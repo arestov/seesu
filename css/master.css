@@ -1791,7 +1791,8 @@ body .surf_nav{
 .song_fans-h-intrack{
 	margin-left: 1rem;
 	margin-right: 0.5rem;
-	float: left
+	float: left;
+	white-space: pre-line;
 }
 .song_fans-l-intrack{
 	max-height: 3rem;
@@ -1835,6 +1836,7 @@ body .surf_nav{
 .song-act-tagging input{
 	display: block;
 	width: 100%;
+	-moz-box-sizing:border-box;
 	box-sizing: border-box;
 	margin-bottom: 1rem;
 	
@@ -1858,7 +1860,7 @@ body .surf_nav{
 	.top_tags{
 		
 		}
-		.top_tags span,.artist_tags span,.personal_tags span{
+		.song_tagging_help .tagging_help span{
 			margin-right: 1rem;
 			background: #3A473D;
 			border: 1px dotted #686868;
@@ -1889,4 +1891,23 @@ body .surf_nav{
 				}
 	.save_tags_b{
 		float:right;
+	}
+.dmca_notice{
+	font-size: 0.8rem;
+	color:#999;
+	display: none;
+	padding: 0.5rem 1rem 1rem;
+	padding-left: 52px;
+	}
+	.want_more_songs .dmca_notice{
+		display: block;
+	}
+.dmca_url{
+	float: right;
+	margin-right: 1rem;
+	display: none;
+	font-size: 0.8rem;
+	}
+	.want_more_songs .dmca_url{
+		display: block;
 	}

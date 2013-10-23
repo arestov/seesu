@@ -14,7 +14,7 @@ coct.SPView.extendTo(SongUI, {
 		this.createBase();
 	},
 	state_change : {
-		"mp_show": function(opts, old_opts) {
+		"vmp_show": function(opts, old_opts) {
 			if (opts){
 			//	this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
@@ -71,7 +71,7 @@ coct.SPView.extendTo(SongUI, {
 
 		this.createTemplate();
 		this.canUseDeepWaypoints = function() {
-			return !(_this.opts && _this.opts.lite) && !!_this.state('mp_show');
+			return !(_this.opts && _this.opts.lite) && !!_this.state('vmp_show');
 		};
 
 	},

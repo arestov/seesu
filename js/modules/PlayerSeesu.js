@@ -261,7 +261,6 @@ var app_env = app_serv.app_env;
 
 
 					var
-						can_use,
 						aqt = document.createElement("embed");
 
 					aqt.style.position = "absolute";
@@ -305,7 +304,7 @@ var app_env = app_serv.app_env;
 					
 				},
 				function(){
-					if (flash_plgs.length && app_env.iframe_support){
+					if (flash_plgs.length && app_env.iframe_support && !app_env.tizen_app){
 						features_storage.canLoad('sm2-proxy');
 					} else {
 						features_storage.setAsInaccessible('sm2-proxy');
@@ -433,11 +432,11 @@ var app_env = app_serv.app_env;
 		changeAppMode: function(playing){
 			if (playing){
 				if (window.btapp){
-					btapp.properties.set('background', true);
+					window.btapp.properties.set('background', true);
 				}
 			} else{
 				if (window.btapp){
-					btapp.properties.set('background', false);
+					window.btapp.properties.set('background', false);
 				}
 			}
 		},

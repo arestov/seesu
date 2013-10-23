@@ -67,10 +67,10 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (e.value){
 				var artcard = this.getNesting('artist');
 				if (artcard){
-					var req = artcard.loaDDD('images');
+					/*var req = artcard.loaDDD('images');
 					if (req){
 						this.addRequest(req);
-					}
+					}*/
 					
 				} else {
 					console.warn('no nested artcard');
@@ -172,14 +172,16 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			}
 		},
 		initHeavyPart: provoda.getOCF('izheavy', function() {
-			var _this = this;
 			var omo = this.omo;
 
 			this.mf_cor = new MfCor();
-			this.mf_cor.init({
-				mo: this,
-				omo: this.omo
-			}, omo.file);
+			this.useMotivator(this.mf_cor, function() {
+				this.mf_cor.init({
+					mo: this,
+					omo: this.omo
+				}, omo.file);
+			});
+			
 
 			if (omo.file){
 				this.updateState('playable', true);
@@ -300,7 +302,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			var
 				starttime = this.start_time,
 				last_scrobble = this.last_scrobble,
-				timestamp = ((new Date() * 1)/1000).toFixed(0),
+				timestamp = (Date.now()/1000).toFixed(0),
 				duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
 
 
@@ -348,7 +350,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 					duration: duration,
 					artist: this.artist,
 					title: this.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
+					timestamp: (Date.now()/1000).toFixed(0)
 				});
 			}
 		},200),

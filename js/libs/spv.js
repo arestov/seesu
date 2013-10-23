@@ -74,6 +74,10 @@ getDefaultView = spv.getDefaultView = function(d) {
 	return d.defaultView || d.parentWindow;
 };
 domReady = spv.domReady = function(d, callback){
+	var wndw = spv.getDefaultView(d);
+	if (!wndw){
+		return;
+	}
 	if (d.readyState == 'complete' || d.readyState == 'loaded' || d.readyState == "interactive"){
 		callback();
 	} else{
@@ -81,12 +85,12 @@ domReady = spv.domReady = function(d, callback){
 		var f = function(){
 			if (!done){
 				done = true;
-				spv.removeEvent(spv.getDefaultView(d), 'load', f);
+				spv.removeEvent(wndw, 'load', f);
 				spv.removeEvent(d, 'DOMContentLoaded', f);
 				callback();
 			}
 		};
-		spv.addEvent(spv.getDefaultView(d), 'load', f);
+		spv.addEvent(wndw, 'load', f);
 		spv.addEvent(d, 'DOMContentLoaded', f);
 	}
 };
@@ -265,7 +269,7 @@ getStringPattern = function (str) {
 spv.getStringPattern = getStringPattern;
 
 ttime = function(f){
-	var d = +new Date();
+	var d = Date.now();
 
 	if (f){
 		f();
@@ -810,5 +814,16 @@ spv.throttle = throttle;
 spv.debounce = debounce;
 spv.filter = $filter;
 
+
+
+spv.zerofyString = function(string, length) {
+	if (typeof string != 'string'){
+		string = '' + string;
+	}
+	while (string.length < length){
+		string = '0' + string;
+	}
+	return string;
+};
 })();
 define(function(){return spv;});

@@ -106,7 +106,7 @@ provoda.Model.extendTo(FileInTorrent, {
 					mo.updateState('play', 'play');
 					if (!mo.start_time){
 						//fixme
-						mo.start_time = ((new Date()).getTime()/1000).toFixed(0);
+						mo.start_time = (Date.now()/1000).toFixed(0);
 					}
 				}
 				this.updateState('play', 'play');

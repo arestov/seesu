@@ -74,10 +74,12 @@ var MfComplect = function(opts, params) {
 	this.start_file = params.file;
 	this.mo = opts.mo;
 	this.mf_cor = opts.mf_cor;
+
 	this.moplas_list = [];
 	this.source_name = params.source_name;
 
 	var _this = this;
+	this.selectMf = null;
 	this.selectMf = function() {
 		_this.mf_cor.playSelectedByUser(this);
 	};
@@ -97,7 +99,11 @@ var MfComplect = function(opts, params) {
 
 	}
 
-	this.updateState('complect_name', this.source_name);
+	var search = this.mo.app.mp3_search.getSearchByName(params.source_name);
+	this.updateManyStates({
+		'dmca_url': search && search.dmca_url,
+		'complect_name': this.source_name
+	});
 	
 };
 
@@ -121,8 +127,10 @@ provoda.Model.extendTo(MfComplect, {
 						.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
 			sf.updateState('overstock', i + 1 > this.overstock_limit);
 			moplas_list.push(sf);
-			this.updateNesting('moplas_list', moplas_list);
+			
 		}
+		this.updateNesting('moplas_list', moplas_list);
+		this.updateState('list_length', moplas_list.length);
 		this.moplas_list = moplas_list;
 
 	},
@@ -150,7 +158,7 @@ provoda.Model.extendTo(MfCor, {
 	},
 	hndTrackNameCh: function(e) {
 		if (e.value){
-			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track});
+			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track}, this.current_motivator);
 			this.bindInvestgChanges();
 			this.mo.bindFilesSearchChanges();
 			if (this.last_search_opts){
@@ -263,10 +271,10 @@ provoda.Model.extendTo(MfCor, {
 				var preview_types = ["default","start","middle","end"];
 
 				//set up filter app$control.yt$state.reasonCode != limitedSyndication
+				var length = Math.min(vs.length, 3);
+				var video_arr = new Array(length);
 
-				var video_arr = [];
-
-				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
+				for (var i=0, l = length; i < l; i++) {
 					var
 						_v = vs[i],
 						tmn = {},
@@ -293,7 +301,7 @@ provoda.Model.extendTo(MfCor, {
 						title: v_title,
 						mo: _this.mo
 					});
-					video_arr.push(yt_v);
+					video_arr[i] = yt_v;
 				}
 
 				video_arr.sort(function(a, b){
@@ -452,8 +460,11 @@ provoda.Model.extendTo(MfCor, {
 					" " +  localize('music-files-from-vk')
 			});
 			this.updateNesting('vk_auth', this.vk_auth_rqb);
-			this.updateState('changed', new Date());
-			this.updateState('vk_audio_auth ', true);
+			this.updateManyStates({
+				'changed': new Date(),
+				'vk_audio_auth': true
+			});
+
 		}
 
 	},
@@ -551,11 +562,11 @@ provoda.Model.extendTo(MfCor, {
 		}
 	},
 	hndSourcesList: function(e) {
-		var sorted_completcs = [];
+		var sorted_completcs = new Array(e.value.length || 0);
 		for (var i = 0; i < e.value.length; i++) {
 			var cur = e.value[i];
 			this.bindSource(cur);
-			sorted_completcs.push(this.complects[cur.search_name]);
+			sorted_completcs[i] = this.complects[cur.search_name];
 		}
 		this.updateNesting('sorted_completcs', sorted_completcs);
 		this.updateState('few_sources', e.value.length > 1);
@@ -706,8 +717,11 @@ provoda.Model.extendTo(MfCor, {
 	},
 	playSelectedByUser: function(mopla) {
 		mopla.use_once = true;
-		this.updateState("selected_mopla_to_use", mopla);
-		this.updateState('selected_mopla', mopla);
+		this.updateManyStates({
+			'selected_mopla_to_use': mopla,
+			'selected_mopla': mopla
+		});
+
 
 		var t_mopla = this.state("mopla_to_use");
 		if (t_mopla){

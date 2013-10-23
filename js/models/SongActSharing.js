@@ -1,4 +1,5 @@
-define(['provoda', 'spv', 'app_serv', './invstg', './comd'], function(provoda, spv, app_serv,  invstg, comd) {
+define(['provoda', 'spv', 'app_serv', './invstg', './comd', 'js/LfmAuth'],
+function(provoda, spv, app_serv,  invstg, comd, LfmAuth) {
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -229,12 +230,14 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 
 		this.wch(this.app, 'lfm_userid');
 		this.wch(row_part, 'active_view');
-		this.wch(this, 'can_load_friends', function(e) {
+
+		this.wch(this, 'can_share', function(e) {
 			if (e.value){
 				this.lfm_friends.preloadStart();
+				this.searchLFMFriends();
 			}
+			
 		});
-
 
 
 	},
@@ -242,7 +245,7 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 		this.changeQuery(query);
 		this.searchLFMFriends();
 	},
-	'compx-can_load_friends':{
+	'compx-can_share':{
 		depends_on: ['active_view', 'lfm_userid'],
 		fn: function(active_view, lfm_userid) {
 			return lfm_userid && active_view;
@@ -251,6 +254,9 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 	searchLFMFriends: function(){
 		var list = this.getNesting('friends') || [];
 		var query = this.state('query');
+		if (!this.state('can_share')){
+			return;
+		}
 		var r = (query ? spv.searchInArray(list, query, ["states.userid", "states.realname"]) : list);
 		if (r.length){
 			r = r.concat();
@@ -315,12 +321,18 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 		this.wch(this.app, 'lfm_userid');
 		this.wch(row_part, 'active_view');
 
+		this.wch(this, 'can_share', function(e) {
+			if (e.value){
+				this.searchLFMFriends();
+			}
+		});
+
 	},
 	searchByQuery: function(query) {
 		this.changeQuery(query);
 		this.searchOneUser();
 	},
-	'compx-can_load_friends':{
+	'compx-can_share':{
 		depends_on: ['active_view', 'lfm_userid'],
 		fn: function(active_view, lfm_userid) {
 			return lfm_userid && active_view;
@@ -331,6 +343,9 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 
 		var q = this.state('query');
 		if (!q){
+			return;
+		}
+		if (!this.state('can_share')){
 			return;
 		}
 
@@ -401,6 +416,16 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 		this.addSection('users', StrusersRSSection);
 		this.addSection('friends', LFMFriendsSection);
 		this.addSection('one-user', LFMOneUserSection);
+
+		var lfm_auth = new LfmAuth.LfmLogin();
+		lfm_auth.init({
+				auth: this.app.lfm_auth,
+				pmd: this
+			}, {
+				desc: localize('lastfm-sharing-access')
+			});
+
+		this.updateNesting('lfm_auth', lfm_auth);
 		
 	},
 	

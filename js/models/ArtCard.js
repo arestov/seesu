@@ -38,12 +38,15 @@ AlbumsList = function() {};
 LoadableList.extendTo(AlbumsList, {
 	model_name: 'albslist',
 	main_list_name: 'albums_list',
-	makeDataItem: function(obj, start_song) {
+	makeDataItem: function(obj) {
 		var pl = new ArtistAlbumSongs();
-		pl.init({
-			map_parent: this,
-			app: this.app
-		}, obj);
+		this.useMotivator(pl, function() {
+			pl.init({
+				map_parent: this,
+				app: this.app
+			}, obj);
+		});
+		
 		return pl;
 	},
 	compareItemWithObj: function(item, data) {
@@ -173,13 +176,9 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		});
 		this.initStates();
 
-		var _this = this;
-		this.map_parent.on('vip_state_change-discogs_id_searching', function(e) {
-			_this.updateState('profile_searching', e.value);
-		}, {immediately: true});
-		this.map_parent.on('vip_state_change-discogs_id', function(e) {
-			_this.updateState('artist_id', e.value);
-		}, {immediately: true});
+		this.wch(this.map_parent, 'discogs_id_searching', 'profile_searching', true);
+		this.wch(this.map_parent, 'discogs_id', 'artist_id', true);
+
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
@@ -494,13 +493,9 @@ var SoundcloudArtcardSongs = function() {};
 SongsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
 		this._super.apply(this, arguments);
-		var _this = this;
-		this.map_parent.on('vip_state_change-sc_profile_searching', function(e) {
-			_this.updateState('profile_searching', e.value);
-		}, {immediately: true});
-		this.map_parent.on('vip_state_change-soundcloud_profile', function(e) {
-			_this.updateState('artist_id', e.value);
-		}, {immediately: true});
+		this.wch(this.map_parent, 'sc_profile_searching', 'profile_searching', true);
+		this.wch(this.map_parent, 'soundcloud_profile', 'artist_id', true);
+
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
@@ -737,7 +732,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 				return SimilarArtists;
 			},
 			getTitle: function() {
-				return 'Similar to «' + this.artist + '» artists';
+				return localize("Similar to «%artist%» artists").replace('%artist%', this.artist);
 			}
 		},
 		'tags': {
@@ -746,12 +741,12 @@ BrowseMap.Model.extendTo(ArtCard, {
 		},
 		'albums': {
 			constr: DiscogsAlbums,
-			title: 'Albums from Discogs'
+			title: localize('Albums from Discogs')
 		},
 		'albums_lfm': {
 			constr: ArtistAlbums,
 			getTitle: function() {
-				return 'Albums of ' + this.artist + ' from last.fm';
+				return localize('Albums of %artist% from last.fm').replace('%artist%', this.artist);
 			}
 		},
 		'soundcloud': {
@@ -764,15 +759,15 @@ BrowseMap.Model.extendTo(ArtCard, {
 		},
 		'fresh': {
 			constr: HypemArtistSeFreshSongs,
-			title: 'Fresh songs'
+			title: localize('Fresh songs')
 		},
 		'most_favorites': {
 			constr: HypemArtistSeUFavSongs,
-			title: 'Most Favorites'
+			title: localize('Most Favorites')
 		},
 		'blogged': {
 			constr: HypemArtistSeBlogged,
-			title: 'Most Reblogged'
+			title: localize('Most Reblogged')
 		}
 	},
 	initHeavy: provoda.getOCF('heavy_oi', function() {

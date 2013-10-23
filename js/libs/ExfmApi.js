@@ -67,6 +67,7 @@ ExfmMusicSearch.prototype = {
 	description:'ex.fm',
 	slave: false,
 	s: {name: 'exfm', key: 0, type:'mp3'},
+	dmca_url: 'http://ex.fm/dmca',
 	preferred: null,
 	makeSongFile: function(item) {
 		return this.makeSong(item);
@@ -127,7 +128,7 @@ ExfmMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.songs.length){
 						for (var i=0; i < r.songs.length; i++) {
-							if (!r.songs[i] || r.songs[i].url.indexOf('api.soundcloud.com/tracks/') != -1){
+							if (!r.songs[i] || !r.songs[i].url || r.songs[i].url.indexOf('api.soundcloud.com/tracks/') != -1){
 								continue;
 							}
 							var ent = _this.makeSong(r.songs[i], msq);

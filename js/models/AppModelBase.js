@@ -59,12 +59,6 @@ provoda.Model.extendTo(AppModelBase, {
 		'move-view': function(change) {
 			var parent = change.target.getMD().getParentMapModel();
 			if (parent){
-				//mp-source
-				/*
-				var mp_source = change.target.state('mp-source');
-				if (mp_source){
-					parent.updateState('mp-highlight', mp_source);
-				}*/
 				parent.updateState('mp_has_focus', false);
 			}
 			change.target.getMD().updateState('mp_show', change.value);
@@ -83,15 +77,15 @@ provoda.Model.extendTo(AppModelBase, {
 			models[i].getMD().updateState('map_animating', mark);
 		}
 	},
-	animateMapChanges: function(changes) {
+	animateMapChanges: function(changes, tree, residents) {
 		var
 			i,
 			target_md,
 			all_changhes = spv.filter(changes.array, 'changes');
 
-		all_changhes = [].concat.apply([], all_changhes);
-		var models = spv.filter(all_changhes, 'target');
-		this.animationMark(models, changes.anid);
+		all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
+		//var models = spv.filter(all_changhes, 'target');
+		//this.animationMark(models, changes.anid);
 
 		for (i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
@@ -103,6 +97,7 @@ provoda.Model.extendTo(AppModelBase, {
 		}
 
 		for (i = changes.array.length - 1; i >= 0; i--) {
+			//вычисление модели, которая станет главной на экране
 			var cur = changes.array[i];
 			if (this['mapch-handlers'][cur.name]){
 				target_md = this['mapch-handlers'][cur.name].call(this, cur.changes);
@@ -114,6 +109,7 @@ provoda.Model.extendTo(AppModelBase, {
 			проскроллить к источнику при отдалении
 			просроллить к источнику при приближении
 		*/
+
 		if (target_md){
 			target_md.updateState('mp_has_focus', true);
 
@@ -124,52 +120,27 @@ provoda.Model.extendTo(AppModelBase, {
 
 
 		}
-		this.nextTick(function() {
-			this.updateState('map_animation', changes);
-			this.nextTick(function() {
-				//отложить изменение через nextTick необходимо, потому что изменения накапливаются и сжимаются,
-				//поэтому несколько синхронных изменений состояний дойдут до view только в виде последнего изменения
-				this.updateState('map_animation', false); //fixme анимация могла изменится. мы отменяем не то
-				this.animationMark(models, false);//fixme анимация могла изменится. мы маркируем то (1вую анимацию), что ещё может находится в анимации (2ая анмация)
-			});
+
+		if (tree){
+			this.updateNesting('navigation', tree);
+		}
+		if (target_md){
+			changes.target = target_md && target_md.getMDReplacer();
+		}
+		this.updateNesting('map_slice', {
+			items: residents,
+			transaction: changes
 		});
-		
-		
+	
 		
 	},
 	bindMMapStateChanges: function(md) {
-		var _this = this;
-
 		md.on('mpl-attach', function() {
 			md.updateState('mpl_attached', true);
-			/*var navigation = _this.getNesting('navigation');
-			var target_array = _this.getNesting('map_slice') || [];
 
-
-			if (navigation.indexOf(md) == -1) {
-				navigation.push(md);
-				_this.updateNesting('navigation', navigation);
-			}
-			if (target_array.indexOf(md) == -1){
-				target_array.push(md);
-				_this.updateNesting('map_slice', target_array);
-			}
-*/
 		}, {immediately: true});
 		md.on('mpl-detach', function(){
 			md.updateState('mpl_attached', false);
-		/*	var navigation = _this.getNesting('navigation');
-			var target_array = _this.getNesting('map_slice') || [];
-
-			var new_nav = spv.arrayExclude(navigation, md);
-			if (new_nav.length != navigation.length){
-				_this.updateNesting('navigation', new_nav);
-			}
-			var new_tarr = spv.arrayExclude(target_array, md);
-
-			if (new_tarr.length != target_array.length){
-				_this.updateNesting('map_slice', new_tarr);
-			}*/
 		}, {immediately: true});
 	},
 	showMOnMap: function(model) {

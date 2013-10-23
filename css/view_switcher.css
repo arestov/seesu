@@ -177,29 +177,34 @@
 	padding-bottom: 20px;
 	max-width: 750px;
 	}
-.full-page .leftcol{
-	width: 50%;
-	float:left;
-	min-width: 15rem;
-	-moz-box-sizing:border-box;
-	box-sizing: border-box;
-	padding-right: 0.86rem;
-	}
+
+
 .full_wide_col{
 	clear:both;
 	}
 	.full_wide_col .area_for_button .albums_previews{
 		height: 4.6rem;
 		}
-.full-page .rightcol{
-	width: 50%;
-	float:right;
-	padding-left: 0.86rem;
-	-moz-box-sizing:border-box;
-	box-sizing: border-box;
-	min-width: 15rem;
-	}
 
+@media (min-width:490px) {
+
+	.full-page .leftcol{
+		width: 50%;
+		float:left;
+		min-width: 15rem;
+		-moz-box-sizing:border-box;
+		box-sizing: border-box;
+		padding-right: 0.86rem;
+		}
+	.full-page .rightcol{
+		width: 50%;
+		float:right;
+		padding-left: 0.86rem;
+		-moz-box-sizing:border-box;
+		box-sizing: border-box;
+		min-width: 15rem;
+		}
+}
 .full-page .art_card{
 	padding: 1.72rem 10px;
 	}

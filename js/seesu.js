@@ -9,7 +9,7 @@ ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax) {
 'use strict';
-var seesu_version = 4.0;
+var seesu_version = 4.2;
 var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
@@ -370,16 +370,16 @@ AppModel.extendTo(SeesuApp, {
 		this.map
 			.init(this.start_page)
 			.on('residents-tree', function(tree) {
-				this.updateNesting('navigation', tree);
-				this.updateNesting('map_slice', tree);
+				
+			}, this.getContextOptsI())
+			.on('changes', function(changes, tree, residents) {
+				//console.log(changes);
+				this.animateMapChanges(changes, tree, residents);
 			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
 				this.changeNavTree(nav_tree);
 			}, this.getContextOptsI())
-			.on('changes', function(changes) {
-				//console.log(changes);
-				this.animateMapChanges(changes);
-			}, this.getContextOptsI())
+
 			.on('title-change', function(title) {
 				this.setDocTitle(title);
 
@@ -403,6 +403,25 @@ AppModel.extendTo(SeesuApp, {
 				this.trackPage(nv.map_level.resident.page_name);
 			}, this.getContextOptsI())
 			.makeMainLevel();
+
+		if (app_env.tizen_app){
+			//https://developer.tizen.org/
+			spv.addEvent(window, 'tizenhwkey', function(e) {
+				if(e.keyName == "back"){
+					//tizen.application.getCurrentApplication().exit();
+					var history = window.history;
+					if (!history.state){
+						var app = window.tizen.application.getCurrentApplication();
+						app.exit();
+					} else {
+						history.back();
+					}
+					
+				}
+			});
+		}
+
+		
 
 
 
@@ -909,19 +928,24 @@ provoda.sync_s.setRootModel(su);
 		mp3_search: su.mp3_search
 	}));
 
+	var allow_torrents = false;
 
-	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
-			cache_ajax: cache_ajax,
-			mp3_search: su.mp3_search
-		}));
-	} else {
-		su.mp3_search.add(new torrent_searches.googleTorrentSearch({
-			crossdomain: app_env.cross_domain_allowed,
-			mp3_search: su.mp3_search,
-			cache_ajax: cache_ajax
-		}));
+	if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
+		if (app_env.cross_domain_allowed){
+			su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
+		} else {
+			su.mp3_search.add(new torrent_searches.googleTorrentSearch({
+				crossdomain: app_env.cross_domain_allowed,
+				mp3_search: su.mp3_search,
+				cache_ajax: cache_ajax
+			}));
+		}
 	}
+
+	
 
 
 

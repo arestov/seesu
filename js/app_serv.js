@@ -6,8 +6,8 @@ var app_serv = {};
 (function(){
 
 function isFileReady ( readyState ) {
-    // Check to see if any of the ways a file can be ready are available as properties on the file's element
-    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
+	// Check to see if any of the ways a file can be ready are available as properties on the file's element
+	return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
 }
 
 var p = document.getElementsByTagName('script');
@@ -201,9 +201,9 @@ var toggleClass = function(old_c, toggle_class){
 		return removeClass(old_c, toggle_class);
 	}
 };
-var NodeClassStates = function(node){
+var NodeClassStates = function(node, init_state){
 	this.node = node;
-	this.html_el_state = node.className || '';
+	this.html_el_state = init_state || node.className || '';
 
 };
 NodeClassStates.prototype = {
@@ -218,6 +218,9 @@ NodeClassStates.prototype = {
 	},
 	applyStates: function(){
 		this.node.className = this.html_el_state;
+	},
+	getFullState: function() {
+		return this.html_el_state;
 	}
 };
 
@@ -280,20 +283,49 @@ var app_env = (function(wd){
 	env.xhr2 = !!xhr2_support;
 
 	
-	
-	var has_transform_prop;
 	var dom_style_obj = wd.document.body.style;
+	var has_transform_prop;
+	var has_transition_prop;
+	
+
+	var transition_props = {
+		//https://github.com/ai/transition-events/blob/master/lib/transition-events.js
+		// Webkit must be on bottom, because Opera try to use webkit
+		// prefix.
+		'transition':		'transitionend',
+		'OTransition':		'oTransitionEnd',
+		'WebkitTransition':	'webkitTransitionEnd',
+		'MozTransition':	'transitionend'
+	};
+	
+
+	for ( var prop in transition_props ) {
+		if (prop in dom_style_obj){
+			has_transition_prop = transition_props[prop];
+			break;
+		}
+	}
+
 	['transform', '-o-transform', '-webkit-transform', '-moz-transform'].forEach(function(el) {
 		if (!has_transform_prop && el in dom_style_obj){
 			has_transform_prop = el;
 		}
 	});
+
+	if (has_transition_prop){
+		env.transition = has_transition_prop;
+	}
+
 	if (has_transform_prop){
 		env.transform = has_transform_prop;
 	}
 	
-
-
+	if (window.tizen){
+		env.app_type = 'tizen_app';
+		env.as_application = false;
+		env.deep_sanbdox = true;
+		env.needs_url_history = true;
+	} else
 	if (typeof widget == 'object' && !window.widget.fake_widget){
 		if (bro.browser == 'opera'){
 			if (window.opera.extension){
@@ -310,13 +342,14 @@ var app_env = (function(wd){
 		env.as_application = true;
 	} else
 	if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
+		var opera = navigator.userAgent.indexOf('OPR') != -1;
 		if (wd.location.pathname == '/index.html'){
-			env.app_type = 'chrome_app';
+			env.app_type = opera ? 'opera_app' : 'chrome_app';
 			env.as_application = false;
 			env.needs_url_history = true;
 			env.need_favicon = true;
 		} else{
-			env.app_type = 'chrome_extension';
+			env.app_type = opera ? 'opera_extension' : 'chrome_extension';
 			env.as_application = true;
 		}
 		
@@ -575,7 +608,8 @@ app_serv.handleDocument = function(d, tracking_opts) {
 	};
 
 	spv.domReady(d, function() {
-		dstates.applyStates();
+		var current_dst = new NodeClassStates(d.documentElement, dstates.getFullState());
+		current_dst.applyStates();
 	});
 	
 
@@ -585,9 +619,13 @@ app_serv.handleDocument = function(d, tracking_opts) {
 		}
 
 		var emptyNode = function(node) {
-			while (node.firstChild){
-				node.removeChild( node.firstChild );
+			var length = node && node.childNodes.length;
+			for (var i = length - 1; i >= 0; i--) {
+				node.removeChild( node.childNodes[i] );
 			}
+			/*while (node.firstChild){
+				node.removeChild( node.firstChild );
+			}*/
 			return node;
 		};
 
@@ -602,8 +640,9 @@ app_serv.handleDocument = function(d, tracking_opts) {
 				var cl = classes[i];
 				if (cl.match(/localize/)){
 					var term = localizer[cl.replace('localize-','')];
-					if (term && term[lang]){
-						translatable.push([el, term[lang]]);
+					var string = term && (term[lang] || term['original']);
+					if (string){
+						translatable.push([el, string]);
 						//$(el).text();
 						break;
 					}

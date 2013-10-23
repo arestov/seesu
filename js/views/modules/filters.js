@@ -1,4 +1,5 @@
 define(function() {
+"use strict";
 var filters = {
 	limitTo: function(input, limit) {
 		if (Array.isArray(input)){
@@ -9,6 +10,13 @@ var filters = {
 			} else {
 				return "";
 			}
+		} else {
+			return input;
+		}
+	},
+	notGIF: function(input) {
+		if (input.lastIndexOf('.gif') == input.length - 4){
+			return;
 		} else {
 			return input;
 		}

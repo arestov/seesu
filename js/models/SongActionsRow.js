@@ -163,12 +163,18 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		}
 	},
 	setVolumeState: function(fac) {
+		if (!fac){
+			return;
+		}
 		this.updateState('volume', fac[0]/fac[1]);
 	},
 	sendVolume: function(vol) {
 		this.app.setSetting('volume', vol);
 	},
 	setVolume: function(fac) {
+		if (!fac){
+			return;
+		}
 		this.updateState('volume', fac[0]/fac[1]);
 		this.sendVolume(fac);
 		

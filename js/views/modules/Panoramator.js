@@ -50,49 +50,58 @@ if (false && has_transform_prop){
 }
 //  transform: translate(350px,0);
 
+var PathPoint = function(cpos, time) {
+	this.cpos = cpos;
+	this.time = time;
+};
 
+var Panoramator = function(opts){
 
-var Panoramator = function(){};
+	this.total_width = null;
+	this.viewport_width = null;
+	this.lift_items = [];
+
+	this.onUseEnd = null;
+	if (opts.onUseEnd){
+		this.onUseEnd = opts.onUseEnd;
+	}
+	this.getFastLiftWidth= null;
+	if (opts.getFastLiftWidth){
+		this.getFastLiftWidth = opts.getFastLiftWidth;
+	}
+	
+
+	var _this = this;
+	this.viewport = opts.viewport;
+	this.viewport.on('mousedown', function(e){
+		if (e.which && e.which != 1){
+			return true;
+		}
+		_this.refreshLiftWidth();
+		e.preventDefault();
+		_this.handleUserStart(e);
+	});
+	this.improved_con = opts.improved_con;
+	this.lift = opts.lift;
+
+	
+	this.mouseMove = function(e){
+		if (e.which && e.which != 1){
+			return true;
+		}
+		_this.cursorMove(e);
+	};
+	this.mouseUp = function(e){
+		if (e.which && e.which != 1){
+			return true;
+		}
+		_this.handleUserEnd(e);
+	};
+	this.path_points = [];
+	this.move_star_lift_pos = null;
+};
 Panoramator.prototype = {
 	constructor: Panoramator,
-	init: function(opts){
-
-		if (opts.onUseEnd){
-			this.onUseEnd = opts.onUseEnd;
-		}
-		if (opts.getFastLiftWidth){
-			this.getFastLiftWidth = opts.getFastLiftWidth;
-		}
-		
-
-		var _this = this;
-		this.viewport = opts.viewport;
-		this.viewport.on('mousedown', function(e){
-			if (e.which && e.which != 1){
-				return true;
-			}
-			_this.refreshLiftWidth();
-			e.preventDefault();
-			_this.handleUserStart(e);
-		});
-		this.improved_con = opts.improved_con;
-		this.lift = opts.lift;
-
-		this.lift_items = [];
-		this.mouseMove = function(e){
-			if (e.which && e.which != 1){
-				return true;
-			}
-			_this.cursorMove(e);
-		};
-		this.mouseUp = function(e){
-			if (e.which && e.which != 1){
-				return true;
-			}
-			_this.handleUserEnd(e);
-		};
-
-	},
 	limit_difficult: 3,
 	mininmal_speed: 0.5,
 	normal_speed: 0.7,
@@ -120,14 +129,11 @@ Panoramator.prototype = {
 	},
 	cursorMove: function(e){
 		//this.path_points
-		this.path_points.push({
-			cpos: e.pageX,
-			time: e.timeStamp
-		});
+		this.path_points.push(new PathPoint(e.pageX, e.timeStamp));
 		
 
 		var path_diff = this.path_points[0].cpos - e.pageX;
-		var target_pos = -this.path_points.lift_pos -path_diff;
+		var target_pos = -this.move_star_lift_pos -path_diff;
 		var move_data = this.getMoveData(target_pos);
 
 		
@@ -188,12 +194,9 @@ Panoramator.prototype = {
 	handleUserEnd: function(e){
 
 		var last_diff = this.path_points[0].cpos - this.path_points[this.path_points.length-1].cpos;
-		var lift_target_pos = -this.path_points.lift_pos -last_diff;
+		var lift_target_pos = -this.move_star_lift_pos -last_diff;
 
-		this.path_points.push({
-			cpos: e.pageX,
-			time: e.timeStamp
-		});
+		this.path_points.push(new PathPoint(e.pageX, e.timeStamp));
 
 		if (this.checkVectorAndSpeed()){
 			var move_data = this.getMoveData(lift_target_pos);
@@ -211,18 +214,15 @@ Panoramator.prototype = {
 		if (this.onUseEnd){
 			this.onUseEnd();
 		}
+		this.path_points.length = 0;
 		//this.viewport
 	},
 	handleUserStart: function(e){
 		
 	
 		this.lift.stop();
-		this.path_points = [];
-		this.path_points.lift_pos = this.getLiftPos();
-		this.path_points.push({
-			cpos: e.pageX,
-			time: e.timeStamp
-		});
+		this.move_star_lift_pos = this.getLiftPos();
+		this.path_points.push(new PathPoint(e.pageX, e.timeStamp));
 		this.viewport.addClass('touching-this');
 		$(this.viewport[0].ownerDocument)
 			.on('mousemove', this.mouseMove)

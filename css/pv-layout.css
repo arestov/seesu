@@ -2,6 +2,10 @@
 	position: relative;
 
 	max-width: 750px;
+	-webkit-transform-origin: 0 0;
+	-moz-transform-origin: 0 0;
+	-o-transform-origin: 0 0;
+	transform-origin: 0 0;
 	}
 .shared-parts{
 	position: relative;
@@ -31,8 +35,9 @@
 
 	}
 @media (min-width:760px) {
-	.screens{
+	.app_map_con{
 		padding-right: 240px;
+		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 	}
 
@@ -49,8 +54,8 @@
 	.yes-transform_support .complex-page{
 		left: auto;
 
-		-moz-transform: translateX(240px);
 		-webkit-transform: translateX(240px);
+		-moz-transform: translateX(240px);
 		-o-transform: translateX(240px);
 		transform: translateX(240px);
 
@@ -58,16 +63,16 @@
 	.yes-transform_support .shared-parts {
 		left: auto;
 
-		-moz-transform: translateX(240px);
 		-webkit-transform: translateX(240px);
+		-moz-transform: translateX(240px);
 		-o-transform: translateX(240px);
 		transform: translateX(240px);
 		}
 	.yes-transform_support .page-scheme{
 		left: auto;
-
-		-moz-transform: translateX(0);
+	
 		-webkit-transform: translateX(0);
+		-moz-transform: translateX(0);
 		-o-transform: translateX(0);
 		transform: translateX(0);
 	}
@@ -96,9 +101,15 @@
 		overflow: hidden;
 		
 		}
-	.app-loaded .complex-page{
+	.app-loaded .can_be_animated.complex-page{
 		-webkit-transition: left 0.12s ease-out, -webkit-transform 0.12s ease-out;
 		-moz-transition: left 0.12s ease-out, -moz-transform 0.12s ease-out;
 		-o-transition: left 0.12s ease-out, -o-transform 0.12s ease-out;
 		transition: left 0.12s ease-out, transform 0.12s ease-out;
+
+
+		/*-webkit-transition: left 2s ease-out, -webkit-transform 2s ease-out;
+		-moz-transition: left 2s ease-out, -moz-transform 2s ease-out;
+		-o-transition: left 2s ease-out, -o-transform 2s ease-out;
+		transition: left 2s ease-out, transform 2s ease-out;*/
 		}

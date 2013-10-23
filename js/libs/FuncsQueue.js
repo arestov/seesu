@@ -107,7 +107,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 				bigdelay_turn = (!this.nobigdelay && last_num > 1  && (last_num  % this.big_delay_interval === 0));
 			
 			if (bigdelay_turn){
-				var real_bdinterval = (new Date()).getTime() - this.using_stat[last_num - (this.big_delay_interval + 1)];
+				var real_bdinterval = Date.now() - this.using_stat[last_num - (this.big_delay_interval + 1)];
 				var _unit = (this.small_delay * this.big_delay_interval + this.big_delay);
 				if (real_bdinterval && real_bdinterval > _unit){
 					time = Math.max(0, this.big_delay - (real_bdinterval - _unit));
@@ -119,7 +119,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 				if (!last_usage){
 					time = 0;
 				} else{
-					var time_difference = (new Date()).getTime() - last_usage;
+					var time_difference = Date.now() - last_usage;
 					var interval_diff = this.small_delay  - time_difference;
 					if (interval_diff > 0){
 						time = interval_diff;
@@ -143,7 +143,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 			this.fstack.next(function(){
 				var atom = this;
 				func();
-				_this.using_stat.push((new Date()).getTime());
+				_this.using_stat.push(Date.now());
 				this.complete = true;
 				atom.done(my_queue);
 			});

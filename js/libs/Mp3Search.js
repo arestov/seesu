@@ -223,9 +223,12 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 		},
 		bindSource: function(name, params, mp3_search) {
 			var files_by_source = new FilesBySource();
-			files_by_source.init({
-				mp3_search: mp3_search
-			}, params, name);
+			this.useMotivator(files_by_source, function() {
+				files_by_source.init({
+					mp3_search: mp3_search
+				}, params, name);
+			});
+			
 			return files_by_source;
 		},
 		complex_states: {
@@ -680,17 +683,20 @@ var getAverageDurations = function(mu_array, time_limit){
 			file.query_match_index[query_string.replace(/\./gi, '')] = new SongQueryMatchIndex(file, msq) * 1;
 			return file.query_match_index[query_string];
 		},
-		getFilesInvestg: function(msq) {
+		getFilesInvestg: function(msq, motivator) {
 			var query_string = msq.q || this.getQueryString(msq);
 			var investg = this.investgs[query_string];
 			if (!investg){
 				investg = new FilesInvestg();
-				investg.init({
-					mp3_search: this
-				}, {
-					msq: msq,
-					query_string: query_string
-				});
+				this.useMotivator(investg, function() {
+					investg.init({
+						mp3_search: this
+					}, {
+						msq: msq,
+						query_string: query_string
+					});
+				}, motivator);
+				
 
 				this.investgs[query_string] = investg;
 

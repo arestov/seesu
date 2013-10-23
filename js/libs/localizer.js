@@ -57,7 +57,7 @@ define({
 	},
 	"listeners-looks":{
 		"original": "People who listened to this track, look like this",
-		"ru": "Люди, слушавшие этот трек, выглядят примерно так:"
+		"ru": "Люди, слушавшие эту композицию, выглядят примерно так:"
 	},
 	"rels-people-you":{
 		"original": "People which want to meet you",
@@ -281,6 +281,10 @@ define({
 		"original": "profile",
 		"ru": 'страница'
 	},
+	"Tag": {
+		"original": "Tag",
+		"ru": "Тег"
+	},
 	"Tags": {
 		"original": "Tags",
 		"ru": "Теги"
@@ -288,6 +292,10 @@ define({
 	"get-albums":{
 		"original": "get albums",
 		"ru": "получить альбомы"
+	},
+	"Similar-to":{
+		"original": "Similar to",
+		"ru": "Похожие на"
 	},
 	"similar-arts": {
 		"original":	"Similar artists",
@@ -303,7 +311,7 @@ define({
 	},
 	"Best-tracks":{
 		"original": "Best tracks",
-		"ru": "Лучшие треки"
+		"ru": "Лучшие композиции"
 	},
 	"Week-chart":{
 		"original": "Week chart",
@@ -315,7 +323,7 @@ define({
 	},
 	"Top-tracks":{
 		"original": "Top tracks",
-		"ru": 'Лучшие треки'
+		"ru": 'Лучшие композиции'
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",
@@ -337,13 +345,18 @@ define({
 		"original": "add to favorites",
 		"ru": "добавить в избранное"
 	},
+
+	"lastfm-sharing-access":{
+		"original": "To share by last.fm",
+		"ru": "Что бы делиться музыкой с помощью last.fm"
+	},
 	"lastfm-loveit-access": {
 		"original": "To add song to your favorites",
 		"ru": "Чтобы добавить композицию в избранное"
 	},
 	"lastfm-tagging-access": {
 		"original": "To add tags to song",
-		"ru": "Чтобы присвоить композиции тэги"
+		"ru": "Чтобы присвоить композиции теги"
 	},
 	"lastfm-scrobble-access": {
 		"original": "To scrobble to last.fm",
@@ -355,7 +368,7 @@ define({
 	},
 	"grant-love-lfm-access": {
 		"original": "To get your favorite tracks",
-		"ru": "Чтобы получить свои любимые треки"
+		"ru": "Чтобы получить свои любимые композиции"
 	},
 	"to-get-access":{
 		"original": "To get access",
@@ -464,11 +477,11 @@ define({
 	},
 	"in-tracks": {
 		"original": "in tracks",
-		"ru": "в треках"
+		"ru": "в композициях"
 	},
 	"in-tags": {
 		"original": "in tags",
-		"ru": "в тэгах"
+		"ru": "в тегах"
 	},
 	"in-albums": {
 		"original": "in albums",
@@ -504,7 +517,7 @@ define({
 	},
 	"otracks": {
 		"original": "tracks",
-		"ru": 'треков'
+		"ru": 'композиций'
 	},
 	"otags": {
 		'original': 'tags',
@@ -603,7 +616,155 @@ define({
 		"original": "more about artist",
 		"ru": "больше об артисте"
 	},
+	"All-a-world":{
+		"original": "All around the World",
+		"ru": "По всему миру"
+	},
+	"Hyped":{
+		"original": "Hyped",
+		"ru": "Набирающие популярность"
+	},
+	"Unique":{
+		"original": "Unique",
+		"ru": "Уникальные"
+	},
+
+	"Most Loved":{
+		"original": "Most Loved",
+		"ru": "В \"любимом\" у пользователей"
+	},
+	"Countries":{
+		"original": "Countries",
+		"ru": "Страны"
+	},
+	"Cities of %county%":{
+		"original": "Cities of %county%",
+		"ru": "Города страны \"%county%\""
+	},
 	
+	
+
+	"Artists lists":{
+		"original": "Artists lists",
+		"ru": "Списки артистов"
+	},
+	"Songs lists":{
+		"original": "Songs lists",
+		"ru": "Списки композиций"
+	},
+	"Top Songs":{
+		"original": "Top Songs",
+		"ru": "Лучшие композиции"
+	},
+	"Top Artists":{
+		"original": "Top Artists",
+		"ru": "Лучшие артисты"
+	},
+	"Latest Blogged music from hypem.com":{
+		"original": "Latest Blogged music from hypem.com",
+		"ru": "Свежаяйшая музыка из блогов, собранная hypem.com"
+	},
+	"Latest Blogged remixes from hypem.com":{
+		"original": "Latest Blogged remixes from hypem.com",
+		"ru": "Свежайшие ремиксы из блогов, собранные hypem.com"
+	},
+	"Popular Now on hypem.com":{
+		"original": "Popular Now on hypem.com",
+		"ru": "Популярное сейчас на hypem.com"
+	},
+	"Albums from Discogs":{
+		"original": "Albums from Discogs",
+		"ru": "Альбомы с discogs"
+	},
+	"Albums of %artist% from last.fm":{
+		"original": "Albums of %artist% from last.fm",
+		"ru": "Альбомы «%artist%» с last.fm"
+	},
+
+	"Similar to «%artist%» artists":{
+		"original": "Similar to «%artist%» artists",
+		"ru": "Артисты похожие на «%artist%»"
+	},
+	"Fresh songs":{
+		"original": "Fresh songs",
+		"ru": "Свежие композиции"
+	},
+	"Most Favorites":{
+		"original": "Most Favorites",
+		"ru": "В избранном у пользователей"
+	},
+	"Most Reblogged":{
+		"original": "Most Reblogged",
+		"ru": "Наиболее упоминаемое в блогах"
+	},
+	"vk.com tracks":{
+		"original": "vk.com tracks",
+		"ru": "композиции с vk.com"
+	},
+	"vk.com friends":{
+		"original": "друзья с vk.com",
+		"ru": ""
+	},
+	"Last.fm friends":{
+		"original": "Last.fm friends",
+		"ru": "друзья с last.fm"
+	},
+	"Neighbours":{
+		"original": "Neighbours",
+		"ru": "Соседи"
+	},
+	"Friends":{
+		"original": "Friends",
+		"ru": "Друзья"
+	},
+	"VK-Recommended":{
+		"original": "Recommended",
+		"ru": "Рекомендации"
+	},
+	"«My audio»":{
+		"original": "«My audio»",
+		"ru": "«Мои аудиозаписи»"
+	},
+	"Top fans":{
+		"original": "Top fans",
+		"ru": "Большие фанаты"
+	},
+	"lastfm_fans":{
+		"original": "Last.fm \n song fans",
+		"ru": "Фанаты \n на last.fm"
+	},
+	"enabled":{
+		"original": "enabled",
+		"ru": "включить"
+	},
+	"disabled":{
+		"original": "disabled",
+		"ru": "отключить"
+	},
+	"lfm_scrobbling":{
+		"original": "scrobbling to last.fm",
+		"ru": "last.fm скроблинг"
+	},
+	"your_tags":{
+		"original": "Your tags",
+		"ru": "Твои теги"
+	},
+	"top_track_tags":{
+		"original": "Top tags of track",
+		"ru": "Теги композиции"
+	},
+	"artist_tags":{
+		"original": "Artist tags",
+		"ru": "Теги артиста"
+	},
+	"dmca_notice":{
+		"original": "Seesu follows terms of service of each api it uses. Seesu does not store any content. Each service follows DMCA. Feel free to report abuse.",
+		"ru": "Сису соблюдает условия использования каждого сервиса, которого она использует и не хранит какого-либо контента. Каждый сервис соблюдает DMCA. Вы имеете возможность направить им жалобы на нарушения копирайта."
+	},
+	"report-abuse":{
+		"original": "report abuse",
+		"ru": "пожаловаться"
+	},
 	"":{
 		"original": "",
 		"ru": ""

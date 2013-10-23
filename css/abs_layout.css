@@ -47,7 +47,7 @@ html.opera-extension{
 		z-index:2;
 		
 		
-		margin:0 1rem 0;
+		
 		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 		}
 
@@ -123,3 +123,11 @@ html.opera-extension{
 
 
 
+.app_map_con{
+	position: absolute;
+	
+	left:0;
+	right: 0;
+	min-height: 100%;
+	margin:0 1rem 0;
+}

@@ -22,7 +22,7 @@ provoda.View.extendTo(ArtcardUI, {
 		tags_list: coct.TagsListPreview
 	},
 	state_change: {
-		"mp_show": function(opts) {
+		"vmp_show": function(opts) {
 			this.c.toggleClass('hidden', !opts);
 		},
 		'selected_image': function(lfm_wrap) {
@@ -95,14 +95,12 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		this.photo_data = {};
 		this.dom_related_props.push('photo_data');
 
-		var _this = this;
 		this.wch(this.root_view, 'window_height');
 		this.wch(this.root_view, 'window_width');
 		this.wch(this.parent_view, 'mp_show_end', 'parent_viewing_mode');
-
-		this.parent_view.on('state_change-mp_show', function(e) {
+		this.wch(this.parent_view, 'vmp_show', function(e) {
 			if (!e.value){
-				_this.setVisState('wamo_info', false);
+				this.setVisState('wamo_info', false);
 			}
 		});
 
@@ -235,12 +233,10 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
 			_this.img_requests = [];
 			var img_requests = _this.img_requests;
-		
-			_this.img_panorama = new Panoramator();
-			var img_panorama = _this.img_panorama;
+
 			var main_c = photo_c.parent();
 
-			img_panorama.init({
+			_this.img_panorama = new Panoramator({
 				viewport: main_c,
 				lift: photo_c,
 				improved_con: true,
@@ -251,6 +247,9 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 					seesu.trackEvent('Panoramator', 'artist photos');
 				}
 			});
+			var img_panorama = _this.img_panorama;
+			
+
 			//bindPanoramaResizeByWindow(img_panorama);
 			_this.updateState('panorama', true);
 			
