@@ -67,14 +67,19 @@ var bindLocationChange = function(hashchangeHandler) {
 
 var navi;
 (function() {
+	var url_base = null;
 	var getURLBase = function(){
-		var cbase;
-		if (location.href.indexOf('#') > -1){
-			cbase = location.href.slice(0, location.href.indexOf('#'));
-		} else{
-			cbase = location.href;
+		if (url_base === null){
+			var cbase;
+			if (location.href.indexOf('#') > -1){
+				cbase = location.href.slice(0, location.href.indexOf('#'));
+			} else{
+				cbase = location.href;
+			}
+			url_base = cbase;
 		}
-		return cbase;
+		
+		return url_base;
 	};
 	var zerofy = function(str, digits){
 		str = "" + str;
@@ -86,10 +91,15 @@ var navi;
 		return str;
 	};
 	var tag_regexp = /\ ?\$...$/;
+	var history_array = [];
+	var current_histate = null;
+
 	navi = {
+		disallow_native_history: false,
 		counter: Math.round((Math.random() * parseInt('zzz', 36))),
 		states_index: {},
 		fake_current_url:'',
+
 		init: function(hashChangeRecover) {
 			this.hashChangeRecover = hashChangeRecover;
 			var _this = this;
@@ -105,6 +115,8 @@ var navi;
 			if (this.fake_current_url != url){
 				this.fake_current_url = url;
 			}
+			current_histate = this.findHistory(url);
+			//
 		},
 		getFakeURL: function(){
 			return this.fake_current_url;
@@ -135,25 +147,51 @@ var navi;
 			if ((fakeud.clear_url !=  ud.clear_url) || replace){
 				if (!this.states_index[ud.uniq_url]){
 					this.setFakeURL(ud.uniq_url);
-					this.states_index[ud.uniq_url] = {
+					var history_obj = {
 						url: ud.clear_url,
-						data: data
+						data: data,
+						num: 0
 					};
+					this.states_index[ud.uniq_url] = history_obj;
 					if (!replace){
-						if (history_api){
-							window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
-						} else {
-							location.assign(getURLBase() + '#' + ud.uniq_url);
+						history_obj.num = history_array.length;
+						history_array[history_obj.num] = history_obj;
+
+						if (!this.disallow_native_history){
+							if (history_api){
+								window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+							} else {
+								location.assign(getURLBase() + '#' + ud.uniq_url);
+							}
+						}
+
+						
+						
+						
+					} else {
+
+						var num = (current_histate && current_histate.num);
+						if (typeof num != 'number'){
+							num = history_array.length;//must be zero
+							if (num !== 0){
+								console.log(fakeud, ud, history_obj);
+							}
+						}
+						history_array.length = num + 1;
+						history_array[num] = history_obj;
+
+						if (!this.disallow_native_history){
+							if (history_api){
+								window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+							} else {
+								location.replace(getURLBase() + '#' + ud.uniq_url);
+							}
 						}
 						
-					} else{
-						if (history_api){
-							window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
-						} else {
-							location.replace(getURLBase() + '#' + ud.uniq_url);
-						}
 						
+
 					}
+					current_histate = history_obj;
 
 				}
 			}
@@ -174,6 +212,17 @@ var navi;
 				this.setFakeURL(e.newURL);
 				this.hashChangeRecover(e, soft);
 			}
+		},
+		trickyBack: function() {
+			if (current_histate){
+				this.hashChangeRecover({
+					
+				});
+				return true;
+			} else {
+				return false;
+			}
+			//можно использовать только, когда гарантированного параллельно не будет использоваться другие способы навигации (вызвать браузером кнопку назад, или ввести другой url)
 		}
 
 	};
