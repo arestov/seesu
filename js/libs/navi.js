@@ -214,6 +214,14 @@ var navi;
 			}
 		},
 		trickyBack: function() {
+			if (current_histate){
+				this.hashChangeRecover({
+					
+				});
+				return true;
+			} else {
+				return false;
+			}
 			//можно использовать только, когда гарантированного параллельно не будет использоваться другие способы навигации (вызвать браузером кнопку назад, или ввести другой url)
 		}
 
