@@ -9,14 +9,17 @@ var app_env = app_serv.app_env;
 
 
 	var sm2opts = {};
-	if (app_env.opera_extension){
-		sm2opts.wmode = 'opaque';
-		sm2opts.useHighPerformance = false;
-	} else {
-		if (app_env.opera_widget){
-			sm2opts.wmode = 'transparent';
+	if (!app_env.chrome_like_ext){
+		if (app_env.opera_extension){
+			sm2opts.wmode = 'opaque';
+			sm2opts.useHighPerformance = false;
+		} else {
+			if (app_env.opera_widget){
+				sm2opts.wmode = 'transparent';
+			}
 		}
 	}
+	
 
 	var done;
 	var useLib = function(cb){

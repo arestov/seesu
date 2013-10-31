@@ -439,7 +439,7 @@ AppModel.extendTo(SeesuApp, {
 		};
 
 		//var ext_view;
-		if (app_env.chrome_extension){
+		if (app_env.chrome_like_ext){
 			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
 		} else if (app_env.opera_extension && window.opera_extension_button){
 			this.opera_ext_b = window.opera_extension_button;
