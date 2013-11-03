@@ -1093,11 +1093,14 @@ AppBaseView.extendTo(AppView, {
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');
-		if (app_env.opera_widget){
-			youtube_video.setAttribute('wmode',"transparent");
-		} else if (app_env.opera_extension){
-			youtube_video.setAttribute('wmode',"opaque");
+		if (!app_env.chrome_like_ext){
+			if (app_env.opera_widget){
+				youtube_video.setAttribute('wmode',"transparent");
+			} else if (app_env.opera_extension){
+				youtube_video.setAttribute('wmode',"opaque");
+			}
 		}
+		
 
 		youtube_video.setAttribute('type',"application/x-shockwave-flash");
 		youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');

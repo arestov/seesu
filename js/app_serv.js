@@ -342,6 +342,7 @@ var app_env = (function(wd){
 		env.as_application = true;
 	} else
 	if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
+		
 		var opera = navigator.userAgent.indexOf('OPR') != -1;
 		if (wd.location.pathname == '/index.html'){
 			env.app_type = opera ? 'opera_app' : 'chrome_app';
@@ -349,6 +350,7 @@ var app_env = (function(wd){
 			env.needs_url_history = true;
 			env.need_favicon = true;
 		} else{
+			env.chrome_like_ext = true;
 			env.app_type = opera ? 'opera_extension' : 'chrome_extension';
 			env.as_application = true;
 		}
@@ -418,7 +420,15 @@ var app_env = (function(wd){
 	} else{
 		dstates.addState('not-as-application');
 	}
-	if (!env.unknown_app_type){dstates.addState(env.app_type.replace('_','-'));}
+	if (!env.unknown_app_type){
+		if (env.chrome_like_ext){
+			dstates.addState('chrome-extension');
+		} else {
+			dstates.addState(env.app_type.replace('_','-'));
+		}
+		
+
+	}
 	if (env.cross_domain_allowed) {dstates.addState('cross-domain-allowed');}
 	
 	if (env.transform){
