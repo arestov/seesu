@@ -1007,9 +1007,14 @@ app_serv.localize = localize;
 		}
 		 
 		//console.log(structure);
+		var file_url = structure.file;
+
+		if (app_env.utorrent_app){
+			file_url = 'http://seesu.me/apps_resources/v4.2/' + file_url;
+		}
 
 		$.ajax({
-			url: structure.file,
+			url: file_url,
 			dataType: 'xml'
 		}).done(function(r){
 			//$(r).find('#states-switcher')
