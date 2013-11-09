@@ -342,7 +342,7 @@ var app_env = (function(wd){
 		env.as_application = true;
 	} else
 	if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
-		env.chrome_like_ext = true;
+		
 		var opera = navigator.userAgent.indexOf('OPR') != -1;
 		if (wd.location.pathname == '/index.html'){
 			env.app_type = opera ? 'opera_app' : 'chrome_app';
@@ -350,6 +350,7 @@ var app_env = (function(wd){
 			env.needs_url_history = true;
 			env.need_favicon = true;
 		} else{
+			env.chrome_like_ext = true;
 			env.app_type = opera ? 'opera_extension' : 'chrome_extension';
 			env.as_application = true;
 		}
@@ -1016,9 +1017,14 @@ app_serv.localize = localize;
 		}
 		 
 		//console.log(structure);
+		var file_url = structure.file;
+
+		if (app_env.utorrent_app){
+			file_url = 'http://seesu.me/apps_resources/v4.2/' + file_url;
+		}
 
 		$.ajax({
-			url: structure.file,
+			url: file_url,
 			dataType: 'xml'
 		}).done(function(r){
 			//$(r).find('#states-switcher')
