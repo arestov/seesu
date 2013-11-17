@@ -1598,6 +1598,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	}
 });
 
+var getMDOfReplace = function(){
+	return this.md;
+};
+
 var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, {
 	checkChildChangeReg: function(namespace) {
@@ -1635,14 +1639,11 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			sync_sender.pushNesting(this, nesting_name, value);
 		};*/
 	//	var _this = this;
-		this.MDReplace = function(){};
-		this.MDReplace.prototype = {
-			md: this,
-			getMD: function(){
-				return this.md;
-			}
-		};
-		this.md_replacer = new this.MDReplace();
+		var MDReplace = function(){};
+		MDReplace.prototype.md = this;
+		MDReplace.prototype.getMD = getMDOfReplace;
+
+		this.md_replacer = new MDReplace();
 		this.md_replacer._provoda_id = this._provoda_id;
 
 		this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
