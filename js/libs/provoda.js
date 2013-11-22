@@ -1215,7 +1215,31 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	onExtend: function() {
 		this.collectCompxs();
+		//this.collectStatesConnectionsProps();
+	},
+	collectStatesConnectionsProps: function() {
+		/*
+		'compx-adad': [['^visible', '@complete:list'], function(visible, complete){
+	
+		}]
+		{
+			'$t-visible': ['^'],
+			'$t-stable': ['@current_song'],
+			'$t-vk_id': ['#']
 
+			'$-^-visible'
+			
+
+		}
+		*/
+
+		this.states_connections_props = [];
+		for (var prop in this){
+			if (this[prop] && prop.indexOf('$t-') === 0){
+				var state_name = prop.replace('$t-', '');
+				this.states_connections_props.push([state_name, this[prop][0]], this[prop][1] || state_name);
+			}
+		}
 	},
 	getCompxName: function(original_name) {
 		if (typeof compx_names_cache[original_name] != 'undefined'){
@@ -1245,6 +1269,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	collectCompxs2part: function(compx_check) {
 		for (var comlx_name in this.complex_states){
 			if (!compx_check[comlx_name]){
+				compx_check[name] = true;
 				this.full_comlxs_list.push({
 					name: comlx_name,
 					obj: this.complex_states[comlx_name]
