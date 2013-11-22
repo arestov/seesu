@@ -1259,10 +1259,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			var name = this.getCompxName(comlx_name);
 			if (name){
 				compx_check[name] = true;
-				this.full_comlxs_list.push({
-					name: name,
-					obj: this[comlx_name]
-				});
+				this[comlx_name].name = name;
+				this.full_comlxs_list.push(this[comlx_name]);
 			}
 		}
 	},
@@ -1270,10 +1268,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		for (var comlx_name in this.complex_states){
 			if (!compx_check[comlx_name]){
 				compx_check[comlx_name] = true;
-				this.full_comlxs_list.push({
-					name: comlx_name,
-					obj: this.complex_states[comlx_name]
-				});
+				this.complex_states[comlx_name].name = comlx_name;
+				this.full_comlxs_list.push(this.complex_states[comlx_name]);
 			}
 		}
 	},
@@ -1288,8 +1284,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		var i, jj, cur, state_name;
 		for (i = 0; i < this.full_comlxs_list.length; i++) {
 			cur = this.full_comlxs_list[i];
-			for (jj = 0; jj < cur.obj.depends_on.length; jj++) {
-				state_name = cur.obj.depends_on[jj];
+			for (jj = 0; jj < cur.depends_on.length; jj++) {
+				state_name = cur.depends_on[jj];
 				if (!this.full_comlxs_index[state_name]) {
 					this.full_comlxs_index[state_name] = [];
 				}
@@ -1592,11 +1588,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		return result_array;
 	},
 	compoundComplexState: function(temp_comx) {
-		var values = new Array(temp_comx.obj.depends_on.length);
-		for (var i = 0; i < temp_comx.obj.depends_on.length; i++) {
-			values[i] = this.state(temp_comx.obj.depends_on[i]);
+		var values = new Array(temp_comx.depends_on.length);
+		for (var i = 0; i < temp_comx.depends_on.length; i++) {
+			values[i] = this.state(temp_comx.depends_on[i]);
 		}
-		return temp_comx.obj.fn.apply(this, values);
+		return temp_comx.fn.apply(this, values);
 	},
 	iterateCSWatchers: function(state_name) {
 		if (this.complex_states_index[state_name]){
