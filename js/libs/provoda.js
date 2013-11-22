@@ -1242,7 +1242,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 	},
 	getCompxName: function(original_name) {
-		if (typeof compx_names_cache[original_name] != 'undefined'){
+		if (compx_names_cache.hasOwnProperty(compx_names_cache)){
 			return compx_names_cache[original_name];
 		}
 		var name = original_name.replace(this.compx_name_test, '');
@@ -1280,10 +1280,22 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	collectCompxs:function() {
 		var compx_check = {};
 		this.full_comlxs_list = [];
+		this.full_comlxs_index = {};
 	//	var comlx_name;
 		this.collectCompxs1part(compx_check);
 		this.collectCompxs2part(compx_check);
 		this.compx_check = compx_check;
+		var i, jj, cur, state_name;
+		for (i = 0; i < this.full_comlxs_list.length; i++) {
+			cur = this.full_comlxs_list[i];
+			for (jj = 0; jj < cur.obj.depends_on.length; jj++) {
+				state_name = cur.obj.depends_on[jj];
+				if (!this.full_comlxs_index[state_name]) {
+					this.full_comlxs_index[state_name] = [];
+				}
+				this.full_comlxs_index[state_name].push(cur);
+			}
+		}
 	},
 	state: function(name){
 		return this.states[name];
@@ -1550,21 +1562,31 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		return changed_states;
 	},
-	checkComplexStates: function(changed_states) {
-		var list = new Array(changed_states.length/2);
-		for (var i = 0; i < changed_states.length; i+=2) {
-			list[ i / 2 ] = changed_states[i];
-		}
-		return this.getTargetComplexStates(list);
+	checkComplexStates: function(changes_list) {
+
+		return this.getTargetComplexStates(changes_list);
 	},
-	getTargetComplexStates: function(states) {
+	getTargetComplexStates: function(changes_list) {
+		var matched_compxs = [];
 		var result_array = [];
 
-		for (var i = 0; i < this.full_comlxs_list.length; i++) {
-			var cur = this.full_comlxs_list[i];
-			if ( spv.hasCommonItems(states, cur.obj.depends_on) ){
-				result_array.push(cur.name, this.compoundComplexState(cur));
+		var i, cur;
+
+		for ( i = 0; i < changes_list.length; i+=2) {
+			cur = this.full_comlxs_index[changes_list[i]];
+			if (!cur){
+				continue;
 			}
+			for (var jj = 0; jj < cur.length; jj++) {
+				if (matched_compxs.indexOf(cur[jj]) == -1){
+					matched_compxs.push(cur[jj]);
+				}
+			}
+		}
+
+		for ( i = 0; i < matched_compxs.length; i++) {
+			cur = matched_compxs[i];
+			result_array.push(cur.name, this.compoundComplexState(cur));
 		}
 
 		return result_array;
