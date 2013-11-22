@@ -1269,7 +1269,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	collectCompxs2part: function(compx_check) {
 		for (var comlx_name in this.complex_states){
 			if (!compx_check[comlx_name]){
-				compx_check[name] = true;
+				compx_check[comlx_name] = true;
 				this.full_comlxs_list.push({
 					name: comlx_name,
 					obj: this.complex_states[comlx_name]
