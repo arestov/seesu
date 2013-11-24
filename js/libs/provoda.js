@@ -1337,7 +1337,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 	},
 	getCompxName: function(original_name) {
-		if (compx_names_cache.hasOwnProperty(compx_names_cache)){
+		if (compx_names_cache.hasOwnProperty(original_name)){
 			return compx_names_cache[original_name];
 		}
 		var name = original_name.replace(this.compx_name_test, '');
