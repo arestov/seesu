@@ -1782,7 +1782,13 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	getStrucParent: function() {
 		return this.map_parent;
 	},
-	init: function(){
+	init: function(opts){
+		if (opts && opts.app){
+			this.app = opts.app;
+		}
+		if (opts && opts.map_parent){
+			this.map_parent = opts.map_parent;
+		}
 
 		this._super();
 
@@ -2024,14 +2030,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 provoda.Model.extendTo(provoda.HModel, {
 	init: function(opts) {
 		
-		opts = opts || {};
+		//opts = opts || {};
 		if (!this.app){
 			this.app = null;
 		}
 		
-		if (opts.app){
-			this.app = opts.app;
-		}
+
 		this.sub_pages = null;
 		this.init_states = null;
 		if (!this.map_parent){
@@ -2040,22 +2044,20 @@ provoda.Model.extendTo(provoda.HModel, {
 		
 		//this.init_opts = null;
 		this.pmd_switch = null;
-		if (opts.map_parent){
-			this.map_parent = opts.map_parent;
-		}
+		
 
 		if (!this.skip_map_init){
 			this.sub_pages = {};
 			if (!this.init_states){
 				this.init_states = {};
 			}
-			if (!opts.map_parent) {
+			if (!opts || !opts.map_parent) {
 				if (!this.zero_map_level){
 					throw new Error('who is your map parent model?');
 				}
 			}
 		}
-		this._super();
+		this._super(opts);
 	},
 	mapStates: function(states_map, donor, acceptor) {
 		if (acceptor && typeof acceptor == 'boolean'){
