@@ -1354,8 +1354,18 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			var name = this.getCompxName(comlx_name);
 			if (name){
 				compx_check[name] = true;
-				this[comlx_name].name = name;
-				this.full_comlxs_list.push(this[comlx_name]);
+				var cur = this[comlx_name];
+				if (cur instanceof Array){
+					cur = {
+						depends_on: cur[0],
+						fn: cur[1],
+						name: name
+					};
+				} else {
+					this[comlx_name].name = name;
+				}
+				
+				this.full_comlxs_list.push(cur);
 			}
 		}
 	},
@@ -1363,8 +1373,19 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		for (var comlx_name in this.complex_states){
 			if (!compx_check[comlx_name]){
 				compx_check[comlx_name] = true;
-				this.complex_states[comlx_name].name = comlx_name;
-				this.full_comlxs_list.push(this.complex_states[comlx_name]);
+				var cur = this.complex_states[comlx_name];
+
+				if (cur instanceof Array){
+					cur = {
+						depends_on: cur[0],
+						fn: cur[1],
+						name: comlx_name
+					};
+				} else {
+					this.complex_states[comlx_name].name = comlx_name;
+				}
+				
+				this.full_comlxs_list.push(cur);
 			}
 		}
 	},
@@ -1791,6 +1812,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.md_replacer._provoda_id = this._provoda_id;
 
 		this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
+
+		this.prsStCon.connect.parent(this);
+		this.prsStCon.connect.root(this);
+				
 		return this;
 	},
 	getReqsOrderField: function() {
@@ -1998,7 +2023,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 });
 provoda.Model.extendTo(provoda.HModel, {
 	init: function(opts) {
-		this._super();
+		
 		opts = opts || {};
 		this.app = null;
 		if (opts.app){
@@ -2017,14 +2042,13 @@ provoda.Model.extendTo(provoda.HModel, {
 			}
 			if (opts.map_parent){
 				this.map_parent = opts.map_parent;
-				this.prsStCon.connect.parent(this);
-				this.prsStCon.connect.root(this);
 			} else {
 				if (!this.zero_map_level){
 					throw new Error('who is your map parent model?');
 				}
 			}
 		}
+		this._super();
 	},
 	mapStates: function(states_map, donor, acceptor) {
 		if (acceptor && typeof acceptor == 'boolean'){

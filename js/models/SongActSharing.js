@@ -226,11 +226,6 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 
 		}, this.getContextOpts());
 
-		var row_part = this.map_parent.map_parent;
-
-		this.wch(this.app, 'lfm_userid');
-		this.wch(row_part, 'active_view');
-
 		this.wch(this, 'can_share', function(e) {
 			if (e.value){
 				this.lfm_friends.preloadStart();
@@ -246,7 +241,7 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 		this.searchLFMFriends();
 	},
 	'compx-can_share':{
-		depends_on: ['active_view', 'lfm_userid'],
+		depends_on: ['^^active_view', '#lfm_userid'],
 		fn: function(active_view, lfm_userid) {
 			return lfm_userid && active_view;
 		}
@@ -317,10 +312,6 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
 
-		var row_part = this.map_parent.map_parent;
-		this.wch(this.app, 'lfm_userid');
-		this.wch(row_part, 'active_view');
-
 		this.wch(this, 'can_share', function(e) {
 			if (e.value){
 				this.searchLFMFriends();
@@ -333,7 +324,7 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 		this.searchOneUser();
 	},
 	'compx-can_share':{
-		depends_on: ['active_view', 'lfm_userid'],
+		depends_on: ['^^active_view', '#lfm_userid'],
 		fn: function(active_view, lfm_userid) {
 			return lfm_userid && active_view;
 		}
