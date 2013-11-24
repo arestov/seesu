@@ -40,6 +40,8 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 	resItem: struserSuggest,
 	model_name: "section-vk-users",
 	init: function(opts) {
+		this.app = opts.app;
+		this.map_parent = opts.map_parent;
 		this._super(opts);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
@@ -209,6 +211,8 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 var LFMFriendsSection = function() {};
 invstg.SearchSection.extendTo(LFMFriendsSection, {
 	init: function(opts) {
+		this.app = opts.app;
+		this.map_parent = opts.map_parent;
 		this._super(opts);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
@@ -308,6 +312,8 @@ invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
 var LFMOneUserSection = function() {};
 invstg.SearchSection.extendTo(LFMOneUserSection, {
 	init: function(opts) {
+		this.app = opts.app;
+		this.map_parent = opts.map_parent;
 		this._super(opts);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;

@@ -1815,7 +1815,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
-				
+
 		return this;
 	},
 	getReqsOrderField: function() {
@@ -2025,24 +2025,31 @@ provoda.Model.extendTo(provoda.HModel, {
 	init: function(opts) {
 		
 		opts = opts || {};
-		this.app = null;
+		if (!this.app){
+			this.app = null;
+		}
+		
 		if (opts.app){
 			this.app = opts.app;
 		}
 		this.sub_pages = null;
 		this.init_states = null;
-		this.map_parent = null;
+		if (!this.map_parent){
+			this.map_parent = null;
+		}
+		
 		//this.init_opts = null;
 		this.pmd_switch = null;
+		if (opts.map_parent){
+			this.map_parent = opts.map_parent;
+		}
 
 		if (!this.skip_map_init){
 			this.sub_pages = {};
 			if (!this.init_states){
 				this.init_states = {};
 			}
-			if (opts.map_parent){
-				this.map_parent = opts.map_parent;
-			} else {
+			if (!opts.map_parent) {
 				if (!this.zero_map_level){
 					throw new Error('who is your map parent model?');
 				}
