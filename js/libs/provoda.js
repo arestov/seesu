@@ -1215,31 +1215,126 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	onExtend: function() {
 		this.collectCompxs();
-		//this.collectStatesConnectionsProps();
+		this.collectStatesConnectionsProps();
+	},
+	prsStCon: {
+		cache: {},
+		parent_count_regexp: /^\^+/gi,
+		parent: function(string) {
+			if (this.cache[string]){
+				return this.cache[string];
+			}
+			var state_name = string.replace(this.parent_count_regexp, '');
+			var count = string.length - state_name.length;
+			this.cache[string] = {
+				full_name: string,
+				ancestors: count,
+				state_name: state_name
+			};
+			return this.cache[string];
+		},
+		nesting: function(string) {
+			if (this.cache[string]){
+				return this.cache[string];
+			}
+			var nesting_and_state_name = string.replace('@', '');
+			var parts = nesting_and_state_name.split(':');
+
+			this.cache[string] = {
+				full_name: string,
+				nesting_name: parts[0],
+				state_name: parts[1]
+			};
+
+			return this.cache[string];
+		},
+		root: function(string) {
+			if (this.cache[string]){
+				return this.cache[string];
+			}
+
+			this.cache[string] = {
+				full_name: string,
+				state_name: string.replace('#', '')
+			};
+
+			return this.cache[string];
+		},
+		toList: function(obj) {
+			var result = [];
+			for (var p in obj){
+				if (obj.hasOwnProperty(p)){
+					result.push(obj[p]);
+				}
+			}
+			return result;
+		},
+		connect: {
+			parent: function(md) {
+				var list = md.conndst_parent;
+				for (var i = 0; i < list.length; i++) {
+					var cur = list[i];
+					var count = cur.ancestors;
+					var target = md;
+					while (count){
+						count--;
+						target = target.getStrucParent();
+					}
+					if (!target){
+						throw new Error();
+					}
+					md.wch(target, cur.state_name, cur.full_name);
+				}
+
+			},
+			nesting: function(md) {
+
+			},
+			root: function(md) {
+				var list = md.conndst_root;
+				for (var i = 0; i < list.length; i++) {
+					var cur = list[i];
+					var target = md.getStrucRoot();
+					if (!target){
+						throw new Error();
+					}
+					md.wch(target, cur.state_name, cur.full_name);
+				}
+				
+			}
+		}
 	},
 	collectStatesConnectionsProps: function() {
 		/*
-		'compx-adad': [['^visible', '@complete:list'], function(visible, complete){
+		'compx-some_state': [['^visible', '@list:complete', '#vk_id'], function(visible, complete){
 	
 		}]
-		{
-			'$t-visible': ['^'],
-			'$t-stable': ['@current_song'],
-			'$t-vk_id': ['#']
-
-			'$-^-visible'
-			
-
-		}
 		*/
+		var states_of_parent = {};
+		var states_of_nesting = {};
+		var states_of_root = {};
 
-		this.states_connections_props = [];
-		for (var prop in this){
-			if (this[prop] && prop.indexOf('$t-') === 0){
-				var state_name = prop.replace('$t-', '');
-				this.states_connections_props.push([state_name, this[prop][0]], this[prop][1] || state_name);
+
+		for (var i = 0; i < this.full_comlxs_list.length; i++) {
+			var cur = this.full_comlxs_list[i];
+
+			for (var jj = 0; jj < cur.depends_on.length; jj++) {
+				var state_name = cur.depends_on[jj];
+				if (state_name.indexOf('^') === 0 && !states_of_parent[state_name]){
+					states_of_parent[state_name] = this.prsStCon.parent(state_name);
+				} else if (state_name.indexOf('@') === 0 && !states_of_nesting[state_name]) {
+					states_of_nesting[state_name] = this.prsStCon.nesting(state_name);
+				} else if (state_name.indexOf('#') === 0 && !states_of_root[state_name]) {
+					states_of_root[state_name] = this.prsStCon.root(state_name);
+				}
 			}
 		}
+
+
+		this.conndst_parent = this.prsStCon.toList(states_of_parent);
+		this.conndst_nesting = this.prsStCon.toList(states_of_nesting);
+		this.conndst_root = this.prsStCon.toList(states_of_root);
+
 	},
 	getCompxName: function(original_name) {
 		if (compx_names_cache.hasOwnProperty(compx_names_cache)){
@@ -1660,6 +1755,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			});
 		}
 	},
+	getStrucRoot: function() {
+		return this.app;
+	},
+	getStrucParent: function() {
+		return this.map_parent;
+	},
 	init: function(){
 
 		this._super();
@@ -1916,6 +2017,8 @@ provoda.Model.extendTo(provoda.HModel, {
 			}
 			if (opts.map_parent){
 				this.map_parent = opts.map_parent;
+				this.prsStCon.connect.parent(this);
+				this.prsStCon.connect.root(this);
 			} else {
 				if (!this.zero_map_level){
 					throw new Error('who is your map parent model?');
@@ -2091,7 +2194,17 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
 			}
 		};
+		this.prsStCon.connect.parent(this);
+		this.prsStCon.connect.root(this);
 		return this;
+
+
+	},
+	getStrucRoot: function() {
+		return this.root_view;
+	},
+	getStrucParent: function() {
+		return this.parent_view;
 	},
 	getWindow: function() {
 		return spv.getDefaultView(this.d || this.getC()[0].ownerDocument);
