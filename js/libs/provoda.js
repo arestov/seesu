@@ -1528,7 +1528,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	updateManyStates: function(obj) {
 		var changes_list = [];
 		for (var name in obj) {
-			changes_list.push(name, obj[name]);
+			if (obj.hasOwnProperty(name)){
+				changes_list.push(name, obj[name]);
+			}
 		}
 		this._updateProxy(changes_list);
 	},

@@ -281,7 +281,7 @@ provoda.View.extendTo(AppBaseView, {
 		if (transaction_data && transaction_data.target){
 			var target_md = transaction_data.target.getMD();
 			var current_lev_num = target_md.map_level_num;
-			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
+			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in" && transaction_data.array[0].changes.length < 3;
 			var lc;
 			if (can_animate && current_lev_num != -1 && one_zoom_in){
 				var target_in_parent = this.getMapSliceChildInParenView(target_md);
@@ -391,18 +391,22 @@ provoda.View.extendTo(AppBaseView, {
 
 
 			if (animation_data && animation_data.lc){
-				
-				this.nextTick(function() {
-					animation_data.lc.c.css(empty_transform_props);
-				});
+				animation_data.lc.c.height(); //заставляем всё пересчитать
+				animation_data.lc.c.css(empty_transform_props);
+				/*this.nextTick(function() {
+					
+				});*/
+				animation_data.lc.c.height(); //заставляем всё пересчитать
 				
 			}
 
 		}
 		if (!animation_data){
-			this.nextTick(function() {
-				this.animationMark(models, 'animation_completed', transaction_data.anid);
-			});
+			//
+			this.animationMark(models, 'animation_completed', transaction_data.anid);
+			/*this.nextTick(function() {
+				
+			});*/
 		} else {
 			animation_data.lc.onTransitionEnd(function() {
 				this.animationMark(models, 'animation_completed', transaction_data.anid);
