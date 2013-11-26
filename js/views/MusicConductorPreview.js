@@ -40,7 +40,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
 						e.preventDefault();
 					}).appendTo(c);
-				c.append(document.createTextNode(' '));
+				c.append(document.createTextNode('  '));
 				_this.addWayPoint(link);
 
 			};
