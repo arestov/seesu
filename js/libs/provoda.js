@@ -1214,8 +1214,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 	},
 	onExtend: function() {
+		if (this.collectStateChangeHandlers){
+			this.collectStateChangeHandlers();
+		}
 		this.collectCompxs();
-		this.collectStatesConnectionsProps();
 	},
 	prsStCon: {
 		cache: {},
@@ -1272,6 +1274,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		connect: {
 			parent: function(md) {
 				var list = md.conndst_parent;
+				if (!list){
+					return;
+				}
 				for (var i = 0; i < list.length; i++) {
 					var cur = list[i];
 					var count = cur.ancestors;
@@ -1292,6 +1297,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			},
 			root: function(md) {
 				var list = md.conndst_root;
+				if (!list){
+					return;
+				}
 				for (var i = 0; i < list.length; i++) {
 					var cur = list[i];
 					var target = md.getStrucRoot();
@@ -1389,7 +1397,27 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
+	full_comlxs_list: [],
+	compx_check: {},
+	full_comlxs_index: {},
 	collectCompxs:function() {
+		var need_recalc = false;
+		if (this.hasOwnProperty('complex_states')){
+			need_recalc = true;
+		} else {
+			for (var prop in this){
+				if (this.hasOwnProperty(prop) && prop.indexOf('compx-') === 0){
+					need_recalc = true;
+					break;
+				}
+			}
+		}
+		if (!need_recalc){
+			return;
+		}
+
+
+
 		var compx_check = {};
 		this.full_comlxs_list = [];
 		this.full_comlxs_index = {};
@@ -1408,6 +1436,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				this.full_comlxs_index[state_name].push(cur);
 			}
 		}
+		this.collectStatesConnectionsProps();
 	},
 	state: function(name){
 		return this.states[name];
@@ -2847,23 +2876,51 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getPart: function(name) {
 		return this.view_parts[name];
 	},
-	getStateChangeHandlers: function(){
-		var r = {};
-		var i;
-		for (i in this) {
-			if (i.indexOf('stch-') == 0){
-				r[i.replace('stch-','')] = this[i];
+	collectStateChangeHandlers: function() {
+		var need_recalc = false;
+		if (this.hasOwnProperty('state_change')){
+			need_recalc = true;
+		} else {
+			for (var prop in this){
+				if (this.hasOwnProperty(prop) && prop.indexOf('stch-') === 0){
+					need_recalc = true;
+					break;
+				}
 			}
 		}
+		if (!need_recalc){
+			return;
+		}
+
+		var has_stchh = {};
+		var result = [];
+		var name;
+
+		for (name in this) {
+			if (name.indexOf('stch-') === 0){
+				var real_name = name.replace('stch-','');
+				has_stchh[real_name] = true;
+				result.push({
+					name: real_name,
+					item: this[name]
+				});
+			}
+		}
+
 		if (this.state_change){
-			for (i in this.state_change) {
-				if (!r[i]){
-					r[i] = this.state_change[i];
+			for (name in this.state_change) {
+				if (!has_stchh[name]){
+					has_stchh[name] = true;
+					result.push({
+						name: name,
+						item: this.state_change[name]
+					});
 				}
 
 			}
 		}
-		return r;
+
+		this.stch_hs = result;
 	},
 	requirePart: function(name) {
 		if (this.view_parts[name]){
@@ -2873,13 +2930,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			if (!this.view_parts[name]){
 				throw new Error('"return" me some build result please');
 			}
-			var stch_hands = this.getStateChangeHandlers();
-			for (var i in stch_hands){
-				if (i in this.states && typeof stch_hands[i] != 'function'){
-					if (this.checkDepVP(stch_hands[i], name)){
-						stch_hands[i].fn.call(this, this.states[i]);
+
+			for (var i = 0; i < this.stch_hs.length; i++) {
+				var cur = this.stch_hs[i];
+				if (this.states.hasOwnProperty(cur.name) && typeof cur.item != 'function'){
+					if (this.checkDepVP(cur.item, name)){
+						cur.item.fn.call(this, this.states[cur.name]);
 					}
 				}
+				
 			}
 			return this.view_parts[name];
 		}
