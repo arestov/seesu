@@ -153,6 +153,18 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				return artist && can_expand && hna;
 			}
 		},
+		'compx-can_expand': [
+			['files_search', 'marked_as', 'mp_show'],
+			function(files_search, marked_as, mp_show) {
+				if (marked_as && files_search && files_search.search_complete){
+					return true;
+				} else if (mp_show){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		],
 
 		initOnShow: provoda.getOCF('izonshow', function() {
 			var actionsrow = new SongActionsRow(this);
@@ -161,15 +173,6 @@ lfm_share_url_replacers.forEach(function(el, i) {
 		getMFCore: function(){
 			this.initHeavyPart();
 			return this.mf_cor;
-		},
-		hndCanExpand: function(files_search, marked_as, mp_show) {
-			if (marked_as && files_search && files_search.search_complete){
-				this.updateState('can_expand', true);
-			} else if (mp_show){
-				this.updateState('can_expand', true);
-			} else {
-				this.updateState('can_expand', false);
-			}
 		},
 		initHeavyPart: provoda.getOCF('izheavy', function() {
 			var omo = this.omo;
@@ -199,7 +202,6 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
 
 			
-			this.watchStates(['files_search', 'marked_as', 'mp_show'], this.hndCanExpand);
 			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
 			this.on('state_change-is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);

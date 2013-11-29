@@ -1158,8 +1158,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 
 		this.states = {};
-		this.complex_states_index = {};
-		this.complex_states_watchers = [];
 		this.states_changing_stack = [];
 
 		//this.collectCompxs();
@@ -1594,19 +1592,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 
-
-		//вызов комплексного наблюдателя
-		var watchers = this.complex_states_index[name];
-		if (watchers){
-			for (var jj = 0; jj < watchers.length; jj++) {
-				var watcher = watchers[jj];
-				if (this.zdsv.called_watchers.indexOf(watcher) == -1){
-					this.callCSWatcher(watcher);
-					this.zdsv.called_watchers.push(watcher);
-				}
-			}
-		}
-
 	},
 	_setUndetailedState: function(i, name, value) {
 		this.undetailed_states[name] = value;
@@ -1656,7 +1641,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				all_i_cg: [],
 				all_ch_compxs: [],
 				changed_states: [],
-				called_watchers: [],
 				total_ch: []
 			};
 		}
@@ -1665,7 +1649,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		var all_i_cg = this.zdsv.all_i_cg;
 		var all_ch_compxs = this.zdsv.all_ch_compxs;
 		var changed_states = this.zdsv.changed_states;
-		var called_watchers = this.zdsv.called_watchers;
 		
 		while (this.states_changing_stack.length){
 
@@ -1673,7 +1656,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			all_i_cg.length = 0;
 			all_ch_compxs.length = 0;
 			changed_states.length = 0;
-			called_watchers.length = 0;
 			//объекты используются повторно, ради выиграша в производительности
 			//которые заключается в исчезновении пауз на сборку мусора 
 
@@ -1731,7 +1713,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		all_i_cg.length = 0;
 		all_ch_compxs.length = 0;
 		changed_states.length = 0;
-		called_watchers.length = 0;
 
 		if (this.sendStatesToViews && total_ch.length){
 			this.nextTick(this.sendChangesAfterDelay);
@@ -1797,51 +1778,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			values[i] = this.state(temp_comx.depends_on[i]);
 		}
 		return temp_comx.fn.apply(this, values);
-	},
-	iterateCSWatchers: function(state_name) {
-		if (this.complex_states_index[state_name]){
-			for (var i = 0; i < this.complex_states_index[state_name].length; i++) {
-				this.callCSWatcher(this.complex_states_index[state_name][i]);
-			}
-		}
-		return this;
-	},
-	callCSWatcher: function(watcher) {
-		var args = new Array(watcher.states_list.length);
-		for (var i = 0; i < watcher.states_list.length; i++) {
-			args[i] = this.states[watcher.states_list[i]];
-		}
-		watcher.func.apply(this, args);
-	},
-	checkCSWatcher: function(watcher) {
-		var match;
-		for (var a in this.states) {
-			if (watcher.states_list.indexOf(a)){
-				match = true;
-				break;
-			}
-		}
-		return match;
-	},
-	watchStates: function(states_list, cb) {
-		var watcher = {
-			states_list: states_list,
-			func: cb
-		};
-
-		for (var i = 0; i < states_list.length; i++) {
-			var cur = states_list[i];
-			if (!this.complex_states_index[cur]){
-				this.complex_states_index[cur] = [];
-			}
-			this.complex_states_index[cur].push(watcher);
-
-		}
-		this.complex_states_watchers.push(watcher);
-		if (this.checkCSWatcher(watcher)){
-			this.callCSWatcher(watcher);
-		}
-		return this;
 	}
 });
 
