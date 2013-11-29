@@ -8,19 +8,24 @@ provoda.Eventor.extendTo(PlayerBase, {
 		this._super();
 		this.song_files = {};
 		this.attached = {};
-		var _this = this;
-		this.onRegistration('core-ready', function(cb) {
-			if (_this.core){
-				cb();
-			}
-		});
-		this.onRegistration('core-fail', function(cb) {
-			if (_this.core_failed){
-				cb();
-			}
-		});
-		// this.
 	},
+	'regfr-cready': {
+		event_name: 'core-ready',
+		fn: function(cb) {
+			if (this.core){
+				cb();
+			}
+		}
+	},
+	'regfr-cfail': {
+		event_name: 'core-fail',
+		fn: function(cb) {
+			if (this.core_failed){
+				cb();
+			}
+		}
+	},
+
 	setFail: function() {
 		this.core_failed = true;
 		this.trigger('core-fail');
