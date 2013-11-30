@@ -2353,15 +2353,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		this.way_points = stay;
 	},
-	buildTemplate: function() {
-		return new PvTemplate();
-	},
+	PvTemplate: PvTemplate,
 	getTemplate: function(node, callCallbacks, pvTypesChange) {
 		node = node[0] || node;
-		var template = new PvTemplate();
-		template.init({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange});
-
-		return template;
+		return new PvTemplate({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange});
 	},
 	parseAppendedTPLPart: function(node) {
 		this.tpl.parseAppended(node);

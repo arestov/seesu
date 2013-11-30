@@ -456,13 +456,13 @@ AppBaseView.extendTo(AppView, {
 	handleStartScreen: function(start_screen) {
 		var st_scr_scrl_con = start_screen.parent();
 		var start_page_wrap = st_scr_scrl_con.parent();
-		var tpl = this.buildTemplate();
-		tpl.init({
+		var tpl = new this.PvTemplate({
 			node: start_page_wrap,
 			spec_states: {
 				'$lev_num': -1
 			}
 		});
+
 		this.tpls.push(tpl);
 
 		this.lev_containers[-1] = {
@@ -723,8 +723,7 @@ AppBaseView.extendTo(AppView, {
 				}
 			});
 
-			var nptpl = _this.buildTemplate();
-			nptpl.init({
+			var nptpl = new _this.PvTemplate({
 				node: np_button
 			});
 			_this.tpls.push(nptpl);

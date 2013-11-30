@@ -1,7 +1,56 @@
 define(['spv', 'angbo', 'jquery'], function(spv, angbo, $) {
 "use strict";
 var push = Array.prototype.push;
-var PvTemplate = function() {};
+var PvTemplate = function(opts) {
+	this.pv_types_collecting = false;
+	this.states_inited = false;
+	this.waypoints = null;
+
+	this.pv_views = null;
+	this.parsed_pv_views = null;
+
+	this.stwat_index = null;
+
+	this.root_node = opts.node;
+	this.root_node_raw = this.root_node[0] || this.root_node;
+	this.pv_repeat_context = null;
+	if (opts.pv_repeat_context){
+		this.pv_repeat_context = opts.pv_repeat_context;
+	}
+	this.scope = null;
+	if (opts.scope){
+		this.scope = opts.scope;
+	}
+	this.spec_states = null;
+	if (opts.spec_states){
+		this.spec_states = opts.spec_states;
+	}
+	if (opts.callCallbacks){
+		this.sendCallback = opts.callCallbacks;
+	}
+	this.pvTypesChange = opts.pvTypesChange;
+	this.ancs = {};
+	this.pv_views = [];
+	this.parsed_pv_views = [];
+	this.pv_repeats = {};
+	this.children_templates = {};
+
+	this.states_watchers = [];
+	this.stwat_index = {};
+	this.pv_types = [];
+	this.pv_repeats_data = [];
+
+
+	
+
+	this.parsePvDirectives(this.root_node);
+	if (!angbo || !angbo.interpolateExpressions){
+		console.log('cant parse statements');
+	}
+	if (this.scope){
+		this.setStates(this.scope);
+	}
+};
 var DOT = '.';
 
 var appendSpace = function() {
@@ -78,15 +127,13 @@ var hndPVRepeat = function(states) {
 			scope.$middle = !(scope.$first || scope.$last);
 
 			var cur_node = sampler.getClone();
-			var template = new PvTemplate();
-
-
-			template.init({
+			var template = new PvTemplate({
 				node: cur_node,
 				pv_repeat_context: full_pv_context,
 				scope: scope,
 				callCallbacks: context.sendCallback
 			});
+
 			old_nodes.push(cur_node);
 			$(fragt).append(cur_node);
 			appendSpace(fragt);
@@ -675,56 +722,6 @@ var directives_h = {
 		}
 	};
 spv.Class.extendTo(PvTemplate, {
-	init: function(opts) {
-		this.pv_types_collecting = false;
-		this.states_inited = false;
-		this.waypoints = null;
-
-		this.pv_views = null;
-		this.parsed_pv_views = null;
-
-		this.stwat_index = null;
-
-		this.root_node = opts.node;
-		this.root_node_raw = this.root_node[0] || this.root_node;
-		this.pv_repeat_context = null;
-		if (opts.pv_repeat_context){
-			this.pv_repeat_context = opts.pv_repeat_context;
-		}
-		this.scope = null;
-		if (opts.scope){
-			this.scope = opts.scope;
-		}
-		this.spec_states = null;
-		if (opts.spec_states){
-			this.spec_states = opts.spec_states;
-		}
-		if (opts.callCallbacks){
-			this.sendCallback = opts.callCallbacks;
-		}
-		this.pvTypesChange = opts.pvTypesChange;
-		this.ancs = {};
-		this.pv_views = [];
-		this.parsed_pv_views = [];
-		this.pv_repeats = {};
-		this.children_templates = {};
-
-		this.states_watchers = [];
-		this.stwat_index = {};
-		this.pv_types = [];
-		this.pv_repeats_data = [];
-
-
-		
-
-		this.parsePvDirectives(this.root_node);
-		if (!angbo || !angbo.interpolateExpressions){
-			console.log('cant parse statements');
-		}
-		if (this.scope){
-			this.setStates(this.scope);
-		}
-	},
 	_pvTypesChange: function() {
 		if (this.pv_types_collecting){
 			return;

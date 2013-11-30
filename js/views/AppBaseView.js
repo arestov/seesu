@@ -85,8 +85,8 @@ provoda.View.extendTo(AppBaseView, {
 				throw new Error('start_screen must exist');
 			}
 			var node = this.getSample('complex-page');
-			var tpl = this.buildTemplate();
-			tpl.init({
+
+			var tpl = new this.PvTemplate({
 				node: node,
 				spec_states: {
 					'$lev_num': num
