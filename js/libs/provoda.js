@@ -637,18 +637,7 @@ FastEventor.prototype = {
 		this.reg_fires.cache[namespace] = funcs;
 		return funcs;
 	},
-	onRegistration: function(name, cb, callbacks_wrapper) {
-		if (typeof name == 'string'){
-			this.reg_fires.by_namespace[name] = {fn: cb};
-		} else if (typeof name =='function'){
-			this.reg_fires.by_test.push({
-				test: name,
-				fn: cb,
-				wrapper: callbacks_wrapper || null
-			});
-		}
-		return this.sputnik;
-	},
+
 	hndUsualEvCallbacksWrapper: function(motivator, fn, context, args, arg) {
 		if (args){
 			fn.apply(context, args);
@@ -1082,9 +1071,6 @@ spv.Class.extendTo(provoda.Eventor, {
 		this.evcompanion.trigger.apply(this.evcompanion, arguments);
 	},
 	
-	onRegistration: function() {
-		return this.evcompanion.onRegistration.apply(this.evcompanion, arguments);
-	},
 	addRequest: function() {
 		return this.evcompanion.addRequest.apply(this.evcompanion, arguments);
 	},
