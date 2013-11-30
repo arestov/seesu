@@ -196,6 +196,12 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		}
 	},
 	img_sample: $('<img class="artist_image hidden" alt=""/>'),
+	updatePanoramaIMGs: function(collection, images_combination, img_panorama) {
+		img_panorama.setCollection(collection, true);
+		//this.img_panorama.setTotalWidth(this.img_panorama.checkTotalWidth());
+
+		this.updateState('images_combination', images_combination);
+	},
 	'stch-images': function(images) {
 		if (!images || !images.length){
 			return;
@@ -245,7 +251,6 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 					seesu.trackEvent('Panoramator', 'artist photos');
 				}
 			});
-			var img_panorama = _this.img_panorama;
 			
 
 			//bindPanoramaResizeByWindow(img_panorama);
@@ -259,13 +264,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				});
 				var images_combination = spv.filter(images_collection, 'num').join('_');
 				
-				_this.nextTick(function() {
-					
-					img_panorama.setCollection(spv.filter(images_collection, 'item'), true);
-					//this.img_panorama.setTotalWidth(this.img_panorama.checkTotalWidth());
-
-					_this.updateState('images_combination', images_combination);
-				});
+				_this.nextTick(_this.updatePanoramaIMGs, [spv.filter(images_collection, 'item'), images_combination, _this.img_panorama]);
 				
 			}, 100);
 

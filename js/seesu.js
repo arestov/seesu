@@ -254,6 +254,9 @@ AppModel.extendTo(SeesuApp, {
 		});
 
 	},
+	tickStat: function(data_array) {
+		window._gaq.push(data_array);
+	},
 	init: function(version){
 		this._super();
 		this.version = version;
@@ -283,9 +286,7 @@ AppModel.extendTo(SeesuApp, {
 				});
 			});
 			return function(data_array){
-				_this.nextTick(function(){
-					window._gaq.push(data_array);
-				});
+				_this.nextTick(_this.tickStat, [data_array]);
 			};
 		})();
 

@@ -95,6 +95,9 @@ provoda.View.extendTo(ShareRowUI, {
 			this.select();
 		});
 	},
+	focusToInput: function() {
+		this.tpl.ancs['share_input'][0].focus();
+	},
 	"stch-active_view": function(state){
 		if (state){
 			if (this.expand){
@@ -103,10 +106,7 @@ provoda.View.extendTo(ShareRowUI, {
 		}
 
 		if (state){
-			var inp = this.tpl.ancs['share_input'][0];
-			this.nextTick(function() {
-				inp.focus();
-			});
+			this.nextTick(this.focusToInput);
 		}
 	},
 	expand: function(){

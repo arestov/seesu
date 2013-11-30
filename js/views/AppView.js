@@ -194,6 +194,12 @@ AppBaseView.extendTo(AppView, {
 		place: AppBaseView.viewOnLevelP,
 		opts: {overview: true}
 	},
+	tickCheckFocus: function() {
+		if (this.isAlive()){
+			this.search_input[0].focus();
+			this.search_input[0].select();
+		}
+	},
 	'collch-start_page': function(name, md) {
 		var view = this.getFreeChildView({name: name, space: 'main'}, md);
 		if (view){
@@ -201,12 +207,7 @@ AppBaseView.extendTo(AppView, {
 
 			var checkFocus = function(state) {
 				if (state){
-					_this.nextTick(function() {
-						if (this.isAlive()){
-							this.search_input[0].focus();
-							this.search_input[0].select();
-						}
-					});
+					_this.nextTick(_this.tickCheckFocus);
 					
 				}
 			};

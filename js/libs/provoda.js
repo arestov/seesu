@@ -1055,8 +1055,8 @@ spv.Class.extendTo(provoda.Eventor, {
 		fn.call(this, item);
 		item.current_motivator = old_value;
 	},
-	nextTick: function(fn, use_current_motivator) {
-		pushToCbsFlow(fn, this, false, false, hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
+	nextTick: function(fn, args, use_current_motivator) {
+		pushToCbsFlow(fn, this, args, false, hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
 	once: function(namespace, cb, opts) {
 		return this.evcompanion.once(namespace, cb, opts);
@@ -3014,6 +3014,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}, false, name, filtered);
 	},
+
 	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
 	//	if (!pv_view.original_node){
 	//		pv_view.original_node = pv_view.node.cloneNode(true);
@@ -3294,6 +3295,19 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.appendOrderedCollection(space, funcs, view_opts, array, not_request);
 		}
 	},
+	createDOMComplect: function(complects, ordered_complects, view, type) {
+		var comt_id = view.view_id + '_' + type;
+		if (!complects[comt_id]){
+			var complect = {
+				fragt: document.createDocumentFragment(),
+				view: view,
+				type: type
+			};
+			complects[comt_id] = complect;
+			ordered_complects.push(comt_id);
+		}
+		return complects[comt_id];
+	},
 	appendOrderedCollection: function(space, funcs, view_opts, array, not_request, ordered_rend_list) {
 		if (!this.isAlive()){
 			return;
@@ -3325,19 +3339,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var append_list = [];
 		var ordered_complects = [];
 		var complects = {};
-		var createComplect = function(view, type) {
-			var comt_id = view.view_id + '_' + type;
-			if (!complects[comt_id]){
-				var complect = {
-					fragt: document.createDocumentFragment(),
-					view: view,
-					type: type
-				};
-				complects[comt_id] = complect;
-				ordered_complects.push(comt_id);
-			}
-			return complects[comt_id];
-		};
 		//view_id + 'after'
 
 		//создать контроллеры, которые уже имеют DOM в документе, но ещё не соединены с ним
@@ -3363,19 +3364,19 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			if (prev_view && prev_view.state('vis_con_appended')) {
 				append_list.push({
 					md: cur,
-					complect: createComplect(prev_view, 'after')
+					complect: this.createDOMComplect(complects, ordered_complects, prev_view, 'after')
 				});
 			} else {
 				next_view = this.getNextView(array, i, space, true);
 				if (next_view && next_view.state('vis_con_appended')){
 					append_list.push({
 						md: cur,
-						complect: createComplect(next_view, 'before')
+						complect: this.createDOMComplect(complects, ordered_complects, next_view, 'before')
 					});
 				} else {
 					append_list.push({
 						md: cur,
-						complect: createComplect(false, 'direct')
+						complect: this.createDOMComplect(complects, ordered_complects, false, 'direct')
 					});
 				}
 			}
@@ -3427,9 +3428,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			detached[i].detached = null;
 		}
 		if (ordered_rend_list && ordered_rend_list.length){
-			this.nextTick(function() {
-				this.appendOrderedCollection(space, funcs, view_opts, array, not_request, ordered_rend_list);
-			});
+			this.nextTick(this.appendOrderedCollection, [space, funcs, view_opts, array, not_request, ordered_rend_list]);
 			//fixme can be bug (если nesting изменён, то измнения могут конфликтовать)
 		}
 		for (i = 0; i < append_list.length; i++) {
