@@ -1231,12 +1231,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		return this;
 
 	},
-	onExtend: function() {
+	onExtend: function(props) {
 		if (this.collectStateChangeHandlers){
-			this.collectStateChangeHandlers();
+			this.collectStateChangeHandlers(props);
 		}
-		this.collectCompxs();
-		this.collectRegFires();
+		this.collectCompxs(props);
+		this.collectRegFires(props);
 	},
 	prsStCon: {
 		cache: {},
@@ -1419,13 +1419,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	full_comlxs_list: [],
 	compx_check: {},
 	full_comlxs_index: {},
-	collectCompxs:function() {
+	collectCompxs:function(props) {
 		var need_recalc = false;
 		if (this.hasOwnProperty('complex_states')){
 			need_recalc = true;
 		} else {
-			for (var prop in this){
-				if (this.hasOwnProperty(prop) && prop.indexOf('compx-') === 0){
+			for (var prop in props){
+				if (props.hasOwnProperty(prop) && prop.indexOf('compx-') === 0){
 					need_recalc = true;
 					break;
 				}
@@ -1457,11 +1457,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		this.collectStatesConnectionsProps();
 	},
-	collectRegFires: function() {
+	collectRegFires: function(props) {
 		var need_recalc = false, prop;
 	
-		for (prop in this){
-			if (this.hasOwnProperty(prop) && prop.indexOf('regfr-') === 0){
+		for (prop in props){
+			if (props.hasOwnProperty(prop) && prop.indexOf('regfr-') === 0){
 				need_recalc = true;
 				break;
 			}
@@ -2871,13 +2871,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getPart: function(name) {
 		return this.view_parts[name];
 	},
-	collectStateChangeHandlers: function() {
+	collectStateChangeHandlers: function(props) {
 		var need_recalc = false;
 		if (this.hasOwnProperty('state_change')){
 			need_recalc = true;
 		} else {
-			for (var prop in this){
-				if (this.hasOwnProperty(prop) && prop.indexOf('stch-') === 0){
+			for (var prop in props){
+				if (props.hasOwnProperty(prop) && prop.indexOf('stch-') === 0){
 					need_recalc = true;
 					break;
 				}
