@@ -1609,10 +1609,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			iterateChList(changes_list, this, this._setUndetailedState);
 			return this;
 		}
-		this.states_changing_stack.push({
-			list: changes_list,
-			opts: opts
-		});
+		this.states_changing_stack.push(changes_list, opts);
 
 		if (this.collecting_states_changing){
 			return this;
@@ -1645,13 +1642,14 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 			spv.cloneObj(original_states, this.states);
 
-			var cur_changes = this.states_changing_stack.shift();
+			var cur_changes_list = this.states_changing_stack.shift();
+			var cur_changes_opts = this.states_changing_stack.shift();
 
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
-			this.getChanges(cur_changes.list, cur_changes.opts, changed_states);
+			this.getChanges(cur_changes_list, cur_changes_opts, changed_states);
 			//var changed_states = ... ↑
 
-			cur_changes = null;
+			cur_changes_list = cur_changes_opts = null;
 
 			//проверить комплексные состояния
 			var first_compxs_chs = this.getComplexChanges(changed_states);
