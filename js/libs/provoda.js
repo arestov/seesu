@@ -3369,40 +3369,30 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			prev_view = this.getPrevView(array, i, space, true);
 
 			if (prev_view && prev_view.state('vis_con_appended')) {
-				append_list.push({
-					md: cur,
-					complect: this.createDOMComplect(complects, ordered_complects, prev_view, 'after')
-				});
+				append_list.push(cur, this.createDOMComplect(complects, ordered_complects, prev_view, 'after'));
 			} else {
 				next_view = this.getNextView(array, i, space, true);
 				if (next_view && next_view.state('vis_con_appended')){
-					append_list.push({
-						md: cur,
-						complect: this.createDOMComplect(complects, ordered_complects, next_view, 'before')
-					});
+					append_list.push(cur, this.createDOMComplect(complects, ordered_complects, next_view, 'before'));
 				} else {
-					append_list.push({
-						md: cur,
-						complect: this.createDOMComplect(complects, ordered_complects, false, 'direct')
-					});
+					append_list.push(cur, this.createDOMComplect(complects, ordered_complects, false, 'direct'));
 				}
 			}
 			//cur.append_list = append_list;
 		}
-		for (i = 0; i < append_list.length; i++) {
-			var append_data = append_list[i];
-			cur = append_data.md;
+		var apd_views = new Array(append_list.length/2);
+		for (i = 0; i < append_list.length; i+=2) {
+			cur = append_list[ i ];
+			var complect = append_list[ i + 1 ];
 
 			view = this.getChildView(cur.mpx, space);
 			if (!view){
 				view = funcs.getFreeView(cur);
-				//
-				//
-
 			}
-			append_data.view = view;
+			apd_views[i/2] = view;
+			//append_data.view = view;
 			view.skip_anchor_appending = true;
-			var fragt = $(append_data.complect.fragt);
+			var fragt = $(complect.fragt);
 			fragt.append(view.getT());
 			appendSpace(fragt);
 			//append_data.complect.fragt.appendChild(view.getT()[0]);
@@ -3438,8 +3428,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.nextTick(this.appendOrderedCollection, [space, funcs, view_opts, array, not_request, ordered_rend_list]);
 			//fixme can be bug (если nesting изменён, то измнения могут конфликтовать)
 		}
-		for (i = 0; i < append_list.length; i++) {
-			cur = append_list[i].view;
+		for (i = 0; i < apd_views.length; i++) {
+			cur = apd_views[i];
 			cur.skip_anchor_appending = null;
 			cur.appendCon();
 		}
