@@ -33,15 +33,17 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 			var wow_tags= function(tag,c){
+				var wrap = $('<span></span>');
 				var link = $('<a class="hyped-tag js-serv"></a>')
 					.text(tag)
 					.click(function(e){
 						_this.root_view.RPCLegacy('show_tag', tag);
 						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
 						e.preventDefault();
-					}).appendTo(c);
-				c.append(document.createTextNode('  '));
+					}).appendTo(wrap);
+				wrap.append(document.createTextNode('  '));
 				_this.addWayPoint(link);
+				wrap.appendTo(c);
 
 			};
 
