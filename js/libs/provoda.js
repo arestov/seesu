@@ -1639,9 +1639,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		while (this.states_changing_stack.length){
 
 			wipeObj(original_states);
-			all_i_cg.length = 0;
-			all_ch_compxs.length = 0;
-			changed_states.length = 0;
+			all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 			//объекты используются повторно, ради выиграша в производительности
 			//которые заключается в исчезновении пауз на сборку мусора 
 
@@ -1696,9 +1694,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 
 		wipeObj(original_states);
-		all_i_cg.length = 0;
-		all_ch_compxs.length = 0;
-		changed_states.length = 0;
+		all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
 		if (this.sendStatesToViews && total_ch.length){
 			this.nextTick(this.sendChangesAfterDelay);
