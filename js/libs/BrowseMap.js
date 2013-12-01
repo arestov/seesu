@@ -836,7 +836,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	getSPI: function(name, init) {
 		var instance;
 
-		if (this.sub_pages[name]){
+		if (this.sub_pages && this.sub_pages[name]){
 			instance = this.sub_pages[name];
 
 		}

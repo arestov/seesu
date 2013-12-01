@@ -247,7 +247,7 @@ MDProxy.prototype = {
 		}
 		for (var jj = 0; jj < views.length; jj++) {
 			cur = views[jj];
-			var ancestor;
+			var ancestor = false;
 			if (mplev_view){
 				ancestor = cur.getAncestorByRooViCon('all-sufficient-details', only_by_ancestor);
 			} else {
@@ -3196,11 +3196,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			if (prop.indexOf(this.collch_h_prefix) === 0){
 				var collch = this[ prop ];
 				var nesting_name = prop.replace(this.collch_h_prefix, '');
+				if (nesting_name == 'yt_videos'){
+				//	debugger;
+				}
 				if (typeof collch == 'function'){
 					this.dclrs_fpckgs[ nesting_name ] = collch;
 				} else {
-					var not_request, collchs;
-					var collchs_limit;
+					var not_request = false, collchs = false;
+					var collchs_limit = false;
 					if (typeof collch == 'object'){
 						not_request = collch.not_request;
 						collchs = collch.spaces;
@@ -3212,6 +3215,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					for (var i = 0; i < collchs.length; i++) {
 						declarations[i] = this.parseCollectionChangeDeclaration(collchs[i]);
 					}
+
 					this.dclrs_fpckgs[ nesting_name ] = {
 						declarations: declarations,
 						not_request: not_request,
