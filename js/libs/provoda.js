@@ -2062,7 +2062,10 @@ provoda.Model.extendTo(provoda.HModel, {
 		
 
 		if (!this.skip_map_init){
-			this.sub_pages = {};
+			if (this.sub_pa || this.subPager){
+				this.sub_pages = {};
+			}
+
 			if (!this.init_states){
 				this.init_states = {};
 			}
@@ -2186,6 +2189,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.detltree_depth = null;
 		this._states_set_processing = null;
 		this._collections_set_processing = null;
+		this.dclrs_fpckgs = this.dclrs_fpckgs;
+		this.dclrs_fpckgs_is_clonned = false;
 
 
 		this.view_id = views_counter++;
@@ -3083,13 +3088,33 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 	},
 	checkCollectionChange: function(nesname) {
+		if (!this.dclrs_fpckgs){
+			throw new Error('there is no declarations');
+		}
+		if (!this.dclrs_fpckgs[ '$ondemand-' + nesname ]){
+			throw new Error('there is no "$ondemand-" declaration for: ' + nesname);
+		}
+		if (this.dclrs_fpckgs.hasOwnProperty(nesname)){
+			throw new Error('constant declaration exist for nesting named "' + nesname + '"');
+		}
+
+		if (!this.dclrs_fpckgs_is_clonned){
+			this.dclrs_fpckgs_is_clonned = true;
+			var new_cache = {};
+			spv.cloneObj(new_cache, this.dclrs_fpckgs);
+			this.dclrs_fpckgs = new_cache;
+		}
+		
+
+		this.dclrs_fpckgs[nesname] = this.dclrs_fpckgs[ '$ondemand-' + nesname ];
 		if (this.children_models[nesname]){
-			this.collectionChange(nesname, this.children_models[nesname], false, false, true);
+
+			this.collectionChange(nesname, this.children_models[nesname]);
 		}
 	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	collch_h_prefix: 'collch-',
-	collectionChange: function(nesname, array, rold_value, removed, ondemand_check) {
+	collectionChange: function(nesname, array, rold_value, removed) {
 		if (this.dead){
 			return;
 		}
@@ -3127,14 +3152,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 			this.requestAll();
 		}
-		var check_name = ondemand_check ? '$ondemand-' + nesname : nesname;
 
-		var collch = this.dclrs_fpckgs && this.dclrs_fpckgs.hasOwnProperty(check_name) && this.dclrs_fpckgs[check_name];//collectionChanger
+
+		var collch = this.dclrs_fpckgs && this.dclrs_fpckgs.hasOwnProperty(nesname) && this.dclrs_fpckgs[nesname];//collectionChanger
 		if (collch){
 			this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
 		}
-		if (this['after-collch-' + check_name]){
-			this['after-collch-' + check_name].call(this, array);
+		if (this['after-collch-' + nesname]){
+			this['after-collch-' + nesname].call(this, array);
 		}
 		return this;
 	},
@@ -3302,6 +3327,17 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}
 	},
+	appen_ne_vws: {
+		appendDirectly: function(fragt) {
+			this.place.append(fragt);
+		},
+		getFreeView: function(cur) {
+			return this.view.getFreeChildView({
+				name: (this.by_model_name ? cur.model_name : this.nesname),
+				space: this.space
+			}, cur, (typeof this.view_opts == 'function' ? this.view_opts.call(this.view, cur) : this.view_opts));
+		}
+	},
 	appendNestingViews: function(declr, view_opts, nesname, array, not_request){
 		var place;
 		if (typeof declr.place == 'string'){
@@ -3312,15 +3348,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.appendCollection(declr.space, {
 			view: this,
 			place: place,
-			appendDirectly: function(fragt) {
-				this.place.append(fragt);
-			},
-			getFreeView: function(cur) {
-				return this.view.getFreeChildView({
-					name: (declr.by_model_name ? cur.model_name : nesname),
-					space: declr.space
-				}, cur, (typeof view_opts == 'function' ? view_opts.call(this.view, cur) : view_opts));
-			}
+			nesname: nesname,
+			space: declr.space,
+			by_model_name: declr.by_model_name,
+			view_opts: view_opts,
+			appendDirectly: this.appen_ne_vws.appendDirectly,
+			getFreeView: this.appen_ne_vws.getFreeView
 		}, view_opts, nesname, array, not_request);
 
 	},
