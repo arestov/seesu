@@ -606,11 +606,8 @@ var parser = {
 					match_stack.push(cur_node.childNodes[i]);
 				}
 			}
-			list_for_binding.push({
-				is_root_node: is_root_node,
-				node: cur_node,
-				data: directives_data
-			});
+			list_for_binding.push(is_root_node, cur_node, directives_data);
+			
 
 		}
 		return list_for_binding;
@@ -934,6 +931,30 @@ spv.Class.extendTo(PvTemplate, {
 	parseAppended: function(node) {
 		this.parsePvDirectives(node);
 	},
+	iterateBindingList: function(is_root_node, cur_node, directives_data) {
+		var i = 0;
+		var directive_name;
+		if (!is_root_node){
+			//используем директивы генерирующие scope только если это не корневой элемент шаблона
+			for (i = 0; i < parser.scope_g_list.length; i++) {
+				directive_name = parser.scope_g_list[i];
+				if (directives_data[directive_name]){
+					this.scope_generators[directive_name].call(this, cur_node, directives_data[directive_name]);
+				}
+				
+			}
+		}
+		if (!directives_data.new_scope_generator || is_root_node){
+			//используем директивы если это node не генерирующий scope или это корневой элемент шаблона 
+			for (i = 0; i < parser.directives_names_list.length; i++) {
+				directive_name = parser.directives_names_list[i];
+				if (directives_data[directive_name]){
+					this.handleDirective(directive_name, cur_node, directives_data[directive_name]);
+				}
+				
+			}
+		}
+	},
 	parsePvDirectives: function(start_node) {
 		start_node = start_node && start_node[0] || start_node;
 
@@ -941,31 +962,14 @@ spv.Class.extendTo(PvTemplate, {
 
 
 		var list_for_binding = parser.parseEasy(start_node, vroot_node);
-		var _this = this;
-		list_for_binding.forEach(function(el) {
-			var i = 0;
-			var directive_name;
-			if (!el.is_root_node){
-				//используем директивы генерирующие scope только если это не корневой элемент шаблона
-				for (i = 0; i < parser.scope_g_list.length; i++) {
-					directive_name = parser.scope_g_list[i];
-					if (el.data[directive_name]){
-						_this.scope_generators[directive_name].call(_this, el.node, el.data[directive_name]);
-					}
-					
-				}
-			}
-			if (!el.data.new_scope_generator || el.is_root_node){
-				//используем директивы если это node не генерирующий scope или это корневой элемент шаблона 
-				for (i = 0; i < parser.directives_names_list.length; i++) {
-					directive_name = parser.directives_names_list[i];
-					if (el.data[directive_name]){
-						_this.handleDirective(directive_name, el.node, el.data[directive_name]);
-					}
-					
-				}
-			}
-		});
+
+		for (var i = 0; i < list_for_binding.length; i+=3) {
+			this.iterateBindingList(
+				list_for_binding[ i ],
+				list_for_binding[ i + 1 ],
+				list_for_binding[ i + 2 ]);
+			
+		}
 
 		this.indexPvViews(this.parsed_pv_views);
 
