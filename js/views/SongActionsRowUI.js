@@ -131,6 +131,7 @@ provoda.View.extendTo(SongActPlaylistingUI, {
 			}
 		}
 	},
+	'collch-$ondemand-searcher': 'lpl',
 	expand: function() {
 		if (this.expanded){
 			return;
@@ -156,7 +157,7 @@ provoda.View.extendTo(SongActPlaylistingUI, {
 		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
 		this.lpl.append(this.pl_creation_b);
 
-		this['collch-searcher'] = 'lpl';
+		//this['collch-searcher'] = 'lpl';
 		this.checkCollectionChange('searcher');
 
 		

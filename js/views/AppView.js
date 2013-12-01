@@ -177,7 +177,7 @@ AppBaseView.extendTo(AppView, {
 		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
 		return playlist_view && playlist_view.getChildView(md.mpx);
 	},
-	'spec-collch-song': function(name, md) {
+	'collch-$spec-song': function(name, md) {
 		var playlist = md.getParentMapModel();
 
 		var playlist_mpx = playlist.mpx;
@@ -190,7 +190,7 @@ AppBaseView.extendTo(AppView, {
 			this.requestAll();
 		}
 	},
-	'spec-collch-playlist': {
+	'collch-$spec-playlist': {
 		place: AppBaseView.viewOnLevelP,
 		opts: {overview: true}
 	},

@@ -415,6 +415,9 @@ provoda.View.extendTo(AppBaseView, {
 
 		
 	},
+	'collch-$spec_common': {
+		place: AppBaseView.viewOnLevelP
+	},
 	'collch-map_slice': function(nesname, nesting_data){
 		var array = nesting_data.items;
 		var transaction_data = nesting_data.transaction;
@@ -427,12 +430,10 @@ provoda.View.extendTo(AppBaseView, {
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			var model_name = cur.model_name;
-			if (this['spec-collch-' + model_name]){
-				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
+			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], model_name, cur);
 			} else {
-				this.callCollectionChangeDeclaration({
-					place: AppBaseView.viewOnLevelP
-				}, model_name, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], model_name, cur);
 			}
 		}
 
