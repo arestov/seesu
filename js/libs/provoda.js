@@ -645,7 +645,7 @@ FastEventor.prototype = {
 			fn.call(context, arg);
 		}
 	},
-	_addEventHandler: function(namespace, cb, opts, once){
+	_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
 		//common opts allowed
 		if (this.sputnik.convertEventName){
 			namespace = this.sputnik.convertEventName(name);
@@ -657,7 +657,7 @@ FastEventor.prototype = {
 			name_parts = parseNamespace(namespace),
 			short_name = name_parts[0];
 
-		if (opts && opts.exlusive){
+		if (exlusive){
 			this.off(namespace);
 		}
 
@@ -670,29 +670,29 @@ FastEventor.prototype = {
 			reg_fires[0].fn.call(this.sputnik, function() {
 				reg_args = arguments;
 				fired = true;
-			}, namespace, opts, name_parts);
+			}, namespace, {opts: false}, name_parts);
 		}
 		if (fired){
 			if (reg_fires[0].wrapper){
 				callbacks_wrapper = reg_fires[0].wrapper;
 			}
-			if (!opts || !opts.skip_reg){
-				var context = (opts && opts.context) || _this.sputnik;
-				if (opts && 'soft_reg' in opts && !opts.soft_reg){
-					cb.apply(context, reg_args);
+			if (!skip_reg){
+				var mo_context = context || _this.sputnik;
+				if (typeof soft_reg != 'undefined' && !soft_reg){
+					cb.apply(mo_context, reg_args);
 				} else {
-					pushToCbsFlow(cb, context, reg_args, false, callbacks_wrapper, this.sputnik, this.current_motivator);
+					pushToCbsFlow(cb, mo_context, reg_args, false, callbacks_wrapper, this.sputnik, this.current_motivator);
 				}
 			}
 		}
 
 
-		var subscr_opts = new EventSubscribingOpts(short_name, namespace, cb, once, opts && opts.context, opts && opts.immediately, callbacks_wrapper);
+		var subscr_opts = new EventSubscribingOpts(short_name, namespace, cb, once, context, immediately, callbacks_wrapper);
 
 		if (!(once && fired)){
 			this._pushCallbackToStack(subscr_opts);
 		}
-		if (opts && opts.easy_bind_control){
+		if (easy_bind_control){
 			var bind_control = new BindControl(this, subscr_opts);
 			return bind_control;
 		} else {
@@ -700,10 +700,28 @@ FastEventor.prototype = {
 		}
 	},
 	once: function(namespace, cb, opts){
-		return this._addEventHandler(namespace, cb, opts, true);
+		return this._addEventHandler(
+			namespace,
+			cb,
+			opts && opts.context,
+			opts && opts.immediately,
+			opts && opts.exlusive,
+			opts && opts.skip_reg,
+			opts && opts.soft_reg,
+			true,
+			opts && opts.easy_bind_control);
 	},
 	on: function(namespace, cb, opts){
-		return this._addEventHandler(namespace, cb, opts);
+		return this._addEventHandler(
+			namespace,
+			cb,
+			opts && opts.context,
+			opts && opts.immediately,
+			opts && opts.exlusive,
+			opts && opts.skip_reg,
+			opts && opts.soft_reg,
+			false,
+			opts && opts.easy_bind_control);
 	},
 	off: function(namespace, cb, obj, context){
 		if (this.convertEventName){
@@ -1201,13 +1219,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			cb = getConnector(acceptor_state);
 			
 		}
-		if (immediately){
-			donor.on(event_name, cb, this.getContextOptsI());
-		} else {
-			donor.on(event_name, cb, this.getContextOpts());
-		}
-
-		
+		donor.evcompanion._addEventHandler(event_name, cb, this, immediately);
 
 		if (this != donor && this instanceof provoda.View){
 			this.onDie(function() {
