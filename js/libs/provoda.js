@@ -2094,12 +2094,12 @@ provoda.Model.extendTo(provoda.HModel, {
 		this.updateManyStates(this.init_states);
 		this.init_states = null;
 	},
+	_hndOnPMDSwitch: function(e) {
+		this.checkPMDSwiched(e.value);
+	},
 	setPmdSwitcher: function(pmd) {
 		this.pmd_switch = pmd;
-		var _this = this;
-		pmd.on('state_change-vswitched', function(e) {
-			_this.checkPMDSwiched(e.value);
-		}, {immediately: true});
+		pmd.on('state_change-vswitched', this._hndOnPMDSwitch, this.getContextOptsI());
 	},
 	switchPmd: function(toggle) {
 		var new_state;
