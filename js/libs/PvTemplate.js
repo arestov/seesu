@@ -226,7 +226,7 @@ var parser = {
 	},
 	directives_p: {
 		'pv-text': function(node, full_declaration) {
-			return this.createStandCh(node, {
+			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getTextValue,
 				setValue: this.dom_helpres.setTextValue
@@ -234,7 +234,7 @@ var parser = {
 		},
 		'pv-class': function(node, full_declaration) {
 			full_declaration = hlpSimplifyValue(full_declaration);
-			return this.createStandCh(node, {
+			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
 				setValue: this.dom_helpres.setClassName,
@@ -273,7 +273,7 @@ var parser = {
 			//если pv-types не требует постоянных вычислений (не зависит ни от одного из состояний)
 			//то использующие шаблон ноды могут выдавать общий результирующий объект - это нужно реализовать fixme
 
-			return this.createStandCh(node, {
+			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getPVTypes,
 				setValue: this.dom_helpres.setPVTypes,
@@ -390,7 +390,14 @@ var parser = {
 	},
 
 	
-
+	prop_ch_helpers: {
+		getValue: function(node, prop) {
+			return spv.getTargetField(node, prop);
+		},
+		setValue: function(node, value, old_value, wwtch) {
+			return spv.setTargetField(node, wwtch.data, value || '');
+		}
+	},
 	createPropChange: function(node, prop, statement) {
 		var parts = prop.split(DOT);
 		for (var i = 0; i < parts.length; i++) {
@@ -398,24 +405,15 @@ var parser = {
 		}
 		prop = parts.join(DOT);
 
-		return this.createStandCh(node, {
+		return new this.StandartChange(node, this, {
+			data: prop,
 			statement: statement,
-			getValue: function(node) {
-				return spv.getTargetField(node, prop);
-			},
-			setValue: function(node, value) {
-				return spv.setTargetField(node, prop, value || '');
-			}
+			getValue: this.prop_ch_helpers.getValue,
+			setValue: this.prop_ch_helpers.setValue
 		});
 	},
-	createStandCh: function(node, opts) {
-		var standch = new this.StandartChange(opts, this, node);
-		if (standch){
-			return standch;
-		}
-	},
 	StandartChange: (function() {
-		var StandartChange = function(opts, context, node) {
+		var StandartChange = function(node, context, opts) {
 			var calculator = opts.calculator;
 			var all_vs;
 			if (!calculator){
@@ -429,6 +427,7 @@ var parser = {
 					all_vs = calculator.propsToWatch;
 				}
 			}
+			this.data = opts.data;
 			this.calculator = calculator;
 			this.context = context;
 			this.all_vs = all_vs;
@@ -438,7 +437,7 @@ var parser = {
 			this.sfy_values = calculator ? getFieldsTreesBases(this.all_vs) : null;
 
 			if (calculator){
-				var original_value = this.getValue.call(this.context, node);
+				var original_value = this.getValue.call(this.context, node, this.data);
 				if (this.simplifyValue){
 					original_value = this.simplifyValue.call(this, original_value);
 				}
@@ -448,21 +447,25 @@ var parser = {
 		};
 		StandartChange.prototype = {
 			checkFunc: function(states, wwtch) {
-				var _this = this.context;
 				var new_value = this.calculator(states);
 				if (this.simplifyValue){
-					new_value = this.simplifyValue.call(_this, new_value);
+					new_value = this.simplifyValue.call(this.context, new_value);
 				}
 				if (wwtch.current_value != new_value){
-					this.setValue.call(_this, wwtch.node, new_value, wwtch.current_value, wwtch);
+					this.setValue.call(this.context, wwtch.node, new_value, wwtch.current_value, wwtch);
 					wwtch.current_value = new_value;
 				}
 			},
+			helpers: {
+				checkFuncPublic: function(states) {
+					this.standch.checkFunc(states, this);
+				}
+			},
 			createBinding: function(node, context) {
-
 				//var sfy_values = getFieldsTreesBases(standch.all_vs);
-				var _this = this;
 				var wwtch = {
+					data: this.data,
+					standch: this,
 					context: context,
 					node: node,
 					current_value: this.original_value,
@@ -470,9 +473,7 @@ var parser = {
 
 					values: this.all_vs,
 					sfy_values: this.sfy_values,
-					checkFunc: function(states) {
-						_this.checkFunc(states, this);
-					}
+					checkFunc: this.helpers.checkFuncPublic
 				};
 				return wwtch;
 			}
