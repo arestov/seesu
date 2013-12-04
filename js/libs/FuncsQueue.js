@@ -161,10 +161,11 @@ define(['./FuncsStack'], function(FuncsStack) {
 			not_init = not_init || my_queue.length !== 0;
 
 			this.fstack.next(function(){
+				this.complete = true;
 				var atom = this;
 				func();
 				_this.using_stat.push(Date.now());
-				this.complete = true;
+				
 				atom.done(my_queue);
 			});
 
