@@ -2204,6 +2204,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.dclrs_fpckgs = this.dclrs_fpckgs;
 		this.dclrs_fpckgs_is_clonned = false;
 
+		this.innesting_pos_current = null;
+		this.innest_prev_view = null;
+		this.innest_next_view = null;
+		//this.innesting_pos_old = null;
+
 
 		this.view_id = views_counter++;
 		this.parent_view = null;
@@ -3379,6 +3384,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return getCollPriority && getCollPriority.call(this, array);
 	},
 	appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
+		//исправляем порядковый номер вьюхи в нэстинге
+		for (var i = 0; i < array.length; i++) {
+			var view = this.getChildView(array[i].mpx, space);
+			if (view) {
+				//view.innesting_pos_old = view.innesting_pos_current;
+				view.innesting_pos_current = i;
+			}
+		}
+
 		var ordered_rend_list = this.getRendOrderedNesting(nesname, array);
 		if (ordered_rend_list){
 			this.appendOrderedCollection(space, funcs, view_opts, array, not_request, ordered_rend_list);
@@ -3406,6 +3420,23 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var cur = null, view = null, i = 0, prev_view = null, next_view = null;
 		var detached = [];
 		var ordered_part = ordered_rend_list && ordered_rend_list.shift();
+		if (ordered_part && ordered_part.length == array && array.length){
+			ordered_part = null;
+		}
+		if  (ordered_part) {
+			//если у всех приоритезированных моделей уже есть вьюхи, то не не используем преоритезацию
+			var has_any_nonviewed = false;
+			for (i = 0; i < ordered_part.length; i++) {
+				if (!this.getChildView(ordered_part[i].mpx, space)){
+					has_any_nonviewed = true;
+				}
+			}
+			if (!has_any_nonviewed){
+				ordered_part = null;
+			}
+		}
+
+
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			view = this.getChildView(cur.mpx, space);
@@ -3508,10 +3539,22 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (i = 0; i < detached.length; i++) {
 			detached[i].detached = null;
 		}
-		if (ordered_rend_list && ordered_rend_list.length){
+		if (ordered_part && ordered_part.length){
 			this.nextTick(this.appendOrderedCollection, [space, funcs, view_opts, array, not_request, ordered_rend_list]);
 			//fixme can be bug (если nesting изменён, то измнения могут конфликтовать)
 		}
+
+
+		for (i = 0; i < array.length; i++) {
+			view = this.getChildView(array[i].mpx, space);
+			if (view){
+				view.innest_prev_view = this.getPrevView(array, i, space, true);
+				view.innest_next_view = this.getNextView(array, i, space, true);
+				
+			}
+			
+		}
+
 		for (i = 0; i < apd_views.length; i++) {
 			cur = apd_views[i];
 			cur.skip_anchor_appending = null;
