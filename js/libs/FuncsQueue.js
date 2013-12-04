@@ -14,6 +14,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 			this.q = null;
 			this.atom.qf = null;
 			this.atom = null;
+			this.pr = null;
 		},
 		setPrio: function(){
 			if (this.q){
