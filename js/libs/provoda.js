@@ -899,7 +899,10 @@ FastEventor.prototype = {
 		
 		var bindRemove = function(req) {
 			req.always(function() {
-				_this.requests[space] = spv.arrayExclude(_this.requests[space], req);
+				if (_this.requests && _this.requests[space]){
+					_this.requests[space] = spv.arrayExclude(_this.requests[space], req);
+				}
+				
 			});
 		};
 		var added = new Array(array.length);
@@ -2686,10 +2689,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.on('die', cb);
 	},
 	markAsDead: function(skip_md_call) {
-		if (this.autoremove){
-			this.remove();
-		}
+		this.nextTick(this.remove, [this.getC(), this._anchor]);
 		this.dead = true;
+		this.stopRequests();
 
 		this.trigger('die');
 		if (!skip_md_call){
@@ -2720,19 +2722,23 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.view_parts = {};
 
 	},
-	remove: function() {
-		var c = this.getC();
-		if (c){
-			c.remove();
+	remove: function(con, anchor) {
+		if (!con){
+			con = this.getC();
 		}
-		if (this._anchor){
-			$(this._anchor).remove();
+		if (con){
+			con.remove();
+		}
+		if (!anchor){
+			anchor = this._anchor;
+		}
+		if (anchor){
+			$(anchor).remove();
 		}
 
 	},
 	die: function(opts){
 		if (!this.marked_as_dead){
-			this.remove();
 			this.markAsDead(opts && opts.skip_md_call);
 			this.marked_as_dead = true;
 		}

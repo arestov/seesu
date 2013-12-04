@@ -5,6 +5,9 @@ var FstackAtom = function(stack, func, done, data) {
 	this.stack = stack;
 	this.func = func;
 	this.done = done;
+	this.aborted = null;
+	this.data = null;
+	this.qf = null;
 	if (data){
 		this.data = data;
 	}

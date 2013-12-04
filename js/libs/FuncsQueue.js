@@ -4,14 +4,22 @@ define(['./FuncsStack'], function(FuncsStack) {
 	var QueueFunc = function(queue, atom){
 		this.q = queue;
 		this.atom = atom;
+		this.aborted = null;
 	};
 	QueueFunc.prototype = {
 		constructor: QueueFunc,
 		abort: function(){
 			this.aborted = true;
+			this.atom.aborted = true;
+			this.q = null;
+			this.atom.qf = null;
+			this.atom = null;
 		},
 		setPrio: function(){
-			this.pr = this.q.getTopPrio() + 1;
+			if (this.q){
+				this.pr = this.q.getTopPrio() + 1;
+			}
+			
 		},
 		removePr: function() {
 			this.pr = null;
@@ -184,7 +192,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 
 			for (i = 0; i < q.length; i++) {
 				atom = q[i];
-				if (!atom.complete && !atom.qf.aborted){
+				if (!atom.complete && !atom.aborted){
 					clean_quene.push(atom);
 				}
 			}
