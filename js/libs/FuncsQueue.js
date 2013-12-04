@@ -10,9 +10,8 @@ define(['./FuncsStack'], function(FuncsStack) {
 		constructor: QueueFunc,
 		abort: function(){
 			this.aborted = true;
-			this.atom.aborted = true;
+			this.atom.abort();
 			this.q = null;
-			this.atom.qf = null;
 			this.atom = null;
 			this.pr = null;
 		},
