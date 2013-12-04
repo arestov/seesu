@@ -9,8 +9,14 @@ define(['./FuncsStack'], function(FuncsStack) {
 	QueueFunc.prototype = {
 		constructor: QueueFunc,
 		abort: function(){
+			if (this.aborted){
+				return;
+			}
 			this.aborted = true;
-			this.atom.abort();
+			if (!this.atom.complete){
+				this.atom.abort();
+			}
+			
 			this.q = null;
 			this.atom = null;
 			this.pr = null;
@@ -76,6 +82,9 @@ define(['./FuncsStack'], function(FuncsStack) {
 		removePrioMarks: function() {
 			var queue = this.fstack.getArr();
 			for (var i = 0; i < queue.length; i++) {
+				if (queue[i].aborted){
+					continue;
+				}
 				queue[i].qf.removePr();
 			}
 			this.valid_sort = false;
@@ -84,6 +93,9 @@ define(['./FuncsStack'], function(FuncsStack) {
 			var nums = [];
 			var queue = this.fstack.getArr();
 			for (var i = 0; i < queue.length; i++) {
+				if (queue[i].aborted){
+					continue;
+				}
 				var cur = queue[i].qf.pr;
 				if (typeof cur == 'number'){
 					nums.push(cur);
