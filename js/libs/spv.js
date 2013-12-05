@@ -500,6 +500,9 @@ cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 	var prop;
 	if (black_list || white_list){
 		for(prop in donor){
+			if (!donor.hasOwnProperty(prop)){
+				continue;
+			}
 			if (!white_list || !!~white_list.indexOf(prop)){
 				if (!black_list || !~black_list.indexOf(prop)){
 					_no[prop] = donor[prop];
@@ -508,6 +511,9 @@ cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 		}
 	} else {
 		for(prop in donor){
+			if (!donor.hasOwnProperty(prop)){
+				continue;
+			}
 			_no[prop] = donor[prop];
 		}
 	}
