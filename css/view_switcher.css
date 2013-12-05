@@ -95,7 +95,7 @@
 		border: 0;
 		border-radius: 0;
 		}
-	.page-scheme .tags-hyped a:nth-of-type(even){
+	.page-scheme .tags-hyped span:nth-of-type(even) a{
 		background-color: #4D4D4D;
 
 		}

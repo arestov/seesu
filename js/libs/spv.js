@@ -639,7 +639,7 @@ separateNum = function(num){
 		namedClass.prototype.constructor = namedClass;
 
 		if (namedClass.prototype.onExtend){
-			namedClass.prototype.onExtend.call(namedClass.prototype);
+			namedClass.prototype.onExtend.call(namedClass.prototype, prop);
 		}
 
 		// And make this class extendable

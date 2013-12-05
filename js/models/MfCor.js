@@ -232,18 +232,6 @@ provoda.Model.extendTo(MfCor, {
 		this.archivateChildrenStates('sorted_completcs', 'moplas_list', this.chldStHasFiles, 'has_files');
 
 		this.intMessages();
-
-
-		
-
-		/*
-		this.watchStates(['has_files', 'vk_audio_auth '], function(has_files, vkaa) {
-			if (has_files || vkaa){
-				_this.updateState('must_be_expandable', true);
-			}
-		});*/
-
-		
 	},
 	chldStHasFiles: function(values_array) {
 		var args = values_array;
@@ -321,7 +309,7 @@ provoda.Model.extendTo(MfCor, {
 		has_available_tracks: {
 			depends_on: ['mopla_to_use'],
 			fn: function(mopla_to_use) {
-				return !!mopla_to_use
+				return !!mopla_to_use;
 			}
 		},
 		mopla_to_use: {

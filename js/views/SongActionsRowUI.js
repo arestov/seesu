@@ -95,6 +95,9 @@ provoda.View.extendTo(ShareRowUI, {
 			this.select();
 		});
 	},
+	focusToInput: function() {
+		this.tpl.ancs['share_input'][0].focus();
+	},
 	"stch-active_view": function(state){
 		if (state){
 			if (this.expand){
@@ -103,10 +106,7 @@ provoda.View.extendTo(ShareRowUI, {
 		}
 
 		if (state){
-			var inp = this.tpl.ancs['share_input'][0];
-			this.nextTick(function() {
-				inp.focus();
-			});
+			this.nextTick(this.focusToInput);
 		}
 	},
 	expand: function(){
@@ -131,6 +131,7 @@ provoda.View.extendTo(SongActPlaylistingUI, {
 			}
 		}
 	},
+	'collch-$ondemand-searcher': 'lpl',
 	expand: function() {
 		if (this.expanded){
 			return;
@@ -156,7 +157,7 @@ provoda.View.extendTo(SongActPlaylistingUI, {
 		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
 		this.lpl.append(this.pl_creation_b);
 
-		this['collch-searcher'] = 'lpl';
+		//this['collch-searcher'] = 'lpl';
 		this.checkCollectionChange('searcher');
 
 		

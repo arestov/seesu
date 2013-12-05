@@ -282,7 +282,6 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 var ActionsRowUI = function(){};
 provoda.View.extendTo(ActionsRowUI, {
 	bindBase: function() {
-		this.wch(this.root_view, 'window_width');
 	},
 	getCurrentButton: function() {
 		var active_part = this.state('active_part');
@@ -302,7 +301,7 @@ provoda.View.extendTo(ActionsRowUI, {
 		return current_button.offset();
 	},
 	'compx-arrow_pos':{
-		depends_on: ['window_width', 'active_part'],
+		depends_on: ['#window_width', 'active_part'],
 		fn: function(window_width, active_part) {
 			if (window_width && active_part){
 				var button_width = this.getBoxDemension(this.getCurrentButtonOWidth, 'button_owidth', active_part);

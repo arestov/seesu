@@ -74,6 +74,12 @@ AsyncDataSteam.prototype = {
 			}
 		}
 	},
+	removeCallback: function(key, cb) {
+		if (this._callbacks[key] && this._callbacks[key].cb === cb){
+			this._callbacks[key] = null;
+		}
+
+	},
 	regCallback: function(key, cb, lcb){
 	
 		if (key){

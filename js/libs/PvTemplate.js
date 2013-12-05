@@ -1,7 +1,56 @@
 define(['spv', 'angbo', 'jquery'], function(spv, angbo, $) {
 "use strict";
 var push = Array.prototype.push;
-var PvTemplate = function() {};
+var PvTemplate = function(opts) {
+	this.pv_types_collecting = false;
+	this.states_inited = false;
+	this.waypoints = null;
+
+	this.pv_views = null;
+	this.parsed_pv_views = null;
+
+	this.stwat_index = null;
+
+	this.root_node = opts.node;
+	this.root_node_raw = this.root_node[0] || this.root_node;
+	this.pv_repeat_context = null;
+	if (opts.pv_repeat_context){
+		this.pv_repeat_context = opts.pv_repeat_context;
+	}
+	this.scope = null;
+	if (opts.scope){
+		this.scope = opts.scope;
+	}
+	this.spec_states = null;
+	if (opts.spec_states){
+		this.spec_states = opts.spec_states;
+	}
+	if (opts.callCallbacks){
+		this.sendCallback = opts.callCallbacks;
+	}
+	this.pvTypesChange = opts.pvTypesChange;
+	this.ancs = {};
+	this.pv_views = [];
+	this.parsed_pv_views = [];
+	this.pv_repeats = {};
+	this.children_templates = {};
+
+	this.states_watchers = [];
+	this.stwat_index = {};
+	this.pv_types = [];
+	this.pv_repeats_data = [];
+
+
+	
+
+	this.parsePvDirectives(this.root_node);
+	if (!angbo || !angbo.interpolateExpressions){
+		console.log('cant parse statements');
+	}
+	if (this.scope){
+		this.setStates(this.scope);
+	}
+};
 var DOT = '.';
 
 var appendSpace = function() {
@@ -78,15 +127,13 @@ var hndPVRepeat = function(states) {
 			scope.$middle = !(scope.$first || scope.$last);
 
 			var cur_node = sampler.getClone();
-			var template = new PvTemplate();
-
-
-			template.init({
+			var template = new PvTemplate({
 				node: cur_node,
 				pv_repeat_context: full_pv_context,
 				scope: scope,
 				callCallbacks: context.sendCallback
 			});
+
 			old_nodes.push(cur_node);
 			$(fragt).append(cur_node);
 			appendSpace(fragt);
@@ -179,7 +226,7 @@ var parser = {
 	},
 	directives_p: {
 		'pv-text': function(node, full_declaration) {
-			return this.createStandCh(node, {
+			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getTextValue,
 				setValue: this.dom_helpres.setTextValue
@@ -187,7 +234,7 @@ var parser = {
 		},
 		'pv-class': function(node, full_declaration) {
 			full_declaration = hlpSimplifyValue(full_declaration);
-			return this.createStandCh(node, {
+			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
 				setValue: this.dom_helpres.setClassName,
@@ -226,7 +273,7 @@ var parser = {
 			//если pv-types не требует постоянных вычислений (не зависит ни от одного из состояний)
 			//то использующие шаблон ноды могут выдавать общий результирующий объект - это нужно реализовать fixme
 
-			return this.createStandCh(node, {
+			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getPVTypes,
 				setValue: this.dom_helpres.setPVTypes,
@@ -343,7 +390,14 @@ var parser = {
 	},
 
 	
-
+	prop_ch_helpers: {
+		getValue: function(node, prop) {
+			return spv.getTargetField(node, prop);
+		},
+		setValue: function(node, value, old_value, wwtch) {
+			return spv.setTargetField(node, wwtch.data, value || '');
+		}
+	},
 	createPropChange: function(node, prop, statement) {
 		var parts = prop.split(DOT);
 		for (var i = 0; i < parts.length; i++) {
@@ -351,24 +405,15 @@ var parser = {
 		}
 		prop = parts.join(DOT);
 
-		return this.createStandCh(node, {
+		return new this.StandartChange(node, this, {
+			data: prop,
 			statement: statement,
-			getValue: function(node) {
-				return spv.getTargetField(node, prop);
-			},
-			setValue: function(node, value) {
-				return spv.setTargetField(node, prop, value || '');
-			}
+			getValue: this.prop_ch_helpers.getValue,
+			setValue: this.prop_ch_helpers.setValue
 		});
 	},
-	createStandCh: function(node, opts) {
-		var standch = new this.StandartChange(opts, this, node);
-		if (standch){
-			return standch;
-		}
-	},
 	StandartChange: (function() {
-		var StandartChange = function(opts, context, node) {
+		var StandartChange = function(node, context, opts) {
 			var calculator = opts.calculator;
 			var all_vs;
 			if (!calculator){
@@ -382,6 +427,7 @@ var parser = {
 					all_vs = calculator.propsToWatch;
 				}
 			}
+			this.data = opts.data;
 			this.calculator = calculator;
 			this.context = context;
 			this.all_vs = all_vs;
@@ -391,7 +437,7 @@ var parser = {
 			this.sfy_values = calculator ? getFieldsTreesBases(this.all_vs) : null;
 
 			if (calculator){
-				var original_value = this.getValue.call(this.context, node);
+				var original_value = this.getValue.call(this.context, node, this.data);
 				if (this.simplifyValue){
 					original_value = this.simplifyValue.call(this, original_value);
 				}
@@ -401,21 +447,25 @@ var parser = {
 		};
 		StandartChange.prototype = {
 			checkFunc: function(states, wwtch) {
-				var _this = this.context;
 				var new_value = this.calculator(states);
 				if (this.simplifyValue){
-					new_value = this.simplifyValue.call(_this, new_value);
+					new_value = this.simplifyValue.call(this.context, new_value);
 				}
 				if (wwtch.current_value != new_value){
-					this.setValue.call(_this, wwtch.node, new_value, wwtch.current_value, wwtch);
+					this.setValue.call(this.context, wwtch.node, new_value, wwtch.current_value, wwtch);
 					wwtch.current_value = new_value;
 				}
 			},
+			helpers: {
+				checkFuncPublic: function(states) {
+					this.standch.checkFunc(states, this);
+				}
+			},
 			createBinding: function(node, context) {
-
 				//var sfy_values = getFieldsTreesBases(standch.all_vs);
-				var _this = this;
 				var wwtch = {
+					data: this.data,
+					standch: this,
 					context: context,
 					node: node,
 					current_value: this.original_value,
@@ -423,9 +473,7 @@ var parser = {
 
 					values: this.all_vs,
 					sfy_values: this.sfy_values,
-					checkFunc: function(states) {
-						_this.checkFunc(states, this);
-					}
+					checkFunc: this.helpers.checkFuncPublic
 				};
 				return wwtch;
 			}
@@ -559,11 +607,8 @@ var parser = {
 					match_stack.push(cur_node.childNodes[i]);
 				}
 			}
-			list_for_binding.push({
-				is_root_node: is_root_node,
-				node: cur_node,
-				data: directives_data
-			});
+			list_for_binding.push(is_root_node, cur_node, directives_data);
+			
 
 		}
 		return list_for_binding;
@@ -675,56 +720,6 @@ var directives_h = {
 		}
 	};
 spv.Class.extendTo(PvTemplate, {
-	init: function(opts) {
-		this.pv_types_collecting = false;
-		this.states_inited = false;
-		this.waypoints = null;
-
-		this.pv_views = null;
-		this.parsed_pv_views = null;
-
-		this.stwat_index = null;
-
-		this.root_node = opts.node;
-		this.root_node_raw = this.root_node[0] || this.root_node;
-		this.pv_repeat_context = null;
-		if (opts.pv_repeat_context){
-			this.pv_repeat_context = opts.pv_repeat_context;
-		}
-		this.scope = null;
-		if (opts.scope){
-			this.scope = opts.scope;
-		}
-		this.spec_states = null;
-		if (opts.spec_states){
-			this.spec_states = opts.spec_states;
-		}
-		if (opts.callCallbacks){
-			this.sendCallback = opts.callCallbacks;
-		}
-		this.pvTypesChange = opts.pvTypesChange;
-		this.ancs = {};
-		this.pv_views = [];
-		this.parsed_pv_views = [];
-		this.pv_repeats = {};
-		this.children_templates = {};
-
-		this.states_watchers = [];
-		this.stwat_index = {};
-		this.pv_types = [];
-		this.pv_repeats_data = [];
-
-
-		
-
-		this.parsePvDirectives(this.root_node);
-		if (!angbo || !angbo.interpolateExpressions){
-			console.log('cant parse statements');
-		}
-		if (this.scope){
-			this.setStates(this.scope);
-		}
-	},
 	_pvTypesChange: function() {
 		if (this.pv_types_collecting){
 			return;
@@ -937,6 +932,30 @@ spv.Class.extendTo(PvTemplate, {
 	parseAppended: function(node) {
 		this.parsePvDirectives(node);
 	},
+	iterateBindingList: function(is_root_node, cur_node, directives_data) {
+		var i = 0;
+		var directive_name;
+		if (!is_root_node){
+			//используем директивы генерирующие scope только если это не корневой элемент шаблона
+			for (i = 0; i < parser.scope_g_list.length; i++) {
+				directive_name = parser.scope_g_list[i];
+				if (directives_data[directive_name]){
+					this.scope_generators[directive_name].call(this, cur_node, directives_data[directive_name]);
+				}
+				
+			}
+		}
+		if (!directives_data.new_scope_generator || is_root_node){
+			//используем директивы если это node не генерирующий scope или это корневой элемент шаблона 
+			for (i = 0; i < parser.directives_names_list.length; i++) {
+				directive_name = parser.directives_names_list[i];
+				if (directives_data[directive_name]){
+					this.handleDirective(directive_name, cur_node, directives_data[directive_name]);
+				}
+				
+			}
+		}
+	},
 	parsePvDirectives: function(start_node) {
 		start_node = start_node && start_node[0] || start_node;
 
@@ -944,31 +963,14 @@ spv.Class.extendTo(PvTemplate, {
 
 
 		var list_for_binding = parser.parseEasy(start_node, vroot_node);
-		var _this = this;
-		list_for_binding.forEach(function(el) {
-			var i = 0;
-			var directive_name;
-			if (!el.is_root_node){
-				//используем директивы генерирующие scope только если это не корневой элемент шаблона
-				for (i = 0; i < parser.scope_g_list.length; i++) {
-					directive_name = parser.scope_g_list[i];
-					if (el.data[directive_name]){
-						_this.scope_generators[directive_name].call(_this, el.node, el.data[directive_name]);
-					}
-					
-				}
-			}
-			if (!el.data.new_scope_generator || el.is_root_node){
-				//используем директивы если это node не генерирующий scope или это корневой элемент шаблона 
-				for (i = 0; i < parser.directives_names_list.length; i++) {
-					directive_name = parser.directives_names_list[i];
-					if (el.data[directive_name]){
-						_this.handleDirective(directive_name, el.node, el.data[directive_name]);
-					}
-					
-				}
-			}
-		});
+
+		for (var i = 0; i < list_for_binding.length; i+=3) {
+			this.iterateBindingList(
+				list_for_binding[ i ],
+				list_for_binding[ i + 1 ],
+				list_for_binding[ i + 2 ]);
+			
+		}
 
 		this.indexPvViews(this.parsed_pv_views);
 

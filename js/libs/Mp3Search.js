@@ -621,7 +621,6 @@ var getAverageDurations = function(mu_array, time_limit){
 		this.investgs_by_artist = {};
 		this.files_ids = {};
 		this.pushed_files_by_artist = {};
-		this.onRegistration('list-changed', this.hndRegListChange);
 	};
 	Mp3Search.getSongFileModel = function(mo, player){
 		return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel()).init({file: this, mo: mo}).setPlayer(player);
@@ -633,9 +632,12 @@ var getAverageDurations = function(mu_array, time_limit){
 
 
 	provoda.Model.extendTo(Mp3Search,  {
-		hndRegListChange: function(cb) {
-			if (this.se_list.length){
-				cb(this.se_list);
+		'regfr-listchange': {
+			event_name: 'list-changed',
+			fn: function(cb) {
+				if (this.se_list.length){
+					cb(this.se_list);
+				}
 			}
 		},
 		getQueryString: function(msq) {

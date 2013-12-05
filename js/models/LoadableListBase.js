@@ -105,34 +105,33 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		this.updateState('main_list_loading', true);
 		return this;
 	},
-	putRequestedData: function(request, data_list, error) {
-		this.nextTick(function() {
-			//console.profile('data list inject');
-			if (!this.request_info || this.request_info.request == request){
+	tickRequestedData: function(request, data_list, error) {
+		//console.profile('data list inject');
+		if (!this.request_info || this.request_info.request == request){
 
-				var items_list = new Array(data_list.length || 0);
-				if (!error && data_list && data_list.length){
+			var items_list = new Array(data_list.length || 0);
+			if (!error && data_list && data_list.length){
 
-					var mlc_opts = this.getMainListChangeOpts();
-					for (var i = 0; i < data_list.length; i++) {
-						var item = this.addItemToDatalist(data_list[i], true);
-						items_list[i] = item;
-					}
-					this.dataListChange(mlc_opts, items_list);
+				var mlc_opts = this.getMainListChangeOpts();
+				for (var i = 0; i < data_list.length; i++) {
+					var item = this.addItemToDatalist(data_list[i], true);
+					items_list[i] = item;
+				}
+				this.dataListChange(mlc_opts, items_list);
 
-				}
-				if (!error && request && data_list.length < this.page_limit){
-					this.setLoaderFinish();
-				}
-				this.requestComplete(request, error);
-				if (items_list.length){
-					return items_list;
-				}
 			}
-			//console.profileEnd();
-		});
-
-		
+			if (!error && request && data_list.length < this.page_limit){
+				this.setLoaderFinish();
+			}
+			this.requestComplete(request, error);
+			if (items_list.length){
+				return items_list;
+			}
+		}
+		//console.profileEnd();
+	},
+	putRequestedData: function(request, data_list, error) {
+		this.nextTick(this.tickRequestedData, [request, data_list, error]);
 		return this;
 
 	},

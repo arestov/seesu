@@ -672,21 +672,22 @@ BrowseMap.Model.extendTo(MusicConductor, {
 		this.allpas = this.getSPI('world');
 		this.сountries = this.getSPI('сountries');
 
-
-		var _this = this;
 		this.allpas.initOnce();
 		this.updateNesting('allpas', this.allpas);
 
 		this.сountries.initOnce();
 		this.updateNesting('сountries', this.сountries);
 
-
-
 		
 		this.initStates();
-		this.wch(this.map_parent, 'can_expand');
 		return this;
 	},
+	'compx-can_expand': [
+		['^can_expand'],
+		function (can_expand) {
+			return can_expand;
+		}
+	],
 	sub_pa: {
 		сountries: {
 			title: localize('Countries'),

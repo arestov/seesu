@@ -64,7 +64,9 @@ var addImageLoadCallback = function(url, cb) {
 	images_callbacks[url].push(cb);
 };
 var removeImageLoadCallback = function(url, cb) {
-
+	if (images_callbacks[url]){
+		images_callbacks[url] = spv.arrayExclude(images_callbacks[url], cb);
+	}
 };
 
 var triggerImagesCallback = function(url) {
@@ -81,23 +83,39 @@ var loadImage = function(opts) {
 		throw new Error('cache_allowed must be true or false');
 	}
 	//queue
-	var done;
+	var stop = '';
+
+	var done, accomplished, url = opts.url;
 	var node = opts.node || new Image();
 	var deferred = $.Deferred();
 
 	var async_obj = deferred.promise({
 		abort: function() {
-			delete node.src;
+			if (node){
+				node.src = null;
+			}
+			
 			if (this.queued){
 				this.queued.abort();
 			}
 			unbindEvents();
+
+			node = null;
+			opts = null;
+			stop = 'abort';
 		}
 	});
+	var imageLoadCallback = function(){
+		accomplishLoad();
+	};
 
 	var unbindEvents = function() {
-		spv.removeEvent(node, "load", loadCb);
-		spv.removeEvent(node, "error", errorCb);
+		if (node) {
+			spv.removeEvent(node, "load", loadCb);
+			spv.removeEvent(node, "error", errorCb);
+		}
+
+		removeImageLoadCallback(url, imageLoadCallback);
 	};
 	var loadCb = function(e) {
 		if (done){
@@ -115,10 +133,18 @@ var loadImage = function(opts) {
 		if (e && e.type == 'load'){
 			triggerImagesCallback(opts.url);
 		}
+
+		node = null;
+		opts = null;
+		stop = 'loaded';
 	};
 	var errorCb = function() {
 		deferred.reject(node);
 		unbindEvents();
+
+		node = null;
+		opts = null;
+		stop = 'error';
 	};
 
 	spv.addEvent(node, "load", loadCb);
@@ -126,6 +152,10 @@ var loadImage = function(opts) {
 
 
 	var accomplishLoad = function() {
+		if (accomplished){
+			return;
+		}
+		accomplished = true;
 		
 		node.src = opts.url;
 		if (node.complete){
@@ -138,15 +168,19 @@ var loadImage = function(opts) {
 				async_obj.timeout_num = setTimeout(function() {
 					deferred.reject(node, 'timeout');
 					unbindEvents();
+
+					node = null;
+					opts = null;
+
+					stop = 'timeout';
 				}, opts.timeout);
 			}
 		}
 	};
 	if (opts.queue && !loaded_images[opts.url]){
+		addImageLoadCallback(opts.url, imageLoadCallback);
 		async_obj.queued = opts.queue.add(accomplishLoad);
-		addImageLoadCallback(opts.url, function(){
-			accomplishLoad();
-		});
+		
 	} else {
 		accomplishLoad();
 	}
