@@ -127,9 +127,14 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 			};
-			su.s.susd.ligs.regCallback('start-page', showUsersListenings, function(){
+			var callback = function(){
 				users_play.addClass('loading');
+			};
+			su.s.susd.ligs.regCallback('start-page', showUsersListenings, callback);
+			this.onDie(function() {
+				su.s.susd.ligs.removeCallback('start-page', callback);
 			});
+			
 
 			return true;
 

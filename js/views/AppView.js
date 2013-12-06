@@ -166,10 +166,7 @@ AppBaseView.extendTo(AppView, {
 		space: 'nav',
 		by_model_name: true
 	},
-	'coll-prio-map_slice': function(array) {
-	//	console.log(array);
-		return array;
-	},
+
 
 	'spec-vget-song': function(md) {
 		var playlist = md.getParentMapModel();
