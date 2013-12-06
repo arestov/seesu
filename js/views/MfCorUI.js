@@ -284,6 +284,10 @@ provoda.View.extendTo(YoutubePreview, {
 
 		this.addWayPoint(li);
 	},
+	remove: function() {
+		this._super();
+		this.user_link = $();
+	},
 	'stch-title': function(state) {
 		this.c.attr('title', state || "");
 	},
@@ -305,12 +309,14 @@ provoda.View.extendTo(YoutubePreview, {
 				$('<img  alt=""/>').addClass('preview-part preview-' + el).attr('src', thmn[el]).appendTo(span);
 
 				imgs = imgs.add(span);
+				span = null;
 
 			});
 		} else {
 			imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn['default']));
 		}
 		this.user_link.empty().append(imgs);
+		imgs = null;
 						
 	}
 });
