@@ -2728,6 +2728,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		//debugger?
 		this.view_parts = {};
 
+		
+
 	},
 	remove: function(con, anchor) {
 		if (!con){

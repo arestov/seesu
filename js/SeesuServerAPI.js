@@ -107,11 +107,17 @@ AsyncDataSteam.prototype = {
 		var f;
 		for (var a in this._callbacks) {
 			f = this._callbacks[a];
+			if (!f){
+				continue;
+			}
 			f = real ? f.cb : f.lcb;
 			if (f){f(this._store);}
 		}
 		for (var i = this._onetime_callbacks.length - 1; i >= 0; i--){
 			f = this._onetime_callbacks.pop();
+			if (!f){
+				continue;
+			}
 			f = real ? f.cb : f.lcb;
 			if (f){f(this._store);}
 		}
