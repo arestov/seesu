@@ -411,12 +411,23 @@ provoda.View.extendTo(AppBaseView, {
 			animation_data.lc.onTransitionEnd(function() {
 				this.animationMark(models, 'animation_completed', transaction_data.anid);
 			});
+
 		}
 
 		
 	},
 	'collch-$spec_common': {
 		place: AppBaseView.viewOnLevelP
+	},
+	'coll-prio-map_slice': function(array) {
+	
+		/*for (var i = 0; i < array.length; i++) {
+			if (array[i].mpx.states.mp_has_focus){
+				return [[array[i]]];
+			}
+		}*/
+		return array;
+
 	},
 	'collch-map_slice': function(nesname, nesting_data){
 		var array = nesting_data.items;
@@ -439,7 +450,22 @@ provoda.View.extendTo(AppBaseView, {
 
 		if (transaction_data){
 			this.animateMapSlice(transaction_data, animation_data);
-			
+			if (!transaction_data.target){
+				var target_md;
+				for (i = 0; i < array.length; i++) {
+					if (array[i].mpx.states.mp_has_focus) {
+						target_md = array[i];
+						break;
+					}
+					
+				}
+				if (!target_md){
+					throw new Error('there is no model with focus!');
+				}
+				
+				this.updateState('current_lev_num', target_md.map_level_num);
+				console.log('alternative focus way');
+			}
 			
 		}
 
