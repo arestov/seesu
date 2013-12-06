@@ -262,6 +262,15 @@ AppBaseView.extendTo(AppView, {
 			return localize('now_playing','Now Playing') + ': ' + text;
 		}
 	},
+	remove: function() {
+		this._super();
+		$(this.d.body).off().find('*').remove();
+		$(this.d).off();
+		$(this.d).remove();
+		this.d = null;
+		this.search_input = null;
+		this.nav = null;
+	},
 	createDetails: function(){
 		this._super();
 		var _this = this;
@@ -335,9 +344,16 @@ AppBaseView.extendTo(AppView, {
 			});
 		}, 150);
 
-		$(wd).on('resize', checkWindowSizes);
+		spv.addEvent(wd, 'resize', checkWindowSizes);
+
+		//$(wd).on('resize', checkWindowSizes);
 		this.onDie(function(){
-			$(wd).off('resize', checkWindowSizes);
+			spv.removeEvent(wd, 'resize', checkWindowSizes);
+			//$(wd).off('resize', checkWindowSizes);
+			$(wd).off();
+			$(wd).remove();
+			wd = null;
+			_this = null;
 		});
 
 	},
@@ -711,8 +727,14 @@ AppBaseView.extendTo(AppView, {
 
 			_this.nav.daddy.empty().removeClass('not-inited');
 
-			np_button.click(function(){
+
+			var npbClickCallback = function(){
 				_this.RPCLegacy('showNowPlaying');
+			};
+			np_button.click(npbClickCallback);
+
+			_this.onDie(function() {
+				np_button.off();
 			});
 
 			_this.addWayPoint(np_button, {
@@ -727,21 +749,37 @@ AppBaseView.extendTo(AppView, {
 			_this.tpls.push(nptpl);
 
 			daddy.append(np_button);
-
-			$(d).on('click', '.external', function(e) {
+			var d_click_callback = function(e) {
 				e.preventDefault();
 				app_env.openURL($(this).attr('href'));
 				seesu.trackEvent('Links', 'just link');
+			};
+
+			$(d).on('click', '.external', d_click_callback);
+			_this.onDie(function() {
+				$(d).off('click', d_click_callback);
 			});
 
 			_this.onDomBuild();
 
-			$(d).keydown(function(e){
+
+			var kd_callback = function(e){
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
 				_this.arrowsKeysNav(e);
+			};
+
+			$(d).on('keydown', kd_callback);
+
+			_this.onDie(function() {
+				$(d).off('keydown', kd_callback);
 			});
 
 			_this.RPCLegacy('attachUI', this.view_id);
+
+			_this.onDie(function() {
+				_this = null;
+				d = null;
+			});
 	},
 	inputs_names: ['input'],
 	key_codes_map:{
