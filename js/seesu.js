@@ -93,6 +93,12 @@ AppModel.extendTo(SeesuApp, {
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
+
+		this.lfm_auth.once("session", function() {
+			_this.setSetting('lfm-scrobbling', true);
+			//_this.auth.setScrobbling(true);
+		});
+
 		this.vk_auth = new VkAuth({
 			app_id: this.vkappid,
 			urls: {
@@ -463,6 +469,15 @@ AppModel.extendTo(SeesuApp, {
 						value = JSON.parse(value);
 					} catch(e){}
 				}
+				if (typeof value == 'string'){
+					if (value == 'true'){
+						value = true;
+					} else if (value == 'false'){
+						value = false;
+					}
+				}
+				
+
 				_this.letAppKnowSetting(cur, value);
 			}
 			var last_ver = app_serv.store('last-su-ver');
@@ -537,9 +552,6 @@ AppModel.extendTo(SeesuApp, {
 		clearTimeout(this.settings_timers[name]);
 
 		this.settings_timers[name] = setTimeout(function(){
-			if (typeof value != 'number'){
-				value = value || '';
-			}
 			app_serv.store('settings.'+ name, value, true);
 		}, 333);
 

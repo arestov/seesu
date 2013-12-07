@@ -3434,20 +3434,24 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		var cur = null, view = null, i = 0, prev_view = null, next_view = null;
 		var detached = [];
-		var ordered_part = ordered_rend_list && ordered_rend_list.shift();
-		if (ordered_part && ordered_part.length == array && array.length){
-			ordered_part = null;
-		}
-		if  (ordered_part) {
-			//если у всех приоритезированных моделей уже есть вьюхи, то не не используем преоритезацию
-			var has_any_nonviewed = false;
-			for (i = 0; i < ordered_part.length; i++) {
-				if (!this.getChildView(ordered_part[i].mpx, space)){
-					has_any_nonviewed = true;
-				}
-			}
-			if (!has_any_nonviewed){
+		var ordered_part;
+
+		while (!ordered_part && ordered_rend_list && ordered_rend_list.length){
+			ordered_part = ordered_rend_list && ordered_rend_list.shift();
+			if (ordered_part && ordered_part.length == array && array.length){
 				ordered_part = null;
+			}
+			if  (ordered_part) {
+				//если у всех приоритезированных моделей уже есть вьюхи, то не не используем преоритезацию
+				var has_any_nonviewed = false;
+				for (i = 0; i < ordered_part.length; i++) {
+					if (!this.getChildView(ordered_part[i].mpx, space)){
+						has_any_nonviewed = true;
+					}
+				}
+				if (!has_any_nonviewed){
+					ordered_part = null;
+				}
 			}
 		}
 
