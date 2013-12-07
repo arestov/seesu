@@ -52,8 +52,10 @@ coct.SPView.extendTo(SongUI, {
 	tpl_events: {
 		showSong: function(e) {
 			e.preventDefault();
+			this.expand();
 			this.RPCLegacy('wantSong');
 			this.RPCLegacy('requestPage');
+
 		}
 	},
 
@@ -75,6 +77,15 @@ coct.SPView.extendTo(SongUI, {
 		};
 
 	},
+	'collch-$ondemand-actionsrow': true,
+	'collch-$ondemand-mf_cor': function(){
+		var ancor = this.getAFreeCV('mf_cor');
+		if (ancor){
+			var context = this.requirePart('context');
+			context.prepend(ancor);
+		}
+		
+	},
 	expand: function(){
 		if (this.opts && this.opts.lite){
 			return false;
@@ -95,16 +106,10 @@ coct.SPView.extendTo(SongUI, {
 		this.parseAppendedTPLPart(context);
 		this.c.append(context);
 
-		this['collch-actionsrow'] = true;
+		//this['collch-actionsrow'] = true;
 		this.checkCollectionChange('actionsrow');
 
-		this['collch-mf_cor'] = function(){
-			var ancor = this.getAFreeCV('mf_cor');
-			if (ancor){
-				context.prepend(ancor);
-			}
-			
-		};
+		//this['collch-mf_cor'] = ;
 		this.checkCollectionChange('mf_cor');
 		
 

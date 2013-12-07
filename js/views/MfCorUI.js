@@ -67,15 +67,6 @@ provoda.View.extendTo(SongFileModelUI, {
 	dom_rp: true,
 	createDetails: function(){
 		this.createBase();
-
-
-		var mf_cor_view = this.parent_view.parent_view;
-
-		this.wch(mf_cor_view, 'want_more_songs', 'vis_pp_wmss');
-		this.wch(this.parent_view, 'show_overstocked', 'vis_p_show_ovst');
-		this.wch(mf_cor_view, 'vis_is_visible');
-		this.wch(this.root_view, 'window_width', 'vis_window_width');
-
 	},
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
@@ -94,14 +85,14 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		},
 		"can-progress": {
-			depends_on: ['vis_is_visible', 'vis_con_appended', 'selected'],
+			depends_on: ['^^vis_is_visible', 'vis_con_appended', 'selected'],
 			fn: function(vis, apd, sel){
 				var can = vis && apd && sel;
 				return can;
 			}
 		},
 		'vis_wp_usable': {
-			depends_on: ['overstock', 'vis_pp_wmss', 'vis_p_show_ovst'],
+			depends_on: ['overstock', '^^want_more_songs', '^show_overstocked'],
 			fn: function(overstock, pp_wmss, p_show_overstock) {
 
 				if (overstock){
@@ -113,7 +104,7 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		},
 		"vis_progress-c-width": {
-			depends_on: ['can-progress', 'vis_pp_wmss', 'vis_window_width'],
+			depends_on: ['can-progress', '^^want_more_songs', '#window_width'],
 			fn: function(can, p_wmss, window_width){
 				if (can){
 					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss);
@@ -293,6 +284,10 @@ provoda.View.extendTo(YoutubePreview, {
 
 		this.addWayPoint(li);
 	},
+	remove: function() {
+		this._super();
+		this.user_link = $();
+	},
 	'stch-title': function(state) {
 		this.c.attr('title', state || "");
 	},
@@ -314,12 +309,14 @@ provoda.View.extendTo(YoutubePreview, {
 				$('<img  alt=""/>').addClass('preview-part preview-' + el).attr('src', thmn[el]).appendTo(span);
 
 				imgs = imgs.add(span);
+				span = null;
 
 			});
 		} else {
 			imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn['default']));
 		}
 		this.user_link.empty().append(imgs);
+		imgs = null;
 						
 	}
 });
@@ -345,11 +342,9 @@ provoda.View.extendTo(MfCorUI, {
 			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
-
-		this.wch(this.parent_view, 'mp_show_end', 'parent_mp_show_end');
 	},
 	'compx-vis_is_visible':{
-		'depends_on': ['parent_mp_show_end'],
+		'depends_on': ['^mp_show_end'],
 		fn: function(mp_show_end) {
 			return !!mp_show_end;
 		}

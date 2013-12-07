@@ -2,6 +2,9 @@ define(['provoda', 'spv'], function(provoda, spv){
 	"use strict";
 	provoda.addPrototype("SongsListBase", {
 		model_name: "playlist",
+		tickListChanges: function(last_usable_song) {
+			this.onChanges(last_usable_song);
+		},
 		init: function(opts){
 			this._super(opts);
 			
@@ -19,9 +22,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 					
 					this.markTracksForFilesPrefinding();
 					this.makePlayable();
-					this.nextTick(function() {
-						this.onChanges(e.last_usable_song);
-					});
+					this.nextTick(this.tickListChanges, [e.last_usable_song]);
 					
 				}
 			});

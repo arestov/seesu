@@ -88,7 +88,7 @@ big_timer = {
 			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
 			view.requestAll();
 			//provoda.sync_r.connectAppRoot();
-			window.app_view = view;
+
 		});
 	}
 

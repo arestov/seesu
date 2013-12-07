@@ -85,8 +85,8 @@ provoda.View.extendTo(AppBaseView, {
 				throw new Error('start_screen must exist');
 			}
 			var node = this.getSample('complex-page');
-			var tpl = this.buildTemplate();
-			tpl.init({
+
+			var tpl = new this.PvTemplate({
 				node: node,
 				spec_states: {
 					'$lev_num': num
@@ -281,7 +281,7 @@ provoda.View.extendTo(AppBaseView, {
 		if (transaction_data && transaction_data.target){
 			var target_md = transaction_data.target.getMD();
 			var current_lev_num = target_md.map_level_num;
-			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
+			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in" && transaction_data.array[0].changes.length < 3;
 			var lc;
 			if (can_animate && current_lev_num != -1 && one_zoom_in){
 				var target_in_parent = this.getMapSliceChildInParenView(target_md);
@@ -391,25 +391,43 @@ provoda.View.extendTo(AppBaseView, {
 
 
 			if (animation_data && animation_data.lc){
-				
-				this.nextTick(function() {
-					animation_data.lc.c.css(empty_transform_props);
-				});
+				animation_data.lc.c.height(); //заставляем всё пересчитать
+				animation_data.lc.c.css(empty_transform_props);
+				/*this.nextTick(function() {
+					
+				});*/
+				animation_data.lc.c.height(); //заставляем всё пересчитать
 				
 			}
 
 		}
 		if (!animation_data){
-			this.nextTick(function() {
-				this.animationMark(models, 'animation_completed', transaction_data.anid);
-			});
+			//
+			this.animationMark(models, 'animation_completed', transaction_data.anid);
+			/*this.nextTick(function() {
+				
+			});*/
 		} else {
 			animation_data.lc.onTransitionEnd(function() {
 				this.animationMark(models, 'animation_completed', transaction_data.anid);
 			});
+
 		}
 
 		
+	},
+	'collch-$spec_common': {
+		place: AppBaseView.viewOnLevelP
+	},
+	'coll-prio-map_slice': function(array) {
+	
+		/*for (var i = 0; i < array.length; i++) {
+			if (array[i].mpx.states.mp_has_focus){
+				return [[array[i]]];
+			}
+		}*/
+		return array;
+
 	},
 	'collch-map_slice': function(nesname, nesting_data){
 		var array = nesting_data.items;
@@ -423,18 +441,31 @@ provoda.View.extendTo(AppBaseView, {
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			var model_name = cur.model_name;
-			if (this['spec-collch-' + model_name]){
-				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
+			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], model_name, cur);
 			} else {
-				this.callCollectionChangeDeclaration({
-					place: AppBaseView.viewOnLevelP
-				}, model_name, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], model_name, cur);
 			}
 		}
 
 		if (transaction_data){
 			this.animateMapSlice(transaction_data, animation_data);
-			
+			if (!transaction_data.target){
+				var target_md;
+				for (i = 0; i < array.length; i++) {
+					if (array[i].mpx.states.mp_has_focus) {
+						target_md = array[i];
+						break;
+					}
+					
+				}
+				if (!target_md){
+					throw new Error('there is no model with focus!');
+				}
+				
+				this.updateState('current_lev_num', target_md.map_level_num);
+				console.log('alternative focus way');
+			}
 			
 		}
 

@@ -173,9 +173,9 @@ var navi;
 						var num = (current_histate && current_histate.num);
 						if (typeof num != 'number'){
 							num = history_array.length;//must be zero
-							if (num !== 0){
-								console.log(fakeud, ud, history_obj);
-							}
+							//if (num !== 0){
+								//console.log(fakeud, ud, history_obj);
+							//}
 						}
 						history_array.length = num + 1;
 						history_array[num] = history_obj;

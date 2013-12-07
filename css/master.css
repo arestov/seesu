@@ -1107,6 +1107,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		position: absolute;
 		top:0;
 		bottom:0;
+		min-height: 320px;
 		}
 .track-video{
 	padding: 0;
@@ -1775,7 +1776,7 @@ body .surf_nav{
 	.full-page .songcard_page-header{
 		font-size: 1.5rem;
 		}
-.song_fans-b-intrack{
+.intrack_page{
 	margin: 1rem -13px 0;
 	border-top: 1px solid #555555;
 	border-bottom: 1px solid #6e6e6e;
@@ -1784,11 +1785,11 @@ body .surf_nav{
 	min-height: 3rem;
 	cursor: pointer;
 	}
-	.song_fans-b-intrack:hover {
+	.intrack_page:hover {
 		background-color: #555;
 		border-top-color: #505050;
 		}
-.song_fans-h-intrack{
+.intrack_page-h{
 	margin-left: 1rem;
 	margin-right: 0.5rem;
 	float: left;
@@ -1829,9 +1830,7 @@ body .surf_nav{
 	-moz-box-sizing:border-box;
 	box-sizing: border-box;
 	}
-	.song_fan-b-tck:hover .song_fan-h-tck{
-		visibility: visible;
-	}
+
 
 .song-act-tagging input{
 	display: block;

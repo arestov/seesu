@@ -5,11 +5,23 @@ var FstackAtom = function(stack, func, done, data) {
 	this.stack = stack;
 	this.func = func;
 	this.done = done;
+	
+	this.data = null;
+	this.qf = null;
+	this.aborted = null;
 	if (data){
 		this.data = data;
 	}
 };
+FstackAtom.prototype.abort = function() {
+	this.stack = null;
+	this.func = null;
+	this.done = null;
+	this.data = null;
+	this.qf = null;
 
+	this.aborted = true;
+};
 
 FuncsStack = function(selectNext, initAtom) {
 	this.arr = [];

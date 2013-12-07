@@ -3,6 +3,7 @@ define(['./LoadableListBase', 'spv', 'js/libs/Mp3Search'], function(LoadableList
 
 
 
+var start_end_spaces = /^\s|\s$/gi;
 var LoadableList = function() {};
 LoadableListBase.extendTo(LoadableList, {
 	getHypemArtistsList: function() {
@@ -26,7 +27,7 @@ LoadableListBase.extendTo(LoadableList, {
 				song_omo = Mp3Search.guessArtist(cur.title);
 			}
 			song_omo.image_url = cur.thumb_url;
-			if (song_omo.artist && song_omo.track){
+			if (song_omo.artist && song_omo.artist.replace(start_end_spaces, '') && song_omo.track){
 				track_list.push(song_omo);
 			} else {
 				console.log('there is no needed attributes');

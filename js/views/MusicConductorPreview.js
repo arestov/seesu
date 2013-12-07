@@ -33,15 +33,17 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 			var wow_tags= function(tag,c){
+				var wrap = $('<span></span>');
 				var link = $('<a class="hyped-tag js-serv"></a>')
 					.text(tag)
 					.click(function(e){
 						_this.root_view.RPCLegacy('show_tag', tag);
 						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
 						e.preventDefault();
-					}).appendTo(c);
-				c.append(document.createTextNode(' '));
+					}).appendTo(wrap);
+				wrap.append(document.createTextNode('  '));
 				_this.addWayPoint(link);
+				wrap.appendTo(c);
 
 			};
 
@@ -125,9 +127,20 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 			};
-			su.s.susd.ligs.regCallback('start-page', showUsersListenings, function(){
+			var callback = function(){
 				users_play.addClass('loading');
+			};
+			su.s.susd.ligs.regCallback('start-page', showUsersListenings, callback);
+			this.onDie(function() {
+				su.s.susd.ligs.removeCallback('start-page', showUsersListenings);
+				users_play.detach();
+				users_play.off();
+				users_play.remove();
+				users_play = null;
+				this.root_view = null;
+				_this = null;
 			});
+			
 
 			return true;
 
