@@ -1107,6 +1107,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		position: absolute;
 		top:0;
 		bottom:0;
+		min-height: 320px;
 		}
 .track-video{
 	padding: 0;
