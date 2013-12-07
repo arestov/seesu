@@ -52,8 +52,10 @@ coct.SPView.extendTo(SongUI, {
 	tpl_events: {
 		showSong: function(e) {
 			e.preventDefault();
+			this.expand();
 			this.RPCLegacy('wantSong');
 			this.RPCLegacy('requestPage');
+
 		}
 	},
 
