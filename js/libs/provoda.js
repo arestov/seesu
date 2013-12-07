@@ -2821,7 +2821,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.requestChildrenDetLev(rel_depth - 1);
 	},
 	getCNode: function(c) {
-		return (c = this.getC()) && (typeof length != 'undefined' ? c[0] : c);
+		return (c = this.getC()) && (typeof c.length != 'undefined' ? c[0] : c);
 	},
 	isAlive: function(dead_doc) {
 		if (this.dead){
