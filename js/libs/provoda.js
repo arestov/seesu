@@ -167,14 +167,18 @@ MDProxy.prototype = {
 			this.sendStatesToView(this.views[i], states_list);
 		}
 	},
-	removeDeadViews: function(hard_deads_check){
+	removeDeadViews: function(hard_deads_check, complex_id){
 		var i = 0;
 		if (hard_deads_check){
-			for (i = 0; i < this.views.length; i++) {
-				if (this.views[i].isAlive){
-					this.views[i].isAlive();
+			var checklist = complex_id ? (this.views_index && this.views_index[complex_id]) : this.views;
+			if (checklist){
+				for (i = 0; i < checklist.length; i++) {
+					if (checklist[i].isAlive){
+						checklist[i].isAlive();
+					}
 				}
 			}
+			
 		}
 		var dead = [], alive = [];
 		for (i = 0; i < this.views.length; i++) {
@@ -222,12 +226,12 @@ MDProxy.prototype = {
 		}
 	},
 	getView: function(complex_id){
-		this.removeDeadViews(true);
+		this.removeDeadViews(true, complex_id);
 		complex_id = complex_id || 'main';
 		return this.views_index[complex_id] && this.views_index[complex_id][0];
 	},
 	addView: function(v, complex_id) {
-		this.removeDeadViews(true);
+		this.removeDeadViews(true, complex_id);
 		this.views.push( v );
 		complex_id = complex_id || 'main';
 		(this.views_index[complex_id] = this.views_index[complex_id] || []).push(v);
@@ -2230,7 +2234,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._super();
 		this.children = [];
 		this.children_models = {};
-		this.view_parts = {};
+		this.view_parts = null;
 
 		if (this.parent_view && !view_otps.location_name){
 			throw new Error('give me location name!');
@@ -2621,6 +2625,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	addChildView: function(view, child_name) {
 		this.children.push.call(this.children, view);
+		//fixme - possible memory leak when child is dead (this.children) 
 	},
 	addChild: function(view, child_name) {
 		if (this.children.indexOf(view) == -1){
@@ -2726,7 +2731,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			children[i].markAsDead();
 		}
 		//debugger?
-		this.view_parts = {};
+		this.view_parts = null;
 
 		
 
@@ -2821,7 +2826,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.requestChildrenDetLev(rel_depth - 1);
 	},
 	getCNode: function(c) {
-		return (c = this.getC()) && (typeof length != 'undefined' ? c[0] : c);
+		return (c = this.getC()) && (typeof c.length != 'undefined' ? c[0] : c);
 	},
 	isAlive: function(dead_doc) {
 		if (this.dead){
@@ -2885,7 +2890,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	getPart: function(name) {
-		return this.view_parts[name];
+		return this.view_parts && this.view_parts[name];
 	},
 	collectStateChangeHandlers: function(props) {
 		var need_recalc = false;
@@ -2934,9 +2939,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.stch_hs = result;
 	},
 	requirePart: function(name) {
-		if (this.view_parts[name]){
+		if (this.dead){
+			return $();
+		}
+		if (this.view_parts && this.view_parts[name]){
 			return this.view_parts[name];
 		} else {
+			if (!this.view_parts){
+				this.view_parts = {};
+			}
 			this.view_parts[name] = this.parts_builder[name].call(this);
 			if (!this.view_parts[name]){
 				throw new Error('"return" me some build result please');
@@ -2961,7 +2972,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		for (var i = 0; i < state_changer.dep_vp.length; i++) {
 			var cur = state_changer.dep_vp[i];
-			if (!this.view_parts[cur]){
+			if (!this.view_parts || !this.view_parts[cur]){
 				has_all_dependings = false;
 				break;
 			} else {

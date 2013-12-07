@@ -438,7 +438,8 @@ provoda.View.extendTo(AppBaseView, {
 
 		var animation_data = this.readMapSliceAnimationData(transaction_data);
 
-		for (i = 0; i < array.length; i++) {
+
+		for (i = array.length - 1; i >= 0; i--) {
 			cur = array[i];
 			var model_name = cur.model_name;
 			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
