@@ -3204,6 +3204,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (this['after-collch-' + nesname]){
 			this['after-collch-' + nesname].call(this, array);
 		}
+		this.checkDeadChildren();
 		return this;
 	},
 	removeViewsByMds: function(array, space) {
