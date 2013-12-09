@@ -2939,7 +2939,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.stch_hs = result;
 	},
 	requirePart: function(name) {
-		if (this.dead){
+		if (!this.isAlive()){
 			return $();
 		}
 		if (this.view_parts && this.view_parts[name]){
@@ -2982,7 +2982,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return has_all_dependings;
 	},
 	recieveStatesChanges: function(changes_list) {
-		if (this.dead){
+		if (!this.isAlive()){
 			return;
 		}
 		this._updateProxy(changes_list);
@@ -3158,7 +3158,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	tpl_children_prefix: 'tpl.children_templates.',
 	collch_h_prefix: 'collch-',
 	collectionChange: function(nesname, array, rold_value, removed) {
-		if (this.dead){
+		if (!this.isAlive()){
 			return;
 		}
 		if (this.undetailed_children_models){
