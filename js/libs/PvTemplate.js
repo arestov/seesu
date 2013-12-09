@@ -644,6 +644,9 @@ var SimplePVSampler = function(node) {
 	this.parsed = false;
 };
 SimplePVSampler.prototype.getClone = function() {
+	if (!this.onode){
+		return;
+	}
 	if (!this.parsed){
 		this.parsed = true;
 		parser.parse(this.onode);

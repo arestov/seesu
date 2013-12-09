@@ -97,6 +97,9 @@ coct.SPView.extendTo(SongUI, {
 		}
 
 		var context = this.requirePart('context');
+		if (!context){
+			return;
+		}
 		
 
 		var nart_dom = this.root_view.getSample('artist_preview-base');

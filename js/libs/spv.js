@@ -65,9 +65,15 @@ function(elem, evType, fn){
 };
 removeEvent = spv.removeEvent = window.addEventListener ?
 function(elem, evType, fn){
+	if (!elem.removeEventListener){
+		return;
+	}
 	elem.removeEventListener(evType, fn, false);
 }:
 function(elem, evType, fn){
+	if (!elem.detachEvent){
+		return;
+	}
 	elem.detachEvent('on' + evType, fn);
 };
 getDefaultView = spv.getDefaultView = function(d) {
