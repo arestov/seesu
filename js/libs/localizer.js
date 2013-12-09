@@ -196,7 +196,7 @@ define({
 		"ru": "Последнюю неделю город"
 	},
 	"reg":{
-		"original": "regisration",
+		"original": "registration",
 		"ru": "регистрация"
 	},
 	"listening": {
