@@ -264,9 +264,16 @@ AppBaseView.extendTo(AppView, {
 	},
 	remove: function() {
 		this._super();
-		$(this.d.body).off().find('*').remove();
-		$(this.d).off();
-		$(this.d).remove();
+		if (this.d){
+			if (this.d.body && this.d.body.firstChild && this.d.body.firstChild.parentNode){
+				$(this.d.body).off().find('*').remove();
+				
+			}
+			$(this.d).off();
+			$(this.d).remove();
+		}
+		
+		
 		this.d = null;
 		this.search_input = null;
 		this.nav = null;

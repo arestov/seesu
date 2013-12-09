@@ -535,6 +535,10 @@ provoda.View.extendTo(AppBaseView, {
 
 		var _this = this;
 		setTimeout(function() {
+			if (!_this.isAlive()){
+				_this = null;
+				return;
+			}
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
 				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);

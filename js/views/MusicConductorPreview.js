@@ -133,9 +133,12 @@ provoda.View.extendTo(MusicConductorPreview, {
 			su.s.susd.ligs.regCallback('start-page', showUsersListenings, callback);
 			this.onDie(function() {
 				su.s.susd.ligs.removeCallback('start-page', showUsersListenings);
-				users_play.detach();
-				users_play.off();
-				users_play.remove();
+				try {
+					users_play.detach();
+					users_play.off();
+					users_play.remove();
+				} catch(e){}
+				
 				users_play = null;
 				this.root_view = null;
 				_this = null;
