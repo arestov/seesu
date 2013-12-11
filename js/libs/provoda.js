@@ -350,6 +350,9 @@ provoda = {
 };
 provoda.Controller = provoda.View;
 
+var DeathMarker = function() {
+	//helper to find memory leaks; if there is memory leaking DeathMarker will be available in memory heap snapshot;
+};
 
 var setEvLiItems = function(items_list, current_motivator) {
 	var old_value = this.current_motivator;
@@ -2695,7 +2698,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	markAsDead: function(skip_md_call) {
 		this.nextTick(this.remove, [this.getC(), this._anchor]);
-		this.dead = true;
+		this.dead = true; //new DeathMarker();
 		this.stopRequests();
 
 		this.trigger('die');
