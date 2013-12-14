@@ -358,6 +358,8 @@ var app_env = (function(wd){
 		env.as_application = false;
 		env.deep_sanbdox = true;
 		env.needs_url_history = true;
+		env.torrents_support = true;
+		env.cross_domain_allowed = true;
 	} else if (window.tizen){
 		env.app_type = 'tizen_app';
 		env.as_application = false;
