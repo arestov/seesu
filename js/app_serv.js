@@ -353,8 +353,12 @@ var app_env = (function(wd){
 	if (has_transform_prop){
 		env.transform = has_transform_prop;
 	}
-	
-	if (window.tizen){
+	if (typeof process == 'object' && window.process.nextTick && typeof navigator == 'object'){
+		env.app_type = 'nodewebkit';
+		env.as_application = false;
+		env.deep_sanbdox = true;
+		env.needs_url_history = true;
+	} else if (window.tizen){
 		env.app_type = 'tizen_app';
 		env.as_application = false;
 		env.deep_sanbdox = true;
