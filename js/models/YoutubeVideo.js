@@ -30,7 +30,7 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 	requestVideo: function() {
 		var cant_show = this.state('cant_show');
 		var link = 'http://www.youtube.com/watch?v=' + this.state('yt_id');
-		if (!cant_show){
+		if (!cant_show && !app_env.tizen_app){
 			this.showOnMap();
 			
 		} else{

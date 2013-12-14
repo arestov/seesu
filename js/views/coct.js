@@ -32,7 +32,7 @@ provoda.View.extendTo(ListPreview, {
 	'stch-list_loading': function(state) {
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
-	'stch-mp_show': function(state) {
+	'stch-vmp_show': function(state) {
 		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		node.toggleClass('button_selected', !!state);
 	},
@@ -74,13 +74,13 @@ ListPreview.extendTo(LiListsPreview, {
 var SPView = function() {};
 provoda.View.extendTo(SPView, {
 	'compx-mp_show_end': {
-		depends_on: ['animation_started', 'animation_completed', 'mp_show'],
-		fn: function(animation_started, animation_completed, mp_show) {
+		depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
+		fn: function(animation_started, animation_completed, vmp_show) {
 			if (!animation_started){
-				return mp_show;
+				return vmp_show;
 			} else {
 				if (animation_started == animation_completed){
-					return mp_show;
+					return vmp_show;
 				} else {
 					return false;
 				}
@@ -91,7 +91,7 @@ provoda.View.extendTo(SPView, {
 
 var PageView = function() {};
 SPView.extendTo(PageView, {
-	'stch-mp_show': function(state) {
+	'stch-vmp_show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
 	createBase: function() {

@@ -46,16 +46,7 @@ coct.SPView.extendTo(StartPageView, {
 		}
 	},
 	state_change: {
-		'mp_show': function(opts) {
-			if (opts){
-				if (opts.userwant){
-			//		this.search_input[0].focus();
-				//	this.search_input[0].select();
-				}
-			} else {
 
-			}
-		},
 		"can_expand": function(state) {
 			if (state){
 				this.requirePart('start-page-blocks');

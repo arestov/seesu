@@ -166,10 +166,7 @@ AppBaseView.extendTo(AppView, {
 		space: 'nav',
 		by_model_name: true
 	},
-	'coll-prio-map_slice': function(array) {
-	//	console.log(array);
-		return array;
-	},
+
 
 	'spec-vget-song': function(md) {
 		var playlist = md.getParentMapModel();
@@ -177,7 +174,7 @@ AppBaseView.extendTo(AppView, {
 		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
 		return playlist_view && playlist_view.getChildView(md.mpx);
 	},
-	'spec-collch-song': function(name, md) {
+	'collch-$spec-song': function(name, md) {
 		var playlist = md.getParentMapModel();
 
 		var playlist_mpx = playlist.mpx;
@@ -190,9 +187,15 @@ AppBaseView.extendTo(AppView, {
 			this.requestAll();
 		}
 	},
-	'spec-collch-playlist': {
+	'collch-$spec-playlist': {
 		place: AppBaseView.viewOnLevelP,
 		opts: {overview: true}
+	},
+	tickCheckFocus: function() {
+		if (this.isAlive()){
+			this.search_input[0].focus();
+			this.search_input[0].select();
+		}
 	},
 	'collch-start_page': function(name, md) {
 		var view = this.getFreeChildView({name: name, space: 'main'}, md);
@@ -201,12 +204,7 @@ AppBaseView.extendTo(AppView, {
 
 			var checkFocus = function(state) {
 				if (state){
-					_this.nextTick(function() {
-						if (this.isAlive()){
-							this.search_input[0].focus();
-							this.search_input[0].select();
-						}
-					});
+					_this.nextTick(_this.tickCheckFocus);
 					
 				}
 			};
@@ -263,6 +261,22 @@ AppBaseView.extendTo(AppView, {
 		fn: function(text) {
 			return localize('now_playing','Now Playing') + ': ' + text;
 		}
+	},
+	remove: function() {
+		this._super();
+		if (this.d){
+			if (this.d.body && this.d.body.firstChild && this.d.body.firstChild.parentNode){
+				$(this.d.body).off().find('*').remove();
+				
+			}
+			$(this.d).off();
+			$(this.d).remove();
+		}
+		
+		
+		this.d = null;
+		this.search_input = null;
+		this.nav = null;
 	},
 	createDetails: function(){
 		this._super();
@@ -337,9 +351,16 @@ AppBaseView.extendTo(AppView, {
 			});
 		}, 150);
 
-		$(wd).on('resize', checkWindowSizes);
+		spv.addEvent(wd, 'resize', checkWindowSizes);
+
+		//$(wd).on('resize', checkWindowSizes);
 		this.onDie(function(){
-			$(wd).off('resize', checkWindowSizes);
+			spv.removeEvent(wd, 'resize', checkWindowSizes);
+			//$(wd).off('resize', checkWindowSizes);
+			$(wd).off();
+			$(wd).remove();
+			wd = null;
+			_this = null;
 		});
 
 	},
@@ -456,13 +477,13 @@ AppBaseView.extendTo(AppView, {
 	handleStartScreen: function(start_screen) {
 		var st_scr_scrl_con = start_screen.parent();
 		var start_page_wrap = st_scr_scrl_con.parent();
-		var tpl = this.buildTemplate();
-		tpl.init({
+		var tpl = new this.PvTemplate({
 			node: start_page_wrap,
 			spec_states: {
 				'$lev_num': -1
 			}
 		});
+
 		this.tpls.push(tpl);
 
 		this.lev_containers[-1] = {
@@ -529,7 +550,7 @@ AppBaseView.extendTo(AppView, {
 					};
 
 					_this.rsd_rz = setInterval(recheckFunc,100);
-					_this.on('vip_state_change-current_mp_md.resize-check', function(e) {
+					_this.on('vip_state_change-current_mp_md.resize-check', function() {
 						recheckFunc();
 					}, {
 						exlusive: true,
@@ -548,10 +569,10 @@ AppBaseView.extendTo(AppView, {
 			var search_form = $('#search',d);
 
 			
+			var app_map_con = screens_block.children('.app_map_con');
 
 
-
-			var shared_parts_c = screens_block.children('.shared-parts');
+			//var shared_parts_c = app_map_con.children('.shared-parts');
 
 			var scrolling_viewport;
 			if (app_env.as_application){
@@ -579,6 +600,7 @@ AppBaseView.extendTo(AppView, {
 			spv.cloneObj(_this.els, {
 				ui_samples: ui_samples,
 				screens: screens_block,
+				app_map_con: app_map_con,
 				scrolling_viewport: scrolling_viewport,
 				slider: slider,
 				navs: $(slider).children('.navs'),
@@ -712,8 +734,14 @@ AppBaseView.extendTo(AppView, {
 
 			_this.nav.daddy.empty().removeClass('not-inited');
 
-			np_button.click(function(){
+
+			var npbClickCallback = function(){
 				_this.RPCLegacy('showNowPlaying');
+			};
+			np_button.click(npbClickCallback);
+
+			_this.onDie(function() {
+				np_button.off();
 			});
 
 			_this.addWayPoint(np_button, {
@@ -722,28 +750,43 @@ AppBaseView.extendTo(AppView, {
 				}
 			});
 
-			var nptpl = _this.buildTemplate();
-			nptpl.init({
+			var nptpl = new _this.PvTemplate({
 				node: np_button
 			});
 			_this.tpls.push(nptpl);
 
 			daddy.append(np_button);
-
-			$(d).on('click', '.external', function(e) {
+			var d_click_callback = function(e) {
 				e.preventDefault();
 				app_env.openURL($(this).attr('href'));
 				seesu.trackEvent('Links', 'just link');
+			};
+
+			$(d).on('click', '.external', d_click_callback);
+			_this.onDie(function() {
+				$(d).off('click', d_click_callback);
 			});
 
 			_this.onDomBuild();
 
-			$(d).keydown(function(e){
+
+			var kd_callback = function(e){
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
 				_this.arrowsKeysNav(e);
+			};
+
+			$(d).on('keydown', kd_callback);
+
+			_this.onDie(function() {
+				$(d).off('keydown', kd_callback);
 			});
 
 			_this.RPCLegacy('attachUI', this.view_id);
+
+			_this.onDie(function() {
+				_this = null;
+				d = null;
+			});
 	},
 	inputs_names: ['input'],
 	key_codes_map:{
@@ -857,70 +900,6 @@ AppBaseView.extendTo(AppView, {
 		}
 		return image;
 	},
-	createUserAvatar: function(info, c, size){
-		var _this = this;
-		var imageplace = $("<div class='image-cropper'></div>").appendTo(c);
-		$('<img alt="user photo" />').attr('src', info.photo).appendTo(imageplace);
-		/*
-		var image = this.preloadImage(info.photo, 'user photo', function(img){
-			_this.verticalAlign(img, 50, true);
-		}, imageplace); */
-	},
-	createLikeButton: function(lig){
-		var nb = this.createNiceButton();
-		nb.b.text( localize('want-meet', 'Want to meet') + '!');
-		nb.enable();
-		var pliking = false;
-		nb.b.click(function(){
-			if (!pliking){
-				var p =
-				su.s.api('relations.setLike', {to: lig.user}, function(r){
-					if (r.done){
-						su.trackEvent('people likes', 'liked');
-						var gc = $("<div></div>");
-						nb.c.after(gc);
-
-						gc.append($('<span class="desc people-list-desc"></span>').text(localize('if-user-accept-i') + " " + localize('will-get-link')));
-						nb.c.remove();
-					}
-					pliking = false;
-				});
-				pliking = true;
-			}
-
-
-
-		});
-		return nb;
-	},
-	createAcceptInviteButton: function(lig){
-		var nb = this.createNiceButton();
-		nb.b.text( localize('accept-inv', 'Accept invite'));
-		nb.enable();
-		var pliking = false;
-		nb.b.click(function(){
-			if (!pliking){
-				var p =
-				su.s.api('relations.acceptInvite', {from: lig.user}, function(r){
-
-					if (r.done){
-						su.trackEvent('people likes', 'accepted', false, 5);
-						nb.c.after(
-							$('<span class="people-list-desc desc"></span>')
-								.text(su.getRemainTimeText(r.done.est, true))
-						);
-						nb.c.remove();
-					}
-					pliking = false;
-				});
-				pliking = true;
-			}
-
-
-
-		});
-		return nb;
-	},
 	getAcceptedDesc: function(rel){
 		var link = rel.info.domain && ('https://vk.com/' + rel.info.domain);
 		if (link && rel.info.full_name){
@@ -929,174 +908,18 @@ AppBaseView.extendTo(AppView, {
 			return $("<span class='desc'></span>").text(su.getRemainTimeText(rel.item.est, true));
 		}
 	},
-	showBigListener: function(c, lig){
-		var _this = this;
-		c.empty();
+	
 
-		if (lig.info && lig.info.photo_big){
-			var algd;
-			var doAlign = function(){
-
-			};
-			var img = _this.preloadImage(lig.info.photo_big, 'user photo', function(img){
-				if (!algd){
-					algd = true;
-					_this.verticalAlign(img, {
-						target_height: 252,
-						animate: true,
-						animate_time: 66
-					});
-				}
-
-			}, $('<div class="big-user-avatar"></div>').appendTo(c));
-
-			var real_height = (img.naturalHeight ||  img.height);
-			if (real_height){
-				algd = true;
-				this.verticalAlign(img, {
-					real_height: real_height,
-					target_height: 252
-				});
-
-			}
-
-		}
-
-		if (su.s.loggedIn()){
-			var liked = su.s.susd.isUserLiked(lig.user);
-			var user_invites_me = su.s.susd.didUserInviteMe(lig.user);
-
-			if (liked){
-
-				if (liked.item.accepted){
-					c.append(this.getAcceptedDesc(liked));
-				} else{
-
-					c.append(localize('you-want-user'));
-					c.append('<br/>');
-
-					c.append($('<span class="desc people-list-desc"></span>').text(localize('if-user-accept-i') + " " + localize('will-get-link')));
-				}
-
-
-			} else if (user_invites_me){
-				if ( user_invites_me.item.accepted){
-					c.append(this.getAcceptedDesc(user_invites_me));
-				} else{
-					c.append(localize('user-want-you'));
-					c.append('<br/>');
-					var lb = this.createAcceptInviteButton(lig);
-					lb.c.appendTo(c);
-				}
-
-			} else {
-				var current_user_info = su.s.getInfo('vk');
-
-				if (current_user_info && current_user_info.photo_big) {
-					this.createLikeButton(lig).c.appendTo(c);
-				} else {
-					var photoupreq_c = this.createPhotoUploadRequest();
-					c.append(photoupreq_c);
-
-					this.on('vip_state_change-vk_info.song-listener', function(e) {
-						if (e.value && e.value.photo_big){
-							photoupreq_c.before(this.createLikeButton(lig).c);
-
-							photoupreq_c.remove();
-						}
-					}, {
-						exlusive: true,
-						immediately: true
-					});
-				}
-			}
-
-		} else{
-			c.append(this.samples.vk_login.clone(localize('to-meet-man-vk')));
-
-		}
-
-
-	},
-	createPhotoUploadRequest: function() {
-		var con = $('<div></div>');
-
-		var vk_photo_meet_need = localize('vk_photo_meet_need');
-		var vk_photo_update = localize('vk_photo_update');
-
-		var nb = this.createNiceButton();
-		nb.b.text( vk_photo_update );
-		nb.enable();
-		nb.c.addClass('get-vk-photo-request-b');
-		var _this = this;
-		nb.b.click(function(){
-			_this.RPCLegacy('getPhotoFromVK');
-		});
-		con.append(nb.c);
-
-
-		var big_string = vk_photo_meet_need.replace('%button_name%', vk_photo_update);
-		var desc = document.createTextNode(big_string);
-		con.append(desc);
-		return con;
-
-	},
-	createSongListener: function(lig, uc){
-		var _this = this;
-
-		var li = $('<li class="song-listener"></li>').click(function() {
-
-			if (!uc.isActive('user_info') || uc.D('user_info', 'current-user') != lig.user){
-
-
-
-				uc.D('user_info', 'current-user', lig.user);
-
-
-				var c = uc.C('user_info');
-
-				_this.showBigListener(c, lig);
-				su.s.auth.regCallback('biglistener', function(){
-					_this.showBigListener(c, lig);
-				});
-
-
-				uc.showPart('user_info', function() {
-					return {
-						left: li.offset().left,
-						owidth: li.outerWidth()
-					};
-				});
-				su.trackEvent('peoples', 'view');
-			} else{
-				uc.hide();
-			}
-
-		});
-		this.createUserAvatar(lig.info, li);
-
-
-		return li;
-
-
-	},
-	createSongListeners: function(listenings, place, above_limit_value, exlude_user, users_context){
-		var _this = this;
-		var users_limit = 3;
-		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
-			if (!exlude_user || (listenings[i].user != exlude_user && listenings[i].info)){
-				place.append(this.createSongListener(listenings[i], users_context));
-			}
-		}
-		return Math.max(users_limit - listenings.length, 0);
-	},
-	create_youtube_video: function(id, transparent){
+	create_youtube_video: function(id){
 		var youtube_video = document.createElement('embed');
-		if (app_env.opera_widget){
-			youtube_video.setAttribute('wmode',"transparent");
-		} else if (app_env.opera_extension){
-			youtube_video.setAttribute('wmode',"opaque");
+		if (!app_env.chrome_like_ext){
+			if (app_env.opera_widget){
+				youtube_video.setAttribute('wmode',"transparent");
+			} else if (app_env.opera_extension){
+				youtube_video.setAttribute('wmode',"opaque");
+			}
 		}
+		
 
 		youtube_video.setAttribute('type',"application/x-shockwave-flash");
 		youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');

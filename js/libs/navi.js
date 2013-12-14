@@ -1,32 +1,45 @@
 define(['spv'], function(spv) {
 'use strict';
 
+var history_api = !!(window.history && window.history.pushState);
+var hash_start = /^\#/;
+
 var bindLocationChange = function(hashchangeHandler) {
-	if ('onhashchange' in window){
+	if (history_api){
+		
+		spv.addEvent(window, 'popstate', function(e){
+			
+			if (!e.state){
+				var newhash = decodeURI(location.hash).replace(hash_start, '');
+				if (typeof hashchangeHandler == 'function'){
+					hashchangeHandler({
+						newURL: newhash
+					});
+				}
+			} else {
+				if (typeof hashchangeHandler == 'function'){
+					hashchangeHandler({
+						newURL: e.state.uniq_url
+					});
+				}
+			}
+			//console.log(e.state);
+		});
+	} else if ('onhashchange' in window){
 		(function(){
-			var hash = location.hash.replace(/^\#/, '');
+			var hash = decodeURI(location.hash).replace(hash_start, '');
 			spv.addEvent(window, 'hashchange', function(e){
 				e = e || window.Event;
-				var newhash = location.hash.replace(/^\#/, '');
+				var newhash = decodeURI(location.hash).replace(hash_start, '');
 				if (newhash != hash){
-					var hnew = decodeURI(e.newURL || newhash);
-					var hold = decodeURI(e.oldURL || hash);
-					var have_new_hash = hnew.indexOf('#')+1;
-					var have_old_hash = hold.indexOf('#')+1;
-
-					var o = {
-						newURL: have_new_hash ? hnew.slice(have_new_hash) : '',
-						oldURL: have_old_hash ? hold.slice(have_old_hash) : ''
-					};
-
-
-					var too_fast_hash_change = o.newURL != decodeURI(newhash);
-					if (!too_fast_hash_change){
-						if (typeof hashchangeHandler == 'function'){
-							hashchangeHandler(o);
-						}
-						hash = newhash;
+					
+					if (typeof hashchangeHandler == 'function'){
+						hashchangeHandler({
+							newURL: newhash
+						});
 					}
+					hash = newhash;
+
 
 				}
 			});
@@ -34,17 +47,16 @@ var bindLocationChange = function(hashchangeHandler) {
 
 	} else{
 		(function(){
-			var hash = location.hash;
+			var hash = decodeURI(location.hash).replace(hash_start, '');
 			setInterval(function(){
-				var newhash = location.hash;
+				var newhash = decodeURI(location.hash).replace(hash_start, '');
 				if (newhash != hash){
+					
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
-							newURL: newhash.replace(/^\#/, ''),
-							oldURL: hash.replace(/^\#/, '')
+							newURL: newhash
 						});
 					}
-
 					hash = newhash;
 				}
 
@@ -55,14 +67,19 @@ var bindLocationChange = function(hashchangeHandler) {
 
 var navi;
 (function() {
+	var url_base = null;
 	var getURLBase = function(){
-		var cbase;
-		if (location.href.indexOf('#') > -1){
-			cbase = location.href.slice(0, location.href.indexOf('#'));
-		} else{
-			cbase = location.href;
+		if (url_base === null){
+			var cbase;
+			if (location.href.indexOf('#') > -1){
+				cbase = location.href.slice(0, location.href.indexOf('#'));
+			} else{
+				cbase = location.href;
+			}
+			url_base = cbase;
 		}
-		return cbase;
+		
+		return url_base;
 	};
 	var zerofy = function(str, digits){
 		str = "" + str;
@@ -74,10 +91,15 @@ var navi;
 		return str;
 	};
 	var tag_regexp = /\ ?\$...$/;
+	var history_array = [];
+	var current_histate = null;
+
 	navi = {
+		disallow_native_history: false,
 		counter: Math.round((Math.random() * parseInt('zzz', 36))),
 		states_index: {},
 		fake_current_url:'',
+
 		init: function(hashChangeRecover) {
 			this.hashChangeRecover = hashChangeRecover;
 			var _this = this;
@@ -93,6 +115,8 @@ var navi;
 			if (this.fake_current_url != url){
 				this.fake_current_url = url;
 			}
+			current_histate = this.findHistory(url);
+			//
 		},
 		getFakeURL: function(){
 			return this.fake_current_url;
@@ -123,16 +147,51 @@ var navi;
 			if ((fakeud.clear_url !=  ud.clear_url) || replace){
 				if (!this.states_index[ud.uniq_url]){
 					this.setFakeURL(ud.uniq_url);
-					this.states_index[ud.uniq_url] = {
-						date: new Date(),
+					var history_obj = {
 						url: ud.clear_url,
-						data: data
+						data: data,
+						num: 0
 					};
+					this.states_index[ud.uniq_url] = history_obj;
 					if (!replace){
-						location.assign(getURLBase() + '#' + ud.uniq_url);
-					} else{
-						location.replace(getURLBase() + '#' + ud.uniq_url);
+						history_obj.num = history_array.length;
+						history_array[history_obj.num] = history_obj;
+
+						if (!this.disallow_native_history){
+							if (history_api){
+								window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+							} else {
+								location.assign(getURLBase() + '#' + ud.uniq_url);
+							}
+						}
+
+						
+						
+						
+					} else {
+
+						var num = (current_histate && current_histate.num);
+						if (typeof num != 'number'){
+							num = history_array.length;//must be zero
+							//if (num !== 0){
+								//console.log(fakeud, ud, history_obj);
+							//}
+						}
+						history_array.length = num + 1;
+						history_array[num] = history_obj;
+
+						if (!this.disallow_native_history){
+							if (history_api){
+								window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+							} else {
+								location.replace(getURLBase() + '#' + ud.uniq_url);
+							}
+						}
+						
+						
+
 					}
+					current_histate = history_obj;
 
 				}
 			}
@@ -151,10 +210,19 @@ var navi;
 		hashchangeHandler: function(e, soft){
 			if (e.newURL != decodeURI(this.getFakeURL())){
 				this.setFakeURL(e.newURL);
-				if (e.oldURL != e.newURL){
-					this.hashChangeRecover(e, soft);
-				}
+				this.hashChangeRecover(e, soft);
 			}
+		},
+		trickyBack: function() {
+			if (current_histate){
+				this.hashChangeRecover({
+					
+				});
+				return true;
+			} else {
+				return false;
+			}
+			//можно использовать только, когда гарантированного параллельно не будет использоваться другие способы навигации (вызвать браузером кнопку назад, или ввести другой url)
 		}
 
 	};

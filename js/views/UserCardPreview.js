@@ -20,7 +20,7 @@ provoda.View.extendTo(UserCardPreview, {
 		this.dom_related_props.push('button');
 
 	},
-	'stch-mp_show': function(state) {
+	'stch-vmp_show': function(state) {
 		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){

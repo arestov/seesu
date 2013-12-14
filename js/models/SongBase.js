@@ -683,7 +683,7 @@ provoda.addPrototype("SongBase",{
 			this.submitNowPlaying();
 
 			if (!this.start_time){
-				this.start_time = ((new Date() * 1)/1000).toFixed(0);
+				this.start_time = (Date.now()/1000).toFixed(0);
 			}
 		}
 	},

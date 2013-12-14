@@ -74,6 +74,7 @@ var MfComplect = function(opts, params) {
 	this.start_file = params.file;
 	this.mo = opts.mo;
 	this.mf_cor = opts.mf_cor;
+
 	this.moplas_list = [];
 	this.source_name = params.source_name;
 
@@ -98,7 +99,11 @@ var MfComplect = function(opts, params) {
 
 	}
 
-	this.updateState('complect_name', this.source_name);
+	var search = this.mo.app.mp3_search.getSearchByName(params.source_name);
+	this.updateManyStates({
+		'dmca_url': search && search.dmca_url,
+		'complect_name': this.source_name
+	});
 	
 };
 
@@ -122,8 +127,10 @@ provoda.Model.extendTo(MfComplect, {
 						.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
 			sf.updateState('overstock', i + 1 > this.overstock_limit);
 			moplas_list.push(sf);
-			this.updateNesting('moplas_list', moplas_list);
+			
 		}
+		this.updateNesting('moplas_list', moplas_list);
+		this.updateState('list_length', moplas_list.length);
 		this.moplas_list = moplas_list;
 
 	},
@@ -151,7 +158,7 @@ provoda.Model.extendTo(MfCor, {
 	},
 	hndTrackNameCh: function(e) {
 		if (e.value){
-			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track});
+			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track}, this.current_motivator);
 			this.bindInvestgChanges();
 			this.mo.bindFilesSearchChanges();
 			if (this.last_search_opts){
@@ -225,18 +232,6 @@ provoda.Model.extendTo(MfCor, {
 		this.archivateChildrenStates('sorted_completcs', 'moplas_list', this.chldStHasFiles, 'has_files');
 
 		this.intMessages();
-
-
-		
-
-		/*
-		this.watchStates(['has_files', 'vk_audio_auth '], function(has_files, vkaa) {
-			if (has_files || vkaa){
-				_this.updateState('must_be_expandable', true);
-			}
-		});*/
-
-		
 	},
 	chldStHasFiles: function(values_array) {
 		var args = values_array;
@@ -314,7 +309,7 @@ provoda.Model.extendTo(MfCor, {
 		has_available_tracks: {
 			depends_on: ['mopla_to_use'],
 			fn: function(mopla_to_use) {
-				return !!mopla_to_use
+				return !!mopla_to_use;
 			}
 		},
 		mopla_to_use: {

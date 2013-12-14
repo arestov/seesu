@@ -9,7 +9,7 @@ ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax) {
 'use strict';
-var seesu_version = 4.0;
+var seesu_version = 4.3;
 var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
@@ -93,6 +93,12 @@ AppModel.extendTo(SeesuApp, {
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
+
+		this.lfm_auth.once("session", function() {
+			_this.setSetting('lfm-scrobbling', true);
+			//_this.auth.setScrobbling(true);
+		});
+
 		this.vk_auth = new VkAuth({
 			app_id: this.vkappid,
 			urls: {
@@ -254,6 +260,9 @@ AppModel.extendTo(SeesuApp, {
 		});
 
 	},
+	tickStat: function(data_array) {
+		window._gaq.push(data_array);
+	},
 	init: function(version){
 		this._super();
 		this.version = version;
@@ -283,9 +292,7 @@ AppModel.extendTo(SeesuApp, {
 				});
 			});
 			return function(data_array){
-				_this.nextTick(function(){
-					window._gaq.push(data_array);
-				});
+				_this.nextTick(_this.tickStat, [data_array]);
 			};
 		})();
 
@@ -404,6 +411,25 @@ AppModel.extendTo(SeesuApp, {
 			}, this.getContextOptsI())
 			.makeMainLevel();
 
+		if (app_env.tizen_app){
+			//https://developer.tizen.org/
+			spv.addEvent(window, 'tizenhwkey', function(e) {
+				if(e.keyName == "back"){
+					//tizen.application.getCurrentApplication().exit();
+					var history = window.history;
+					if (!history.state){
+						var app = window.tizen.application.getCurrentApplication();
+						app.exit();
+					} else {
+						history.back();
+					}
+					
+				}
+			});
+		}
+
+		
+
 
 
 
@@ -420,7 +446,7 @@ AppModel.extendTo(SeesuApp, {
 		};
 
 		//var ext_view;
-		if (app_env.chrome_extension){
+		if (app_env.chrome_like_ext){
 			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
 		} else if (app_env.opera_extension && window.opera_extension_button){
 			this.opera_ext_b = window.opera_extension_button;
@@ -443,6 +469,15 @@ AppModel.extendTo(SeesuApp, {
 						value = JSON.parse(value);
 					} catch(e){}
 				}
+				if (typeof value == 'string'){
+					if (value == 'true'){
+						value = true;
+					} else if (value == 'false'){
+						value = false;
+					}
+				}
+				
+
 				_this.letAppKnowSetting(cur, value);
 			}
 			var last_ver = app_serv.store('last-su-ver');
@@ -517,9 +552,6 @@ AppModel.extendTo(SeesuApp, {
 		clearTimeout(this.settings_timers[name]);
 
 		this.settings_timers[name] = setTimeout(function(){
-			if (typeof value != 'number'){
-				value = value || '';
-			}
 			app_serv.store('settings.'+ name, value, true);
 		}, 333);
 
@@ -933,20 +965,26 @@ var torrent_search;
 		mp3_search: su.mp3_search
 	}));
 
+	var allow_torrents = false || app_env.nodewebkit;
 
-	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
-			cache_ajax: cache_ajax,
-			mp3_search: su.mp3_search
-		}));
-	} else {
-		su.mp3_search.add(new torrent_searches.googleTorrentSearch({
-			crossdomain: app_env.cross_domain_allowed,
-			mp3_search: su.mp3_search,
-			cache_ajax: cache_ajax
-		}));
-		su.mp3_search.add(torrent_search);
+	if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
+		if (app_env.torrents_support) {
+			
+		} else if (app_env.cross_domain_allowed){
+			su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
+		} else {
+			su.mp3_search.add(new torrent_searches.googleTorrentSearch({
+				crossdomain: app_env.cross_domain_allowed,
+				mp3_search: su.mp3_search,
+				cache_ajax: cache_ajax
+			}));
+		}
 	}
+
+	
 
 
 

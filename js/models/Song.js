@@ -67,10 +67,10 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (e.value){
 				var artcard = this.getNesting('artist');
 				if (artcard){
-					var req = artcard.loaDDD('images');
+					/*var req = artcard.loaDDD('images');
 					if (req){
 						this.addRequest(req);
-					}
+					}*/
 					
 				} else {
 					console.warn('no nested artcard');
@@ -153,6 +153,18 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				return artist && can_expand && hna;
 			}
 		},
+		'compx-can_expand': [
+			['files_search', 'marked_as', 'mp_show'],
+			function(files_search, marked_as, mp_show) {
+				if (marked_as && files_search && files_search.search_complete){
+					return true;
+				} else if (mp_show){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		],
 
 		initOnShow: provoda.getOCF('izonshow', function() {
 			var actionsrow = new SongActionsRow(this);
@@ -162,24 +174,17 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			this.initHeavyPart();
 			return this.mf_cor;
 		},
-		hndCanExpand: function(files_search, marked_as, mp_show) {
-			if (marked_as && files_search && files_search.search_complete){
-				this.updateState('can_expand', true);
-			} else if (mp_show){
-				this.updateState('can_expand', true);
-			} else {
-				this.updateState('can_expand', false);
-			}
-		},
 		initHeavyPart: provoda.getOCF('izheavy', function() {
-			var _this = this;
 			var omo = this.omo;
 
 			this.mf_cor = new MfCor();
-			this.mf_cor.init({
-				mo: this,
-				omo: this.omo
-			}, omo.file);
+			this.useMotivator(this.mf_cor, function() {
+				this.mf_cor.init({
+					mo: this,
+					omo: this.omo
+				}, omo.file);
+			});
+			
 
 			if (omo.file){
 				this.updateState('playable', true);
@@ -197,7 +202,6 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
 
 			
-			this.watchStates(['files_search', 'marked_as', 'mp_show'], this.hndCanExpand);
 			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
 			this.on('state_change-is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);
@@ -300,7 +304,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			var
 				starttime = this.start_time,
 				last_scrobble = this.last_scrobble,
-				timestamp = ((new Date() * 1)/1000).toFixed(0),
+				timestamp = (Date.now()/1000).toFixed(0),
 				duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
 
 
@@ -348,7 +352,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 					duration: duration,
 					artist: this.artist,
 					title: this.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
+					timestamp: (Date.now()/1000).toFixed(0)
 				});
 			}
 		},200),

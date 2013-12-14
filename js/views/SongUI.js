@@ -14,7 +14,7 @@ coct.SPView.extendTo(SongUI, {
 		this.createBase();
 	},
 	state_change : {
-		"mp_show": function(opts, old_opts) {
+		"vmp_show": function(opts, old_opts) {
 			if (opts){
 			//	this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
@@ -52,8 +52,10 @@ coct.SPView.extendTo(SongUI, {
 	tpl_events: {
 		showSong: function(e) {
 			e.preventDefault();
+			this.expand();
 			this.RPCLegacy('wantSong');
 			this.RPCLegacy('requestPage');
+
 		}
 	},
 
@@ -71,9 +73,18 @@ coct.SPView.extendTo(SongUI, {
 
 		this.createTemplate();
 		this.canUseDeepWaypoints = function() {
-			return !(_this.opts && _this.opts.lite) && !!_this.state('mp_show');
+			return !(_this.opts && _this.opts.lite) && !!_this.state('vmp_show');
 		};
 
+	},
+	'collch-$ondemand-actionsrow': true,
+	'collch-$ondemand-mf_cor': function(){
+		var ancor = this.getAFreeCV('mf_cor');
+		if (ancor){
+			var context = this.requirePart('context');
+			context.prepend(ancor);
+		}
+		
 	},
 	expand: function(){
 		if (this.opts && this.opts.lite){
@@ -86,6 +97,9 @@ coct.SPView.extendTo(SongUI, {
 		}
 
 		var context = this.requirePart('context');
+		if (!context){
+			return;
+		}
 		
 
 		var nart_dom = this.root_view.getSample('artist_preview-base');
@@ -95,16 +109,10 @@ coct.SPView.extendTo(SongUI, {
 		this.parseAppendedTPLPart(context);
 		this.c.append(context);
 
-		this['collch-actionsrow'] = true;
+		//this['collch-actionsrow'] = true;
 		this.checkCollectionChange('actionsrow');
 
-		this['collch-mf_cor'] = function(){
-			var ancor = this.getAFreeCV('mf_cor');
-			if (ancor){
-				context.prepend(ancor);
-			}
-			
-		};
+		//this['collch-mf_cor'] = ;
 		this.checkCollectionChange('mf_cor');
 		
 

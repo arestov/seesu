@@ -9,14 +9,17 @@ var app_env = app_serv.app_env;
 
 
 	var sm2opts = {};
-	if (app_env.opera_extension){
-		sm2opts.wmode = 'opaque';
-		sm2opts.useHighPerformance = false;
-	} else {
-		if (app_env.opera_widget){
-			sm2opts.wmode = 'transparent';
+	if (!app_env.chrome_like_ext){
+		if (app_env.opera_extension){
+			sm2opts.wmode = 'opaque';
+			sm2opts.useHighPerformance = false;
+		} else {
+			if (app_env.opera_widget){
+				sm2opts.wmode = 'transparent';
+			}
 		}
 	}
+	
 
 	var done;
 	var useLib = function(cb){
@@ -304,7 +307,7 @@ var app_env = app_serv.app_env;
 					
 				},
 				function(){
-					if (flash_plgs.length && app_env.iframe_support){
+					if (flash_plgs.length && app_env.iframe_support && !app_env.tizen_app){
 						features_storage.canLoad('sm2-proxy');
 					} else {
 						features_storage.setAsInaccessible('sm2-proxy');

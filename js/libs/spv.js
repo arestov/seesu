@@ -65,9 +65,15 @@ function(elem, evType, fn){
 };
 removeEvent = spv.removeEvent = window.addEventListener ?
 function(elem, evType, fn){
+	if (!elem.removeEventListener){
+		return;
+	}
 	elem.removeEventListener(evType, fn, false);
 }:
 function(elem, evType, fn){
+	if (!elem.detachEvent){
+		return;
+	}
 	elem.detachEvent('on' + evType, fn);
 };
 getDefaultView = spv.getDefaultView = function(d) {
@@ -269,7 +275,7 @@ getStringPattern = function (str) {
 spv.getStringPattern = getStringPattern;
 
 ttime = function(f){
-	var d = +new Date();
+	var d = Date.now();
 
 	if (f){
 		f();
@@ -500,6 +506,9 @@ cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 	var prop;
 	if (black_list || white_list){
 		for(prop in donor){
+			if (!donor.hasOwnProperty(prop)){
+				continue;
+			}
 			if (!white_list || !!~white_list.indexOf(prop)){
 				if (!black_list || !~black_list.indexOf(prop)){
 					_no[prop] = donor[prop];
@@ -508,6 +517,9 @@ cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 		}
 	} else {
 		for(prop in donor){
+			if (!donor.hasOwnProperty(prop)){
+				continue;
+			}
 			_no[prop] = donor[prop];
 		}
 	}
@@ -639,7 +651,7 @@ separateNum = function(num){
 		namedClass.prototype.constructor = namedClass;
 
 		if (namedClass.prototype.onExtend){
-			namedClass.prototype.onExtend.call(namedClass.prototype);
+			namedClass.prototype.onExtend.call(namedClass.prototype, prop);
 		}
 
 		// And make this class extendable
@@ -814,5 +826,16 @@ spv.throttle = throttle;
 spv.debounce = debounce;
 spv.filter = $filter;
 
+
+
+spv.zerofyString = function(string, length) {
+	if (typeof string != 'string'){
+		string = '' + string;
+	}
+	while (string.length < length){
+		string = '0' + string;
+	}
+	return string;
+};
 })();
 define(function(){return spv;});

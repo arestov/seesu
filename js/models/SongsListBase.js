@@ -2,6 +2,9 @@ define(['provoda', 'spv'], function(provoda, spv){
 	"use strict";
 	provoda.addPrototype("SongsListBase", {
 		model_name: "playlist",
+		tickListChanges: function(last_usable_song) {
+			this.onChanges(last_usable_song);
+		},
 		init: function(opts){
 			this._super(opts);
 			
@@ -15,12 +18,12 @@ define(['provoda', 'spv'], function(provoda, spv){
 		
 			this.on('child_change-' + this.main_list_name, function(e) {
 				if (!e.skip_report){
-					this.onChanges(e.last_usable_song);
+					
+					
 					this.markTracksForFilesPrefinding();
-
-					setTimeout(function() {
-						_this.makePlayable();
-					},300);
+					this.makePlayable();
+					this.nextTick(this.tickListChanges, [e.last_usable_song]);
+					
 				}
 			});
 			this.watchChildrenStates(this.main_list_name, 'want_to_play', function(e) {
@@ -277,9 +280,18 @@ define(['provoda', 'spv'], function(provoda, spv){
 		},
 		getNeighbours: function(mo, neitypes){
 			var obj = {},i;
+			if (neitypes){
+				for (var song_type in neitypes){
+					if (neitypes[song_type]){
+						obj[song_type] = null;
+					}
+				}
+			}
 			var c_num = this[this.main_list_name].indexOf(mo);
 
 			if (!neitypes || neitypes.prev_song){
+				//ищем пред. композицию если нет ограничений 
+				//или ограничения не касаются пред. композиции
 				for (i = c_num - 1; i >= 0; i--) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.prev_song = this[this.main_list_name][i];
@@ -289,6 +301,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 
 			if (!neitypes || neitypes.next_song){
+				//ищем след. композицию если нет ограничений 
+				//или ограничения не касаются след. композиции
 				for (i = c_num + 1; i < this[this.main_list_name].length; i++) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.next_song = obj.next_preload_song = this[this.main_list_name][i];
@@ -297,6 +311,10 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			}
 			if ((!neitypes || neitypes.next_preload_song) && !obj.next_preload_song){
+				//ищем композицю для предзагрузки если нет ограничений
+				//или ограничения не касаются композиции для предзагрузки
+
+				//и при этого такая композиция ещё не была найдена
 				for (i = 0; i < c_num; i++) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.next_preload_song = this[this.main_list_name][i];

@@ -4,14 +4,28 @@ define(['./FuncsStack'], function(FuncsStack) {
 	var QueueFunc = function(queue, atom){
 		this.q = queue;
 		this.atom = atom;
+		this.aborted = null;
 	};
 	QueueFunc.prototype = {
 		constructor: QueueFunc,
 		abort: function(){
+			if (this.aborted){
+				return;
+			}
 			this.aborted = true;
+			if (!this.atom.complete){
+				this.atom.abort();
+			}
+			
+			this.q = null;
+			this.atom = null;
+			this.pr = null;
 		},
 		setPrio: function(){
-			this.pr = this.q.getTopPrio() + 1;
+			if (this.q){
+				this.pr = this.q.getTopPrio() + 1;
+			}
+			
 		},
 		removePr: function() {
 			this.pr = null;
@@ -68,6 +82,9 @@ define(['./FuncsStack'], function(FuncsStack) {
 		removePrioMarks: function() {
 			var queue = this.fstack.getArr();
 			for (var i = 0; i < queue.length; i++) {
+				if (queue[i].aborted){
+					continue;
+				}
 				queue[i].qf.removePr();
 			}
 			this.valid_sort = false;
@@ -76,6 +93,9 @@ define(['./FuncsStack'], function(FuncsStack) {
 			var nums = [];
 			var queue = this.fstack.getArr();
 			for (var i = 0; i < queue.length; i++) {
+				if (queue[i].aborted){
+					continue;
+				}
 				var cur = queue[i].qf.pr;
 				if (typeof cur == 'number'){
 					nums.push(cur);
@@ -107,7 +127,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 				bigdelay_turn = (!this.nobigdelay && last_num > 1  && (last_num  % this.big_delay_interval === 0));
 			
 			if (bigdelay_turn){
-				var real_bdinterval = (new Date()).getTime() - this.using_stat[last_num - (this.big_delay_interval + 1)];
+				var real_bdinterval = Date.now() - this.using_stat[last_num - (this.big_delay_interval + 1)];
 				var _unit = (this.small_delay * this.big_delay_interval + this.big_delay);
 				if (real_bdinterval && real_bdinterval > _unit){
 					time = Math.max(0, this.big_delay - (real_bdinterval - _unit));
@@ -119,7 +139,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 				if (!last_usage){
 					time = 0;
 				} else{
-					var time_difference = (new Date()).getTime() - last_usage;
+					var time_difference = Date.now() - last_usage;
 					var interval_diff = this.small_delay  - time_difference;
 					if (interval_diff > 0){
 						time = interval_diff;
@@ -141,10 +161,11 @@ define(['./FuncsStack'], function(FuncsStack) {
 			not_init = not_init || my_queue.length !== 0;
 
 			this.fstack.next(function(){
+				this.complete = true;
 				var atom = this;
 				func();
-				_this.using_stat.push((new Date()).getTime());
-				this.complete = true;
+				_this.using_stat.push(Date.now());
+				
 				atom.done(my_queue);
 			});
 
@@ -184,7 +205,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 
 			for (i = 0; i < q.length; i++) {
 				atom = q[i];
-				if (!atom.complete && !atom.qf.aborted){
+				if (!atom.complete && !atom.aborted){
 					clean_quene.push(atom);
 				}
 			}

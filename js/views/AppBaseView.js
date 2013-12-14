@@ -1,10 +1,12 @@
-define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv'], function(provoda, spv, $, filters, app_serv){
+define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate'], function(provoda, spv, $, filters, app_serv, PvTemplate){
 "use strict";
-var transform_props = ['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
+var transform_props = [app_serv.app_env.transform];
+//['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
 var empty_transform_props = {};
 transform_props.forEach(function(el) {
 	empty_transform_props[el] = '';
 });
+var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
 
 
 provoda.setTplFilterGetFn(function(filter_name) {
@@ -21,10 +23,42 @@ var viewOnLevelP = function(md, view) {
 	return lev_conj.material;
 };
 
+
+var LevContainer = function(con, scroll_con, material, tpl, context) {
+	this.c = con;
+	this.scroll_con = scroll_con;
+	this.material = material;
+	this.tpl = tpl;
+	this.context = context;
+	this.callbacks = [];
+	var _this = this;
+	if (can_animate){
+		spv.addEvent(this.c[0], can_animate, function(e) {
+			//console.log(e);
+			_this.completeAnimation();
+		});
+	}
+};
+
+LevContainer.prototype = {
+	onTransitionEnd: function(cb) {
+		this.callbacks.push(cb);
+	},
+	completeAnimation: function() {
+		while (this.callbacks.length){
+			var cb = this.callbacks.shift();
+			this.context.nextTick(cb);
+		}
+	}
+};
+
+
+
 var AppBaseView = function() {};
 AppBaseView.viewOnLevelP = viewOnLevelP;
 provoda.View.extendTo(AppBaseView, {
 	dom_rp: true,
+	location_name: 'root_view',
 	createDetails: function() {
 		this.root_view = this;
 		this.d = this.opts.d;
@@ -51,8 +85,8 @@ provoda.View.extendTo(AppBaseView, {
 				throw new Error('start_screen must exist');
 			}
 			var node = this.getSample('complex-page');
-			var tpl = this.buildTemplate();
-			tpl.init({
+
+			var tpl = new this.PvTemplate({
 				node: node,
 				spec_states: {
 					'$lev_num': num
@@ -61,13 +95,14 @@ provoda.View.extendTo(AppBaseView, {
 
 			this.tpls.push(tpl);
 			tpl.setStates(this.states);
-
-			return this.lev_containers[num] = {
-				c: node.appendTo(this.els.screens),
-				scroll_con: tpl.ancs['scroll_con'],
-				material: tpl.ancs['material'],
-				tpl: tpl
-			};
+			var lev_con = new LevContainer
+					(node.appendTo(this.els.app_map_con),
+					tpl.ancs['scroll_con'],
+					tpl.ancs['material'],
+					tpl,
+					this);
+			this.lev_containers[num] = lev_con;
+			return lev_con;
 		}
 	},
 	manual_states_connect: true,
@@ -176,21 +211,37 @@ provoda.View.extendTo(AppBaseView, {
 		}
 	},
 	getSample: function(name) {
-		var sample_node = this.samples[name];
-		if (!sample_node){
-			sample_node = this.samples[name] = this.els.ui_samples.children('.' + name);
+		var sampler = this.samples[name], sample_node;
+
+		//
+		if (!sampler){
+			sample_node = this.els.ui_samples.children('.' + name);
+			sample_node = sample_node[0];
+			if (sample_node){
+				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+			}
+			
 		}
-		if (!sample_node[0]){
-			sample_node = this.samples[name] = this.requirePart(name);
+		if (!sampler){
+			sample_node = $(this.requirePart(name));
+			sample_node = sample_node[0];
+			if (sample_node){
+				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+			}
+			
 		}
-		if (!sample_node[0]){
+		if (!sampler){
 			throw new Error('no such sample');
 		}
-		return $(sample_node).clone();
+		if (sampler.getClone){
+			return $(sampler.getClone());
+		} else {
+			return $(sampler).clone();
+		}
 	},
 	animationMark: function(models, prop, anid) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].getMD().updateState(prop, anid);
+			models[i].getMD().mpx.updateState(prop, anid);
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
@@ -217,7 +268,88 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		return target_in_parent;
 	},
-	animateMapSlice: function(transaction_data) {
+	getNavOHeight: function() {
+		return this.els.navs.outerHeight();
+	},
+	getAMCWidth: function() {
+		return this.els.app_map_con.width();
+	},
+	getAMCOffset: function() {
+		return this.els.app_map_con.offset();
+	},
+	readMapSliceAnimationData: function(transaction_data) {
+		if (transaction_data && transaction_data.target){
+			var target_md = transaction_data.target.getMD();
+			var current_lev_num = target_md.map_level_num;
+			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in" && transaction_data.array[0].changes.length < 3;
+			var lc;
+			if (can_animate && current_lev_num != -1 && one_zoom_in){
+				var target_in_parent = this.getMapSliceChildInParenView(target_md);
+				if (target_in_parent){
+					var targt_con = target_in_parent.getC();
+
+					//var offset_parent_node = targt_con.offsetParent();
+					var parent_offset = this.getBoxDemension(this.getAMCOffset, 'screens_offset');
+					//или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
+					var offset = targt_con.offset(); //domread
+
+					var top = offset.top - parent_offset.top;
+					var width = targt_con.outerWidth();  //domread
+					var height = targt_con.outerHeight(); //domread
+
+
+					//return ;
+
+					var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
+					var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('window_width'));
+
+
+					var scale_x = width/con_width;
+					var scale_y = height/con_height;
+					var min_scale = Math.min(scale_x, scale_y);
+
+
+					var shift_x = width/2 - min_scale * con_width/2;
+					var shift_y = height/2 - min_scale * con_height/2;
+
+
+					lc = this.getLevelContainer(current_lev_num);
+
+
+					var transform_values = {};
+					var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
+					transform_props.forEach(function(el) {
+						transform_values[el] = value;
+					});
+
+					return {
+						lc: lc,
+						transform_values: transform_values
+					};
+				}
+			}
+		}
+	},
+	'model-mapch': {
+		'move-view': function(change) {
+			var parent = change.target.getMD().getParentMapModel();
+			if (parent){
+			//	parent.updateState('mp_has_focus', false);
+			}
+			//mpx.updateState(prop, anid);
+
+			change.target.getMD().mpx.updateState('vmp_show', change.value);
+		},
+		'zoom-out': function(change) {
+			change.target.getMD().mpx.updateState('vmp_show', false);
+		},
+		'destroy': function(change) {
+			var md = change.target.getMD();
+		//	md.mlmDie();
+			md.mpx.updateState('vmp_show', false);
+		}
+	},
+	animateMapSlice: function(transaction_data, animation_data) {
 		var all_changhes = spv.filter(transaction_data.array, 'changes');
 			all_changhes = [].concat.apply([], all_changhes);
 		var models = spv.filter(all_changhes, 'target');
@@ -231,81 +363,71 @@ provoda.View.extendTo(AppBaseView, {
 			if (cur.type == 'destroy'){
 				this.removeChildViewsByMd(target.mpx);
 			}
-
 		}
+
+		for (i = 0; i < all_changhes.length; i++) {
+			var change = all_changhes[i];
+		//	change.anid = changes.anid;
+			var handler = this['model-mapch'][change.type];
+			if (handler){
+				handler.call(this, change);
+			}
+		}
+
 		if (transaction_data.target){
 			var target_md = transaction_data.target.getMD();
 			var current_lev_num = target_md.map_level_num;
-			var lc;
 			
-			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
-			if (app_serv.app_env.transform && current_lev_num != -1 && one_zoom_in){
-				
-				//найти view внутри предыдущего target
-				//прочитать позицию, высоту (может не надо), ширину
-				var target_in_parent = this.getMapSliceChildInParenView(target_md);
-				if (target_in_parent){
-					var targt_con = target_in_parent.getC();
-
-					//var offset_parent_node = targt_con.offsetParent();
-					var parent_offset = this.els.screens.offset();//offset_parent_node.offset(); //domread, can_be_cached
-					var offset = targt_con.offset(); //domread
-
-					var top = offset.top- parent_offset.top;
-					var width = targt_con.outerWidth();  //domread
-					var height = targt_con.outerHeight(); //domread
-
-					//var con_height = this.els.screens.height();
-					var con_height = window.innerHeight - this.els.navs.height(); //domread, can_be_cached
-					var con_width = this.els.screens.width(); //domread, can_be_cached
-
-
-					var scale_x = width/con_width;
-					var scale_y = height/con_height;
-					var min_scale = Math.min(scale_x, scale_y);
-
-
-					var shift_x = width/2 - min_scale * con_width/2;
-					var shift_y = height/2 - min_scale * con_height/2;
-
-
-					lc = this.getLevelContainer(current_lev_num);
-					this.updateState('disallow_animation', true);
-
-					var transform_values = {};
-					var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
-					transform_props.forEach(function(el) {
-						transform_values[el] = value;
-					});
-
-					lc.c.css(transform_values);
-					//lc.tpl.spec_states['disallow_animation'] = true;
-
-
-
-					//lc.tpl.spec_states['disallow_animation'] = false;
-
-					this.updateState('disallow_animation', false);
-				}
-				
+			if (animation_data){
+				this.updateState('disallow_animation', true);
+				animation_data.lc.c.css(animation_data.transform_values);
+				//lc.tpl.spec_states['disallow_animation'] = true;
+				//lc.tpl.spec_states['disallow_animation'] = false;
+				this.updateState('disallow_animation', false);
 			}
 
 			this.updateState('current_lev_num', current_lev_num);
+			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 
 
-			if (lc){
-				this.nextTick(function() {
-					lc.c.css(empty_transform_props);
-				});
+			if (animation_data && animation_data.lc){
+				animation_data.lc.c.height(); //заставляем всё пересчитать
+				animation_data.lc.c.css(empty_transform_props);
+				/*this.nextTick(function() {
+					
+				});*/
+				animation_data.lc.c.height(); //заставляем всё пересчитать
 				
 			}
 
-			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
-
-			this.nextTick(function() {
+		}
+		if (!animation_data){
+			//
+			this.animationMark(models, 'animation_completed', transaction_data.anid);
+			/*this.nextTick(function() {
+				
+			});*/
+		} else {
+			animation_data.lc.onTransitionEnd(function() {
 				this.animationMark(models, 'animation_completed', transaction_data.anid);
 			});
+
 		}
+
+		
+	},
+	'collch-$spec_common': {
+		place: AppBaseView.viewOnLevelP
+	},
+	'coll-prio-map_slice': function(array) {
+	
+		/*for (var i = 0; i < array.length; i++) {
+			if (array[i].mpx.states.mp_has_focus){
+				return [[array[i]]];
+			}
+		}*/
+		return array;
+
 	},
 	'collch-map_slice': function(nesname, nesting_data){
 		var array = nesting_data.items;
@@ -313,20 +435,39 @@ provoda.View.extendTo(AppBaseView, {
 		array = this.getRendOrderedNesting(nesname, array) || array;
 		var i, cur;
 
-		for (i = 0; i < array.length; i++) {
+
+		var animation_data = this.readMapSliceAnimationData(transaction_data);
+
+
+		for (i = array.length - 1; i >= 0; i--) {
 			cur = array[i];
 			var model_name = cur.model_name;
-			if (this['spec-collch-' + model_name]){
-				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
+			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], model_name, cur);
 			} else {
-				this.callCollectionChangeDeclaration({
-					place: AppBaseView.viewOnLevelP
-				}, model_name, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], model_name, cur);
 			}
 		}
 
 		if (transaction_data){
-			this.animateMapSlice(transaction_data);
+			this.animateMapSlice(transaction_data, animation_data);
+			if (!transaction_data.target){
+				var target_md;
+				for (i = 0; i < array.length; i++) {
+					if (array[i].mpx.states.mp_has_focus) {
+						target_md = array[i];
+						break;
+					}
+					
+				}
+				if (!target_md){
+					throw new Error('there is no model with focus!');
+				}
+				
+				this.updateState('current_lev_num', target_md.map_level_num);
+				console.log('alternative focus way');
+			}
+			
 		}
 
 
@@ -394,6 +535,10 @@ provoda.View.extendTo(AppBaseView, {
 
 		var _this = this;
 		setTimeout(function() {
+			if (!_this.isAlive()){
+				_this = null;
+				return;
+			}
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
 				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);

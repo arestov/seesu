@@ -196,7 +196,7 @@ define({
 		"ru": "Последнюю неделю город"
 	},
 	"reg":{
-		"original": "regisration",
+		"original": "registration",
 		"ru": "регистрация"
 	},
 	"listening": {
@@ -356,7 +356,7 @@ define({
 	},
 	"lastfm-tagging-access": {
 		"original": "To add tags to song",
-		"ru": "Чтобы присвоить композиции тэги"
+		"ru": "Чтобы присвоить композиции теги"
 	},
 	"lastfm-scrobble-access": {
 		"original": "To scrobble to last.fm",
@@ -481,7 +481,7 @@ define({
 	},
 	"in-tags": {
 		"original": "in tags",
-		"ru": "в тэгах"
+		"ru": "в тегах"
 	},
 	"in-albums": {
 		"original": "in albums",
@@ -683,7 +683,7 @@ define({
 
 	"Similar to «%artist%» artists":{
 		"original": "Similar to «%artist%» artists",
-		"ru": "Аристы похожие на «%artist%»"
+		"ru": "Артисты похожие на «%artist%»"
 	},
 	"Fresh songs":{
 		"original": "Fresh songs",
@@ -725,8 +725,46 @@ define({
 		"original": "«My audio»",
 		"ru": "«Мои аудиозаписи»"
 	},
-
-
+	"Top fans":{
+		"original": "Top fans",
+		"ru": "Большие фанаты"
+	},
+	"lastfm_fans":{
+		"original": "Last.fm \n song fans",
+		"ru": "Фанаты \n на last.fm"
+	},
+	"enabled":{
+		"original": "enabled",
+		"ru": "включить"
+	},
+	"disabled":{
+		"original": "disabled",
+		"ru": "отключить"
+	},
+	"lfm_scrobbling":{
+		"original": "scrobbling to last.fm",
+		"ru": "last.fm скроблинг"
+	},
+	"your_tags":{
+		"original": "Your tags",
+		"ru": "Твои теги"
+	},
+	"top_track_tags":{
+		"original": "Top tags of track",
+		"ru": "Теги композиции"
+	},
+	"artist_tags":{
+		"original": "Artist tags",
+		"ru": "Теги артиста"
+	},
+	"dmca_notice":{
+		"original": "Seesu follows terms of service of each api it uses. Seesu does not store any content. Each service follows DMCA. Feel free to report abuse.",
+		"ru": "Сису соблюдает условия использования каждого сервиса, которого она использует и не хранит какого-либо контента. Каждый сервис соблюдает DMCA. Вы имеете возможность направить им жалобы на нарушения копирайта."
+	},
+	"report-abuse":{
+		"original": "report abuse",
+		"ru": "пожаловаться"
+	},
 	"":{
 		"original": "",
 		"ru": ""

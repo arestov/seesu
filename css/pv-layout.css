@@ -35,7 +35,7 @@
 
 	}
 @media (min-width:760px) {
-	.screens{
+	.app_map_con{
 		padding-right: 240px;
 		-moz-box-sizing:border-box;
 		box-sizing: border-box;
@@ -106,4 +106,10 @@
 		-moz-transition: left 0.12s ease-out, -moz-transform 0.12s ease-out;
 		-o-transition: left 0.12s ease-out, -o-transform 0.12s ease-out;
 		transition: left 0.12s ease-out, transform 0.12s ease-out;
+
+
+		/*-webkit-transition: left 2s ease-out, -webkit-transform 2s ease-out;
+		-moz-transition: left 2s ease-out, -moz-transform 2s ease-out;
+		-o-transition: left 2s ease-out, -o-transform 2s ease-out;
+		transition: left 2s ease-out, transform 2s ease-out;*/
 		}

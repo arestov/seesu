@@ -65,6 +65,7 @@ ScMusicSearch.prototype = {
 	description:'soundcloud.com',
 	slave: false,
 	s: {name: 'soundcloud', key: 0, type:'mp3'},
+	dmca_url: 'http://soundcloud.com/pages/dmca_policy',
 	preferred: null,
 	makeSongFile: function(item) {
 		return this.makeSong(item);

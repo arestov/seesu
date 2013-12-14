@@ -836,7 +836,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	getSPI: function(name, init) {
 		var instance;
 
-		if (this.sub_pages[name]){
+		if (this.sub_pages && this.sub_pages[name]){
 			instance = this.sub_pages[name];
 
 		}
@@ -891,7 +891,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		this.on('vip_state_change-mp_show', function(e) {
+		this.wch(this, 'mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					var cur = lists_list[i];

@@ -6,8 +6,8 @@ var app_serv = {};
 (function(){
 
 function isFileReady ( readyState ) {
-    // Check to see if any of the ways a file can be ready are available as properties on the file's element
-    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
+	// Check to see if any of the ways a file can be ready are available as properties on the file's element
+	return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
 }
 
 var p = document.getElementsByTagName('script');
@@ -64,7 +64,9 @@ var addImageLoadCallback = function(url, cb) {
 	images_callbacks[url].push(cb);
 };
 var removeImageLoadCallback = function(url, cb) {
-
+	if (images_callbacks[url]){
+		images_callbacks[url] = spv.arrayExclude(images_callbacks[url], cb);
+	}
 };
 
 var triggerImagesCallback = function(url) {
@@ -81,23 +83,39 @@ var loadImage = function(opts) {
 		throw new Error('cache_allowed must be true or false');
 	}
 	//queue
-	var done;
+	var stop = '';
+
+	var done, accomplished, url = opts.url;
 	var node = opts.node || new Image();
 	var deferred = $.Deferred();
 
 	var async_obj = deferred.promise({
 		abort: function() {
-			delete node.src;
+			if (node){
+				node.src = null;
+			}
+			
 			if (this.queued){
 				this.queued.abort();
 			}
 			unbindEvents();
+
+			node = null;
+			opts = null;
+			stop = 'abort';
 		}
 	});
+	var imageLoadCallback = function(){
+		accomplishLoad();
+	};
 
 	var unbindEvents = function() {
-		spv.removeEvent(node, "load", loadCb);
-		spv.removeEvent(node, "error", errorCb);
+		if (node) {
+			spv.removeEvent(node, "load", loadCb);
+			spv.removeEvent(node, "error", errorCb);
+		}
+
+		removeImageLoadCallback(url, imageLoadCallback);
 	};
 	var loadCb = function(e) {
 		if (done){
@@ -115,10 +133,18 @@ var loadImage = function(opts) {
 		if (e && e.type == 'load'){
 			triggerImagesCallback(opts.url);
 		}
+
+		node = null;
+		opts = null;
+		stop = 'loaded';
 	};
 	var errorCb = function() {
 		deferred.reject(node);
 		unbindEvents();
+
+		node = null;
+		opts = null;
+		stop = 'error';
 	};
 
 	spv.addEvent(node, "load", loadCb);
@@ -126,6 +152,10 @@ var loadImage = function(opts) {
 
 
 	var accomplishLoad = function() {
+		if (accomplished){
+			return;
+		}
+		accomplished = true;
 		
 		node.src = opts.url;
 		if (node.complete){
@@ -138,15 +168,19 @@ var loadImage = function(opts) {
 				async_obj.timeout_num = setTimeout(function() {
 					deferred.reject(node, 'timeout');
 					unbindEvents();
+
+					node = null;
+					opts = null;
+
+					stop = 'timeout';
 				}, opts.timeout);
 			}
 		}
 	};
 	if (opts.queue && !loaded_images[opts.url]){
+		addImageLoadCallback(opts.url, imageLoadCallback);
 		async_obj.queued = opts.queue.add(accomplishLoad);
-		addImageLoadCallback(opts.url, function(){
-			accomplishLoad();
-		});
+		
 	} else {
 		accomplishLoad();
 	}
@@ -201,9 +235,9 @@ var toggleClass = function(old_c, toggle_class){
 		return removeClass(old_c, toggle_class);
 	}
 };
-var NodeClassStates = function(node){
+var NodeClassStates = function(node, init_state){
 	this.node = node;
-	this.html_el_state = node.className || '';
+	this.html_el_state = init_state || node.className || '';
 
 };
 NodeClassStates.prototype = {
@@ -218,6 +252,9 @@ NodeClassStates.prototype = {
 	},
 	applyStates: function(){
 		this.node.className = this.html_el_state;
+	},
+	getFullState: function() {
+		return this.html_el_state;
 	}
 };
 
@@ -280,20 +317,55 @@ var app_env = (function(wd){
 	env.xhr2 = !!xhr2_support;
 
 	
-	
-	var has_transform_prop;
 	var dom_style_obj = wd.document.body.style;
+	var has_transform_prop;
+	var has_transition_prop;
+	
+
+	var transition_props = {
+		//https://github.com/ai/transition-events/blob/master/lib/transition-events.js
+		// Webkit must be on bottom, because Opera try to use webkit
+		// prefix.
+		'transition':		'transitionend',
+		'OTransition':		'oTransitionEnd',
+		'WebkitTransition':	'webkitTransitionEnd',
+		'MozTransition':	'transitionend'
+	};
+	
+
+	for ( var prop in transition_props ) {
+		if (prop in dom_style_obj){
+			has_transition_prop = transition_props[prop];
+			break;
+		}
+	}
+
 	['transform', '-o-transform', '-webkit-transform', '-moz-transform'].forEach(function(el) {
 		if (!has_transform_prop && el in dom_style_obj){
 			has_transform_prop = el;
 		}
 	});
+
+	if (has_transition_prop){
+		env.transition = has_transition_prop;
+	}
+
 	if (has_transform_prop){
 		env.transform = has_transform_prop;
 	}
-	
-
-
+	if (typeof process == 'object' && window.process.nextTick && typeof navigator == 'object'){
+		env.app_type = 'nodewebkit';
+		env.as_application = false;
+		env.deep_sanbdox = true;
+		env.needs_url_history = true;
+		env.torrents_support = true;
+		env.cross_domain_allowed = true;
+	} else if (window.tizen){
+		env.app_type = 'tizen_app';
+		env.as_application = false;
+		env.deep_sanbdox = true;
+		env.needs_url_history = true;
+	} else
 	if (typeof widget == 'object' && !window.widget.fake_widget){
 		if (bro.browser == 'opera'){
 			if (window.opera.extension){
@@ -310,6 +382,7 @@ var app_env = (function(wd){
 		env.as_application = true;
 	} else
 	if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
+		
 		var opera = navigator.userAgent.indexOf('OPR') != -1;
 		if (wd.location.pathname == '/index.html'){
 			env.app_type = opera ? 'opera_app' : 'chrome_app';
@@ -317,6 +390,7 @@ var app_env = (function(wd){
 			env.needs_url_history = true;
 			env.need_favicon = true;
 		} else{
+			env.chrome_like_ext = true;
 			env.app_type = opera ? 'opera_extension' : 'chrome_extension';
 			env.as_application = true;
 		}
@@ -386,7 +460,15 @@ var app_env = (function(wd){
 	} else{
 		dstates.addState('not-as-application');
 	}
-	if (!env.unknown_app_type){dstates.addState(env.app_type.replace('_','-'));}
+	if (!env.unknown_app_type){
+		if (env.chrome_like_ext){
+			dstates.addState('chrome-extension');
+		} else {
+			dstates.addState(env.app_type.replace('_','-'));
+		}
+		
+
+	}
 	if (env.cross_domain_allowed) {dstates.addState('cross-domain-allowed');}
 	
 	if (env.transform){
@@ -576,7 +658,8 @@ app_serv.handleDocument = function(d, tracking_opts) {
 	};
 
 	spv.domReady(d, function() {
-		dstates.applyStates();
+		var current_dst = new NodeClassStates(d.documentElement, dstates.getFullState());
+		current_dst.applyStates();
 	});
 	
 
@@ -586,9 +669,13 @@ app_serv.handleDocument = function(d, tracking_opts) {
 		}
 
 		var emptyNode = function(node) {
-			while (node.firstChild){
-				node.removeChild( node.firstChild );
+			var length = node && node.childNodes.length;
+			for (var i = length - 1; i >= 0; i--) {
+				node.removeChild( node.childNodes[i] );
 			}
+			/*while (node.firstChild){
+				node.removeChild( node.firstChild );
+			}*/
 			return node;
 		};
 
@@ -603,8 +690,9 @@ app_serv.handleDocument = function(d, tracking_opts) {
 				var cl = classes[i];
 				if (cl.match(/localize/)){
 					var term = localizer[cl.replace('localize-','')];
-					if (term && term[lang]){
-						translatable.push([el, term[lang]]);
+					var string = term && (term[lang] || term['original']);
+					if (string){
+						translatable.push([el, string]);
 						//$(el).text();
 						break;
 					}
@@ -621,7 +709,7 @@ app_serv.handleDocument = function(d, tracking_opts) {
 			
 		}
 	});
-	require(['jquery'], function($) {
+	requirejs(['jquery'], function($) {
 		spv.domReady(d, function() {
 			replaceComplexSVGImages(d, $);
 		});
@@ -969,9 +1057,14 @@ app_serv.localize = localize;
 		}
 		 
 		//console.log(structure);
+		var file_url = structure.file;
+
+		if (app_env.utorrent_app){
+			file_url = 'http://seesu.me/apps_resources/v4.2/' + file_url;
+		}
 
 		$.ajax({
-			url: structure.file,
+			url: file_url,
 			dataType: 'xml'
 		}).done(function(r){
 			//$(r).find('#states-switcher')

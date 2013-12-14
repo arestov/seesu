@@ -52,7 +52,7 @@ function(provoda, $, SongUI, etc_views) {
 			}
 		},
 		'coll-prio-songs-list': function(array) {
-			var viewing = [], prev_next = [], play = [], others = [];
+			var viewing = [], prev_next = [], play = [];//, others = [];
 			for (var i = array.length - 1; i >= 0; i--) {
 				var cur = array[i];
 				//.mpx
@@ -63,9 +63,9 @@ function(provoda, $, SongUI, etc_views) {
 					prev_next.push(cur);
 				} else if (states.player_song){
 					play.push(cur);
-				} else {
-					others.push(cur);
-				}
+				} /*else {
+				//	others.push(cur);
+				}*/
 			}
 			var result = [];
 			if (viewing.length){
@@ -77,14 +77,14 @@ function(provoda, $, SongUI, etc_views) {
 			if (play.length){
 				result.push(play);
 			}
-			if (others.length){
+			/*if (others.length){
 				result.push(others);
-			}
+			}*/
 			return result;
 			/*
 			player_song
 			marked_as
-			mp_show*/
+			vmp_show*/
 			
 		}
 

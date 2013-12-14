@@ -49,7 +49,7 @@ provoda.View.extendTo(ArtistListView, {
 		this.addWayPoint(this.generate_button);
 	},
 
-	'stch-mp_show': function(opts) {
+	'stch-vmp_show': function(opts) {
 		this.c.toggleClass('hidden', !opts);
 	},
 	'stch-list_loading': function(state){
