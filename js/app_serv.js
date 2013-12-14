@@ -703,7 +703,7 @@ app_serv.handleDocument = function(d, tracking_opts) {
 			
 		}
 	});
-	require(['jquery'], function($) {
+	requirejs(['jquery'], function($) {
 		spv.domReady(d, function() {
 			replaceComplexSVGImages(d, $);
 		});

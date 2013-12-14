@@ -51,7 +51,7 @@ big_timer = {
 	//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
 	var need_ui = (!cbp || cbp != window) && (!opera || !opera.contexts);
 	if (need_ui){
-		require(['spv', 'app_serv'], function(spv, app_serv) {
+		requirejs(['spv', 'app_serv'], function(spv, app_serv) {
 			app_serv.handleDocument(window.document);
 		});
 	}
@@ -70,13 +70,13 @@ big_timer = {
 			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
 	}
-	require(['su'], function() {
+	requirejs(['su'], function() {
 		
 		//app thread;
 	});
 	if (need_ui){
 		//ui thread;
-		require(['su', 'js/views/AppView', 'angbo'], function(su, AppView, angbo) {
+		requirejs(['su', 'js/views/AppView', 'angbo'], function(su, AppView, angbo) {
 			var can_die = false;
 			var md = su;
 			var view = new AppView();

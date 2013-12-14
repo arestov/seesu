@@ -1,0 +1,7 @@
+{
+  "name": "Seesu Music",
+  "main": "index.html",
+  "webkit": {
+    "plugin": true
+  }
+}
