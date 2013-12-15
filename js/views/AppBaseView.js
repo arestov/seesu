@@ -487,9 +487,7 @@ provoda.View.extendTo(AppBaseView, {
 				this.animateMapSlice(transaction_data, animation_data);
 				if (!transaction_data.target){
 					target_md = this.findBMapTarget(array);
-					if (!target_md){
-						throw new Error('there is no model with focus!');
-					}
+
 					
 					this.updateState('current_lev_num', target_md.map_level_num);
 					console.log('alternative focus way');
