@@ -6,6 +6,7 @@ provoda.Model.extendTo(AppModelBase, {
 		this._super();
 		this.navigation = [];
 		this.map = new BrowseMap();
+		this.current_mp_md = null;
 	},
 	setDocTitle: function(title) {
 		this.updateState('doc_title', title);
@@ -109,8 +110,13 @@ provoda.Model.extendTo(AppModelBase, {
 			проскроллить к источнику при отдалении
 			просроллить к источнику при приближении
 		*/
+		if (this.current_mp_md) {
+			this.current_mp_md.updateState('mp_has_focus', false);
+			this.current_mp_md = null;
+		}
 
 		if (target_md){
+			this.current_mp_md = target_md;
 			target_md.updateState('mp_has_focus', true);
 
 			this.updateState('show_search_form', !!target_md.state('needs_search_from'));
@@ -120,6 +126,7 @@ provoda.Model.extendTo(AppModelBase, {
 
 
 		}
+
 
 		if (tree){
 			this.updateNesting('navigation', tree);

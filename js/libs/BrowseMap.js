@@ -274,7 +274,6 @@ provoda.Eventor.extendTo(BrowseMap, {
 				} else {
 					cur.value = {
 						userwant: false,
-						transit: true
 					};
 				}
 			}
