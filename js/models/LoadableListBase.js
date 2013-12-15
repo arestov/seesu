@@ -2,30 +2,31 @@ define(['js/libs/BrowseMap', 'spv'], function(BrowseMap, spv) {
 "use strict";
 var LoadableListBase = function() {};
 BrowseMap.Model.extendTo(LoadableListBase, {
+	hndSPlOnFocus: function(e) {
+		if (e.value){
+			this.preloadStart();
+		}
+	},
+	hndSPlOnLoadAllowing: function(e) {
+		if (e.value && this.state('mp_has_focus')){
+			this.preloadStart();
+		}
+	},
+	hndCheckPreviews: function(e) {
+		if (!e.skip_report){
+			this.updateNesting(this.preview_mlist_name, e.value);
+		}
+	},
 	init: function(opts) {
 		this._super(opts);
 		this[this.main_list_name] = [];
 		if (this.sendMoreDataRequest){
 			this.updateState("has_loader", true);
 		}
-		this.wch(this, 'mp_has_focus', function(e) {
-			if (e.value){
-				this.preloadStart();
-			}
-
-		});
-		this.on('state_change-more_load_available', function(e) {
-			if (e.value && this.state('mp_has_focus')){
-				this.preloadStart();
-			}
-			
-		});
+		this.wch(this, 'mp_has_focus', this.hndSPlOnFocus);
+		this.on('state_change-more_load_available', this.hndSPlOnLoadAllowing);
 		if (!this.manual_previews){
-			this.on('child_change-' + this.main_list_name, function(e) {
-				if (!e.skip_report){
-					this.updateNesting(this.preview_mlist_name, e.value);
-				}
-			});
+			this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
 		}
 		this.excess_data_items = [];
 		this.tumour_data_count = 0;

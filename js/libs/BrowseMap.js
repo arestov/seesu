@@ -31,11 +31,11 @@ spv.Class.extendTo(MapLevel, {
 		var parent = this.getParentLev();
 		return parent && parent.resident;
 	},
-	show: function(opts){
+	show: function(){
 		this.map.addChange({
 			type: 'move-view',
 			target: this.resident.getMDReplacer(),
-			value: opts
+			value: true
 		});
 	},
 	hide: function(){
@@ -267,14 +267,10 @@ provoda.Eventor.extendTo(BrowseMap, {
 			for (var jj = 0; jj < move_view_changes.length; jj++) {
 				var cur = move_view_changes[jj];
 				if (jj == move_view_changes.length -1){
-					cur.value = {
-						userwant: true
-					};
+					//cur.value = true;
 					this.updateNav(cur.target.getMD().lev, opts);
 				} else {
-					cur.value = {
-						userwant: false,
-					};
+					//cur.value = true;
 				}
 			}
 
@@ -318,7 +314,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 		return this.current_level_num;
 	},
 	setLevelPartActive: function(lp){
-		lp.show({});
+		lp.show();
 		this.current_level_num = lp.num;
 	},
 	_goDeeper: function(resident){
