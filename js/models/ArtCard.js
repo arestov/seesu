@@ -800,8 +800,8 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.getSimilarArtists();
 
 
-		this.wch(this, 'mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.wch(this, 'mp_has_focus', function(e) {
+			if (e.value){
 				this.initHeavy();
 				this.loadInfo();
 			}

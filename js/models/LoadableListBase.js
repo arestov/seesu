@@ -8,15 +8,14 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		if (this.sendMoreDataRequest){
 			this.updateState("has_loader", true);
 		}
-		this.wch(this, 'mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.wch(this, 'mp_has_focus', function(e) {
+			if (e.value){
 				this.preloadStart();
 			}
 
 		});
 		this.on('state_change-more_load_available', function(e) {
-			var mp_show = this.state('mp_show');
-			if (e.value && mp_show && mp_show.userwant){
+			if (e.value && this.state('mp_has_focus')){
 				this.preloadStart();
 			}
 			

@@ -565,8 +565,8 @@ BrowseMap.Model.extendTo(TagPage, {
 		this.updateNesting('albums_list', albums_list);
 		this.updateNesting('similar_tags', similar_tags);
 
-		this.on('vip_state_change-mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.on('vip_state_change-mp_has_focus', function(e) {
+			if (e.value){
 				albums_list.preloadStart();
 				similar_tags.preloadStart();
 			}

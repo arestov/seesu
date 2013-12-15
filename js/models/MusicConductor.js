@@ -487,8 +487,8 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 		
 
 		var _this = this;
-		this.map_parent.on('state_change-mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.map_parent.on('state_change-mp_has_focus', function(e) {
+			if (e.value){
 				_this.heavyInit();
 			}
 		});
@@ -580,14 +580,14 @@ BrowseMap.Model.extendTo(CountryPlace, {
 		this.initStates();
 		this.sub_pa_params = {country_name: this.country_name};
 
-		this.on('state_change-mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.on('state_change-mp_has_focus', function(e) {
+			if (e.value){
 				this.heavyInit();
 			}
 		});
 		var _this = this;
-		this.map_parent.on('state_change-mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.map_parent.on('state_change-mp_has_focus', function(e) {
+			if (e.value){
 				_this.heavyInit();
 			}
 		});

@@ -890,8 +890,8 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		this.wch(this, 'mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.wch(this, 'mp_has_focus', function(e) {
+			if (e.value){
 				for (var i = 0; i < lists_list.length; i++) {
 					var cur = lists_list[i];
 					if (cur.preloadStart){
