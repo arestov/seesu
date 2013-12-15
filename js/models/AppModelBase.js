@@ -127,8 +127,20 @@ provoda.Model.extendTo(AppModelBase, {
 		if (target_md){
 			changes.target = target_md && target_md.getMDReplacer();
 		}
+
+		var mp_show_wrap;
+		if (residents){
+			mp_show_wrap = {
+				items: residents,
+				mp_show_states: []
+			};
+			for (i = 0; i < residents.length; i++) {
+				mp_show_wrap.mp_show_states.push(residents[i].state('mp_show'));
+			}
+		}
+
 		this.updateNesting('map_slice', {
-			items: residents,
+			residents_struc: mp_show_wrap,
 			transaction: changes
 		});
 	

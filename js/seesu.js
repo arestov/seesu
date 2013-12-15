@@ -945,7 +945,10 @@ provoda.sync_s.setRootModel(su);
 
 	if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
 		if (app_env.torrents_support) {
-			
+			su.mp3_search.add(new torrent_searches.BtdiggTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
 		} else if (app_env.cross_domain_allowed){
 			su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
 				cache_ajax: cache_ajax,

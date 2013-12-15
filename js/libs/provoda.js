@@ -143,6 +143,9 @@ MDProxy.prototype = {
 		this.sendStatesToViews([name, value]);
 		return this;
 	},
+	state: function(state_name) {
+		return this.vstates[state_name];
+	},
 	removeView: function(view){
 		var views = [];
 		for (var i = 0; i < this.views.length; i++) {
