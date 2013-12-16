@@ -110,12 +110,12 @@ provoda.Model.extendTo(AppModelBase, {
 			проскроллить к источнику при отдалении
 			просроллить к источнику при приближении
 		*/
-		if (this.current_mp_md) {
-			this.current_mp_md.updateState('mp_has_focus', false);
-			this.current_mp_md = null;
-		}
+		
 
 		if (target_md){
+			if (this.current_mp_md) {
+				this.current_mp_md.updateState('mp_has_focus', false);
+			}
 			this.current_mp_md = target_md;
 			target_md.updateState('mp_has_focus', true);
 
