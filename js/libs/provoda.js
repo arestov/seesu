@@ -2216,6 +2216,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._collections_set_processing = null;
 		this.dclrs_fpckgs = this.dclrs_fpckgs;
 		this.dclrs_fpckgs_is_clonned = false;
+		this.detached = null;
 
 		this.innesting_pos_current = null;
 		this.innest_prev_view = null;
@@ -3472,6 +3473,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				}
 			}
 		}
+
+		//если сосед имевший меньший номер теперь имеет номер больше значит нас сместили в начало
+		//если сосед имел больший, а теперь меньше, нас сместили в конец
 
 
 		for (i = 0; i < array.length; i++) {
