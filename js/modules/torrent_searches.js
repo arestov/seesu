@@ -168,30 +168,38 @@ BtdiggTorrentSearch.prototype = {
 		return async_ans;
 	},
 	wrapItem: function(r, item, query) {
-		return;
 		var node = $(item);
+		var root_node = node.parent().parent().parent().parent();
 
-		torrent_link
-		query
-		media_type
-		title
-		models
-
-
-		var isohunt_id = item && item.url && item.url.match(this.url_regexp);
-		if (isohunt_id && isohunt_id[1]){
-			r.push(item);
-			item.isohunt_id = isohunt_id[1];
-			item.torrent_link = 'http://isohunt.com/download/' + item.isohunt_id;
-			item.query = query;
-			item.media_type = 'torrent';
-			item.title = item.titleNoFormatting = htmlencoding.decode(item.titleNoFormatting);
-			item.models = {};
-			item.getSongFileModel = function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
-			};
+		var magnet_link;
+		var links = root_node.find('a[href]');
+		var i;
+		for (i = 0; i < links.length; i++) {
+			var href = links[i].href;
+			if (href.indexOf('magnet:') === 0){
+				magnet_link = href;
+				break;
+			}
+			
 		}
-		
+		if (!magnet_link){
+			return;
+		}
+
+		console.log(magnet_link);
+
+		r.push({
+			torrent_link: magnet_link,
+			title: node.text(),
+			
+			query: query,
+			media_type: 'torrent',
+			models: {},
+			getSongFileModel: function(mo, player) {
+				this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
+				return this.models[mo.uid];
+			}
+		});
 	}
 };
 
