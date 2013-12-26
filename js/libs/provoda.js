@@ -158,9 +158,14 @@ MDProxy.prototype = {
 			this.views = views;
 		}
 	},
-	sendCollectionChange: function(collection_name, array, old_value, removed) {
-		//var old_value = this.nestings[collection_name];
-		//this.nestings[collection_name] = array;
+	sendCollectionChange: function(collection_name, array) {
+		var old_value = this.nestings[collection_name];
+		this.nestings[collection_name] = array;
+		var removed;
+		if (Array.isArray(array)){
+			removed = spv.arrayExclude(array, old_value);
+		}
+		
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].collectionChange(collection_name, array, old_value, removed);
 		}
