@@ -86,11 +86,11 @@ provoda.Model.extendTo(AppModelBase, {
 
 		all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
 		//var models = spv.filter(all_changhes, 'target');
-		//this.animationMark(models, changes.anid);
+		//this.animationMark(models, changes.changes_number);
 
 		for (i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
-		//	change.anid = changes.anid;
+		//	change.changes_number = changes.changes_number;
 			var handler = this['model-mapch'][change.type];
 			if (handler){
 				handler.call(this, change);

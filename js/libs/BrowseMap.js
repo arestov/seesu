@@ -283,10 +283,10 @@ provoda.Eventor.extendTo(BrowseMap, {
 
 			this.trigger('changes', {
 				array: this.chans_coll,
-				anid: this.cha_counter
+				changes_number: this.cha_counter
 			}, changed_residents, this.residents);
 			this.chans_coll = [];
-			this.chans_coll.anid = ++this.cha_counter;
+			this.chans_coll.changes_number = ++this.cha_counter;
 
 		}
 		

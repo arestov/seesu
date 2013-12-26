@@ -241,19 +241,19 @@ provoda.View.extendTo(AppBaseView, {
 		}
 	},
 	
-	markAnimationStart: function(models, anid) {
+	markAnimationStart: function(models, changes_number) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].getMD().mpx.updateState('animation_started', anid);
+			models[i].getMD().mpx.updateState('animation_started', changes_number);
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
-	markAnimationEnd: function(models, anid) {
+	markAnimationEnd: function(models, changes_number) {
 		for (var i = 0; i < models.length; i++) {
 			//
 			var mpx = models[i].getMD().mpx;
 
-			if (mpx.state('animation_started') == anid){
-				mpx.updateState('animation_completed', anid);
+			if (mpx.state('animation_started') == changes_number){
+				mpx.updateState('animation_completed', changes_number);
 			}
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
@@ -352,7 +352,7 @@ provoda.View.extendTo(AppBaseView, {
 			if (parent){
 			//	parent.updateState('mp_has_focus', false);
 			}
-			//mpx.updateState(prop, anid);
+			//mpx.updateState(prop, changes_number);
 			this.setVMpshow(change.target.getMD().mpx, change.value);
 		},
 		'zoom-out': function(change) {
@@ -370,7 +370,7 @@ provoda.View.extendTo(AppBaseView, {
 		var models = spv.filter(all_changhes, 'target');
 		var i, cur;
 
-		this.markAnimationStart(models, transaction_data.anid);
+		this.markAnimationStart(models, transaction_data.changes_number);
 
 		for (i = 0; i < all_changhes.length; i++) {
 			cur = all_changhes[i];
@@ -382,7 +382,7 @@ provoda.View.extendTo(AppBaseView, {
 
 		for (i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
-		//	change.anid = changes.anid;
+		//	change.changes_number = changes.changes_number;
 			var handler = this['model-mapch'][change.type];
 			if (handler){
 				handler.call(this, change);
@@ -418,12 +418,12 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		var _this = this;
 		var completeAnimation = function() {
-			_this.markAnimationEnd(models, transaction_data.anid);
+			_this.markAnimationEnd(models, transaction_data.changes_number);
 		};
 		setTimeout(completeAnimation, 16*21*4);
 		if (!animation_data){
 			//
-			this.markAnimationEnd(models, transaction_data.anid);
+			this.markAnimationEnd(models, transaction_data.changes_number);
 			/*this.nextTick(function() {
 				
 			});*/
@@ -459,7 +459,7 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		return target_md;
 	},
-	'collch-map_slice': function(nesname, nesting_data){
+	'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
 		var target_md;
 		var array = nesting_data.residents_struc && nesting_data.residents_struc.items;
 		var transaction_data = nesting_data.transaction;
@@ -482,7 +482,7 @@ provoda.View.extendTo(AppBaseView, {
 
 		//avoid nextTick method!
 
-		if (this.completely_rendered_once['map_slice']){
+		if (this.completely_rendered_once['map_slice'] && old_nesting_data && old_nesting_data.transaction.changes_number + 1 === nesting_data.transaction.changes_number){
 			if (transaction_data){
 				this.animateMapSlice(transaction_data, animation_data);
 				if (!transaction_data.target){

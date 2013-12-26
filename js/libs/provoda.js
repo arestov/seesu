@@ -116,6 +116,7 @@ var MDProxy = function(_provoda_id, states, children_models, md) {
 	this.vstates = {};
 	this.children_models = children_models;
 	this.md = md;
+	this.nestings = {};
 };
 MDProxy.prototype = {
 	RPCLegacy: function() {
@@ -158,6 +159,8 @@ MDProxy.prototype = {
 		}
 	},
 	sendCollectionChange: function(collection_name, array, old_value, removed) {
+		//var old_value = this.nestings[collection_name];
+		//this.nestings[collection_name] = array;
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].collectionChange(collection_name, array, old_value, removed);
 		}
@@ -1575,7 +1578,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				obj_to_change[name] = value;
 
 				if (method){
-					method.call(this, value, old_value);
+					this.nextTick(method, [value, old_value], true);
+					//method.call(this, value, old_value);
 				}
 				stack.push(name, value);
 				//return [old_value];
