@@ -51,7 +51,7 @@ spv.Class.extendTo(MapLevel, {
 		});
 		this.resident.trigger('mpl-detach');
 		this.map.removeResident(this.resident);
-		delete this.map;
+		this.map = null;
 	},
 	_sliceTM: function(){ //private alike
 		var current_level = this.map.getCurrentLevel();
@@ -179,7 +179,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 		if (this.changes_group.changes.length){
 
 			this.chans_coll.push(this.changes_group);
-			delete this.changes_group;
+			this.changes_group = null;
 			if (!this.isCollectingChanges()){
 				this.emitChanges();
 			}
@@ -419,14 +419,14 @@ provoda.Eventor.extendTo(BrowseMap, {
 					if (this.levels[i].free != this.levels[i].freezed){
 						if (this.levels[i].freezed){ //removing old freezed
 							this.levels[i].freezed.die();
-							delete this.levels[i].freezed;
+							this.levels[i].freezed = null;
 						}
 						this.levels[i].freezed = this.levels[i].free;
 						this.levels[i].freezed.markAsFreezed();
 						fresh_freeze = true;
 					}
 				}
-				delete this.levels[i].free;
+				this.levels[i].free = null;
 			}
 			
 			
@@ -438,7 +438,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 			for (i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
 					this.levels[i].freezed.die();
-					delete this.levels[i].freezed;
+					this.levels[i].freezed = null;
 				}
 				
 			}
@@ -541,7 +541,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
 			lev.free.die();
-			delete lev.free;
+			lev.free = null;
 		}
 	},
 	hideLevel: function(lev, exept, only_free){
