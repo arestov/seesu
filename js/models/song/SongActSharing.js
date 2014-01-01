@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv', './invstg', './comd', 'js/LfmAuth'],
+define(['provoda', 'spv', 'app_serv', '../invstg', '../comd', 'js/LfmAuth'],
 function(provoda, spv, app_serv,  invstg, comd, LfmAuth) {
 "use strict";
 var localize = app_serv.localize;

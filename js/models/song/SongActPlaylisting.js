@@ -1,4 +1,4 @@
-define(['./invstg', './comd'], function(invstg, comd) {
+define(['../invstg', '../comd'], function(invstg, comd) {
 "use strict";
 var SongActPlaylisting;
 

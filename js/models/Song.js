@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './SongActionsRow', './SongBase'],
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
 function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 	"use strict";
 var lfm_share_url_replacers = ['[',']','(',')'];

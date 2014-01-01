@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv', './comd', 'js/LfmAuth',
+define(['provoda', 'spv', 'app_serv', '../comd', 'js/LfmAuth',
 './SongActPlaylisting', './SongActTaging', './SongActSharing'], function(provoda, spv, app_serv, comd, LfmAuth,
 SongActPlaylisting, SongActTaging, SongActSharing){
 "use strict";
