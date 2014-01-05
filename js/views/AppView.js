@@ -159,7 +159,16 @@ AppBaseView.extendTo(AppView, {
 		songcard: {
 			main: SongcardPage,
 			nav: nav.baseNavUI
+		},
+		songcard_cloudcasts: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		cloudcasts_list: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		}
+		
 	},
 	'collch-navigation': {
 		place: 'nav.daddy',

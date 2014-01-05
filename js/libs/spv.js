@@ -837,5 +837,233 @@ spv.zerofyString = function(string, length) {
 	}
 	return string;
 };
+
+
+var getFullFieldPath = function(last_part, data) {
+	var cur = data;
+	var result = [last_part];
+	while (cur && cur.prop_name) {
+		result.unshift(cur.prop_name);
+		cur = cur.parent;
+	}
+	return result.join('.');
+};
+
+
+var getPropsListByTree = function(obj) {
+	var all_objects = [{
+		parent: null,
+		prop_name: '',
+		obj: obj
+	}];
+	var cur, i, prop_name;
+	var objects_list = [];
+	var result_list = [];
+
+	while (all_objects.length) {
+		cur = all_objects.shift();
+		for (prop_name in cur.obj){
+			if (!cur.obj.hasOwnProperty(prop_name)){
+				continue;
+			}
+			if (typeof cur.obj[prop_name] == 'object'){
+				all_objects.push({
+					parent: cur,
+					prop_name: prop_name,
+					obj: cur.obj[prop_name]
+				});
+			}
+		}
+		objects_list.push(cur);
+	}
+
+	for (i = 0; i < objects_list.length; i++) {
+		cur = objects_list[i];
+		for (prop_name in cur.obj){
+			if (!cur.obj.hasOwnProperty(prop_name)){
+				continue;
+			}
+			if (typeof cur.obj[prop_name] == 'string'){
+				result_list.push({
+					field_path: getFullFieldPath(prop_name, cur),
+					field_path_value: cur.obj[prop_name]
+				});
+			}
+		}
+	}
+	return result_list;
+
+
+};
+
+
+var parseMap = function(map) {
+	var result = {};
+
+	//var root = map;
+
+	var all_targets = [map];
+	var full_list = [];
+	var cur, i;
+
+	while (all_targets.length){
+		cur = all_targets.shift();
+		if (cur.parts_map) {
+			for (var prop_name in cur.parts_map){
+				if (!cur.parts_map.hasOwnProperty(prop_name)){
+					continue;
+				}
+				all_targets.push(cur.parts_map[prop_name]);
+			}
+		}
+		full_list.push(cur);
+	}
+
+
+	for (i = 0; i < full_list.length; i++) {
+		cur = full_list[i];
+		//cur.props_map
+
+
+		var full_propslist = getPropsListByTree(cur.props_map);
+	//	console.log(full_propslist);
+		cur.props_map = full_propslist;
+	}
+
+
+	return map;
+	//'весь список подчинённостей';
+	//''
+};
+
+var parent_count_regexp = /^\^+/gi;
+
+
+
+var getTargetProps = function(obj, scope, iter, spec_data) {
+	for (var i = 0; i < iter.map_opts.props_map.length; i++) {
+		var cur = iter.map_opts.props_map[i];
+
+		var fpv = cur.field_path_value;
+
+		var state_name = fpv;
+		var source_data = scope;
+
+		if (fpv.indexOf('^') === 0){
+			state_name = fpv.replace(parent_count_regexp, '');
+			var count = fpv.length - state_name.length;
+			while (count) {
+				--count;
+				source_data = iter.parent_data;
+				if (!source_data) {
+					break;
+				}
+			}
+			//states_of_parent[fpv] = this.prsStCon.parent(fpv);
+		} else if (fpv.indexOf('@') === 0) {
+			throw new Error('');
+			//states_of_nesting[fpv] = this.prsStCon.nesting(fpv);
+		} else if (fpv.indexOf('#') === 0) {
+			state_name = fpv.replace('#', '');
+			source_data = spec_data;
+			if (!spec_data) {
+				throw new Error();
+			}
+			//states_of_root[fpv] = this.prsStCon.root(fpv);
+		}
+	
+		
+
+		
+
+
+		spv.setTargetField(obj, cur.field_path, getTargetField(source_data, state_name));
+	}
+
+};
+
+var executeMap = function(map, data, spec_data) {
+	var data_root = data;
+	var map_root = map;
+
+
+
+	var result = [];
+
+	var cursor = {
+		map_opts: map,
+		parent_data: data,
+		parent_map: null,
+		writeable_array: result,
+
+		data_scope: null
+	};
+
+
+	var objects_list = [cursor];
+
+
+	while (objects_list.length) {
+		var cur = objects_list.shift();
+
+		var cvalue = getTargetField(cur.parent_data, cur.map_opts.source);
+		if (!cvalue) {
+			continue;
+		}
+		var root_iter = toRealArray( cvalue );
+		cur.writeable_array.length = root_iter.length;
+
+
+		cur.data_scope = root_iter;
+		
+		for (var i = 0; i < cur.data_scope.length; i++) {
+			var obj = cur.writeable_array[i] = {};
+			var scope = cur.data_scope[i];
+
+			getTargetProps(obj, scope, cur, spec_data);
+
+			for (var prop_name in cur.map_opts.parts_map) {
+				//cur.map_opts.parts_map[prop_name];
+				var array = [];
+				spv.setTargetField(obj, prop_name, array);
+
+				objects_list.push({
+					map_opts: cur.map_opts.parts_map[prop_name],
+					parent_data: scope,
+					parent_map: cur.map_opts,
+					writeable_array: array,
+
+					data_scope: null
+				});
+			}
+
+		}
+
+
+
+	}
+
+	return result;
+};
+
+
+var MorphMap = function(config) {
+	this.config = config;
+	this.pconfig = null;
+};
+MorphMap.prototype.execute = function(data, spec_data) {
+	if (!this.pconfig) {
+		this.pconfig = parseMap(this.config);
+	}
+	return executeMap( this.pconfig, data, spec_data );
+};
+
+//var data_bymap = executeMap( parseMap(map), raw_testmap_data, {smile: '25567773'} );
+//console.log(data_bymap);
+
+spv.MorphMap = MorphMap;
+//i should not rewrite fields
+
+
 })();
 define(function(){return spv;});

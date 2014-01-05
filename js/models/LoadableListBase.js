@@ -47,6 +47,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			}
 		}
 	},
+	main_list_name: 'lists_list',
 	preview_mlist_name: 'preview_list',
 	getMainListChangeOpts: function() {},
 	page_limit: 30,
@@ -88,11 +89,26 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		if (this.state("has_loader") && this.sendMoreDataRequest){
 			if (!this.request_info || this.request_info.done){
 				this.markLoading();
-				this.request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo(), {});
+				var request_info = {
+					request: null,
+					done: null
+				};
+				this.sendMoreDataRequest.call(this, this.getPagingInfo(), request_info);
+				this.request_info = request_info;
 				if (!this.request_info.request){
 					throw new Error('give me request');
 				} else {
+					var _this = this;
 					this.addRequest(this.request_info.request);
+					this.request_info.request
+						.fail(function(){
+							_this.requestComplete(request_info.request, true);
+						}).always(function() {
+							request_info.done = true;
+						});
+
+
+					
 				}
 			}
 			//this.trigger("load-more");
@@ -199,14 +215,14 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 				/* если объект не совпадает ни с одним элементом, то извлекаем все излишки,
 				вставляем объект, вставляем элементы обратно */
 				work_array = spv.arrayExclude(work_array, excess_items);
-				work_array.push(item = this.makeDataItem(obj));
+				work_array.push(item = this.makeItemByData(obj));
 				work_array = work_array.concat(excess_items);
 
 
 			}
 			this.excess_data_items = excess_items;
 		} else {
-			work_array.push(item = this.makeDataItem(obj));
+			work_array.push(item = this.makeItemByData(obj));
 		}
 
 		this[this.main_list_name] = work_array;
@@ -217,6 +233,23 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
 		}
 		return item;
+	},
+	makeItemByData: function(data) {
+		if (this.subitemConstr){
+			var item = new this.subitemConstr();
+			item.init({
+				map_parent: this,
+				app: this.app
+			}, data);
+			return item;
+		} else if (this.makeDataItem){
+			return this.makeDataItem(data);
+		} else {
+			throw new Error('cant make item');
+		}
+		
+
+		
 	},
 	findMustBePresentDataItem: function(obj) {
 		var matched = this.compareItemsWithObj(this[this.main_list_name], obj);
@@ -229,7 +262,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		var
 			work_array = this[this.main_list_name],
 			ml_ch_opts = this.getMainListChangeOpts(),
-			item = this.makeDataItem(obj);
+			item = this.makeItemByData(obj);
 
 		if (!this.cant_find_dli_pos){
 			this.excess_data_items.push(item);

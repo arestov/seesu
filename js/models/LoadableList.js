@@ -49,12 +49,6 @@ LoadableListBase.extendTo(LoadableList, {
 				var data_list = parser.call(this, r, paging_opts);
 				_this.putRequestedData(request_info.request, data_list, !r[0]);
 
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	},
@@ -86,11 +80,6 @@ LoadableListBase.extendTo(LoadableList, {
 					_this.setLoaderFinish();
 				}
 				_this.putRequestedData(request_info.request, data_list, r.error);
-			})
-			.fail(function(){
-				_this.requestComplete(request_info.request, true);
-			}).always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	},
