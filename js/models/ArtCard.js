@@ -156,11 +156,10 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		this._super(opts);
 		this.artist_name = params.artist;
 
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			'artist_id': false,
 			'possible_loader_disallowing': localize('no-dgs-id')
 		});
-		this.initStates();
 
 		this.wch(this.map_parent, 'discogs_id_searching', 'profile_searching', true);
 		this.wch(this.map_parent, 'discogs_id', 'artist_id', true);
@@ -524,11 +523,10 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistLikes, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			'artist_id': '',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
-		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		var artist_id = this.state('artist_id');
@@ -540,11 +538,10 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			'artist_id': '',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
-		this.initStates();
 		
 	},
 	allow_artist_guessing: true,

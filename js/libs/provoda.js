@@ -2124,7 +2124,10 @@ provoda.Model.extendTo(provoda.HModel, {
 		}
 		return this;
 	},
-	initStates: function() {
+	initStates: function(more_states) {
+		if (more_states) {
+			spv.cloneObj(this.init_states, more_states);
+		}
 		this.updateManyStates(this.init_states);
 		this.init_states = null;
 	},

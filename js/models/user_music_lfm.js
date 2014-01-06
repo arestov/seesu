@@ -704,13 +704,12 @@ BrowseMap.Model.extendTo(UserTag, {
 			for_current_user: params.for_current_user,
 			tag_name: tag_name
 		};
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			tag_name: tag_name,
 			count: params.data.count,
 			nav_title: tag_name,
 			url_part: tag_name
 		});
-		this.initStates();
 
 		this.initListedModels(['artists', 'tracks', 'albums']);
 	},
@@ -800,7 +799,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 		}
 		var image = this.app.art_images.getImageRewrap(data.lfm_image);
 
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			selected_image: image,
 			nav_title: data.userid,
 			userid: data.userid,
@@ -814,7 +813,6 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			song_time_raw: song_time,
 			scrobbler: data.scrobblesource
 		});
-		this.initStates();
 		this.rawdata = data;
 	},
 	showOnMap: function() {

@@ -7,8 +7,7 @@ var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 	init: function(opts, params) {
 		this._super(opts);
-		spv.cloneObj(this.init_states, params);
-		this.initStates();
+		this.initStates(params);
 	},
 	getRqData: function() {
 		return {
@@ -50,12 +49,11 @@ BrowseMap.Model.extendTo(SongCard, {
 	model_name: 'songcard',
 	init: function(opts, params) {
 		this._super(opts);
-		spv.cloneObj(this.init_states, params);
 		this.sub_pa_params = {
 			artist_name: params.artist_name,
 			track_name: params.track_name
 		};
-		this.initStates();
+		this.initStates(params);
 		this.on('state_change-mp_show', function(e) {
 			if (e.value){
 				this.fullInit();
