@@ -10,70 +10,6 @@ var localize = app_serv.localize;
 
 
 
-
-
-var raw_testmap_data = {
-	topalbums: {
-		album: {
-			artist: {
-				name: "The Killers"
-			},
-			name: "Shiny Album",
-			image: [55, 14],
-			"555": 'number',
-			"1466": 'value',
-			playcount: 10024,
-			images: [
-				{
-					artist_name: "The Killers",
-					track_name: "Just a test"
-				}, {
-					artist_name: "Beastie Boys",
-					track_name: "Another Track Name"
-				}
-			]
-		}
-	}
-};
-
-var map = {
-
-	source: 'topalbums.album',
-
-	props_map: {
-		album_artist: 'artist.name',
-		album_name: 'name',
-		lfm_image: {
-			array: 'image',
-			justatest: {
-				deep: '555',
-				wrong: {
-					realy_deep: '1466'
-				}
-			}
-		},
-		playcount: 'playcount'
-	},
-
-	parts_map: {
-		'lfm_image.real_array': {
-			source: 'images',
-			props_map: {
-				common_time_stamp: '#smile',
-				album_name: '^name',
-				artist_name: 'artist_name',
-				track: {
-					name: 'track_name'
-				}
-			}
-		}
-	}
-
-};
-
-
-
-
 var Cloudcast = function() {};
 SongsList.extendTo(Cloudcast, {
 	init: function(opts, params) {
@@ -92,17 +28,18 @@ SongsList.extendTo(Cloudcast, {
 		return this.state('key');
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
+		//var _this = this;
 
 		request_info.request = $.ajax({
 			url: 'https://api.mixcloud.com/' + this.getRqData(),
-			dataType: "json"
+			dataType: "json",
+			context: this
 		})
 			.done(function(r){
-				var list = _this.datamorph_map.execute(r);
-				_this.putRequestedData(request_info.request, list, r.error);
+				var list = this.datamorph_map.execute(r);
+				this.putRequestedData(request_info.request, list, r.error);
 				if (!r.error) {
-					_this.setLoaderFinish();
+					this.setLoaderFinish();
 				}
 			});
 			
@@ -135,11 +72,12 @@ LoadableList.extendTo(TrackCloudcastsList, {
 
 		request_info.request = $.ajax({
 			url: 'https://api.mixcloud.com/' + this.getRqData(),
-			dataType: "json"
+			dataType: "json",
+			context: this
 		})
 			.done(function(r){
-				var list = _this.datamorph_map.execute(r);
-				_this.putRequestedData(request_info.request, list, r.error);
+				var list = this.datamorph_map.execute(r);
+				this.putRequestedData(request_info.request, list, r.error);
 			});
 			
 	}
@@ -207,12 +145,6 @@ BrowseMap.Model.extendTo(SongcardCloudcasts, {
 
 		//this.tag_name = params.tag_name;
 	},
-/*	getRqData: function() {
-		return {
-			artist: this.state('artist_name'),
-			track: this.state('track_name')
-		};
-	},*/
 	model_name: 'songcard_cloudcasts',
 	sub_pa: {
 		'new': {
@@ -229,59 +161,6 @@ BrowseMap.Model.extendTo(SongcardCloudcasts, {
 		},
 	}
 });
-
-/*
-var SongsLists = function() {};
-BrowseMap.Model.extendTo(SongsLists, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.tag_name = params.tag_name;
-		this.initStates();
-
-		this.sub_pa_params = {tag_name:this.tag_name};
-		this.lists_list = ['_', 'free', 'trending_exfm', 'explore_exfm',
-			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'];
-		this.initSubPages(this.lists_list);
-
-		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
-
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
-	},
-	model_name: 'tag_songs',
-	sub_pa: {
-		'_': {
-			constr: TopTagSongs,
-			title: localize('Top')
-		},
-		'free': {
-			constr: FreeTagSongs,
-			title: localize('Free-songs')
-		},
-		'trending_exfm': {
-			constr: TrendingTagSongs,
-			title: localize('Trending-songs-exfm')
-		},
-		'explore_exfm': {
-			constr: ExplorableTagSongs,
-			title: localize('Explore-songs-exfm')
-		},
-		'blogged': {
-			constr: AllHypemTagSongs,
-			title: localize('Blogged-all-hypem')
-		},
-		'blogged?fav_from=25&fav_to=250': {
-			constr: Fav25HypemTagSongs,
-			title: localize('Blogged-25-hypem')
-		},
-		'blogged?fav_from=250&fav_to=100000': {
-			constr: Fav250HypemTagSongs,
-			title: localize('Blogged-250-hypem')
-		}
-	}
-});
-
-*/
 return SongcardCloudcasts;
 
 });
