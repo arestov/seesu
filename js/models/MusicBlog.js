@@ -57,17 +57,8 @@ BrowseMap.Model.extendTo(MusicBlog, {
 	}
 });
 
-var FeaturedBlogs = function() {};
-LoadableList.extendTo(FeaturedBlogs, {
-	model_name: 'blogs_list',
-	init: function(opts) {
-		this._super(opts);
-		this.initStates();
-	}
-});
-
-var TrendedBlogs = function() {};
-LoadableList.extendTo(TrendedBlogs, {
+var BlogsList = function() {};
+LoadableList.extendTo(BlogsList, {
 	model_name: 'blogs_list',
 	init: function(opts) {
 		this._super(opts);
@@ -95,12 +86,22 @@ LoadableList.extendTo(TrendedBlogs, {
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 
-		request_info.request = this.app.exfm.get('sotd', this.getRqData(paging_opts))
+		request_info.request = this.app.exfm.get(this.api_url_part, this.getRqData(paging_opts))
 			.done(function(r){
 				var list = _this.datamorph_map.execute(r);
 				_this.putRequestedData(request_info.request, list, r.error);
 			});
 	}
+});
+
+var FeaturedBlogs = function() {};
+BlogsList.extendTo(FeaturedBlogs, {
+	api_url_part: 'site/featured'
+});
+
+var TrendedBlogs = function() {};
+BlogsList.extendTo(TrendedBlogs, {
+	api_url_part: 'sotd'
 });
 
 
@@ -110,7 +111,7 @@ BrowseMap.Model.extendTo(BlogsConductor, {
 	init: function(opts) {
 		this._super.apply(this, arguments);
 		this.initStates();
-		this.initListedModels(['blogs-of-the-day', 'featured']);
+		this.initListedModels(['blogs-of-the-day'/*, 'featured'*/]);
 		
 	},
 	sub_pa: {
