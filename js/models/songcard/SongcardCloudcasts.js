@@ -63,10 +63,7 @@ LoadableList.extendTo(TrackCloudcastsList, {
 		}
 	}),
 	getRqData: function(paging_opts) {
-		return {
-			results: paging_opts.page_limit,
-			start: paging_opts.next_page
-		};
+		return ['track', this.state('artist_key'), this.state('track_key'), this.tcl_type].join('/') + '/';
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
