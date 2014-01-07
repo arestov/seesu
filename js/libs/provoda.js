@@ -2608,6 +2608,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			if (!Constr && address_opts.sampleController){
 				Constr = address_opts.sampleController;
 			}
+			if (!Constr) {
+				throw new Error('there is no View for ' + child_name);
+			}
 
 			view = new Constr();
 			view.init({

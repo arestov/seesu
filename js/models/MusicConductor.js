@@ -1,4 +1,5 @@
-define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data'],function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data){
+define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', './MusicBlog'],
+function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, MusicBlog){
 "use strict";
 var MusicConductor;
 //http://hypem.com/latest
@@ -114,6 +115,7 @@ SongsList.extendTo(AllPSongsLoved, {
 
 
 
+
 var AllPlacesSongsLists = function() {};
 BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 	init: function(opts, params) {
@@ -216,6 +218,7 @@ BrowseMap.Model.extendTo(AllPlacesArtistsLists, {
 });
 
 
+
 var AllPlaces = function() {};
 BrowseMap.Model.extendTo(AllPlaces, {
 	model_name:'allplaces',
@@ -228,7 +231,11 @@ BrowseMap.Model.extendTo(AllPlaces, {
 
 		this.artists_lists = this.getSPI('artists', true);
 		this.updateNesting('artists_lists', this.artists_lists);
-		this.updateNesting('lists_list', [this.artists_lists, this.songs_lists]);
+
+		var blogs = this.getSPI('blogs', true);
+		this.updateNesting('lists_list', [this.songs_lists, this.artists_lists, blogs]);
+
+
 
 		this.initStates();
 
@@ -242,6 +249,10 @@ BrowseMap.Model.extendTo(AllPlaces, {
 		'artists': {
 			constr: AllPlacesArtistsLists,
 			title: localize('Artists')
+		},
+		'blogs': {
+			constr: MusicBlog.BlogsConductor,
+			title: 'Blogs'
 		}
 	}
 });
@@ -505,8 +516,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 
 		for (var i = 0; i < citiesl.length; i++) {
 			var name = citiesl[i];
-			var instance = this.getSPI(name);
-			instance.initOnce();
+			var instance = this.getSPI(name, true);
 			lists_list.push(instance);
 		}
 		
@@ -634,8 +644,7 @@ BrowseMap.Model.extendTo(CountriesList, {
 		this._super.apply(this, arguments);
 		this.lists_list = [];
 		for (var country in lastfm_data.сountries){
-			var country_place = this.getSPI(country);
-			country_place.initOnce();
+			var country_place = this.getSPI(country, true);
 			this.lists_list.push(country_place);
 		}
 		this.updateNesting('lists_list', this.lists_list);
@@ -663,20 +672,15 @@ BrowseMap.Model.extendTo(CountriesList, {
 });
 
 
+
 MusicConductor = function() {};
 BrowseMap.Model.extendTo(MusicConductor, {
 	model_name: 'mconductor',
 	init: function() {
 		this._super.apply(this, arguments);
 
-		this.allpas = this.getSPI('world');
-		this.сountries = this.getSPI('сountries');
-
-		this.allpas.initOnce();
-		this.updateNesting('allpas', this.allpas);
-
-		this.сountries.initOnce();
-		this.updateNesting('сountries', this.сountries);
+		this.updateNesting('allpas', this.getSPI('world', true));
+		this.updateNesting('сountries', this.getSPI('сountries', true));
 
 		
 		this.initStates();

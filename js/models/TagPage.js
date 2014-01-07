@@ -143,7 +143,7 @@ SongsList.extendTo(ExplorableTagSongs, {
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 
-		request_info.request = this.app.exfm.get('/explore/' + this.tag_name, {
+		request_info.request = this.app.exfm.get('explore/' + this.tag_name, {
 				results: paging_opts.page_limit,
 				start: paging_opts.next_page
 			})
@@ -186,7 +186,7 @@ SongsList.extendTo(TrendingTagSongs, {
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 
-		request_info.request = this.app.exfm.get('/trending/tag/' + this.tag_name, {
+		request_info.request = this.app.exfm.get('trending/tag/' + this.tag_name, {
 				results: paging_opts.page_limit,
 				start: paging_opts.next_page
 			})

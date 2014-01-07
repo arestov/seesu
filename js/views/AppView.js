@@ -54,7 +54,7 @@ AppBaseView.extendTo(AppView, {
 		},
 		allplaces: {
 			nav: nav.baseNavUI,
-			main: coct.AllPlacesPage
+			main: coct.ListOfListsView
 		},
 		mconductor: {
 			nav: nav.baseNavUI,
@@ -165,6 +165,18 @@ AppBaseView.extendTo(AppView, {
 			nav: nav.baseNavUI
 		},
 		cloudcasts_list: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		blogs_conductor: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		blogs_list: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		music_blog: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		}

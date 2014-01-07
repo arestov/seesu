@@ -80,36 +80,6 @@ LoadableList.extendTo(TrackCloudcastsList, {
 				var list = this.datamorph_map.execute(r);
 				this.putRequestedData(request_info.request, list, r.error);
 			});
-
-		/*request_info.request = this.app.exfm.get('/explore/' + this.tag_name, {
-				results: paging_opts.page_limit,
-				start: paging_opts.next_page
-			})
-			.done(function(r){
-				var tracks = spv.toRealArray(spv.getTargetField(r, 'songs'));
-				var track_list = [];
-				var files_list = [];
-
-				for (var i = 0; i < tracks.length; i++) {
-					var cur = tracks[i];
-					track_list.push({
-						artist: cur.artist,
-						track: cur.title
-					});
-					
-				}
-
-				_this.setLoaderFinish();
-
-				_this.app.mp3_search.pushSomeResults(files_list);
-
-				_this.putRequestedData(request_info.request, track_list, r.error);
-
-			});
-			
-
-		return request_info;*/
-			
 	}
 
 });

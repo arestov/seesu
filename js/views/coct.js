@@ -99,17 +99,6 @@ SPView.extendTo(PageView, {
 	}
 });
 
-var AllPlacesPage = function() {};
-PageView.extendTo(AllPlacesPage, {
-	children_views: {
-		songs_lists: LiListsPreview,
-		artists_lists: LiListsPreview
-	},
-	'collch-songs_lists': 'c',
-	'collch-artists_lists': 'c'
-
-});
-
 
 
 
@@ -329,7 +318,6 @@ return {
 	ListPreviewLine:ListPreviewLine,
 	SPView: SPView,
 	PageView:PageView,
-	AllPlacesPage:AllPlacesPage,
 	ArtistsListPreviewLine: ArtistsListPreviewLine,
 	ItemOfLL:ItemOfLL,
 	ListOfListsView:ListOfListsView,
