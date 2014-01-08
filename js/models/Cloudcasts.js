@@ -1,4 +1,4 @@
-define(['spv', 'app_serv', 'js/libs/BrowseMap', '../SongsList', '../LoadableList'],
+define(['spv', 'app_serv', 'js/libs/BrowseMap', './SongsList', './LoadableList'],
 function(spv, app_serv, BrowseMap, SongsList, LoadableList) {
 "use strict";
 var localize = app_serv.localize;
@@ -23,18 +23,28 @@ SongsList.extendTo(Cloudcast, {
 			track: 'track.name'
 		}
 	}),
-	getRqData: function() {
-		return this.state('key');
+	getRqData: function(paging_opts) {
+
+		return {
+			limit: paging_opts.page_limit,
+			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
+		};
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		//var _this = this;
 
 		request_info.request = $.ajax({
-			url: 'https://api.mixcloud.com/' + this.getRqData(),
+			url: 'https://api.mixcloud.com/' + this.state('key'),
+			data: this.getRqData(paging_opts),
 			dataType: "json",
 			context: this
 		})
 			.done(function(r){
+				var title = spv.getTargetField(r, 'name');
+				if (title) {
+					this.updateState('nav_title', title);
+				}
+				
 				var list = this.datamorph_map.execute(r);
 				this.putRequestedData(request_info.request, list, r.error);
 				if (!r.error) {
@@ -42,19 +52,27 @@ SongsList.extendTo(Cloudcast, {
 				}
 			});
 			
+	},
+	addRawData: function(data) {
+		this.updateState('nav_title', data.nav_title);
 	}
 
 });
 
-var TrackCloudcastsList = function() {};
-LoadableList.extendTo(TrackCloudcastsList, {
+var CloudcastsList = function() {};
+LoadableList.extendTo(CloudcastsList, {
 	model_name: 'cloudcasts_list',
 	init: function(opts, params) {
 		this._super(opts);
 		this.sub_pa_params = params;
 		this.initStates(params);
 	},
-	subitemConstr: Cloudcast,
+	//subitemConstr: Cloudcast,
+	makeDataItem: function(data) {
+		var item = this.app.start_page.getSPI('cloudcasts/' + this.app.encodeURLPart(data.key), true);
+		item.addRawData(data);
+		return item;
+	},
 	datamorph_map: new spv.MorphMap({
 		source: 'data',
 		props_map: {
@@ -63,14 +81,18 @@ LoadableList.extendTo(TrackCloudcastsList, {
 		}
 	}),
 	getRqData: function(paging_opts) {
-		return ['track', this.state('artist_key'), this.state('track_key'), this.tcl_type].join('/') + '/';
+
+		return {
+			limit: paging_opts.page_limit,
+			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
+		};
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-
+		//var _this = this;
 		request_info.request = $.ajax({
-			url: 'https://api.mixcloud.com/' + this.getRqData(paging_opts),
+			url: 'https://api.mixcloud.com/' + this.getNDataPath(),
 			dataType: "json",
+			data: this.getRqData(paging_opts),
 			context: this
 		})
 			.done(function(r){
@@ -80,20 +102,29 @@ LoadableList.extendTo(TrackCloudcastsList, {
 	}
 
 });
-
-
+var getNDataPathTrack = function() {
+	return ['track', this.state('artist_key'), this.state('track_key'), this.tcl_type].join('/') + '/';
+};
 var TrackCloudcastsNew = function() {};
-TrackCloudcastsList.extendTo(TrackCloudcastsNew, {
-	tcl_type: 'new'
+CloudcastsList.extendTo(TrackCloudcastsNew, {
+	tcl_type: 'new',
+	getNDataPath: getNDataPathTrack
 });
 var TrackCloudcastsPopular = function() {};
-TrackCloudcastsList.extendTo(TrackCloudcastsPopular, {
-	tcl_type: 'popular'
+CloudcastsList.extendTo(TrackCloudcastsPopular, {
+	tcl_type: 'popular',
+	getNDataPath: getNDataPathTrack
 });
 var TrackCloudcastsHot = function() {};
-TrackCloudcastsList.extendTo(TrackCloudcastsHot, {
-	tcl_type: 'hot'
+CloudcastsList.extendTo(TrackCloudcastsHot, {
+	tcl_type: 'hot',
+	getNDataPath: getNDataPathTrack
 });
+
+
+
+
+
 
 
 
@@ -123,14 +154,8 @@ BrowseMap.Model.extendTo(SongcardCloudcasts, {
 			artist_key: getMixcloudNameKey(params.artist_name),
 			track_key: getMixcloudNameKey(params.track_name)
 		});
-
 		this.sub_pa_params = sub_pa_params;
-
 		this.initStates(params);
-
-
-
-
 		this.lists_list = ['new', 'hot', 'popular'];
 		this.initSubPages(this.lists_list);
 
@@ -157,6 +182,7 @@ BrowseMap.Model.extendTo(SongcardCloudcasts, {
 		},
 	}
 });
-return SongcardCloudcasts;
+Cloudcast.SongcardCloudcasts = SongcardCloudcasts;
+return Cloudcast;
 
 });

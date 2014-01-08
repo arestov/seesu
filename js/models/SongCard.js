@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './user_music_lfm', './songcard/SongcardCloudcasts'],
-function(provoda, spv, app_serv, BrowseMap, user_music_lfm, SongcardCloudcasts) {
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './user_music_lfm', './Cloudcasts'],
+function(provoda, spv, app_serv, BrowseMap, user_music_lfm, Cloudcasts) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -98,7 +98,7 @@ BrowseMap.Model.extendTo(SongCard, {
 			title: localize('Top fans')
 		},
 		'cloudcasts': {
-			constr: SongcardCloudcasts,
+			constr: Cloudcasts.SongcardCloudcasts,
 			title: 'Cloudcasts'
 		}
 	}

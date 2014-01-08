@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog'],
-function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_serv, MusicBlog) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts'],
+function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
 "use strict";
 var StartPage = function() {};
 var app_env = app_serv.app_env;
@@ -91,9 +91,9 @@ BrowseMap.Model.extendTo(StartPage, {
 		},
 		'cloudcasts': function(mixcloud_urlpiece) {
 			var full_name = 'blogs/' +  this.app.encodeURLPart(mixcloud_urlpiece);
-			return this.subPageInitWrap(MusicBlog, full_name, {
+			return this.subPageInitWrap(Cloudcasts, full_name, {
 				urp_name: mixcloud_urlpiece,
-				urlpiece: mixcloud_urlpiece
+				key: mixcloud_urlpiece
 			});
 		}
 	},
