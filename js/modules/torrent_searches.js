@@ -29,7 +29,8 @@ isohuntTorrentSearch.prototype = {
 				data: {
 					ihq: query
 				},
-				timeout: 20000
+				timeout: 20000,
+				context: options.context
 			}, {
 				cache_ajax: this.cache_ajax,
 				nocache: options.nocache,
@@ -120,7 +121,8 @@ BtdiggTorrentSearch.prototype = {
 
 					q: query //"allintext:" + song + '.mp3'
 				},
-				timeout: 20000
+				timeout: 20000,
+				context: options.context
 				
 			}, {
 				cache_ajax: this.cache_ajax,
@@ -234,7 +236,8 @@ googleTorrentSearch.prototype = {
 					v: "1.0",
 					q: query //"allintext:" + song + '.mp3'
 				},
-				timeout: 20000
+				timeout: 20000,
+				context: options.context
 				
 			}, {
 				cache_ajax: this.cache_ajax,

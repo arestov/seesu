@@ -154,6 +154,17 @@ AppModel.extendTo(SeesuApp, {
 			})
 		});
 
+		this.mixcloud = new net_apis.MixcloudApi();
+		this.mixcloud.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue({
+				time: [2000, 4000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
+			})
+		});
+
 
 
 

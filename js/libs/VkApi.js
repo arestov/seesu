@@ -46,7 +46,8 @@ spv.Class.extendTo(vkCoreApi, {
 					type: "GET",
 					dataType: this.jsonp ? 'jsonp' : 'json',
 					data: params_full,
-					timeout: 20000
+					timeout: 20000,
+					context: options.context
 				}, {
 				cache_ajax: this.cache_ajax,
 				nocache: options.nocache,

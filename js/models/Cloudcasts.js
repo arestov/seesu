@@ -31,24 +31,18 @@ SongsList.extendTo(Cloudcast, {
 		};
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
-		//var _this = this;
-
-		request_info.request = $.ajax({
-			url: 'https://api.mixcloud.com/' + this.state('key'),
-			data: this.getRqData(paging_opts),
-			dataType: "json",
-			context: this
-		})
+		var _this = this;
+		request_info.request = this.app.mixcloud.get(this.state('key'), this.getRqData(paging_opts), {context: this})
 			.done(function(r){
 				var title = spv.getTargetField(r, 'name');
 				if (title) {
-					this.updateState('nav_title', title);
+					_this.updateState('nav_title', title);
 				}
 				
-				var list = this.datamorph_map.execute(r);
-				this.putRequestedData(request_info.request, list, r.error);
+				var list = _this.datamorph_map.execute(r);
+				_this.putRequestedData(request_info.request, list, r.error);
 				if (!r.error) {
-					this.setLoaderFinish();
+					_this.setLoaderFinish();
 				}
 			});
 			
@@ -88,17 +82,13 @@ LoadableList.extendTo(CloudcastsList, {
 		};
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
-		//var _this = this;
-		request_info.request = $.ajax({
-			url: 'https://api.mixcloud.com/' + this.getNDataPath(),
-			dataType: "json",
-			data: this.getRqData(paging_opts),
-			context: this
-		})
+		var _this = this;
+		request_info.request = this.app.mixcloud.get(this.getNDataPath(), this.getRqData(paging_opts), {context: this})
 			.done(function(r){
-				var list = this.datamorph_map.execute(r);
-				this.putRequestedData(request_info.request, list, r.error);
+				var list = _this.datamorph_map.execute(r);
+				_this.putRequestedData(request_info.request, list, r.error);
 			});
+			
 	}
 
 });
