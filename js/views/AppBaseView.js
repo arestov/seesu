@@ -211,29 +211,32 @@ provoda.View.extendTo(AppBaseView, {
 
 		}
 	},
-	getSample: function(name) {
-		var sampler = this.samples[name], sample_node;
-
-		//
+	getSampler: function(sample_name) {
+		var sampler = this.samples[sample_name], sample_node;
 		if (!sampler){
-			sample_node = this.els.ui_samples.children('.' + name);
+			sample_node = this.els.ui_samples.children('.' + sample_name);
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node);
 			}
 			
 		}
 		if (!sampler){
-			sample_node = $(this.requirePart(name));
+			sample_node = $(this.requirePart(sample_name));
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node);
 			}
 			
 		}
 		if (!sampler){
 			throw new Error('no such sample');
 		}
+		return sampler;
+	},
+	getSample: function(sample_name) {
+		var sampler = this.getSampler(sample_name);
+		
 		if (sampler.getClone){
 			return $(sampler.getClone());
 		} else {
