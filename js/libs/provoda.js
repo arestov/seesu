@@ -1255,11 +1255,83 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (this.collectStateChangeHandlers){
 			this.collectStateChangeHandlers(props);
 		}
+		var collches_modified;
 		if (this.collectCollectionChangeDeclarations){
-			this.collectCollectionChangeDeclarations(props);
+			collches_modified = this.collectCollectionChangeDeclarations(props);
 		}
 		this.collectCompxs(props);
 		this.collectRegFires(props);
+
+		var base_tree_mofified;
+		if (props.hasOwnProperty('base_tree')) {
+			base_tree_mofified = true;
+			this.base_tree_list = getBaseTreeCheckList(props.base_tree);
+		}
+		if (collches_modified || base_tree_mofified) {
+			this.collectBaseExtendStates();
+		}
+	},
+	hndExpandViewTree: function(e) {
+		if (!e.value) {
+			return;
+		}
+		this.checkExpandableTree(e.type);
+
+	},
+	checkExpandableTree: function(state_name) {
+		for (var i = 0; i < this.base_skeleton.length; i++) {
+			var cur = this.base_skeleton[i];
+			var cur_config = this.base_tree_list[ cur.chunk_num - 1 ];
+			if (cur.handled) {
+				continue;
+			}
+			if (!cur.parent || cur.parent.handled) {
+
+			}
+			
+			//chunk_num
+		}
+
+		//если есть прикреплённый родитель и пришло время прикреплять (если оно должно было прийти)
+		//
+
+		/*
+		прикрепление родителя
+		парсинг детей
+		прикрепление детей
+
+		прикрепление детей привязаных к якорю
+
+
+
+		*/
+
+	},
+	collectBaseExtendStates: function() {
+		var states_list = [], i, states_index = {};
+
+		for ( var nesting_name in this.dclrs_fpckgs ) {
+			if ( nesting_name.indexOf('$ondemand-') === 0 ) {
+				var cur = this.dclrs_fpckgs[ nesting_name ];
+				for ( i = 0; i < cur.declarations.length; i++ ) {
+					if (cur.declarations[i].needs_expand_state) {
+						var state_name = cur.declarations[i].needs_expand_state;
+						if (typeof state_name != 'string') {
+							state_name = 'can_expand';
+						}
+						if (!states_index[state_name]) {
+							states_index[state_name] = true;
+							states_list.push( state_name );
+						}
+						 
+					}
+				}
+			}
+		}
+		if (states_list) {
+			console.log(states_list);
+		}
+		//debugger;
 	},
 	prsStCon: {
 		cache: {},
@@ -2208,6 +2280,54 @@ var appendSpace = function(target) {
 };
 
 
+var getBaseTreeCheckList = function(start) {
+	var i, result = [];
+	var chunks_counter = 0;
+	var all_items = [null, start];
+
+	while (all_items.length) {
+		chunks_counter++;
+
+		var cur_parent = all_items.shift();
+		var cur = all_items.shift();
+
+		cur.parent = cur_parent;
+		cur.chunk_num = chunks_counter;
+
+		if (cur.children_by_selector) {
+			for (i = 0; i < cur.children_by_selector.length; i++) {
+				all_items.push( cur, cur.children_by_selector[i] );
+			}
+		}
+		
+		if (cur.children_by_anchor) {
+			for (i = 0; i < cur.children_by_anchor.length; i++) {
+				all_items.push( cur, cur.children_by_anchor[i] );
+			}
+		}
+
+		result.push( cur );
+
+
+	}
+	return result;
+
+};
+
+
+var getBaseTreeSkeleton = function(array) {
+	var result = new Array(array.length);
+	for (var i = 0; i < array.length; i++) {
+		result[i] = {
+			handled: false,
+			parent: null,
+			chunk_num: array[i].chunk_num
+		};
+	}
+	return result;
+};
+
+
 var views_counter = 1;
 var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
@@ -2229,11 +2349,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.dclrs_fpckgs = this.dclrs_fpckgs;
 		this.dclrs_fpckgs_is_clonned = false;
 		this.detached = null;
+		this.base_skeleton = null;
 
 		this.innesting_pos_current = null;
 		this.innest_prev_view = null;
 		this.innest_next_view = null;
 		//this.innesting_pos_old = null;
+
+		if (this.base_tree_list) {
+			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
+		}
 
 
 		this.view_id = views_counter++;
@@ -3262,9 +3387,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			if (prop.indexOf(this.collch_h_prefix) === 0){
 				var collch = this[ prop ];
 				var nesting_name = prop.replace(this.collch_h_prefix, '');
-				if (nesting_name == 'yt_videos'){
-				//	debugger;
-				}
 				if (typeof collch == 'function'){
 					this.dclrs_fpckgs[ nesting_name ] = collch;
 				} else {
@@ -3292,6 +3414,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 			}
 		}
+		return true;
 	},
 	callCollectionChangeDeclaration: function(dclr_fpckg, nesname, array, old_value, removed) {
 		if (typeof dclr_fpckg == 'function'){
@@ -3339,7 +3462,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			by_model_name: collch.by_model_name,
 			space: collch.space || 'main',
 			strict: collch.strict,
-			opts: collch.opts
+			opts: collch.opts,
+			needs_expand_state: collch.needs_expand_state
 		};
 	},
 	simpleAppendNestingViews: function(declr, opts, nesname, array) {

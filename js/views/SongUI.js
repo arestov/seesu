@@ -83,11 +83,27 @@ coct.SPView.extendTo(SongUI, {
 		};
 
 	},
-	'collch-$ondemand-actionsrow': true,
+	'collch-$ondemand-actionsrow': {
+		place: true,
+		needs_expand_state: true
+	},
 	'collch-$ondemand-mf_cor': {
 		place: function() {
 			return this.requirePart('mf_cor_con');
-		}
+		},
+		needs_expand_state: true
+	},
+	base_tree: {
+		sample_name: 'song-view',
+		children_by_selector: [{
+			parse_as_tplpart: true,
+			part_name: 'context',
+			needs_expand_state: true,
+			children_by_selector: [{
+				sample_name: 'artist_preview-base',
+				selector: '.nested_artist'
+			}]
+		}]
 	},
 	expand: function(){
 		if (this.opts && this.opts.lite){
