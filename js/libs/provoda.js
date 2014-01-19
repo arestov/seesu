@@ -1281,7 +1281,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	checkExpandableTree: function(state_name) {
 		for (var i = 0; i < this.base_skeleton.length; i++) {
 			var cur = this.base_skeleton[i];
-			var cur_config = this.base_tree_list[ cur.chunk_num - 1 ];
+			var cur_config = this.base_tree_list[ cur.chunk_num ];
 			if (cur.handled) {
 				continue;
 			}
@@ -2286,7 +2286,7 @@ var getBaseTreeCheckList = function(start) {
 	var all_items = [null, start];
 
 	while (all_items.length) {
-		chunks_counter++;
+		
 
 		var cur_parent = all_items.shift();
 		var cur = all_items.shift();
@@ -2307,6 +2307,7 @@ var getBaseTreeCheckList = function(start) {
 		}
 
 		result.push( cur );
+		chunks_counter++;
 
 
 	}
@@ -2320,7 +2321,7 @@ var getBaseTreeSkeleton = function(array) {
 	for (var i = 0; i < array.length; i++) {
 		result[i] = {
 			handled: false,
-			parent: null,
+			parent: array[i].parent && result[ array[i].parent.chunk_num ] || null,
 			chunk_num: array[i].chunk_num
 		};
 	}
