@@ -167,6 +167,11 @@ provoda.View.extendTo(SongActPlaylistingUI, {
 		
 		
 	},
+	tpl_events: {
+		input_search: spv.debounce(function(e, node) {
+			this.RPCLegacy('search', node.value);
+		}, 100)
+	},
 
 	state_change: {
 		need_creation_button: function(state) {

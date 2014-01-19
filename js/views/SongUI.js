@@ -62,6 +62,12 @@ coct.SPView.extendTo(SongUI, {
 	parts_builder: {
 		context: function() {
 			return this.root_view.getSample('track_c');
+		},
+		mf_cor_con: function() {
+			var context = this.requirePart('context');
+			var div = $('<div></div>');
+			context.prepend(div);
+			return div;
 		}
 	},
 	createBase: function(){
@@ -78,13 +84,10 @@ coct.SPView.extendTo(SongUI, {
 
 	},
 	'collch-$ondemand-actionsrow': true,
-	'collch-$ondemand-mf_cor': function(){
-		var ancor = this.getAFreeCV('mf_cor');
-		if (ancor){
-			var context = this.requirePart('context');
-			context.prepend(ancor);
+	'collch-$ondemand-mf_cor': {
+		place: function() {
+			return this.requirePart('mf_cor_con');
 		}
-		
 	},
 	expand: function(){
 		if (this.opts && this.opts.lite){
