@@ -1286,7 +1286,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				continue;
 			}
 			if (!cur.parent || cur.parent.handled) {
+				if (!cur_config.needs_expand_state || cur_config.needs_expand_state == state_name){
 
+				}
 			}
 			
 			//chunk_num
@@ -1316,9 +1318,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				for ( i = 0; i < cur.declarations.length; i++ ) {
 					if (cur.declarations[i].needs_expand_state) {
 						var state_name = cur.declarations[i].needs_expand_state;
-						if (typeof state_name != 'string') {
-							state_name = 'can_expand';
-						}
 						if (!states_index[state_name]) {
 							states_index[state_name] = true;
 							states_list.push( state_name );
@@ -3457,6 +3456,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				place: collch
 			};
 		}
+		var expand_state = collch.needs_expand_state;
+		if (expand_state && typeof expand_state != 'string') {
+			expand_state = 'can_expand';
+		}
 
 		return {
 			place: collch.place,
@@ -3464,7 +3467,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			space: collch.space || 'main',
 			strict: collch.strict,
 			opts: collch.opts,
-			needs_expand_state: collch.needs_expand_state
+			needs_expand_state: expand_state || null
 		};
 	},
 	simpleAppendNestingViews: function(declr, opts, nesname, array) {
