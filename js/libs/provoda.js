@@ -1333,10 +1333,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 
 		if (state_name && this.dclrs_expandable) {
-			if (this.dclrs_expandable[state_name]) {
+			if (this.dclrs_expandable[state_name] && !this.handled_expandable_dclrs[state_name]) {
+				this.handled_expandable_dclrs[state_name] = true;
 				for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
 					this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
 				}
+
 				this.checkChildrenModelsRendering();
 				this.requestAll();
 			}
@@ -2425,6 +2427,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
 		}
 
+		this.handled_expandable_dclrs = this.dclrs_expandable ? {} : null;
 
 		this.view_id = views_counter++;
 		this.parent_view = null;
