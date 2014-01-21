@@ -1360,6 +1360,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				}
 			}
 		}
+
+		if (states_list.length) {
+			this.base_tree_expand_states = states_list;
+		}
+
 		if (states_list) {
 			console.log(states_list);
 		}
@@ -2435,6 +2440,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		spv.cloneObj(this.undetailed_states, this.mpx.states);
 		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
 		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
+
+
+		if (this.base_tree_expand_states) {
+			for (var i = 0; i < this.base_tree_expand_states.length; i++) {
+				//this.on('state_change-' + this.base_tree_expand_states[i], this.hndExpandViewTree);
+			}
+		}
+
 
 		var _this = this;
 		this.triggerTPLevents = function(e) {

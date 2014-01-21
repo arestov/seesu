@@ -21,11 +21,7 @@ coct.SPView.extendTo(SongViewBase, {
 	createBase: function(){
 		var _this = this;
 		this.setVisState('lite_view', this.opts && this.opts.lite);
-		this.c = this.root_view.getSample('song-view');
-		//window.dizi = sonw;
-		//this.tpl = this.getTemplate(sonw);
 
-		this.createTemplate();
 		this.canUseDeepWaypoints = function() {
 			return !(_this.opts && _this.opts.lite) && !!_this.state('vmp_show');
 		};
@@ -37,6 +33,12 @@ var SongUI = function(){};
 
 SongViewBase.extendTo(SongUI, {
 	dom_rp: true,
+	createBase: function() {
+		this._super();
+		//this.checkExpandableTree();
+		this.c = this.root_view.getSample('song-view');
+		this.createTemplate();
+	},
 	state_change : {
 		"vmp_show": function(opts, old_opts) {
 			if (opts){
@@ -53,7 +55,12 @@ SongViewBase.extendTo(SongUI, {
 			}
 		}
 	},
-
+	'compx-must_expand': [
+		['can_expand', 'vmp_show', 'vis_can_expand'],
+		function(can_expand, vmp_show, vis_can_expand) {
+			return can_expand || vmp_show || vis_can_expand;
+		}
+	],
 	deactivate: function(){
 
 		var acts_row = this.getMdChild('actionsrow');
@@ -86,20 +93,20 @@ SongViewBase.extendTo(SongUI, {
 
 	'collch-$ondemand-actionsrow': {
 		place: true,
-		needs_expand_state: true
+		needs_expand_state: 'must_expand'
 	},
 	'collch-$ondemand-mf_cor': {
 		place: function() {
 			return this.requirePart('mf_cor_con');
 		},
-		needs_expand_state: true
+		needs_expand_state: 'must_expand'
 	},
 	base_tree: {
 		sample_name: 'song-view',
 		children_by_selector: [{
 			parse_as_tplpart: true,
 			part_name: 'context',
-			needs_expand_state: true,
+			needs_expand_state: 'must_expand',
 			children_by_selector: [{
 				sample_name: 'artist_preview-base',
 				selector: '.nested_artist'
@@ -143,7 +150,11 @@ SongViewBase.extendTo(SongUI, {
 var SongViewLite = function() {};
 
 SongViewBase.extendTo(SongViewLite, {
-
+	createBase: function() {
+		this._super();
+		this.c = this.root_view.getSample('song-view');
+		this.createTemplate();
+	}
 });
 SongUI.SongViewLite = SongViewLite;
 return SongUI;
