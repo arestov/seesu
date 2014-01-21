@@ -34,7 +34,7 @@ AppBaseView.extendTo(AppView, {
 		},
 		playlist: {
 			main: SongsListView,
-			'all-sufficient-details': SongsListView,
+			'all-sufficient-details': SongsListView.SongsListDetailedView,
 			nav: nav.baseNavUI
 		},
 		vk_usercard: {

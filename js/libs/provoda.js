@@ -1279,20 +1279,53 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 	},
 	checkExpandableTree: function(state_name) {
-		for (var i = 0; i < this.base_skeleton.length; i++) {
-			var cur = this.base_skeleton[i];
-			var cur_config = this.base_tree_list[ cur.chunk_num ];
-			if (cur.handled) {
-				continue;
-			}
-			if (!cur.parent || cur.parent.handled) {
-				if (!cur_config.needs_expand_state || cur_config.needs_expand_state == state_name){
+		var i, cur, cur_config, has_changes = true, append_list = [];
+		while (has_changes) {
+			has_changes = false;
+			for (i = 0; i < this.base_skeleton.length; i++) {
+				cur = this.base_skeleton[i];
+				cur_config = this.base_tree_list[ cur.chunk_num ];
+				if (cur.handled) {
+					continue;
+				}
+				if (!cur.parent || cur.parent.handled) {
+					if (!cur_config.needs_expand_state || cur_config.needs_expand_state == state_name){
+						cur.handled = true;
+						if (cur_config.sample_name) {
+							cur.node = this.root_view.getSample( cur_config.sample_name );
+						} else if (cur_config.part_name) {
+							cur.node = this.requirePart( cur_config.part_name );
+						} else {
+							throw new Error('how to get node for this?!');
+						}
+						has_changes = true;
 
+						//sample_name
+						//part_name
+					}
+				}
+				
+				//chunk_num
+			}
+			while (append_list.length) {
+				cur = append_list.pop();
+				if (cur.parent && cur.parent.node) {
+					cur_config =  this.base_tree_list[ cur.chunk_num ];
+					if (cur_config.selector) {
+						$(cur.parent.node).find(cur_config.selector).append(cur.node);
+					} else {
+						$(cur.parent.node).append(cur.node);
+					}
+					if (cur_config.parse_as_tplpart) {
+						this.parseAppendedTPLPart(cur.node);
+					}
+				} else if (cur.parent){
+					console.log('cant append');
 				}
 			}
-			
-			//chunk_num
+
 		}
+		
 
 		//если есть прикреплённый родитель и пришло время прикреплять (если оно должно было прийти)
 		//
@@ -2320,6 +2353,7 @@ var getBaseTreeSkeleton = function(array) {
 	for (var i = 0; i < array.length; i++) {
 		result[i] = {
 			handled: false,
+			node: null,
 			parent: array[i].parent && result[ array[i].parent.chunk_num ] || null,
 			chunk_num: array[i].chunk_num
 		};

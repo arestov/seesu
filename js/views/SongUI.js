@@ -4,15 +4,39 @@ function(provoda, spv, $, app_serv,
 SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 
+var SongViewBase = function() {};
+coct.SPView.extendTo(SongViewBase, {
+	tpl_events: {
+		showSong: function(e) {
+			e.preventDefault();
+			if (this.expand) {
+				this.expand();
+			}
+			
+			this.RPCLegacy('wantSong');
+			this.RPCLegacy('requestPage');
 
+		}
+	},
+	createBase: function(){
+		var _this = this;
+		this.setVisState('lite_view', this.opts && this.opts.lite);
+		this.c = this.root_view.getSample('song-view');
+		//window.dizi = sonw;
+		//this.tpl = this.getTemplate(sonw);
+
+		this.createTemplate();
+		this.canUseDeepWaypoints = function() {
+			return !(_this.opts && _this.opts.lite) && !!_this.state('vmp_show');
+		};
+
+	},
+});
 
 var SongUI = function(){};
 
-coct.SPView.extendTo(SongUI, {
+SongViewBase.extendTo(SongUI, {
 	dom_rp: true,
-	createDetails: function(){
-		this.createBase();
-	},
 	state_change : {
 		"vmp_show": function(opts, old_opts) {
 			if (opts){
@@ -48,17 +72,6 @@ coct.SPView.extendTo(SongUI, {
 	activate: function(){
 		this.expand();
 	},
-
-	tpl_events: {
-		showSong: function(e) {
-			e.preventDefault();
-			this.expand();
-			this.RPCLegacy('wantSong');
-			this.RPCLegacy('requestPage');
-
-		}
-	},
-
 	parts_builder: {
 		context: function() {
 			return this.root_view.getSample('track_c');
@@ -70,19 +83,7 @@ coct.SPView.extendTo(SongUI, {
 			return div;
 		}
 	},
-	createBase: function(){
-		var _this = this;
-		this.setVisState('lite_view', this.opts && this.opts.lite);
-		this.c = this.root_view.getSample('song-view');
-		//window.dizi = sonw;
-		//this.tpl = this.getTemplate(sonw);
 
-		this.createTemplate();
-		this.canUseDeepWaypoints = function() {
-			return !(_this.opts && _this.opts.lite) && !!_this.state('vmp_show');
-		};
-
-	},
 	'collch-$ondemand-actionsrow': {
 		place: true,
 		needs_expand_state: true
@@ -139,5 +140,11 @@ coct.SPView.extendTo(SongUI, {
 		this.requestAll();
 	}
 });
+var SongViewLite = function() {};
+
+SongViewBase.extendTo(SongViewLite, {
+
+});
+SongUI.SongViewLite = SongViewLite;
 return SongUI;
 });
