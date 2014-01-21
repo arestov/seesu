@@ -35,8 +35,8 @@ SongViewBase.extendTo(SongUI, {
 	dom_rp: true,
 	createBase: function() {
 		this._super();
-		//this.checkExpandableTree();
-		this.c = this.root_view.getSample('song-view');
+		this.checkExpandableTree();
+		//this.c = this.root_view.getSample('song-view');
 		this.createTemplate();
 	},
 	state_change : {
@@ -114,6 +114,7 @@ SongViewBase.extendTo(SongUI, {
 		}]
 	},
 	expand: function(){
+		return;
 		if (this.opts && this.opts.lite){
 			return false;
 		}

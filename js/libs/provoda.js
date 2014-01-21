@@ -1299,6 +1299,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 							throw new Error('how to get node for this?!');
 						}
 						has_changes = true;
+						append_list.push(cur);
 
 						//sample_name
 						//part_name
@@ -1321,9 +1322,24 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 					}
 				} else if (cur.parent){
 					console.log('cant append');
+				} else {
+					this.c = cur.node;
 				}
 			}
 
+		}
+		if (!this.c && this.base_skeleton[0].node) {
+			this.c = this.base_skeleton[0].node;
+		}
+
+		if (state_name && this.dclrs_expandable) {
+			if (this.dclrs_expandable[state_name]) {
+				for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
+					this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
+				}
+				this.checkChildrenModelsRendering();
+				this.requestAll();
+			}
 		}
 		
 
@@ -1344,16 +1360,25 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	collectBaseExtendStates: function() {
 		var states_list = [], i, states_index = {};
+		var dclrs_expandable = {};
 
 		for ( var nesting_name in this.dclrs_fpckgs ) {
 			if ( nesting_name.indexOf('$ondemand-') === 0 ) {
 				var cur = this.dclrs_fpckgs[ nesting_name ];
+				var added = false;
 				for ( i = 0; i < cur.declarations.length; i++ ) {
 					if (cur.declarations[i].needs_expand_state) {
 						var state_name = cur.declarations[i].needs_expand_state;
 						if (!states_index[state_name]) {
 							states_index[state_name] = true;
 							states_list.push( state_name );
+						}
+
+						if (!added) {
+							if ( !dclrs_expandable[state_name] ) {
+								dclrs_expandable[state_name] = [];
+							}
+							dclrs_expandable[state_name].push(nesting_name.replace('$ondemand-', ''));
 						}
 						 
 					}
@@ -1363,11 +1388,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		if (states_list.length) {
 			this.base_tree_expand_states = states_list;
+			console.log(states_list);
+			console.log(dclrs_expandable);
+			this.dclrs_expandable = dclrs_expandable;
 		}
 
-		if (states_list) {
-			console.log(states_list);
-		}
+
 		//debugger;
 	},
 	prsStCon: {
@@ -2444,7 +2470,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		if (this.base_tree_expand_states) {
 			for (var i = 0; i < this.base_tree_expand_states.length; i++) {
-				//this.on('state_change-' + this.base_tree_expand_states[i], this.hndExpandViewTree);
+				this.on('state_change-' + this.base_tree_expand_states[i], this.hndExpandViewTree);
 			}
 		}
 
