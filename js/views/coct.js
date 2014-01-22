@@ -36,18 +36,18 @@ provoda.View.extendTo(ListPreview, {
 		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		node.toggleClass('button_selected', !!state);
 	},
-	createBase: function() {
-		this.c = this.root_view.getSample('area_for_button');
-		this.bindBase();
+	base_tree: {
+		sample_name: 'area_for_button'
 	}
 });
 
 var ListPreviewLine = function() {};
 provoda.View.extendTo(ListPreviewLine, {
+	base_tree: {
+		sample_name: 'preview_line'
+	},
 	createBase: function() {
 		this.setVisState('img_allowed', this.extended_viewing);
-		this.c = this.root_view.getSample('preview_line');
-		this.createTemplate();
 	},
 	'compx-selected_title': {
 		depends_on: ['nav_title', 'nav_short_title'],
@@ -163,9 +163,8 @@ ListPreview.extendTo(ItemOfLL, {
 
 var AuthListPreview = function() {};
 ImagedListPreview.extendTo(AuthListPreview, {
-	createBase: function() {
-		this.c = this.root_view.getSample('preview_area');
-		this.bindBase();
+	base_tree: {
+		sample_name: 'preview_area'
 	}
 });
 

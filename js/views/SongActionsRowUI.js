@@ -5,9 +5,8 @@ var localize = app_serv.localize;
 
 var PlaylistAddSearchCtr = function() {};
 provoda.View.extendTo(PlaylistAddSearchCtr, {
-	createBase: function() {
-		this.c = this.root_view.getSample('song_acting_playlist_add');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'song_acting_playlist_add'
 	}
 });
 

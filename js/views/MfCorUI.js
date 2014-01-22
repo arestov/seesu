@@ -65,9 +65,6 @@ provoda.View.extendTo(FileInTorrentUI,{
 var SongFileModelUI = function() {};
 provoda.View.extendTo(SongFileModelUI, {
 	dom_rp: true,
-	createDetails: function(){
-		this.createBase();
-	},
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
 	},
@@ -142,9 +139,11 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		}
 	},
-	createBase: function() {
-		var node = this.root_view.getSample('song-file');
-		this.useBase(node);
+	base_tree: {
+		sample_name: 'song-file'
+	},
+	expandBase: function() {
+
 
 		var progress_c = this.tpl.ancs['progress_c'];
 
@@ -349,10 +348,8 @@ provoda.View.extendTo(MfCorUI, {
 			return !!mp_show_end;
 		}
 	},
-	createBase: function() {
-		this.c = this.root_view.getSample('moplas-block');
-		this.bindBase();
-
+	base_tree: {
+		sample_name: 'moplas-block'
 	}
 });
 

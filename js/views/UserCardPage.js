@@ -84,9 +84,8 @@ provoda.View.extendTo(VkFriendPreview, {
 
 var VkUsersPageView = function() {};
 provoda.View.extendTo(VkUsersPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('vk_users_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'vk_users_page'
 	},
 	children_views: {
 		list_items: VkFriendPreview

@@ -2702,8 +2702,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	createDetails: function() {
 		if (this.pv_view_node){
 			this.useBase(this.pv_view_node);
-		} else if (this.createBase){
-			this.createBase();
+		} else {
+			if (this.base_skeleton) {
+				this.checkExpandableTree();
+				if (this.c) {
+					this.useBase(this.c);
+				}
+				if (this.expandBase) {
+					this.expandBase();
+				}
+			} else if (this.createBase){
+				this.createBase();
+			}
 		}
 	},
 	requestDetailesCreating: function() {

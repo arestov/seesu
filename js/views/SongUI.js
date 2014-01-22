@@ -18,27 +18,18 @@ coct.SPView.extendTo(SongViewBase, {
 
 		}
 	},
-	createBase: function(){
-		var _this = this;
+	expandBase: function(){
 		this.setVisState('lite_view', this.opts && this.opts.lite);
-
-		this.canUseDeepWaypoints = function() {
-			return !(_this.opts && _this.opts.lite) && !!_this.state('vmp_show');
-		};
-
 	},
+	canUseDeepWaypoints: function() {
+		return !(this.opts && this.opts.lite) && !!this.state('vmp_show');
+	}
 });
 
 var SongUI = function(){};
 
 SongViewBase.extendTo(SongUI, {
 	dom_rp: true,
-	createBase: function() {
-		this._super();
-		this.checkExpandableTree();
-		//this.c = this.root_view.getSample('song-view');
-		this.createTemplate();
-	},
 	state_change : {
 		"vmp_show": function(opts, old_opts) {
 			if (opts){
@@ -47,11 +38,6 @@ SongViewBase.extendTo(SongUI, {
 			} else if (old_opts) {
 			//	this.parent_view.c.removeClass("show-zoom-to-track");
 				this.deactivate();
-			}
-		},
-		"can_expand": function(state) {
-			if (state){
-				this.expand();
 			}
 		}
 	},
@@ -77,7 +63,6 @@ SongViewBase.extendTo(SongUI, {
 		songcard: SongcardPage.SongcardController
 	},
 	activate: function(){
-		this.expand();
 	},
 	parts_builder: {
 		context: function() {
@@ -90,7 +75,6 @@ SongViewBase.extendTo(SongUI, {
 			return div;
 		}
 	},
-
 	'collch-$ondemand-actionsrow': {
 		place: true,
 		needs_expand_state: 'must_expand'
@@ -112,49 +96,14 @@ SongViewBase.extendTo(SongUI, {
 				selector: '.nested_artist'
 			}]
 		}]
-	},
-	expand: function(){
-		return;
-		if (this.opts && this.opts.lite){
-			return false;
-		}
-		if (this.expanded){
-			return true;
-		} else{
-			this.expanded = true;
-		}
-
-		var context = this.requirePart('context');
-		if (!context){
-			return;
-		}
-		
-
-		var nart_dom = this.root_view.getSample('artist_preview-base');
-		context.children('.nested_artist').append(nart_dom);
-
-		
-		this.parseAppendedTPLPart(context);
-		this.c.append(context);
-
-		//this['collch-actionsrow'] = true;
-		this.checkCollectionChange('actionsrow');
-
-		//this['collch-mf_cor'] = ;
-		this.checkCollectionChange('mf_cor');
-		
-
-		this.checkChildrenModelsRendering();
-		this.requestAll();
 	}
 });
 var SongViewLite = function() {};
 
 SongViewBase.extendTo(SongViewLite, {
-	createBase: function() {
-		this._super();
-		this.c = this.root_view.getSample('song-view');
-		this.createTemplate();
+
+	base_tree: {
+		sample_name: 'song-view'
 	}
 });
 SongUI.SongViewLite = SongViewLite;

@@ -3,9 +3,8 @@ define(['provoda', './coct', 'app_serv', 'jquery'], function(provoda, coct, app_
 var app_env = app_serv.app_env;
 var LULAPageVIew = function() {};
 provoda.View.extendTo(LULAPageVIew, {
-	createBase: function() {
-		this.c = this.root_view.getSample('lula_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'lula_page'
 	},
 	children_views: {
 		all_time: coct.ImagedListPreview
@@ -15,18 +14,16 @@ provoda.View.extendTo(LULAPageVIew, {
 
 var LULAsPageVIew = function() {};
 provoda.View.extendTo(LULAsPageVIew, {
-	createBase: function() {
-		this.c = this.root_view.getSample('lulas_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'lulas_page'
 	}
 });
 
 
 var UserTagsPageView = function() {};
 provoda.View.extendTo(UserTagsPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('user_tags_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'user_tags_page'
 	}
 });
 
@@ -44,9 +41,8 @@ provoda.View.extendTo(LfmFriendPreview, {
 
 var LfmUsersPageView = function() {};
 provoda.View.extendTo(LfmUsersPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('lfm_users_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'lfm_users_page'
 	},
 	children_views: {
 		list_items: LfmFriendPreview

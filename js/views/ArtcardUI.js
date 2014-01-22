@@ -50,9 +50,8 @@ provoda.View.extendTo(ArtcardUI, {
 			}
 		}
 	},
-	createBase: function() {
-		this.c = this.root_view.getSample('artcard');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'artcard'
 	}
 });
 
