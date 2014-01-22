@@ -46,7 +46,7 @@ provoda.View.extendTo(ListPreviewLine, {
 	base_tree: {
 		sample_name: 'preview_line'
 	},
-	createBase: function() {
+	expandBase: function() {
 		this.setVisState('img_allowed', this.extended_viewing);
 	},
 	'compx-selected_title': {
