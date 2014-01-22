@@ -75,7 +75,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 			'url_part': '/' + this.album_id
 		});
 	},
-	'compx-can-hide-artist_name': {
+	'compx-can_hide_artist_name': {
 		depends_on: ['album_artist', 'original_artist'],
 		fn: function(alb_artist, orgn_artist) {
 			return alb_artist == orgn_artist;
@@ -319,7 +319,7 @@ SongsList.extendTo(ArtistAlbumSongs, {
 		}
 
 	},
-	'compx-can-hide-artist_name': {
+	'compx-can_hide_artist_name': {
 		depends_on: ['album_artist', 'original_artist'],
 		fn: function(alb_artist, orgn_artist) {
 			return alb_artist == orgn_artist;

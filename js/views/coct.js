@@ -212,27 +212,10 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 
 var BigAlbumPreview = function() {};
 provoda.View.extendTo(BigAlbumPreview, {
-	createBase: function() {
-		this.c = this.root_view.getSample('alb_prev_big');
-		this.createTemplate();
-		var _this = this;
+	base_tree: {
+		sample_name: 'alb_prev_big'
+	},
 
-		this.c.click(function() {
-			_this.RPCLegacy('requestPage');
-			return false;
-		});
-		this.addWayPoint(this.c);
-	},
-	'stch-can-hide-artist_name': function(state) {
-		this.tpl.ancs.artist_name_c.toggleClass('hidden', state);
-	},
-	'stch-album_name': function(state) {
-		this.c.attr('title', state);
-		this.tpl.ancs.album_name_c.text(state);
-	},
-	'stch-album_artist': function(state) {
-		this.tpl.ancs.artist_name_c.text(state);
-	},
 	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){

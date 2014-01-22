@@ -332,12 +332,19 @@
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
 		</div>
-		<div class="album_preview-big">
+		<div class="album_preview-big" 
+			pv-events="click::requestPage"
+			pv-type="way-point"
+			pv-props="title: {{album_name}}"
+			>
 			<img src="" alt="" pv-anchor="imgc"/>
 			<div class="full_album_name">
 				<div class="desc hidden" pv-class="desc {{!album_year && 'hidden'}}" pv-text="{{album_year}}"></div>
-				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
-				<div class="album_name" pv-anchor="album_name_c"></div>
+				<div 
+					class="artist_name_alb" 
+					pv-class="artist_name_alb {{can_hide_artist_name && 'hidden'}}"
+					pv-anchor="artist_name_c" pv-text="{{album_artist}}"></div>
+				<div class="album_name" pv-anchor="album_name_c" pv-text="{{album_name}}"></div>
 			</div>
 		</div>
 		
