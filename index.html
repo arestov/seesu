@@ -530,11 +530,13 @@
 
 
 
-		<div class="artists_list no_arfb">
-			<div class="to-open-block area-button">
+		<div 
+			class="artists_list no_arfb" 
+			pv-class="artists_list no_arfb {{!vmp_show && 'hidden'}} {{list_loading && 'list_loading_state'}}">
+			<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
 			</div>
-			<ul>
+			<ul pv-anchor="listc">
 				
 			</ul>
 		</div>
