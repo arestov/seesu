@@ -2076,8 +2076,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var i = 0, cur = null;
 		for (var collection_name in this.children_models){
 			cur = this.children_models[collection_name];
+			if (!cur) {
+				continue;
+			}
 			if (Array.isArray(cur)){
-				all_models = all_models.concat(cur);
+				all_models.push.apply(all_models, cur);
+				//all_models = all_models.concat(cur);
 			} else {
 				all_models.push(cur);
 			}
