@@ -1,4 +1,6 @@
 .navs{
+	-webkit-transform: translateZ(0);
+	
 	overflow:hidden;
 	padding-top:6px;
 	padding-right:1rem;
