@@ -2633,7 +2633,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			var total = [];
 			var i = 0;
 			for (i = 0; i < arr_arr.length; i++) {
-				total = total.concat(arr_arr[i]);
+				if (!arr_arr[i]) {
+					continue;
+				}
+				total.push.apply(total, arr_arr[i]);
+				//total = total.concat(arr_arr[i]);
 			}
 			var matched = [];
 			for (i = 0; i < total.length; i++) {
