@@ -50,10 +50,10 @@ var sync_sender = {
 		}
 
 	},
-	connectSockect: function(api, socket_id) {
+	connectSockect: function(start_model, api, socket_id) {
 		this.sockets_m_index[socket_id] = {};
 		this.sockets[socket_id] = api;
-		var struc = this.root_model.toSimpleStructure(this.sockets_m_index[socket_id]);
+		var struc = start_model.toSimpleStructure(this.sockets_m_index[socket_id]);
 		this.postTree(struc, true);
 		
 	},
@@ -306,7 +306,7 @@ var sync_reciever = {
 	connectAppRoot: function() {
 		//window.postMessage({});
 		var _this = this;
-		provoda.sync_s.connectSockect({}, Math.random());
+		provoda.sync_s.connectSockect(this.root_model, {}, Math.random());
 
 		spv.addEvent(window, 'message', function(e) {
 			var data  = e.data;

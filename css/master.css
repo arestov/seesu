@@ -119,6 +119,7 @@ a.track_name_loading .song-track-name{
 		}
 .moplas-block .show-all-songs{
 	position: relative;
+	z-index: 2;
 	float:right;
 	}
 	.moplas-block .show-all-songs .notifier{
