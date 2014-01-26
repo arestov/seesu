@@ -6,102 +6,85 @@ var provoda;
 var sync_sender = {
 	root_model: null,
 	sockets: {},
+	streams_list: [],
 	sockets_m_index: {},
 	setRootModel: function(md) {
 		this.root_model = md;
 	},
-	postTree: function(struc, has_root) {
-		window.postMessage({
-			protocol: 'provoda',
-			action: 'buildtree',
-			message: {
-				has_root: has_root,
-				value: struc
-			}
-		}, window.location.origin);
-	},
-	postNesting: function(md, nesname, value) {
-		var result = value;
-		if (value){
-			if (value._provoda_id){
-				result = value._provoda_id;
-			} else {
-				result = [];
-				for (var i = 0; i < value.length; i++) {
-					result.push(value[i]._provoda_id);
-				}
-			}
-		}
-		window.postMessage({
-			protocol: 'provoda',
-			action: 'update_nesting',
-			message: {
-				_provoda_id: md._provoda_id,
-				name: nesname,
-				value: result
-			}
-		}, window.location.origin);
-	},
-	postStates: function(id, states) {
-		var converted_states = [];
-		for (var i = 0; i < states.length; i++) {
+	addSyncStream: function(start_md, stream) {
+		this.sockets_m_index[stream.id] = {};
+		this.sockets[stream.id] = stream;
+		this.streams_list.push(stream);
 
-			//states[i]
-		}
+		var struc = start_md.toSimpleStructure(this.sockets_m_index[stream.id]);
+		stream.buildTree(struc);
 
 	},
-	connectSockect: function(start_model, api, socket_id) {
-		this.sockets_m_index[socket_id] = {};
-		this.sockets[socket_id] = api;
-		var struc = start_model.toSimpleStructure(this.sockets_m_index[socket_id]);
-		this.postTree(struc, true);
-		
-	},
-	checkModels: function(array, index) {
-		var big_result = [];
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			if (!index[cur._provoda_id]){
-				index[cur._provoda_id] = true;
-				cur.toSimpleStructure(index, big_result);
-			}
-			
-		}
-		if (big_result.length){
-			this.postTree(big_result);
-		}
-	},
-	pushNesting: function(md, nesname, value) {
-		var struc;
-		for (var socket_id in this.sockets) {
-			var index = this.sockets_m_index[socket_id];
-			if (!this.sockets_m_index[socket_id][md._provoda_id]){
-				if (!struc){
-					struc = md.toSimpleStructure(index);
-				}
-				this.postTree(struc);
-			} else {
-				if (value){
+	pushNesting: function(md, nesname, value, oldv, remove){
+		//var struc;
+		var parsed_value;
+		for (var i = 0; i < this.streams_list.length; i++) {
+			var cur = this.streams_list[i];
+			var index = this.sockets_m_index[cur.id];
+			if (index[md._provoda_id]){
+
+
+				if (value && typeof parsed_value == 'undefined') {
+					//parsed_value
+
 					if (value._provoda_id){
-						this.checkModels([value], index);
+						parsed_value = value._provoda_id;
+					} else if (Array.isArray(value)){
+
+						parsed_value = new Array(value.length);
+						for (var jj = 0; jj < value.length; jj++) {
+							parsed_value[jj] = value[jj]._provoda_id;
+						}
 					} else {
-						this.checkModels(value, index);
+						console.warn('unparsed', value);
+					}
+					if (parsed_value == 'undefined') {
+						parsed_value = null;
 					}
 				}
-				this.postNesting(md, nesname, value);
+
+				var struc = md.toSimpleStructure(index);
+
+
+
+				cur.changeCollection(md._provoda_id, struc, nesname, parsed_value);
 			}
 		}
 	},
 	pushStates: function(md, states) {
-		var struc;
-		for (var socket_id in this.sockets) {
-			if (!this.sockets_m_index[socket_id][md._provoda_id]){
-				if (!struc){
-					struc = md.toSimpleStructure(this.sockets_m_index[socket_id]);
+	//	var struc;
+		var needs_changes, parsing_done, fixed_values;
+
+		for (var i = 0; i < this.streams_list.length; i++) {
+			var cur = this.streams_list[i];
+			if (this.sockets_m_index[cur.id][md._provoda_id]) {
+				if (!parsing_done) {
+					for ( var jj = 1; jj < states.length; jj += 2 ) {
+						var cur_value = states[jj];
+						if (cur_value && typeof cur_value == 'object' && cur_value._provoda_id) {
+							needs_changes = true;
+
+							if (!fixed_values) {
+								fixed_values = states.slice();
+							}
+
+							fixed_values[jj] = {
+								_provoda_id: states[jj]._provoda_id
+							};
+
+						}
+						//needs_changes
+					}
+
+
 				}
-				this.postTree(struc);
-			} else {
-				this.postStates(md, states);
+				
+				cur.updateStates(md._provoda_id, needs_changes ? fixed_values : states);
 			}
 		}
 	}
@@ -118,6 +101,7 @@ var MDProxy = function(_provoda_id, states, children_models, md) {
 	this.md = md;
 	this.nestings = {};
 };
+
 MDProxy.prototype = {
 	RPCLegacy: function() {
 		this.md.RPCLegacy.apply(this.md, arguments);
@@ -278,53 +262,86 @@ MDProxy.prototype = {
 		}
 	}
 };
-
-window.big_index = {};
-var big_index = window.big_index;
+var idToModel = function(index, ids) {
+	if (typeof ids == 'number'){
+		return index[ids];
+	} else if (Array.isArray(ids)) {
+		var result = new Array(ids.length);
+		for (var i = 0; i < ids.length; i++) {
+			result[i] = index[ids[i]];
+			
+		}
+		return result;
+	} else {
+		if (ids){
+			debugger;
+		}
+		
+		return ids;
+	}
+};
 
 var sync_reciever = {
 	md_proxs_index: {},
+	models_index: {},
+	buildTree: function(array) {
+		var i, cur, cur_pvid;
+
+		for (i = 0; i < array.length; i++) {
+			cur = array[i];
+			cur_pvid = cur._provoda_id;
+			if (!this.models_index[cur_pvid]){
+				this.models_index[cur_pvid]  = cur;
+			}
+			//резервируем объекты для моделей
+			//big_index[cur_pvid] = true;
+		}
+
+		for (i = 0; i < array.length; i++) {
+			//восстанавливаем связи моделей
+			cur = array[i];
+			cur.map_parent = idToModel(this.models_index, cur.map_parent);
+			for (var nesting_name in cur.children_models) {
+				cur.children_models[nesting_name] = idToModel(this.models_index, cur.children_models[nesting_name]);
+			}
+
+		}
+
+
+		for (i = 0; i < array.length; i++) {
+			//создаём передатчики обновлений во вьюхи
+			cur = array[i];
+			cur_pvid = cur._provoda_id;
+			if (!this.md_proxs_index[cur_pvid]){
+				this.md_proxs_index[cur_pvid] = new provoda.MDProxy(cur._provoda_id, cur.states, cur.children_models, this.models_index[cur_pvid]);
+				this.models_index[cur_pvid].mpx = this.md_proxs_index[cur_pvid];
+			}
+		}
+		return array.length && this.md_proxs_index[array[0]._provoda_id];
+	},
 	actions: {
 		buildtree: function(message) {
-			for (var i = 0; i < message.value.length; i++) {
-				var cur = message.value[i];
-				if (!this.md_proxs_index[cur._provoda_id]){
-					this.md_proxs_index[cur._provoda_id] = new MDProxy();
-				}
-				big_index[cur._provoda_id] = true;
-
-			}
+			return this.buildTree(message.value);
 		},
 		update_states: function(message) {
-			this.md_proxs_index[message._provoda_id].updateStates(message.states);
+			this.md_proxs_index[message._provoda_id].sendStatesToViews(message.value);
 		},
 		update_nesting: function(message) {
-			this.md_proxs_index[message._provoda_id].updateNesting(message.name, message.value);
-		}
-	},
-
-	connectAppRoot: function() {
-		//window.postMessage({});
-		var _this = this;
-		provoda.sync_s.connectSockect(this.root_model, {}, Math.random());
-
-		spv.addEvent(window, 'message', function(e) {
-			var data  = e.data;
-			if (data && data.protocol == 'provoda'){
-				if (_this.actions[data.action]){
-					_this.actions[data.action].call(_this, data.message);
-				}
+			if (message.struc) {
+				this.buildTree(message.struc);
 			}
-		});
-		//window.postMessage
+			this.md_proxs_index[message._provoda_id].sendCollectionChange(message.name, message.value);
+		}
 	}
 };
+
 
 provoda = {
 	prototypes: {},
 	setTplFilterGetFn: function(fn) {
 		angbo.getFilterFn = fn;
 	},
+	MDProxy: MDProxy,
 	sync_s: sync_sender,
 	sync_r: sync_reciever,
 	Eventor: function(){},
@@ -1390,8 +1407,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		if (states_list.length) {
 			this.base_tree_expand_states = states_list;
-			console.log(states_list);
-			console.log(dclrs_expandable);
 			this.dclrs_expandable = dclrs_expandable;
 		}
 
@@ -1964,6 +1979,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	getStrucParent: function() {
 		return this.map_parent;
 	},
+
 	init: function(opts){
 		if (opts && opts.app){
 			this.app = opts.app;
@@ -1980,16 +1996,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.states = {};
 		
 		this.children_models = {};
-		/*
-		this.postStatesChanges = function(states) {
-			return;
-			sync_sender.pushStates(this, states);
-		};
-		this.postNestingChange = function(nesting_name, value) {
-			return;
-			sync_sender.pushNesting(this, nesting_name, value);
-		};*/
-	//	var _this = this;
+
 
 		this.md_replacer = null;
 		
@@ -2147,31 +2154,29 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	sendCollectionChange: function(collection_name, array, old_value, removed) {
 		//this.removeDeadViews();
-		if (this.postNestingChange){
-			this.postNestingChange(collection_name, array, old_value, removed);
-		}
+		sync_sender.pushNesting(this, collection_name, array, old_value, removed);
+
 		this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
 	},
 	complex_st_prefix: 'compx-',
 
 	sendStatesToViews: function(states_list) {
 		//this.removeDeadViews();
-		if (this.postStatesChanges){
-			this.postStatesChanges(states_list);
-		}
+		sync_sender.pushStates(this, states_list);
 
 		this.mpx.sendStatesToViews(states_list);
 	},
 
 	toSimpleStructure: function(models_index, big_result) {
 		models_index = models_index || {};
+		var local_index = {};
 		var all_for_parse = [this];
 		big_result = big_result || [];
 
 		var checkModel = function(md) {
 			var cur_id = md._provoda_id;
-			if (!models_index[cur_id]){
-				models_index[cur_id] = true;
+			if (!models_index[cur_id] && !local_index[cur_id]){
+				local_index[cur_id] = true;
 				all_for_parse.push(md);
 			}
 			return cur_id;
@@ -2179,13 +2184,19 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		while (all_for_parse.length) {
 			var cur_md = all_for_parse.shift();
+			var can_push = !models_index[cur_md._provoda_id];
+			if (can_push) {
+				models_index[cur_md._provoda_id] = true;
+			}
+			
 			var result = {
 				_provoda_id: cur_md._provoda_id,
-				name: cur_md.model_name,
+				model_name: cur_md.model_name,
 				states: spv.cloneObj({}, cur_md.states),
 				map_parent: cur_md.map_parent && checkModel(cur_md.map_parent),
 				children_models: {},
-				map_level_num: cur_md.map_level_num
+				map_level_num: cur_md.map_level_num,
+				mpx: null
 			};
 			for (var state_name in result.states){
 				var state = result.states[state_name];
@@ -2200,9 +2211,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 				var cur = cur_md.children_models[nesting_name];
 				if (cur){
 					if (cur._provoda_id){
-						result.children_models = checkModel(cur);
+						result.children_models[nesting_name] = checkModel(cur);
 					} else {
-						var array = [];
+						var array = new Array(cur.length);
 						for (var i = 0; i < cur.length; i++) {
 							array.push(checkModel(cur[i]));
 						}
@@ -2210,11 +2221,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 					}
 				}
 			}
-			big_result.push(result);
+			if (can_push) {
+				big_result.push(result);
+			}
+			
 		}
 
 
-		return big_result.reverse();
+		return big_result;
 	}
 });
 provoda.Model.extendTo(provoda.HModel, {
@@ -2506,6 +2520,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	getStrucParent: function() {
 		return this.parent_view;
+	},
+	getNesting: function(collection_name) {
+		return this.children_models[collection_name];
 	},
 	getWindow: function() {
 		return spv.getDefaultView(this.d || this.getC()[0].ownerDocument);

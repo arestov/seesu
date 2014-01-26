@@ -399,7 +399,7 @@ AppBaseView.extendTo(AppView, {
 				this.all_queues[i].removePrioMarks();
 			}
 		}
-		var md = this.state('current_mp_md');
+		var md = this.getNesting('current_mp_md');
 		var view = md && md.mpx.getRooConPresentation(true);
 		if (view){
 			view.setPrio();
@@ -542,7 +542,7 @@ AppBaseView.extendTo(AppView, {
 					//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
 				};
 				var getCurrentNode = function() {
-					var current_md = _this.state('current_mp_md');
+					var current_md = _this.getNesting('current_mp_md');
 					return current_md && current_md.mpx.getRooConPresentation(true, true).getC();
 				};
 
@@ -840,7 +840,7 @@ AppBaseView.extendTo(AppView, {
 	},
 	scrollToWP: function(cwp) {
 		if (cwp){
-			var cur_md_md = this.state('current_mp_md');
+			var cur_md_md = this.getNesting('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
 			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.mpx.getRooConPresentation()){
 				this.scrollTo($(cwp.node), {

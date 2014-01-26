@@ -121,7 +121,8 @@ provoda.Model.extendTo(AppModelBase, {
 
 			this.updateState('show_search_form', !!target_md.state('needs_search_from'));
 			this.updateState('full_page_need', !!target_md.full_page_need);
-			this.updateState('current_mp_md', target_md);
+			this.updateState('current_mp_md', target_md._provoda_id);
+			this.updateNesting('current_mp_md', target_md);
 			//target_md.updateState('mp-highlight', false);
 
 
@@ -218,7 +219,7 @@ provoda.Model.extendTo(AppModelBase, {
 				this.all_queues[i].removePrioMarks();
 			}
 		}
-		var md = this.state('current_mp_md');
+		var md = this.getNesting('current_mp_md');
 		if (md){
 			if (md.checkRequestsPriority){
 				md.checkRequestsPriority();

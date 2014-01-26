@@ -520,7 +520,7 @@ provoda.View.extendTo(AppBaseView, {
 	},
 
 	transform_props: transform_props,
-	'stch-current_mp_md': function(md, old_md) {
+	'stch-current_mp_md': function() {
 
 		//map_level_num
 		//md.map_level_num
@@ -577,7 +577,7 @@ provoda.View.extendTo(AppBaseView, {
 
 			
 		}*/
-
+		var md = this.getNesting('current_mp_md');
 
 		var _this = this;
 		setTimeout(function() {

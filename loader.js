@@ -87,7 +87,6 @@ big_timer = {
 				mpx: md.mpx
 			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
 			view.requestAll();
-			//provoda.sync_r.connectAppRoot();
 
 		});
 	}
