@@ -640,7 +640,7 @@ AppBaseView.extendTo(AppView, {
 
 			_this.search_input = _this.els.search_input;
 
-			_this.search_input.on('keyup change', function(e) {
+			_this.search_input.on('keyup change', function() {
 				var input_value = this.value;
 				_this.overrideStateSilently('search_query', input_value);
 				_this.RPCLegacy('search', input_value);
