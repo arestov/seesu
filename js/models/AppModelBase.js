@@ -121,7 +121,7 @@ provoda.Model.extendTo(AppModelBase, {
 
 			this.updateState('show_search_form', !!target_md.state('needs_search_from'));
 			this.updateState('full_page_need', !!target_md.full_page_need);
-			this.updateState('current_mp_md', target_md._provoda_id);
+		//	this.updateState('current_mp_md', target_md._provoda_id);
 			this.updateNesting('current_mp_md', target_md);
 			//target_md.updateState('mp-highlight', false);
 

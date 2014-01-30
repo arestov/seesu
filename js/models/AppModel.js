@@ -11,8 +11,8 @@ AppModelBase.extendTo(AppModel, {
 		for (var func_name in this.bmap_travel){
 			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
 		}
-		this.on('state_change-current_mp_md', function(e) {
-			if (e.value){
+		this.on('child_change-current_mp_md', function(e) {
+			if (e.target){
 				this.resortQueue();
 			}
 

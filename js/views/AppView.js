@@ -182,6 +182,9 @@ AppBaseView.extendTo(AppView, {
 		}
 		
 	},
+	'collch-current_mp_md': function(name, value) {
+		this.updateState('current_mp_md', value._provoda_id);
+	},
 	'collch-navigation': {
 		place: 'nav.daddy',
 		space: 'nav',
