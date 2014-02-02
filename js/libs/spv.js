@@ -1006,7 +1006,14 @@ var executeMap = function(map, data, spec_data) {
 	while (objects_list.length) {
 		var cur = objects_list.shift();
 
-		var cvalue = getTargetField(cur.parent_data, cur.map_opts.source);
+
+		var cvalue;
+		if (cur.map_opts.source) {
+			cvalue = getTargetField(cur.parent_data, cur.map_opts.source);
+		} else {
+			cvalue = cur.parent_data;
+		}
+		
 		if (!cvalue) {
 			continue;
 		}
