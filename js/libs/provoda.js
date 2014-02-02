@@ -3,6 +3,7 @@ define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate'], function(spv
 var push = Array.prototype.push;
 var DOT = '.';
 var provoda;
+var big_index = {};
 var sync_sender = {
 	root_model: null,
 	sockets: {},
@@ -10,6 +11,14 @@ var sync_sender = {
 	sockets_m_index: {},
 	setRootModel: function(md) {
 		this.root_model = md;
+	},
+	removeSyncStream: function(stream) {
+		if (!this.sockets[stream.id]) {
+			return;
+		}
+		this.sockets_m_index[stream.id] = null;
+		this.sockets[stream.id] = null;
+		this.streams_list = spv.arrayExclude(this.streams_list, stream);
 	},
 	addSyncStream: function(start_md, stream) {
 		this.sockets_m_index[stream.id] = {};
@@ -99,12 +108,13 @@ var MDProxy = function(_provoda_id, states, children_models, md) {
 	this.vstates = {};
 	this.children_models = children_models;
 	this.md = md;
-	this.nestings = {};
+	this.nestings = spv.cloneObj({}, children_models);
 };
 
 MDProxy.prototype = {
 	RPCLegacy: function() {
 		this.md.RPCLegacy.apply(this.md, arguments);
+		
 	},
 	setStates: function() {},
 	updateStates: function() {},
@@ -148,6 +158,8 @@ MDProxy.prototype = {
 		var removed;
 		if (Array.isArray(array)){
 			removed = spv.arrayExclude(array, old_value);
+		} else if (old_value && array != old_value) {
+			removed = [old_value];
 		}
 		
 		for (var i = 0; i < this.views.length; i++) {
@@ -281,9 +293,41 @@ var idToModel = function(index, ids) {
 	}
 };
 
-var sync_reciever = {
-	md_proxs_index: {},
-	models_index: {},
+var FakeModel = function(model_skeleton, stream) {
+	this.stream = stream;
+	this._provoda_id = model_skeleton._provoda_id;
+
+	this.children_models = model_skeleton.children_models;
+	this.map_level_num = model_skeleton.map_level_num;
+	this.map_parent = model_skeleton.map_parent;
+	this.model_name = model_skeleton.model_name;
+	this.mpx = model_skeleton.mpx;
+	this.states = model_skeleton.states;
+
+};
+
+var slice = Array.prototype.slice;
+FakeModel.prototype = {
+	getParentMapModel: function() {
+		return this.map_parent;
+	},
+	RealRemoteCall: function(arguments_obj) {
+		this.stream.RPCLegacy(this._provoda_id, slice.call(arguments_obj));
+	},
+	RPCLegacy: function() {
+		this.RealRemoteCall(arguments);
+	}
+};
+
+var SyncReciever = function(stream){
+	this.stream = stream;
+	this.md_proxs_index = {};
+	this.models_index = {};
+
+};
+
+SyncReciever.prototype = {
+	
 	buildTree: function(array) {
 		var i, cur, cur_pvid;
 
@@ -291,7 +335,7 @@ var sync_reciever = {
 			cur = array[i];
 			cur_pvid = cur._provoda_id;
 			if (!this.models_index[cur_pvid]){
-				this.models_index[cur_pvid]  = cur;
+				this.models_index[cur_pvid]  = new FakeModel(cur, this.stream);
 			}
 			//резервируем объекты для моделей
 			//big_index[cur_pvid] = true;
@@ -299,10 +343,12 @@ var sync_reciever = {
 
 		for (i = 0; i < array.length; i++) {
 			//восстанавливаем связи моделей
-			cur = array[i];
+			cur_pvid = array[i]._provoda_id;
+			cur = this.models_index[cur_pvid];
 			cur.map_parent = idToModel(this.models_index, cur.map_parent);
 			for (var nesting_name in cur.children_models) {
 				cur.children_models[nesting_name] = idToModel(this.models_index, cur.children_models[nesting_name]);
+		
 			}
 
 		}
@@ -317,33 +363,54 @@ var sync_reciever = {
 				this.models_index[cur_pvid].mpx = this.md_proxs_index[cur_pvid];
 			}
 		}
-		return array.length && this.md_proxs_index[array[0]._provoda_id];
+		return array.length && this.models_index[array[0]._provoda_id];
 	},
 	actions: {
 		buildtree: function(message) {
 			return this.buildTree(message.value);
 		},
 		update_states: function(message) {
+			var target_model = this.models_index[message._provoda_id];
+			var target_md_proxy = this.md_proxs_index[message._provoda_id];
+
+			for (var i = 0; i < message.value.length; i+=2) {
+				var state_name = message.value[ i ];
+				var state_value = message.value[ i +1 ];
+				target_model.states[state_name] = target_md_proxy.states[state_name] = state_value;
+			}
+
+			
 			this.md_proxs_index[message._provoda_id].sendStatesToViews(message.value);
 		},
 		update_nesting: function(message) {
 			if (message.struc) {
 				this.buildTree(message.struc);
 			}
-			this.md_proxs_index[message._provoda_id].sendCollectionChange(message.name, message.value);
+
+			var target_model = this.models_index[message._provoda_id];
+			var target_md_proxy = this.md_proxs_index[message._provoda_id];
+
+			var fakes_models = idToModel(this.models_index, message.value);
+			
+
+			target_model.children_models[message.name] = target_md_proxy.children_models[message.name] = fakes_models;
+			target_md_proxy.sendCollectionChange(message.name, fakes_models);
 		}
 	}
 };
 
 
 provoda = {
+	getModelById: function(id) {
+		return big_index[id];
+	},
 	prototypes: {},
 	setTplFilterGetFn: function(fn) {
 		angbo.getFilterFn = fn;
 	},
 	MDProxy: MDProxy,
 	sync_s: sync_sender,
-	sync_r: sync_reciever,
+	SyncR: SyncReciever,
 	Eventor: function(){},
 	StatesEmitter: function(){},
 	Model: function(){},
@@ -1297,7 +1364,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	checkExpandableTree: function(state_name) {
 		var i, cur, cur_config, has_changes = true, append_list = [];
-		while (has_changes) {
+		while (this.base_skeleton && has_changes) {
 			has_changes = false;
 			for (i = 0; i < this.base_skeleton.length; i++) {
 				cur = this.base_skeleton[i];
@@ -1993,6 +2060,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.req_order_field = null;
 
 		this._provoda_id = models_counters++;
+		big_index[this._provoda_id] = this;
+
 		this.states = {};
 		
 		this.children_models = {};
@@ -2041,6 +2110,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.stopRequests();
 		this.mpx.die();
 		this.trigger('die');
+		big_index[this._provoda_id] = null;
 		return this;
 	},
 	watchChildrenStates: function(collection_name, state_name, callback) {
@@ -2213,9 +2283,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 					if (cur._provoda_id){
 						result.children_models[nesting_name] = checkModel(cur);
 					} else {
+						
 						var array = new Array(cur.length);
 						for (var i = 0; i < cur.length; i++) {
-							array.push(checkModel(cur[i]));
+							array[i] = checkModel(cur[i]);
 						}
 						result.children_models[nesting_name] = array;
 					}
