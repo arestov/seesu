@@ -24,7 +24,7 @@ var ProspApi = function(queue, crossdomain, cache_ajax) {
 
 ProspApi.prototype = {
 	constructor: ProspApi,
-	cache_namespace: 'prostopleer',
+	cache_namespace: 'pleer.com',
 	thisOriginAllowed: false,
 	get: function(method, params, options) {
 		if (method) {
@@ -72,6 +72,7 @@ ProspApi.prototype = {
 var datamorph_map = new spv.MorphMap({
 	source: 'tracks',
 	props_map: {
+		_id: 'id',
 		artist: 'artist',
 		track: 'track',
 		link: 'file',
@@ -83,6 +84,11 @@ var datamorph_map = new spv.MorphMap({
 var ProspMusicSearch = function(opts) {
 	this.api = opts.api;
 	this.mp3_search = opts.mp3_search;
+};
+var standart_props = {
+	from: 'pleer.com',
+	type: 'mp3',
+	media_type: 'mp3'
 };
 
 ProspMusicSearch.prototype = {
@@ -97,34 +103,24 @@ ProspMusicSearch.prototype = {
 		return this.makeSong(item);
 	},
 	makeSong: function(cursor, msq){
+		cursor.models = {};
+		cursor.getSongFileModel = Mp3Search.getSongFileModel;
+		cursor.duration = cursor.duration && cursor.duration * 1000; 
+		spv.cloneObj(cursor, standart_props);
 
-		var entity = {
-			artist		: htmlencoding.decode(cursor.artist),
-			track		: htmlencoding.decode(cursor.title),
-			link		: cursor.url,
-			from		: 'exfm',
-			page_link	: cursor.sources && cursor.sources[0],
-			_id			: cursor.id,
-			type: 'mp3',
-			media_type: 'mp3',
-			models: {},
-			getSongFileModel: Mp3Search.getSongFileModel
-		};
-		if (!entity.artist){
-			var guess_info = Mp3Search.guessArtist(entity.track, msq && msq.artist);
+		if (!cursor.artist){
+			var guess_info = Mp3Search.guessArtist(cursor.track, msq && msq.artist);
 			if (guess_info.artist){
-				entity.artist = guess_info.artist;
-				entity.track = guess_info.track;
+				cursor.artist = guess_info.artist;
+				cursor.track = guess_info.track;
 			}
 		}
+		
 		if (msq){
-			this.mp3_search.setFileQMI(entity, msq);
-			
-			
+			this.mp3_search.setFileQMI(cursor, msq);
 		}
 		
-		
-		return entity;
+		return cursor;
 	},
 	findAudio: function(msq, opts) {
 		var
@@ -156,9 +152,19 @@ ProspMusicSearch.prototype = {
 				if (!result){
 
 					var list = datamorph_map.execute(r);
-					console.log(list);
-					debugger;
 					var music_list = [];
+					console.log(list);
+
+					for (var i = 0; i < list.length; i++) {
+						var item = _this.makeSong(list[i], msq);
+						if (_this.mp3_search.getFileQMI(item, msq) == -1){
+							//console.log(ent)
+						} else {
+							music_list.push(item);
+						}
+					}
+
+					
 					/*
 					if (r && r.songs.length){
 						for (var i=0; i < r.songs.length; i++) {

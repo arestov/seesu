@@ -335,6 +335,7 @@ AppModel.extendTo(SeesuApp, {
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		this.mp3_search = (new Mp3Search({
 			vk: 5,
+			'pleer.com': 4,
 			nigma: 1,
 			exfm: 0,
 			soundcloud: -5,
