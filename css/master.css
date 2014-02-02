@@ -222,7 +222,8 @@ a.track_name_loading .song-track-name{
 				margin-left: 5px;
 				}
 			.moplas-block .moplas-list li .mf-source{
-				margin-left:10px;
+				margin-right:5px;
+				margin-left: 2px;
 				color: hsl(0, 0%, 47%);
 				}
 				.moplas-block.want_more_songs ul .mf-source{
