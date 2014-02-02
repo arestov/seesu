@@ -327,7 +327,7 @@ AppModel.extendTo(SeesuApp, {
 		}, 1000 * 60 * 20);
 		setInterval(function(){
 			var rootvs = _this.mpx.getViews('root');
-			if (rootvs.length){
+			if (rootvs && rootvs.length){
 				_this.updateLVTime();
 			}
 		}, 1000 * 60 * 2);
@@ -958,11 +958,6 @@ provoda.sync_s.setRootModel(su);
 		init: addQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
-
-	su.mp3_search.add(new ExfmApi.ExfmMusicSearch({
-		api: exfm_api,
-		mp3_search: su.mp3_search
-	}));
 
 	su.mp3_search.add(new ExfmApi.ExfmMusicSearch({
 		api: exfm_api,
