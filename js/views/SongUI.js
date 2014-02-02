@@ -63,6 +63,7 @@ SongViewBase.extendTo(SongUI, {
 		songcard: SongcardPage.SongcardController
 	},
 	activate: function(){
+		
 	},
 	parts_builder: {
 		context: function() {
