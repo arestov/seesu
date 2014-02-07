@@ -153,7 +153,6 @@ ProspMusicSearch.prototype = {
 
 					var list = datamorph_map.execute(r);
 					var music_list = [];
-					console.log(list);
 
 					for (var i = 0; i < list.length; i++) {
 						var item = _this.makeSong(list[i], msq);
