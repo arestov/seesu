@@ -4,6 +4,7 @@ html{
 body{
 	margin:0;
 	padding:0;
+	width: 760px;
 	
 	height:596px;
 	color:#E6E6E6;
@@ -20,7 +21,7 @@ html.not-as-application{
 }
 html.not-as-application, .not-as-application  body{
 	height:100%;
-	
+	width: auto;
 }
 
 .not-as-application body{
