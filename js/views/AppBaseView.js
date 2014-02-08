@@ -59,15 +59,27 @@ AppBaseView.viewOnLevelP = viewOnLevelP;
 provoda.View.extendTo(AppBaseView, {
 	dom_rp: true,
 	location_name: 'root_view',
+	init: function(opts, vopts) {
+		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), true);
+		return this._super.apply(this, arguments);
+	},
+	_getCallsFlow: function() {
+		return this.calls_flow;
+	},
 	createDetails: function() {
+		
 		this.root_view = this;
 		this.d = this.opts.d;
+
+		
+
 		this.tpls = [];
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
-		this.dom_related_props.push('samples', 'lev_containers', 'els');
+		this.dom_related_props.push('samples', 'lev_containers', 'els', 'calls_flow');
 		this.completely_rendered_once = {};
+
 	},
 	completeDomBuilding: function() {
 		this.connectStates();
