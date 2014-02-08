@@ -77,6 +77,7 @@ provoda.View.extendTo(AppBaseView, {
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
+		this.max_level_num = -1;
 		this.dom_related_props.push('samples', 'lev_containers', 'els', 'calls_flow');
 		this.completely_rendered_once = {};
 
@@ -97,6 +98,7 @@ provoda.View.extendTo(AppBaseView, {
 			if (num == -1){
 				throw new Error('start_screen must exist');
 			}
+
 			var node = this.getSample('complex-page');
 
 			var tpl = new this.PvTemplate({
@@ -108,13 +110,33 @@ provoda.View.extendTo(AppBaseView, {
 
 			this.tpls.push(tpl);
 			tpl.setStates(this.states);
+			
+
+
+
+			var next_lev_con;
+			for (var i = num; i <= this.max_level_num; i++) {
+				if (this.lev_containers[i]) {
+					next_lev_con = this.lev_containers[i];
+					break;
+				}
+			}
+			if (next_lev_con) {
+				node.insertBefore(next_lev_con.c);
+			} else {
+				node.appendTo(this.els.app_map_con);
+			}
+			
+
 			var lev_con = new LevContainer
-					(node.appendTo(this.els.app_map_con),
+					(node,
 					tpl.ancs['scroll_con'],
 					tpl.ancs['material'],
 					tpl,
 					this);
 			this.lev_containers[num] = lev_con;
+
+			this.max_level_num = Math.max(this.max_level_num, num);
 			return lev_con;
 		}
 	},
