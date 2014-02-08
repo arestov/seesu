@@ -656,6 +656,9 @@ var getBoxedSetImmFunc = function(win) {
 		}
 
 		return win.postMessage ? function(func) {
+			if (!win || win.closed) {
+				return;
+			}
 			tail = tail.next = { func: func, next: null };
 			win.postMessage(ID, "*");
 		} :
