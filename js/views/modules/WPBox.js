@@ -28,7 +28,7 @@ spv.Class.extendTo(WPBox, {
 	wayPointsNav: function(nav_type) {
 		var _this = this;
 
-		var cur_mp_md = this.root_view.state('current_mp_md');
+		var cur_mp_md = this.root_view.getNesting('current_mp_md');
 		var roocon_view =  cur_mp_md && cur_mp_md.mpx.getRooConPresentation(true);
 		if (roocon_view){
 			var dems_storage = {};

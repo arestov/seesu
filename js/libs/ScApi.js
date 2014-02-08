@@ -36,7 +36,8 @@ ScApi.prototype = {
 					}
 					
 				},
-				thisOriginAllowed: this.thisOriginAllowed
+				thisOriginAllowed: this.thisOriginAllowed,
+				context: options.context
 			}, {
 				cache_ajax: this.cache_ajax,
 				nocache: options.nocache,

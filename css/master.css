@@ -119,6 +119,7 @@ a.track_name_loading .song-track-name{
 		}
 .moplas-block .show-all-songs{
 	position: relative;
+	z-index: 2;
 	float:right;
 	}
 	.moplas-block .show-all-songs .notifier{
@@ -166,6 +167,7 @@ a.track_name_loading .song-track-name{
 	min-height:81px;
 	}
 	.music-files-lists{
+		-webkit-transform: translateZ(0);
 		min-height: 33px;
 	}
 	.moplas-block h4{
@@ -220,7 +222,8 @@ a.track_name_loading .song-track-name{
 				margin-left: 5px;
 				}
 			.moplas-block .moplas-list li .mf-source{
-				margin-left:10px;
+				margin-right:5px;
+				margin-left: 2px;
 				color: hsl(0, 0%, 47%);
 				}
 				.moplas-block.want_more_songs ul .mf-source{
@@ -1110,6 +1113,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		min-height: 320px;
 		}
 .track-video{
+	-webkit-transform: translateZ(0);
 	padding: 0;
 	min-height: 48px;
 	overflow: hidden;

@@ -40,7 +40,7 @@ define({
 		"ru": "Знакомства"
 	},
 	"vk_photo_meet_need": {
-		"original": "If you want to meet this man you need to upload photo to your vk.com profile and press \"%button_name%\" button",
+		"original": "If you want to meet this person you need to upload photo to your vk.com profile and press \"%button_name%\" button",
 		"ru":  "Чтобы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
 	},
 	"vk_photo_update": {
@@ -56,7 +56,7 @@ define({
 		"ru": "Твоя персональная музыка, друзья и знакомства"
 	},
 	"listeners-looks":{
-		"original": "People who listened to this track, look like this",
+		"original": "People who have listened to this track, look like this",
 		"ru": "Люди, слушавшие эту композицию, выглядят примерно так:"
 	},
 	"rels-people-you":{

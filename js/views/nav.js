@@ -5,9 +5,10 @@ var baseNavUI = function() {};
 
 provoda.View.extendTo( baseNavUI, {
 	dom_rp: true,
-	createBase: function() {
-		this.useBase(this.root_view.getSample('common-nav'));
+	base_tree: {
+		sample_name: 'common-nav'
 	},
+
 	'compx-nav_clickable':{
 		depends_on: ['mp_stack'],
 		fn : function(mp_stack) {
@@ -25,15 +26,15 @@ provoda.View.extendTo( baseNavUI, {
 
 var StartPageNavView = function() {};
 baseNavUI.extendTo(StartPageNavView, {
-	createBase: function(){
-		this.useBase(this.root_view.getSample('start_page-nav'));
+	base_tree: {
+		sample_name: 'start_page-nav'
 	}
 });
 
 var investgNavUI = function() {};
 baseNavUI.extendTo(investgNavUI, {
-	createBase: function() {
-		this.useBase(this.root_view.getSample('search_page-nav'));
+	base_tree: {
+		sample_name: 'search_page-nav'
 	}
 });
 

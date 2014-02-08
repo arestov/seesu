@@ -12,9 +12,8 @@ var tagListChange = function(array) {
 
 var TagsListPage = function() {};
 coct.PageView.extendTo(TagsListPage, {
-	createBase: function() {
-		this.c = this.root_view.getSample('tags_list_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'tags_list_page'
 	},
 	'stch-data-list': tagListChange,
 	createTagLink: function(name) {

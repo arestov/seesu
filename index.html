@@ -2,6 +2,7 @@
 <html class="not-as-application">
   <head>
 	<meta charset="utf-8">
+	<meta name="google" content="notranslate" />
 	<title>Seesu</title>
 	<link rel="shortcut icon" id="dynamic-favicon"  href="icons/icon16.png"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/base.css">
@@ -331,12 +332,19 @@
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
 		</div>
-		<div class="album_preview-big">
+		<div class="album_preview-big" 
+			pv-events="click::requestPage"
+			pv-type="way-point"
+			pv-props="title: {{album_name}}"
+			>
 			<img src="" alt="" pv-anchor="imgc"/>
 			<div class="full_album_name">
 				<div class="desc hidden" pv-class="desc {{!album_year && 'hidden'}}" pv-text="{{album_year}}"></div>
-				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
-				<div class="album_name" pv-anchor="album_name_c"></div>
+				<div 
+					class="artist_name_alb" 
+					pv-class="artist_name_alb {{can_hide_artist_name && 'hidden'}}"
+					pv-anchor="artist_name_c" pv-text="{{album_artist}}"></div>
+				<div class="album_name" pv-anchor="album_name_c" pv-text="{{album_name}}"></div>
 			</div>
 		</div>
 		
@@ -529,11 +537,13 @@
 
 
 
-		<div class="artists_list no_arfb">
-			<div class="to-open-block area-button">
+		<div 
+			class="artists_list no_arfb" 
+			pv-class="artists_list no_arfb {{!vmp_show && 'hidden'}} {{list_loading && 'list_loading_state'}}">
+			<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
 			</div>
-			<ul>
+			<ul pv-anchor="listc">
 				
 			</ul>
 		</div>
@@ -689,6 +699,12 @@
 			</h4>
 			<div class="nested_artist" pv-nest="artist"></div>
 			<div class="area_for_button" pv-nest='fans'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}"></span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+			<div class="area_for_button" pv-nest='cloudcasts'>
 				<div class="area-button" pv-anchor='big_button'>
 					<span pv-text="{{nav_title}}"></span>
 				</div>
@@ -1112,7 +1128,8 @@
 					</span>
 					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 				</div>
-				<div class="song_fans-b-intrack intrack_page" pv-nest="fans" pv-events="click::requestPage" pv-type="way-point">
+				<div class="song_fans-b-intrack intrack_page"
+					pv-nest="fans" pv-events="click::requestPage" pv-type="way-point">
 					<div class="intrack_page-h lang localize-lastfm_fans">
 					</div>
 					<div class="song_fans-l-intrack" >
@@ -1131,10 +1148,14 @@
 					</div>
 					
 				</div>
-				<!--
-				<div class="song_mixtapes-b-intrack intrack_page">
+				
+				<div class="song_cloudcasts-b-intrack intrack_page" 
+					pv-nest="cloudcasts" pv-events="click::requestPage" pv-type="way-point">
+					<div class="intrack_page-h">Cloudcasts</div>
+					<span pv-nest="lists_list" pv-text="{{nav_title}} "></span>
+
 					
-				</div>-->
+				</div>
 			</div>
 		</div>
 	
@@ -1169,8 +1190,9 @@
 					></div>
 				<div class="mf-text">
 					<span class="mf-duration" pv-text="{{visible_duration_text}}"></span>
-					<span class="main-mf-text" pv-text="{{title}}" pv-props="title:{{description}}"></span>
 					<span class="mf-source" pv-text="{{source_name}}"></span>
+					<span class="main-mf-text" pv-text="{{title}}" pv-props="title:{{description}}"></span>
+					
 				</div>
 			</div>
 		</li>

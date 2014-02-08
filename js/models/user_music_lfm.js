@@ -128,7 +128,7 @@ var UserArtists = function() {};
 LoadableList.extendTo(UserArtists, {
 	model_name: 'lulas',
 	main_list_name: 'artists',
-	makeDataItem:function(data) {
+	makeDataItem: function(data) {
 		var item = new LULA();
 		item.init({
 			map_parent: this,
@@ -303,9 +303,8 @@ ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 			parser: this.getLastfmArtistsList
 		});
 	},
-	loadMoreByRSS: function() {
+	loadMoreByRSS: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 		request_info.request = $.ajax({
 			url: 'http://ws.audioscrobbler.com/1.0/user/' + this.getRqData() + '/systemrecs.rss',
 			type: "GET",
@@ -324,12 +323,6 @@ ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 					_this.putRequestedData(request_info.request, track_list_without_tracks);
 					_this.setLoaderFinish();
 				}
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -711,13 +704,12 @@ BrowseMap.Model.extendTo(UserTag, {
 			for_current_user: params.for_current_user,
 			tag_name: tag_name
 		};
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			tag_name: tag_name,
 			count: params.data.count,
 			nav_title: tag_name,
 			url_part: tag_name
 		});
-		this.initStates();
 
 		this.initListedModels(['artists', 'tracks', 'albums']);
 	},
@@ -807,7 +799,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 		}
 		var image = this.app.art_images.getImageRewrap(data.lfm_image);
 
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			selected_image: image,
 			nav_title: data.userid,
 			userid: data.userid,
@@ -821,7 +813,6 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			song_time_raw: song_time,
 			scrobbler: data.scrobblesource
 		});
-		this.initStates();
 		this.rawdata = data;
 	},
 	showOnMap: function() {

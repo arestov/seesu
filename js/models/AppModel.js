@@ -11,8 +11,8 @@ AppModelBase.extendTo(AppModel, {
 		for (var func_name in this.bmap_travel){
 			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
 		}
-		this.on('state_change-current_mp_md', function(e) {
-			if (e.value){
+		this.on('child_change-current_mp_md', function(e) {
+			if (e.target){
 				this.resortQueue();
 			}
 
@@ -225,7 +225,7 @@ AppModelBase.extendTo(AppModel, {
 		if (w_song){
 			addToArray(acting, w_song);
 		}
-		var imporant_models = [ this.p && this.p.waiting_next, this.state('current_mp_md'), this.p && this.p.c_song ];
+		var imporant_models = [ this.p && this.p.waiting_next, this.getNesting('current_mp_md'), this.p && this.p.c_song ];
 		for (i = 0; i < imporant_models.length; i++) {
 			var cur = imporant_models[i];
 			if (cur){

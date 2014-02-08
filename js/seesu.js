@@ -3,11 +3,11 @@ define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
-'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax'],
+'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax', 'js/libs/ProspApi'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
-PlayerSeesu, invstg, cache_ajax) {
+PlayerSeesu, invstg, cache_ajax, ProspApi) {
 'use strict';
 var seesu_version = 4.3;
 var
@@ -145,6 +145,17 @@ AppModel.extendTo(SeesuApp, {
 		});
 		this.discogs = new net_apis.DiscogsApi();
 		this.discogs.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue({
+				time: [2000, 4000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
+			})
+		});
+
+		this.mixcloud = new net_apis.MixcloudApi();
+		this.mixcloud.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue({
@@ -316,7 +327,7 @@ AppModel.extendTo(SeesuApp, {
 		}, 1000 * 60 * 20);
 		setInterval(function(){
 			var rootvs = _this.mpx.getViews('root');
-			if (rootvs.length){
+			if (rootvs && rootvs.length){
 				_this.updateLVTime();
 			}
 		}, 1000 * 60 * 2);
@@ -324,6 +335,7 @@ AppModel.extendTo(SeesuApp, {
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		this.mp3_search = (new Mp3Search({
 			vk: 5,
+			'pleer.com': 4,
 			nigma: 1,
 			exfm: 0,
 			soundcloud: -5,
@@ -929,6 +941,17 @@ provoda.sync_s.setRootModel(su);
 	}));
 
 
+	if (app_env.cross_domain_allowed) {
+		su.mp3_search.add(new ProspApi.ProspMusicSearch({
+			api: new ProspApi(new FuncsQueue({
+				time: [3500, 5000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
+			}), app_env.cross_domain_allowed, cache_ajax),
+			mp3_search: su.mp3_search
+		}));
+	}
+
 	var exfm_api = new ExfmApi(new FuncsQueue({
 		time: [3500, 5000, 4],
 		resortQueue: resortQueue,
@@ -941,10 +964,15 @@ provoda.sync_s.setRootModel(su);
 		mp3_search: su.mp3_search
 	}));
 
-	var allow_torrents = false;
+	var allow_torrents = false || app_env.nodewebkit;
 
 	if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
-		if (app_env.cross_domain_allowed){
+		if (app_env.torrents_support) {
+			su.mp3_search.add(new torrent_searches.BtdiggTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
+		} else if (app_env.cross_domain_allowed){
 			su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
 				cache_ajax: cache_ajax,
 				mp3_search: su.mp3_search

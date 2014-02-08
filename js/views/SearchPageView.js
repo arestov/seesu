@@ -3,9 +3,8 @@ function(provoda) {
 "use strict";
 var SearchPageView = function() {};
 provoda.View.extendTo(SearchPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('search_results-container');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'search_results-container'
 	}
 });
 return SearchPageView;

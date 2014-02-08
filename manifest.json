@@ -36,7 +36,9 @@
 		"http://ex.fm/api/*",
 		"http://developer.echonest.com/api/*",
 		"http://hypem.com/*",
-		"http://api.discogs.com/*"
+		"http://api.discogs.com/*",
+		"https://api.mixcloud.com/*",
+		"http://pleer.com/*"
 	],
 	"content_security_policy": "script-src 'self'; object-src 'self' https://www.youtube.com/v/"
 }

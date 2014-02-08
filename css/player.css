@@ -96,16 +96,18 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 	
 	.mf-text{
+		position: relative;
+		z-index: 2;
 		margin:0 5px;
 		}
 	.selected-mf .mf-text{
 		margin:0 4px;
 		color: hsl(0, 0%, 55%);
 		}
-.track-progress, .moplas-block .moplas-list li .mf-progress{
+.moplas-block .moplas-list li .mf-progress{
 	line-height:1.2;
 	}
-.track-progress, .moplas-block .moplas-list li.selected-mf .mf-progress{	
+.moplas-block .moplas-list li.selected-mf .mf-progress{	
 	position:relative;
 	right:0;
 	left:0;
@@ -126,14 +128,11 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	
 	
 	}
-	.track-progress{
-		
-		text-align:right;
-	}
+
 	.mf-load-progress, .mf-play-progress{
 		display: none;
 	}
-	.track-load-progress,  .selected-mf .mf-load-progress{
+	.selected-mf .mf-load-progress{
 		position:absolute;
 		top:0;
 		left:0;
@@ -150,7 +149,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	
 	
 		}
-	.track-play-progress, .selected-mf .mf-play-progress{
+	.selected-mf .mf-play-progress{
 		position:absolute;
 		top:0;
 		left:0;
@@ -165,20 +164,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		cursor:pointer;
 	
 		}
-	.track-node-text, .mf-text{
-		position: relative;
-		z-index: 2;
-	}
-	.track-node-text{
-		display:none;
-		
-		margin-right: 7px;
-		color: #666;
-		font-size: 0.85rem;
-	}
-	.track-progress:hover .track-node-text{
-		display:inline;
-	}
 
 
 

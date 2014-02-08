@@ -3,9 +3,8 @@ define(['./coct'], function(coct) {
 
 var MusicConductorPage = function() {};
 coct.PageView.extendTo(MusicConductorPage, {
-	createBase: function() {
-		this.c = this.root_view.getSample('music_conductor_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'music_conductor_page'
 	},
 	children_views: {
 		allpas: coct.LiListsPreview,

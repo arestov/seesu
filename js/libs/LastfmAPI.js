@@ -123,7 +123,8 @@ spv.Class.extendTo(LastfmAPI, {
 			dataType: this.crossdomain ? 'json' : 'jsonp',
 			data: params,
 			resourceCachingAvailable: true,
-			thisOriginAllowed: this.thisOriginAllowed
+			thisOriginAllowed: this.thisOriginAllowed,
+			context: options.context
 		}, wraprq_opts, complex_response);
 
 		return wrap_def.complex;

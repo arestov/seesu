@@ -13,9 +13,8 @@ LoadableList.TagsList.extendTo(ArtistTagsList, {
 		this.artist_name = params.artist;
 		this.initStates();
 	},
-	sendMoreDataRequest: function() {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('artist.getTopTags', {
 			artist: this.artist_name
 		})
@@ -23,12 +22,6 @@ LoadableList.TagsList.extendTo(ArtistTagsList, {
 				var res_list = spv.toRealArray(spv.getTargetField(r, 'toptags.tag'));
 				var data_list = res_list;
 				_this.putRequestedData(request_info.request, data_list, r.error);
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -82,7 +75,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 			'url_part': '/' + this.album_id
 		});
 	},
-	'compx-can-hide-artist_name': {
+	'compx-can_hide_artist_name': {
 		depends_on: ['album_artist', 'original_artist'],
 		fn: function(alb_artist, orgn_artist) {
 			return alb_artist == orgn_artist;
@@ -97,8 +90,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 	getAlbumURL: function() {
 		return '';
 	},
-	sendMoreDataRequest: function(paging_opts) {
-		var request_info = {};
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 
 
@@ -153,12 +145,6 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 				}
 				//pl.putRequestedData(false, track_list);
 				//getAlbumPlaylist(r.album.id, pl);
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -170,11 +156,10 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		this._super(opts);
 		this.artist_name = params.artist;
 
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			'artist_id': false,
 			'possible_loader_disallowing': localize('no-dgs-id')
 		});
-		this.initStates();
 
 		this.wch(this.map_parent, 'discogs_id_searching', 'profile_searching', true);
 		this.wch(this.map_parent, 'discogs_id', 'artist_id', true);
@@ -204,9 +189,8 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		return pl;
 	},
 	manual_previews: false,
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 		var artist_id = this.state('artist_id');
 		//http://api.discogs.com?page=1&per_page=50
 		request_info.request = this.app.discogs.get('/artists/' + artist_id + '/releases', {
@@ -241,12 +225,6 @@ AlbumsList.extendTo(DiscogsAlbums, {
 				}*/
 				_this.putRequestedData(request_info.request, data_list);
 				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -261,11 +239,10 @@ AlbumsList.extendTo(ArtistAlbums, {
 		this.initStates();
 	},
 	page_limit: 50,
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		//artist.getTopAlbums
 		var artist_name = this.artist;
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('artist.getTopAlbums', {
 			artist: artist_name,
 			limit: paging_opts.page_limit,
@@ -295,12 +272,6 @@ AlbumsList.extendTo(ArtistAlbums, {
 				}
 				_this.putRequestedData(request_info.request, data_list, r.error);
 				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	},
@@ -348,7 +319,7 @@ SongsList.extendTo(ArtistAlbumSongs, {
 		}
 
 	},
-	'compx-can-hide-artist_name': {
+	'compx-can_hide_artist_name': {
 		depends_on: ['album_artist', 'original_artist'],
 		fn: function(alb_artist, orgn_artist) {
 			return alb_artist == orgn_artist;
@@ -374,7 +345,7 @@ SongsList.extendTo(ArtistAlbumSongs, {
 			album_name: this.album_name
 		}, this.app);
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		/*
 		var loadById = function() {
 			if (album_id) {
@@ -398,7 +369,6 @@ SongsList.extendTo(ArtistAlbumSongs, {
 			}
 		};*/
 
-		var request_info = {};
 		var _this = this;
 		request_info.request = this.app.lfm.get('album.getInfo',{'artist': this.playlist_artist, album : this.album_name})
 			.done(function(r){
@@ -422,12 +392,6 @@ SongsList.extendTo(ArtistAlbumSongs, {
 				}
 				//pl.putRequestedData(false, track_list);
 				//getAlbumPlaylist(r.album.id, pl);
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -511,11 +475,10 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 			return !artist_id;
 		}
 	},
-	getSomeScList: function(paging_opts, path) {
+	getSomeScList: function(paging_opts, request_info, path) {
 
 		var artcard_artist = this.artcard_artist;
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.sc_api.get(path, {
 			limit: paging_opts.page_limit,
 			offset: paging_opts.page_limit * (paging_opts.next_page -1)
@@ -551,12 +514,6 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 					
 				}
 				_this.putRequestedData(request_info.request, track_list);
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -566,15 +523,14 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistLikes, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			'artist_id': '',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
-		this.initStates();
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var artist_id = this.state('artist_id');
-		return this.getSomeScList(paging_opts, 'users/' + artist_id + '/favorites');
+		return this.getSomeScList(paging_opts, request_info, 'users/' + artist_id + '/favorites');
 	}
 });
 var SoundcloudArtistSongs = function() {};
@@ -582,17 +538,16 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		spv.cloneObj(this.init_states, {
+		this.initStates({
 			'artist_id': '',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
-		this.initStates();
 		
 	},
 	allow_artist_guessing: true,
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var artist_id = this.state('artist_id');
-		return this.getSomeScList(paging_opts, 'users/' + artist_id + '/tracks');
+		return this.getSomeScList(paging_opts, request_info, 'users/' + artist_id + '/tracks');
 	}
 });
 
@@ -621,12 +576,6 @@ SongsList.extendTo(TopArtistSongs, {
 				var track_list = _this.getLastfmTracksList(r, 'toptracks.track', paging_opts);
 				_this.putRequestedData(request_info.request, track_list, r.error);
 				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -634,10 +583,9 @@ SongsList.extendTo(TopArtistSongs, {
 
 var FreeArtistTracks = function() {};
 SongsList.extendTo(FreeArtistTracks, {
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var artist_name = this.playlist_artist;
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('artist.getPodcast', {artist: artist_name})
 			.done(function(r){
 				var tracks = spv.toRealArray(spv.getTargetField(r, 'rss.channel.item'));
@@ -677,12 +625,6 @@ SongsList.extendTo(FreeArtistTracks, {
 
 				_this.putRequestedData(request_info.request, track_list, r.error);
 
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 
 		return request_info;
@@ -800,8 +742,8 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.getSimilarArtists();
 
 
-		this.wch(this, 'mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.wch(this, 'mp_has_focus', function(e) {
+			if (e.value){
 				this.initHeavy();
 				this.loadInfo();
 			}
@@ -1170,8 +1112,7 @@ ArtistsList.extendTo(SimilarArtists, {
 			page: paging_opts.next_page
 		};
 	},
-	sendMoreDataRequest: function(paging_opts){
-		var request_info = {};
+	sendMoreDataRequest: function(paging_opts, request_info){
 		var _this = this;
 		request_info.request = this.app.lfm.get('artist.getSimilar',this.getRqData(paging_opts))
 			.done(function(r){
@@ -1196,12 +1137,6 @@ ArtistsList.extendTo(SimilarArtists, {
 				}
 				//"artist.getSimilar" does not support paging
 				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	},

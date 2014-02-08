@@ -36,18 +36,18 @@ provoda.View.extendTo(ListPreview, {
 		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		node.toggleClass('button_selected', !!state);
 	},
-	createBase: function() {
-		this.c = this.root_view.getSample('area_for_button');
-		this.bindBase();
+	base_tree: {
+		sample_name: 'area_for_button'
 	}
 });
 
 var ListPreviewLine = function() {};
 provoda.View.extendTo(ListPreviewLine, {
-	createBase: function() {
+	base_tree: {
+		sample_name: 'preview_line'
+	},
+	expandBase: function() {
 		this.setVisState('img_allowed', this.extended_viewing);
-		this.c = this.root_view.getSample('preview_line');
-		this.createTemplate();
 	},
 	'compx-selected_title': {
 		depends_on: ['nav_title', 'nav_short_title'],
@@ -97,17 +97,6 @@ SPView.extendTo(PageView, {
 	createBase: function() {
 		this.c = $('<div class="usual_page"></div>');
 	}
-});
-
-var AllPlacesPage = function() {};
-PageView.extendTo(AllPlacesPage, {
-	children_views: {
-		songs_lists: LiListsPreview,
-		artists_lists: LiListsPreview
-	},
-	'collch-songs_lists': 'c',
-	'collch-artists_lists': 'c'
-
 });
 
 
@@ -174,9 +163,8 @@ ListPreview.extendTo(ItemOfLL, {
 
 var AuthListPreview = function() {};
 ImagedListPreview.extendTo(AuthListPreview, {
-	createBase: function() {
-		this.c = this.root_view.getSample('preview_area');
-		this.bindBase();
+	base_tree: {
+		sample_name: 'preview_area'
 	}
 });
 
@@ -224,27 +212,10 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 
 var BigAlbumPreview = function() {};
 provoda.View.extendTo(BigAlbumPreview, {
-	createBase: function() {
-		this.c = this.root_view.getSample('alb_prev_big');
-		this.createTemplate();
-		var _this = this;
+	base_tree: {
+		sample_name: 'alb_prev_big'
+	},
 
-		this.c.click(function() {
-			_this.RPCLegacy('requestPage');
-			return false;
-		});
-		this.addWayPoint(this.c);
-	},
-	'stch-can-hide-artist_name': function(state) {
-		this.tpl.ancs.artist_name_c.toggleClass('hidden', state);
-	},
-	'stch-album_name': function(state) {
-		this.c.attr('title', state);
-		this.tpl.ancs.album_name_c.text(state);
-	},
-	'stch-album_artist': function(state) {
-		this.tpl.ancs.artist_name_c.text(state);
-	},
 	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
@@ -329,7 +300,6 @@ return {
 	ListPreviewLine:ListPreviewLine,
 	SPView: SPView,
 	PageView:PageView,
-	AllPlacesPage:AllPlacesPage,
 	ArtistsListPreviewLine: ArtistsListPreviewLine,
 	ItemOfLL:ItemOfLL,
 	ListOfListsView:ListOfListsView,
