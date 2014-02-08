@@ -69,18 +69,6 @@ provoda.View.extendTo(SongFileModelUI, {
 		return this.tpl.ancs['progress_c'].width();
 	},
 	complex_states: {
-		'visible_duration_text': {
-			depends_on: ['visible_duration'],
-			fn: function(state) {
-				if (state){
-					var duration = Math.floor(state/1000);
-					if (duration){
-						var digits = duration % 60;
-						return (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits );
-					}
-				}
-			}
-		},
 		"can-progress": {
 			depends_on: ['^^vis_is_visible', 'vis_con_appended', 'selected'],
 			fn: function(vis, apd, sel){
