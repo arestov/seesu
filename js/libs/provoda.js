@@ -775,8 +775,8 @@ FastEventor.prototype = {
 			}, namespace, {opts: false}, name_parts);
 		}
 		if (fired){
-			if (reg_fires[0].wrapper){
-				callbacks_wrapper = reg_fires[0].wrapper;
+			if (reg_fires[0].getWrapper){
+				callbacks_wrapper = reg_fires[0].getWrapper.call(this);
 			}
 			if (!skip_reg){
 				var mo_context = context || _this.sputnik;
@@ -1115,7 +1115,11 @@ FastEventor.prototype = {
 		var _this = this;
 		var rqd = this.sputnik.requests_desc[name];
 		if (!this.drequests[name]){
-			this.drequests[name] = {};
+			this.drequests[name] = {
+				done: false,
+				error: false,
+				process: false
+			};
 		}
 		var store = this.drequests[name];
 		if (!store.process && (!store.done || store.error)){
@@ -1155,6 +1159,10 @@ FastEventor.prototype = {
 
 };
 var hndMotivationWrappper = function(motivator, fn, context, args, arg) {
+	if (this.isAliveFast && !this.isAliveFast() && fn !== this.remove) {
+		return;
+	}
+
 	var old_value = this.current_motivator;
 	this.current_motivator = motivator;
 	if (args){
@@ -1179,8 +1187,9 @@ spv.Class.extendTo(provoda.Eventor, {
 		fn.call(this, item);
 		item.current_motivator = old_value;
 	},
+	hndMotivationWrappper: hndMotivationWrappper,
 	nextTick: function(fn, args, use_current_motivator) {
-		pushToCbsFlow(fn, this, args, false, hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
+		pushToCbsFlow(fn, this, args, false, this.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
 	once: function(namespace, cb, opts) {
 		return this.evcompanion.once(namespace, cb, opts);
@@ -1285,7 +1294,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				target: this
 			});
 		},
-		wrapper: hndMotivationWrappper
+		getWrapper: function() {
+			return this.hndMotivationWrappper;
+		}
 	},
 	'regfr-stev': {
 		test: function(namespace) {
@@ -1298,7 +1309,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				target: this
 			});
 		},
-		wrapper: hndMotivationWrappper
+		getWrapper: function() {
+			return this.hndMotivationWrappper;
+		}
 	},
 
 	getContextOptsI: function() {
@@ -2038,7 +2051,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 				});
 			}
 		},
-		wrapper: hndMotivationWrappper
+		getWrapper: function() {
+			return this.hndMotivationWrappper;
+		}
 	},
 	getStrucRoot: function() {
 		return this.app;
@@ -2206,7 +2221,11 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			//console.log(removed);
 		}
 
-		var event_obj = {};
+		var event_obj = {
+			value: null,
+			old_value: null,
+			target: null
+		};
 		if (typeof opts == 'object'){
 			spv.cloneObj(event_obj, opts);
 		}
@@ -3156,6 +3175,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	getCNode: function(c) {
 		return (c = this.getC()) && (typeof c.length != 'undefined' ? c[0] : c);
+	},
+	isAliveFast: function() {
+		return !this.dead;
 	},
 	isAlive: function(dead_doc) {
 		if (this.dead){
