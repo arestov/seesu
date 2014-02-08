@@ -9,9 +9,8 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 		this.tag_name = params.tag_name;
 		this.initStates();
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('tag.getSimilar', {
 			tag: this.tag_name
 		})
@@ -19,12 +18,6 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 				var res_list = spv.toRealArray(spv.getTargetField(r, 'similartags.tag'));
 				var data_list = res_list;
 				_this.putRequestedData(request_info.request, data_list, r.error);
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -38,11 +31,10 @@ ArtCard.AlbumsList.extendTo(TagAlbums, {
 		this.initStates();
 	},
 	page_limit: 50,
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		//artist.getTopAlbums
 		var tag_name = this.tag_name;
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('tag.getTopAlbums', {
 			tag: tag_name,
 			limit: paging_opts.page_limit,
@@ -71,12 +63,6 @@ ArtCard.AlbumsList.extendTo(TagAlbums, {
 				}
 				_this.putRequestedData(request_info.request, data_list, r.error);
 				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -154,11 +140,10 @@ SongsList.extendTo(ExplorableTagSongs, {
 		this.initStates();
 	},
 	page_limit: 100,
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 
-		request_info.request = this.app.exfm.get('/explore/' + this.tag_name, {
+		request_info.request = this.app.exfm.get('explore/' + this.tag_name, {
 				results: paging_opts.page_limit,
 				start: paging_opts.next_page
 			})
@@ -182,12 +167,6 @@ SongsList.extendTo(ExplorableTagSongs, {
 
 				_this.putRequestedData(request_info.request, track_list, r.error);
 
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 			
 
@@ -204,11 +183,10 @@ SongsList.extendTo(TrendingTagSongs, {
 		this.initStates();
 	},
 	page_limit: 100,
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 
-		request_info.request = this.app.exfm.get('/trending/tag/' + this.tag_name, {
+		request_info.request = this.app.exfm.get('trending/tag/' + this.tag_name, {
 				results: paging_opts.page_limit,
 				start: paging_opts.next_page
 			})
@@ -232,12 +210,6 @@ SongsList.extendTo(TrendingTagSongs, {
 
 				_this.putRequestedData(request_info.request, track_list, r.error);
 
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 			
 
@@ -253,9 +225,8 @@ SongsList.extendTo(FreeTagSongs, {
 
 		this.initStates();
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('playlist.fetch', {
 			playlistURL: 'lastfm://playlist/tag/' + this.tag_name + '/freetracks'
 		})
@@ -293,12 +264,6 @@ SongsList.extendTo(FreeTagSongs, {
 
 				_this.putRequestedData(request_info.request, track_list, r.error);
 
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 
 		return request_info;
@@ -317,9 +282,8 @@ SongsList.extendTo(TopTagSongs, {
 
 		this.initStates();
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('tag.getTopTracks', {
 			tag: (this.tag_name),
 			limit: paging_opts.page_limit,
@@ -343,12 +307,6 @@ SongsList.extendTo(TopTagSongs, {
 
 				_this.putRequestedData(request_info.request, track_list, r.error);
 
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
 			});
 
 		return request_info;
@@ -424,11 +382,10 @@ ArtCard.ArtistsList.extendTo(WeekTagArtists, {
 			page: paging_opts.next_page
 		};
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		//lastfm images
 		var _this = this;
 
-		var request_info = {};
 		request_info.request = this.app.lfm.get('tag.getWeeklyArtistChart', this.getRqData(paging_opts)).done(function(r){
 
 
@@ -454,11 +411,6 @@ ArtCard.ArtistsList.extendTo(WeekTagArtists, {
 					_this.setLoaderFinish();
 				}
 				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			}).always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -479,11 +431,10 @@ ArtCard.ArtistsList.extendTo(TagTopArtists, {
 			page: paging_opts.next_page
 		};
 	},
-	sendMoreDataRequest: function(paging_opts){
+	sendMoreDataRequest: function(paging_opts, request_info){
 
 		var _this = this;
 
-		var request_info = {};
 		request_info.request = this.app.lfm.get('tag.getTopArtists', this.getRqData(paging_opts))
 			.done(function(r){
 				var artists = spv.toRealArray(spv.getTargetField(r, 'topartists.artist'));
@@ -504,11 +455,6 @@ ArtCard.ArtistsList.extendTo(TagTopArtists, {
 				}
 				_this.putRequestedData(request_info.request, track_list, r.error);
 				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			}).always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -565,8 +511,8 @@ BrowseMap.Model.extendTo(TagPage, {
 		this.updateNesting('albums_list', albums_list);
 		this.updateNesting('similar_tags', similar_tags);
 
-		this.on('vip_state_change-mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.on('vip_state_change-mp_has_focus', function(e) {
+			if (e.value){
 				albums_list.preloadStart();
 				similar_tags.preloadStart();
 			}

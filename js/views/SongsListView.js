@@ -27,9 +27,8 @@ function(provoda, $, SongUI, etc_views) {
 		}
 	});
 
-
-	var SongsListView = function(){};
-	provoda.View.extendTo(SongsListView, {
+	var SongsListViewBase = function() {};
+	provoda.View.extendTo(SongsListViewBase, {
 		createBase: function() {
 			this.setVisState('overview', this.opts && this.opts.overview);
 			this.c = this.root_view.getSample('playlist-container');
@@ -38,11 +37,6 @@ function(provoda, $, SongUI, etc_views) {
 			}
 			this.createTemplate();
 			
-		},
-
-		children_views: {
-			plarow: PlARowView,
-			'songs-list': SongUI
 		},
 		'collch-songs-list': {
 			place: 'tpl.ancs.lc',
@@ -87,8 +81,23 @@ function(provoda, $, SongUI, etc_views) {
 			vmp_show*/
 			
 		}
-
 	});
+	var SongsListView = function(){};
+	SongsListViewBase.extendTo(SongsListView, {
+		children_views: {
+			plarow: PlARowView,
+			'songs-list': SongUI.SongViewLite
+		}
+	});
+	var SongsListDetailedView = function() {};
+	SongsListViewBase.extendTo(SongsListDetailedView, {
+		children_views: {
+			plarow: PlARowView,
+			'songs-list': SongUI
+		}
+	});
+
+	SongsListView.SongsListDetailedView = SongsListDetailedView;
 
 return SongsListView;
 });

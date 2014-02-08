@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './user_music_lfm'],
-function(provoda, spv, app_serv, BrowseMap, user_music_lfm) {
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './user_music_lfm', './Cloudcasts'],
+function(provoda, spv, app_serv, BrowseMap, user_music_lfm, Cloudcasts) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -7,8 +7,7 @@ var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 	init: function(opts, params) {
 		this._super(opts);
-		spv.cloneObj(this.init_states, params);
-		this.initStates();
+		this.initStates(params);
 	},
 	getRqData: function() {
 		return {
@@ -50,12 +49,11 @@ BrowseMap.Model.extendTo(SongCard, {
 	model_name: 'songcard',
 	init: function(opts, params) {
 		this._super(opts);
-		spv.cloneObj(this.init_states, params);
 		this.sub_pa_params = {
 			artist_name: params.artist_name,
 			track_name: params.track_name
 		};
-		this.initStates();
+		this.initStates(params);
 		this.on('state_change-mp_show', function(e) {
 			if (e.value){
 				this.fullInit();
@@ -78,6 +76,11 @@ BrowseMap.Model.extendTo(SongCard, {
 		var fans = this.getSPI('fans', true);
 		this.updateNesting('fans', fans);
 		fans.preloadStart();
+
+
+		var cloudcasts = this.getSPI('cloudcasts', true);
+		this.updateNesting('cloudcasts', cloudcasts);
+
 	},
 	fullInit: function() {
 		var artist_name = this.state('artist_name');
@@ -93,6 +96,10 @@ BrowseMap.Model.extendTo(SongCard, {
 		'fans':{
 			constr: SongFansList,
 			title: localize('Top fans')
+		},
+		'cloudcasts': {
+			constr: Cloudcasts.SongcardCloudcasts,
+			title: 'Cloudcasts'
 		}
 	}
 });

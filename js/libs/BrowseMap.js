@@ -31,11 +31,11 @@ spv.Class.extendTo(MapLevel, {
 		var parent = this.getParentLev();
 		return parent && parent.resident;
 	},
-	show: function(opts){
+	show: function(){
 		this.map.addChange({
 			type: 'move-view',
 			target: this.resident.getMDReplacer(),
-			value: opts
+			value: true
 		});
 	},
 	hide: function(){
@@ -51,7 +51,7 @@ spv.Class.extendTo(MapLevel, {
 		});
 		this.resident.trigger('mpl-detach');
 		this.map.removeResident(this.resident);
-		delete this.map;
+		this.map = null;
 	},
 	_sliceTM: function(){ //private alike
 		var current_level = this.map.getCurrentLevel();
@@ -179,7 +179,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 		if (this.changes_group.changes.length){
 
 			this.chans_coll.push(this.changes_group);
-			delete this.changes_group;
+			this.changes_group = null;
 			if (!this.isCollectingChanges()){
 				this.emitChanges();
 			}
@@ -267,15 +267,10 @@ provoda.Eventor.extendTo(BrowseMap, {
 			for (var jj = 0; jj < move_view_changes.length; jj++) {
 				var cur = move_view_changes[jj];
 				if (jj == move_view_changes.length -1){
-					cur.value = {
-						userwant: true
-					};
+					//cur.value = true;
 					this.updateNav(cur.target.getMD().lev, opts);
 				} else {
-					cur.value = {
-						userwant: false,
-						transit: true
-					};
+					//cur.value = true;
 				}
 			}
 
@@ -288,10 +283,10 @@ provoda.Eventor.extendTo(BrowseMap, {
 
 			this.trigger('changes', {
 				array: this.chans_coll,
-				anid: this.cha_counter
+				changes_number: this.cha_counter
 			}, changed_residents, this.residents);
 			this.chans_coll = [];
-			this.chans_coll.anid = ++this.cha_counter;
+			this.chans_coll.changes_number = ++this.cha_counter;
 
 		}
 		
@@ -319,7 +314,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 		return this.current_level_num;
 	},
 	setLevelPartActive: function(lp){
-		lp.show({});
+		lp.show();
 		this.current_level_num = lp.num;
 	},
 	_goDeeper: function(resident){
@@ -424,14 +419,14 @@ provoda.Eventor.extendTo(BrowseMap, {
 					if (this.levels[i].free != this.levels[i].freezed){
 						if (this.levels[i].freezed){ //removing old freezed
 							this.levels[i].freezed.die();
-							delete this.levels[i].freezed;
+							this.levels[i].freezed = null;
 						}
 						this.levels[i].freezed = this.levels[i].free;
 						this.levels[i].freezed.markAsFreezed();
 						fresh_freeze = true;
 					}
 				}
-				delete this.levels[i].free;
+				this.levels[i].free = null;
 			}
 			
 			
@@ -443,7 +438,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 			for (i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
 					this.levels[i].freezed.die();
-					delete this.levels[i].freezed;
+					this.levels[i].freezed = null;
 				}
 				
 			}
@@ -546,7 +541,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
 			lev.free.die();
-			delete lev.free;
+			lev.free = null;
 		}
 	},
 	hideLevel: function(lev, exept, only_free){
@@ -891,8 +886,8 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		this.wch(this, 'mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.wch(this, 'mp_has_focus', function(e) {
+			if (e.value){
 				for (var i = 0; i < lists_list.length; i++) {
 					var cur = lists_list[i];
 					if (cur.preloadStart){

@@ -1,4 +1,4 @@
-define(['js/LfmAuth', 'app_serv', './comd', 'spv'], function(LfmAuth, app_serv, comd, spv) {
+define(['js/LfmAuth', 'app_serv', '../comd', 'spv'], function(LfmAuth, app_serv, comd, spv) {
 "use strict";
 var localize = app_serv.localize;
 

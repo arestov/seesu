@@ -38,29 +38,15 @@ provoda.View.extendTo(ArtcardViewInList, {
 
 var ArtistListView = function() {};
 provoda.View.extendTo(ArtistListView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('artists_list');
-		var _this = this;
-		this.generate_button = this.c.find('.to-open-block').click(function() {
-			_this.RPCLegacy('requestRandomPlaylist');
-			//_this.RPCLegacy('requestRandomPlaylist');
-		});
-		this.listc = this.c.find('ul');
-		this.addWayPoint(this.generate_button);
-	},
-
-	'stch-vmp_show': function(opts) {
-		this.c.toggleClass('hidden', !opts);
-	},
-	'stch-list_loading': function(state){
-		this.c.toggleClass('list_loading_state', !!state);
+	base_tree: {
+		sample_name: 'artists_list'
 	},
 	children_views: {
 		artists_list: {
 			main: ArtcardViewInList
 		}
 	},
-	'collch-artists_list': 'listc'
+	'collch-artists_list': 'tpl.ancs.listc'
 });
 
 return ArtistListView;

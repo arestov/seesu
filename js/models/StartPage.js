@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv'],
-function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_serv) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts'],
+function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
 "use strict";
 var StartPage = function() {};
 var app_env = app_serv.app_env;
@@ -18,8 +18,8 @@ BrowseMap.Model.extendTo(StartPage, {
 		this.updateState('nav_title', 'Seesu start page');
 		this.updateState('nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
-		this.updateNesting('pstuff', this.getSPI('users/me').initOnce());
-		this.updateNesting('muco', this.getSPI('conductor').initOnce());
+		this.updateNesting('pstuff', this.getSPI('users/me', true));
+		this.updateNesting('muco', this.getSPI('conductor', true));
 
 
 		this.closed_messages = app_serv.store('closed-messages') || {};
@@ -81,6 +81,20 @@ BrowseMap.Model.extendTo(StartPage, {
 			} else if (name.indexOf('vk:') === 0){
 				return this.subPageInitWrap(UserCard.VkUserCard, full_name, {urp_name: name});
 			}
+		},
+		'blogs': function(blog_url) {
+			var full_name = 'blogs/' +  this.app.encodeURLPart(blog_url);
+			return this.subPageInitWrap(MusicBlog, full_name, {
+				urp_name: blog_url,
+				blog_url: blog_url
+			});
+		},
+		'cloudcasts': function(mixcloud_urlpiece) {
+			var full_name = 'blogs/' +  this.app.encodeURLPart(mixcloud_urlpiece);
+			return this.subPageInitWrap(Cloudcasts, full_name, {
+				urp_name: mixcloud_urlpiece,
+				key: mixcloud_urlpiece
+			});
 		}
 	},
 	sub_pa: {

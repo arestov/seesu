@@ -19,8 +19,8 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 
 		var _this = this;
 
-		this.on('vip_state_change-mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.on('vip_state_change-mp_has_focus', function(e) {
+			if (e.value){
 				su.trackEvent('Navigation', 'youtube video');
 				_this.mo.pause();
 			}

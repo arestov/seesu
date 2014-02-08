@@ -65,25 +65,10 @@ provoda.View.extendTo(FileInTorrentUI,{
 var SongFileModelUI = function() {};
 provoda.View.extendTo(SongFileModelUI, {
 	dom_rp: true,
-	createDetails: function(){
-		this.createBase();
-	},
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
 	},
 	complex_states: {
-		'visible_duration_text': {
-			depends_on: ['visible_duration'],
-			fn: function(state) {
-				if (state){
-					var duration = Math.floor(state/1000);
-					if (duration){
-						var digits = duration % 60;
-						return (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits );
-					}
-				}
-			}
-		},
 		"can-progress": {
 			depends_on: ['^^vis_is_visible', 'vis_con_appended', 'selected'],
 			fn: function(vis, apd, sel){
@@ -142,9 +127,11 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		}
 	},
-	createBase: function() {
-		var node = this.root_view.getSample('song-file');
-		this.useBase(node);
+	base_tree: {
+		sample_name: 'song-file'
+	},
+	expandBase: function() {
+
 
 		var progress_c = this.tpl.ancs['progress_c'];
 
@@ -349,10 +336,8 @@ provoda.View.extendTo(MfCorUI, {
 			return !!mp_show_end;
 		}
 	},
-	createBase: function() {
-		this.c = this.root_view.getSample('moplas-block');
-		this.bindBase();
-
+	base_tree: {
+		sample_name: 'moplas-block'
 	}
 });
 

@@ -34,7 +34,7 @@ AppBaseView.extendTo(AppView, {
 		},
 		playlist: {
 			main: SongsListView,
-			'all-sufficient-details': SongsListView,
+			'all-sufficient-details': SongsListView.SongsListDetailedView,
 			nav: nav.baseNavUI
 		},
 		vk_usercard: {
@@ -54,7 +54,7 @@ AppBaseView.extendTo(AppView, {
 		},
 		allplaces: {
 			nav: nav.baseNavUI,
-			main: coct.AllPlacesPage
+			main: coct.ListOfListsView
 		},
 		mconductor: {
 			nav: nav.baseNavUI,
@@ -159,7 +159,31 @@ AppBaseView.extendTo(AppView, {
 		songcard: {
 			main: SongcardPage,
 			nav: nav.baseNavUI
+		},
+		songcard_cloudcasts: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		cloudcasts_list: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		blogs_conductor: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		blogs_list: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		music_blog: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		}
+		
+	},
+	'collch-current_mp_md': function(name, value) {
+		this.updateState('current_mp_md', value._provoda_id);
 	},
 	'collch-navigation': {
 		place: 'nav.daddy',
@@ -378,7 +402,7 @@ AppBaseView.extendTo(AppView, {
 				this.all_queues[i].removePrioMarks();
 			}
 		}
-		var md = this.state('current_mp_md');
+		var md = this.getNesting('current_mp_md');
 		var view = md && md.mpx.getRooConPresentation(true);
 		if (view){
 			view.setPrio();
@@ -521,7 +545,7 @@ AppBaseView.extendTo(AppView, {
 					//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
 				};
 				var getCurrentNode = function() {
-					var current_md = _this.state('current_mp_md');
+					var current_md = _this.getNesting('current_mp_md');
 					return current_md && current_md.mpx.getRooConPresentation(true, true).getC();
 				};
 
@@ -619,7 +643,7 @@ AppBaseView.extendTo(AppView, {
 
 			_this.search_input = _this.els.search_input;
 
-			_this.search_input.on('keyup change', function(e) {
+			_this.search_input.on('keyup change', function() {
 				var input_value = this.value;
 				_this.overrideStateSilently('search_query', input_value);
 				_this.RPCLegacy('search', input_value);
@@ -819,7 +843,7 @@ AppBaseView.extendTo(AppView, {
 	},
 	scrollToWP: function(cwp) {
 		if (cwp){
-			var cur_md_md = this.state('current_mp_md');
+			var cur_md_md = this.getNesting('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
 			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.mpx.getRooConPresentation()){
 				this.scrollTo($(cwp.node), {

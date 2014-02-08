@@ -68,8 +68,7 @@ SongsList.extendTo(VkSongList, {
 
 var VkRecommendedTracks = function() {};
 VkSongList.extendTo(VkRecommendedTracks, {
-	sendMoreDataRequest: function(paging_opts) {
-		var request_info = {};
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 
 		request_info.request = this.app.vk_api.get('audio.getRecommendations', {
@@ -96,11 +95,6 @@ VkSongList.extendTo(VkRecommendedTracks, {
 
 				_this.putRequestedData(request_info.request, track_list, r.error);
 
-			})
-			.fail(function(){
-				_this.requestComplete(request_info.request, true);
-			}).always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -108,8 +102,7 @@ VkSongList.extendTo(VkRecommendedTracks, {
 
 var MyVkAudioList = function() {};
 VkSongList.extendTo(MyVkAudioList, {
-	sendMoreDataRequest: function(paging_opts) {
-		var request_info = {};
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 
 		request_info.request = this.app.vk_api.get('audio.get', {
@@ -134,11 +127,6 @@ VkSongList.extendTo(MyVkAudioList, {
 					});
 				}
 				_this.putRequestedData(request_info.request, track_list, r.error);
-			})
-			.fail(function(){
-				_this.requestComplete(request_info.request, true);
-			}).always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}
@@ -270,11 +258,6 @@ LoadableList.extendTo(VKFriendsList, {
 
 				_this.putRequestedData(request_info.request, r.response.items, r.error);
 
-			})
-			.fail(function(){
-				_this.requestComplete(request_info.request, true);
-			}).always(function() {
-				request_info.done = true;
 			});
 		return request_info;
 	}

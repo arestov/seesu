@@ -3,9 +3,8 @@ define(['provoda', './coct'], function(provoda, coct) {
 
 var TagPageView = function() {};
 coct.PageView.extendTo(TagPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('tag_page');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'tag_page'
 	},
 	children_views: {
 		artists_lists: coct.LiListsPreview,

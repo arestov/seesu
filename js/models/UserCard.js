@@ -106,8 +106,8 @@ BrowseMap.Model.extendTo(UserCard, {
 		
 		return this;
 	},
-	'stch-mp_show': function(state) {
-		if (state && state.userwant){
+	'stch-mp_has_focus': function(state) {
+		if (state){
 			var list_to_preload = [
 				this.getNesting('vk__friends'),
 				this.getNesting('lfm__tags'),
@@ -184,8 +184,8 @@ BrowseMap.Model.extendTo(VkUserCard, {
 			this.updateNesting('vk__' + cur, this.getSPI(cur));
 		}
 	},
-	'stch-mp_show': function(state) {
-		if (state && state.userwant){
+	'stch-mp_has_focus': function(state) {
+		if (state){
 			var list_to_preload = [
 				this.getNesting('vk__friends')
 
@@ -293,8 +293,8 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 			}
 		}
 	},
-	'stch-mp_show': function(state) {
-		if (state && state.userwant){
+	'stch-mp_has_focus': function(state) {
+		if (state){
 			this.loadInfo();
 			var list_to_preload = [
 				this.getNesting('lfm__tags'),

@@ -67,6 +67,7 @@ provoda.View.extendTo(AppBaseView, {
 		this.samples = {};
 		this.lev_containers = {};
 		this.dom_related_props.push('samples', 'lev_containers', 'els');
+		this.completely_rendered_once = {};
 	},
 	completeDomBuilding: function() {
 		this.connectStates();
@@ -210,38 +211,53 @@ provoda.View.extendTo(AppBaseView, {
 
 		}
 	},
-	getSample: function(name) {
-		var sampler = this.samples[name], sample_node;
-
-		//
+	getSampler: function(sample_name) {
+		var sampler = this.samples[sample_name], sample_node;
 		if (!sampler){
-			sample_node = this.els.ui_samples.children('.' + name);
+			sample_node = this.els.ui_samples.children('.' + sample_name);
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node);
 			}
 			
 		}
 		if (!sampler){
-			sample_node = $(this.requirePart(name));
+			sample_node = $(this.requirePart(sample_name));
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node);
 			}
 			
 		}
 		if (!sampler){
 			throw new Error('no such sample');
 		}
+		return sampler;
+	},
+	getSample: function(sample_name) {
+		var sampler = this.getSampler(sample_name);
+		
 		if (sampler.getClone){
 			return $(sampler.getClone());
 		} else {
 			return $(sampler).clone();
 		}
 	},
-	animationMark: function(models, prop, anid) {
+	
+	markAnimationStart: function(models, changes_number) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].getMD().mpx.updateState(prop, anid);
+			models[i].getMD().mpx.updateState('animation_started', changes_number);
+			////MUST UPDATE VIEW, NOT MODEL!!!!!
+		}
+	},
+	markAnimationEnd: function(models, changes_number) {
+		for (var i = 0; i < models.length; i++) {
+			//
+			var mpx = models[i].getMD().mpx;
+
+			if (mpx.state('animation_started') == changes_number){
+				mpx.updateState('animation_completed', changes_number);
+			}
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
@@ -330,23 +346,25 @@ provoda.View.extendTo(AppBaseView, {
 			}
 		}
 	},
+	setVMpshow: function(target_mpx, value) {
+		target_mpx.updateState('vmp_show', value);
+	},
 	'model-mapch': {
 		'move-view': function(change) {
 			var parent = change.target.getMD().getParentMapModel();
 			if (parent){
 			//	parent.updateState('mp_has_focus', false);
 			}
-			//mpx.updateState(prop, anid);
-
-			change.target.getMD().mpx.updateState('vmp_show', change.value);
+			//mpx.updateState(prop, changes_number);
+			this.setVMpshow(change.target.getMD().mpx, change.value);
 		},
 		'zoom-out': function(change) {
-			change.target.getMD().mpx.updateState('vmp_show', false);
+			this.setVMpshow(change.target.getMD().mpx, false);
 		},
 		'destroy': function(change) {
 			var md = change.target.getMD();
 		//	md.mlmDie();
-			md.mpx.updateState('vmp_show', false);
+			this.setVMpshow(md.mpx, false);
 		}
 	},
 	animateMapSlice: function(transaction_data, animation_data) {
@@ -355,7 +373,7 @@ provoda.View.extendTo(AppBaseView, {
 		var models = spv.filter(all_changhes, 'target');
 		var i, cur;
 
-		this.animationMark(models, 'animation_started', transaction_data.anid);
+		this.markAnimationStart(models, transaction_data.changes_number);
 
 		for (i = 0; i < all_changhes.length; i++) {
 			cur = all_changhes[i];
@@ -367,7 +385,7 @@ provoda.View.extendTo(AppBaseView, {
 
 		for (i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
-		//	change.anid = changes.anid;
+		//	change.changes_number = changes.changes_number;
 			var handler = this['model-mapch'][change.type];
 			if (handler){
 				handler.call(this, change);
@@ -401,18 +419,22 @@ provoda.View.extendTo(AppBaseView, {
 			}
 
 		}
+		var _this = this;
+		var completeAnimation = function() {
+			_this.markAnimationEnd(models, transaction_data.changes_number);
+		};
+		setTimeout(completeAnimation, 16*21*4);
 		if (!animation_data){
 			//
-			this.animationMark(models, 'animation_completed', transaction_data.anid);
+			this.markAnimationEnd(models, transaction_data.changes_number);
 			/*this.nextTick(function() {
 				
 			});*/
 		} else {
-			animation_data.lc.onTransitionEnd(function() {
-				this.animationMark(models, 'animation_completed', transaction_data.anid);
-			});
+			animation_data.lc.onTransitionEnd(completeAnimation);
 
 		}
+
 
 		
 	},
@@ -429,8 +451,20 @@ provoda.View.extendTo(AppBaseView, {
 		return array;
 
 	},
-	'collch-map_slice': function(nesname, nesting_data){
-		var array = nesting_data.items;
+	findBMapTarget: function(array) {
+		var target_md, i;
+		for (i = 0; i < array.length; i++) {
+			if (array[i].mpx.states.mp_has_focus) {
+				target_md = array[i];
+				break;
+			}
+			
+		}
+		return target_md;
+	},
+	'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
+		var target_md;
+		var array = nesting_data.residents_struc && nesting_data.residents_struc.items;
 		var transaction_data = nesting_data.transaction;
 		array = this.getRendOrderedNesting(nesname, array) || array;
 		var i, cur;
@@ -449,32 +483,44 @@ provoda.View.extendTo(AppBaseView, {
 			}
 		}
 
-		if (transaction_data){
-			this.animateMapSlice(transaction_data, animation_data);
-			if (!transaction_data.target){
-				var target_md;
-				for (i = 0; i < array.length; i++) {
-					if (array[i].mpx.states.mp_has_focus) {
-						target_md = array[i];
-						break;
+		//avoid nextTick method!
+
+		if (this.completely_rendered_once['map_slice'] && old_nesting_data && old_nesting_data.transaction.changes_number + 1 === nesting_data.transaction.changes_number){
+			if (transaction_data){
+				this.animateMapSlice(transaction_data, animation_data);
+				if (!transaction_data.target){
+					target_md = this.findBMapTarget(array);
+
+					if (target_md){
+						this.updateState('current_lev_num', target_md.map_level_num);
 					}
 					
 				}
-				if (!target_md){
-					throw new Error('there is no model with focus!');
-				}
-				
-				this.updateState('current_lev_num', target_md.map_level_num);
-				console.log('alternative focus way');
 			}
-			
+		} else {
+			var models = new Array(array.length);
+			for (i = 0; i < array.length; i++) {
+				models[i] = array[i].md_replacer;
+			}
+			target_md = this.findBMapTarget(array);
+			if (!target_md){
+				throw new Error('there is no model with focus!');
+			}
+			this.markAnimationStart(models, -1);
+			for (i = 0; i < array.length; i++) {
+				this.setVMpshow(array[i].mpx, nesting_data.residents_struc.mp_show_states[i]);
+			}
+			this.updateState('current_lev_num', target_md.map_level_num);
+			this.markAnimationEnd(models, -1);
+			this.completely_rendered_once['map_slice'] = true;
 		}
+		
 
 
 	},
 
 	transform_props: transform_props,
-	'stch-current_mp_md': function(md, old_md) {
+	'stch-current_mp_md': function() {
 
 		//map_level_num
 		//md.map_level_num
@@ -531,7 +577,7 @@ provoda.View.extendTo(AppBaseView, {
 
 			
 		}*/
-
+		var md = this.getNesting('current_mp_md');
 
 		var _this = this;
 		setTimeout(function() {

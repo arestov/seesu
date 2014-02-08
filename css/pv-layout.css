@@ -1,12 +1,16 @@
 .complex-page{
 	position: relative;
 
+
 	max-width: 750px;
 	-webkit-transform-origin: 0 0;
 	-moz-transform-origin: 0 0;
 	-o-transform-origin: 0 0;
 	transform-origin: 0 0;
 	}
+.complex-page-scroll_con{
+	-webkit-transform: translateZ(0);
+}
 .shared-parts{
 	position: relative;
 	max-width: 750px;

@@ -1,4 +1,4 @@
-define(['provoda', 'app_serv'], function(provoda, app_serv){
+define(['provoda', 'app_serv', 'spv'], function(provoda, app_serv, spv){
 "use strict";
 var app_env = app_serv.app_env;
 
@@ -73,14 +73,39 @@ provoda.Model.extendTo(FileInTorrent, {
 			}
 			this.updateManyStates(states);
 		},
-		complex_states: {
-			"visible_duration": {
-				depends_on: ['duration', 'loaded_duration'],
-				fn: function(duration, loaded_duration) {
-					return duration || loaded_duration;
+		'compx-visible_duration': [
+			['duration', 'loaded_duration'],
+			function(duration, loaded_duration) {
+				return duration || loaded_duration;
+			}
+		],
+		'compx-play_position': [
+			['visible_duration', 'playing_progress'],
+			function(duration, playing_progress) {
+				return Math.round(duration * playing_progress);
+			}
+		],
+		getNiceSeconds: function(state) {
+			if (typeof state == 'number'){
+				var duration = Math.round(state/1000);
+				if (duration){
+					var digits = duration % 60;
+					return  spv.zerofyString(Math.floor(duration/60), 2) + ':' + spv.zerofyString(digits, 2);
 				}
 			}
 		},
+		'compx-visible_duration_text': [
+			['visible_duration'],
+			function (state) {
+				return this.getNiceSeconds(state);
+			}
+		],
+		'compx-play_position_text': [
+			['play_position'],
+			function (state) {
+				return this.getNiceSeconds(state);
+			}
+		],
 		getTitle: function() {
 			var title = [];
 
