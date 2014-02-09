@@ -232,8 +232,8 @@ BrowseMap.Model.extendTo(AllPlaces, {
 		this.artists_lists = this.getSPI('artists', true);
 		this.updateNesting('artists_lists', this.artists_lists);
 
-		var blogs = this.getSPI('blogs', true);
-		this.updateNesting('lists_list', [this.songs_lists, this.artists_lists, blogs]);
+		//var blogs = this.getSPI('blogs', true);
+		this.updateNesting('lists_list', [this.songs_lists, this.artists_lists/*, blogs*/]);
 
 
 

@@ -64,13 +64,15 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 
 		//this.original_artist = params.original_artist;
 
+		var image_url = params.thumb && params.thumb.replace('api.discogs.com', 's.pixogs.com');
+
 
 		this.updateManyStates({
 			'album_artist': this.playlist_artist,
 			'album_name': this.album_name,
 			'album_year': params.year,
 		//	'original_artist': this.original_artist,
-			'image_url': params.thumb && {url: params.thumb},
+			'image_url': image_url && {url: image_url},
 			'nav_title': '(' + this.album_artist + ') ' + this.album_name,
 			'url_part': '/' + this.album_id
 		});
