@@ -182,7 +182,6 @@ provoda.View.extendTo(AppBaseView, {
 	},
 	scrollTo: function(jnode, view_port, opts) {
 		if (!jnode){return false;}
-		opts = opts || {};
 	//	if (!this.view_port || !this.view_port.node){return false;}
 
 		//var scrollingv_port = ;
@@ -194,7 +193,7 @@ provoda.View.extendTo(AppBaseView, {
 			return;
 		}
 
-		var view_port_limit = opts.vp_limit || 1;
+		var view_port_limit = (opts && opts.vp_limit) || 1;
 
 		var svp = view_port || this.getScrollVP(),
 			scroll_c = svp.offset ? svp.node :  svp.node,
@@ -232,7 +231,7 @@ provoda.View.extendTo(AppBaseView, {
 			//new_position =  node_position - scrolling_viewport_height/2;
 		}
 		if (new_position){
-			if (opts.animate){
+			if (opts && opts.animate){
 				scroll_c
 					.stop(false, true)
 					.animate({
