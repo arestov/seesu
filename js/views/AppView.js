@@ -328,6 +328,12 @@ AppBaseView.extendTo(AppView, {
 			resortQueue: resortQueue
 		});
 
+		this.dgs_imgq_alt = new FuncsQueue({
+			time: [170],
+			init: addQueue,
+			resortQueue: resortQueue
+		});
+
 		setTimeout(function() {
 			spv.domReady(_this.d, function() {
 				_this.buildAppDOM();
@@ -983,6 +989,8 @@ AppBaseView.extendTo(AppView, {
 				queue = this.lfm_imgq;
 			} else if (opts.url.indexOf('discogs.com') != -1) {
 				queue = this.dgs_imgq;
+			} else if (opts.url.indexOf('http://s.pixogs.com') != -1) {
+				queue = this.dgs_imgq_alt;
 			}
 			opts.timeout = opts.timeout || 40000;
 			opts.queue = opts.queue || queue;

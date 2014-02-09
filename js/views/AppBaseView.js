@@ -77,6 +77,7 @@ provoda.View.extendTo(AppBaseView, {
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
+		this.max_level_num = -1;
 		this.dom_related_props.push('samples', 'lev_containers', 'els', 'calls_flow');
 		this.completely_rendered_once = {};
 
@@ -97,6 +98,7 @@ provoda.View.extendTo(AppBaseView, {
 			if (num == -1){
 				throw new Error('start_screen must exist');
 			}
+
 			var node = this.getSample('complex-page');
 
 			var tpl = new this.PvTemplate({
@@ -108,13 +110,33 @@ provoda.View.extendTo(AppBaseView, {
 
 			this.tpls.push(tpl);
 			tpl.setStates(this.states);
+			
+
+
+
+			var next_lev_con;
+			for (var i = num; i <= this.max_level_num; i++) {
+				if (this.lev_containers[i]) {
+					next_lev_con = this.lev_containers[i];
+					break;
+				}
+			}
+			if (next_lev_con) {
+				node.insertBefore(next_lev_con.c);
+			} else {
+				node.appendTo(this.els.app_map_con);
+			}
+			
+
 			var lev_con = new LevContainer
-					(node.appendTo(this.els.app_map_con),
+					(node,
 					tpl.ancs['scroll_con'],
 					tpl.ancs['material'],
 					tpl,
 					this);
 			this.lev_containers[num] = lev_con;
+
+			this.max_level_num = Math.max(this.max_level_num, num);
 			return lev_con;
 		}
 	},
@@ -160,7 +182,6 @@ provoda.View.extendTo(AppBaseView, {
 	},
 	scrollTo: function(jnode, view_port, opts) {
 		if (!jnode){return false;}
-		opts = opts || {};
 	//	if (!this.view_port || !this.view_port.node){return false;}
 
 		//var scrollingv_port = ;
@@ -172,7 +193,7 @@ provoda.View.extendTo(AppBaseView, {
 			return;
 		}
 
-		var view_port_limit = opts.vp_limit || 1;
+		var view_port_limit = (opts && opts.vp_limit) || 1;
 
 		var svp = view_port || this.getScrollVP(),
 			scroll_c = svp.offset ? svp.node :  svp.node,
@@ -210,7 +231,7 @@ provoda.View.extendTo(AppBaseView, {
 			//new_position =  node_position - scrolling_viewport_height/2;
 		}
 		if (new_position){
-			if (opts.animate){
+			if (opts && opts.animate){
 				scroll_c
 					.stop(false, true)
 					.animate({
