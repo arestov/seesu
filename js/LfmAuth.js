@@ -165,6 +165,10 @@ provoda.Eventor.extendTo(LfmAuth, {
 		var _this = this;
 		var i = this.auth_frame = document.createElement('iframe');
 		spv.addEvent(window, 'message', function(e){
+			var iframe_win = _this.auth_frame && _this.auth_frame.contentWindow;
+			if (e.source != iframe_win) {
+				return;
+			}
 			if (e.data == 'lastfm_bridge_ready:'){
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('lastfm_token:') === 0){
