@@ -131,6 +131,10 @@ provoda.Eventor.extendTo(VkAuth, {
 		}
 		var i = this.auth_frame = document.createElement('iframe');
 		spv.addEvent(window, 'message', function(e){
+			var iframe_win = _this.auth_frame && _this.auth_frame.contentWindow;
+			if (e.source != iframe_win) {
+				return;
+			}
 			if (e.data == 'vk_bridge_ready:'){
 			//	console.log('vk_bridge_ready');
 				_this.trigger('vk-bridge-ready');
