@@ -118,6 +118,41 @@ a.track_name_loading .song-track-name{
 		margin-bottom: 1rem;
 		margin-left:1rem;
 		}
+@-webkit-keyframes "pulse1" {
+	 0% {
+	    background-color: red;
+	 }
+	 50% {
+	    background-color: #bb17b5;
+	 }
+	 100% {
+	    background-color: red;
+	 }
+ 
+}
+@-moz-keyframes pulse1 {
+     0% {
+	    background-color: red;
+	 }
+	 50% {
+	    background-color: #bb17b5;
+	 }
+	 100% {
+	    background-color: red;
+	 }
+}	
+@keyframes "pulse1" {
+	 0% {
+	    background-color: red;
+	 }
+	 50% {
+	    background-color: #bb17b5;
+	 }
+	 100% {
+	    background-color: red;
+	 }
+
+}
 .moplas-block .show-all-songs{
 	position: relative;
 	z-index: 2;
@@ -134,6 +169,9 @@ a.track_name_loading .song-track-name{
 		text-align: center;
 		line-height: 1.5rem;
 		opacity: 0.8;
+		-webkit-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+		-moz-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+		animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
 		}
 	.moplas-block .show-all-songs a{
 		display: inline-block;
