@@ -669,6 +669,7 @@ var getBoxedSetImmFunc = function(win) {
 };
 
 var getBoxedRAFFunc = function(win) {
+	return false;
 	var raf;
 
 	if ( win.requestAnimationFrame ){
