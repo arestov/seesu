@@ -242,7 +242,7 @@ provoda.addPrototype("SongBase",{
 	},
 	unmark: function(mo){
 		if (this.neighbour_for == mo){
-			delete this.neighbour_for;
+			this.neighbour_for = null;
 			this.updateState('marked_as', false);
 
 		}
@@ -257,32 +257,33 @@ provoda.addPrototype("SongBase",{
 		
 		if (!this.marked_prev_song || this.marked_prev_song != this.prev_song){
 			if (this.marked_prev_song){
-				this.marked_prev_song.unmark(this);
+			//	this.marked_prev_song.unmark(this);
 			}
 			if (this.prev_song){
-				(this.marked_prev_song = this.prev_song).markAs('prev', this);
+				(this.marked_prev_song = this.prev_song);//.markAs('prev', this);
 			}
 		}
 		if (!this.marked_next_song || this.marked_next_song != this.next_song){
 			if (this.marked_next_song){
-				this.marked_next_song.unmark(this);
+				//this.marked_next_song.unmark(this);
 			}
 			if (this.next_song){
-				(this.marked_next_song = this.next_song).markAs('next', this);
+				(this.marked_next_song = this.next_song);//.markAs('next', this);
 			}
 		}
-			
+		this.plst_titl.checkShowedNeighboursMarks();
 		
 	},
 	removeMarksFromNeighbours: function(){
 		if (this.marked_prev_song){
-			this.marked_prev_song.unmark(this);
-			delete this.marked_prev_song;
+			//this.marked_prev_song.unmark(this);
+			this.marked_prev_song = null;
 		}
 		if (this.marked_next_song){
-			this.marked_next_song.unmark(this);
-			delete this.marked_next_song;
+			//this.marked_next_song.unmark(this);
+			this.marked_next_song = null;
 		}
+		this.plst_titl.checkShowedNeighboursMarks();
 	},
 	waitToLoadNext: function(ready){
 		this.ready_to_preload = ready;

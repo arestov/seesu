@@ -669,6 +669,7 @@ var getBoxedSetImmFunc = function(win) {
 };
 
 var getBoxedRAFFunc = function(win) {
+	return false;
 	var raf;
 
 	if ( win.requestAnimationFrame ){
@@ -2314,7 +2315,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var event_obj = {
 			value: null,
 			old_value: null,
-			target: null
+			target: null,
+			nesting_name: collection_name
 		};
 		if (typeof opts == 'object'){
 			spv.cloneObj(event_obj, opts);

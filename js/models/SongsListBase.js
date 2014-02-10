@@ -7,8 +7,14 @@ define(['provoda', 'spv'], function(provoda, spv){
 		},
 		init: function(opts){
 			this._super(opts);
+
+			this.idx_wplay_song = null;
+			this.idx_show_song = null;
+			this.idx_player_song = null;
+
+			this.vis_neig_next = null;
+			this.vis_neig_prev= null;
 			
-			var _this = this;
 			this.app = opts.app;
 			this.player = this.app.p;
 			this.mp3_search = this.app.mp3_search;
@@ -16,48 +22,74 @@ define(['provoda', 'spv'], function(provoda, spv){
 				this.pmd = opts.pmd;
 			}
 		
-			this.on('child_change-' + this.main_list_name, function(e) {
-				if (!e.skip_report){
-					
-					
-					this.markTracksForFilesPrefinding();
-					this.makePlayable();
-					this.nextTick(this.tickListChanges, [e.last_usable_song]);
-					
-				}
-			});
-			this.watchChildrenStates(this.main_list_name, 'want_to_play', function(e) {
-				if (e.value){
-					this.idx_wplay_song = e.item;
-				} else if (this.idx_wplay_song == e.item) {
-					this.idx_wplay_song = null;
-				}
-			});
-			this.watchChildrenStates(this.main_list_name, 'mp_show', function(e) {
-				if (e.value){
-					this.idx_show_song = e.item;
-				} else if (this.idx_show_song == e.item) {
-					this.idx_show_song = null;
-				}
-				
-			});
-			this.watchChildrenStates(this.main_list_name, 'player_song', function(e) {
-				if (e.value){
-					this.idx_player_song = e.item;
-				} else if (this.idx_player_song == e.item) {
-					this.idx_player_song = null;
-				}
-			});
-			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', function(e) {
-				_this.checkNeighboursStatesCh(e.item);
-				
-			});
-			this.watchChildrenStates(this.main_list_name, 'is_important', function(e) {
-				if (e.item.isImportant()){
-					_this.checkNeighboursChanges(e.item);
-				}
-			});
+			this.on('child_change-' + this.main_list_name, this.hndChangedPlaylist);
+			this.watchChildrenStates(this.main_list_name, 'want_to_play', this.hndChangedWantPlay);
+			this.watchChildrenStates(this.main_list_name, 'mp_show', this.hndChangedMPShow);
+			this.watchChildrenStates(this.main_list_name, 'player_song', this.hndChangedPlayerSong);
+			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', this.hndChangedNeigUse);
+			this.watchChildrenStates(this.main_list_name, 'is_important', this.hndChangedImportant);
 			
+			this.on('child_change-' + 'vis_neig_prev', this.hndNeighboursRemarks);
+			this.on('child_change-' + 'vis_neig_next', this.hndNeighboursRemarks);
+		},
+		hndNeighboursRemarks: function(e) {
+			var direction =  e.nesting_name.replace('vis_neig_', '');
+			if (e.value != e.old_value) {
+				if (e.old_value) {
+					e.old_value.updateState('marked_as', false);
+				}
+				if (e.value) {
+					e.value.updateState('marked_as', direction);
+				}
+			}
+			//console.log(e.value, e.nesting_name);
+		},
+		checkShowedNeighboursMarks: function() {
+
+			this.updateNesting('vis_neig_prev', this.idx_show_song && this.idx_show_song.marked_prev_song || null);
+			this.updateNesting('vis_neig_next', this.idx_show_song && this.idx_show_song.marked_next_song || null);
+			
+			
+		},
+		hndChangedPlaylist: function(e) {
+			if (!e.skip_report){
+				this.markTracksForFilesPrefinding();
+				this.makePlayable();
+				this.nextTick(this.tickListChanges, [e.last_usable_song]);
+				
+			}
+		},
+		hndChangedWantPlay: function(e) {
+			if (e.value){
+				this.idx_wplay_song = e.item;
+			} else if (this.idx_wplay_song == e.item) {
+				this.idx_wplay_song = null;
+			}
+		},
+		hndChangedMPShow: function(e) {
+			if (e.value){
+				this.idx_show_song = e.item;
+			} else if (this.idx_show_song == e.item) {
+				this.idx_show_song = null;
+			}
+			this.checkShowedNeighboursMarks();
+			
+		},
+		hndChangedPlayerSong: function(e) {
+			if (e.value){
+				this.idx_player_song = e.item;
+			} else if (this.idx_player_song == e.item) {
+				this.idx_player_song = null;
+			}
+		},
+		hndChangedNeigUse: function(e) {
+			this.checkNeighboursStatesCh(e.item);
+			
+		},
+		hndChangedImportant: function(e) {
+			if (e.item.isImportant()){
+				this.checkNeighboursChanges(e.item);
+			}
 		},
 		getMainList: function() {
 			return this[this.main_list_name];
