@@ -679,7 +679,9 @@ var getBoxedRAFFunc = function(win) {
 			raf = win[vendors[x]+'RequestAnimationFrame'];
 		}
 	}
-	return raf;
+	return function(fn) {
+		return raf.call(win, fn);
+	};
 };
 
 
@@ -697,12 +699,12 @@ var CallbacksFlow = function(win, rendering_flow) {
 	var raf = rendering_flow && getBoxedRAFFunc(win);
 	if ( raf ) {
 		this.pushIteration = function(fn) {
-			raf(fn);
+			return raf(fn);
 		};
 	} else {
 		var setImmediate = getBoxedSetImmFunc(win);
 		this.pushIteration = function(fn) {
-			setImmediate(fn);
+			return setImmediate(fn);
 		};
 	}
 	
