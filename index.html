@@ -805,8 +805,11 @@
 		
 		<div class="song-row-content moplas-block" pv-class="song-row-content moplas-block {{want_more_songs && 'want_more_songs'}}">
 			<div class="show-all-songs hidden" pv-class="show-all-songs {{!must_be_expandable && 'hidden'}}">
-				<a pv-anchor='more_songs_b'><span class="lang localize-files">Files</span></a>
-				<span class="notifier hidden" pv-nest='notifier' pv-text='{{counter}}'></span>
+				<a pv-anchor='more_songs_b'>
+					<span class="notifier hidden" pv-nest='notifier' pv-text='{{counter}}'></span>
+					<span class="lang localize-files">Files</span>
+				</a>
+				
 				
 			</div>
 			<div class="messages-c" pv-anchor='messages_c'>
