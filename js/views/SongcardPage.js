@@ -315,7 +315,7 @@ provoda.View.extendTo(SongcardController, {
 
 	},
 	createSongListeners: function(listenings, place, above_limit_value, exlude_user, users_context){
-		var users_limit = 3;
+		var users_limit = 5;
 		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
 			if (!exlude_user || (listenings[i].user != exlude_user && listenings[i].info)){
 				place.append(this.createSongListener(listenings[i], users_context));
