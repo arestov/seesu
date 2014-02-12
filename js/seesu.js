@@ -28,9 +28,6 @@ $.ajaxSetup({
   cache: true,
   global:false,
   timeout:40000,
-  headers:{
-	'X-Requested-With': 'XMLHttpRequest'
-  }
 });
 $.support.cors = true;
 

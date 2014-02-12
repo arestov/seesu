@@ -165,6 +165,9 @@ var get_fast_suggests = spv.debounce(function(q, callback, hash, invstg){
 		global: false,
 		type: "GET",
 		timeout: 15000,
+		headers:{
+			'X-Requested-With': 'XMLHttpRequest'
+		},
 		dataType: "json",
 		data: {
 			"q": q,
