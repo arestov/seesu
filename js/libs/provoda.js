@@ -2627,7 +2627,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		spv.cloneObj(this.undetailed_states, this.mpx.states);
-		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
 		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
 
 
