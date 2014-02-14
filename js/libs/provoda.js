@@ -85,6 +85,8 @@ var sync_sender = {
 							fixed_values[jj] = {
 								_provoda_id: states[jj]._provoda_id
 							};
+							//fixme, отправляя _provoda_id мы не отправляем модели
+							//которые могли попасть в состояния после отправки ПОДДЕЛКИ текущей модели
 
 						}
 						//needs_changes
@@ -96,6 +98,45 @@ var sync_sender = {
 				cur.updateStates(md._provoda_id, needs_changes ? fixed_values : states);
 			}
 		}
+	}
+};
+
+
+var ViewsProxies = function(root_md) {
+	this.root_md = root_md;
+	this.spaces = {};
+	this.spaces_list = [];
+};
+
+ViewsProxies.prototype = {
+	//инициализация простанства
+	//поддержка простанства в актуальном состоянии
+	//очистка простанства
+	
+	addSpaceById: function(id) {
+		if (!this.spaces[id]) {
+			this.spaces[id] = {
+				models_index: {},
+				ids_index: {}
+			};
+			this.spaces_list.push(this.spaces[id]);
+		} else {
+			throw new Error();
+		}
+	},
+	removeSpaceById: function(id) {
+		var space = this.spaces[id];
+		if (!space) {
+			throw new Error();
+		}
+		this.spaces[id] = null;
+		this.spaces_list = spv.arrayExclude(this.spaces_list, space);
+	},
+	pushNesting: function(md, nesname, value, oldv, remove) {
+
+	},
+	pushStates: function(md, states) {
+
 	}
 };
 
@@ -2347,8 +2388,65 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.mpx.sendStatesToViews(states_list);
 	},
+	getLinedStructure: function(models_index, local_index) {
+		//используется для получения массива всех РЕАЛЬНЫХ моделей, связанных с текущей
+		local_index = local_index || {};
+		models_index = models_index || {};
+		var big_result_array = [];
+		var all_for_parse = [this];
 
+
+		var checkModel = function(md) {
+			if (!md) {
+				return;
+			}
+			var cur_id = md._provoda_id;
+			if (!models_index[cur_id] && !local_index[cur_id]){
+				local_index[cur_id] = true;
+				all_for_parse.push(md);
+			}
+			return cur_id;
+		};
+
+
+		while (all_for_parse.length) {
+			var cur_md = all_for_parse.shift();
+			var can_push = !models_index[cur_md._provoda_id];
+			if (can_push) {
+				models_index[cur_md._provoda_id] = true;
+			}
+			checkModel(cur_md.map_parent);
+
+
+			for (var state_name in cur_md.states){
+				checkModel(cur_md.states[state_name]);
+				
+			}
+
+			for (var nesting_name in cur_md.children_models){
+				var cur = cur_md.children_models[nesting_name];
+				if (cur){
+					if (cur._provoda_id){
+						checkModel(cur);
+					} else {
+						for (var i = 0; i < cur.length; i++) {
+							checkModel(cur[i]);
+						}
+					}
+				}
+			}
+
+
+			if (can_push) {
+				big_result_array.push(cur_md);
+			}
+		}
+
+		return all_for_parse;
+
+	},
 	toSimpleStructure: function(models_index, big_result) {
+		//используется для получения массива всех ПОДДЕЛЬНЫХ, пригоднях для отправки через postMessage моделей, связанных с текущей
 		models_index = models_index || {};
 		var local_index = {};
 		var all_for_parse = [this];
@@ -2627,6 +2725,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		spv.cloneObj(this.undetailed_states, this.mpx.states);
+		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
 		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
 
 
