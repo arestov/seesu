@@ -28,9 +28,6 @@ $.ajaxSetup({
   cache: true,
   global:false,
   timeout:40000,
-  headers:{
-	'X-Requested-With': 'XMLHttpRequest'
-  }
 });
 $.support.cors = true;
 
@@ -326,6 +323,7 @@ AppModel.extendTo(SeesuApp, {
 
 		}, 1000 * 60 * 20);
 		setInterval(function(){
+			return;
 			var rootvs = _this.mpx.getViews('root');
 			if (rootvs && rootvs.length){
 				_this.updateLVTime();
@@ -448,10 +446,14 @@ AppModel.extendTo(SeesuApp, {
 		var addBrowserView = function(Constr, name, opts) {
 			var view = new Constr();
 
-			_this.mpx.addView(view, name);
+
+			var mpx = _this.connectMPX();
+			
+
+			mpx.addView(view, name);
 
 			view.init({
-				mpx: _this.mpx
+				mpx: mpx
 			}, opts);
 			view.requestAll();
 

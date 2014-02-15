@@ -161,6 +161,9 @@ var SeesuServerAPI = function(app, auth, url){
 			url: _this.url + 'last_listenings/',
 			type: "GET",
 			dataType: "json",
+			headers:{
+				'X-Requested-With': 'XMLHttpRequest'
+			},
 			error: function(){
 				callback();
 			},
@@ -290,6 +293,9 @@ provoda.Eventor.extendTo(SeesuServerAPI, {
 			type: "GET",
 			url: _this.url + 'api/',
 			data: params,
+			headers:{
+				'X-Requested-With': 'XMLHttpRequest'
+			},
 			success: function(r){
 				if (r){
 					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){

@@ -103,6 +103,7 @@ ProspMusicSearch.prototype = {
 		return this.makeSong(item);
 	},
 	makeSong: function(cursor, msq){
+		cursor.artist = cursor.artist + '';
 		cursor.models = {};
 		cursor.getSongFileModel = Mp3Search.getSongFileModel;
 		cursor.duration = cursor.duration && cursor.duration * 1000; 
@@ -115,6 +116,7 @@ ProspMusicSearch.prototype = {
 				cursor.track = guess_info.track;
 			}
 		}
+
 		
 		if (msq){
 			this.mp3_search.setFileQMI(cursor, msq);

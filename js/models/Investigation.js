@@ -345,7 +345,6 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			for (var i = 0; i < this.rendering_list.length; i++) {
 				this.rendering_list[i].die();
 			}
-			this.mpx.collectViewsGarbadge();
 			this.updateNesting('rendering_list', []);
 			
 		},

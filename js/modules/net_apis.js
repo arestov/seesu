@@ -74,6 +74,12 @@ spv.Class.extendTo(DiscogsApi, {
 			data: params_full,
 			timeout: 20000,
 			resourceCachingAvailable: true,
+			afterChange: function(opts) {
+				if (opts.dataType == 'json'){
+					opts.headers = null;
+				}
+			},
+			thisOriginAllowed: true,
 			context: options.context
 		}, {
 			cache_ajax: this.cache_ajax,
