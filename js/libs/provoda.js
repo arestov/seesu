@@ -85,6 +85,8 @@ var sync_sender = {
 							fixed_values[jj] = {
 								_provoda_id: states[jj]._provoda_id
 							};
+							//fixme, отправляя _provoda_id мы не отправляем модели
+							//которые могли попасть в состояния после отправки ПОДДЕЛКИ текущей модели
 
 						}
 						//needs_changes
@@ -98,6 +100,7 @@ var sync_sender = {
 		}
 	}
 };
+
 
 
 var MDProxy = function(_provoda_id, states, children_models, md) {
@@ -274,6 +277,136 @@ MDProxy.prototype = {
 		}
 	}
 };
+
+
+
+var views_proxies = {
+	spaces: {},
+	spaces_list: [],
+	//инициализация простанства
+	//поддержка простанства в актуальном состоянии
+	//очистка простанства
+
+	addRootView: function(view, root_md) {
+		return this.addSpaceById(view.view_id, root_md);
+	},
+	removeRootView: function(view) {
+		return this.removeSpaceById(view.view_id);
+	},
+	getMPX: function(space_id, md) {
+		if (typeof space_id == 'object') {
+			space_id = space_id.view_id;
+		}
+		var mpx = this.spaces[space_id].mpxes_index[md._provoda_id];
+
+		return mpx;
+	},
+	addSpaceById: function(id, root_md) {
+		if (!this.spaces[id]) {
+			this.spaces[id] = {
+				mpxes_index: {},
+				ids_index: {}
+			};
+			this.spaces_list.push(this.spaces[id]);
+
+			var array = root_md.getLinedStructure(this.spaces[id].ids_index);
+			this.createMPXes(array, this.spaces[id].mpxes_index);
+		} else {
+			throw new Error();
+		}
+	},
+	removeSpaceById: function(id) {
+		var space = this.spaces[id];
+		if (!space) {
+			throw new Error();
+		}
+		this.spaces[id] = null;
+		this.spaces_list = spv.arrayExclude(this.spaces_list, space);
+	},
+	createMPXesByRawData: function(raw_array, ids_index, mpxes_index) {
+		if (!raw_array.length) {
+			return;
+		}
+		var i, clean_array = [], local_index = {};
+		for (i = 0; i < raw_array.length; i++) {
+			var cur_id = raw_array[i]._provoda_id;
+			if (!ids_index[cur_id] && !local_index[cur_id]) {
+				local_index[cur_id] = true;
+				clean_array.push(raw_array[i]);
+			}
+			
+		}
+		if (clean_array.length) {
+			var full_array = [];
+			for (i = 0; i < clean_array.length; i++) {
+				push.apply(full_array, clean_array[i].getLinedStructure(ids_index));
+			
+			}
+			this.createMPXes(full_array, mpxes_index);
+		}
+		
+	},
+	createMPXes: function(array, store) {
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			store[cur._provoda_id] = new MDProxy(cur._provoda_id, cur.states, cur.children_models, cur);
+		}
+	},
+	pushNesting: function(md, nesname, value, oldv, removed) {
+		var collected;
+		var raw_array = [];
+		for (var i = 0; i < this.spaces_list.length; i++) {
+			var cur = this.spaces_list[i];
+			if (cur.ids_index[md._provoda_id]) {
+				if (!collected) {
+					collected = true;
+					if (value) {
+						if (value._provoda_id) {
+							raw_array = [value];
+						} else if (Array.isArray(value)){
+							raw_array = value;
+						} else {
+
+							var pos_array = spv.getTargetField(value, 'residents_struc.items');
+							if (pos_array) {
+								raw_array = pos_array;
+							} else {
+								throw new Error('you must provide parsable array in "residents_struc.items" prop')
+							}
+
+						}
+					}
+				}
+				this.createMPXesByRawData(raw_array, cur.ids_index, cur.mpxes_index);
+				cur.mpxes_index[md._provoda_id].sendCollectionChange(nesname, value, oldv, removed);
+			}
+		}
+		
+
+
+	},
+	pushStates: function(md, states_list) {
+		for (var i = 0; i < this.spaces_list.length; i++) {
+			var cur = this.spaces_list[i];
+			if (cur.ids_index[md._provoda_id]) {
+				cur.mpxes_index[md._provoda_id].sendStatesToViews(states_list);
+
+			}
+		}
+	},
+	killMD: function(md) {
+		for (var i = 0; i < this.spaces_list.length; i++) {
+			var cur = this.spaces_list[i];
+			if (cur.ids_index[md._provoda_id]) {
+				cur.mpxes_index[md._provoda_id].die();
+
+			}
+		}
+	}
+};
+
+
+
 var idToModel = function(index, ids) {
 	if (typeof ids == 'number'){
 		return index[ids];
@@ -416,6 +549,7 @@ provoda = {
 	Model: function(){},
 	HModel: function() {},
 	View: function(){},
+	views_proxies: views_proxies,
 	addPrototype: function(name, obj){
 		if (!this.prototypes[name]){
 			this.prototypes[name] = obj;
@@ -2176,7 +2310,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.md_replacer = null;
 		
 
-		this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
+		//this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
 
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
@@ -2214,7 +2348,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	die: function(){
 		this.stopRequests();
-		this.mpx.die();
+		//this.mpx.die();
+		views_proxies.killMD(this);
 		this.trigger('die');
 		big_index[this._provoda_id] = null;
 		return this;
@@ -2336,19 +2471,80 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	sendCollectionChange: function(collection_name, array, old_value, removed) {
 		//this.removeDeadViews();
 		sync_sender.pushNesting(this, collection_name, array, old_value, removed);
-
-		this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
+		views_proxies.pushNesting(this, collection_name, array, old_value, removed);
+		//this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
 	},
 	complex_st_prefix: 'compx-',
 
 	sendStatesToViews: function(states_list) {
 		//this.removeDeadViews();
 		sync_sender.pushStates(this, states_list);
+		views_proxies.pushStates(this, states_list);
 
-		this.mpx.sendStatesToViews(states_list);
+		//this.mpx.sendStatesToViews(states_list);
 	},
+	getLinedStructure: function(models_index, local_index) {
+		//используется для получения массива всех РЕАЛЬНЫХ моделей, связанных с текущей
+		local_index = local_index || {};
+		models_index = models_index || {};
+		var big_result_array = [];
+		var all_for_parse = [this];
 
+
+		var checkModel = function(md) {
+			if (!md) {
+				return;
+			}
+			var cur_id = md._provoda_id;
+			if (typeof cur_id == 'undefined') {
+				return;
+			}
+			if (!models_index[cur_id] && !local_index[cur_id]){
+				local_index[cur_id] = true;
+				all_for_parse.push(md);
+			}
+			return cur_id;
+		};
+
+
+		while (all_for_parse.length) {
+			var cur_md = all_for_parse.shift();
+			var can_push = !models_index[cur_md._provoda_id];
+			if (can_push) {
+				models_index[cur_md._provoda_id] = true;
+			}
+			checkModel(cur_md.map_parent);
+
+
+			for (var state_name in cur_md.states){
+				checkModel(cur_md.states[state_name]);
+				
+			}
+
+			for (var nesting_name in cur_md.children_models){
+				var cur = cur_md.children_models[nesting_name];
+				if (cur){
+					if (cur._provoda_id){
+						checkModel(cur);
+					} else {
+						for (var i = 0; i < cur.length; i++) {
+							checkModel(cur[i]);
+						}
+					}
+				}
+			}
+
+
+			if (can_push) {
+				big_result_array.push(cur_md);
+			}
+		}
+
+		return big_result_array;
+
+	},
 	toSimpleStructure: function(models_index, big_result) {
+		//используется для получения массива всех ПОДДЕЛЬНЫХ, пригоднях для отправки через postMessage моделей, связанных с текущей
 		models_index = models_index || {};
 		var local_index = {};
 		var all_for_parse = [this];
@@ -2618,6 +2814,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		
 		this.mpx = view_otps.mpx;
+		this.proxies_space = view_otps.proxies_space || null;
 		this.undetailed_states = {};
 		this.undetailed_children_models = {};
 		this.way_points = [];
@@ -2627,6 +2824,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		spv.cloneObj(this.undetailed_states, this.mpx.states);
+		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
 		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
 
 
@@ -2709,6 +2907,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		} else {
 			return (this.req_order_field = ['mdata', 'v', this.view_id, 'order']);
 		}
+	},
+	getStoredMpx: function(md) {
+		//return md.mpx;
+		return views_proxies.getMPX(this.root_view.proxies_space, md);
 	},
 	RPCLegacy: function() {
 		this.mpx.RPCLegacy.apply(this.mpx, arguments);
@@ -2967,7 +3169,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return mpx.getView(complex_id, true);
 	},
 	getFreeChildView: function(address_opts, md, opts) {
-		var mpx = md.mpx;
+		var mpx = this.getStoredMpx(md);
 		var
 			child_name = address_opts.name,
 			view_space = address_opts.space || 'main',
@@ -3613,7 +3815,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		for (var i = 0; i < array.length; i++) {
-			var view = this.getChildView(array[i].mpx, space || 'main');
+			var view = this.getChildView(this.getStoredMpx(array[i]), space || 'main');
 			if (view){
 				view.die();
 			} else {
@@ -3747,7 +3949,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		for (; i >= 0; i--) {
-			var view = array[i].mpx.getView(complex_id);
+			var view = this.getStoredMpx(array[i]).getView(complex_id);
 			var dom_hook = view && !view.detached && view.getT();
 			if (dom_hook){
 				if (view_itself){
@@ -3768,7 +3970,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		for (; i < array.length; i++) {
-			var view = array[i].mpx.getView(complex_id);
+			var view = this.getStoredMpx(array[i]).getView(complex_id);
 			var dom_hook = view && !view.detached && view.getT();
 			if (dom_hook){
 				if (view_itself){
@@ -3817,7 +4019,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
 		//исправляем порядковый номер вьюхи в нэстинге
 		for (var i = 0; i < array.length; i++) {
-			var view = this.getChildView(array[i].mpx, space);
+			var view = this.getChildView(this.getStoredMpx(array[i]), space);
 			if (view) {
 				//view.innesting_pos_old = view.innesting_pos_current;
 				view.innesting_pos_current = i;
@@ -3861,7 +4063,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				//если у всех приоритезированных моделей уже есть вьюхи, то не не используем преоритезацию
 				var has_any_nonviewed = false;
 				for (i = 0; i < ordered_part.length; i++) {
-					if (!this.getChildView(ordered_part[i].mpx, space)){
+					if (!this.getChildView(this.getStoredMpx(ordered_part[i]), space)){
 						has_any_nonviewed = true;
 					}
 				}
@@ -3877,7 +4079,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
-			view = this.getChildView(cur.mpx, space);
+			view = this.getChildView(this.getStoredMpx(cur), space);
 			if (view){
 				prev_view = this.getPrevView(array, i, space, true);
 				if (prev_view){
@@ -3912,7 +4114,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
-			view = this.getChildView(cur.mpx, space);
+			view = this.getChildView(this.getStoredMpx(cur), space);
 			if (view && !view.detached){
 				continue;
 			}
@@ -3938,7 +4140,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			cur = append_list[ i ];
 			var complect = append_list[ i + 1 ];
 
-			view = this.getChildView(cur.mpx, space);
+			view = this.getChildView(this.getStoredMpx(cur), space);
 			if (!view){
 				view = funcs.getFreeView(cur);
 			}
@@ -3953,7 +4155,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		if (!this._collections_set_processing){
 			for (i = array.length - 1; i >= 0; i--) {
-				view = this.getChildView(array[i].mpx, space);
+				view = this.getChildView(this.getStoredMpx(array[i]), space);
 				if (view){
 					view.requestDetailesCreating();
 				}
@@ -3984,7 +4186,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 
 		for (i = 0; i < array.length; i++) {
-			view = this.getChildView(array[i].mpx, space);
+			view = this.getChildView(this.getStoredMpx(array[i]), space);
 			if (view){
 				view.innest_prev_view = this.getPrevView(array, i, space, true);
 				view.innest_next_view = this.getNextView(array, i, space, true);

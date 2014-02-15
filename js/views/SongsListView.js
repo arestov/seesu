@@ -49,7 +49,6 @@ function(provoda, $, SongUI, etc_views) {
 			var viewing = [], prev_next = [], play = [];//, others = [];
 			for (var i = array.length - 1; i >= 0; i--) {
 				var cur = array[i];
-				//.mpx
 				var states = cur.states;
 				if (states.mp_show || states.mpl_attached){
 					viewing.push(cur);

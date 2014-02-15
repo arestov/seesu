@@ -279,14 +279,14 @@ provoda.View.extendTo(AppBaseView, {
 	
 	markAnimationStart: function(models, changes_number) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].getMD().mpx.updateState('animation_started', changes_number);
+			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number);
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
 	markAnimationEnd: function(models, changes_number) {
 		for (var i = 0; i < models.length; i++) {
 			//
-			var mpx = models[i].getMD().mpx;
+			var mpx = this.getStoredMpx(models[i].getMD());
 
 			if (mpx.state('animation_started') == changes_number){
 				mpx.updateState('animation_completed', changes_number);
@@ -299,7 +299,7 @@ provoda.View.extendTo(AppBaseView, {
 		if (this['spec-vget-' + model_name]){
 			return this['spec-vget-' + model_name](md);
 		} else {
-			return this.getChildView(md.mpx, 'main');
+			return this.getChildView(this.getStoredMpx(md), 'main');
 		}
 	},
 	getMapSliceChildInParenView: function(md) {
@@ -310,9 +310,9 @@ provoda.View.extendTo(AppBaseView, {
 		if (!parent_view){
 			return;
 		}
-		var target_in_parent = parent_view.getChildView(md.mpx, 'main');
+		var target_in_parent = parent_view.getChildView(this.getStoredMpx(md), 'main');
 		if (!target_in_parent){
-			var view = parent_view.getChildViewsByMpx(md.mpx);
+			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
 			target_in_parent = view && view[0];
 		}
 		return target_in_parent;
@@ -389,15 +389,15 @@ provoda.View.extendTo(AppBaseView, {
 			//	parent.updateState('mp_has_focus', false);
 			}
 			//mpx.updateState(prop, changes_number);
-			this.setVMpshow(change.target.getMD().mpx, change.value);
+			this.setVMpshow(this.getStoredMpx(change.target.getMD()), change.value);
 		},
 		'zoom-out': function(change) {
-			this.setVMpshow(change.target.getMD().mpx, false);
+			this.setVMpshow(this.getStoredMpx(change.target.getMD()), false);
 		},
 		'destroy': function(change) {
 			var md = change.target.getMD();
 		//	md.mlmDie();
-			this.setVMpshow(md.mpx, false);
+			this.setVMpshow(this.getStoredMpx(md), false);
 		}
 	},
 	animateMapSlice: function(transaction_data, animation_data) {
@@ -412,7 +412,7 @@ provoda.View.extendTo(AppBaseView, {
 			cur = all_changhes[i];
 			var target = cur.target.getMD();
 			if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(target.mpx);
+				this.removeChildViewsByMd(this.getStoredMpx(target));
 			}
 		}
 
@@ -487,7 +487,7 @@ provoda.View.extendTo(AppBaseView, {
 	findBMapTarget: function(array) {
 		var target_md, i;
 		for (i = 0; i < array.length; i++) {
-			if (array[i].mpx.states.mp_has_focus) {
+			if (this.getStoredMpx(array[i]).states.mp_has_focus) {
 				target_md = array[i];
 				break;
 			}
@@ -541,7 +541,7 @@ provoda.View.extendTo(AppBaseView, {
 			}
 			this.markAnimationStart(models, -1);
 			for (i = 0; i < array.length; i++) {
-				this.setVMpshow(array[i].mpx, nesting_data.residents_struc.mp_show_states[i]);
+				this.setVMpshow(this.getStoredMpx(array[i]), nesting_data.residents_struc.mp_show_states[i]);
 			}
 			this.updateState('current_lev_num', target_md.map_level_num);
 			this.markAnimationEnd(models, -1);
@@ -620,7 +620,7 @@ provoda.View.extendTo(AppBaseView, {
 			}
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
-				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
+				var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(false, false, true);
 				var con = mplev_item_view && mplev_item_view.getC();
 				if (con && con.height()){
 					_this.scrollTo(mplev_item_view.getC(), {

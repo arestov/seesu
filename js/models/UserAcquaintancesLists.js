@@ -172,7 +172,6 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 			concated[i] = user_acq;
 		}
 		this.removeChildren(array_name);
-		this.mpx.collectViewsGarbadge();
 
 		this.updateNesting(array_name, concated);
 
