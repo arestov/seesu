@@ -18,19 +18,32 @@ if (need_ui){
 	});
 }
 if (need_ui){
-	cbp.require(['su', 'js/views/AppView', 'angbo'], function(su, AppView, angbo) {
+	cbp.require(['su', 'js/views/AppView', 'angbo', 'provoda'], function(su, AppView, angbo, provoda) {
 		if (!window){
 			return;
 		}
 		var can_die = true;
 		var md = su;
+
+		var views_proxies = provoda.views_proxies;
+
+		var proxies_space = Date.now();
+
+
 		var view = new AppView();
-		md.mpx.addView(view, 'root');
+		//md.mpx.addView(view, 'root');
 		md.updateLVTime();
 
+		views_proxies.addSpaceById(proxies_space, md);
+
+		var mpx = views_proxies.getMPX(proxies_space, md);
+		mpx.addView(view, 'root');
+
 		view.init({
-			mpx: md.mpx
+			mpx: mpx,
+			proxies_space: proxies_space
 		}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
+
 		view.requestAll();
 		//provoda.sync_r.connectAppRoot();
 	});
@@ -39,6 +52,9 @@ if (need_ui){
 })();
 
 /*
+
+
+
 cbp.jsLoadComplete({
 	test: function() {
 		return cbp.app_env
