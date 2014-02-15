@@ -2472,7 +2472,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//this.removeDeadViews();
 		sync_sender.pushNesting(this, collection_name, array, old_value, removed);
 		views_proxies.pushNesting(this, collection_name, array, old_value, removed);
-		//this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
+		if (this.mpx) {
+			this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
+		}
 	},
 	complex_st_prefix: 'compx-',
 
@@ -2480,8 +2482,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//this.removeDeadViews();
 		sync_sender.pushStates(this, states_list);
 		views_proxies.pushStates(this, states_list);
-
-		//this.mpx.sendStatesToViews(states_list);
+		if (this.mpx) {
+			this.mpx.sendStatesToViews(states_list);
+		}
+		//
 	},
 	getLinedStructure: function(models_index, local_index) {
 		//используется для получения массива всех РЕАЛЬНЫХ моделей, связанных с текущей
