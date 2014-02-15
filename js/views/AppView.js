@@ -194,14 +194,14 @@ AppBaseView.extendTo(AppView, {
 
 	'spec-vget-song': function(md) {
 		var playlist = md.getParentMapModel();
-		var playlist_mpx = playlist.mpx;
+		var playlist_mpx = this.getStoredMpx(playlist);
 		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
-		return playlist_view && playlist_view.getChildView(md.mpx);
+		return playlist_view && playlist_view.getChildView(this.getStoredMpx(md));
 	},
 	'collch-$spec-song': function(name, md) {
 		var playlist = md.getParentMapModel();
 
-		var playlist_mpx = playlist.mpx;
+		var playlist_mpx = this.getStoredMpx(playlist);
 
 		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
 		if (!view){
@@ -409,7 +409,7 @@ AppBaseView.extendTo(AppView, {
 			}
 		}
 		var md = this.getNesting('current_mp_md');
-		var view = md && md.mpx.getRooConPresentation(true);
+		var view = md && this.getStoredMpx(md).getRooConPresentation(true);
 		if (view){
 			view.setPrio();
 		}
@@ -552,7 +552,7 @@ AppBaseView.extendTo(AppView, {
 				};
 				var getCurrentNode = function() {
 					var current_md = _this.getNesting('current_mp_md');
-					return current_md && current_md.mpx.getRooConPresentation(true, true).getC();
+					return current_md && _this.getStoredMpx(current_md).getRooConPresentation(true, true).getC();
 				};
 
 				var readySteadyResize = function(){
@@ -851,7 +851,7 @@ AppBaseView.extendTo(AppView, {
 		if (cwp){
 			var cur_md_md = this.getNesting('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
-			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.mpx.getRooConPresentation()){
+			if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation()){
 				this.scrollTo($(cwp.node), {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});

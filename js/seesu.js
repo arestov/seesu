@@ -323,6 +323,7 @@ AppModel.extendTo(SeesuApp, {
 
 		}, 1000 * 60 * 20);
 		setInterval(function(){
+			return;
 			var rootvs = _this.mpx.getViews('root');
 			if (rootvs && rootvs.length){
 				_this.updateLVTime();
