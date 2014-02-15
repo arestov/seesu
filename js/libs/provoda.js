@@ -2308,14 +2308,21 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 
 		this.md_replacer = null;
-		
+		this.mpx = null;
 
-		//this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
+		//
 
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 
 		return this;
+	},
+	connectMPX: function() {
+		if (!this.mpx) {
+			this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
+		}
+
+		return this.mpx;
 	},
 
 	getReqsOrderField: function() {
@@ -2472,7 +2479,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//this.removeDeadViews();
 		sync_sender.pushNesting(this, collection_name, array, old_value, removed);
 		views_proxies.pushNesting(this, collection_name, array, old_value, removed);
-		//this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
+		if (this.mpx) {
+			this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
+		}
 	},
 	complex_st_prefix: 'compx-',
 
@@ -2480,8 +2489,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//this.removeDeadViews();
 		sync_sender.pushStates(this, states_list);
 		views_proxies.pushStates(this, states_list);
-
-		//this.mpx.sendStatesToViews(states_list);
+		if (this.mpx) {
+			this.mpx.sendStatesToViews(states_list);
+		}
+		//
 	},
 	getLinedStructure: function(models_index, local_index) {
 		//используется для получения массива всех РЕАЛЬНЫХ моделей, связанных с текущей
@@ -3298,6 +3309,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.on('die', cb);
 	},
 	markAsDead: function(skip_md_call) {
+		if (this.proxies_space) {
+			views_proxies.removeSpaceById(this.proxies_space);
+		}
 		this.nextTick(this.remove, [this.getC(), this._anchor]);
 		this.dead = true; //new DeathMarker();
 		this.stopRequests();
