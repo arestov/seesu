@@ -455,7 +455,7 @@ AppModel.extendTo(SeesuApp, {
 			view.init({
 				mpx: mpx
 			}, opts);
-			view.requestAll();*/
+			view.requestAll();
 
 		};
 
