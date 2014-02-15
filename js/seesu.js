@@ -446,10 +446,14 @@ AppModel.extendTo(SeesuApp, {
 		var addBrowserView = function(Constr, name, opts) {
 			var view = new Constr();
 
-			_this.mpx.addView(view, name);
+
+			var mpx = _this.connectMPX();
+			
+
+			mpx.addView(view, name);
 
 			view.init({
-				mpx: _this.mpx
+				mpx: mpx
 			}, opts);
 			view.requestAll();
 
