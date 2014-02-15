@@ -2308,14 +2308,21 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 
 		this.md_replacer = null;
-		
+		this.mpx = null;
 
-		//this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
+		//
 
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 
 		return this;
+	},
+	connectMPX: function() {
+		if (!this.mpx) {
+			this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
+		}
+
+		return this.mpx;
 	},
 
 	getReqsOrderField: function() {
