@@ -53,7 +53,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (e.value){
 				var artcard = this.getNesting('artist');
 				if (artcard){
-					var req = artcard.loaDDD('base_info');
+					var req = artcard.requestState('bio');
 					if (req){
 						this.addRequest(req);
 					}
@@ -67,7 +67,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (e.value){
 				var artcard = this.getNesting('artist');
 				if (artcard){
-					/*var req = artcard.loaDDD('images');
+					/*var req = artcard.requestState('images');
 					if (req){
 						this.addRequest(req);
 					}*/
@@ -76,8 +76,6 @@ lfm_share_url_replacers.forEach(function(el, i) {
 					console.warn('no nested artcard');
 				}
 				
-				//
-				//_this.loaDDD('artist_images');
 			}
 		},
 		init: function(opts) {
