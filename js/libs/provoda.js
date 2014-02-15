@@ -3298,6 +3298,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.on('die', cb);
 	},
 	markAsDead: function(skip_md_call) {
+		if (this.proxies_space) {
+			views_proxies.removeSpaceById(this.proxies_space);
+		}
 		this.nextTick(this.remove, [this.getC(), this._anchor]);
 		this.dead = true; //new DeathMarker();
 		this.stopRequests();
