@@ -341,7 +341,8 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				if (this.app.settings['lfm-scrobbling']){
 					this.app.lfm.submit({
 						artist: this.artist,
-						track: this.track
+						track: this.track,
+						album: this.state('album_name')
 					}, duration, timestamp);
 				}
 				if (this.app.s.loggedIn()){
@@ -362,7 +363,8 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (this.app.settings['lfm-scrobbling']){
 				this.app.lfm.nowplay({
 					artist: this.artist,
-					track: this.track
+					track: this.track,
+					album: this.state('album_name')
 				}, duration);
 			}
 			if (this.app.s.loggedIn()){
