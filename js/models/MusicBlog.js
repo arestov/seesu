@@ -28,7 +28,7 @@ SongsList.extendTo(MusicBlogSongs, {
 			this.getRqData(paging_opts)
 		)
 			.done(function(r){
-				var list = _this.datamorph_map.execute(r);
+				var list = _this.datamorph_map(r);
 				_this.putRequestedData(request_info.request, list, r.error);
 			});
 	}
@@ -88,7 +88,7 @@ LoadableList.extendTo(BlogsList, {
 
 		request_info.request = this.app.exfm.get(this.api_url_part, this.getRqData(paging_opts))
 			.done(function(r){
-				var list = _this.datamorph_map.execute(r);
+				var list = _this.datamorph_map(r);
 				_this.putRequestedData(request_info.request, list, r.error);
 			});
 	}

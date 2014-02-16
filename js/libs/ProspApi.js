@@ -153,7 +153,7 @@ ProspMusicSearch.prototype = {
 			olddone.call(this, function(r) {
 				if (!result){
 
-					var list = datamorph_map.execute(r);
+					var list = datamorph_map(r);
 					var music_list = [];
 
 					for (var i = 0; i < list.length; i++) {

@@ -1362,7 +1362,8 @@ FastEventor.prototype = {
 		var store = this.mapped_reqs[selected_map_num];
 
 		store.process = true;
-		this.sputnik.updateManyStates(this.makeLoadingMarks(selected_map[0], true));
+		states_list = selected_map[0];
+		this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
 		var send = selected_map[2], parse = selected_map[1], errors_selectors = selected_map[3];
 		var request = send.call(this.sputnik, {has_error: store.error});
 
@@ -1370,7 +1371,7 @@ FastEventor.prototype = {
 		request
 				.always(function() {
 					store.process = false;
-					_this.sputnik.updateManyStates(_this.makeLoadingMarks(selected_map[0], false));
+					_this.sputnik.updateManyStates(_this.makeLoadingMarks(states_list, false));
 				})
 				.fail(function(){
 					store.error = true;
