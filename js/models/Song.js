@@ -67,10 +67,12 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (e.value){
 				var artcard = this.getNesting('artist');
 				if (artcard){
-					/*var req = artcard.requestState('images');
+					
+					var req = artcard.requestState('profile_image');
+					//artcard.requestState('images');
 					if (req){
 						this.addRequest(req);
-					}*/
+					}
 					
 				} else {
 					console.warn('no nested artcard');
@@ -133,6 +135,26 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				return artist_name && track_name;
 			}
 		},
+		'compx-available_images': [
+			['artist_images', 'album_image'],
+			function (artist_images, album_image) {
+
+				var arr = [ ];
+				if (album_image) {
+					arr.push(album_image);
+				} else {
+
+					arr.push({
+						url: 'i/album_placeholder.png'
+					});
+				}
+				if (artist_images) {
+					arr.push.apply(arr, artist_images);
+				}
+				
+				return arr;
+			}
+		],
 		'compx-can_load_songcard':{
 			depends_on:['can_expand', 'has_full_title'],
 			fn: function(can_expand, has_full_title) {
@@ -359,6 +381,10 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				var artcard = this.app.getArtcard(this.artist);
 				this.updateNesting('artist', artcard);
 				this.updateState('has_nested_artist', true);
+				if (artcard) {
+					this.wch(artcard, 'available_images', 'artist_images');
+				}
+				//this.wch()
 			}
 			//this.loadSongListeners();
 		})

@@ -467,12 +467,12 @@ define(['provoda', 'spv'], function(provoda, spv){
 			if ((viewing || playing) && target_song.next_preload_song){
 				target_song.next_preload_song.makeSongPlayalbe(true);
 			}
-			if (!target_song.cncco){
+		/*	if (!target_song.cncco){
 				target_song.cncco = [];
 			} else {
 				target_song.cncco.push(log);
 			}
-
+*/
 			if (viewing || playing || wanted){
 				if (!target_song.hasNextSong()){
 					this.requestMoreData();

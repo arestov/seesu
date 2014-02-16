@@ -2,17 +2,19 @@ define(['provoda', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', '.
 function(provoda, etc_views, app_serv, $, spv, ArtcardUI, coct) {
 'use strict';
 var localize = app_serv.localize;
-var app_env = app_serv.app_env;
 
 var SongcardPage = function() {};
 coct.SPView.extendTo(SongcardPage, {
-	createBase: function() {
-		this.c = this.root_view.getSample('songcard_page');
-
-		var nart_dom = this.root_view.getSample('artist_preview-base');
-		this.c.children('.nested_artist').append(nart_dom);
-
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'songcard_page',
+		children_by_selector: [{
+			sample_name: 'artist_preview-base',
+			selector: '.nested_artist',
+			children_by_selector: [{
+				sample_name: 'photo-cont',
+				selector: '.possible_images_con'
+			}]
+		}]
 	},
 	children_views: {
 		fans: coct.ImagedListPreview,

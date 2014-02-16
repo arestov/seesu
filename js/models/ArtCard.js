@@ -660,6 +660,12 @@ BrowseMap.Model.extendTo(ArtCard, {
 			}
 		}
 	},
+	'compx-available_images': [
+		['selected_image', 'images'],
+		function (selected_image, images) {
+			return images || [selected_image];
+		}
+	],
 	init: function(opts, params) {
 		this._super(opts);
 		this.app = opts.app;
