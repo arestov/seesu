@@ -54,9 +54,9 @@ provoda.addPrototype("SongBase",{
 			}
 		},
 		'selected_image': {
-			depends_on: ['lfm_image', 'ext_lfm_image', 'image_url'],
-			fn: function(lfm_i, ext_lfm, just_url) {
-				return lfm_i || just_url || ext_lfm;
+			depends_on: ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
+			fn: function(lfm_i, ext_lfm, just_url, album_image) {
+				return album_image || lfm_i || just_url || ext_lfm;
 			}
 		},
 		'song_title': {
