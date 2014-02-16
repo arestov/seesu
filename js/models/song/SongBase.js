@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery'], function(provoda, spv, $) {
+define(['provoda', 'spv', 'jquery', 'app_serv'], function(provoda, spv, $, app_serv) {
 "use strict";
 var counter = 0;
 
@@ -324,52 +324,33 @@ provoda.addPrototype("SongBase",{
 			last_in_collection: last_in_collection
 		});
 	},
-
-	track_info_reqprops_map_morph: new spv.MorphMap({
-		source: 'track',
-		not_array: true,
-		props_map: {
-			album_name: 'album.title',
-			album_image: ['lfm_image', 'album.image'],
-			listeners: ['num', 'listeners'],
-			playcount: ['num', 'playcount'],
-			duration: ['num', 'duration'],
-			//top_tags: 'toptags'
-		},
-		parts_map: {
-			top_tags: {
-				source: 'toptags.tag',
-				props_map: 'name'
-			}
-		}
-	}, {
-		num: function(value) {
-			return parseFloat(value);
-		},
-		lfm_image: function(value) {
-			console.log(value);
-			return value;
-		}
-	}),
-
-	track_info_reqprops_map: {
-		album_name: 'track.album.title',
-		album_image: 'track.album.image',
-		listeners: 'track.listeners',
-		playcount: 'track.playcount',
-		duration: 'track.duration',
-		top_tags: 'track.toptags'
-	},
 	req_map: [
 		[
 			['album_name', 'album_image', 'listeners', 'playcount', 'duration', 'top_tags'],
-			function(r) {
-				var props = spv.mapProps(this.track_info_reqprops_map, r, {});
-
-				console.log(this.track_info_reqprops_map_morph(r));
-
-				return [props.album_name, props.album_image, props.listeners, props.playcount, props.duration, props.top_tags];
-			},
+			new spv.MorphMap({
+				source: 'track',
+				not_array: true,
+				props_map: {
+					album_name: 'album.title',
+					album_image: ['lfm_image', 'album.image'],
+					listeners: ['num', 'listeners'],
+					playcount: ['num', 'playcount'],
+					duration: ['num', 'duration'],
+				},
+				parts_map: {
+					top_tags: {
+						source: 'toptags.tag',
+						props_map: 'name'
+					}
+				}
+			}, {
+				num: function(value) {
+					return parseFloat(value);
+				},
+				lfm_image: function(value) {
+					return app_serv.getLFMImageWrap(value);
+				}
+			}),
 			function(opts) {
 				return this.app.lfm.get('track.getInfo', {
 					artist: this.state('artist'),

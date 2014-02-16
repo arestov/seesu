@@ -1391,17 +1391,31 @@ FastEventor.prototype = {
 					} else {
 						var result = parse.call(_this.sputnik, r);
 						if (result) {
-							if (result.length != states_list.length) {
-								throw new Error('values array does not match states array');
+
+							if (Array.isArray(result)) {
+								if (result.length != states_list.length) {
+									throw new Error('values array does not match states array');
+								}
+								
+
+								var result_states = {};
+								for (i = 0; i < states_list.length; i++) {
+									result_states[ states_list[i] ] = result[i];
+								}
+								_this.sputnik.updateManyStates(result_states);
+							} else if (typeof result == 'object') {
+								for (i = 0; i < states_list.length; i++) {
+									if (!result.hasOwnProperty(states_list[i])) {
+										throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
+									}
+								}
+								_this.sputnik.updateManyStates(result);
 							}
+							
+
+
 							store.error = false;
 							store.done = true;
-
-							var result_states = {};
-							for (i = 0; i < states_list.length; i++) {
-								result_states[ states_list[i] ] = result[i];
-							}
-							_this.sputnik.updateManyStates(result_states);
 						} else {
 							store.error = true;
 						}
