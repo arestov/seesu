@@ -330,7 +330,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 
 			if (
 				(!duration && !careful) ||
-				((timestamp - starttime)/duration > 0.2) ||
+				((timestamp - starttime)/duration > 0.33) ||
 				(last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
 
 				this.start_time = false;
