@@ -157,6 +157,7 @@ provoda.addPrototype("SongBase",{
 		if (this.player){
 			this.player.wantSong(this);
 		}
+		this.makeSongPlayalbe(true);
 	},
 	prepareForPlaying: function() {
 
