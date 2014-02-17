@@ -2971,11 +2971,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.getBoxDemensionByKey(cb, key);
 	},
 	getReqsOrderField: function() {
-		if (this.req_order_field){
-			return this.req_order_field;
-		} else {
-			return (this.req_order_field = ['mdata', 'v', this.view_id, 'order']);
+		if (!this.req_order_field){
+			this.req_order_field = ['mdata', 'v', this.view_id, 'order'];
 		}
+		return this.req_order_field;
 	},
 	getStoredMpx: function(md) {
 		if (md.stream) {
