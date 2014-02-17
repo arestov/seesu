@@ -2978,8 +2978,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	getStoredMpx: function(md) {
-		//return md.mpx;
-		return views_proxies.getMPX(this.root_view.proxies_space, md);
+		if (md.stream) {
+			return md.mpx;
+		} else {
+			return views_proxies.getMPX(this.root_view.proxies_space, md);
+		}
+		//
+		
 	},
 	RPCLegacy: function() {
 		this.mpx.RPCLegacy.apply(this.mpx, arguments);
