@@ -226,8 +226,36 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 			return this;
 		},
+		checkChangesSinceFS: function() {
+			if (this.player.waiting_playlist && this == this.player.waiting_playlist) {
+				if (this.waiting_next){
+					if (!this.waiting_next.next_preload_song){
+						this.waiting_next = null;
+						this.player.waiting_playlist = null;
+					} else {
+						if (this.waiting_next.next_preload_song.canPlay()){
+							this.waiting_next.next_preload_song.wantSong();
+						}
+						
+					}
+				}
+			} else {
+				this.waiting_next = null;
+			}
+			
+		},
+		wantListPlaying: function() {
+			if (!this[this.main_list_name][0]) {
+				return;
+			}
+			this.updateState('want_be_played', true);
+			this[this.main_list_name][0].wantSong();
+		},
 		setWaitingNextSong: function(mo) {
-			this.player.setWaitingNextSong(mo);
+			this.waiting_next = mo;
+			this.player.setWaitingPlaylist(this);
+			
+			//this.player.setWaitingNextSong(mo);
 		},
 		switchTo: function(mo, direction) {
 	
@@ -467,6 +495,17 @@ define(['provoda', 'spv'], function(provoda, spv){
 			if ((viewing || playing) && target_song.next_preload_song){
 				target_song.next_preload_song.makeSongPlayalbe(true);
 			}
+
+			if (this.state('want_be_played') && wanted) {
+				if (!target_song.canPlay() && target_song.next_preload_song) {
+
+					this.setWaitingNextSong(target_song);
+					target_song.next_preload_song.makeSongPlayalbe(true);
+				}
+			}
+
+
+
 		/*	if (!target_song.cncco){
 				target_song.cncco = [];
 			} else {
@@ -501,7 +540,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			
 			var demonstration = [];
 
-			var waiting_next = this.player.waiting_next;
+			var waiting_next = this.waiting_next;
 			var v_song = this.getViewingSong();
 			var p_song = this.getPlayerSong();
 

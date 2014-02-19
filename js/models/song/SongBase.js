@@ -695,7 +695,7 @@ provoda.addPrototype("SongBase",{
 		return result;
 	},
 	checkChangesSinceFS: function(opts){
-		this.player.checkChangesSinceFS(this, opts);
+		this.plst_titl.checkChangesSinceFS(this, opts);
 	},
 	view: function(no_navi, userwant){
 		if (!this.state('mp_show')){
