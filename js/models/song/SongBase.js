@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery'], function(provoda, spv, $) {
+define(['provoda', 'spv', 'jquery', 'app_serv'], function(provoda, spv, $, app_serv) {
 "use strict";
 var counter = 0;
 
@@ -54,9 +54,9 @@ provoda.addPrototype("SongBase",{
 			}
 		},
 		'selected_image': {
-			depends_on: ['lfm_image', 'ext_lfm_image', 'image_url'],
-			fn: function(lfm_i, ext_lfm, just_url) {
-				return lfm_i || just_url || ext_lfm;
+			depends_on: ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
+			fn: function(lfm_i, ext_lfm, just_url, album_image) {
+				return album_image || lfm_i || just_url || ext_lfm;
 			}
 		},
 		'song_title': {
@@ -126,10 +126,10 @@ provoda.addPrototype("SongBase",{
 		return this.state('can-use-as-neighbour');
 	},
 	state_change: {
-		"mp_show": function(opts) {
-			if (opts){
+		"mp_show": function(state) {
+			if (state){
 				this.prepareForPlaying();
-				
+				this.requestState('album_name');
 				
 			} else {
 				this.removeMarksFromNeighbours();
@@ -157,6 +157,7 @@ provoda.addPrototype("SongBase",{
 		if (this.player){
 			this.player.wantSong(this);
 		}
+		this.makeSongPlayalbe(true);
 	},
 	prepareForPlaying: function() {
 
@@ -324,6 +325,42 @@ provoda.addPrototype("SongBase",{
 			last_in_collection: last_in_collection
 		});
 	},
+	req_map: [
+		[
+			['album_name', 'album_image', 'listeners', 'playcount', 'duration', 'top_tags'],
+			new spv.MorphMap({
+				source: 'track',
+				not_array: true,
+				props_map: {
+					album_name: 'album.title',
+					album_image: ['lfm_image', 'album.image'],
+					listeners: ['num', 'listeners'],
+					playcount: ['num', 'playcount'],
+					duration: ['num', 'duration'],
+				},
+				parts_map: {
+					top_tags: {
+						source: 'toptags.tag',
+						props_map: 'name'
+					}
+				}
+			}, {
+				num: function(value) {
+					return parseFloat(value);
+				},
+				lfm_image: function(value) {
+					return app_serv.getLFMImageWrap(value);
+				}
+			}),
+			function(opts) {
+				return this.app.lfm.get('track.getInfo', {
+					artist: this.state('artist'),
+					track: this.state('track')
+				}, {nocache: opts.has_error});
+			},
+			['error']
+		]
+	],
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
 		this.updateState('track_name_loading', true);
 		var _this = this;
@@ -658,7 +695,7 @@ provoda.addPrototype("SongBase",{
 		return result;
 	},
 	checkChangesSinceFS: function(opts){
-		this.player.checkChangesSinceFS(this, opts);
+		this.plst_titl.checkChangesSinceFS(this, opts);
 	},
 	view: function(no_navi, userwant){
 		if (!this.state('mp_show')){

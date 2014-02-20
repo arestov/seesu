@@ -141,6 +141,13 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		this.inited_parts = {};
 
 		this.nextTick(this.initHeavyPart);
+
+		this.wch(this.mo, 'mp_show', this.hndSongHide);
+	},
+	hndSongHide: function(e) {
+		if (!e.value) {
+			this.hideAll();
+		}
 	},
 	initHeavyPart: function() {
 		if (this.app.settings['volume']){

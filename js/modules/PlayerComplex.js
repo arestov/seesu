@@ -9,24 +9,13 @@ PlayerBase.extendTo(PlayerComplex, {
 	playPrev: function(mo){
 		mo.playPrev();
 	},
-	checkChangesSinceFS: function() {
-		if (this.waiting_next){
-			if (!this.waiting_next.next_preload_song){
-				delete this.waiting_next;
-			} else {
-				if (this.waiting_next.next_preload_song.canPlay()){
-					this.wantSong(this.waiting_next.next_preload_song);
-				}
-				
-			}
-		}
-	},
-	setWaitingNextSong: function(mo) {
-		this.waiting_next = mo;
+	
+	setWaitingPlaylist: function(playlist) {
+		this.waiting_playlist = playlist;
 		var _this = this;
 		this.once('now_playing-signal', function() {
-			if (_this.waiting_next == mo){
-				delete _this.waiting_next;
+			if (_this.waiting_playlist == playlist){
+				_this.waiting_playlist = null;
 			}
 		});
 	},

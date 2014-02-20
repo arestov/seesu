@@ -9,7 +9,7 @@ ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, ProspApi) {
 'use strict';
-var seesu_version = 4.4;
+var seesu_version = 4.5;
 var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;

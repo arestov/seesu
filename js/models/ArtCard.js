@@ -13,6 +13,18 @@ LoadableList.TagsList.extendTo(ArtistTagsList, {
 		this.artist_name = params.artist;
 		this.initStates();
 	},
+	'compx-preview_loading': [
+		['^tags_list__loading'],
+		function(state) {
+			return state;
+		}
+	],
+	'compx-preview_list': [
+		['^tags_list'],
+		function(state) {
+			return state;
+		}
+	],
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 		request_info.request = this.app.lfm.get('artist.getTopTags', {
@@ -136,7 +148,8 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 					var song_obj = {
 						artist: compileArtistsArray(cur.artists) || release_artist,
 						track: cur.title,
-						image_url: image_url
+						album_image: image_url && {url: image_url},
+						album_name: _this.album_name
 					};
 					track_list.push(song_obj);
 				}
@@ -379,12 +392,12 @@ SongsList.extendTo(ArtistAlbumSongs, {
 				var imgs = spv.getTargetField(r, 'album.image');
 				for (var i = 0; i < tracks.length; i++) {
 					var cur = tracks[i];
+					
 					track_list.push({
 						artist: cur.artist.name,
 						track: cur.name,
-						lfm_image: {
-							array: imgs
-						}
+						album_image: app_serv.getLFMImageWrap(imgs),
+						album_name: _this.album_name
 					});
 				}
 				_this.putRequestedData(request_info.request, track_list, !!r.error);
@@ -648,6 +661,12 @@ BrowseMap.Model.extendTo(ArtCard, {
 			}
 		}
 	},
+	'compx-available_images': [
+		['selected_image', 'images'],
+		function (selected_image, images) {
+			return images || [selected_image];
+		}
+	],
 	init: function(opts, params) {
 		this._super(opts);
 		this.app = opts.app;
@@ -917,65 +936,60 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 
 		this.preloadChildren();
-		this.loaDDD('base_info');
+		this.requestState('bio' /*,'profile_image', 'listeners', 'playcount', 'similar_artists_list', 'tags_list'*/);
 
 	},
-	requests_desc: {
-		images: {
-			errors: ['error'],
-			send: function() {
-				var _this = this;
-				return this.app.lfm.get('artist.getImages',{'artist': _this.artist })
-					.done(function(r){
-						var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
-						_this.updateState('images', images);
-					});
-			}
-		},
-		base_info: {
-			before: function() {
-				this.updateState('loading_baseinfo', true);
-				this.tags_list.updateState('preview_loading', true);
+	req_map: [
+		[
+			['images'],
+			function(r) {
+				var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
+				return [images];
 			},
-			after: function() {
-				this.updateState('loading_baseinfo', false);
-				this.tags_list.updateState('preview_loading', false);
+			function() {
+				return this.app.lfm.get('artist.getImages',{'artist': this.artist });
 			},
-			send: function(opts) {
-				var _this = this;
-				return this.app.lfm.get('artist.getInfo', {'artist': this.artist}, {nocache: opts.has_error})
-					.done(function(r){
-						var psai = app_serv.parseArtistInfo(r);
-						var profile_image = _this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image'));
-						_this.updateManyStates({
-							profile_image: profile_image,
-							bio: psai.bio,
-							listeners: spv.getTargetField(r, 'artist.stats.listeners'),
-							playcount: spv.getTargetField(r, 'artist.stats.playcount')
-						});
-						
-						_this.tags_list.setPreview(psai.tags);
+			['error']
+		],
+		[
+			['profile_image', 'bio', 'listeners', 'playcount', 'similar_artists_list', 'tags_list'],
+			function(r) {
+				var psai = app_serv.parseArtistInfo(r);
+				var profile_image = this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image'));
 
-						if (psai.similars){
-							var data_list = [];
-							for (var i = 0; i < psai.similars.length; i++) {
-								var cur = psai.similars[i];
-								data_list.push({
-									artist: cur.name,
-									lfm_image: {
-										array: cur.image
-									}
-								});
+				//_this.tags_list.setPreview();
+				var artists_list;
 
+				if (psai.similars){
+					var data_list = [];
+					for (var i = 0; i < psai.similars.length; i++) {
+						var cur = psai.similars[i];
+						data_list.push({
+							artist: cur.name,
+							lfm_image: {
+								array: cur.image
 							}
-							_this.similar_artists.setPreviewList(data_list);
-						}
-					});
+						});
+
+					}
+					artists_list = data_list;
+					//_this.similar_artists.setPreviewList(data_list);
+				}
+
+				return [
+					profile_image,
+					psai.bio,
+					spv.getTargetField(r, 'artist.stats.listeners'),
+					spv.getTargetField(r, 'artist.stats.playcount'),
+					artists_list, psai.tags
+				];
 			},
-			//done: ['states.bio'],
-			errors: ['error']
-		}
-	},
+			function(opts) {
+				return this.app.lfm.get('artist.getInfo', {'artist': this.artist}, {nocache: opts.has_error});
+			},
+			['error']
+		]
+	],
 	getTopTracks: function() {
 		if (this.top_songs){
 			return this.top_songs;
@@ -1106,7 +1120,25 @@ ArtistsList.extendTo(SimilarArtists, {
 
 		this.initStates();
 
+		this.wch(this, 'preview_list', function(e) {
+			if (e.value) {
+				this.setPreviewList(e.value);
+			}
+		});
+
 	},
+	'compx-preview_loading': [
+		['^similar_artists_list__loading'],
+		function(state) {
+			return state;
+		}
+	],
+	'compx-preview_list': [
+		['^similar_artists_list'],
+		function(state) {
+			return state;
+		}
+	],
 	getRqData: function(paging_opts) {
 		return {
 			artist: this.original_artist,
