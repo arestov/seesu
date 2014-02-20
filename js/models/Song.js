@@ -107,6 +107,13 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			}
 			var images_pack;
 
+			if (omo.album_image) {
+				this.init_states['album_image'] = omo.album_image;
+			}
+			if (omo.album_name) {
+				this.init_states['album_name'] = omo.album_name;
+			}
+
 			if (spec_image_wrap) {
 				this.init_states['lfm_image'] = spec_image_wrap;
 

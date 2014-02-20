@@ -148,7 +148,8 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 					var song_obj = {
 						artist: compileArtistsArray(cur.artists) || release_artist,
 						track: cur.title,
-						image_url: image_url
+						album_image: image_url && {url: image_url},
+						album_name: _this.album_name
 					};
 					track_list.push(song_obj);
 				}
@@ -391,12 +392,12 @@ SongsList.extendTo(ArtistAlbumSongs, {
 				var imgs = spv.getTargetField(r, 'album.image');
 				for (var i = 0; i < tracks.length; i++) {
 					var cur = tracks[i];
+					
 					track_list.push({
 						artist: cur.artist.name,
 						track: cur.name,
-						lfm_image: {
-							array: imgs
-						}
+						album_image: app_serv.getLFMImageWrap(imgs),
+						album_name: _this.album_name
 					});
 				}
 				_this.putRequestedData(request_info.request, track_list, !!r.error);

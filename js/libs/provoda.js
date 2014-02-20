@@ -1330,6 +1330,11 @@ FastEventor.prototype = {
 		return this.sputnik;
 	},
 	requestState: function(state_name) {
+		var current_value = this.sputnik.state(state_name);
+		if (current_value) {
+			return;
+		}
+
 		var i, cur, maps_for_state = [], states_list;
 		for (i = 0; i < this.sputnik.req_map.length; i++) {
 			states_list = this.sputnik.req_map[i][0];
