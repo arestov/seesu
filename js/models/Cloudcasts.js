@@ -39,7 +39,7 @@ SongsList.extendTo(Cloudcast, {
 					_this.updateState('nav_title', title);
 				}
 				
-				var list = _this.datamorph_map.execute(r);
+				var list = _this.datamorph_map(r);
 				_this.putRequestedData(request_info.request, list, r.error);
 				if (!r.error) {
 					_this.setLoaderFinish();
@@ -85,7 +85,7 @@ LoadableList.extendTo(CloudcastsList, {
 		var _this = this;
 		request_info.request = this.app.mixcloud.get(this.getNDataPath(), this.getRqData(paging_opts), {context: this})
 			.done(function(r){
-				var list = _this.datamorph_map.execute(r);
+				var list = _this.datamorph_map(r);
 				_this.putRequestedData(request_info.request, list, r.error);
 			});
 			

@@ -687,7 +687,7 @@
 				<div class="art_card-image">
 					<div class="art_card-image-padding" pv-anchor="bigimagec"></div>
 				</div>
-				<div class="art_card-bio" pv-anchor="bio" pv-class="art_card-bio {{loading_baseinfo && 'loading'}}"></div>
+				<div class="art_card-bio" pv-anchor="bio" pv-class="art_card-bio {{bio__loading && 'loading'}}"></div>
 			</div>
 
 			
@@ -697,7 +697,7 @@
 			<h4 class="songcard_page-header">
 				<span pv-text="{{track_name}}"></span> - <span pv-text="{{artist_name}}"></span>
 			</h4>
-			<div class="nested_artist" pv-nest="artist"></div>
+			<div class="nested_artist photo_and_artinfo" pv-nest="artist"></div>
 			<div class="area_for_button" pv-nest='fans'>
 				<div class="area-button" pv-anchor='big_button'>
 					<span pv-text="{{nav_title}}"></span>
@@ -712,24 +712,26 @@
 			</div>
 
 		</div>
+		<div class="photo-cont">
+			<div class="photo-cont-lift" pv-anchor="phocoli">
+				<img
+					class="artist_image hidden"
+					pv-anchor="first-image" 
+					pv-class="{{!selected_image && 'hidden'}} artist_image"
+					pv-props="
+						alt: {{artist_name}}
+						src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + selected_image.lfm_id) || selected_image.url}}
+					"
+					src="" alt=""
+					/>
+			</div>
+		</div>
 		<div 
 		class="artist_preview-base"
 		pv-class="artist_preview-base {{vis_wamo_info && 'want-more-info'}}"
 		>
-			<div class="photo-cont">
-				<div class="photo-cont-lift" pv-anchor="phocoli">
-					<img
-						class="artist_image hidden"
-						pv-anchor="first-image" 
-						pv-class="{{!selected_image && 'hidden'}} artist_image"
-						pv-props="
-							alt: {{artist_name}}
-							src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + selected_image.lfm_id) || selected_image.url}}
-						"
-						src="" alt=""
-						/>
-				</div>
-			</div>
+			<div class="possible_images_con"></div>
+			
 			<div class="artist_preview-texcon">
 				<div class="dominator-head">
 					<div 
@@ -885,8 +887,8 @@
 							pv-class="
 								song-files-search-status
 								{{has_none_files_to_play && 'has-none-files'}}
-								{{files_search.have_best_tracks && 'has_best_files'}}
-								{{files_search.have_mp3_tracks && 'has-some-files'}}
+								{{!has_none_files_to_play && files_search.have_best_tracks && 'has_best_files'}}
+								{{!has_none_files_to_play && files_search.have_mp3_tracks && 'has-some-files'}}
 								"
 						>
 						</span>
@@ -1120,7 +1122,17 @@
 					</div>
 				</div>
 			</div>
-			<div pv-nest="artist" class="nested_artist"></div>
+			<div class="photo_and_artinfo">
+				<div class="photo-cont"><div class="photo-cont-lift" pv-anchor="phocoli">
+					<img 
+						src="" alt="" class="artist_image" 
+						pv-repeat="image in available_images"
+						pv-class="artist_image {{$first && 'album_insong_image'}}"
+						pv-props="src:{{(image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + image.lfm_id)|| image.url}}">
+				</div></div>
+				<div pv-nest="artist" class="nested_artist"></div>
+			</div>
+			
 			<div pv-nest="songcard">
 				<div class="track-listeners" pv-anchor="track-listeners">
 					<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>

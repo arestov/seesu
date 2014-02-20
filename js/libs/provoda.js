@@ -918,7 +918,7 @@ var FastEventor = function(context) {
 		this.reg_fires = context.reg_fires;
 	}
 	this.requests = {};
-	this.drequests = {};
+	this.mapped_reqs = this.sputnik.req_map ? {} : null;
 };
 FastEventor.prototype = {
 	_pushCallbackToStack: function(opts) {
@@ -1329,38 +1329,63 @@ FastEventor.prototype = {
 		}
 		return this.sputnik;
 	},
-	loaDDD: function(name) {
-		//завершено?
-		//есть ошибки?
-		//в процессе?
+	requestState: function(state_name) {
+		var current_value = this.sputnik.state(state_name);
+		if (current_value) {
+			return;
+		}
 
-		var _this = this;
-		var rqd = this.sputnik.requests_desc[name];
-		if (!this.drequests[name]){
-			this.drequests[name] = {
+		var i, cur, maps_for_state = [], states_list;
+		for (i = 0; i < this.sputnik.req_map.length; i++) {
+			states_list = this.sputnik.req_map[i][0];
+			if (states_list.indexOf(state_name) != -1) {
+				maps_for_state.push(i, this.sputnik.req_map[i]);
+			}
+		}
+		var cant_request;
+		for (i = 0; i < maps_for_state.length; i+=2) {
+			cur = this.mapped_reqs[maps_for_state[i]];
+			if (cur && (cur.done || cur.process)) {
+				cant_request = true;
+				break;
+			}
+		}
+		if (cant_request) {
+			return;
+		}
+
+		var selected_map = maps_for_state[1];
+		var selected_map_num = maps_for_state[0];
+		if ( !this.mapped_reqs[selected_map_num] ) {
+			this.mapped_reqs[selected_map_num] = {
 				done: false,
 				error: false,
 				process: false
 			};
 		}
-		var store = this.drequests[name];
-		if (!store.process && (!store.done || store.error)){
-			store.process = true;
-			if (rqd.before){
-				rqd.before.call(this.sputnik);
-			}
-			var request = rqd.send.call(this.sputnik, {has_error: store.error});
-			request
+
+		var store = this.mapped_reqs[selected_map_num];
+
+		store.process = true;
+		states_list = selected_map[0];
+		this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
+		var send = selected_map[2], parse = selected_map[1], errors_selectors = selected_map[3];
+		var request = send.call(this.sputnik, {has_error: store.error});
+
+		var _this = this;
+		request
 				.always(function() {
 					store.process = false;
-					if (rqd.after){
-						rqd.after.call(_this.sputnik);
-					}
+					_this.sputnik.updateManyStates(_this.makeLoadingMarks(states_list, false));
 				})
-				.done(function(r) {
+				.fail(function(){
+					store.error = true;
+				})
+				.done(function(r){
 					var has_error;
-					for (var i = 0; i < rqd.errors.length; i++) {
-						var cur = rqd.errors[i];
+					var i;
+					for (i = 0; i < errors_selectors.length; i++) {
+						var cur = errors_selectors[i];
 						has_error = spv.getTargetField(r, cur);
 						if (has_error){
 							break;
@@ -1369,14 +1394,52 @@ FastEventor.prototype = {
 					if (has_error){
 						store.error = true;
 					} else {
-						store.error = null;
-						store.done = true;
-					}
+						var result = parse.call(_this.sputnik, r);
+						if (result) {
 
+							if (Array.isArray(result)) {
+								if (result.length != states_list.length) {
+									throw new Error('values array does not match states array');
+								}
+								
+
+								var result_states = {};
+								for (i = 0; i < states_list.length; i++) {
+									result_states[ states_list[i] ] = result[i];
+								}
+								_this.sputnik.updateManyStates(result_states);
+							} else if (typeof result == 'object') {
+								for (i = 0; i < states_list.length; i++) {
+									if (!result.hasOwnProperty(states_list[i])) {
+										throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
+									}
+								}
+								_this.sputnik.updateManyStates(result);
+							}
+							
+
+
+							store.error = false;
+							store.done = true;
+						} else {
+							store.error = true;
+						}
+						
+					}
 				});
-			this.addRequest(request, rqd.rq_opts);
-			return request;
+		
+		this.addRequest(request);
+		return request;
+
+	},
+	makeLoadingMarks: function(states_list, value) {
+		var loading_marks = {};
+		for (var i = 0; i < states_list.length; i++) {
+
+			loading_marks[ states_list[i] + '__loading'] = value;
+			
 		}
+		return loading_marks;
 	}
 
 };
@@ -1447,8 +1510,8 @@ spv.Class.extendTo(provoda.Eventor, {
 	setPrio: function() {
 		return this.evcompanion.setPrio.apply(this.evcompanion, arguments);
 	},
-	loaDDD: function() {
-		return this.evcompanion.loaDDD.apply(this.evcompanion, arguments);
+	requestState: function() {
+		return this.evcompanion.requestState.apply(this.evcompanion, arguments);
 	}
 });
 
@@ -2913,15 +2976,19 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.getBoxDemensionByKey(cb, key);
 	},
 	getReqsOrderField: function() {
-		if (this.req_order_field){
-			return this.req_order_field;
-		} else {
-			return (this.req_order_field = ['mdata', 'v', this.view_id, 'order']);
+		if (!this.req_order_field){
+			this.req_order_field = ['mdata', 'v', this.view_id, 'order'];
 		}
+		return this.req_order_field;
 	},
 	getStoredMpx: function(md) {
-		//return md.mpx;
-		return views_proxies.getMPX(this.root_view.proxies_space, md);
+		if (md.stream) {
+			return md.mpx;
+		} else {
+			return views_proxies.getMPX(this.root_view.proxies_space, md);
+		}
+		//
+		
 	},
 	RPCLegacy: function() {
 		this.mpx.RPCLegacy.apply(this.mpx, arguments);
