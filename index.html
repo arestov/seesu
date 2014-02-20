@@ -1,24 +1,140 @@
 <!DOCTYPE html>
-<html class="not-as-application">
+<html class="not-as-application lg_smarttv_app">
   <head>
 	<meta charset="utf-8">
-	<title>Seesu</title>
-	<link rel="shortcut icon" id="dynamic-favicon"  href="icons/icon16.png"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/base.css">
-	<link rel="stylesheet" type="text/css" media="screen" href="css/buttons.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/master.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/view_switcher.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/vkontakte_switcher.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/search_results.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/player.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/buttmen.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/play-list-panel.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/abs_layout.css"/>
-	<meta name="keywords"  content="seesu, seesu for iphone, seesu for android, seesu for mobile, seesu online, last.fm, vk.com music, vkontakte.ru and last.fm" >
-	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
+	<title>Seesu online</title>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		var bpath = location.protocol+'//'+location.host +location.pathname + '/';
+		document.write('<'+'base '+'href="' + bpath + '"/>')
+		/* ]]>*/
+	</script>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/base.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/buttons.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/master.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/view_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/vkontakte_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/search_results.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/player.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/buttmen.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/play-list-panel.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/abs_layout.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/lg_smart_tv.css"/>
+
+	<meta name="keywords"  content="lg smart-tv" >
+	<meta name="description" content="LG smart tv app for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-	<script type="text/javascript" src="loader.js"></script>
+
+	<link rel="image_src" href="http://seesu.me/i/page-poster.png"/>
+	<meta property="og:title" content="Seesu Music (online lg app version)" />
+	<meta property="og:description" content="Seesu is a small mashup application which combines last.fm catalog, vk.com mp3 and soundcloud mp3 libraries to lets you listen to music and meet new people." />
+	<meta property="og:image" content="http://seesu.me/i/page-poster.png" />
+	<script type="text/javascript">
+		window._gaq = window._gaq || [];
+		var big_timer = {
+			setN: function(name){
+				var time = new Date() * 1;
+				if (name){
+					this[name] = time;
+				}
+				return time;
+			},
+			comp: function(name) {
+				var now = this.setN();
+				return now - this[name];
+			},
+			base_category: 'App init',
+			"page-start": new Date() * 1,
+			q: []
+		};
+				
+		(function(){
+		function isFileReady ( readyState ) {
+		    // Check to see if any of the ways a file can be ready are available as properties on the file's element
+		    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
+		  }	
+			
+			
+		var p = document.getElementsByTagName('script'),
+			p = p[p.length-1]; 
+				
+		window.loadJS = function(src, callback){
+			var s = document.createElement('script'),
+				done;
+			s.onreadystatechange = s.onload = function () {
+
+			  if ( ! done && isFileReady( s.readyState ) ) {
+
+				// Set done to prevent this function from being called twice.
+				done = true;
+				callback();
+
+				// Handle memory leak in IE
+				s.onload = s.onreadystatechange = null;
+			  }
+			};
+			s.src = src;
+			p.parentNode.insertBefore(s, p);
+		};
+		})();
+		loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
+			big_timer.q.push([big_timer.base_category, 'ready-yepnope', big_timer.comp('page-start'), 'yepnope loaded', 100]);
+
+			yepnope({
+				load: bpath + 'js/_seesu.jslist.js',
+				complete: function(){
+					var cbp;
+					if (window.chrome && chrome.extension){
+						cbp = chrome.extension.getBackgroundPage();	
+					} else if (window.opera && opera.extension && opera.extension.bgProcess){
+						cbp = opera.extension.bgProcess;
+					}
+
+					if (!cbp || cbp != window){
+						//big_timer.sui_want = new Date();
+						jsLoadComplete({
+							test: function() {
+								return window.app_env
+							},
+							fn: function() {
+								handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
+								//
+							}
+						});
+						jsLoadComplete({
+							test: function() {
+								return window.appTelegrapher
+							},
+							fn: function() {
+
+								var app_tph = new appTelegrapher();
+								app_tph.init(window, {category: big_timer.base_category, start_time: "page-start"});
+								//
+								window.app_view = app_tph.app_view;
+							}
+						});
+					}
+				}
+			});
+		});
+
+	</script>
+	<script type="text/javascript">
+	/*<![CDATA[*/
+	var openstat = { counter: 2101409, next: openstat };
+	(function(){
+		var opst = document.createElement('script');
+			opst.setAttribute('async', 'true');
+			opst.src = '//openstat.net/cnt.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(opst, s);
+	})();
+	/* ]]>*/
+	</script>
+	<link rel="stylesheet" type="text/css" media="screen" href="jslgvkeyboard_1.5/LgVKeyboard.css"/>
+	<script type="text/javascript" src="jslgvkeyboard_1.5/LgVKeyboard.js"  id="mainVKScript"></script>
+	
   </head>
   
   <body>
@@ -90,7 +206,7 @@
 						</div>
 						<ul class="track-buttons">
 
-							<li title="About «Adobe Flash Player Security»" class="flash-secur">
+							<li title="About В«Adobe Flash Player SecurityВ»" class="flash-secur">
 								<a  class="flash-security-status trackbutton flash-secur-button">fl</a>
 							</li>
 							<li class="scrobbling-button"  title="Last.fm scrobbling">
@@ -281,7 +397,7 @@
 		<div class="play-list-panel">
 			<div class="playlist-actions">
 				<div class="pla-panel">
-					<span class="pla-button">● ● ●</span>
+					<span class="pla-button">в—Џ в—Џ в—Џ</span>
 					<span class="pl-settings-button" title="Playlists settings"></span>
 				</div>
 				<div class="pla-row-content has-dark-buttons hidden" style="position:relative">
@@ -331,7 +447,7 @@
 		
 			<div class="screens" id="screens">
 				<div class="shared-parts">
-					<form id="search" name="search" action='/o' method="post">
+					<form id="search" name="search" action='/o' method="post" class="root-lev-search-form">
 						<!-- google stat for custom search in browsers -->
 						<div>
 							<input type="hidden" name="utm_source" value="web_app" id="app_type">
@@ -375,16 +491,16 @@
 										<span class="lang localize-vk-audio">Vkontakte audio</span>
 									</div>
 								</div>
-								<div class="aqc_preview"></div>
+								
 
-								<div class="block-for-startpage relations-invites-wrap hidden"></div>
-								<div class="block-for-startpage relations-likes-wrap hidden"></div>
+								<div class="block-for-startpage relations-invites-wrap"></div>
+								<div class="block-for-startpage relations-likes-wrap"></div>
 
 							</div>
 							
 							<div class="for-startpage"></div>
 							<div class="block-for-startpage music-conductor-preview">
-								<h2 class="hidden">Музыкальный кондуктор</h2>
+								<h2 class="hidden">РњСѓР·С‹РєР°Р»СЊРЅС‹Р№ РєРѕРЅРґСѓРєС‚РѕСЂ</h2>
 							</div>
 							<div class="app-loading-mark"></div>
 							

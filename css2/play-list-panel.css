@@ -1,0 +1,293 @@
+
+.play-list-panel{
+	margin-bottom:10px;
+	padding-top:8px;
+	padding-left:6px;
+	
+	/* rem hack */
+	margin-bottom: 0.7142857142857143rem;
+	padding-top: 0.5714285714285714rem;
+	padding-left: 0.42857142857142855rem;
+}
+.page-scheme .play-list-panel{
+	display: none;
+	}
+	.play-list-panel .playlist-actions{
+
+		}
+		.play-list-panel .playlist-actions .pla-panel{
+			overflow: hidden;
+			}
+			.pla-panel .pla-button{
+				color: #5e5e5e;
+				cursor: pointer;
+				}
+			.pla-panel .pla-button:hover{
+				color:#666;
+				}
+				
+			.play-list-panel .playlist-actions .pla-button{
+				float:left;
+				}
+			.play-list-panel .playlist-actions .pl-settings-button{
+				float:right;
+				width: 16px;
+				height: 16px;
+				background-image: url(../i/settings-icon.png);
+				cursor: pointer;
+				
+				/* rem hack */
+				width: 1.1428571428571428rem;
+				height: 1.1428571428571428rem;
+}
+				.pla-settings{
+
+					}
+				.pla-settings input{
+					margin:0 6px 0 0;
+				
+					/* rem hack */
+					margin: 0 0.42857142857142855rem 0 0;
+}
+	.play-list-panel .pla-row-content{
+		
+		position:relative;
+		margin:1rem -1rem 0;
+		padding: 1rem;
+		border-top: 1px solid #444;
+		border-bottom: 1px solid #555;
+		border-radius: 1rem;
+		background: #4D4D4D;
+
+		color:#999;
+		line-height: 1.5;
+
+		
+		/* rem hack */
+		border-top: 0.07142857142857142rem solid #444;
+		border-bottom: 0.07142857142857142rem solid #555;
+}
+		.play-list-panel .pla-row-content .rc-s-arrow{
+			border-bottom-color:#444; 
+			}
+			.play-list-panel .pla-row-content .rc-s-arrow-bg{
+				border-bottom-color:#4D4D4D;
+				}
+.open-external-playlist{
+	position:relative;
+	display:none;
+}
+.has-files-in-songs .open-external-playlist{
+	display:inline;
+	}
+	.has-files-in-songs .open-external-playlist.nicebutton{
+		display: block;
+		}
+
+.buttons-panel .track-buttons li.volume-control{
+	margin-top: -3px;
+	padding: 6px 6px 6px 22px;
+	width: 62px;
+	height: 8px;
+	border: 1px solid #515151;
+	border-radius: 10px;
+	background: #5E5E5E url(../i/volume-icon.png) no-repeat 3px 50%;
+	
+	/* rem hack */
+	margin-top: -0.21428571428571427rem;
+	padding: 0.42857142857142855rem 0.42857142857142855rem 0.42857142857142855rem 1.5714285714285714rem;
+	width: 4.428571428571429rem;
+	height: 0.5714285714285714rem;
+	border: 0.07142857142857142rem solid #515151;
+	border-radius: 0.7142857142857143rem;
+	background: #5E5E5E url(../i/volume-icon.png) no-repeat 0.21428571428571427rem 50%;
+}
+
+	.buttons-panel .track-buttons li.volume-control:hover{
+		border-color: #4F4F4F;
+		background-color: #5A5A5A;
+		}
+	.v-hole{
+		position: relative;
+		border: 1px solid transparent;
+		border-top: 1px solid #4D4D4D;
+		border-bottom: 1px solid #5E5E5E;
+		border-radius: 3px;
+		background: #555;
+		
+		/* rem hack */
+		border: 0.07142857142857142rem solid transparent;
+		border-top: 0.07142857142857142rem solid #4D4D4D;
+		border-bottom: 0.07142857142857142rem solid #5E5E5E;
+		border-radius: 0.21428571428571427rem;
+}
+		.v-bar{
+			height: 6px;
+			border: 1px solid transparent;
+			border-top: 1px solid #666;
+			border-bottom: 1px solid #454545;
+			border-radius: 3px;
+			background: #5E5E5E;
+			
+			/* rem hack */
+			height: 0.42857142857142855rem;
+			border: 0.07142857142857142rem solid transparent;
+			border-top: 0.07142857142857142rem solid #666;
+			border-bottom: 0.07142857142857142rem solid #454545;
+			border-radius: 0.21428571428571427rem;
+}
+		.buttons-panel .track-buttons li.volume-control:hover .v-bar{
+			background-color: #5f5f5f;
+		}
+	.buttons-panel .track-buttons li.volume-control.interactive-state{
+		border-color:transparent;
+		background-color:transparent;
+		}
+.trackbutton{
+	background: no-repeat 50% 50%;
+}
+.rept-song-button-wrap .trackbutton{
+	background-image: url(../i/repeat-icon.png);
+}
+
+.scrobbling-button .trackbutton{
+	background-image: url(../i/lfm-icon.png);
+	
+	}
+	.scrobbling-button .trackbutton:hover{
+		
+	}
+	.scrobbling-button .trackbutton:active{
+	}
+.flash-security-status{
+	background-color:#0d8b2b;
+	text-decoration:blink;
+	}
+	.flash-internet
+	.flash-security-status{
+		color:inherit;
+		
+		text-decoration:none;
+		}
+
+.track-buttons{
+	position:relative;
+	float:right;
+	padding: 0.25rem 0;
+	height:16px;
+
+	
+	/* rem hack */
+	height: 1.1428571428571428rem;
+}
+	.track-buttons>li{
+		position:relative;
+		float:left;
+		margin-left:6px;
+		width:16px;
+		height:16px;
+		border-radius:2px;
+		line-height:16px;
+		
+		/* rem hack */
+		margin-left: 0.42857142857142855rem;
+		width: 1.1428571428571428rem;
+		height: 1.1428571428571428rem;
+		border-radius: 0.14285714285714285rem;
+		line-height: 1.1428571428571428rem;
+}
+		.track-buttons>li>a{
+			display:block;
+			width:16px;
+			height:16px;
+			border-bottom:0;
+			border-radius:4px;
+			color:#d5d5d5;
+			text-align:center;
+			font-weight:700;
+			line-height:inherit;
+			cursor:pointer;
+			
+			/* rem hack */
+			width: 1.1428571428571428rem;
+			height: 1.1428571428571428rem;
+			border-radius: 0.2857142857142857rem;
+}
+			.track-buttons>li>a:hover{
+				background-color: #555;
+				}
+				.track-buttons>li>a:active{
+					background-position: 0 1px;
+					box-shadow: inset 0 0 2px 1px #444;
+					
+					/* rem hack */
+					background-position: 0 0.07142857142857142rem;
+					box-shadow: inset 0 0 0.14285714285714285rem 0.07142857142857142rem #444;
+}
+
+
+
+
+
+.volume-state{
+	position:relative;
+	float:right;
+	margin-top:2px;
+	
+	margin-left:1rem;
+	
+	width:50px;
+	height:6px;
+	border: 1px solid #4A4A4A;
+	border-radius:2px;
+	background:#456726;
+	cursor:pointer;
+	
+	/* rem hack */
+	margin-top: 0.14285714285714285rem;
+	width: 3.5714285714285716rem;
+	height: 0.42857142857142855rem;
+	border: 0.07142857142857142rem solid #4A4A4A;
+	border-radius: 0.14285714285714285rem;
+}
+.player-holder{
+	position:relative;
+	margin: 0 0 18px;
+	height: 18px;
+
+	/* rem hack */
+	margin: 0 0 1.2857142857142858rem;
+	height: 1.2857142857142858rem;
+}
+.nice-buttons-place{
+	float:left;
+	margin-left: -2px;
+
+	/* rem hack */
+	margin-left: -0.14285714285714285rem;
+}
+.song-actions{
+	clear:both;
+	padding:0.5rem 0 0.65rem;
+	}
+	.song-actions .song-row-content{
+		margin-top: 1rem;
+		}
+.track-panel{
+	position:relative;
+	top:1px;
+	height:26px;
+	
+	/* rem hack */
+	top: 0.07142857142857142rem;
+	height: 1.8571428571428572rem;
+}
+
+.playlist-info .artist-info{
+	margin-bottom:30px;
+
+	/* rem hack */
+	margin-bottom: 2.142857142857143rem;
+}
+
+

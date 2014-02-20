@@ -667,6 +667,9 @@ provoda.View.extendTo(songUI, {
 		}
 	},
 	updateSongListeners: function(){
+		if (app_env.lg_smarttv_app){
+			return;
+		}
 		if (!this.expanded){
 			return;
 		}

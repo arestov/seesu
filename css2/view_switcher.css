@@ -1,0 +1,553 @@
+.navs{
+	overflow:hidden;
+	padding-top:6px;
+	padding-right:1rem;
+	padding-left:1rem;
+	min-height:36px;
+	border-bottom:1px solid #333;
+	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
+	
+	
+	font-size:1.28rem;
+	font-family:"Trebuchet MS", sans-serif;
+	font-family: "Trebuchet MS", sans-serif;
+
+
+	/* rem hack */
+	padding-top: 0.42857142857142855rem;
+	min-height: 2.5714285714285716rem;
+	border-bottom: 0.07142857142857142rem solid #333;
+}
+.daddy.not-inited * {
+	display:none;
+}
+.daddy{
+	overflow: hidden;
+	margin-right:19px;
+	height: 31px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	/* rem hack */
+	margin-right: 1.3571428571428572rem;
+	height: 2.2142857142857144rem;
+}
+
+.player-played .np{
+	background-image:url(../i/equalaizer.gif);
+}
+ #slider .screens{
+ 	max-width: 900px;
+	
+
+	/* rem hack */
+	max-width: 64.28571428571429rem;
+}
+
+.start-screen{
+	padding-bottom:1.5rem;
+	}
+.full-page .start-screen{
+	padding: 0 1rem 1.5rem;
+	}
+.page-scheme .start-screen{
+	padding-top: 1rem;
+	}
+.page-scheme .art_card{
+	padding-top: 1rem;
+}
+
+#search {
+	margin: 0 auto;
+	max-width: 750px;
+
+	
+	/* rem hack */
+	max-width: 53.57142857142857rem;
+}
+.complex-page{
+	
+
+	max-width: 750px;
+	
+	/* rem hack */
+	max-width: 53.57142857142857rem;
+}
+.inactive-page{
+	display: none;
+}
+
+.page-scheme{
+	
+	float:left;
+	
+
+	}
+.complex-page.page-scheme .complex-page-scroll_con{
+	overflow-x: hidden;
+	overflow-y: auto;
+	
+	margin-right: -30px;
+	height: 100%;
+	
+	/* rem hack */
+	margin-right: -2.142857142857143rem;
+}
+	.complex-page.page-scheme .complex-page_material{
+		width: 200px;
+		
+		/* rem hack */
+		width: 14.285714285714286rem;
+}
+
+@media (min-width:760px) {
+	
+	.complex-page{
+		margin-left: 240px;
+		
+		/* rem hack */
+		margin-left: 17.142857142857142rem;
+}
+	#search {
+		margin-left: 240px;
+		
+		/* rem hack */
+		margin-left: 17.142857142857142rem;
+}
+	.page-scheme{
+		display: block;
+		margin-left:0;
+		width: 200px;
+		
+		/* rem hack */
+		width: 14.285714285714286rem;
+}
+}
+
+
+.block-for-startpage, .for-startpage{
+	margin-top:2rem;
+}
+
+.page-scheme .relations-invites-wrap,
+.page-scheme .relations-likes-wrap,
+.page-scheme .users-play-this{
+	display: none;
+	}
+
+.random-metro-chart{
+
+	}
+	.random-metro-chart .show-in-header{
+		display: none;
+		margin-left: 0 !important;
+		}
+	.page-scheme .random-metro-chart ul{
+		display: none;
+		}		
+	.page-scheme .random-metro-chart .refresh-in-header{
+		display: none;
+		}
+	.page-scheme .random-metro-chart .show-in-header{
+		display: inline;
+		}
+
+
+.tags-hyped{
+
+	}
+	.page-scheme .tags-hyped a{
+		display: block;
+		padding:0.2rem 0.5rem;
+		border: 0;
+		border-radius: 0;
+		}
+	.page-scheme .tags-hyped a:nth-of-type(even){
+		background-color: #4D4D4D;
+
+		}
+	.page-scheme .tags-hyped a:hover{
+		background-color: #535353;
+		}
+	#slider .page-scheme .tags-hyped a.surf_nav{
+		background-color: #000;
+		}
+
+/**  New nav **/	
+
+	
+
+.not-as-application .navs .nav-title{
+	float:left;
+}
+
+
+		
+.nav-start{
+	margin-right: 0;
+	margin-left: 0;
+	padding: 4px 18px 4px;
+	width: 20px;
+
+	/* rem hack */
+	padding: 0.2857142857142857rem 1.2857142857142858rem 0.2857142857142857rem;
+	width: 1.4285714285714286rem;
+}
+
+.nav-start{
+	border-left:1px solid transparent;
+	-webkit-transition: margin-right 0.1s ease-out;
+	-moz-transition: margin-right 0.1s ease-out;
+	-o-transition: margin-right 0.1s ease-out;
+	transition: margin-right 0.1s ease-out;
+
+	/* rem hack */
+	border-left: 0.07142857142857142rem solid transparent;
+}	
+
+.nav-start .icon{
+	background-image:url(../i/seesu_logo.svg);
+	}
+	
+.nav-search-results{
+	padding:4px 1rem 4px 9px;
+	width:15px;
+	
+	/* rem hack */
+	padding: 0.2857142857142857rem 1rem 0.2857142857142857rem 0.6428571428571429rem;
+	width: 1.0714285714285714rem;
+}
+.nav-search-results .icon{
+	background-image:url(../i/nav/seesu-nav-search.png);
+	}
+	.nav-search-results:active .icon{
+		background-image:url(../i/nav/seesu-nav-search-active.png);
+		}
+
+.np-button{	
+	position:absolute;
+	top:8px;
+	right:1rem;
+	padding: 4px 8px;
+	width:20px;
+	border-right: 1px solid transparent;
+	
+	/* rem hack */
+	top: 0.5714285714285714rem;
+	padding: 0.2857142857142857rem 0.5714285714285714rem;
+	width: 1.4285714285714286rem;
+	border-right: 0.07142857142857142rem solid transparent;
+}
+	.np{
+		width:20px;
+		height:20px;
+		background:url(../i/equalaizer_stoped.gif) no-repeat;
+		cursor:pointer;
+		
+		/* rem hack */
+		width: 1.4285714285714286rem;
+		height: 1.4285714285714286rem;
+}
+@media (max-width:550px) {
+
+	.daddy .stack-top{
+		width:30px;
+		
+		/* rem hack */
+		width: 2.142857142857143rem;
+}
+	
+}
+.full-page .usual_page{
+	margin-top:1.72rem;
+}
+.art_card{
+	
+	overflow:hidden;
+	margin: 0 auto;
+	padding-bottom: 20px;
+	max-width: 750px;
+	
+	/* rem hack */
+	padding-bottom: 1.4285714285714286rem;
+	max-width: 53.57142857142857rem;
+}
+.full-page .art_card{
+	padding: 1.72rem 10px;
+	
+	/* rem hack */
+	padding: 1.72rem 0.7142857142857143rem;
+}
+	.art_card ul{
+		
+	}
+	.art_card .row-header{
+		margin-bottom:0.5rem;
+	}
+	.art_card h5{
+	
+		}
+		.art_card h5 a.extends-header{
+			margin-left:1rem;
+			}
+	.art_card-meta{
+		
+		margin-bottom:1.72rem;
+		
+		
+		
+		}
+	.full-page .art_card-meta{
+		float:left;
+		width:50%;
+		min-height:18rem;
+		min-width: 15rem;
+		}
+		.top-tracks,.art_card-tags{
+			margin-right:1.72rem;
+			margin-bottom:1.72rem;
+			}
+			.top-tracks.loading,.art_card-tags.loading{
+				background: url(../i/spinner.svg) no-repeat;
+				background-position:  100% 4px;
+				background-size: 1.143rem;
+				
+				/* rem hack */
+				background-position: 100% 0.2857142857142857rem;
+}
+					
+	
+			.art_card-meta ul{
+				overflow:hidden;
+				}
+				.art_card-meta ul li{
+					float:left;
+					margin-right:1rem;
+					white-space:nowrap;
+					}
+		.top-tracks .links-list,.art_card-similar .links-list{
+			min-height: 6.86rem;
+			}
+		.page-scheme .top-tracks .links-list,.page-scheme .art_card-similar .links-list{
+			display: none;
+			}
+	.art_card-similar{
+		
+		margin-bottom:1.72rem;
+		
+		}
+	.full-page .art_card-similar{
+		width:50%;
+		float:right;
+		min-width: 15rem;
+		}
+		.art_card-similar.loading{
+			background: url(../i/spinner.svg) no-repeat ;
+			background-position: 100% 4px;
+			background-size: 1.143rem;
+			
+			/* rem hack */
+			background-position: 100% 0.2857142857142857rem;
+}
+		.art_card-similar ul{
+			overflow:hidden;
+			}
+			.art_card-similar ul li{
+				float:left;
+				margin-right:1rem;
+				white-space:nowrap;
+				}
+
+	
+	
+	.full-page .art_card-albums{
+
+		clear:both;
+		margin: 0 -10px 1.72rem;
+		padding: 10px 10px;
+		border-radius: 6px;
+		background: #3f3f3f;
+		
+		
+		/* rem hack */
+		margin: 0 -0.7142857142857143rem 1.72rem;
+		padding: 0.7142857142857143rem 0.7142857142857143rem;
+		border-radius: 0.42857142857142855rem;
+}
+		.art_card-albums.loading .row-header{
+			background: url(../i/spinner.svg) no-repeat;
+			background-position:  100% 0;
+			background-size: 1.143rem;
+			}
+	.art_card-albums.show-all-albums{
+		
+		}
+		.art_card-albums .albums-groups{
+			overflow:hidden;
+			height:126px;
+		
+			/* rem hack */
+			height: 9rem;
+}
+		.art_card-albums.show-all-albums .albums-groups{
+			height:auto;
+		}
+		.art_card-albums ul{
+			overflow:hidden;
+			margin:0 0 1rem;
+			padding-left:0;
+			}
+
+			.art_card-albums ul li{
+				float:left;
+				}
+			.art_card-albums ul li img{
+				
+				}
+				
+			.art_card-albums ul li{
+				width:126px;
+
+				
+				/* rem hack */
+				width: 9rem;
+}
+				.art_card-albums ul li a{
+					position: relative;
+					display:block;
+					border-bottom:0;
+					color:#aaaaaa;
+					}
+				.art_card-albums a.surf_nav{
+
+					}
+					.art_card-albums a.surf_nav .album-name{
+						opacity: 1;
+						font-size: 1.4em;
+						}
+				.page-scheme .art_card-albums ul li a{
+					overflow: hidden;
+					}
+					.art_card-albums ul li a:hover{
+						color:#fff;
+						}
+						.art_card-albums ul li a:hover  .album-name{
+							opacity: 1;
+						}
+				.art_card-albums ul li img{
+					display:block;
+					margin-right:4px;
+					width:126px;
+					height:126px;
+					background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
+				
+					/* rem hack */
+					margin-right: 0.2857142857142857rem;
+					width: 9rem;
+					height: 9rem;
+}
+				.art_card-albums ul li .album-name{
+					position: absolute;
+					right:0;
+					
+					bottom:0;
+					left:0;
+					overflow:hidden;
+					background: black;
+					
+					text-overflow: ellipsis;
+					opacity: 0.7;
+					
+					}
+	.page-scheme .art_card-albums .row-header .extends-header{
+		display: none;
+		}
+	.page-scheme .art_card-image{
+		display: none;
+		}
+	.full-page .art_card-bio{
+		float: right;
+		width: 50%;
+		}
+		.art_card-bio.loading{
+			min-height:20px;
+			background: url(../i/spinner.svg) no-repeat ;
+			background-position: 100% 0%;
+			background-size: 1.143rem;
+			
+			/* rem hack */
+			min-height: 1.4285714285714286rem;
+}
+	.page-scheme .art_card-bio{
+		display: none;
+		}
+	.full-page .art_card-image{
+		float:left;
+		width:50%;
+		}
+		
+		.full-page .art_card-image-padding{
+			padding-right:1.72rem;
+		}
+		.art_card-image img{
+			margin-bottom:1.72rem;
+			width:100%;
+		}
+@media (max-width:550px) {
+	.art_card-similar, .art_card-meta{
+		float:none;
+		width:auto;
+	}
+}
+
+
+
+
+
+.page-scheme{
+
+	}
+	.page-scheme .art_card{
+
+		}
+		.page-scheme .art_card-meta{
+			float:none;
+			width: auto;
+			}
+		.page-scheme .art_card-similar{
+			float:none;
+			width: auto;
+			}
+			.page-scheme .art_card-albums .albums-groups{
+				height: auto;
+				}
+			.page-scheme .art_card-albums ul li{
+				float:none;
+				overflow: hidden;
+				margin-bottom: 1rem;
+				width: auto;
+				}
+			.page-scheme .art_card-albums ul li img{
+				float:left;
+				width: 38px;
+				height: 38px;
+				
+				/* rem hack */
+				width: 2.7142857142857144rem;
+				height: 2.7142857142857144rem;
+}
+			.page-scheme .art_card-albums ul li .album-name{
+				position: static;
+				background: transparent;
+				}
+
+.full-page-need {
+	max-width: 100%;
+}
+.full-page-need .page-scheme{
+	display: none;
+	}
+.full-page-need .full-page{
+	margin-left: 0;
+	max-width: none;
+}

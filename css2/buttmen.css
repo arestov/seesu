@@ -1,0 +1,131 @@
+.buttmen{
+	position:relative;
+	width:25px;
+	height:1.72rem;
+	
+	
+	/* rem hack */
+	width: 1.7857142857142858rem;
+}
+	.buttmen a{
+		border:0;
+		text-decoration:none;
+	}
+	.buttmen .buttmen-mask{
+		position:absolute;
+		top:-2px;
+		left:-3px;
+		z-index:-1;
+		width:29px;
+		height:28px;
+		background: url(../i/white-black-dots.png) no-repeat ;
+	
+		/* rem hack */
+		top: -0.14285714285714285rem;
+		left: -0.21428571428571427rem;
+		width: 2.0714285714285716rem;
+		height: 2rem;
+}
+	.buttmen .main-button{
+		display:block;
+		width:25px;
+		height:1.72rem;
+		
+		/* rem hack */
+		width: 1.7857142857142858rem;
+}
+.buttmen-highlighting{
+	
+	}
+	.buttmen-highlighting .buttmen-mask{
+		display:none;
+	}
+	.buttmen-highlighting .buttmen-hlts{
+		display:block;
+	}
+	
+.buttmen-butting{
+	
+	}
+	.buttmen-butting .buttmen-mask{
+		display:none;
+	}
+	.buttmen-butting .buttmen-butts{
+		display:block;
+		}	
+		
+		
+.buttmen-butts{
+	display:none;
+	
+	}
+	.buttmen-butts li{
+		position:absolute;
+		top:0;
+		left:0;
+		width:25px;
+		height:1.72rem;
+	
+		/* rem hack */
+		width: 1.7857142857142858rem;
+}
+	.buttmen-butts .buttmen-butt-top{
+		top:-28px;
+		
+		
+		/* rem hack */
+		top: -2rem;
+}
+	.buttmen-butts .buttmen-butt-right{
+		right:-28px;
+		left:auto;
+		
+		/* rem hack */
+		right: -2rem;
+}
+	.buttmen-butts .buttmen-butt-bottom{
+		top:auto;
+		bottom:-28px;
+		
+		/* rem hack */
+		bottom: -2rem;
+}
+	.buttmen-butts .buttmen-butt-left{
+		right:auto;
+		left:-29px;
+		
+		/* rem hack */
+		left: -2.0714285714285716rem;
+}
+.buttmen-hlts{
+	display:none;
+	}
+	.buttmen-hlts li{
+		position:absolute;
+		top:0;
+		left:0;
+		width:1.72rem;
+		height:1.72rem;
+		background:url(../i/white-dot.png) no-repeat 50% 50%;
+		text-align:center;
+		opacity:0.5;
+	}
+	.buttmen-hlts .buttmen-hlt-top{
+		top:-1.72rem;
+		
+		}
+	.buttmen-hlts .buttmen-hlt-right{
+		right:-1.72rem;
+		left:auto;
+		}
+	.buttmen-hlts .buttmen-hlt-bottom{
+		top:100%;
+		bottom:-1.72rem;
+		}
+	.buttmen-hlts .buttmen-hlt-left{
+		left:-25px;
+		
+		/* rem hack */
+		left: -1.7857142857142858rem;
+}
+

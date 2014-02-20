@@ -1,0 +1,140 @@
+.navs {
+	padding-top:32px;
+	padding-left: 32px;
+	padding-right: 32px;
+	}
+	.daddy{
+		position: relative;
+		margin-right: 0;
+		}
+		.daddy .np-button{
+			top:auto;
+			right:0;
+			}
+#slider-materail{
+	position: static;
+	top:auto;
+	bottom:auto;
+	}
+#slider .screens{
+	padding-left:32px;
+	padding-right: 32px;
+}
+body{
+	overflow: hidden;
+	font-family: 'LG Display_Eng_Kor', 'LG Display', Arial, Helvetica ,sans-serif;
+	}
+#slider{
+	height: 720px;
+	overflow: hidden;
+	position: relative;
+	}
+.rc-s-arrow, .tl-arrow {
+	top: -11px;
+	border: 11px solid;
+	border: 0.7857142857142857rem solid;
+	border-color: transparent transparent #555 transparent;
+	top: -0.7857142857142857rem;
+
+	}
+.rc-s-arrow-bg, .tl-arrow-bg{
+	top: -10px;
+	left: -11px;
+
+	border: 11px solid;
+	border: 0.7857142857142857rem solid;
+
+	border-color: transparent transparent #5A5A5A transparent;
+	top: -0.7142857142857143rem;
+	left: -0.7857142857142857rem;
+	
+	}
+.root_level.complex-page, .shared-parts .root-lev-search-form#search{
+	margin-left:0;
+	max-width: none;
+	}
+
+
+.lg_smarttv_app .personal-stuff-preview{
+	display: none;
+}
+.video-preview .preview-slicer {
+	height: 1.15rem;
+}
+
+html{
+	font-size:30px;
+}
+.song-actions *{
+	display: none;
+	}
+.track-context{
+	margin-bottom: -4rem;
+	}
+.playlist-actions{
+	display: none;
+}
+.you-tube-video-link.cant-show{
+	display: none;
+}
+
+.lg_smarttv_app .full-page .art_card-image,
+.lg_smarttv_app .full-page .art_card-bio,
+.lg_smarttv_app .full-page .art_card-meta,
+.lg_smarttv_app .full-page .art_card-similar{
+	float:none;
+	width:auto;
+	}
+
+.lg_smarttv_app .nnav, .lg_smarttv_app .nav-button{
+	background-image: url(../i/svg-exp/menu-nf-line.png);
+	}
+	.lg_smarttv_app .nnav b{
+		height: 2rem;
+		background-image: url(../i/svg-exp/menu-nf-arrow.png);
+		}
+
+.lg_smarttv_app .nnav:hover, .lg_smarttv_app .nav-button:hover{
+	background-image: url(../i/svg-exp/menu-nf-line-hover.png);
+	}
+	.lg_smarttv_app .nnav:hover b{
+		background-image: url(../i/svg-exp/menu-nf-arrow-hover.png);
+		}
+
+
+.lg_smarttv_app .nnav:active, .lg_smarttv_app .nav-button:active{
+	background-image: url(../i/svg-exp/menu-nf-line-active.png);
+	}
+	.lg_smarttv_app .nnav:active b{
+		background-image: url(../i/svg-exp/menu-nf-arrow-active.png);
+		}
+
+
+.lg_smarttv_app .nnav.surf_nav, .lg_smarttv_app .nav-button.surf_nav{
+	background-image: url(../i/svg-exp/menu-nf-line-surf_nav.png);
+	}
+	.lg_smarttv_app .nnav.surf_nav b{
+		background-image: url(../i/svg-exp/menu-nf-arrow-surf_nav.png);
+		}
+
+
+
+.lg_smarttv_app .playing-file .big-indicator.play-indicator{
+	background-image: url(../i/svg-exp/svg.play-big-h.png);
+
+	}
+.lg_smarttv_app .pc-play.big-control{
+	background-image: url(../i/svg-exp/svg.play-big.png);
+	}
+.lg_smarttv_app .pc-play.big-control:hover{
+	background-image: url(../i/svg-exp/svg.play-big-hover.png);
+	}
+.lg_smarttv_app .pc-play.big-control:active{
+	background-image: url(../i/svg-exp/svg.play-big-active.png);
+	}
+.lg_smarttv_app .surf_nav .pc-play.big-control {
+	background-image: url(../i/svg-exp/svg.play-big-surf_nav.png);
+	}
+.lg_smarttv_app .youtube-video-page .you-tube-video{
+	height: 577px;
+}

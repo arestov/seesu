@@ -1003,6 +1003,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			node: point,
 			canUse: opts && opts.canUse,
 			simple_check: opts && opts.simple_check,
+			navigateToItem: opts && opts.navigateToItem,
 			view: this,
 			wpid: ++way_points_counter
 		};

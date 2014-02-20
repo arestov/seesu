@@ -752,8 +752,14 @@ window.app_env = (function(wd){
 	env.url = get_url_parameters(wd.location.search, true);
 	
 	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);
+	
 	env.xhr2 = !!xhr2_support;
 	
+	if (navigator.userAgent.search(/LG Browser/i) && (window.NetCastExit || window.NetCasBack)){
+		env.deep_sanbdox = true;
+		env.as_application = false;
+		env.app_type = 'lg_smarttv_app';
+	} else
 	if (typeof widget == 'object' && !widget.fake_widget){
 		if (bro.browser == 'opera'){
 			if (opera.extension){
@@ -787,8 +793,10 @@ window.app_env = (function(wd){
 			env.app_type = 'vkontakte';
 			env.check_resize = true;
 		} else{
+
 			env.need_favicon = true;
 			env.app_type = 'web_app';
+			
 		}
 		env.as_application = false;
 		env.needs_url_history = true;
@@ -1166,15 +1174,27 @@ jsLoadComplete(function() {
 	yepnope({
 		load: [ 'CSSOM/spec/utils.js', 'CSSOM/src/loader.js'],
 		complete: function() {
-			console.log('ddddd')
+			console.log('ddddd');
 		}
 	});
 });
 
+var css = $filter(document.styleSheets, 'href')
+for (var i = 0; i < css.length; i++) {
+	css[i] = css[i].replace(location.origin, '').replace('css2', 'css');
+	if (css[i].indexOf('/css/') == 0){
+		checkPX(css[i]);
+	}
+	//
+
+	
+};
+
+//checkPX('/css/search_results.css');
+
+
+
 */
-
-
-
 
 
 (function(global) {
@@ -1372,6 +1392,8 @@ jsLoadComplete(function() {
 		})
 		.done(function(r) {
 			var test = createStyleSheet(url, r, root_font_size, true);
+			console.log("url: " + url);
+			console.log(test);
 			window.open('data:text/plain;base64,' + btoa(test));
 		});
 		
@@ -1382,35 +1404,27 @@ jsLoadComplete(function() {
 	var replaceSVGHImage = function(rule, style){
 
 		var bgIString = rule.style.backgroundImage;
-		bgIString = bgIString
-			.replace(/^url\(\s*[\"\']?/, '')
-			.replace('data:text/plain;utf8,svg-hack,', '')
-			.replace(/[\"\']?\s*\)$/, '');
-
-		/*
-			.replace('url(\'', '')
+		bgIString = decodeURIComponent(bgIString)
+			.replace('url(\'data:text/plain;utf8,svg-hack,', '')
 			.replace('}\'\)','}')
 			.replace('url(data:text/plain;utf8,svg-hack,', '')
 			.replace('}\)','}')
 			.replace('url(\"data:text/plain;utf8,svg-hack,', '')
 			.replace('}\"\)','}');
-*/
+
 		var structure;
-		var errors = [];
 		try {
 			structure = JSON.parse(bgIString);
-		} catch (e){
-			errors.push(e);
+		} catch (e) {
+			console.log(e);
+			console.log(bgIString);
+			//structure = JSON.parse(decodeURIComponent(bgIString));
+			
+			//console.log(bgIString);
+			//console.log(decodeURIComponent(bgIString))
 		}
 		if (!structure){
-			try {
-				structure = JSON.parse(bgIString.replace(/\\([\s\S])/gi, '$1'));
-			} catch (e) {
-				errors.push(e);
-			}
-		}
-		if (!structure){
-			console.log(errors);
+			console.log('cant parse svg structure string :((( ')
 			return;
 		}
 		 

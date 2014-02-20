@@ -220,8 +220,11 @@ provoda.View.extendTo(appModelView, {
 			var checkFocus = function(opts) {
 				if (opts){
 					if (opts.userwant){
-						_this.search_input[0].focus();
-						_this.search_input[0].select();
+						if (!app_env.lg_smarttv_app){
+							_this.search_input[0].focus();
+							_this.search_input[0].select();
+						}
+						
 					} else {
 						_this.search_input[0].blur();
 					}
@@ -685,10 +688,15 @@ provoda.View.extendTo(appModelView, {
 			
 			_this.search_input = _this.els.search_input;
 		
-			_this.search_input.on('keyup change', function(e) {
+			_this.search_input.on('keyup change focus', function(e) {
 				var input_value = this.value;
 				_this.overrideStateSilently('search-query', input_value);
 				_this.md.search(input_value);
+			});
+			_this.addWayPoint(_this.search_input, {
+				navigateToItem: function() {
+					_this.search_input.focus();
+				}
 			});
 
 			/*
@@ -835,9 +843,72 @@ provoda.View.extendTo(appModelView, {
 
 			$(d).keydown(function(e){
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
+				if (d.activeElement && d.activeElement.nodeName == 'INPUT'){
+					return;
+				}
+				if (app_env.lg_smarttv_app){
+					_this.smartTVNav(e);
+				}
+
 				_this.arrowsKeysNav(e);
 			});
 		});
+	},
+	smart_tv_keyacs: {
+		'461': function(e) {
+			var su = window.su;
+			var cur_res = su.map.getCurrentResident();
+			if (cur_res == su.start_page || !cur_res.map_parent){
+				if (window.NetCastBack){
+					window.NetCastBack();
+				} else if (window.NetCastExit){
+					window.NetCastExit();
+				}
+			} else {
+				cur_res.map_parent.showOnMap();
+			}
+		},
+		'417': function(e) {
+			var current_song = su.p && su.p.c_song;
+			if (current_song){
+				current_song.playNext();
+			}
+		},
+		'412': function(e) {
+			var current_song = su.p && su.p.c_song;
+			if (current_song){
+				current_song.playPrev();
+			}
+		},
+		'415': function(e) {
+			var current_song = su.p && su.p.c_song;
+			if (current_song){
+				current_song.play();
+			}
+		},
+		'19': function(e) {
+			var current_song = su.p && su.p.c_song;
+			if (current_song){
+				current_song.pause();
+			}
+		},
+		'413': function(e) {
+			var current_song = su.p && su.p.c_song;
+			if (current_song){
+				current_song.pause();
+			}
+		}
+	},
+	smartTVNav: function(e) {
+		var _key = e.keyCode;
+		if (this.smart_tv_keyacs[_key]){
+			this.smart_tv_keyacs[_key]();
+			e.preventDefault();
+		}
+		//back
+		//next
+		//prev
+		//lg_smarttv_app
 	},
 	arrowsKeysNav: function(e) {
 		var
@@ -1444,7 +1515,12 @@ provoda.View.extendTo(appModelView, {
 			var cwp = this.state('vis-current_wpoint');
 			if (nav_type == 'Enter'){
 				if (cwp){
-					cwp.node.click();
+					if (cwp.navigateToItem){
+						cwp.navigateToItem();
+					} else {
+						cwp.node.click();
+					}
+					
 					var _this = this;
 
 					this.cwp_check = setTimeout(function() {

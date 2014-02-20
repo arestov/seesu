@@ -593,6 +593,9 @@ appModel.extendTo(seesuApp, {
 	},
 	checkUpdates: function(){
 		var _this = this;
+		if (app_env.lg_smarttv_app){
+			return;
+		}
 
 		$.ajax({
 			url: this.s.url + 'update',

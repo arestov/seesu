@@ -18,15 +18,17 @@ mapLevelModel.extendTo(StartPage, {
 		this.updateState('nav-title', 'Seesu start page');
 
 		
+		var personal_stuff;
+		if (!app_env.lg_smarttv_app){
+			personal_stuff = (new UserCard()).init({
+				app: su, 
+				pmd: this,
+				map_parent: this
+			}, {for_current_user: true});
+			this.setChild('pstuff', personal_stuff);
+		}
 
-
-
-		var personal_stuff = (new UserCard()).init({
-			app: su, 
-			pmd: this,
-			map_parent: this
-		}, {for_current_user: true});
-		this.setChild('pstuff', personal_stuff);
+		
 
 		var muco = (new MusicConductor()).init({
 			app: su,
@@ -37,7 +39,10 @@ mapLevelModel.extendTo(StartPage, {
 
 		this.on('state-change.can-expand', function(e) {
 			muco.updateState('can-expand', e.value);
-			personal_stuff.updateState('can-expand', e.value);
+			if (personal_stuff){
+				personal_stuff.updateState('can-expand', e.value);
+			}
+			
 		});
 
 
