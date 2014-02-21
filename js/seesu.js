@@ -1,26 +1,54 @@
+var su, seesu;
+define('su',
+['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
+'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
+'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
+'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax', 'js/libs/ProspApi'],
+function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
+ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
+AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
+PlayerSeesu, invstg, cache_ajax, ProspApi) {
+'use strict';
+var seesu_version = 4.5;
+var
+	localize = app_serv.localize,
+	app_env = app_serv.app_env;
+
+var all_queues = [];
+var addQueue = function() {
+	this.reverse_default_prio = true;
+	all_queues.push(this);
+	return this;
+};
+var resortQueue = function(queue) {
+	su.resortQueue(queue);
+};
+
 $.ajaxSetup({
   cache: true,
   global:false,
   timeout:40000,
-  headers:{
-	'X-Requested-With': 'XMLHttpRequest'
-  }
 });
 $.support.cors = true;
 
-window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 
-var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret'), function(key){
-	return suStore(key);
+var lfm = new LastfmAPIExtended();
+
+lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
+	return app_serv.store(key);
 }, function(key, value){
-	return suStore(key, value, true);
-}, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(700));
+	return app_serv.store(key, value, true);
+}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue({
+	time: [700],
+	resortQueue: resortQueue,
+	init: addQueue
+}));
 lfm.checkMethodResponse = function(method, data, r) {
 	su.art_images.checkLfmData(method, r);
 };
 
 
-
+var chrome = window.chrome;
 var ChromeExtensionButtonView = function() {};
 provoda.View.extendTo(ChromeExtensionButtonView, {
 	state_change: {
@@ -31,8 +59,8 @@ provoda.View.extendTo(ChromeExtensionButtonView, {
 				chrome.browserAction.setIcon({path:"/icons/icon19.png"});
 			}
 		},
-		'now-playing': function(text) {
-			chrome.browserAction.setTitle({title: localize('now-playing','Now Playing') + ': ' + text});
+		'now_playing': function(text) {
+			chrome.browserAction.setTitle({title: localize('now_playing','Now Playing') + ': ' + text});
 		}
 	}
 });
@@ -46,181 +74,115 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 				this.opts.opera_ext_b.icon = "/icons/icon18.png";
 			}
 		},
-		'now-playing': function(text) {
-			this.opts.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
+		'now_playing': function(text) {
+			this.opts.opera_ext_b.title = localize('now_playing','Now Playing') + ': ' + text;
 		}
 	}
 });
 
 
-var seesuApp = function(version) {};
-appModel.extendTo(seesuApp, {
-	init: function(version){
-		this._super();
-		this.version = version;
-
-		this._url = get_url_parameters(location.search, true);
-		this.settings = {};
-		this.settings_timers = {};
-
-		this.trackStat = (function(){
-			window._gaq = window._gaq || [];
-			_gaq.sV = debounce(function(v){
-				suStore('ga_store', v, true);
-			},130);
-			_gaq.gV = function(){
-				return suStore('ga_store');
-			};
-			suReady(function(){
-				yepnope( {
-					
-					load: bpath + 'js/common-libs/ga.mod.min.js',
-					complete: function(){
-						_gaq.push(['_setAccount', 'UA-17915703-1']);
-						_gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
-						_gaq.push(['_setCustomVar', 2, 'version', version, 1]);
-					}
-				});
-			});
-			return function(data_array){
-				_gaq.push(data_array);
-			};
-		})();
-
-		var lu = suStore('su-usage-last');
-
-		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
-		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
-		
+var SeesuApp = function() {};
+AppModel.extendTo(SeesuApp, {
+	initAPIs: function() {
 		var _this = this;
-		setInterval(function(){
-
-			var now = new Date();
-
-			if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
-				_this.checkStats();
-				suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
-				suStore('su-usage-counter', ++_this.usage_counter, true);
-			}
-
-			
-		}, 1000 * 60 * 20);
-		setInterval(function(){
-			var rootvs = _this.getViews('root');
-			if (rootvs.length){
-				_this.updateLVTime();
-			}
-		}, 1000 * 60 * 2);
-
-		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
-		this.vk = {};
-
-		this.notf = new gMessagesStore(
-			function(value) {
-				return suStore('notification', value, true);
-			},
-			function() {
-				return suStore('notification');
-			}
-		);
 		this.lfm_auth = new LfmAuth(lfm, {
 			deep_sanbdox: app_env.deep_sanbdox,
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
 
-		this.app_md = this;
-		this.art_images = new LastFMArtistImagesSelector();
-		this.art_images.init();
-
-		if (app_env.check_resize){
-			this.updateState('slice-for-height', true);
-		}
-		if (app_env.deep_sanbdox){
-			this.updateState('deep-sandbox', true);
-		}
-
-
-		
-		this.start_page = (new StartPage()).init({
-			app: this
+		this.lfm_auth.once("session", function() {
+			_this.setSetting('lfm-scrobbling', true);
+			//_this.auth.setScrobbling(true);
 		});
-		this.setChild('navigation', [this.start_page]);
-		this.setChild('start_page', this.start_page);
+
+		this.vk_auth = new VkAuth({
+			app_id: this.vkappid,
+			urls: {
+				bridge: 'http://seesu.me/vk/bridge.html',
+				callbacker: 'http://seesu.me/vk/callbacker.html'
+			},
+			permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
+			open_api: false,
+			deep_sanbdox: app_env.deep_sanbdox,
+			vksite_app: app_env.vkontakte,
+			vksite_settings: this._url.api_settings
+		});
+
+
+		this.once("vk-site-api", function() {
+			window.documentScrollSizeChangeHandler = function(height){
+				VK.callMethod("resizeWindow", 800, Math.max(700, height));
+			};
+			_this.vk_auth.trigger('vk-site-api', VK);
+		});
 
 
 
-		this.map
-			.init(this.start_page)
-			.on('map-tree-change', function(nav_tree) {
-				_this.changeNavTree(nav_tree);
+		this.hypem = new net_apis.HypemApi();
+		this.hypem.init({
+			xhr2: app_env.xhr2,
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue({
+				time: [1700, 4000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
 			})
-			.on('title-change', function(title) {
-				_this.setDocTitle(title);
-
+		});
+		this.goog_sc = new net_apis.GoogleSoundcloud();
+		this.goog_sc.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue({
+				time: [1000, 3000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
 			})
-			.on('url-change', function(nu, ou, data, replace) {
-				jsLoadComplete(function(){
-					if (replace){
-						navi.replace(ou, nu, data.resident);
-					} else {
-						navi.set(nu, data.resident);
-					}
-				});
+		});
+		this.discogs = new net_apis.DiscogsApi();
+		this.discogs.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue({
+				time: [2000, 4000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
 			})
-			.on('every-url-change', function(nv, ov, replace) {
-				if (replace){
-					//su.trackPage(nv.map_level.resident.page_name);
-				}
-				
+		});
+
+		this.mixcloud = new net_apis.MixcloudApi();
+		this.mixcloud.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue({
+				time: [2000, 4000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
 			})
-			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				_this.trackPage(nv.map_level.resident.page_name);
-			})
-			.on('changes', function(changes) {
-				//console.log(changes);
-				_this.animateMapChanges(changes);
-			})
-			.makeMainLevel();
+		});
 
 
-
-
-		var addBrowserView = function(Constr, name, opts) {
-			var view = new Constr();
-
-			_this.addView(view, name);
-
-			view.init({
-				md: _this
-			}, opts);
-			view.requestAll();
-
-		};
-
-		var ext_view;
-		if (app_env.chrome_extension){
-			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
-		} else if (app_env.opera_extension && window.opera_extension_button){
-			this.opera_ext_b = opera_extension_button;
-			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button});
-		}
-				
 
 
 		this.delayed_search = {
 			vk_api:{
-				queue:  new funcsQueue(700, 8000 , 7)
+				queue:  new FuncsQueue({
+					time: [700, 8000 , 7],
+					resortQueue: resortQueue,
+					init: addQueue
+				})
 			}
 		};
 
 
 
-		this.s  = new seesuServerAPI(suStore('dg_auth'), this.server_url);
-		this.updateState('su-server-api', true);
+		this.s  = new SeesuServerAPI(this, app_serv.store('dg_auth'), this.server_url);
+		this.updateState('su_server_api', true);
 
 		this.s.on('info-change.vk', function(data) {
-			_this.updateState('vk-info', data);
+			_this.updateState('vk_info', data);
+			_this.updateState('vk_userid', data && data.id);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -228,29 +190,28 @@ appModel.extendTo(seesuApp, {
 		});
 
 
-		this.mp3_search = (new Mp3Search({
-			vk: 5,
-			nigma: 1,
-			exfm: 0,
-			soundcloud: -5,
-			lastfm:-10,
-			torrents: -15
-		}));
 
 
 
-
-		var reportSearchEngs = debounce(function(string){
+		var reportSearchEngs = spv.debounce(function(string){
 			_this.trackVar(4, 'search', string, 1);
 		}, 300);
 
 		this.mp3_search.on('list-changed', function(list){
-			list = $filter(list, 'name').sort();
+			list = spv.filter(list, 'name').sort();
 			for (var i = 0; i < list.length; i++) {
 				list[i] = list[i].slice(0, 2);
 			}
 			reportSearchEngs(list.join(','));
 		});
+		if (this.lfm.username){
+			this.updateState('lfm_userid', this.lfm.username);
+		} else {
+			this.lfm_auth.on('session', function() {
+				_this.updateState('lfm_userid', _this.lfm.username);
+			});
+		}
+		
 
 		this.lfm_auth.on('session.ga_tracking', function(){
 			_this.trackEvent('Auth to lfm', 'end');
@@ -291,71 +252,297 @@ appModel.extendTo(seesuApp, {
 			_this.trackEvent('Auth to lfm', 'start');
 
 		});
-
-		this.lfm_imgq = new funcsQueue(700);
-		setTimeout(function(){
-			_this.checkStats();
-		},100);
-
-		suReady(function() {
+		spv.domReady(window.document, function() {
 			_this.lfm_auth.try_to_login();
 			setTimeout(function(){
+				return;
 				while (big_timer.q.length){
 					_this.trackTime.apply(_this, big_timer.q.shift());
 					//console.log()
 				}
 			}, 300);
+			if (!lfm.sk) {
+				_this.lfm_auth.get_lfm_token();
+
+			}
 		});
 
+	},
+	tickStat: function(data_array) {
+		window._gaq.push(data_array);
+	},
+	init: function(version){
+		this._super();
+		this.version = version;
+		this.lfm = lfm;
+
+		this._url = app_serv.get_url_parameters(location.search, true);
+		this.settings = {};
+		this.settings_timers = {};
+
+		this.all_queues = all_queues;
+		var _this = this;
+		this.trackStat = (function(){
+			window._gaq = window._gaq || [];
+			//var _gaq = window._gaq;
+			window._gaq.sV = spv.debounce(function(v){
+				app_serv.store('ga_store', v, true);
+			},130);
+			window._gaq.gV = function(){
+				return app_serv.store('ga_store');
+			};
+			window._gaq.push(['_setAccount', 'UA-17915703-1']);
+			window._gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
+			window._gaq.push(['_setCustomVar', 2, 'version', version, 1]);
+			spv.domReady(window.document, function(){
+				app_serv.loadJS('js/common-libs/ga.mod.min.js', function(){
+					console.log('ga done');
+				});
+			});
+			return function(data_array){
+				_this.nextTick(_this.tickStat, [data_array]);
+			};
+		})();
+
+		var lu = app_serv.store('su-usage-last');
+
+		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
+		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
+
+		
+		setInterval(function(){
+
+			var now = new Date();
+
+			if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
+				_this.checkStats();
+				app_serv.store('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
+				app_serv.store('su-usage-counter', ++_this.usage_counter, true);
+			}
+
+
+		}, 1000 * 60 * 20);
+		setInterval(function(){
+			return;
+			var rootvs = _this.mpx.getViews('root');
+			if (rootvs && rootvs.length){
+				_this.updateLVTime();
+			}
+		}, 1000 * 60 * 2);
+
+		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
+		this.mp3_search = (new Mp3Search({
+			vk: 5,
+			'pleer.com': 4,
+			nigma: 1,
+			exfm: 0,
+			soundcloud: -5,
+			lastfm:-10,
+			torrents: -15
+		}));
+
+
+		this.vk = {};
+
+		this.notf = new comd.GMessagesStore(
+			function(value) {
+				return app_serv.store('notification', value, true);
+			},
+			function() {
+				return app_serv.store('notification');
+			}
+		);
+
+		this.initAPIs();
+
+		
+
+
+
+
+
+
+		this.p = new PlayerSeesu();
+		this.p.init(this);
+		this.app_md = this;
+		this.art_images = new comd.LastFMArtistImagesSelector();
+		this.art_images.init();
+
+		if (app_env.check_resize){
+			this.updateState('slice-for-height', true);
+		}
+		if (app_env.deep_sanbdox){
+			this.updateState('deep-sandbox', true);
+		}
+
+
+		this.start_page = (new StartPage()).init({
+			app: this
+		});
+		this.updateNesting('navigation', [this.start_page]);
+		this.updateNesting('start_page', this.start_page);
+
+
+
+		this.map
+			.init(this.start_page)
+			.on('residents-tree', function(tree) {
+				
+			}, this.getContextOptsI())
+			.on('changes', function(changes, tree, residents) {
+				//console.log(changes);
+				this.animateMapChanges(changes, tree, residents);
+			}, this.getContextOptsI())
+			.on('map-tree-change', function(nav_tree) {
+				this.changeNavTree(nav_tree);
+			}, this.getContextOptsI())
+
+			.on('title-change', function(title) {
+				this.setDocTitle(title);
+
+			}, this.getContextOptsI())
+			.on('url-change', function(nu, ou, data, replace) {
+				if (app_env.needs_url_history){
+					if (replace){
+						navi.replace(ou, nu, data.resident);
+					} else {
+						navi.set(nu, data.resident);
+					}
+				}
+			}, this.getContextOptsI())
+			.on('every-url-change', function(nv, ov, replace) {
+				if (replace){
+					//su.trackPage(nv.map_level.resident.page_name);
+				}
+
+			}, {immediately: true})
+			.on('nav-change', function(nv, ov, history_restoring, title_changed){
+				this.trackPage(nv.map_level.resident.page_name);
+			}, this.getContextOptsI())
+			.makeMainLevel();
+
+		if (app_env.tizen_app){
+			//https://developer.tizen.org/
+			spv.addEvent(window, 'tizenhwkey', function(e) {
+				if(e.keyName == "back"){
+					//tizen.application.getCurrentApplication().exit();
+					var history = window.history;
+					if (!history.state){
+						var app = window.tizen.application.getCurrentApplication();
+						app.exit();
+					} else {
+						history.back();
+					}
+					
+				}
+			});
+		}
+
+		
+
+
+
+
+		var addBrowserView = function(Constr, name, opts) {
+			var view = new Constr();
+
+
+			var mpx = _this.connectMPX();
+			
+
+			mpx.addView(view, name);
+
+			view.init({
+				mpx: mpx
+			}, opts);
+			view.requestAll();
+
+		};
+
+		//var ext_view;
+		if (app_env.chrome_like_ext){
+			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
+		} else if (app_env.opera_extension && window.opera_extension_button){
+			this.opera_ext_b = window.opera_extension_button;
+			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: window.opera_extension_button});
+		}
+
+
+
+		setTimeout(function(){
+			_this.checkStats();
+		},100);
+
+		
 		setTimeout(function() {
 			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
 				var cur = _this.supported_settings[i];
-				var value = suStore('settings.' + cur);
+				var value = app_serv.store('settings.' + cur);
 				if (value){
 					try {
 						value = JSON.parse(value);
 					} catch(e){}
 				}
+				if (typeof value == 'string'){
+					if (value == 'true'){
+						value = true;
+					} else if (value == 'false'){
+						value = false;
+					}
+				}
+				
+
 				_this.letAppKnowSetting(cur, value);
 			}
-			var last_ver = suStore('last-su-ver');
+			var last_ver = app_serv.store('last-su-ver');
 			_this.migrateStorage(last_ver);
-			suStore('last-su-ver', version, true);
-			
+			app_serv.store('last-su-ver', version, true);
+
 		}, 200);
 
 
-		this.vk_auth = new vkAuth({
-			app_id: this.vkappid,
-			urls: {
-				bridge: 'http://seesu.me/vk/bridge.html',
-				callbacker: 'http://seesu.me/vk/callbacker.html'
-			},
-			permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
-			open_api: false,
-			deep_sanbdox: app_env.deep_sanbdox,
-			vksite_app: app_env.vkontakte,
-			vksite_settings: this._url.api_settings
-		});
+		
 
 
+		
+		if (app_env.needs_url_history){
+			navi.init(function(e){
+				var url = e.newURL;
+				_this.map.startChangesCollecting({
+					skip_url_change: true
+				});
 
-		this.once("vk-site-api", function() {
-			window.documentScrollSizeChangeHandler = function(height){
-				VK.callMethod("resizeWindow", 800, Math.max(700, height));
-			};
-			_this.vk_auth.trigger('vk-site-api', VK);
-		});
+				var state_from_history = navi.findHistory(e.newURL);
+				if (state_from_history){
+					state_from_history.data.showOnMap();
+				} else{
+					var md = _this.routePathByModels(url.replace(/\ ?\$...$/, ''));
+					if (md){
+						md.showOnMap();
+					}
+				}
+				_this.map.finishChangesCollecting();
+			});
+			(function() {
+				var url = window.location && location.hash.replace(/^\#/,'');
+				if (url){
+					_this.on('handle-location', function() {
+						navi.hashchangeHandler({
+							newURL: url
+						}, true);
 
+					});
+				}
+			})();
 
-
+		}
 	},
 	migrateStorage: function(ver){
 		if (!ver){
-			var lfm_scrobbling_enabled = suStore('lfm_scrobbling_enabled');
+			var lfm_scrobbling_enabled = app_serv.store('lfm_scrobbling_enabled');
 			if (lfm_scrobbling_enabled){
 
-				suStore('lfm_scrobbling_enabled', '', true);
+				app_serv.store('lfm_scrobbling_enabled', '', true);
 				this.setSetting('lfm-scrobbling', lfm_scrobbling_enabled);
 			}
 		}
@@ -363,7 +550,7 @@ appModel.extendTo(seesuApp, {
 			this.setSetting('volume', [this.settings['volume'], 100]);
 		}
 	},
-	
+
 	checkStats: function() {
 		if (this.usage_counter > 2){
 			this.start_page.showMessage('rating-help');
@@ -379,27 +566,19 @@ appModel.extendTo(seesuApp, {
 		clearTimeout(this.settings_timers[name]);
 
 		this.settings_timers[name] = setTimeout(function(){
-			if (typeof value != 'number'){
-				value = value || '';
-			}
-			suStore('settings.'+ name, value, true);
+			app_serv.store('settings.'+ name, value, true);
 		}, 333);
-		
+
 	},
 	setSetting: function(name, value){
 		if (this.supported_settings.indexOf(name) != -1){
 			this.letAppKnowSetting(name, value);
 			this.storeSetting(name, value);
 		} else{
-			
-		}
-		
 
-	},
-	checkPlaylists: function(){
-		if (this.gena){
-			this.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
+
+
 	},
 	showPlaylists: function() {
 		this.search(':playlists');
@@ -414,14 +593,33 @@ appModel.extendTo(seesuApp, {
 		});
 		return spaced.join("+");
 	},
+	decodeURLPart: function(part) {
+		var spaced = part.split("+");
+		$.each(spaced, function(i, el){
+			spaced[i] = decodeURIComponent(el);
+		});
+		return spaced.join(" ");
+	},
+	joinCommaParts: function(array) {
+		return array.map(function(item) {
+			return this.encodeURLPart(item);
+		}, this).join(',');
+	},
+	getCommaParts: function(string) {
+		var parts = string.split(',');
+		for (var i = 0; i < parts.length; i++) {
+			parts[i] = this.decodeURLPart(parts[i]);
+		}
+		return parts;
+	},
 	app_pages: {
-		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
-		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",
+		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi/reviews",
+		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko/reviews",
 		opera_widget: "http://widgets.opera.com/widget/15872/",
 		opera_extension: "https://addons.opera.com/addons/extensions/details/seesu-music",
 		pokki_app: "https://www.pokki.com/app/Seesu"
 	},
-	
+
 	trackEvent:function(){
 		var current_page = this.current_page || '(nonono)';
 		var args = Array.prototype.slice.call(arguments);
@@ -432,11 +630,27 @@ appModel.extendTo(seesuApp, {
 			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
+	'rootv_field': ['mpx', 'views_index', 'root', 'length'],
 	trackPage:function(page_name){
 		this.current_page = page_name;
+
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
-		this.trackStat.call(this, args);
+
+		if (!this.app_view_id){
+			this.last_page_tracking_data = args;
+			return;
+		} else {
+			this.trackStat.call(this, args);
+		}
+		
+	},
+	checkPageTracking: function() {
+		if (this.app_view_id && this.last_page_tracking_data){
+			this.trackStat.call(this, this.last_page_tracking_data);
+			this.last_page_tracking_data = null;
+
+		}
 	},
 	trackTime: function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -456,31 +670,99 @@ appModel.extendTo(seesuApp, {
 		this.trigger('vk-api', vkapi, user_id);
 	},
 	createSearchPage: function() {
-		var sp = new SearchPage();
+		var sp = new invstg.SearchPage();
 		sp.init({
 			app: this,
 			map_parent: this.start_page
 		});
 		return sp;
 	},
+	routePathByModels: function(pth_string) {
+
+	/*
+	catalog
+	users
+	tags
+	*/
+
+
+	/*
+	#/catalog/The+Killers/_/Try me
+	#?q=be/tags/beautiful
+	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
+	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
+	#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
+	#/recommendations/Beastie+boys/Phone+Call
+	#/loved/Beastie+boys/Phone+Call
+	#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
+	#?q=be/directsearch/vk/345345
+	'artists by loved'
+	#/ds/vk/25325_2344446
+	http://www.lastfm.ru/music/65daysofstatic/+similar
+	*/
+		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
+
+		var cur_md = this.start_page;
+		var tree_parts_group = null;
+		for (var i = 0; i < pth.length; i++) {
+			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
+				if (!tree_parts_group){
+					tree_parts_group = [];
+				}
+				tree_parts_group.push(pth[i]);
+				continue;
+			} else {
+				var path_full_string;
+				if (tree_parts_group){
+					path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
+				} else {
+					path_full_string = pth[i];
+				}
+				tree_parts_group = null;
+				var md = cur_md.findSPbyURLPart(path_full_string);
+				if (md){
+					cur_md = md;
+				} else {
+					break;
+				}
+
+			}
+
+
+		}
+		return cur_md;
+	},
 	getPlaylists: function(query) {
-		var r = [];
+		var r = [],i;
 		if (this.gena){
 			for (i=0; i < this.gena.playlists.length; i++) {
 				var cur = this.gena.playlists[i];
 				if (query){
 					if (cur.playlist_title == query){
 						r.unshift(cur);
-					} else if (cur.playlist_title.match(new  RegExp('\\b' + query))){
+
+					} else if (cur.playlist_title.match(spv.getStringPattern(query))){
 						r.push(cur);
 					}
 				} else {
 					r.push(cur);
 				}
-				
+
 			}
 		}
 		return r;
+	},
+	attachUI: function(app_view_id) {
+		this.app_view_id = app_view_id;
+		this.checkPageTracking();
+	},
+	detachUI: function(app_view_id) {
+		if (this.p && this.p.c_song){
+			this.showNowPlaying(true);
+		}
+		if (this.app_view_id === app_view_id){
+			this.app_view_id = null;
+		}
 	},
 	vkappid: 2271620,
 	getAuthAndTransferVKInfo: function(vk_api, user_id) {
@@ -492,14 +774,15 @@ appModel.extendTo(seesuApp, {
 		vk_api.get('getProfiles', {
 			uids: user_id,
 			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
-			
+
 		},{nocache: true})
 			.done(function(info) {
 				info = info.response && info.response[0];
 				if (info){
 					_this.s.vk_id = user_id;
 
-					var _d = cloneObj({data_source: 'vkontakte'}, info);
+					var _d = spv.cloneObj({data_source: 'vkontakte'}, info);
+					
 
 					_this.s.setInfo('vk', _d);
 
@@ -511,11 +794,11 @@ appModel.extendTo(seesuApp, {
 						_this.s.api('user.update', _d);
 					}
 				} else {
-					
+
 				}
 			})
-			.fail(function(r) {
-				
+			.fail(function() {
+
 			});
 	},
 	getPhotoFromVK: function() {
@@ -523,6 +806,9 @@ appModel.extendTo(seesuApp, {
 	},
 	getVKFriends: function(){
 		var _this = this;
+		if (!this.vk_api){
+			return;
+		}
 		if (!this.vk_fr_req){
 			this.vk_fr_req = this.vk_api.get("friends.get", {fields: "uid, photo"}, {cache_timeout: 1000*60*5})
 				.done(function(){
@@ -531,7 +817,7 @@ appModel.extendTo(seesuApp, {
 		}
 		this.vk_fr_req
 			.done(function(r){
-				_this.trigger("vk-friends", r && r.response);
+				_this.trigger("vk-friends", r && r.response.items);
 			})
 			.fail(function(){
 
@@ -541,26 +827,34 @@ appModel.extendTo(seesuApp, {
 	updateLVTime: function() {
 		this.last_view_time = new Date() * 1;
 	},
+	vkSessCode: function(vk_t_raw) {
+		if (vk_t_raw){
+			var vk_token = new VkAuth.VkTokenAuth(su.vkappid, vk_t_raw);
+			su.vk_auth.api = su.connectVKApi(vk_token, true);
+			su.vk_auth.trigger('full-ready', true);
+				
+		}
+	},
 	connectVKApi: function(vk_token, access, not_save) {
 		var _this = this;
 
 
 		var lostAuth = function(vkapi) {
-			
+
 			_this.mp3_search.remove(vkapi.asearch);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
 				delete _this.vkapi;
 			}
-			
+
 		};
-		var vkapi = new vkApi(vk_token, {
+		var vkapi = new VkApi(vk_token, {
 			queue: _this.delayed_search.vk_api.queue,
 			jsonp: !app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			onAuthLost: function() {
 				lostAuth(vkapi);
-				checkDeadSavedToken(vk_token);
+				initVk.checkDeadSavedToken(vk_token);
 			},
 			mp3_search: _this.mp3_search
 		});
@@ -569,14 +863,14 @@ appModel.extendTo(seesuApp, {
 		if (access){
 			_this.mp3_search.add(vkapi.asearch, true);
 		}
-		
+
 		if (vk_token.expires_in){
 			setTimeout(function() {
 				lostAuth(vkapi);
 			}, vk_token.expires_in);
 		}
 		if (!not_save){
-			suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
+			app_serv.store('vk_token_info', spv.cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
 		}
 		return vkapi;
 	},
@@ -587,7 +881,7 @@ appModel.extendTo(seesuApp, {
 			track: track_name,
 			from:'lastfm',
 			media_type: 'mp3',
-			getSongFileModel: getSongFileModel,
+			getSongFileModel: Mp3Search.getSongFileModel,
 			models: {}
 		};
 	},
@@ -609,7 +903,7 @@ appModel.extendTo(seesuApp, {
 		}).done(function(r){
 			if (!r){return;}
 
-			
+
 			var cver = r.latest_version.number;
 			if (cver > _this.version) {
 				var message =
@@ -620,7 +914,7 @@ appModel.extendTo(seesuApp, {
 					$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
 				}
 			}
-			
+
 			console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
 
 		});
@@ -628,8 +922,9 @@ appModel.extendTo(seesuApp, {
 
 });
 
-window.seesu = window.su = new seesuApp();
-su.init(3.9);
+seesu = su = new SeesuApp();
+su.init(seesu_version);
+provoda.sync_s.setRootModel(su);
 
 
 
@@ -638,164 +933,76 @@ su.init(3.9);
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+
 	//su.sc_api = sc_api;
-	su.mp3_search.add(new scMusicSearch({
-		api: sc_api,
+	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue({
+		time: [3500, 5000 , 4],
+		resortQueue: resortQueue,
+		init: addQueue
+	}), app_env.cross_domain_allowed, cache_ajax);
+	su.mp3_search.add(new ScApi.ScMusicSearch({
+		api: su.sc_api,
 		mp3_search: su.mp3_search
 	}));
 
 
-	var exfm_api = new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
+	if (app_env.cross_domain_allowed) {
+		su.mp3_search.add(new ProspApi.ProspMusicSearch({
+			api: new ProspApi(new FuncsQueue({
+				time: [3500, 5000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
+			}), app_env.cross_domain_allowed, cache_ajax),
+			mp3_search: su.mp3_search
+		}));
+	}
+
+	var exfm_api = new ExfmApi(new FuncsQueue({
+		time: [3500, 5000, 4],
+		resortQueue: resortQueue,
+		init: addQueue
+	}), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
 
-	su.mp3_search.add(new ExfmMusicSearch({
+	su.mp3_search.add(new ExfmApi.ExfmMusicSearch({
 		api: exfm_api,
 		mp3_search: su.mp3_search
 	}));
 
-	
-	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new isohuntTorrentSearch({
-			mp3_search: su.mp3_search
-		}));
+	var allow_torrents = false || app_env.nodewebkit;
 
-		/*yepnope({
-			load:  [bpath + 'js/libs/nigma.search.js'],
-			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(5000, 10000, 4)))
-				su.mp3_search.add(window.nms);
-				
-				//$(document.body).append(_this.c);
-			}
-		});*/
-	} else {
-		su.mp3_search.add(new googleTorrentSearch({
-			crossdomain: app_env.cross_domain_allowed,
-			mp3_search: su.mp3_search
-		}));
+	if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
+		if (app_env.torrents_support) {
+			su.mp3_search.add(new torrent_searches.BtdiggTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
+		} else if (app_env.cross_domain_allowed){
+			su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
+		} else {
+			su.mp3_search.add(new torrent_searches.googleTorrentSearch({
+				crossdomain: app_env.cross_domain_allowed,
+				mp3_search: su.mp3_search,
+				cache_ajax: cache_ajax
+			}));
+		}
 	}
 
 	
-	
+
+
+
 })();
 
-suReady(function(){
-	try_mp3_providers();
-	seesu.checkUpdates();
-});
-
-var UserPlaylists = function() {};
-provoda.Eventor.extendTo(UserPlaylists, {
-	init: function() {
-		this._super();
-		this.playlists = [];
-	},
-	savePlaylists: function(){
-		var _this = this;
-		if (this.save_timeout){clearTimeout(this.save_timeout);}
-		
-		this.save_timeout = setTimeout(function(){
-			var plsts = [];
-			var playlists = _this.playlists;
-			for (var i=0; i < playlists.length; i++) {
-				plsts.push(playlists[i].simplify());
-			}
-			_this.saveToStore(plsts);
-			
-		},10);
-		
-	},
-	
-	createUserPlaylist: function(title){
-
-		var pl_r = this.createEnvPlaylist({
-			title: title,
-			type: "cplaylist",
-			data: {name: title}
-		});
-		this.watchOwnPlaylist(pl_r);
-		this.playlists.push(pl_r);
-		this.trigger('playlsits-change', this.playlists);
-		return pl_r;
-	},
-	watchOwnPlaylist: function(pl) {
-		var _this = this;
-		pl.on('child-change.songs-list', function(e) {
-			this.trigger('each-playlist-change');
-			_this.savePlaylists();
-		}, {
-			skip_reg: true
-		});
-	},
-	removePlaylist: function(pl) {
-		var length = this.playlists.length;
-		this.playlists = arrayExclude(this.playlists, pl);
-		if (this.playlists.length != length){
-			this.trigger('playlsits-change', this.playlists);
-			this.savePlaylists();
-		}
-		
-	},
-	rebuildPlaylist: function(saved_pl){
-		var p = this.createEnvPlaylist({
-			title: saved_pl.playlist_title,
-			type: saved_pl.playlist_type,
-			data: {name: saved_pl.playlist_title}
-		});
-		for (var i=0; i < saved_pl.length; i++) {
-			p.addOmo(saved_pl[i]);
-		}
-		this.watchOwnPlaylist(p);
-		return p;
-	},
-	setSavedPlaylists: function(spls) {
-		var recovered = [];
-
-		if (spls){
-			for (var i=0; i < spls.length; i++) {
-				recovered[i] = this.rebuildPlaylist(spls[i]);
-			}
-		}
-		
-		this.playlists = recovered;
-		this.trigger('playlsits-change', this.playlists);
-	}
-});
-
-SuUsersPlaylists = function() {};
-UserPlaylists.extendTo(SuUsersPlaylists, {
-	init: function() {
-		this._super();
-		this
-			.on('playlsits-change', function(array) {
-				su.checkPlaylists(array);
-			})
-			.on('each-playlist-change', function() {
-				su.trackEvent('song actions', 'add to playlist');
-			});
-	},
-	saveToStore: function(value) {
-		suStore('user_playlists', value, true);
-	},
-	createEnvPlaylist: function(params) {
-		return su.createSonglist(su.start_page, params);
-	}
+spv.domReady(window.document, function(){
+	initVk(su);
+	su.checkUpdates();
 });
 
 
-jsLoadComplete(function() {
 
-
-	su.gena = new SuUsersPlaylists();
-	su.gena.init();
-
-
-	var plsts_str = suStore('user_playlists');
-	if (plsts_str){
-		su.gena.setSavedPlaylists(plsts_str);
-	}
-
-	
-	jsLoadComplete.change();
+return su;
 });

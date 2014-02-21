@@ -1,6 +1,27 @@
-var bpath = '';
+var big_timer;
+(function(){
+"use strict";
+requirejs.config({
+	paths: {
+		provoda: 'js/libs/provoda',
+		spv: 'js/libs/spv',
+		su: 'js/seesu',
+		jquery: 'js/common-libs/jquery-2.1.0.min',
+		localizer: 'js/libs/localizer',
+		cache_ajax: 'js/libs/cache_ajax',
+		app_serv: "js/app_serv",
+		hex_md5: 'js/common-libs/md5.min',
+		angbo: 'js/libs/StatementsAngularParser.min'
+	},
+	shim: {
+		hex_md5: {
+			exports: 'hex_md5'
+		}
+	}
+});
+
 window._gaq = window._gaq || [];
-var big_timer = {
+big_timer = {
 	setN: function(name){
 		var time = new Date() * 1;
 		if (name){
@@ -16,74 +37,78 @@ var big_timer = {
 	"page-start": new Date() * 1,
 	q: []
 };
-		
-(function(){
-function isFileReady ( readyState ) {
-    // Check to see if any of the ways a file can be ready are available as properties on the file's element
-    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
-  }	
-	
-	
-var p = document.getElementsByTagName('script'),
-	p = p[p.length-1]; 
-		
-window.loadJS = function(src, callback){
-	var s = document.createElement('script'),
-		done;
-	s.onreadystatechange = s.onload = function () {
 
-	  if ( ! done && isFileReady( s.readyState ) ) {
 
-		// Set done to prevent this function from being called twice.
-		done = true;
-		callback();
-
-		// Handle memory leak in IE
-		s.onload = s.onreadystatechange = null;
-	  }
-	};
-	s.src = src;
-	p.parentNode.insertBefore(s, p);
-};
-})();
-loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
-	big_timer.q.push([big_timer.base_category, 'ready-yepnope', big_timer.comp('page-start'), 'yepnope loaded', 100]);
-
-	yepnope({
-		load: bpath + 'js/_seesu.jslist.js',
-		complete: function(){
-			var cbp;
-			if (window.chrome && chrome.extension){
-				cbp = chrome.extension.getBackgroundPage();	
-			} else if (window.opera && opera.extension && opera.extension.bgProcess){
-				cbp = opera.extension.bgProcess;
-			}
-
-			if (!cbp || cbp != window){
-				//big_timer.sui_want = new Date();
-				jsLoadComplete({
-					test: function() {
-						return window.app_env
-					},
-					fn: function() {
-						handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
-						//
+(function() {
+	var cbp;
+	var opera = window.opera;
+	var chrome = window.chrome;
+	if (window.chrome && chrome.extension){
+		cbp = chrome.extension.getBackgroundPage();
+	} else if (window.opera && opera.extension && opera.extension.bgProcess){
+		cbp = opera.extension.bgProcess;
+	}
+	//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
+	var need_ui = (!cbp || cbp != window) && (!opera || !opera.contexts);
+	if (need_ui){
+		requirejs(['spv', 'app_serv'], function(spv, app_serv) {
+			app_serv.handleDocument(window.document);
+		});
+	}
+	if (!need_ui){
+		if (opera){
+			window.opera_extension_button = opera.contexts.toolbar.createItem( {
+					disabled: false,
+					title: "Seesu - search and listen music",
+					icon: "icons/icon18.png",
+					popup:{
+						href: "index.html",
+						width: 600,
+						height: 570
 					}
-				});
-				jsLoadComplete({
-					test: function() {
-						return window.appTelegrapher
-					},
-					fn: function() {
-
-						var app_tph = new appTelegrapher();
-						app_tph.init(window, {category: big_timer.base_category, start_time: "page-start"});
-						//
-						window.app_view = app_tph.app_view;
-					}
-				});
-			}
-			
+				} );
+			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
+	}
+	requirejs(['su'], function() {
+		
+		//app thread;
 	});
-});
+	if (need_ui){
+
+		//ui thread;
+		requirejs(['su', 'js/views/AppView', 'angbo', 'provoda'], function(su, AppView, angbo, provoda) {
+			var can_die = false;
+			var md = su;
+			var views_proxies = provoda.views_proxies;
+
+			var proxies_space = Date.now();
+			var view = new AppView();
+			//md.mpx.addView(view, 'root');
+			md.updateLVTime();
+
+			views_proxies.addSpaceById(proxies_space, md);
+
+			var mpx = views_proxies.getMPX(proxies_space, md);
+			mpx.addView(view, 'root');
+			view.init({
+				mpx: mpx,
+				proxies_space: proxies_space
+			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
+			view.onDie(function() {
+				views_proxies.removeSpaceById(proxies_space);
+				view = null;
+			});
+			view.requestAll();
+			
+
+
+
+		});
+	}
+
+})();
+
+
+
+})();

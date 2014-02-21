@@ -45,16 +45,14 @@ h5{
 	font-weight:400;
 	font-size:1rem;
 }
-.links-list{
-	line-height: 2.25rem;
-}
+
 a.js-serv{
 	white-space: nowrap;
-	color:#ABABAB;
+	color: hsl(0, 0%, 75%);
 	cursor: pointer;
 	padding: 0.286rem;
 	background: #555;
-	border: 0.07142857142857142rem solid #4a4a4a;
+	border: 0.08rem solid #4a4a4a;
 	border-radius: 0.5rem;
 	}
 	a.js-serv:hover{
@@ -127,6 +125,11 @@ a.desc{
   	-o-transition: margin-left 0.1s ease-out; 
   	transition: margin-left 0.1s ease-out; 
 }
+
+.nodewebkit .nav-item {
+	float:left;
+	/*fixme checkme, v0.8.2 - Dec 6, 2013*/
+}
 	.nav-item span{
 		display:block;
 		overflow:hidden;
@@ -147,21 +150,21 @@ a.desc{
 .nav-button{
 	display: inline-block;
 	padding:4px 8px;
-	border-left:1px solid #751679;
 	border-radius:6px;
+	cursor:pointer;
 }	
 .nnav, .nav-button{
 
 	position:relative;
 	overflow: visible;
-	border-top:1px solid #C16CC6;
-	border-right:1px solid #751679;
-	border-bottom:1px solid #580A5C;
+	border-top:1px solid #777;
+	border-right:1px solid #333;
+	border-bottom:1px solid #111;
 	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect"}');
 	
 	text-shadow:0 1px 0 #000;
-	cursor:pointer;
+	
 }
 
 .nnav{
@@ -193,30 +196,33 @@ a.desc{
 	left:0;
 	display:block;
 	height:28px;
-	border-bottom:1px solid #783B7D;
+	border-bottom:1px solid #444;
 	border-radius:0 0 6px 0;
 	content: " ";
 }
 .nav-button:after{
 	border-radius:0 0 6px 6px !important;
 }
-
-.nnav:hover,.nav-button:hover{
+.nav_clickable{
+	cursor: pointer;
+}
+.nnav.nav_clickable:hover,.nav-button:hover{
 	background-image:url(../i/nav/button-gradient-hover.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"hover-state"}');
 	color:#fff;
 	}
-	.nnav:hover b{
+	.nnav.nav_clickable:hover b{
 		background-image:url(../i/nav/button-arrow-hover.png) ;
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
 		}
-.nnav:active, .nav-button:active{
+.nnav.nav_clickable:active, .nav-button:active{
+	border-top-color: #666;
 	background-image:url(../i/nav/button-gradient-active.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"active-state"}');
 	text-shadow:none;
 	
 	}
-	.nnav:active b{
+	.nnav.nav_clickable:active b{
 		background-image:url(../i/nav/button-arrow-active.png) ;
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"active-state"}');
 		}

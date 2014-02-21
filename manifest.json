@@ -1,5 +1,5 @@
 {
-	"version": "3.8",
+	"version": "4.5",
 	"name": "__MSG_extName__",
 	"description": "__MSG_extDesc__",
 	"default_locale": "en",
@@ -30,7 +30,10 @@
 		"http://api.songkick.com/*",
 		"http://ex.fm/api/*",
 		"http://developer.echonest.com/api/*",
-		"http://hypem.com/*"
+		"http://hypem.com/*",
+		"http://api.discogs.com/*",
+		"https://api.mixcloud.com/*",
+		"http://pleer.com/*"
 	],
 	"content_security_policy": "script-src 'self'; object-src 'self' https://www.youtube.com/v/"
 	
