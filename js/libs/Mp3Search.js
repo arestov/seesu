@@ -388,11 +388,16 @@ var guessArtist = function(track_title, query_artist){
 };
 
 var QueryMatchIndex = function() {};
+var letter_regexp = /[\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
+//http://stackoverflow.com/questions/150033/regular-expression-to-match-non-english-characters#comment22322603_150078
 spv.Class.extendTo(QueryMatchIndex, {
 	init: function(file, query) {
 
 	},
 	match: function(){
+		if (!this.trim_index) {
+			this.trim_index = {};
+		}
 		for (var i = 0; i < this.match_order.length; i++) {
 			var match_index = this.match_order[i].call(this, this.under_consideration, this.query);
 			if (typeof match_index == 'number'){
@@ -409,6 +414,7 @@ spv.Class.extendTo(QueryMatchIndex, {
 		if (typeof this.match_index != 'number'){
 			this.match_index = -1;
 		}
+		this.trim_index = null;
 	},
 	toQueryString: function(msq) {
 		return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
@@ -417,11 +423,24 @@ spv.Class.extendTo(QueryMatchIndex, {
 		return this.match_index;
 	},
 	hardTrim: function(string, min_length){
-		var trimmed = string.toLowerCase()
-			.replace(/^The /, '')
-			.replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '')
-			.replace(/(^\s+)|(\s+$)/gi, '')
-			.replace(/\s+/gi, ' ');
+		var trimmed;
+		if (!this.trim_index[string]) {
+			var letters = string.match(letter_regexp);
+			trimmed = letters ? letters.join('').toLowerCase() : '';
+			/*
+			trimmed = string.toLowerCase()
+				.replace(/^The /, '')
+				.replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '')
+				.replace(/(^\s+)|(\s+$)/gi, '')
+				.replace(/\s+/gi, ' ');*/
+			this.trim_index[string] = trimmed;
+		}
+
+		
+
+		trimmed = this.trim_index[string];
+
+		
 		if (!min_length){
 			return trimmed;
 		} else {
@@ -434,18 +453,19 @@ spv.Class.extendTo(QueryMatchIndex, {
 	}
 });
 var FileNameSQMatchIndex = function(filename, query) {
-	this.init(filename, query);
+	this.trim_index = null;
+	this.filename = filename;
+
+	this.under_consideration = filename;
+	filename.split(/\//);
+	this.query = query;
+	this.query_string = this.toQueryString(this.query);
+	this.match_order = [this.matchers.bestMatch, this.matchers.anyGood];
+	this.match();
 };
 QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 	init: function(filename, query) {
-		this.filename = filename;
-
-		this.under_consideration = filename;
-		filename.split(/\//);
-		this.query = query;
-		this.query_string = this.toQueryString(this.query);
-		this.match_order = [this.matchers.bestMatch, this.matchers.anyGood];
-		this.match();
+		
 		return this;
 	},
 	matchers: {
@@ -461,19 +481,16 @@ QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 });
 
 var SongQueryMatchIndex = function(song_item, query){
-	this.init(song_item, query);
+	this.trim_index = null;
+	this.under_consideration = song_item;
+	this.query = query;
+	this.query_string = this.toQueryString(this.query);
+	this.match_order = [this.matchers.full, this.matchers.almost, this.matchers.anyGood, this.matchers.byWordsInTrackField, this.matchers.byWordsInFullTitle, this.matchers.inDescription];
+	this.match();
 };
 
 QueryMatchIndex.extendTo(SongQueryMatchIndex, {
-	init: function(file_song, query){
-		this.under_consideration = file_song;
-		this.query = query;
-		this.query_string = this.toQueryString(this.query);
-		this.match_order = [this.matchers.full, this.matchers.almost, this.matchers.anyGood, this.matchers.byWordsInTrackField, this.matchers.byWordsInFullTitle, this.matchers.inDescription];
-		this.match();
-		return this;
-	},
-	
+
 	matchers: {
 		full: function(file_song, query){
 			return (file_song.artist == query.artist && (!query.track || file_song.track == query.track)) && 0;
