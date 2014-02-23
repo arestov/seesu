@@ -466,7 +466,7 @@ provoda.Model.extendTo(MfCor, {
 
 	},
 	checkVKAuthNeed: function() {
-		if (app_env.lg_smarttv_app){
+		if (app_serv.app_env.lg_smarttv_app){
 			return this;
 		}
 		if (this.mo.mp3_search){
