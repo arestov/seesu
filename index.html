@@ -34,96 +34,7 @@
 	<meta property="og:title" content="Seesu Music (online lg app version)" />
 	<meta property="og:description" content="Seesu is a small mashup application which combines last.fm catalog, vk.com mp3 and soundcloud mp3 libraries to lets you listen to music and meet new people." />
 	<meta property="og:image" content="http://seesu.me/i/page-poster.png" />
-	<script type="text/javascript">
-		window._gaq = window._gaq || [];
-		var big_timer = {
-			setN: function(name){
-				var time = new Date() * 1;
-				if (name){
-					this[name] = time;
-				}
-				return time;
-			},
-			comp: function(name) {
-				var now = this.setN();
-				return now - this[name];
-			},
-			base_category: 'App init',
-			"page-start": new Date() * 1,
-			q: []
-		};
-				
-		(function(){
-		function isFileReady ( readyState ) {
-		    // Check to see if any of the ways a file can be ready are available as properties on the file's element
-		    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
-		  }	
-			
-			
-		var p = document.getElementsByTagName('script'),
-			p = p[p.length-1]; 
-				
-		window.loadJS = function(src, callback){
-			var s = document.createElement('script'),
-				done;
-			s.onreadystatechange = s.onload = function () {
-
-			  if ( ! done && isFileReady( s.readyState ) ) {
-
-				// Set done to prevent this function from being called twice.
-				done = true;
-				callback();
-
-				// Handle memory leak in IE
-				s.onload = s.onreadystatechange = null;
-			  }
-			};
-			s.src = src;
-			p.parentNode.insertBefore(s, p);
-		};
-		})();
-		loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
-			big_timer.q.push([big_timer.base_category, 'ready-yepnope', big_timer.comp('page-start'), 'yepnope loaded', 100]);
-
-			yepnope({
-				load: bpath + 'js/_seesu.jslist.js',
-				complete: function(){
-					var cbp;
-					if (window.chrome && chrome.extension){
-						cbp = chrome.extension.getBackgroundPage();	
-					} else if (window.opera && opera.extension && opera.extension.bgProcess){
-						cbp = opera.extension.bgProcess;
-					}
-
-					if (!cbp || cbp != window){
-						//big_timer.sui_want = new Date();
-						jsLoadComplete({
-							test: function() {
-								return window.app_env
-							},
-							fn: function() {
-								handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
-								//
-							}
-						});
-						jsLoadComplete({
-							test: function() {
-								return window.appTelegrapher
-							},
-							fn: function() {
-
-								var app_tph = new appTelegrapher();
-								app_tph.init(window, {category: big_timer.base_category, start_time: "page-start"});
-								//
-								window.app_view = app_tph.app_view;
-							}
-						});
-					}
-				}
-			});
-		});
-
-	</script>
+	<script data-main="loader" src="js/common-libs/require-2.1.10.min.js"></script>
 	<script type="text/javascript">
 	/*<![CDATA[*/
 	var openstat = { counter: 2101409, next: openstat };
@@ -1078,13 +989,6 @@
 							
 						</div>
 						<ul class="track-buttons">
-<<<<<<< HEAD
-
-							<li title="About В«Adobe Flash Player SecurityВ»" class="flash-secur">
-								<a  class="flash-security-status trackbutton flash-secur-button">fl</a>
-							</li>
-=======
->>>>>>> master
 							<li class="scrobbling-button"  title="Last.fm scrobbling">
 								<a  class="trackbutton lfm-scrobbling-button" pv-anchor="btrow-lastfm" pv-events="click::switchPart:row-lastfm" pv-type="way-point"></a>
 							</li>
@@ -1441,14 +1345,6 @@
 				</div>
 			</div>
 		</div>
-<<<<<<< HEAD
-
-		<div class="play-list-panel">
-			<div class="playlist-actions">
-				<div class="pla-panel">
-					<span class="pla-button">в—Џ в—Џ в—Џ</span>
-					<span class="pl-settings-button" title="Playlists settings"></span>
-=======
 		<div class="song-act-tagging">
 			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input" pv-type="way-point"/>
 			<div class="save_tags_b hidden" pv-class="save_tags_b {{!has_changes && 'hidden'}}">
@@ -1460,7 +1356,6 @@
 			<div class="possible_tags">
 				<div class="tagging_help">
 					<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
->>>>>>> master
 				</div>
 
 			</div>
@@ -1798,24 +1693,20 @@
 										<span class="lang localize-vk-audio">Vkontakte audio</span>
 									</div>
 								</div>
-								
+								<div class="aqc_preview"></div>
 
-								<div class="block-for-startpage relations-invites-wrap"></div>
-								<div class="block-for-startpage relations-likes-wrap"></div>
+								<div class="block-for-startpage relations-invites-wrap hidden"></div>
+								<div class="block-for-startpage relations-likes-wrap hidden"></div>
 
 							</div>
 							
 							<div class="for-startpage"></div>
 							<div class="block-for-startpage music-conductor-preview">
-<<<<<<< HEAD
-								<h2 class="hidden">РњСѓР·С‹РєР°Р»СЊРЅС‹Р№ РєРѕРЅРґСѓРєС‚РѕСЂ</h2>
-=======
 								<div class="no_arfb">
 									<div class="to-open-block area-button hidden">
 										<span class="lang localize-music-cond">Music Conductor</span>
 									</div>
 								</div>
->>>>>>> master
 							</div>
 							<div class="app-loading-mark"></div>
 							
