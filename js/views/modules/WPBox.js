@@ -198,8 +198,14 @@ spv.Class.extendTo(WPBox, {
 		var parents = [];
 		var p_cur = cur.parent();
 		while (p_cur[0]){
-			parents.push(p_cur);
-			p_cur = p_cur.parent();
+			if (p_cur[0].ownerDocument) {
+				
+				parents.push(p_cur);
+				p_cur = p_cur.parent();
+			} else {
+				break;
+			}
+			
 		}
 
 		var break_of_disnone = false;
