@@ -2,10 +2,12 @@
 	padding-top:2rem;
 	}
 .full-page .search_results-container{
-	position:relative;
-	padding-left:4.3rem;
+	
 	}
-
+	.search_results_sections {
+		position:relative;
+		padding-left:4.3rem;
+		}
 	.search_results-container h4{
 		margin:0;
 		
@@ -56,7 +58,7 @@
 			display:block;
 			overflow: hidden;
 			margin: 0;
-			padding:5px;
+			padding:0.4rem;
 			cursor:pointer;
 			zoom:1;
 			}

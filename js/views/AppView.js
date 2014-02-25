@@ -246,7 +246,6 @@ AppBaseView.extendTo(AppView, {
 		this.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
 	'stch-show_search_form': function(state) {
-		this.els.search_form.toggleClass('hidden', !state);
 		if (!state){
 			this.search_input[0].blur();
 		}
@@ -504,6 +503,11 @@ AppBaseView.extendTo(AppView, {
 			return this.els.ui_samples.children('.scrobbling-switches');
 		}
 	},
+	handleSearchForm: function(form_node) {
+		var tpl = this.createTemplate(form_node);
+		this.tpls.push(tpl);
+
+	},
 	handleStartScreen: function(start_screen) {
 		var st_scr_scrl_con = start_screen.parent();
 		var start_page_wrap = st_scr_scrl_con.parent();
@@ -597,6 +601,18 @@ AppBaseView.extendTo(AppView, {
 
 
 			var search_form = $('#search',d);
+			search_form.find('#app_type').val(app_env.app_type);
+			search_form.submit(function(){return false;});
+			var search_input =  $('#q', search_form);
+			_this.search_input = search_input;
+
+			search_input.on('keyup change input', function() {
+				var input_value = this.value;
+				_this.overrideStateSilently('search_query', input_value);
+				_this.RPCLegacy('search', input_value);
+			});
+
+
 
 			
 			var app_map_con = screens_block.children('.app_map_con');
@@ -626,6 +642,10 @@ AppBaseView.extendTo(AppView, {
 			}
 
 			var start_screen = $('#start-screen',d);
+
+			_this.handleSearchForm(search_form);
+
+
 			_this.handleStartScreen(start_screen);
 			spv.cloneObj(_this.els, {
 				ui_samples: ui_samples,
@@ -635,26 +655,17 @@ AppBaseView.extendTo(AppView, {
 				slider: slider,
 				navs: $(slider).children('.navs'),
 				start_screen: start_screen,
-				search_input: $('#q',d),
+				search_input: search_input,
 				search_form: search_form,
 				pestf_preview: start_screen.children('.personal-stuff-preview')
 			});
 
 
 
-			_this.els.search_form.find('#app_type').val(app_env.app_type);
-
-			_this.els.search_form.submit(function(){return false;});
+			
 
 
-			_this.search_input = _this.els.search_input;
-
-			_this.search_input.on('keyup change', function() {
-				var input_value = this.value;
-				_this.overrideStateSilently('search_query', input_value);
-				_this.RPCLegacy('search', input_value);
-			});
-
+			
 
 
 
