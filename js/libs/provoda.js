@@ -3060,13 +3060,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.tpl.parseAppended(node);
 		this.tpl.setStates(this.states);
 	},
-	createTemplate: function(con) {
-		con = con || this.c;
+	createTemplate: function(ext_node) {
+		var con = ext_node || this.c;
 		if (!con){
 			throw new Error('cant create template');
 		}
 		var _this = this;
-		this.tpl = this.getTemplate(con, this.triggerTPLevents, function(arr_arr) {
+		var tpl = this.getTemplate(con, this.triggerTPLevents, function(arr_arr) {
 			//pvTypesChange
 			//this == template
 			//this != provoda.View
@@ -3094,6 +3094,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.waypoints = matched;
 			_this.updateTemplatedWaypoints(matched, to_remove);
 		});
+		if (!ext_node) {
+			this.tpl = tpl;
+		}
+
+		return tpl;
 	},
 	addTemplatedWaypoint: function(wp_wrap) {
 		if (!this.hasWaypoint(wp_wrap.node)){
