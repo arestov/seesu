@@ -241,7 +241,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .files-load-states{
 	position: absolute;
-	top: 6px;
+	top: 0.2rem;
 	left: 5px;
 	width: 16px;
 	height: 16px;
@@ -251,6 +251,24 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		width: 100%;
 
 	}
+.list_rel_pos_mark {
+	display: none;
+	position: absolute;
+	top: 1.6rem;
+	left: 0.7rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	background: no-repeat 0 0;
+	opacity: 0.2;
+}
+.to-play-previous .list_rel_pos_mark{
+	display: block;
+	background-image: url(../i/nano-prev.svg);
+}
+.to-play-next .list_rel_pos_mark{
+	display: block;
+	background-image: url(../i/nano-next.svg);
+}
 	
 .nothing-toy{
 	position: absolute;
