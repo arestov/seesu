@@ -885,11 +885,11 @@ a.track_name_loading .song-track-name{
 		
 
 .users-play-this li{
-	float:left;
-	overflow:hidden;
-	margin-bottom:1rem;
-	min-width:195px;
-	width:30%;
+	float: left;
+	overflow: hidden;
+	margin-bottom: 1rem;
+	min-width: 13rem;
+	width: 33%;
 }
 	.users-play-this li .vk-ava{
 		float:left;
