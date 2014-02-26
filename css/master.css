@@ -223,7 +223,7 @@ a.track_name_loading .song-track-name{
 		min-height: 33px;
 	}
 	.moplas-block h4{
-		margin:0.5rem 0 0.5rem 53px;
+		margin:0.5rem 0 0.5rem 3.2rem;
 		font-weight: 400;
 
 		}
@@ -231,23 +231,22 @@ a.track_name_loading .song-track-name{
 		
 		}
 		.moplas-block .moplas-list li{
-			padding:0.5rem 5px;
+			padding:0.5rem 0.4rem 0.5rem 3.1rem;
 			border-top: 1px solid transparent;
 			border-bottom: 1px solid transparent;
 			color:#999;
 			cursor: pointer;
+			position: relative;
 			}
 		.moplas-block .moplas-list li.mf-unavailable{
 			color:#666;
 			}
 			.moplas-block .moplas-list li .play-button-place{
-				float: left;
-				margin-top: -8px;
-				margin-right: 5px;
-				margin-bottom: -1rem;
-				margin-left: 5px;
+				position: absolute;
+				left:0.4rem;
 				width: 32px;
-				height: 31px;
+				height: 32px;
+				top: -0.1rem;
 			}
 			.moplas-block .moplas-list li .play-button-place .pc-place{
 				display: none;
@@ -301,6 +300,7 @@ a.track_name_loading .song-track-name{
 			margin-bottom:42px;
 			}
 		.want_more_songs.moplas-block .moplas-list li{
+
 			display: block;
 			}
 
@@ -885,11 +885,11 @@ a.track_name_loading .song-track-name{
 		
 
 .users-play-this li{
-	float:left;
-	overflow:hidden;
-	margin-bottom:1rem;
-	min-width:195px;
-	width:30%;
+	float: left;
+	overflow: hidden;
+	margin-bottom: 1rem;
+	min-width: 13rem;
+	width: 33%;
 }
 	.users-play-this li .vk-ava{
 		float:left;
@@ -1963,7 +1963,7 @@ body .surf_nav{
 	color:#999;
 	display: none;
 	padding: 0.5rem 1rem 1rem;
-	padding-left: 52px;
+	padding-left: 3.2rem;
 	}
 	.want_more_songs .dmca_notice{
 		display: block;

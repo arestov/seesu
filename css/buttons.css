@@ -59,6 +59,7 @@
 .pc.big-control{
 	width:32px;
 	height:32px;
+	display: block;
 }
 .pc.surf_nav{
 	background-color: transparent;
