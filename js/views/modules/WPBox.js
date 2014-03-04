@@ -37,6 +37,7 @@ spv.Class.extendTo(WPBox, {
 			if (nav_type == 'Enter'){
 				if (cwp){
 					$(cwp.node).click();
+					$(cwp.node).trigger('activate_waypoint');
 
 					this.cwp_check = setTimeout(function() {
 						var still_in_use = _this.checkCurrentWPoint(dems_storage);

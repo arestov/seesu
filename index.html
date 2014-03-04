@@ -45,7 +45,7 @@
 			class="common-nav nav-item"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
 			pv-class="
 				nav-item
@@ -65,7 +65,7 @@
 			title="Search results"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
 				nav-item nav-search_results
@@ -82,7 +82,7 @@
 			title="Seesu start page"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
 				nav-item nav-start
@@ -1564,18 +1564,22 @@
 	</div>
 <div id="slider">
 	<div class="navs ">
-		<div class="daddy not-inited">
-			<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+		<div class="appnav_wrap">
 			<a 
-				class="nav-item np-button hidden"
-				pv-props="title:{{now_playing_text}}"
-				pv-class="
-					nav-item np-button
-					{{!now_playing_text && 'hidden'}}
-					{{!viewing_playing && 'nav-button'}}
-					{{playing && 'player-played'}}
-				"><span class="np"></span></a>
+					class="nav-item np-button hidden"
+					pv-props="title:{{now_playing_text}}"
+					pv-class="
+						nav-item np-button
+						{{!now_playing_text && 'hidden'}}
+						{{!viewing_playing && 'nav-button'}}
+						{{playing && 'player-played'}}
+					"><span class="np"></span></a>
+			<div class="daddy not-inited">
+				<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+				
+			</div>
 		</div>
+		
 	</div>
 	<div id="slider-materail" class="shadowed">
 		
@@ -1592,7 +1596,9 @@
 						<p id="search-p">
 							<label>
 								<span class='main_search_label lang localize-search' pv-class="main_search_label {{search_query && 'hidden'}}">Search</span>
-								<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
+								<span class="inpt"><input 
+									type="search" name="q" id="q" size="50"  autocomplete="off"
+									pv-type="{{show_search_form && 'way-point'}}" /></span>
 								
 							</label>
 							

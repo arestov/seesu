@@ -18,6 +18,7 @@ coct.SPView.extendTo(SongcardPage, {
 	},
 	children_views: {
 		fans: coct.ImagedListPreview,
+		cloudcasts: coct.ImagedListPreview,
 		artist: ArtcardUI.ArtistInSongConstroller
 	}
 });

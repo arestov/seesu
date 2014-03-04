@@ -860,6 +860,9 @@ a.track_name_loading .song-track-name{
 
 	-webkit-appearance: none;
 }
+#q.surf_nav{
+	color:#fff;
+}
 .users-play-this{
 	overflow:hidden;
 	
@@ -1050,13 +1053,15 @@ a.track_name_loading .song-track-name{
 }
 	.rc-s-arrow,.tl-arrow {		
 		top:-11px;
-		border: 11px solid;
+		border-style: solid;
+		border-width: 11px;
 		border-color: transparent   transparent  #555 transparent ;
 		}
 		.rc-s-arrow-bg,.tl-arrow-bg {
 			top: -10px;
 			left: -11px;
-			border: 11px solid;
+			border-style: solid;
+			border-width: 11px;
 			border-color: transparent transparent #5A5A5A transparent  ;
 			}
 	.tl-arrow{

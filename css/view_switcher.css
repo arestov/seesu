@@ -24,10 +24,14 @@
 }
 .daddy{
 	overflow: hidden;
+	
 	margin-right:19px;
 	height: 31px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+.appnav_wrap {
+	position: relative;
 }
 
 .player-played .np{
@@ -150,8 +154,8 @@
 
 .np-button{	
 	position:absolute;
-	top:8px;
-	right:1rem;
+	top:0;
+	right:0;
 	padding: 4px 8px;
 	width:20px;
 	border-right: 1px solid transparent;
