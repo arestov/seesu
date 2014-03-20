@@ -116,7 +116,7 @@ BtdiggTorrentSearch.prototype = {
 			var wrap_def = wrapRequest({
 				url: "http://btdigg.org/search?info_hash",
 				type: "GET",
-				dataType: "html",
+				dataType: "text",
 				data: {
 
 					q: query //"allintext:" + song + '.mp3'
@@ -158,7 +158,10 @@ BtdiggTorrentSearch.prototype = {
 			olddone.call(this, function(r) {
 				if (!result){
 					result = [];
-					$(r).find('.torrent_name').each(function() {
+					var safe_node = document.createElement('html');
+					safe_node.innerHTML = r.replace(/src\=/gi, 'none=');
+				//	debugger;
+					$(safe_node).find('.torrent_name').each(function() {
 						_this.wrapItem(result, this, msq);
 					});
 				}
