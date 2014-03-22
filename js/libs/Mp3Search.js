@@ -5,6 +5,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 	provoda.Model.extendTo(FilesBySource, {
 		init: function(opts, params, search_eng_name) {
 			this._super();
+			this.map_parent = opts.map_parent;
 			this.mp3_search = opts.mp3_search;
 			this.search_name = search_eng_name;
 			this.search_eng = this.mp3_search.getSearchByName(search_eng_name);
@@ -110,7 +111,8 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			};
 
 			used_successful = this.search_eng.findAudio(msq, {
-				nocache: opts.nocache
+				nocache: opts.nocache,
+				bindRelation: this.map_parent.bindRelation
 			})
 				.progress(function(note){
 					if (note == 'just-requested'){
@@ -166,7 +168,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			this.archivateChildrenStates('sources_list', 'has_best_files');
 
 
-
+			this.createRelationsBinder(); 
 
 			//this.on('vip_state_change-search_progress', function(e) {
 			//	console.log('search_progress: ' + e.value);
@@ -181,10 +183,22 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			
 			
 		},
-		'stch-investg_to_load-for-song_need': function(state) {
-			if (this.utils.isDepend(state)) {
+		'compx-must_load': [
+			['investg_to_load-for-song_need'],
+			function(state) {
+				return this.utils.isDepend(state);
+			}
+		],
+		'stch-must_load': function(state) {
+			if (state) {
 				this.startSearch({});
 			}
+		},
+		createRelationsBinder: function() {
+			var _this = this;
+			this.bindRelation = function(callback) {
+				this.wch(this, 'must_load', callback);
+			};
 		},
 		hndBigFilesList: function(e) {
 			var array = e && e.value || [];
@@ -234,6 +248,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			var files_by_source = new FilesBySource();
 			this.useMotivator(files_by_source, function() {
 				files_by_source.init({
+					map_parent: this,
 					mp3_search: mp3_search
 				}, params, name);
 			});
@@ -296,10 +311,9 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 		},
 		delayFileCheck: function(file) {
 			if (file.artist == this.msq.artist){
-				var _this = this;
-				setTimeout(function() {
-					_this.checkFile(file);
-				},0);
+				this.nextTick(function() {
+					this.checkFile(file);
+				});
 			}
 		},
 		checkFile: function(file) {
