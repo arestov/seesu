@@ -175,7 +175,16 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			this.mp3_search.on('list-changed', this.hndListChange, {soft_reg: false, context: this});
 
 			this.wch(this.mp3_search, 'big_files_list', this.hndBigFilesList);
+			this.nextTick(function() {
+				this.startSearch( {only_cache: true} );
+			});
 			
+			
+		},
+		'stch-investg_to_load-for-song_need': function(state) {
+			if (this.utils.isDepend(state)) {
+				this.startSearch({});
+			}
 		},
 		hndBigFilesList: function(e) {
 			var array = e && e.value || [];

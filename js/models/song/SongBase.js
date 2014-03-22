@@ -120,8 +120,48 @@ provoda.addPrototype("SongBase",{
 				}
 				return false;
 			}
-		}
+		},
+		'$relation:next_preload_song:mp_show': [
+			['mp_show', 'related_next_preload_song'],
+			function(mp_show, related_next_preload_song) {
+				return mp_show && related_next_preload_song;
+			}
+		],
+		'$relation:next_preload_song:player_song': [
+			['player_song', 'related_next_preload_song'],
+			function(player_song, related_next_preload_song) {
+				return player_song && related_next_preload_song;
+			}
+		],
+		'$relation:next_preload_song:very_wanted_play': [
+			['want_to_play', 'related_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
+			function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
+				return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
+			}
+		],
+		'need_files': [
+		/*
+
+		необходимо искать файлы для композиций в следующих состояниях:
+
+			показываемая
+			желанная для воспроизведения
+
+			следующая по порядку воспроизведения (но не визуальному порядку)
+				для воспроизводимой
+				отображаемой
+				для желанной, но недоступной в %желанном% плейлисте
+
+		*/
+			[ 'mp_show', 'want_to_play', 'next_preload_song-for-mp_show', 'next_preload_song-for-player_song', 'next_preload_song-for-very_wanted_play'],
+			function(mp_show, want_to_play, n_show, n_player_song, n_vvsong) {
+				return mp_show || want_to_play || this.utils.isDepend(n_show) || this.utils.isDepend(n_player_song) || this.utils.isDepend(n_vvsong);
+			}
+		]
 	},
+	'stch-$relation:next_preload_song:mp_show': provoda.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song:player_song': provoda.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song:very_wanted_play': provoda.Model.prototype.hndRDep,
 	canUseAsNeighbour: function(){
 		return this.state('can-use-as-neighbour');
 	},
@@ -603,9 +643,7 @@ provoda.addPrototype("SongBase",{
 		
 	},
 	prefindFiles: function(){
-		this.findFiles({
-			get_next: true
-		});
+		this.findFiles();
 	},
 	updateFilesSearchState: function(opts){
 
@@ -654,9 +692,13 @@ provoda.addPrototype("SongBase",{
 		return this.getMFCore() && this.getMFCore().isSearchAllowed();
 	},
 	findFiles: function(opts){
+		return;
+		
 		if (!this.artist || !this.track || !this.isSearchAllowed()){
 			return false;
 		}
+
+		
 		if (this.mp3_search){
 			opts = opts || {};
 			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);

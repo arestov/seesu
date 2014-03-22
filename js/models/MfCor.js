@@ -149,7 +149,7 @@ provoda.Model.extendTo(MfComplect, {
 
 
 var MfCor = function() {};
-provoda.Model.extendTo(MfCor, {
+provoda.HModel.extendTo(MfCor, {
 	hndMoImportant: function(e) {
 			
 		if (e.value && e.value){
@@ -165,11 +165,19 @@ provoda.Model.extendTo(MfCor, {
 				this.files_investg.startSearch(this.last_search_opts);
 				this.last_search_opts = null;
 			}
+			this.updateState('files_investg', this.files_investg);
 		}
 		
 	},
+	'compx-$relation:investg_to_load:song_need': [
+		['^need_files', 'files_investg'],
+		function(need_files, files_investg) {
+			return need_files && files_investg;
+		}
+	],
+	'stch-$relation:investg_to_load:song_need': provoda.Model.prototype.hndRDep,
 	init: function(opts, file) {
-		this._super();
+		this._super(opts);
 		this.files_investg = null;
 		this.last_search_opts = null;
 		this.file = null;

@@ -2103,7 +2103,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				obj_to_change[name] = value;
 
 				if (method){
-					this.nextTick(method, [value, old_value], true);
+					this.nextTick(method, [value, old_value, name], true);
 					//method.call(this, value, old_value);
 				}
 				stack.push(name, value);
@@ -2149,6 +2149,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		this._updateProxy(changes_list);
 	},
+	utils: {
+		isDepend: function(obj) {
+			return obj && !!obj.count;
+		}
+	},
 	updateState: function(name, value){
 		if (name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop name: ' + name);
@@ -2157,6 +2162,41 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			throw new Error("you can't change complex state in this way");
 		}
 		return this._updateProxy([name, value]);
+	},
+	hndRDep: function(state, oldstate, state_name) {
+		var target_name = state_name.split(':');
+		target_name = target_name[ 1 ] + '-for-' + target_name[ 2 ];
+		if (oldstate) {
+			oldstate.setStateDependence(target_name, this, false);
+		}
+		if (state) {
+			state.setStateDependence(target_name, this, true);
+		}
+	},
+	setStateDependence: function(state_name, source_id, value) {
+		if (typeof source_id == 'object') {
+			source_id = source_id._provoda_id;
+		}
+		var old_value = this.state(state_name) || {index: {}, count: 0};
+		old_value.index[source_id] = value ? true: false;
+
+		var count = 0;
+
+		for (var prop in old_value.index) {
+			if (!old_value.index.hasOwnProperty(prop)) {
+				continue;
+			}
+			if (old_value.index[prop]) {
+				count++;
+			}
+		}
+
+		this.updateState(state_name, {
+			index: old_value.index,
+			count: count
+		});
+
+
 	},
 	hasComplexStateFn: function(state_name) {
 		return this.compx_check[state_name];

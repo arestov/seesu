@@ -207,6 +207,8 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			this.mf_cor = new MfCor();
 			this.useMotivator(this.mf_cor, function() {
 				this.mf_cor.init({
+					app: this.app,
+					map_parent: this,
 					mo: this,
 					omo: this.omo
 				}, omo.file);
@@ -232,6 +234,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
 			this.on('state_change-is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);
+			this.updateState('mf_cor', this.mf_cor);
 
 		}),
 		hndImportant: function(e) {

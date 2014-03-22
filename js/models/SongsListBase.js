@@ -412,7 +412,17 @@ define(['provoda', 'spv'], function(provoda, spv){
 				prev_song: true,
 				next_preload_song: true
 			});
-			spv.cloneObj(mo, changes);
+			this.applySongRolesChanges(mo, changes);
+		},
+		applySongRolesChanges: function(target_song, changes) {
+			spv.cloneObj(target_song, changes);
+			var result = {};
+			for (var prop in changes) {
+				result[ 'related_' + prop] = changes[prop];
+			}
+			target_song.updateManyStates(result);
+
+
 		},
 		getNeighboursChanges: function(target_song, changed_song) {
 			var
@@ -493,7 +503,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 			var changes = this.getNeighboursChanges(target_song, changed_neighbour);
 			//console.log("changes");
 			//console.log(); isImportant
-			spv.cloneObj(target_song, changes);
+			this.applySongRolesChanges(target_song, changes);
+			
 
 			//this.findNeighbours();
 
