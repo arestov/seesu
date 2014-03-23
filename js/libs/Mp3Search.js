@@ -114,14 +114,20 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 				nocache: opts.nocache,
 				bindRelation: this.map_parent.bindRelation
 			})
-				.progress(function(note){
-					if (note == 'just-requested'){
-						
-					}
+				.progress(function(){
 					_this.updateState('search_progress', true);
 				})
 				.done(function(music_list){
-					_this.updateState('search_result', music_list);
+					if (typeof music_list == 'function') {
+						
+						music_list(function(list) {
+							_this.updateState('search_result', list);
+						});
+
+					} else {
+						_this.updateState('search_result', music_list);
+					}
+					
 					_this.updateState('search_fail', false);
 				})
 				.fail(function(){
@@ -168,7 +174,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			this.archivateChildrenStates('sources_list', 'has_best_files');
 
 
-			this.createRelationsBinder(); 
+			this.createRelationsBinder();
 
 			//this.on('vip_state_change-search_progress', function(e) {
 			//	console.log('search_progress: ' + e.value);
