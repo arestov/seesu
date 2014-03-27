@@ -107,9 +107,7 @@ VkSearch.prototype = {
 				downloadable: false,
 				_id			: cursor.owner_id + '_' + cursor.id,
 				type: 'mp3',
-				media_type: 'mp3',
-				models: {},
-				getSongFileModel: Mp3Search.getSongFileModel
+				media_type: 'mp3'
 			};
 			if (msq){
 				this.mp3_search.setFileQMI(entity, msq);

@@ -91,8 +91,6 @@ ScMusicSearch.prototype = {
 				_id			: cursor.id,
 				type: 'mp3',
 				media_type: 'mp3',
-				models: {},
-				getSongFileModel: Mp3Search.getSongFileModel
 			};
 			if (msq){
 				this.mp3_search.setFileQMI(entity, msq);

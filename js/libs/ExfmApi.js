@@ -83,9 +83,7 @@ ExfmMusicSearch.prototype = {
 			page_link	: cursor.sources && cursor.sources[0],
 			_id			: cursor.id,
 			type: 'mp3',
-			media_type: 'mp3',
-			models: {},
-			getSongFileModel: Mp3Search.getSongFileModel
+			media_type: 'mp3'
 		};
 		if (!entity.artist){
 			var guess_info = Mp3Search.guessArtist(entity.track, msq && msq.artist);

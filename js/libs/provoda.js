@@ -134,9 +134,10 @@ MDProxy.prototype = {
 	updateState: function(name, value){
 		//fixme если вьюха ещё не создана у неё не будет этого состояния
 		//эклюзивные состояния для вьюх не хранятся и не передаются при создании
-		if (name.indexOf('-') != -1 && console.warn){
+
+		/*if (name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop name: ' + name);
-		}
+		}*/
 		this.vstates[name] = value;
 		this.sendStatesToViews([name, value]);
 		return this;
@@ -2155,9 +2156,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 	},
 	updateState: function(name, value){
-		if (name.indexOf('-') != -1 && console.warn){
+		/*if (name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop name: ' + name);
-		}
+		}*/
 		if (this.hasComplexStateFn(name)){
 			throw new Error("you can't change complex state in this way");
 		}
@@ -2165,7 +2166,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	hndRDep: function(state, oldstate, state_name) {
 		var target_name = state_name.split(':');
-		target_name = target_name[ 1 ] + '-for-' + target_name[ 2 ];
+		target_name = target_name[ 1 ];
 		if (oldstate) {
 			oldstate.setStateDependence(target_name, this, false);
 		}

@@ -203,7 +203,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 		createRelationsBinder: function() {
 			var _this = this;
 			this.bindRelation = function(callback) {
-				this.wch(this, 'must_load', callback);
+				_this.wch(_this, 'must_load', callback);
 			};
 		},
 		hndBigFilesList: function(e) {
@@ -481,33 +481,7 @@ spv.Class.extendTo(QueryMatchIndex, {
 		}
 	}
 });
-var FileNameSQMatchIndex = function(filename, query) {
-	this.trim_index = null;
-	this.filename = filename;
 
-	this.under_consideration = filename;
-	filename.split(/\//);
-	this.query = query;
-	this.query_string = this.toQueryString(this.query);
-	this.match_order = [this.matchers.bestMatch, this.matchers.anyGood];
-	this.match();
-};
-QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
-	init: function(filename, query) {
-		
-		return this;
-	},
-	matchers: {
-		bestMatch: function(filename, query) {
-
-		},
-		anyGood: function(filename, query) {
-			if (filename.indexOf(query.artist) != -1 && filename.indexOf(query.track) != -1){
-				return 0;
-			}
-		}
-	}
-});
 
 var SongQueryMatchIndex = function(song_item, query){
 	this.trim_index = null;
@@ -669,11 +643,26 @@ var getAverageDurations = function(mu_array, time_limit){
 		this.pushed_files_by_artist = {};
 	};
 	Mp3Search.getSongFileModel = function(mo, player){
-		return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel()).init({file: this, mo: mo}).setPlayer(player);
+
+		return (new SongFileModel()).init({file: this, mo: mo, player: player});
+	};
+	Mp3Search.getSFM = function(file, mo, player) {
+		if (file.getSongFileModel) {
+			return file.getSongFileModel(mo, player);
+		} else {
+			var md = new SongFileModel();
+			md.init({
+				file: file,
+				mo: mo,
+				player: player
+			});
+			return md;
+		}
+		
 	};
 	Mp3Search.hasMusicCopy = hasMusicCopy;
 	Mp3Search.guessArtist = guessArtist;
-
+	Mp3Search.QueryMatchIndex = QueryMatchIndex;
 
 
 
@@ -686,6 +675,7 @@ var getAverageDurations = function(mu_array, time_limit){
 				}
 			}
 		},
+
 		getQueryString: function(msq) {
 			return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
 		},
@@ -723,17 +713,17 @@ var getAverageDurations = function(mu_array, time_limit){
 		},
 		getFileQMI: function(file, msq) {
 			var query_string = this.getQueryString(msq);
-			return spv.getTargetField(file, ['query_match_index', query_string.replace(/\./gi, '')]);
+			return spv.getTargetField(file, [ 'query_match_index', query_string.replace(/\./gi, '') ]);
 		},
-		setFileQMI: function(file, msq) {
+		setFileQMI: function(file, msq, Constr) {
 			var query_string = this.getQueryString(msq);
 			file.query_match_index = file.query_match_index || {};
-			file.query_match_index[query_string.replace(/\./gi, '')] = new SongQueryMatchIndex(file, msq) * 1;
-			return file.query_match_index[query_string];
+			file.query_match_index[ query_string.replace(/\./gi, '') ] = Constr ? ( new Constr(file, msq) * 1 ) : ( new SongQueryMatchIndex(file, msq) * 1 );
+			return file.query_match_index[ query_string ];
 		},
 		getFilesInvestg: function(msq, motivator) {
 			var query_string = msq.q || this.getQueryString(msq);
-			var investg = this.investgs[query_string];
+			var investg = this.investgs[ query_string ];
 			if (!investg){
 				investg = new FilesInvestg();
 				this.useMotivator(investg, function() {

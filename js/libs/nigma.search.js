@@ -123,9 +123,7 @@ NigmaMusicSearch.prototype = {
 			from		: 'exfm',
 			page_link	: cursor.sources && cursor.sources[0],
 			_id			: cursor.id,
-			type: 'mp3',
-			models: {},
-			getSongFileModel: getSongFileModel
+			type: 'mp3'
 		};
 		
 		
@@ -135,7 +133,6 @@ NigmaMusicSearch.prototype = {
 		from: "nigma",
 		type: 'mp3',
 		raw: true,
-		getSongFileModel: getSongFileModel
 	},
 	findAudio: function(msq, opts) {
 		var

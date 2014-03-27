@@ -83,9 +83,8 @@ isohuntTorrentSearch.prototype = {
 			media_type: 'torrent',
 			torrent_link: 'http://isohunt.com/download/' + sitem.guid,
 			query: query,
-			models: {},
 			getSongFileModel: function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
+				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			}
 		});
 	}
@@ -191,7 +190,7 @@ BtdiggTorrentSearch.prototype = {
 			return;
 		}
 
-		console.log(magnet_link);
+		//console.log(magnet_link);
 
 		r.push({
 			torrent_link: magnet_link,
@@ -201,8 +200,7 @@ BtdiggTorrentSearch.prototype = {
 			media_type: 'torrent',
 			models: {},
 			getSongFileModel: function(mo, player) {
-				this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
-				return this.models[mo.uid];
+				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			}
 		});
 	}
@@ -298,7 +296,7 @@ googleTorrentSearch.prototype = {
 			item.title = item.titleNoFormatting = htmlencoding.decode(item.titleNoFormatting);
 			item.models = {};
 			item.getSongFileModel = function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
+				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			};
 		}
 		

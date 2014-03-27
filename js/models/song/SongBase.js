@@ -12,7 +12,6 @@ provoda.addPrototype("SongBase",{
 		this.marked_prev_song = null;
 		this.marked_next_song = null;
 		this.ready_to_preload = null;
-		this.waiting_to_load_next = null;
 		this.track = null;
 		this.rtn_request = null;
 		this.playable_info = null;
@@ -41,6 +40,8 @@ provoda.addPrototype("SongBase",{
 		//this.updateManyStates(states);
 
 		this.on('requests', this.hndRequestsPrio, this.getContextOptsI());
+
+		this.archivateChildrenStates('mf_cor', 'almost_loaded', 'every', 'file_almost_loaded');
 	},
 	hndRequestsPrio: function() {
 		this.plst_titl.checkRequestsPriority();
@@ -121,47 +122,67 @@ provoda.addPrototype("SongBase",{
 				return false;
 			}
 		},
-		'$relation:next_preload_song:mp_show': [
+		'$relation:next_preload_song-for-loaded_player_song': [
+			['player_song', 'related_next_preload_song', 'file_almost_loaded'],
+			function(player_song, related_next_preload_song, file_almost_loaded) {
+				return player_song && file_almost_loaded && related_next_preload_song;
+			}
+		],
+		'$relation:next_preload_song-for-mp_show': [
 			['mp_show', 'related_next_preload_song'],
 			function(mp_show, related_next_preload_song) {
 				return mp_show && related_next_preload_song;
 			}
 		],
-		'$relation:next_preload_song:player_song': [
+		'$relation:next_preload_song-for-player_song': [
 			['player_song', 'related_next_preload_song'],
 			function(player_song, related_next_preload_song) {
 				return player_song && related_next_preload_song;
 			}
 		],
-		'$relation:next_preload_song:very_wanted_play': [
+		'$relation:next_preload_song-for-very_wanted_play': [
 			['want_to_play', 'related_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
 			function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
 				return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
 			}
 		],
 		'need_files': [
-		/*
-
-		необходимо искать файлы для композиций в следующих состояниях:
-
-			показываемая
-			желанная для воспроизведения
-
-			следующая по порядку воспроизведения (но не визуальному порядку)
-				для воспроизводимой
-				отображаемой
-				для желанной, но недоступной в %желанном% плейлисте
-
-		*/
 			[ 'mp_show', 'want_to_play', 'next_preload_song-for-mp_show', 'next_preload_song-for-player_song', 'next_preload_song-for-very_wanted_play'],
 			function(mp_show, want_to_play, n_show, n_player_song, n_vvsong) {
 				return mp_show || want_to_play || this.utils.isDepend(n_show) || this.utils.isDepend(n_player_song) || this.utils.isDepend(n_vvsong);
 			}
+			/*
+
+			необходимо искать файлы для композиций в следующих состояниях:
+
+				показываемая
+				желанная для воспроизведения
+
+				следующая по порядку воспроизведения (но не визуальному порядку)
+					для воспроизводимой
+					отображаемой
+					для желанной, но недоступной в %желанном% плейлисте
+
+			*/
+		],
+		'preload_current_file': [
+			['next_preload_song-for-loaded_player_song'],
+			function(n_loaded_psong) {
+				return this.utils.isDepend(n_loaded_psong);
+			}
+		],
+		'load_current_file': [
+			['player_song'],
+			function(player_song) {
+				return player_song;
+			}
 		]
 	},
-	'stch-$relation:next_preload_song:mp_show': provoda.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song:player_song': provoda.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song:very_wanted_play': provoda.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-mp_show': provoda.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-player_song': provoda.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-very_wanted_play': provoda.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-loaded_player_song': provoda.Model.prototype.hndRDep,
+
 	canUseAsNeighbour: function(){
 		return this.state('can-use-as-neighbour');
 	},
@@ -183,13 +204,11 @@ provoda.addPrototype("SongBase",{
 		},
 		"is_important": function(state){
 			if (!state){
-				this.unloadFor(this.uid);
-
-				spv.cloneObj(this, {
+				/*spv.cloneObj(this, {
 					next_song: false,
 					prev_song: false,
 					next_preload_song: false
-				});
+				});*/
 			}
 		}
 	},
@@ -253,12 +272,7 @@ provoda.addPrototype("SongBase",{
 	canPlay: function() {
 		return this.getMFCore().canPlay();
 	},
-	preloadFor: function(id){
-		this.getMFCore().preloadFor(id);
-	},
-	unloadFor: function(id){
-		this.getMFCore().unloadFor(id);
-	},
+
 	setVolume: function(vol, fac){
 		this.getMFCore().setVolume(vol, fac);
 	},
@@ -326,21 +340,7 @@ provoda.addPrototype("SongBase",{
 		}
 		this.plst_titl.checkShowedNeighboursMarks();
 	},
-	waitToLoadNext: function(ready){
-		this.ready_to_preload = ready;
-		if (ready){
-			if (!this.waiting_to_load_next && this.player.c_song == this && this.next_preload_song){
-				var nsong = this.next_preload_song;
-				var uid = this.uid;
-				this.waiting_to_load_next = setTimeout(function(){
-					nsong.preloadFor(uid);
-				}, 4000);
-			}
-		} else if (this.waiting_to_load_next){
-			clearTimeout(this.waiting_to_load_next);
-			delete this.waiting_to_load_next;
-		}
-	},
+
 	isImportant: function() {
 		return this.state('is_important');
 	},

@@ -881,8 +881,6 @@ AppModel.extendTo(SeesuApp, {
 			track: track_name,
 			from:'lastfm',
 			media_type: 'mp3',
-			getSongFileModel: Mp3Search.getSongFileModel,
-			models: {}
 		};
 	},
 	checkUpdates: function(){
