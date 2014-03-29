@@ -324,10 +324,10 @@ AppModel.extendTo(SeesuApp, {
 		}, 1000 * 60 * 20);
 		setInterval(function(){
 			return;
-			var rootvs = _this.mpx.getViews('root');
+			/*var rootvs = _this.mpx.getViews('root');
 			if (rootvs && rootvs.length){
 				_this.updateLVTime();
-			}
+			}*/
 		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];

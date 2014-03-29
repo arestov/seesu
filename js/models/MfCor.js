@@ -75,7 +75,7 @@ var MfComplect = function(opts, params) {
 	this.mo = opts.mo;
 	this.mf_cor = opts.mf_cor;
 
-	this.moplas_list = [];
+	this.moplas_list = null;
 	this.source_name = params.source_name;
 
 	var _this = this;
@@ -88,14 +88,17 @@ var MfComplect = function(opts, params) {
 
 	var sf;
 	if (this.start_file){
+		this.moplas_list = [];
 		sf =
 			this.mf_cor.getSFM(this.start_file)
 			.on('want-to-play-sf', this.selectMf);
 		this.moplas_list.push(sf);
 		this.updateNesting('moplas_list', this.moplas_list);
+		this.updateState('has_start_file', true);
 	} else {
 		this.search_source = params.search_source;
 		this.wch(this.search_source, 'files-list', this.hndFilesListCh);
+		this.updateNesting('pioneer', params.search_source);
 
 	}
 
@@ -103,6 +106,19 @@ var MfComplect = function(opts, params) {
 	this.updateManyStates({
 		'dmca_url': search && search.dmca_url,
 		'complect_name': this.source_name
+	});
+
+
+	this.on('child_change-moplas_list', function(e) {
+		if (e.value) {
+			var part_start = e.value.slice(0, 5);
+
+			var part_end = e.value.slice(5);
+			this.updateNesting('moplas_list_start', part_start);
+			this.updateNesting('moplas_list_end', part_end);
+		}
+
+		
 	});
 	
 };

@@ -13,6 +13,12 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			this.msq = params.msq;
 			this.query_string = params.query_string;
 
+			this.updateManyStates({
+				'dmca_url': this.search_eng && this.search_eng.dmca_url,
+				'search_name': search_eng_name
+			});
+
+
 			//cache
 			//network
 			//scope
@@ -123,22 +129,26 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 						music_list(function(list) {
 							_this.updateState('search_result', list);
 						});
+						_this.updateState('search_fail', false);
 
 					} else {
-						_this.updateState('search_result', music_list);
+						_this.updateManyStates({
+							search_result: music_list,
+							search_fail: false
+						});
 					}
 					
-					_this.updateState('search_fail', false);
+					
 				})
 				.fail(function(){
-					
 					_this.updateState('search_fail', true);
 				})
 				.always(function() {
-					_this.updateState('search_complete', true);
-
-					_this.updateState('search_progress', false);
-					_this.updateState('has_request', false);
+					_this.updateManyStates({
+						search_complete: true,
+						search_progress: false,
+						has_request: false
+					});
 				});
 
 			var req;

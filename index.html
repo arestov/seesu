@@ -829,20 +829,28 @@
 					pv-class="moplas-list {{show_overstocked && 'want-overstocked-songs'}}"
 					pv-nest="sorted_completcs"
 					>
-					<a 
-						pv-props="href: {{dmca_url}}" 
-						pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
-						class="external hidden lang localize-report-abuse"></a>
-					<h4>
+					<div class="files-list-pioneer full_mb_part" pv-nest="pioneer">
+						<a 
+							pv-type="way-point"
+							pv-props="href: {{dmca_url}}" 
+							pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
+							class="external hidden lang localize-report-abuse"></a>
+						<span pv-text="{{search_name}}"></span>
+					</div>
+	
+
+
+					<ul pv-anchor='listc-start'></ul>
+					<div class="full_mb_part">
 						<a
-							class=""
-							pv-class="{{overstock && 'js-serv'}}"
-							pv-text="{{complect_name}}"
+							class="hidden lang localize-full-list"
 							pv-type="{{overstock && 'way-point'}}"
+							pv-class="js-serv {{!overstock && 'hidden'}}"
 							pv-events="click::toggleOverstocked"
-							></a>
-					</h4>
-					<ul pv-anchor='listc'></ul>
+							>full list</a>
+					</div>
+					<ul pv-anchor='listc-end'></ul>
+					
 				</div>
 
 			</div>

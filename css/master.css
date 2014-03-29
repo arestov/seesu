@@ -222,9 +222,10 @@ a.track_name_loading .song-track-name{
 		-webkit-transform: translateZ(0);
 		min-height: 33px;
 	}
-	.moplas-block h4{
+	.moplas-block .files-list-pioneer{
 		margin:0.5rem 0 0.5rem 3.2rem;
 		font-weight: 400;
+		color:#d5d5d5;
 
 		}
 	.moplas-block ul {
@@ -284,19 +285,20 @@ a.track_name_loading .song-track-name{
 			.moplas-block .moplas-list li a{
 				color:inherit;
 			}
-
-	.moplas-block .moplas-list h4{
+	.moplas-block .full_mb_part {
 		display: none;
-		}
+	}
+	.moplas-block.want_more_songs .full_mb_part {
+		display: block;
+	}
+
 	.moplas-block .moplas-list li{
 		display: none;
 		}
 
 
-		.want_more_songs.moplas-block  .moplas-list h4{
-			display: block;
-			}
-		.want_more_songs.moplas-block .moplas-list ul{
+
+		.want_more_songs.moplas-block .moplas-list{
 			margin-bottom:42px;
 			}
 		.want_more_songs.moplas-block .moplas-list li{

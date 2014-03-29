@@ -246,8 +246,13 @@ provoda.View.extendTo(mfComplectUI, {
 		'file-torrent': FileInTorrentUI,
 		'file-http': SongFileModelUI
 	},
-	'collch-moplas_list': {
-		place: 'tpl.ancs.listc',
+
+	'collch-moplas_list_start': {
+		place: 'tpl.ancs.listc-start',
+		by_model_name: true
+	},
+	'collch-moplas_list_end': {
+		place: 'tpl.ancs.listc-end',
 		by_model_name: true
 	}
 });
