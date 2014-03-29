@@ -601,7 +601,7 @@ provoda.View.extendTo(AppBaseView, {
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
 		if (ov_highlight && ov_highlight.source_md){
 			var source_md = ov_highlight.source_md;
-			var mplev_item_view = source_md.getRooConPresentation();
+			var mplev_item_view = source_md.getRooConPresentation(this);
 			if (mplev_item_view){
 				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
@@ -620,7 +620,7 @@ provoda.View.extendTo(AppBaseView, {
 			}
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
-				var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(false, false, true);
+				var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(_this, false, false, true);
 				var con = mplev_item_view && mplev_item_view.getC();
 				if (con && con.height()){
 					_this.scrollTo(mplev_item_view.getC(), {

@@ -408,7 +408,7 @@ AppBaseView.extendTo(AppView, {
 			}
 		}
 		var md = this.getNesting('current_mp_md');
-		var view = md && this.getStoredMpx(md).getRooConPresentation(true);
+		var view = md && this.getStoredMpx(md).getRooConPresentation(this, true);
 		if (view){
 			view.setPrio();
 		}
@@ -556,7 +556,7 @@ AppBaseView.extendTo(AppView, {
 				};
 				var getCurrentNode = function() {
 					var current_md = _this.getNesting('current_mp_md');
-					return current_md && _this.getStoredMpx(current_md).getRooConPresentation(true, true).getC();
+					return current_md && _this.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
 				};
 
 				var readySteadyResize = function(){
@@ -871,7 +871,7 @@ AppBaseView.extendTo(AppView, {
 		if (cwp){
 			var cur_md_md = this.getNesting('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
-			if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation()){
+			if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation(this)){
 				this.scrollTo($(cwp.node), {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
@@ -885,7 +885,7 @@ AppBaseView.extendTo(AppView, {
 		}
 		if (nst) {
 			$(nst.node).addClass('surf_nav');
-			//if (nst.view.getRooConPresentation() ==)
+			//if (nst.view.getRooConPresentation(this) ==)
 
 			this.scrollToWP(nst);
 
