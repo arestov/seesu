@@ -204,7 +204,7 @@ AppBaseView.extendTo(AppView, {
 
 		var playlist_mpx = this.getStoredMpx(playlist);
 
-		var location_id = provoda.$v.getViewLocationId(this, false, 'all-sufficient-details');
+		var location_id = provoda.$v.getViewLocationId(this, nesname, 'all-sufficient-details');
 
 
 
@@ -212,9 +212,8 @@ AppBaseView.extendTo(AppView, {
 		if (!view){
 			view = this.getFreeChildView({
 				by_model_name: true,
-				model_name: playlist.model_name,
-				name: nesname,
-				space: 'all-sufficient-details'
+				nesting_name: nesname,
+				nesting_space: 'all-sufficient-details'
 			}, playlist);
 			var place = AppBaseView.viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
 			place.append(view.getA());
@@ -232,8 +231,13 @@ AppBaseView.extendTo(AppView, {
 			this.search_input[0].select();
 		}
 	},
-	'collch-start_page': function(name, md) {
-		var view = this.getFreeChildView({name: name, space: 'main'}, md);
+	'collch-$spec-start_page': function(nesname, md) {
+		var view = this.getFreeChildView({
+			by_model_name: true,
+			nesting_name: nesname,
+			nesting_space: 'main'
+		}, md);
+
 		if (view){
 			var _this = this;
 
