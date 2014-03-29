@@ -257,10 +257,14 @@ MDProxy.prototype = {
 		if (!only_by_ancestor){
 			for (var i = 0; i < views.length; i++) {
 				cur = views[i];
-				var target = $v.getChildView(root_view, this, 'main');
-				if (target == cur){
+				if ( root_view.matchCildrenView( cur ) ) {
 					return cur;
 				}
+
+				/*var target = $v.getChildView(root_view, this, 'main');
+				if (target == cur){
+					return cur;
+				}*/
 			}
 		}
 		for (var jj = 0; jj < views.length; jj++) {
@@ -2869,12 +2873,12 @@ var getBaseTreeSkeleton = function(array) {
 };
 var $v = {
 	getChildView: function(parent_view, child_mpx, view_space) {
-		var complex_id = this.getViewLocationId(parent_view, view_space);
+		var complex_id = this.getViewLocationId(parent_view, false, view_space);
 		return child_mpx.getView(complex_id);
 	},
 	//nest, by_model_name, model_name 
 
-	getViewLocationId: function(parent_view, view_space) {
+	getViewLocationId: function(parent_view, nesting_name, view_space) {
 		/*
 		помогает определить есть ли у модели вьюха, ассоциированная с локацией - с родительской вьюхой (а также с гнездом внутри родительской вьюхи) 
 
@@ -2882,6 +2886,7 @@ var $v = {
 		return parent_view.view_id + '_' +  view_space;
 	}
 };
+provoda.$v = $v;
 
 var views_counter = 1;
 var way_points_counter = 0;
@@ -2910,6 +2915,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.innest_prev_view = null;
 		this.innest_next_view = null;
 		//this.innesting_pos_old = null;
+
+		this.nesting_space = view_otps.nesting_space;
+		this.nesting_name = view_otps.nesting_name;
 
 		if (this.base_tree_list) {
 			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
@@ -3265,6 +3273,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var md = this.getMdChild(child_name);
 		if (md){
 			var view = this.getFreeChildView({
+				by_model_name: false,
 				name: child_name,
 				space: view_space
 			}, md, opts);
@@ -3297,16 +3306,44 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				break;
 			} else {
 				if (cur_ancestor.parent_view == this.root_view){
-					if (cur_ancestor == $v.getChildView(this.root_view, cur_ancestor.mpx, view_space)){
+					if ( this.root_view.matchCildrenView( cur_ancestor, view_space ) ) {
 						target_ancestor = cur_ancestor;
 						break;
 					}
+
+					/*if (cur_ancestor == $v.getChildView(this.root_view, cur_ancestor.mpx, view_space)){
+						target_ancestor = cur_ancestor;
+						break;
+					}*/
 				}
 			}
 
 			cur_ancestor = cur_ancestor.parent_view;
 		}
 		return target_ancestor;
+	},
+	findMpxViewInChildren: function(mpx, nesting_space) {
+		nesting_space = nesting_space || 'main';
+		var views = mpx.getViews();
+		for (var i = 0; i < views.length; i++) {
+			var cur = views[i];
+			if (this.matchCildrenView( cur, nesting_space )) {
+				return cur;
+			}
+		}
+	},
+	matchCildrenView: function(target_view, nesting_space) {
+		nesting_space = nesting_space || 'main';
+		for (var i = 0; i < this.children.length; i++) {
+			if (this.children[i] != target_view) {
+				continue;
+			}
+			if (this.children[i].nesting_space == nesting_space) {
+				return true;
+			}
+			
+		}
+		return false;
 	},
 	getChildView: function(mpx, view_space) {
 		return $v.getChildView(this, mpx, view_space);
@@ -3317,7 +3354,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			child_name = address_opts.name,
 			constructor_name = address_opts.by_model_name ? address_opts.model_name : address_opts.name,
 			view_space = address_opts.space || 'main',
-			complex_id = $v.getViewLocationId(this, view_space),
+			complex_id = $v.getViewLocationId(this, false, view_space),
 			view = mpx.getView(complex_id);
 
 		if (view){
@@ -3343,7 +3380,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				mpx: mpx,
 				parent_view: this,
 				root_view: this.root_view,
-				location_name: child_name + '-' + view_space
+				location_name: child_name + '-' + view_space,
+				nesting_space: view_space,
+				nesting_name: child_name
 			}, opts);
 			mpx.addView(view, complex_id);
 			this.addChildView(view, child_name);
@@ -3371,14 +3410,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return all_requests;
 	},
-	addChildView: function(view, child_name) {
+	addChildView: function(view) {
 		this.children.push.call(this.children, view);
 		//fixme - possible memory leak when child is dead (this.children) 
-	},
-	addChild: function(view, child_name) {
-		if (this.children.indexOf(view) == -1){
-			this.children.push.call(this.children, view);
-		}
 	},
 	getChildViewsByMpx: function(mpx) {
 		var result = [];
@@ -3773,6 +3807,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			getFreeView: function(cur_md, node_to_use) {
 				var pv_view = this.pv_view;
 				var view = this.view.getFreeChildView({
+					by_model_name: false,
 					name: this.name,
 					space: this.space_name,
 					sampleController: provoda.Controller
@@ -3963,7 +3998,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!array){
 			return;
 		}
-		var location_id = $v.getViewLocationId(this, space || 'main');
+		var location_id = $v.getViewLocationId(this, nesname, space || 'main');
 		for (var i = 0; i < array.length; i++) {
 
 			var view = this.getStoredMpx(array[i]).getView(location_id);
@@ -4082,7 +4117,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			var cur = array[bb];
 			this.appendFVAncorByVN({
 				md: cur,
-				name: (declr.by_model_name ? cur.model_name : nesname),
+				by_model_name: declr.by_model_name,
+				name: nesname,
 				opts: (typeof opts == 'function' ? opts.call(this, cur) : opts),
 				place: declr.place,
 				space: declr.space,
@@ -4166,7 +4202,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return getCollPriority && getCollPriority.call(this, array);
 	},
 	appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
-		var location_id = $v.getViewLocationId(this, space || 'main');
+		var location_id = $v.getViewLocationId(this, nesname, space || 'main');
 
 		//исправляем порядковый номер вьюхи в нэстинге
 		for (var i = 0; i < array.length; i++) {
@@ -4203,7 +4239,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		var cur = null, view = null, i = 0, prev_view = null, next_view = null;
 
-		var location_id = $v.getViewLocationId(this, space || 'main');
+		var location_id = $v.getViewLocationId(this, funcs.nesname, space || 'main');
 		var detached = [];
 		var ordered_part;
 
@@ -4361,7 +4397,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		//присоединить новое
 	},
 	appendFVAncorByVN: function(opts) {
-		var view = this.getFreeChildView({name: opts.name, space: opts.space}, opts.md, opts.opts);
+		var view = this.getFreeChildView({
+			by_model_name: opts.by_model_name,
+			model_name: opts.md.model_name,
+			name: opts.name,
+			space: opts.space
+		}, opts.md, opts.opts);
 		var place = opts.place;
 		if (place && typeof opts.place == 'function'){
 			if ((opts.strict || view) && place){

@@ -195,17 +195,27 @@ AppBaseView.extendTo(AppView, {
 	'spec-vget-song': function(md) {
 		var playlist = md.getParentMapModel();
 		var playlist_mpx = this.getStoredMpx(playlist);
-		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
-		return playlist_view && playlist_view.getChildView(this.getStoredMpx(md));
+
+		var playlist_view = this.findMpxViewInChildren(playlist_mpx, 'all-sufficient-details');
+		return playlist_view && playlist_view.findMpxViewInChildren(this.getStoredMpx(md));
 	},
-	'collch-$spec-song': function(name, md) {
+	'collch-$spec-song': function(nesname, md) {
 		var playlist = md.getParentMapModel();
 
 		var playlist_mpx = this.getStoredMpx(playlist);
 
-		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		var location_id = provoda.$v.getViewLocationId(this, false, 'all-sufficient-details');
+
+
+
+		var view = playlist_mpx.getView(location_id);
 		if (!view){
-			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			view = this.getFreeChildView({
+				by_model_name: true,
+				model_name: playlist.model_name,
+				name: nesname,
+				space: 'all-sufficient-details'
+			}, playlist);
 			var place = AppBaseView.viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
 			place.append(view.getA());
 			this.requestAll();
@@ -213,7 +223,8 @@ AppBaseView.extendTo(AppView, {
 	},
 	'collch-$spec-playlist': {
 		place: AppBaseView.viewOnLevelP,
-		opts: {overview: true}
+		opts: {overview: true},
+		by_model_name: true
 	},
 	tickCheckFocus: function() {
 		if (this.isAlive()){
