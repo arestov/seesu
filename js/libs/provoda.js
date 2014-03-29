@@ -236,7 +236,7 @@ MDProxy.prototype = {
 	getViews: function(complex_id, hard_deads_check) {
 		this.removeDeadViews(hard_deads_check);
 		if (complex_id){
-			return this.views_index[complex_id];
+			return [this.views_index[complex_id]];
 		} else {
 			return this.views;
 		}
