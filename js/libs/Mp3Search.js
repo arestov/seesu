@@ -851,7 +851,6 @@ var getAverageDurations = function(mu_array, time_limit){
 				]);
 			});
 
-			debugger;
 		},
 		getFileQMI: function(file, msq) {
 			var query_string = this.getQueryString(msq);
