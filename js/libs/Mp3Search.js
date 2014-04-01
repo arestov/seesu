@@ -807,6 +807,8 @@ var getAverageDurations = function(mu_array, time_limit){
 			return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
 		},
 		sortMusicFilesArray: function(music_list, msq, time_limit) {
+			var searches_pr = this.searches_pr;
+
 			var query_string = this.getQueryString(msq);
 			time_limit = time_limit || 30000;
 
@@ -822,7 +824,18 @@ var getAverageDurations = function(mu_array, time_limit){
 						} else {
 							return value;
 						}
-					}, function(item){
+					},
+					{
+						field: function(item) {
+							if (item.from && searches_pr.hasOwnProperty(item.from) ) {
+								return searches_pr[item.from];
+							} else {
+								return -1000;
+							}
+						},
+						reverse: true
+					},
+					function(item){
 
 						var average_dur = average_durs[spv.getTargetField(item, field_name)];
 						if (average_dur){
@@ -837,6 +850,8 @@ var getAverageDurations = function(mu_array, time_limit){
 					}
 				]);
 			});
+
+			debugger;
 		},
 		getFileQMI: function(file, msq) {
 			var query_string = this.getQueryString(msq);
