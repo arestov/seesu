@@ -81,15 +81,8 @@ LfmLogin.extendTo(LfmScrobble, {
 	init: function(opts){
 		this._super(opts);
 
-		var _this = this;
 
-		var setScrobbling = function(state) {
-			_this.updateState('scrobbling', state);
-		};
-		if (su.settings['lfm-scrobbling']){
-			setScrobbling(true);
-		}
-		su.on('settings.lfm-scrobbling', setScrobbling);
+		this.wch(su, 'settings-lfm-scrobbling', 'scrobbling');
 
 
 	

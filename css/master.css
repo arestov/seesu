@@ -50,7 +50,8 @@ html.not-as-application, .not-as-application  body{
 .vk-login-context.waiting-auth .deco:after,
 .desc_prevw_list.list_loading:after,
 .search-mp3 .files-load-states:after,
-a.track_name_loading .song-track-name{
+a.track_name_loading .song-track-name,
+.files-list-pioneer.list_loading:after{
 	position: absolute;
 	top:0;
 	left:0;
@@ -222,11 +223,15 @@ a.track_name_loading .song-track-name{
 		-webkit-transform: translateZ(0);
 		min-height: 33px;
 	}
+	.moplas-block-shift {
+		padding-left: 3.2rem;
+	}
 	.moplas-block .files-list-pioneer{
-		margin:0.5rem 0 0.5rem 3.2rem;
+		position: relative;
+		padding:0.5rem 0;
 		font-weight: 400;
 		color:#d5d5d5;
-
+		overflow: hidden;
 		}
 	.moplas-block ul {
 		
@@ -288,8 +293,44 @@ a.track_name_loading .song-track-name{
 	.moplas-block .full_mb_part {
 		display: none;
 	}
+	.moplas-block .full_list_switch {
+		margin: 0.2rem 0;
+		padding-left: 3.2rem;
+	}
 	.moplas-block.want_more_songs .full_mb_part {
 		display: block;
+	}
+	.moplas_source-tuner {
+		background: #535353;
+		border-top: 1px solid #4f4f4f;
+		border-bottom: 1px solid #646464;
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+	.moplas_source-unavailable {
+		color: #666;
+	}
+	.moplas_source-icon {
+		background: transparent no-repeat url(../i/icon-gear.svg);
+		height: 1.14rem;
+		width: 1.14rem;
+		display: block;
+		
+		cursor: pointer;
+		border-radius: 0.3rem;
+
+		}
+		.moplas_source-icon:hover {
+			background-color: #666;
+			}
+		.moplas_source-icon:active {
+			background-color: #444;
+			}
+	.moplas-block .moplas_source-icon{
+		float: left;
+		margin-right: 0.2rem;
+		position: relative;
+		top: 0.15rem;
 	}
 
 	.moplas-block .moplas-list li{

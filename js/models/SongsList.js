@@ -40,15 +40,8 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			this.actionsrow = actionsrow;
 			this._super();
 
-			var _this = this;
 
-			var doNotReptPl = function(state) {
-				_this.updateState('dont_rept_pl', state);
-			};
-			if (su.settings['dont-rept-pl']){
-				doNotReptPl(true);
-			}
-			su.on('settings.dont-rept-pl', doNotReptPl);
+			this.wch(su, 'settings-dont-rept-pl', 'dont_rept_pl');
 
 
 		},
@@ -107,15 +100,9 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 			this.updateNesting('plarow', plarow);
 			
-			var _this = this;
-			
-			var doNotReptPl = function(state) {
-				_this.updateState('dont_rept_pl', state);
-			};
-			if (this.app.settings['dont-rept-pl']){
-				doNotReptPl(true);
-			}
-			this.app.on('settings.dont-rept-pl', doNotReptPl);
+
+
+			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
 			if (this.playlist_type){
 				this.updateState('url_part', this.getURL());
 			}

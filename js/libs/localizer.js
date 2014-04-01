@@ -448,7 +448,7 @@ define({
 		"ru": "Сохранить пароль в Сису"
 	},
 	"rept-song": {
-		"original": "Repeat playling song",
+		"original": "Repeat playing song",
 		"ru": "Повторять играющую композицию"
 	},
 	"dont-rept-pl": {

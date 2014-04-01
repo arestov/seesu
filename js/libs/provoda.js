@@ -2876,7 +2876,7 @@ var getBaseTreeSkeleton = function(array) {
 var $v = {
 	getViewLocationId: function(parent_view, nesting_name, nesting_space) {
 		if (!nesting_name) {
-			throw new Error('1');
+			throw new Error('no nesting_name');
 		}
 		/*
 		помогает определить есть ли у модели вьюха, ассоциированная с локацией - с родительской вьюхой (а также с гнездом внутри родительской вьюхи) 

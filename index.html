@@ -829,19 +829,54 @@
 					pv-class="moplas-list {{show_overstocked && 'want-overstocked-songs'}}"
 					pv-nest="sorted_completcs"
 					>
-					<div class="files-list-pioneer full_mb_part" pv-nest="pioneer">
-						<a 
-							pv-type="way-point"
-							pv-props="href: {{dmca_url}}" 
-							pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
-							class="external hidden lang localize-report-abuse"></a>
-						<span pv-text="{{search_name}}"></span>
+					<div 
+
+						pv-nest="pioneer"
+						class="files-list-pioneer full_mb_part" 
+						pv-class="files-list-pioneer full_mb_part {{search_progress && 'list_loading'}}">
+						<div class="moplas-block-shift">
+							<span class="moplas_source-icon" pv-events="click::switchTunerVisibility"></span>
+							<a 
+								pv-type="way-point"
+								pv-props="href: {{dmca_url}}" 
+								pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
+								class="external hidden lang localize-report-abuse"></a>
+							<span pv-text="{{search_name}}" pv-class="{{ search_complete && !has_files && 'moplas_source-unavailable'}}"></span>
+						</div>
+						
+
+						<div
+							pv-nest="vis_tuner" 
+							class="moplas_source-tuner moplas-block-shift hidden"
+							pv-class="moplas_source-tuner moplas-block-shift {{hidden && 'hidden'}}">
+							<div>
+								<label>
+									<input type="checkbox" pv-events="click:changeTune" name="disable_search" pv-props="checked:{{disable_search}}">
+									Отключить поиск файлов в этом источнике
+								</label>
+							</div>
+							<div>
+								<label>
+									<input type="checkbox" pv-events="click:changeTune" name="wait_before_playing" 
+									pv-props="
+										checked: {{wait_before_playing}}
+										disabled: {{disable_search}}
+									">
+									<span pv-class="{{disable_search && 'desc'}}">
+										Дожидаться списка файлов из этого источника до воспроизведения.
+									</span>
+									
+								</label>
+							</div>
+							
+						</div>
 					</div>
 	
 
 
+
 					<ul pv-anchor='listc-start'></ul>
-					<div class="full_mb_part">
+					<div class="full_mb_part full_list_switch">
 						<a
 							class="hidden lang localize-full-list"
 							pv-type="{{overstock && 'way-point'}}"
@@ -1126,7 +1161,7 @@
 					<div class="rept-song hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="rept-song {{!active_view && 'hidden'}}">
 						<label class="rept-song-label">
 							<input type="checkbox"/>
-							<span class="lang localize-rept-song">Repeat playling song</span>
+							<span class="lang localize-rept-song">Repeat playing song</span>
 						</label>
 						
 					</div>

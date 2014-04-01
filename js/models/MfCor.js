@@ -102,12 +102,6 @@ var MfComplect = function(opts, params) {
 
 	}
 
-	var search = this.mo.app.mp3_search.getSearchByName(params.source_name);
-	this.updateManyStates({
-		'dmca_url': search && search.dmca_url,
-		'complect_name': this.source_name
-	});
-
 
 	this.on('child_change-moplas_list', function(e) {
 		if (e.value) {

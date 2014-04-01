@@ -331,7 +331,7 @@ AppModel.extendTo(SeesuApp, {
 		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
-		this.mp3_search = (new Mp3Search({
+		this.mp3_search = (new Mp3Search({app: this}, {
 			vk: 5,
 			'pleer.com': 4,
 			nigma: 1,
@@ -557,10 +557,11 @@ AppModel.extendTo(SeesuApp, {
 		}
 		return this;
 	},
-	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume'],
+	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume', 'files_sources'],
 	letAppKnowSetting: function(name, value){
 		this.settings[name] = value;
-		this.trigger('settings.' + name, value);
+		this.updateState('settings-' + name, value);
+		//this.trigger('settings-' + name, value);
 	},
 	storeSetting: function(name, value){
 		clearTimeout(this.settings_timers[name]);

@@ -37,7 +37,7 @@ PlayerBase.extendTo(PlayerComplex, {
 			(this.wanted_song = mo).updateState('want_to_play', true);
 			
 			var opts = mo.state('files_search');
-			if (opts && ((opts.search_complete && opts.have_mp3_tracks) || opts.have_best_tracks)){
+			if (opts && !opts.exsrc_incomplete && ((opts.search_complete && opts.have_mp3_tracks) || opts.have_best_tracks)){
 				mo.play();
 				clearTimeout(_this.cantwait_toplay);
 			} else {
@@ -45,7 +45,7 @@ PlayerBase.extendTo(PlayerComplex, {
 					var opts = e.value;
 					if (_this.wanted_song == mo){
 						if (mo.canPlay()){
-							if (opts.search_complete || opts.have_best_tracks){
+							if (!opts.exsrc_incomplete && (opts.search_complete || opts.have_best_tracks)){
 								clearTimeout(_this.cantwait_toplay);
 								mo.play();
 							} else if (!_this.cantwait_toplay){

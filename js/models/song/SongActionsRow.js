@@ -102,16 +102,10 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 		this.actionsrow = actionsrow;
 		this._super();
 
-		var _this = this;
-
-		var doNotReptPl = function(state) {
-			_this.updateState('rept-song', state);
-			actionsrow.mo.updateState('rept-song', state);
-		};
-		if (su.settings['rept-song']){
-			doNotReptPl(true);
-		}
-		su.on('settings.rept-song', doNotReptPl);
+		this.wch(su, 'settings-rept-song', function(e) {
+			this.updateState('rept-song', e.value);
+			this.actionsrow.mo.updateState('rept-song', e.value);
+		});
 
 
 	},
@@ -150,10 +144,13 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		}
 	},
 	initHeavyPart: function() {
-		if (this.app.settings['volume']){
-			this.setVolumeState(this.app.settings['volume']);
-		}
-		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
+
+		this.wch(this.app, 'settings-volume', function(e) {
+			if (!e.value) {
+				return;
+			}
+			this.setVolumeState(e.value);
+		});
 	},
 	switchPart: function(name) {
 		this.initPart(name);

@@ -1,11 +1,55 @@
 define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, SongFileModel){
-	"use strict";
+"use strict";
+
+var FilesSourceTuner = function() {};
+provoda.Model.extendTo(FilesSourceTuner, {
+	init: function(opts, data) {
+		this._super();
+		this.app = opts.app;
+		var search_name = data.search_name;
+		this.wch(this.app, 'settings-files_sources', function (e) {
+			this.updateState('settings', e.value && e.value[search_name]);
+		});
+		this.updateManyStates(data);
+
+		//this.data
+	},
+
+
+	
+	'compx-disable_search': [
+		['settings'],
+		function(settings) {
+			return settings && settings['disable_search'];
+		}
+
+	],
+	'compx-wait_before_playing': [
+		['settings'],
+		function(settings) {
+			return settings && settings['wait_before_playing'];
+		}
+	],
+	changeSetting: function(setting_name, value) {
+		var all_settings = this.app.settings['files_sources'];
+		all_settings = all_settings ? spv.cloneObj({}, all_settings) : {};
+		spv.setTargetField(all_settings, [this.state('search_name'), setting_name], value);
+		all_settings[this.state('search_name')] = spv.cloneObj({}, all_settings[this.state('search_name')]);
+		this.app.setSetting('files_sources', all_settings);
+	},
+	changeTune: function(tune_name, value) {
+		this.changeSetting(tune_name, value);
+	}
+
+});
+
 
 	var FilesBySource = function() {};
 	provoda.Model.extendTo(FilesBySource, {
 		init: function(opts, params, search_eng_name) {
-			this._super();
 			this.map_parent = opts.map_parent;
+			this._super();
+			
 			this.mp3_search = opts.mp3_search;
 			this.search_name = search_eng_name;
 			this.search_eng = this.mp3_search.getSearchByName(search_eng_name);
@@ -18,12 +62,22 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 				'search_name': search_eng_name
 			});
 
+			this.tuner = this.mp3_search.getSourceTuner(search_eng_name);
+			this.wch(this.tuner, 'disable_search');
+			this.wch(this.tuner, 'wait_before_playing');
+
+			//this.wch(this.map_parent, 'must_load');
 
 			//cache
 			//network
 			//scope
 		},
+		switchTunerVisibility: function() {
+			var visible = this.getNesting('vis_tuner');
+			this.updateNesting('vis_tuner', ( visible ? null : this.tuner ) );
+		},
 		startSearch: function(opts) {
+			opts = opts || {};
 			if ((!this.state('search_complete') || this.state('search_fail') ) && !this.state('search_progress')){
 				return this.makeRequest(this.msq, {
 					only_cache: opts.only_cache,
@@ -54,6 +108,12 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			}
 		},
 		complex_states: {
+			'request_required': [
+				['disable_search', '^must_load'],
+				function(disabled, must_load) {
+					return !disabled && must_load;
+				}
+			],
 			'files-list': {
 				depends_on: ['search_result', 'injected_files'],
 				fn: function(sarr, inj_f) {
@@ -97,6 +157,11 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 				fn: function(fslist) {
 					return !!fslist.length;
 				}
+			}
+		},
+		'stch-request_required': function(state) {
+			if (state) {
+				this.startSearch();
 			}
 		},
 		makeRequest: function(msq, opts) {
@@ -175,13 +240,28 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			this.msq = params.msq;
 			this.query_string = params.query_string;
 
-			this.archivateChildrenStates('sources_list', 'has_request');
-			this.archivateChildrenStates('sources_list', 'search_progress');
-			this.archivateChildrenStates('sources_list', 'search_complete', 'every');
+
+
 			
-			this.archivateChildrenStates('sources_list', 'has_files');
-			this.archivateChildrenStates('sources_list', 'has_mp3_files');
-			this.archivateChildrenStates('sources_list', 'has_best_files');
+
+			this.bindNestingFlows('sources_list', 'disable_search', function(item) {
+				return !item.state('disable_search');
+			}, 'available_sources');
+			this.bindNestingFlows('sources_list', 'wait_before_playing', function(item) {
+				return item.state('wait_before_playing');
+			}, 'expected_sources');
+
+
+			this.archivateChildrenStates('available_sources', 'has_request');
+			this.archivateChildrenStates('available_sources', 'search_progress');
+			this.archivateChildrenStates('available_sources', 'search_complete', 'every');
+			
+			this.archivateChildrenStates('available_sources', 'has_files');
+			this.archivateChildrenStates('available_sources', 'has_mp3_files');
+			this.archivateChildrenStates('available_sources', 'has_best_files');
+
+			this.archivateChildrenStates('expected_sources', 'has_request', 'some', 'exsrc_has_request');
+			this.archivateChildrenStates('expected_sources', 'search_complete', 'every', 'exsrc_search_complete');
 
 
 			this.createRelationsBinder();
@@ -199,6 +279,17 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			
 			
 		},
+		bindNestingFlows: function(donor_list_name, state_name, check, target_list_name) {
+			this.watchChildrenStates(donor_list_name, state_name, function(e) {
+				var result = [];
+				for (var i = 0; i < e.items.length; i++) {
+					if ( check( e.items[i] ) ) {
+						result.push( e.items[i] );
+					}
+				}
+				this.updateNesting(target_list_name, result);
+			});
+		},
 		'compx-must_load': [
 			['investg_to_load-for-song_need'],
 			function(state) {
@@ -207,7 +298,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 		],
 		'stch-must_load': function(state) {
 			if (state) {
-				this.startSearch({});
+				this.startSearch();
 			}
 		},
 		createRelationsBinder: function() {
@@ -268,18 +359,31 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 					mp3_search: mp3_search
 				}, params, name);
 			});
+			var _this = this;
+			files_by_source.on('requests', function(requests) {
+				_this.addRequests(requests);
+			});
 			
 			return files_by_source;
 		},
 		complex_states: {
+			'exsrc_incomplete': [
+				['exsrc_has_request', 'exsrc_search_complete'],
+				function(exsrc_has_request, exsrc_search_complete) {
+					return exsrc_has_request && !exsrc_search_complete;
+				}
+			],
+			
+
 			'legacy-files-search': {
-				depends_on: ['has_best_files', 'has_files', 'has_mp3_files', 'search_complete'],
-				fn: function(h_best_f, h_files, h_mp3_files, s_complete) {
+				depends_on: ['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
+				fn: function(h_best_f, h_files, h_mp3_files, s_complete, exsrc_incomplete) {
 					return {
 						search_complete: s_complete,
 						have_best_tracks: h_best_f,
 						have_tracks: h_files,
-						have_mp3_tracks: h_mp3_files
+						have_mp3_tracks: h_mp3_files,
+						exsrc_incomplete: exsrc_incomplete
 					};
 				}
 			},
@@ -291,15 +395,18 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			}
 		},
 		startSearch: function(opts) {
+			return;
+
 			var requests = [];
-			for (var i = 0; i < this.sources_list.length; i++) {
-				var req = this.sources_list[i].startSearch(opts || {});
+			var sources_list = this.getNesting('available_sources') || [];
+			for (var i = 0; i < sources_list.length; i++) {
+				var req = sources_list[i].startSearch(opts);
 				if (req){
 					requests.push(req);
 				}
 			}
 			if (requests.length){
-				this.addRequests(requests);
+				//this.addRequests(requests);
 			}
 		},
 		byBestSearchIndex: function(g,f, searches_pr){
@@ -642,8 +749,9 @@ var getAverageDurations = function(mu_array, time_limit){
 
 
 
-	var Mp3Search = window.Mp3Search = function(searches_pr){
+	var Mp3Search = window.Mp3Search = function(opts, searches_pr){
 		this.init();
+		this.app = opts.app;
 		this.se_list = [];
 		this.searches_pr  = searches_pr || {};
 		this.tools_by_name = {};
@@ -651,7 +759,9 @@ var getAverageDurations = function(mu_array, time_limit){
 		this.investgs_by_artist = {};
 		this.files_ids = {};
 		this.pushed_files_by_artist = {};
+		this.tuners = {};
 	};
+	
 	Mp3Search.getSongFileModel = function(mo, player){
 
 		return (new SongFileModel()).init({file: this, mo: mo, player: player});
@@ -685,7 +795,14 @@ var getAverageDurations = function(mu_array, time_limit){
 				}
 			}
 		},
-
+		getSourceTuner: function(search_name) {
+			if (!this.tuners[search_name]) {
+				var tuner = new FilesSourceTuner();
+				tuner.init({app: this.app}, {search_name: search_name});
+				this.tuners[search_name] = tuner;
+			}
+			return this.tuners[search_name];
+		},
 		getQueryString: function(msq) {
 			return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
 		},
