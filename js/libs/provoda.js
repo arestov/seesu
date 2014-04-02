@@ -597,7 +597,7 @@ var setEvLiItems = function(items_list, current_motivator) {
 	var old_value = this.current_motivator;
 	this.current_motivator = this.current_motivator;
 
-	items_list = items_list && spv.toRealArray(items_list);
+	items_list = spv.toRealArray(items_list);
 	this.unsubcribeOld();
 	this.items_list = items_list;
 	this.controls_list.length = 0;
