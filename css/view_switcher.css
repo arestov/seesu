@@ -176,6 +176,12 @@
 .full-page .usual_page{
 	margin-top:1.72rem;
 }
+.preview_ffp {
+	display: none;
+}
+.full-page .preview_ffp {
+	display: block;
+}
 .art_card{
 	
 	overflow:hidden;

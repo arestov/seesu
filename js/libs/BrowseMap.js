@@ -884,6 +884,16 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 			lists_list[i].init(opts, params);
 		}
 	},
+	preloadNestings: function(array) {
+		//var full_list = [];
+		for (var i = 0; i < array.length; i++) {
+			var md = this.getNesting(array[i]);
+			if (md) {
+				md.preloadStart();
+			}
+			
+		}
+	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
 		this.wch(this, 'mp_has_focus', function(e) {

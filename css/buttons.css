@@ -326,6 +326,7 @@
 	color: hsl(0, 0%, 70%);
 	
 	}
+
 	.no_arfb .area-button{
 		cursor: pointer;
 	}
@@ -367,6 +368,22 @@
 	.page-scheme .area-button .area-description{
 		display: none;
 		}
+.arb-union {
+	margin-bottom: 1rem;
+	}
+	.arb-union .area-button {
+		margin-bottom: 0;
+	}
+
+	.arb-union .arb-ally {
+		padding: 0.1rem 1rem;
+		border: 1px dashed transparent;
+		border-radius: 0.5rem;
+		cursor: pointer;
+		}
+		.arb-union .arb-ally:hover {
+			background: #555;
+			}
 .button_selected{
 	background-color: #444;
 	border: 1px solid transparent;

@@ -106,7 +106,7 @@ BrowseMap.Model.extendTo(StartPage, {
 	subPager: function(parsed_str, path_string) {
 		var parts = path_string.split('/');
 		var first_part = parts[0];
-		var full_name;
+		var full_name = first_part;
 
 		if (parts[1]){
 			full_name += '/' + parts[1];

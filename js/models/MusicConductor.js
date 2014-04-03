@@ -684,6 +684,15 @@ BrowseMap.Model.extendTo(MusicConductor, {
 
 		
 		this.initStates();
+
+
+		
+		this.nextTick(function() {
+			this.updateNesting('preview_hypem', this.app.routePathByModels('conductor/world/songs/topnow_hypem', true));
+			this.updateNesting('preview_lastfm_top', this.app.routePathByModels('conductor/world/songs/_', true));
+		});
+		
+		//var mixcloud
 		return this;
 	},
 	'compx-can_expand': [
@@ -692,6 +701,17 @@ BrowseMap.Model.extendTo(MusicConductor, {
 			return can_expand;
 		}
 	],
+	'compx-can_load_previews': [
+		['^mp_show'],
+		function(mp_show) {
+			return !!mp_show;
+		}
+	],
+	'stch-can_load_previews': function(state) {
+		if (state) {
+			this.preloadNestings(['preview_hypem', 'preview_lastfm_top'])
+		}
+	},
 	sub_pa: {
 		сountries: {
 			title: localize('Countries'),

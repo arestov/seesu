@@ -907,16 +907,11 @@ a.track_name_loading .song-track-name,
 	color:#fff;
 }
 .users-play-this{
+	clear: both;
 	overflow:hidden;
 	
 }
-.full-page .metro-tracks li{
-	float:left;
-	overflow:hidden;
-	margin-bottom:1rem;
-	min-width:195px;
-	width:30%;
-}
+
 .chart-song{
 	display: block;
 	overflow:hidden;
@@ -950,25 +945,7 @@ a.track_name_loading .song-track-name,
 		
 		background:#5C5C5C;
 	}
-.metro-tracks{
-	overflow:hidden;
-	margin-bottom:44px;
-	}
-	.metro-tracks li{
-		overflow:hidden;
-		margin-bottom:1rem;
-	}
-	.full-page .metro-tracks li{
-		
 
-	}
-
-	.metro-tracks li img{
-		float:left;
-		margin-right:1rem;
-		width:34px;
-		height:34px;
-	}
 
 .start-page-messages{
 	display: none;
@@ -996,15 +973,7 @@ a.track_name_loading .song-track-name,
 	font-size:0.85rem;
 }
 
-.space_box_holder {
-	visibility:hidden;
-}
-.tags-hyped{
-	
-	margin-top: 50px;
-	
 
-	}
 	.tags-hyped h3{
 		margin-bottom:10px;
 	}
@@ -2025,3 +1994,49 @@ body .surf_nav{
 	.want_more_songs .dmca_url{
 		display: block;
 	}
+
+
+
+.compact_song {
+	overflow: hidden;
+	height: 2rem;
+	font-size: 0.9rem;
+	color: #ccc;
+	padding: 0.4rem;
+	margin: 0 -0.4rem;
+}
+.compact_song-image_con {
+	float:left;
+	width: 2rem;
+	height: 2rem;
+	margin-right: 0.4rem;
+}
+	.compact_song-artist_name, .compact_song-track_name{
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 10rem;
+	}
+	.compact_song-artist_name {
+		height: 1em;
+		line-height: 1em;
+		color: #AAA;
+	}
+	.compact_song-track_name{
+		margin-top: 0.2rem;
+		height: 1.4em;
+		line-height: 1.4em;
+	}
+	.compact_song-image_con img{
+		height: 100%;
+		width: 100%;
+	}
+.compact_playlist .compact_song{
+	background: #505050;
+	}
+.compact_playlist .compact_song:nth-of-type(even) {
+	background: #555;
+	}
+	.compact_playlist-header {
+		margin: 0.2rem 0;
+		}
