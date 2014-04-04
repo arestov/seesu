@@ -688,8 +688,8 @@ BrowseMap.Model.extendTo(MusicConductor, {
 
 		
 		this.nextTick(function() {
-			this.updateNesting('preview_hypem', this.app.routePathByModels('conductor/world/songs/topnow_hypem', true));
-			this.updateNesting('preview_lastfm_top', this.app.routePathByModels('conductor/world/songs/_', true));
+			this.updateNesting('preview_hypem', this.app.routePathByModels('conductor/world/songs/topnow_hypem'));
+			this.updateNesting('preview_lastfm_top', this.app.routePathByModels('conductor/world/songs/_'));
 		});
 		
 		//var mixcloud

@@ -364,6 +364,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.p = new PlayerSeesu();
 		this.p.init(this);
+		this.player = this.p;
 		this.app_md = this;
 		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();
@@ -412,12 +413,11 @@ AppModel.extendTo(SeesuApp, {
 			}, this.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
-					//su.trackPage(nv.map_level.resident.page_name);
 				}
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				this.trackPage(nv.map_level.resident.page_name);
+				this.trackPage(nv.map_level.resident.model_name);
 			}, this.getContextOptsI())
 			.makeMainLevel();
 

@@ -101,14 +101,12 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 			}
 		});
 
-		this.archivateChildrenStates('acqs_from_someone', 'accepted', 'every', 'not_wait_me');
-		this.archivateChildrenStates('acqs_from_me', 'accepted', 'every', 'not_wait_someone');
 
 		this.updateState('nav_title', localize('Acquaintances'));
 		this.updateState('url_part', '/acquaintances');
 	},
 	'compx-wait_me_desc': {
-		depends_on: ['not_wait_me'],
+		depends_on: ['@every:accepted:acqs_from_someone'],
 		fn: function(not_wait_me) {
 			if (!not_wait_me){
 				return localize('if-you-accept-one-i') + ' ' + localize('will-get-link');
@@ -116,7 +114,7 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		}
 	},
 	'compx-wait_someone_desc': {
-		depends_on: ['not_wait_someone'],
+		depends_on: ['@every:accepted:acqs_from_me'],
 		fn: function(not_wait_someone) {
 			if (!not_wait_someone){
 				return localize('if-one-accept-i') + ' ' + localize('will-get-link');

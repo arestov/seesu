@@ -108,7 +108,6 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			}
 			
 		},
-		page_name: 'playlist',
 		setBaseInfo: function(params) {
 			this.info = params.data || {};
 			if (params.title){
@@ -148,12 +147,8 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 				this.useMotivator(mo, function(mo) {
 					mo.init({
 						map_parent: this,
-						app: this.app,
-						omo: omo,
-						plst_titl: this,
-						player: this.player,
-						mp3_search: this.mp3_search
-					}, {
+						app: this.app
+					}, omo, {
 						file: omo.file
 					});
 				});

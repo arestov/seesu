@@ -10,7 +10,6 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			this.setInactiveAll();
 			this.updateState('url_part', this.getURL());
 		},
-		page_name: "search results",
 		addCallback: function(event_name, func){
 			this.on(event_name, func);
 		},

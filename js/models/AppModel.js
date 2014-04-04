@@ -164,7 +164,8 @@ AppModelBase.extendTo(AppModel, {
 			return md;
 		},
 		show_tag: function(tag){
-			var md = this.start_page.getSPI('tags/' + tag, true);
+			var md = this.routePathByModels('tags/' + tag );
+			
 			md.showOnMap();
 			return md;
 		},

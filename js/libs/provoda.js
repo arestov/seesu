@@ -1795,42 +1795,52 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		cache: {},
 		parent_count_regexp: /^\^+/gi,
 		parent: function(string) {
-			if (this.cache[string]){
-				return this.cache[string];
+			//example: '^visible'
+
+			if (!this.cache[string]){
+				var state_name = string.replace(this.parent_count_regexp, '');
+				var count = string.length - state_name.length;
+				this.cache[string] = {
+					full_name: string,
+					ancestors: count,
+					state_name: state_name
+				};
 			}
-			var state_name = string.replace(this.parent_count_regexp, '');
-			var count = string.length - state_name.length;
-			this.cache[string] = {
-				full_name: string,
-				ancestors: count,
-				state_name: state_name
-			};
+			
 			return this.cache[string];
 		},
 		nesting: function(string) {
-			if (this.cache[string]){
-				return this.cache[string];
-			}
-			var nesting_and_state_name = string.replace('@', '');
-			var parts = nesting_and_state_name.split(':');
+			//example:  '@some:complete:list'
+			if (!this.cache[string]){
+				var nesting_and_state_name = string.replace('@', '');
+				var parts = nesting_and_state_name.split(':');
 
-			this.cache[string] = {
-				full_name: string,
-				nesting_name: parts[0],
-				state_name: parts[1]
-			};
+				var nesting_name = parts.pop();
+				var state_name = parts.pop();
+				var zin_func = parts.pop();
+				if (!zin_func) {
+					zin_func = function(list) {return list;};
+				}
+
+				this.cache[string] = {
+					full_name: string,
+					nesting_name: nesting_name,
+					state_name: state_name,
+					zin_func: zin_func
+				};
+			}
+			
 
 			return this.cache[string];
 		},
 		root: function(string) {
-			if (this.cache[string]){
-				return this.cache[string];
+			//example: '#vk_id'
+			if (!this.cache[string]){
+				this.cache[string] = {
+					full_name: string,
+					state_name: string.replace('#', '')
+				};
 			}
-
-			this.cache[string] = {
-				full_name: string,
-				state_name: string.replace('#', '')
-			};
 
 			return this.cache[string];
 		},
@@ -1865,7 +1875,22 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 			},
 			nesting: function(md) {
+				var list = md.conndst_nesting;
+				if (!list){
+					return;
+				}
+				if (!md.archivateChildrenStates) {
+					throw new Error('cant calculate nesting based complex states for view (only for models)');
+				}
+				for (var i = 0; i < list.length; i++) {
+					var cur = list[i];
+					
+					
+					
+					
+					md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
 
+				}
 			},
 			root: function(md) {
 				var list = md.conndst_root;
@@ -1886,7 +1911,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	collectStatesConnectionsProps: function() {
 		/*
-		'compx-some_state': [['^visible', '@list:complete', '#vk_id'], function(visible, complete){
+		'compx-some_state': [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
 	
 		}]
 		*/
@@ -2427,6 +2452,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
+		this.prsStCon.connect.nesting(this);
+		
 
 		return this;
 	},

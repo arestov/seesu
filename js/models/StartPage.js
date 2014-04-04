@@ -1,12 +1,11 @@
 define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts'],
-function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
 "use strict";
 var StartPage = function() {};
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
-	page_name: 'start page',
 	zero_map_level: true,
 	showPlaylists: function(){
 		su.search(':playlists');
@@ -65,13 +64,6 @@ BrowseMap.Model.extendTo(StartPage, {
 			}
 		
 		},
-		'tags': function(name) {
-			var full_name = 'tags/' + name;
-			return this.subPageInitWrap(TagPage, full_name, {
-				urp_name: name,
-				tag_name: name
-			});
-		},
 		'users': function(name) {
 			var full_name = 'users/' + name;
 			if (name == 'me'){
@@ -98,6 +90,10 @@ BrowseMap.Model.extendTo(StartPage, {
 		}
 	},
 	sub_pa: {
+		'tags': {
+			title: localize('Pop-tags'),
+			constr: TagsList
+		},
 		'conductor': {
 			title: localize('music-cond'),
 			constr: MusicConductor

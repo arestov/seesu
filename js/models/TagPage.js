@@ -2,7 +2,10 @@ define(['spv', 'app_serv','js/libs/BrowseMap', './ArtCard', './LoadableList', '.
 "use strict";
 var localize = app_serv.localize;
 
+
+
 var SimilarTags = function() {};
+
 LoadableList.TagsList.extendTo(SimilarTags, {
 	init: function(opts, params) {
 		this._super(opts);
@@ -544,5 +547,50 @@ BrowseMap.Model.extendTo(TagPage, {
 
 });
 
-return TagPage;
+
+var TagsList = function() {};
+LoadableList.TagsList.extendTo(TagsList, {
+	init: function(opts) {
+		this._super(opts);
+		this.initStates();
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		var _this = this;
+		request_info.request = this.app.lfm.get('tag.getTopTags', {
+			limit: paging_opts.page_limit
+		})
+			.done(function(r){
+				var res_list = spv.toRealArray(spv.getTargetField(r, 'toptags.tag'));
+				var data_list = res_list;
+				_this.putRequestedData(request_info.request, data_list, r.error);
+			});
+		return request_info;
+	},
+	subPager: function(sub_path_string){
+		var page_name = sub_path_string;//spv.capitalize(sub_path_string);
+		if (this.sub_pages[page_name]){
+			return this.sub_pages[page_name];
+		} else {
+
+			var instance = new TagPage();
+			instance.init_opts = [{
+				app: this.app,
+				map_parent: this,
+				nav_opts: {
+					url_part: '/' + page_name
+				}
+			}, {
+				urp_name: page_name,
+				tag_name: page_name
+			}];
+			this.sub_pages[page_name] = instance;
+			return instance;
+		}
+
+	},
+	page_limit: 150
+});
+
+//TagsList
+return TagsList;
 });

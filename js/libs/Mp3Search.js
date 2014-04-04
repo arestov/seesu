@@ -252,17 +252,6 @@ provoda.Model.extendTo(FilesSourceTuner, {
 			}, 'expected_sources');
 
 
-			this.archivateChildrenStates('available_sources', 'has_request');
-			this.archivateChildrenStates('available_sources', 'search_progress');
-			this.archivateChildrenStates('available_sources', 'search_complete', 'every');
-			
-			this.archivateChildrenStates('available_sources', 'has_files');
-			this.archivateChildrenStates('available_sources', 'has_mp3_files');
-			this.archivateChildrenStates('available_sources', 'has_best_files');
-
-			this.archivateChildrenStates('expected_sources', 'has_request', 'some', 'exsrc_has_request');
-			this.archivateChildrenStates('expected_sources', 'search_complete', 'every', 'exsrc_search_complete');
-
 
 			this.createRelationsBinder();
 
@@ -279,7 +268,59 @@ provoda.Model.extendTo(FilesSourceTuner, {
 			
 			
 		},
+		'compx-has_request': [
+			['@some:has_request:available_sources'],
+			function (state) {
+				return state;
+			}
+		],
+		'compx-search_progress': [
+			['@some:search_progress:available_sources'],
+			function (state) {
+				return state;
+			}
+		],
+		'compx-search_complete': [
+			['@every:search_complete:available_sources'],
+			function (state) {
+				return state;
+			}
+		],
+		'compx-has_files': [
+			['@some:has_files:available_sources'],
+			function (state) {
+				return state;
+			}
+		],
+		'compx-has_mp3_files': [
+			['@some:has_mp3_files:available_sources'],
+			function (state) {
+				return state;
+			}
+		],
+		'compx-has_best_files': [
+			['@some:has_best_files:available_sources'],
+			function (state) {
+				return state;
+			}
+		],
+		'compx-exsrc_has_request': [
+			['@some:has_request:expected_sources'],
+			function (state) {
+				return state;
+			}
+		],
+		'compx-exsrc_search_complete': [
+			['@every:search_complete:expected_sources'],
+			function (state) {
+				return state;
+			}
+		],
 		bindNestingFlows: function(donor_list_name, state_name, check, target_list_name) {
+			/*
+			watchChildrenStates: function(collection_name, state_name, callback) {
+			archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
+			*/
 			this.watchChildrenStates(donor_list_name, state_name, function(e) {
 				var result = [];
 				for (var i = 0; i < e.items.length; i++) {

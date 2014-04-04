@@ -30,8 +30,8 @@ PlayerBase.extendTo(PlayerComplex, {
 		if (this.wanted_song !== mo){
 			this.removeCurrentWantedSong();
 			if (!this.c_song){
-				if (mo.plst_titl.lev){
-					mo.plst_titl.lev.freeze();
+				if (mo.map_parent.lev){
+					mo.map_parent.lev.freeze();
 				}
 			}
 			(this.wanted_song = mo).updateState('want_to_play', true);
@@ -69,7 +69,7 @@ PlayerBase.extendTo(PlayerComplex, {
 	},
 	isPlaying: function(playlist, force){
 		if (this.c_song){
-			var pl = this.c_song && this.c_song.plst_titl;
+			var pl = this.c_song && this.c_song.map_parent;
 			if (pl){
 				if (playlist === pl ){
 					return pl;
@@ -101,8 +101,8 @@ PlayerBase.extendTo(PlayerComplex, {
 				this.nowPlaying(mo);
 			}
 			
-			if (mo.plst_titl.lev){
-				mo.plst_titl.lev.freeze();
+			if (mo.map_parent.lev){
+				mo.map_parent.lev.freeze();
 			}
 			this.c_song = mo;
 			mo.updateState("player_song", true);

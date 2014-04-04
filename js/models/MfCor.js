@@ -239,12 +239,8 @@ provoda.HModel.extendTo(MfCor, {
 			this.mo.on('vip_state_change-track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
 			
 		}
-		
-		this.archivateChildrenStates('sorted_completcs', 'moplas_list', this.chldStHasFiles, 'has_files');
+	
 
-		this.archivateChildrenStates('current_mopla', 'loading_progress', function(array) {
-			return array && array[0] > 0.8;
-		}, 'almost_loaded');
 
 		this.intMessages();
 	},
@@ -260,6 +256,18 @@ provoda.HModel.extendTo(MfCor, {
 		
 
 	},
+	'compx-has_files': [
+		['@some:list_length:sorted_completcs'],
+		function (state) {
+			return state;
+		}
+	],
+	'compx-almost_loaded': [
+		['@loading_progress:current_mopla'],
+		function (array) {
+			return array && array[0] > 0.8;
+		}
+	],
 	chldStHasFiles: function(values_array) {
 		var args = values_array;
 		for (var i = 0; i < args.length; i++) {

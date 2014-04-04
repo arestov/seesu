@@ -649,7 +649,6 @@ SongsList.extendTo(FreeArtistTracks, {
 ArtCard = function() {};
 BrowseMap.Model.extendTo(ArtCard, {
 	model_name: 'artcard',
-	page_name: "art card",
 	getURL: function() {
 		return '/catalog/' + this.app.encodeURLPart(this.artist);
 	},
