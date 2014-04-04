@@ -147,7 +147,7 @@ BrowseMap.Model.extendTo(SongcardCloudcasts, {
 		this.sub_pa_params = sub_pa_params;
 		this.initStates(params);
 		this.lists_list = ['new', 'hot', 'popular'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
 

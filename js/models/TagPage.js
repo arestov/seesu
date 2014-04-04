@@ -328,7 +328,7 @@ BrowseMap.Model.extendTo(SongsLists, {
 		this.sub_pa_params = {tag_name:this.tag_name};
 		this.lists_list = ['_', 'free', 'trending_exfm', 'explore_exfm',
 			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
 
@@ -472,7 +472,7 @@ BrowseMap.Model.extendTo(ArtistsLists, {
 
 		this.sub_pa_params = {tag_name:this.tag_name};
 		this.lists_list = ['_', 'week'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},

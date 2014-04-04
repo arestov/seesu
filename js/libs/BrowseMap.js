@@ -867,7 +867,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	initListedModels: function(array) {
 		this.lists_list = array;
-		this.lists_list = this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages( this.lists_list );
 		this.updateNesting('lists_list', this.lists_list);
 		this.updateNesting('preview_list', this.lists_list);
 		this.bindChildrenPreload(array);
@@ -877,7 +877,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		for (var i = 0; i < array.length; i++) {
 			var instance = this.getSPI(array[i]);
 			instance.initOnce();
-			array[i] = instance;
+			//array[i] = instance;
 			result.push( instance );
 		}
 		return result;

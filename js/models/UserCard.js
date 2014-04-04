@@ -78,7 +78,7 @@ BrowseMap.Model.extendTo(UserCard, {
 		
 
 		this.lists_list = ['playlists', 'vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours','lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		var networks_pages = ['vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
@@ -176,7 +176,7 @@ BrowseMap.Model.extendTo(VkUserCard, {
 		this.initStates();
 		this.rq_b = {};
 		this.lists_list = ['friends', 'tracks'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		var networks_pages = ['friends', 'tracks'];
 		for (var i = 0; i < networks_pages.length; i++) {
@@ -256,7 +256,7 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 		this.initStates();
 		this.rq_b = {};
 		this.lists_list = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		var networks_pages = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
 		for (var i = 0; i < networks_pages.length; i++) {

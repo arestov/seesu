@@ -122,7 +122,7 @@ BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 		this._super(opts);
 		this.initStates();
 		this.lists_list = ['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
@@ -198,7 +198,7 @@ BrowseMap.Model.extendTo(AllPlacesArtistsLists, {
 		this.initStates();
 
 		this.lists_list = ['hyped', '_'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
@@ -342,7 +342,7 @@ BrowseMap.Model.extendTo(CityArtistsLists, {
 		};
 
 		this.lists_list = ['_', 'hyped', 'unique'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
@@ -437,7 +437,7 @@ BrowseMap.Model.extendTo(CitySongsLists, {
 			city_name: this.city_name
 		};
 		this.lists_list = ['_', 'hyped', 'unique'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
@@ -472,7 +472,7 @@ BrowseMap.Model.extendTo(CityPlace, {
 		};
 
 		this.lists_list = ['artists', 'songs'];
-		this.initSubPages(this.lists_list);
+		this.lists_list = this.initSubPages(this.lists_list);
 
 		this.updateNesting('lists_list', this.lists_list);
 	},
@@ -626,10 +626,9 @@ BrowseMap.Model.extendTo(CountryPlace, {
 		} else {
 			this.heavy_inited = true;
 		}
-		var artists_top = this.getSPI('artists_top');
-		var songs_top = this.getSPI('songs_top');
-		this.lists_list = [artists_top, songs_top, this.getSPI('cities')];
-		this.initSubPages(['artists_top', 'songs_top', 'cities']);
+
+		this.lists_list = ['artists_top', 'songs_top', 'cities'];
+		this.lists_list = this.initSubPages(this.lists_list);
 
 
 		this.updateNesting('lists_list', this.lists_list);
