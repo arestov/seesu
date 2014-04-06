@@ -637,9 +637,9 @@ define({
 		"original": "Countries",
 		"ru": "Страны"
 	},
-	"Cities of %county%":{
-		"original": "Cities of %county%",
-		"ru": "Города страны \"%county%\""
+	"Cities of %country%":{
+		"original": "Cities of %country%",
+		"ru": "Города страны \"%country%\""
 	},
 	
 	

@@ -77,13 +77,10 @@ BrowseMap.Model.extendTo(UserCard, {
 
 		
 
-		this.lists_list = ['playlists', 'vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours','lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
-		this.lists_list = this.initSubPages(this.lists_list);
-
 		var networks_pages = ['vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
-			this.updateNesting(cur.replace(':', '__'), this.getSPI(cur));
+			this.updateNesting(cur.replace(':', '__'), this.getSPI(cur, true));
 		}
 
 		//плейлисты
@@ -175,13 +172,13 @@ BrowseMap.Model.extendTo(VkUserCard, {
 		this.init_states['p_nav_title'] = 'Vk.com user: ' + this.vk_userid;
 		this.initStates();
 		this.rq_b = {};
-		this.lists_list = ['friends', 'tracks'];
-		this.lists_list = this.initSubPages(this.lists_list);
+
+		
 
 		var networks_pages = ['friends', 'tracks'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
-			this.updateNesting('vk__' + cur, this.getSPI(cur));
+			this.updateNesting('vk__' + cur, this.getSPI(cur, true));
 		}
 	},
 	'stch-mp_has_focus': function(state) {
@@ -255,13 +252,13 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 		this.init_states['nav_title'] = 'Last.fm user: ' + this.lfm_userid;
 		this.initStates();
 		this.rq_b = {};
-		this.lists_list = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
-		this.lists_list = this.initSubPages(this.lists_list);
+
+		
 
 		var networks_pages = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
-			this.updateNesting('lfm__' + cur, this.getSPI(cur));
+			this.updateNesting('lfm__' + cur, this.getSPI(cur, true));
 		}
 	},
 	loadInfo: function() {

@@ -1665,6 +1665,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (collches_modified || base_tree_mofified) {
 			this.collectBaseExtendStates();
 		}
+
+		if (this.collectNestingsDeclarations) {
+			this.collectNestingsDeclarations(props);
+		}
 	},
 	hndExpandViewTree: function(e) {
 		if (!e.value) {
@@ -2400,6 +2404,34 @@ var getMDOfReplace = function(){
 
 var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, {
+	collectNestingsDeclarations: function(props) {
+		var need_recalc = false, prop;
+		for (prop in props){
+			if (props.hasOwnProperty(prop) && prop.indexOf('nest-') === 0){
+				need_recalc = true;
+				break;
+			}
+		}
+		if (!need_recalc){
+			return;
+		}
+		var result = [];
+
+
+		for (prop in this) {
+			if (prop.indexOf('nest-') === 0) {
+				var real_name = prop.replace('nest-','');
+				result.push({
+					nesting_name: real_name,
+					subpages_names_list: this[prop][0],
+					preload: this[prop][1],
+					init_state_name: this[prop][2],
+				});
+			}
+		}
+		this.nestings_declarations = result;
+
+	},
 	'regfr-childchev': {
 		test: function(namespace) {
 			return namespace.indexOf('child_change-') === 0;
@@ -2449,10 +2481,11 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.mpx = null;
 
 		//
-
+		
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 		this.prsStCon.connect.nesting(this);
+
 		
 
 		return this;
@@ -3692,15 +3725,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return this;
 	},
-	getPart: function(name) {
-		return this.view_parts && this.view_parts[name];
+	getPart: function(part_name) {
+		return this.view_parts && this.view_parts[part_name];
 	},
 	collectStateChangeHandlers: function(props) {
-		var need_recalc = false;
+		var need_recalc = false, prop;
 		if (this.hasOwnProperty('state_change')){
 			need_recalc = true;
 		} else {
-			for (var prop in props){
+			for (prop in props){
 				if (props.hasOwnProperty(prop) && prop.indexOf('stch-') === 0){
 					need_recalc = true;
 					break;
@@ -3713,26 +3746,26 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var has_stchh = {};
 		var result = [];
-		var name;
+		
 
-		for (name in this) {
-			if (name.indexOf('stch-') === 0){
-				var real_name = name.replace('stch-','');
+		for (prop in this) {
+			if (prop.indexOf('stch-') === 0){
+				var real_name = prop.replace('stch-','');
 				has_stchh[real_name] = true;
 				result.push({
 					name: real_name,
-					item: this[name]
+					item: this[prop]
 				});
 			}
 		}
 
 		if (this.state_change){
-			for (name in this.state_change) {
-				if (!has_stchh[name]){
-					has_stchh[name] = true;
+			for (prop in this.state_change) {
+				if (!has_stchh[prop]){
+					has_stchh[prop] = true;
 					result.push({
-						name: name,
-						item: this.state_change[name]
+						name: prop,
+						item: this.state_change[prop]
 					});
 				}
 
@@ -3741,31 +3774,31 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		this.stch_hs = result;
 	},
-	requirePart: function(name) {
+	requirePart: function(part_name) {
 		if (!this.isAlive()){
 			return $();
 		}
-		if (this.view_parts && this.view_parts[name]){
-			return this.view_parts[name];
+		if (this.view_parts && this.view_parts[part_name]){
+			return this.view_parts[part_name];
 		} else {
 			if (!this.view_parts){
 				this.view_parts = {};
 			}
-			this.view_parts[name] = this.parts_builder[name].call(this);
-			if (!this.view_parts[name]){
+			this.view_parts[part_name] = this.parts_builder[part_name].call(this);
+			if (!this.view_parts[part_name]){
 				throw new Error('"return" me some build result please');
 			}
 
 			for (var i = 0; i < this.stch_hs.length; i++) {
 				var cur = this.stch_hs[i];
 				if (this.states.hasOwnProperty(cur.name) && typeof cur.item != 'function'){
-					if (this.checkDepVP(cur.item, name)){
+					if (this.checkDepVP(cur.item, part_name)){
 						cur.item.fn.call(this, this.states[cur.name]);
 					}
 				}
 				
 			}
-			return this.view_parts[name];
+			return this.view_parts[part_name];
 		}
 	},
 	checkDepVP: function(state_changer, builded_vp_name) {

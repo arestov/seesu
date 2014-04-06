@@ -50,13 +50,14 @@ var VkSongList = function() {};
 SongsList.extendTo(VkSongList, {
 	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
-		this._super(opts);
-
-		//var user_id = params.vk_userid;
 		this.sub_pa_params = {
 			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
 		};
+		this._super(opts);
+
+		//var user_id = params.vk_userid;
+		
 		connectUserid.call(this, params);
 		//this.user_id = user_id;
 
@@ -132,6 +133,8 @@ VkSongList.extendTo(MyVkAudioList, {
 	}
 });
 
+var vk_user_tracks_sp = ['my', 'recommended'];
+
 var VkUserTracks = function() {};
 BrowseMap.Model.extendTo(VkUserTracks, {
 	model_name: 'listoflists',
@@ -142,8 +145,11 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 			for_current_user: params.for_current_user
 		};
 		this.initStates();
-		this.initListedModels(['my', 'recommended']);
 	},
+	'nest-lists_list':
+		[vk_user_tracks_sp],
+	'nest-preview_list':
+		[vk_user_tracks_sp, true],
 	sub_pa: {
 		'my': {
 			constr: MyVkAudioList,

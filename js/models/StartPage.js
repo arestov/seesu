@@ -17,13 +17,14 @@ BrowseMap.Model.extendTo(StartPage, {
 		this.updateState('nav_title', 'Seesu start page');
 		this.updateState('nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
-		this.updateNesting('pstuff', this.getSPI('users/me', true));
-		this.updateNesting('muco', this.getSPI('conductor', true));
+
 
 
 		this.closed_messages = app_serv.store('closed-messages') || {};
 		return this;
 	},
+	'nest-pstuff': ['users/me'],
+	'nest-muco': ['conductor'],
 	rpc_legacy: {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');

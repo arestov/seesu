@@ -34,7 +34,7 @@ SongsList.extendTo(MusicBlogSongs, {
 	}
 });
 
-
+var music_blog_sps = ['songs'];
 var MusicBlog = function() {};
 BrowseMap.Model.extendTo(MusicBlog, {
 	model_name: 'music_blog',
@@ -44,8 +44,11 @@ BrowseMap.Model.extendTo(MusicBlog, {
 		this.initStates(params);
 		this.sub_pa_params = {url: params.blog_url};
 
-		this.initListedModels(['songs']);
 	},
+	'nest-lists_list':
+		[music_blog_sps],
+	'nest-preview_list':
+		[music_blog_sps, true],
 	sub_pa: {
 		songs: {
 			title: 'Song of the blog',
@@ -104,16 +107,18 @@ BlogsList.extendTo(TrendedBlogs, {
 	api_url_part: 'sotd'
 });
 
-
+var blogs_cond_sps = ['blogs-of-the-day'/*, 'featured'*/];
 var BlogsConductor = function() {};
 BrowseMap.Model.extendTo(BlogsConductor, {
 	model_name: 'blogs_conductor',
 	init: function(opts) {
 		this._super.apply(this, arguments);
 		this.initStates();
-		this.initListedModels(['blogs-of-the-day'/*, 'featured'*/]);
-		
 	},
+	'nest-lists_list':
+		[blogs_cond_sps],
+	'nest-preview_list':
+		[blogs_cond_sps, true],
 	sub_pa: {
 		'blogs-of-the-day': {
 			title: 'Blogs of the day',

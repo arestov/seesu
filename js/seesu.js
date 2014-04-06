@@ -679,59 +679,8 @@ AppModel.extendTo(SeesuApp, {
 		return sp;
 	},
 	routePathByModels: function(pth_string) {
-
-	/*
-	catalog
-	users
-	tags
-	*/
-
-
-	/*
-	#/catalog/The+Killers/_/Try me
-	#?q=be/tags/beautiful
-	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
-	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
-	#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
-	#/recommendations/Beastie+boys/Phone+Call
-	#/loved/Beastie+boys/Phone+Call
-	#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
-	#?q=be/directsearch/vk/345345
-	'artists by loved'
-	#/ds/vk/25325_2344446
-	http://www.lastfm.ru/music/65daysofstatic/+similar
-	*/
-		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
-
-		var cur_md = this.start_page;
-		var tree_parts_group = null;
-		for (var i = 0; i < pth.length; i++) {
-			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
-				if (!tree_parts_group){
-					tree_parts_group = [];
-				}
-				tree_parts_group.push(pth[i]);
-				continue;
-			} else {
-				var path_full_string;
-				if (tree_parts_group){
-					path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
-				} else {
-					path_full_string = pth[i];
-				}
-				tree_parts_group = null;
-				var md = cur_md.findSPbyURLPart(path_full_string);
-				if (md){
-					cur_md = md;
-				} else {
-					break;
-				}
-
-			}
-
-
-		}
-		return cur_md;
+		return BrowseMap.routePathByModels(this.start_page, pth_string);
+	
 	},
 	getPlaylists: function(query) {
 		var r = [],i;

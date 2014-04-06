@@ -326,15 +326,9 @@ BrowseMap.Model.extendTo(SongsLists, {
 		this.initStates();
 
 		this.sub_pa_params = {tag_name:this.tag_name};
-		this.lists_list = ['_', 'free', 'trending_exfm', 'explore_exfm',
-			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'];
-		this.lists_list = this.initSubPages(this.lists_list);
-
-		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
-
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
 	},
+	'nest-lists_list': [['_', 'free', 'trending_exfm', 'explore_exfm',
+			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], true],
 	model_name: 'tag_songs',
 	sub_pa: {
 		'_': {
@@ -471,11 +465,8 @@ BrowseMap.Model.extendTo(ArtistsLists, {
 		this.initStates();
 
 		this.sub_pa_params = {tag_name:this.tag_name};
-		this.lists_list = ['_', 'week'];
-		this.lists_list = this.initSubPages(this.lists_list);
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
 	},
+	'nest-lists_list': [['_', 'week'], true],
 	model_name: 'tag_artists',
 	sub_pa: {
 		'_': {
@@ -499,28 +490,15 @@ BrowseMap.Model.extendTo(TagPage, {
 		this.init_states['nav_title'] = localize('Tag') + ' ' + this.tag_name;
 		this.initStates();
 		this.updateState('tag_name', this.tag_name);
-
 		this.sub_pa_params = {tag_name:this.tag_name};
 
-		var artists_lists = this.getSPI('artists', true);
-		var songs_list = this.getSPI('songs', true);
-		var albums_list = this.getSPI('albums', true);
-
-
-		var similar_tags = this.getSPI('similar', true);
-
-		this.updateNesting('artists_lists', artists_lists);
-		this.updateNesting('songs_list', songs_list);
-		this.updateNesting('albums_list', albums_list);
-		this.updateNesting('similar_tags', similar_tags);
-
-		this.on('vip_state_change-mp_has_focus', function(e) {
-			if (e.value){
-				albums_list.preloadStart();
-				similar_tags.preloadStart();
-			}
-		});
 	},
+	'nest-artists_lists': ['artists'],
+	'nest-songs_list': ['songs'],
+	'nest-albums_list': ['albums'],
+	'nest-similar_tags': ['similar'],
+
+	'nest-pwis': [['albums','similar'], true],
 	model_name: 'tag_page',
 	sub_pa: {
 		'similar': {

@@ -132,30 +132,22 @@ var getMixcloudNameKey = function(string) {
 		.replace(/-+/g, '-');
 
 };
-
+var song_cloudcasts_sps = ['new', 'hot', 'popular'];
 var SongcardCloudcasts = function() {};
 BrowseMap.Model.extendTo(SongcardCloudcasts, {
-	init: function(opts, params) {
+	init: function(opts, data) {
 		this._super(opts);
 
 		var sub_pa_params = {};
-		spv.cloneObj(sub_pa_params, params);
+		spv.cloneObj(sub_pa_params, data);
 		spv.cloneObj(sub_pa_params, {
-			artist_key: getMixcloudNameKey(params.artist_name),
-			track_key: getMixcloudNameKey(params.track_name)
+			artist_key: getMixcloudNameKey(data.artist_name),
+			track_key: getMixcloudNameKey(data.track_name)
 		});
 		this.sub_pa_params = sub_pa_params;
-		this.initStates(params);
-		this.lists_list = ['new', 'hot', 'popular'];
-		this.lists_list = this.initSubPages(this.lists_list);
-
-		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
-
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
-
-		//this.tag_name = params.tag_name;
+		this.initStates(data);
 	},
+	'nest-lists_list': [song_cloudcasts_sps, true],
 	model_name: 'songcard_cloudcasts',
 	sub_pa: {
 		'new': {

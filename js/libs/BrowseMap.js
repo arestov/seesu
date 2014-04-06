@@ -789,6 +789,141 @@ provoda.Eventor.extendTo(BrowseMap, {
 	
 });
 
+BrowseMap.routePathByModels = function(start_md, pth_string) {
+
+		/*
+		catalog
+		users
+		tags
+		*/
+
+
+		/*
+		#/catalog/The+Killers/_/Try me
+		#?q=be/tags/beautiful
+		#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
+		#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
+		#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
+		#/recommendations/Beastie+boys/Phone+Call
+		#/loved/Beastie+boys/Phone+Call
+		#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
+		#?q=be/directsearch/vk/345345
+		'artists by loved'
+		#/ds/vk/25325_2344446
+		http://www.lastfm.ru/music/65daysofstatic/+similar
+		*/
+		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
+
+		var cur_md = start_md;
+		var tree_parts_group = null;
+		for (var i = 0; i < pth.length; i++) {
+			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
+				if (!tree_parts_group){
+					tree_parts_group = [];
+				}
+				tree_parts_group.push(pth[i]);
+				continue;
+			} else {
+				var path_full_string;
+				if (tree_parts_group){
+					path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
+				} else {
+					path_full_string = pth[i];
+				}
+				tree_parts_group = null;
+				var md = cur_md.getSPI(path_full_string, true);
+				if (md){
+					cur_md = md;
+				} else {
+					break;
+				}
+
+			}
+
+
+		}
+		return cur_md;
+};
+
+
+
+var executePreload = function(md, nesting_name) {
+	var lists_list = md.getNesting(nesting_name);
+
+	if (!lists_list) {return;}
+	if (Array.isArray(lists_list)) {
+		for (var i = 0; i < lists_list.length; i++) {
+			var cur = lists_list[i];
+			if (cur.preloadStart){
+				cur.preloadStart();
+			}
+
+		}
+	} else {
+		if (lists_list.preloadStart){
+			lists_list.preloadStart();
+		}
+	}
+};
+
+var bindPreload = function(md, preload_state_name, nesting_name) {
+	if (typeof preload_state_name != 'string') {
+		preload_state_name = 'mp_has_focus';
+	}
+	md.wch(md, preload_state_name, function(e) {
+		if (e.value){
+			
+			executePreload(md, nesting_name);
+		}
+	});
+};
+
+var initOneDeclaredNesting = function(md, el) {
+	/*
+	nesting_name
+	subpages_names_list
+	preload
+	init_state_name
+	*/
+	if (el.init_state_name) {
+		md.wch(md, el.init_state_name, function(e) {
+			if (e.value) {
+				this.updateNesting(el.nesting_name, getSubpages( this, el.subpages_names_list ));
+				if (el.preload && this.state('mp_has_focus')) {
+					executePreload(this, el.nesting_name);
+				}
+			}
+		});
+	} else {
+		md.updateNesting(el.nesting_name, getSubpages( md, el.subpages_names_list ));
+	}
+
+	if (el.preload) {
+		bindPreload(md, el.preload, el.nesting_name);
+	}
+
+};
+
+var initDeclaredNestings = function(md) {
+	for (var i = 0; i < md.nestings_declarations.length; i++) {
+		initOneDeclaredNesting(md, md.nestings_declarations[i]);
+	}
+};
+
+
+var getSubpages = function(md, array) {
+	var result;
+	if (Array.isArray( array )) {
+		result = new Array(array);
+		for (var i = 0; i < array.length; i++) {
+			result[i] = BrowseMap.routePathByModels(md, array[i]);
+		}
+	} else {
+		result = BrowseMap.routePathByModels(md, array);
+	}
+	return result;
+};
+
 BrowseMap.Model = function() {};
 
 provoda.HModel.extendTo(BrowseMap.Model, {
@@ -810,6 +945,12 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 				}
 			}
 		}
+		if (this.nestings_declarations) {
+			this.nextTick(function() {
+				initDeclaredNestings(this);
+			});
+		}
+		
 	},
 	getSPOpts: function(name) {
 		var parts = name.split(':');
@@ -825,9 +966,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		}
 		return obj;
 	},
-	findSPbyURLPart: function(name) {
-		return this.getSPI(name, true);
-	},
+
 	getSPI: function(name, init) {
 		var instance;
 
@@ -865,28 +1004,6 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		}
 		return instance;
 	},
-	initListedModels: function(array) {
-		this.lists_list = array;
-		this.lists_list = this.initSubPages( this.lists_list );
-		this.updateNesting('lists_list', this.lists_list);
-		this.updateNesting('preview_list', this.lists_list);
-		this.bindChildrenPreload(array);
-	},
-	initSubPages: function(array) {
-		var result = [];
-		for (var i = 0; i < array.length; i++) {
-			var instance = this.getSPI(array[i]);
-			instance.initOnce();
-			//array[i] = instance;
-			result.push( instance );
-		}
-		return result;
-	},
-	initItems: function(lists_list, opts, params) {
-		for (var i = 0; i < lists_list.length; i++) {
-			lists_list[i].init(opts, params);
-		}
-	},
 	preloadNestings: function(array) {
 		//var full_list = [];
 		for (var i = 0; i < array.length; i++) {
@@ -897,20 +1014,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 			
 		}
 	},
-	bindChildrenPreload: function(array) {
-		var lists_list = array || this.lists_list;
-		this.wch(this, 'mp_has_focus', function(e) {
-			if (e.value){
-				for (var i = 0; i < lists_list.length; i++) {
-					var cur = lists_list[i];
-					if (cur.preloadStart){
-						cur.preloadStart();
-					}
 
-				}
-			}
-		});
-	},
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
@@ -959,5 +1063,9 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		return '';
 	}
 });
+
+
+
+
 return BrowseMap;
 });

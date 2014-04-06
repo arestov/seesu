@@ -115,19 +115,14 @@ SongsList.extendTo(AllPSongsLoved, {
 
 
 
-
 var AllPlacesSongsLists = function() {};
 BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
-		this.lists_list = ['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'];
-		this.lists_list = this.initSubPages(this.lists_list);
-
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
 
 	},
+	'nest-lists_list':[['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'], true],
 	sub_pa: {
 		latest: {
 			constr: AllPHypemLatestSongs,
@@ -196,13 +191,8 @@ BrowseMap.Model.extendTo(AllPlacesArtistsLists, {
 	init: function(opts) {
 		this._super(opts);
 		this.initStates();
-
-		this.lists_list = ['hyped', '_'];
-		this.lists_list = this.initSubPages(this.lists_list);
-
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
 	},
+	'nest-lists_list':[ ['hyped', '_'], true],
 	model_name: 'artists_lists',
 	sub_pa: {
 		'_': {
@@ -224,23 +214,11 @@ BrowseMap.Model.extendTo(AllPlaces, {
 	model_name:'allplaces',
 	init: function(opts) {
 		this._super.apply(this, arguments);
-
-
-		this.songs_lists = this.getSPI('songs', true);
-		this.updateNesting('songs_lists', this.songs_lists);
-
-		this.artists_lists = this.getSPI('artists', true);
-		this.updateNesting('artists_lists', this.artists_lists);
-
-		//var blogs = this.getSPI('blogs', true);
-		this.updateNesting('lists_list', [this.songs_lists, this.artists_lists/*, blogs*/]);
-
-
-
 		this.initStates();
-
-
 	},
+	'nest-songs_lists': ['songs'],
+	'nest-artists_lists': ['artists'],
+	'nest-lists_list': [['songs', 'artists']],
 	sub_pa: {
 		'songs': {
 			constr: AllPlacesSongsLists,
@@ -341,11 +319,9 @@ BrowseMap.Model.extendTo(CityArtistsLists, {
 			country_name: this.country_name
 		};
 
-		this.lists_list = ['_', 'hyped', 'unique'];
-		this.lists_list = this.initSubPages(this.lists_list);
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
+
 	},
+	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
 	sub_pa: {
 		'_': {
 			constr: CityAritstsTop,
@@ -436,11 +412,9 @@ BrowseMap.Model.extendTo(CitySongsLists, {
 			country_name: this.country_name,
 			city_name: this.city_name
 		};
-		this.lists_list = ['_', 'hyped', 'unique'];
-		this.lists_list = this.initSubPages(this.lists_list);
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
+
 	},
+	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
 	sub_pa: {
 		'_': {
 			constr: CitySongsTop,
@@ -471,11 +445,8 @@ BrowseMap.Model.extendTo(CityPlace, {
 			city_name: this.city_name
 		};
 
-		this.lists_list = ['artists', 'songs'];
-		this.lists_list = this.initSubPages(this.lists_list);
-
-		this.updateNesting('lists_list', this.lists_list);
 	},
+	'nest-lists_list': [['artists', 'songs']],
 	sub_pa: {
 		'artists': {
 			constr: CityArtistsLists,
@@ -604,6 +575,8 @@ BrowseMap.Model.extendTo(CountryPlace, {
 
 			
 	},
+	'nest-lists_list':[ ['artists_top', 'songs_top', 'cities'], false, 'mp_alhf' ],
+	'nest-pwis':[ ['artists_top', 'songs_top'], true, 'mp_alhf' ],
 	sub_pa: {
 		'songs_top': {
 			constr: CountryTopSongs,
@@ -616,7 +589,7 @@ BrowseMap.Model.extendTo(CountryPlace, {
 		'cities': {
 			constr: CountryCitiesList,
 			getTitle: function() {
-				return localize('Cities of %county%').replace('%county%', this.country_name);
+				return localize('Cities of %country%').replace('%country%', this.country_name);
 			}
 		}
 	},
@@ -625,14 +598,8 @@ BrowseMap.Model.extendTo(CountryPlace, {
 			return;
 		} else {
 			this.heavy_inited = true;
+			this.updateState('mp_alhf', true);
 		}
-
-		this.lists_list = ['artists_top', 'songs_top', 'cities'];
-		this.lists_list = this.initSubPages(this.lists_list);
-
-
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload([this.getSPI('artists_top'), this.getSPI('songs_top')]);
 	}
 });
 
@@ -641,12 +608,12 @@ BrowseMap.Model.extendTo(CountriesList, {
 	model_name: 'сountries_list',
 	init: function(opts) {
 		this._super.apply(this, arguments);
-		this.lists_list = [];
+		var lists_list = [];
 		for (var country in lastfm_data.сountries){
 			var country_place = this.getSPI(country, true);
-			this.lists_list.push(country_place);
+			lists_list.push(country_place);
 		}
-		this.updateNesting('lists_list', this.lists_list);
+		this.updateNesting('lists_list', lists_list);
 		this.initStates();
 		
 	},
@@ -678,18 +645,8 @@ BrowseMap.Model.extendTo(MusicConductor, {
 	init: function() {
 		this._super.apply(this, arguments);
 
-		this.updateNesting('allpas', this.getSPI('world', true));
-		this.updateNesting('сountries', this.getSPI('сountries', true));
 
-		
 		this.initStates();
-
-
-		
-		this.nextTick(function() {
-			this.updateNesting('preview_hypem', this.app.routePathByModels('conductor/world/songs/topnow_hypem'));
-			this.updateNesting('preview_lastfm_top', this.app.routePathByModels('conductor/world/songs/_'));
-		});
 		
 		//var mixcloud
 		return this;
@@ -706,11 +663,10 @@ BrowseMap.Model.extendTo(MusicConductor, {
 			return !!mp_show;
 		}
 	],
-	'stch-can_load_previews': function(state) {
-		if (state) {
-			this.preloadNestings(['preview_hypem', 'preview_lastfm_top'])
-		}
-	},
+	'nest-allpas': ['world'],
+	'nest-сountries': ['сountries'],
+	'nest-preview_hypem': ['world/songs/topnow_hypem', 'can_load_previews'],
+	'nest-preview_lastfm_top': ['world/songs/_', 'can_load_previews'],
 	sub_pa: {
 		сountries: {
 			title: localize('Countries'),
