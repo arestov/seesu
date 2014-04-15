@@ -96,11 +96,11 @@ BrowseMap.Model.extendTo(UserCard, {
 		//знакомства
 
 
-		this.updateNesting('users_acqutes', this.initSi(UserAcquaintancesLists));
 		
 		
 		return this;
 	},
+	'nest-users_acqutes':['acquaintances'],
 	'stch-mp_has_focus': function(state) {
 		if (state){
 			var list_to_preload = [

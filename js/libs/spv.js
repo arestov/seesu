@@ -985,13 +985,18 @@ var getComplexPropValueByField = function(fpv, scope, iter, spec_data, converter
 	if (typeof fpv == 'string') {
 		cur_value = getPropValueByField(fpv, iter, scope, spec_data);
 	} else if (Array.isArray(fpv)) {
-		var convert = fpv[0];
+		if (fpv.length > 1) {
+			var convert = fpv[0];
 
-		if (typeof convert == 'string' ) {
-			convert = converters[convert];
+			if (typeof convert == 'string' ) {
+				convert = converters[convert];
+			}
+
+			cur_value = convert(fpv[1] && getPropValueByField(fpv[1], iter, scope, spec_data));
+		} else {
+			cur_value = fpv[0];
 		}
-
-		cur_value = convert(getPropValueByField(fpv[1], iter, scope, spec_data));
+		
 	}
 	return cur_value;
 };

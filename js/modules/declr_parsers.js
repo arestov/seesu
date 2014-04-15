@@ -1,4 +1,4 @@
-define(['spv','js/libs/Mp3Search'],function(spv, Mp3Search) {
+define(['spv','js/libs/Mp3Search', 'js/common-libs/htmlencoding'],function(spv, Mp3Search, htmlencoding) {
 "use strict";
 
 var toArrayByKeys = function(r) {
@@ -142,8 +142,53 @@ return {
 		]
 	},
 	soundcloud: {
-		tracks: function(tracks) {
-			
+		tracksFn: function(tracks) {
+			var track_list = [];
+			var artcard_artist = this.artcard_artist;
+			for (var i = 0; i < tracks.length; i++) {
+				var cur = tracks[i];
+				var song_data = Mp3Search.guessArtist(cur.title, artcard_artist);
+				if (!song_data || !song_data.artist){
+					if (this.allow_artist_guessing){
+						song_data = {
+							artist: artcard_artist,
+							track: cur.title
+						};
+					} else {
+						song_data = {
+							artist: cur.user.username,
+							track: cur.title
+						};
+					}
+
+					
+				}
+				song_data.track = htmlencoding.decode(song_data.track);
+				song_data.image_url = cur.artwork_url;
+				song_data.file = this.app.mp3_search.getSearchByName('soundcloud').makeSongFile(cur);
+				track_list.push(song_data);
+			}
+			return track_list;
+		}
+	},
+	vk: {
+		getTracksFn: function(field) {
+			return function(r) {
+				var vk_search = this.app.mp3_search.getSearchByName('vk');
+				var track_list = [];
+
+				var items = spv.getTargetField(r, field);
+
+				for (var i = 0; i < items.length; i++) {
+					var cur = items[i];
+					track_list.push({
+						artist: htmlencoding.decode(cur.artist),
+						track: htmlencoding.decode(cur.title),
+						file: vk_search.makeSongFile(cur)
+					});
+				}
+				return track_list;
+			};
 		}
 	}
 };

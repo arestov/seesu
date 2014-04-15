@@ -1573,13 +1573,15 @@ FastEventor.prototype = {
 							sputnik.updateState("has_loader", false);
 						} else {
 							var has_more_data;
-							if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
-								if (!isNaN(serv_data.total_pages_num)) {
+							if (serv_data === true) {
+								has_more_data = true;
+							} else if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
+								if (!isNaN(serv_data.total)) {
 									if ( (paging_opts.current_length + items.length) < serv_data.total && serv_data.total > paging_opts.page_limit) {
 										has_more_data = true;
 									}
 								} else {
-									if (serv_data.total_pages_num == serv_data.page_num) {
+									if (serv_data.page_num < serv_data.total_pages_num) {
 										has_more_data = true;
 									}
 								}
@@ -1603,7 +1605,11 @@ FastEventor.prototype = {
 						if (!sputnik.loaded_nestings_items[nesting_name]) {
 							sputnik.loaded_nestings_items[nesting_name] = 0;
 						}
-						sputnik.loaded_nestings_items[nesting_name] += items.length;
+						var has_data_holes = serv_data === true || (serv_data && serv_data.has_data_holes === true);
+
+						sputnik.loaded_nestings_items[nesting_name] += has_data_holes ? paging_opts.page_limit : items.length;
+						//special logic where server send us page without few items. but it can be more pages available
+						//so serv_data in this case is answer for question "Is more data available?"
 
 						if (side_data_parsers) {
 							for (var i = 0; i < side_data_parsers.length; i++) {

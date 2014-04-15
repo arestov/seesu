@@ -8,6 +8,7 @@ var ScApi = function(key, queue, crossdomain, cache_ajax) {
 };
 
 ScApi.prototype = {
+	errors_fields: [],
 	constructor: ScApi,
 	cache_namespace: "soundcloud_api",
 	thisOriginAllowed: true,
@@ -17,7 +18,7 @@ ScApi.prototype = {
 			options = options || {};
 			params = params || {};
 
-			if (options.paging) {
+			if (options && options.paging) {
 				params.limit = options.paging.page_limit;
 				params.offset = options.paging.page_limit * (options.paging.next_page -1);
 			}

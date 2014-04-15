@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList'],
-function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList){
+define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList', 'js/modules/declr_parsers'],
+function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList, declr_parsers){
 'use strict';
 var localize = app_serv.localize;
 
@@ -69,68 +69,35 @@ SongsList.extendTo(VkSongList, {
 
 var VkRecommendedTracks = function() {};
 VkSongList.extendTo(VkRecommendedTracks, {
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
+	'nest_req-songs-list': [
+		[declr_parsers.vk.getTracksFn('response'), function(r) {
+			return r && r.response && !!r.response.length;
+		}],
+		['vk_api', 'get', function() {
+			return ['audio.getRecommendations', {
+				user_id: this.state('userid')
+			}];
+		}]
 
-		request_info.request = this.app.vk_api.get('audio.getRecommendations', {
-			count: paging_opts.page_limit,
-			user_id: this.state('userid'),
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		})
-			.done(function(r){
-				if (!r || r.error){
-					_this.requestComplete(request_info.request, true);
-					return;
-				}
-				var vk_search = _this.app.mp3_search.getSearchByName('vk');
-				var track_list = [];
-
-				for (var i = 0; i < r.response.length; i++) {
-					var cur = r.response[i];
-					track_list.push({
-						artist: htmlencoding.decode(cur.artist),
-						track: htmlencoding.decode(cur.title),
-						file: vk_search.makeSongFile(cur)
-					});
-				}
-
-				_this.putRequestedData(request_info.request, track_list, r.error);
-
-			});
-		return request_info;
-	}
+	]
 });
 
 var MyVkAudioList = function() {};
 VkSongList.extendTo(MyVkAudioList, {
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
+	'nest_req-songs-list': [
+		[declr_parsers.vk.getTracksFn('response.items'), {
+			props_map: {
+				total: ['num', 'response.count'],
+				has_data_holes: [true]
+			}
+		}],
+		['vk_api', 'get', function() {
+			return ['audio.get', {
+				oid: this.state('userid')
+			}];
+		}]
 
-		request_info.request = this.app.vk_api.get('audio.get', {
-			count: paging_opts.page_limit,
-			oid: this.state('userid'),
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		})
-			.done(function(r){
-				if (!r || r.error){
-					_this.requestComplete(request_info.request, true);
-					return;
-				}
-				var vk_search = _this.app.mp3_search.getSearchByName('vk');
-				var track_list = [];
-
-				for (var i = 0; i < r.response.items.length; i++) {
-					var cur = r.response.items[i];
-					track_list.push({
-						artist: htmlencoding.decode(cur.artist),
-						track: htmlencoding.decode(cur.title),
-						file: vk_search.makeSongFile(cur)
-					});
-				}
-				_this.putRequestedData(request_info.request, track_list, r.error);
-			});
-		return request_info;
-	}
+	]
 });
 
 var vk_user_tracks_sp = ['my', 'recommended'];
@@ -233,27 +200,21 @@ LoadableList.extendTo(VKFriendsList, {
 			user: this.state('userid')
 		};
 	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-
-		request_info.request = this.app.vk_api.get('friends.get', {
-			user_id: this.state('userid'),
-			fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(','),
-			count: paging_opts.page_limit,
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		})
-			.done(function(r){
-				if (!r || r.error){
-					_this.requestComplete(request_info.request, true);
-					return;
-				}
-
-
-				_this.putRequestedData(request_info.request, r.response.items, r.error);
-
-			});
-		return request_info;
-	}
+	'nest_req-list_items': [
+		[function(r) {
+			return spv.getTargetField(r, 'response.items');
+		}, {
+			props_map: {
+				total: ['num', 'response.count']
+			}
+		}],
+		['vk_api', 'get', function() {
+			return ['friends.get', {
+				user_id: this.state('userid'),
+				fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
+			}];
+		}]
+	]
 });
 
 

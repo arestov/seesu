@@ -99,63 +99,54 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 	getAlbumURL: function() {
 		return '';
 	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-
-
-		var compileArtistsArray = function(array) {
-			var result = '';
-			if (!array){
+	'nest_req-songs-list': [
+		[function(r) {
+			var _this = this;
+			var compileArtistsArray = function(array) {
+				var result = '';
+				if (!array){
+					return result;
+				}
+				for (var i = 0; i < array.length; i++) {
+					result += (array[i].name || '');
+					if (array[i].join){
+						result += (" " + array[i].join + " ");
+					}
+					
+				}
 				return result;
+			};
+
+			var tracks = spv.toRealArray(spv.getTargetField(r, 'tracklist'));
+			var track_list = [];
+			var release_artist = compileArtistsArray(r.artists);
+			var image_url = _this.state('image_url');
+			image_url = image_url && image_url.url;
+			//var imgs = spv.getTargetField(r, 'album.image');
+			for (var i = 0; i < tracks.length; i++) {
+				var cur = tracks[i];
+				var song_obj = {
+					artist: compileArtistsArray(cur.artists) || release_artist,
+					track: cur.title,
+					album_image: image_url && {url: image_url},
+					album_name: _this.album_name
+				};
+				track_list.push(song_obj);
 			}
-			for (var i = 0; i < array.length; i++) {
-				result += (array[i].name || '');
-				if (array[i].join){
-					result += (" " + array[i].join + " ");
-				}
-				
+			return track_list;
+
+		}],
+		['discogs', 'get', function() {
+			var discogs_url;
+			if (this.release_type == 'master'){
+				discogs_url = '/masters/';
+			} else {
+				discogs_url = '/releases/';
 			}
-			return result;
-		};
 
-		var discogs_url;
-		if (this.release_type == 'master'){
-			discogs_url = '/masters/';
-		} else {
-			discogs_url = '/releases/';
-		}
-
-
-
-		request_info.request = this.app.discogs.get(discogs_url + this.album_id,{})
-			.done(function(r){
-
-				var tracks = spv.toRealArray(spv.getTargetField(r, 'tracklist'));
-				var track_list = [];
-				var release_artist = compileArtistsArray(r.artists);
-				var image_url = _this.state('image_url');
-				image_url = image_url && image_url.url;
-				//var imgs = spv.getTargetField(r, 'album.image');
-				for (var i = 0; i < tracks.length; i++) {
-					var cur = tracks[i];
-					var song_obj = {
-						artist: compileArtistsArray(cur.artists) || release_artist,
-						track: cur.title,
-						album_image: image_url && {url: image_url},
-						album_name: _this.album_name
-					};
-					track_list.push(song_obj);
-				}
-				_this.putRequestedData(request_info.request, track_list, !!r.error);
-
-				if (!r.error){
-					_this.setLoaderFinish();
-				}
-				//pl.putRequestedData(false, track_list);
-				//getAlbumPlaylist(r.album.id, pl);
-			});
-		return request_info;
-	}
+			return [discogs_url + this.album_id,{}];
+		}]
+	]
 });
 
 var DiscogsAlbums = function() {};
@@ -193,22 +184,23 @@ AlbumsList.extendTo(DiscogsAlbums, {
 
 	},
 	manual_previews: false,
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-		var artist_id = this.state('artist_id');
-		//http://api.discogs.com?page=1&per_page=50
-		request_info.request = this.app.discogs.get('/artists/' + artist_id + '/releases', {
-			per_page: paging_opts.page_limit,
-			page: paging_opts.next_page
-		})
-			.done(function(r){
-				var albums_data = spv.toRealArray(spv.getTargetField(r, 'releases'));
-				var data_list = albums_data;
-				_this.putRequestedData(request_info.request, data_list);
-				
-			});
-		return request_info;
-	}
+	'nest_req-albums_list': [
+		[function(r) {
+			return spv.toRealArray(spv.getTargetField(r, 'releases'));
+		}, {
+			source: 'pagination',
+			props_map: {
+				page_num: ['num', 'page'],
+				items_per_page: ['num', 'per_page'],
+				total_pages_num: ['num', 'pages'],
+				total: ['num', 'items']
+			}
+		}],
+		['discogs', 'get', function() {
+			var artist_id = this.state('artist_id');
+			return ['/artists/' + artist_id + '/releases', null];
+		}]
+	]
 
 });
 
@@ -400,49 +392,6 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 		fn: function(artist_id) {
 			return !artist_id;
 		}
-	},
-	
-	getSomeScList: function(paging_opts, request_info, path) {
-
-		var artcard_artist = this.artcard_artist;
-		var _this = this;
-		request_info.request = this.app.sc_api.get(path, {
-			limit: paging_opts.page_limit,
-			offset: paging_opts.page_limit * (paging_opts.next_page -1)
-		})
-			.done(function(tracks){
-
-				var track_list = [];
-				if (tracks.length) {
-					var l = Math.min(tracks.length, paging_opts.page_limit);
-					for (var i=paging_opts.remainder; i < l; i++) {
-						var cur = tracks[i];
-						var song_data = Mp3Search.guessArtist(cur.title, artcard_artist);
-						if (!song_data || !song_data.artist){
-							if (_this.allow_artist_guessing){
-								song_data = {
-									artist: artcard_artist,
-									track: cur.title
-								};
-							} else {
-								song_data = {
-									artist: cur.user.username,
-									track: cur.title
-								};
-							}
-
-							
-						}
-						song_data.track = htmlencoding.decode(song_data.track);
-						song_data.image_url = cur.artwork_url;
-						song_data.file = _this.app.mp3_search.getSearchByName('soundcloud').makeSongFile(cur);
-						track_list.push(song_data);
-					}
-					
-				}
-				_this.putRequestedData(request_info.request, track_list);
-			});
-		return request_info;
 	}
 });
 var SoundcloudArtistLikes = function() {};
@@ -455,10 +404,14 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistLikes, {
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
 	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var artist_id = this.state('artist_id');
-		return this.getSomeScList(paging_opts, request_info, 'users/' + artist_id + '/favorites');
-	}
+	'nest_req-songs-list': [
+		[declr_parsers.soundcloud.tracksFn, true],
+		['sc_api', 'get', function() {
+			var artist_id = this.state('artist_id');
+			return ['users/' + artist_id + '/favorites', null];
+		}]
+
+	]
 });
 var SoundcloudArtistSongs = function() {};
 SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
@@ -471,11 +424,15 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 		});
 		
 	},
-	allow_artist_guessing: true,
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var artist_id = this.state('artist_id');
-		return this.getSomeScList(paging_opts, request_info, 'users/' + artist_id + '/tracks');
-	}
+	'nest_req-songs-list': [
+		[declr_parsers.soundcloud.tracksFn, true],
+		['sc_api', 'get', function() {
+			var artist_id = this.state('artist_id');
+			return ['users/' + artist_id + '/tracks', null];
+		}]
+
+	],
+	allow_artist_guessing: true
 });
 
 var TopArtistSongs = function() {};
