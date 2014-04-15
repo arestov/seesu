@@ -6,53 +6,6 @@ define(['./LoadableListBase', 'spv', 'js/libs/Mp3Search'], function(LoadableList
 var start_end_spaces = /^\s|\s$/gi;
 var LoadableList = function() {};
 LoadableListBase.extendTo(LoadableList, {
-	getHypemArtistsList: function() {
-
-	},
-	getHypemTracksList: function(r) {
-		var result_list = [];
-		for (var num in r){
-			if (num == parseInt(num, 10) && r[num]){
-				result_list.push(r[num]);
-			}
-		}
-		var track_list = [];
-		for (var i = 0; i < result_list.length; i++) {
-			var cur = result_list[i];
-			var song_omo = {
-				artist: cur.artist,
-				track: cur.title
-			};
-			if (!song_omo.artist){
-				song_omo = Mp3Search.guessArtist(cur.title);
-			}
-			song_omo.image_url = cur.thumb_url;
-			if (song_omo.artist && song_omo.artist.replace(start_end_spaces, '') && song_omo.track){
-				track_list.push(song_omo);
-			} else {
-				console.log('there is no needed attributes');
-				console.log(cur);
-			}
-
-		}
-		return track_list;
-	},
-	sendHypemDataRequest: function(paging_opts, request_info, opts) {
-		var
-			no_paging = opts.no_paging,
-			path = opts.path,
-			parser = opts.parser;
-
-		var _this = this;
-		request_info.request = this.app.hypem.get(path, opts.data, {nocache: this.state('error')})
-			.done(function(r) {
-				var data_list = parser.call(this, r, paging_opts);
-				_this.putRequestedData(request_info.request, data_list, !r[0]);
-
-			});
-		return request_info;
-	},
-
 	sendLFMDataRequest: function(paging_opts, request_info, opts, rqop) {
 		var
 			no_paging = opts.no_paging,
@@ -83,26 +36,6 @@ LoadableListBase.extendTo(LoadableList, {
 			});
 		return request_info;
 	},
-	getLastfmAlbumsList: function(r, field_name, paging_opts) {
-		var albums_data = spv.toRealArray(spv.getTargetField(r, field_name));
-		var data_list = [];
-		if (albums_data.length) {
-			var l = Math.min(albums_data.length, paging_opts.page_limit);
-			for (var i=paging_opts.remainder; i < l; i++) {
-				var cur = albums_data[i];
-				data_list.push({
-					album_artist: spv.getTargetField(cur, 'artist.name'),
-					album_name: cur.name,
-					lfm_image: {
-						array: cur.image
-					},
-					playcount: cur.playcount
-				});
-			}
-			
-		}
-		return data_list;
-	},
 	getLastfmArtistsList: function(r, field_name, paging_opts) {
 		var artists = spv.toRealArray(spv.getTargetField(r, field_name));
 		var data_list = [];
@@ -120,22 +53,6 @@ LoadableListBase.extendTo(LoadableList, {
 		}
 		return data_list;
 	},
-	getLastfmTracksList: function(r, field_name, paging_opts) {
-		var tracks = spv.toRealArray(spv.getTargetField(r, field_name));
-		var track_list = [];
-		if (tracks) {
-			for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-				track_list.push({
-					'artist' : tracks[i].artist.name,
-					'track': tracks[i].name,
-					lfm_image:  {
-						array: tracks[i].image
-					}
-				});
-			}
-		}
-		return track_list;
-	}
 });
 
 var TagsList = function() {};
@@ -143,7 +60,7 @@ LoadableList.extendTo(TagsList, {
 	model_name: 'tagslist',
 	main_list_name: 'tags_list',
 	addTag: function(name, silent) {
-		var main_list = this[this.main_list_name];
+		var main_list = this.getMainlist();
 		main_list.push(name);
 
 		if (!silent){
@@ -152,7 +69,7 @@ LoadableList.extendTo(TagsList, {
 		}
 	},
 	dataListChange: function() {
-		var main_list = this[this.main_list_name];
+		var main_list = this.getMainlist();
 		this.updateState(this.main_list_name, [].concat(main_list));
 
 	},

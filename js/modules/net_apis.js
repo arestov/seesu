@@ -90,7 +90,13 @@ spv.Class.extendTo(DiscogsApi, {
 			requestFn: function() {
 				return aReq.apply(this, arguments);
 			},
-			queue: this.queue
+			queue: this.queue,
+			responseFn: function(r) {
+				if (r.meta && r.data){
+					r = r.data;
+				}
+				return r;
+			}
 		});
 
 		return wrap_def.complex;
@@ -159,6 +165,9 @@ spv.Class.extendTo(HypemApi, {
 		this.crossdomain = opts.crossdomain;
 		this.can_send = this.xhr2 || this.crossdomain;
 
+	},
+	checkResponse: function(r) {
+		return !r.version;
 	},
 	cache_namespace: 'hypem',
 	get: function(path, params, options) {

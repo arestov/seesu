@@ -79,7 +79,7 @@ var LfmScrobble = function(auth){
 };
 LfmLogin.extendTo(LfmScrobble, {
 	init: function(opts){
-		this._super(opts);
+		this._super.apply(this, arguments);
 
 
 		this.wch(su, 'settings-lfm-scrobbling', 'scrobbling');

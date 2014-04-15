@@ -3,7 +3,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 	provoda.addPrototype("Investigation", {
 		model_name: 'invstg',
 		init: function(opts) {
-			this._super(opts);
+			this._super.apply(this, arguments);
 			this.names = {};
 			this.enter_items = false;
 			this.updateNesting('section', []);

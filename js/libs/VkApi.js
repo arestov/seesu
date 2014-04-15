@@ -63,6 +63,7 @@ spv.Class.extendTo(vkCoreApi, {
 							_this.onAuthLost();
 						}
 					}
+					return r;
 				},
 				queue: this.queue
 			});

@@ -15,10 +15,21 @@ ScApi.prototype = {
 
 		if (method) {
 			options = options || {};
+			params = params || {};
+
+			if (options.paging) {
+				params.limit = options.paging.page_limit;
+				params.offset = options.paging.page_limit * (options.paging.next_page -1);
+			}
+
+			
+
+	
+			params.consumer_key = this.key;
+
 			options.cache_key = options.cache_key || hex_md5("http://api.soundcloud.com/" + method + spv.stringifyParams(params));
 
-			var	params_full = params || {};
-			params_full.consumer_key = this.key;
+			
 
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
@@ -27,7 +38,7 @@ ScApi.prototype = {
 				url: "http://api.soundcloud.com/" + method + ".js",
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
-				data: params_full,
+				data: params,
 				timeout: 20000,
 				resourceCachingAvailable: true,
 				afterChange: function(opts) {

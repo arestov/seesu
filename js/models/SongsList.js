@@ -143,23 +143,15 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 		},
 		extendSong: function(omo){
 			if (!(omo instanceof Song)){
-				var mo = new Song();
-				this.useMotivator(mo, function(mo) {
-					mo.init({
-						map_parent: this,
-						app: this.app
-					}, omo, {
-						file: omo.file
-					});
+				return this.initSi(Song,  omo, {
+					file: omo.file
 				});
-				
-				return mo;
 			} else{
 				return omo;
 			}
 		},
 		makeExternalPlaylist: function() {
-			var songs_list = this.getMainList();
+			var songs_list = this.getMainlist();
 			if (!songs_list.length){return false;}
 			var simple_playlist = [];
 			for (var i=0; i < songs_list.length; i++) {

@@ -88,7 +88,7 @@ var UserAcquaintancesLists = function() {};
 BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 	model_name: 'user_acqs_list',
 	init: function(opts) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		var _this = this;
 
 		this.wch(this.app, 'su_userid', 'current_user');
@@ -101,9 +101,8 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 			}
 		});
 
+		this.initStates();
 
-		this.updateState('nav_title', localize('Acquaintances'));
-		this.updateState('url_part', '/acquaintances');
 	},
 	'compx-wait_me_desc': {
 		depends_on: ['@every:accepted:acqs_from_someone'],

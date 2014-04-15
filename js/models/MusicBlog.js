@@ -4,10 +4,11 @@ function(spv, BrowseMap, SongsList, LoadableList) {
 var MusicBlogSongs = function() {};
 SongsList.extendTo(MusicBlogSongs, {
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.initStates(params);
 	},
 	datamorph_map: new spv.MorphMap({
+		is_array: true,
 		source: 'songs',
 		props_map: {
 			artist: 'artist',
@@ -39,7 +40,7 @@ var MusicBlog = function() {};
 BrowseMap.Model.extendTo(MusicBlog, {
 	model_name: 'music_blog',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 
 		this.initStates(params);
 		this.sub_pa_params = {url: params.blog_url};
@@ -64,7 +65,7 @@ var BlogsList = function() {};
 LoadableList.extendTo(BlogsList, {
 	model_name: 'blogs_list',
 	init: function(opts) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.initStates();
 	},
 	makeDataItem: function(data) {
@@ -72,8 +73,8 @@ LoadableList.extendTo(BlogsList, {
 		item.addRawData(data);
 		return item;
 	},
-	//subitemConstr: MusicBlog,
 	datamorph_map: new spv.MorphMap({
+		is_array: true,
 		source: 'sites',
 		props_map: {
 			nav_title: 'title',
@@ -86,6 +87,15 @@ LoadableList.extendTo(BlogsList, {
 			start: paging_opts.next_page
 		};
 	},
+/*	'nest_req-lists_list': [
+		[{
+
+		}, true],
+		['exfm', 'get', function() {
+			return [this.api_url_part, null];
+		}]
+
+	],*/
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		var _this = this;
 

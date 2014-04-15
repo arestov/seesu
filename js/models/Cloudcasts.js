@@ -17,6 +17,7 @@ SongsList.extendTo(Cloudcast, {
 		this.initStates(params);
 	},
 	datamorph_map: new spv.MorphMap({
+		is_array: true,
 		source: 'sections',
 		props_map: {
 			artist: 'track.artist.name',
@@ -57,17 +58,17 @@ var CloudcastsList = function() {};
 LoadableList.extendTo(CloudcastsList, {
 	model_name: 'cloudcasts_list',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.sub_pa_params = params;
 		this.initStates(params);
 	},
-	//subitemConstr: Cloudcast,
 	makeDataItem: function(data) {
 		var item = this.app.start_page.getSPI('cloudcasts/' + this.app.encodeURLPart(data.key), true);
 		item.addRawData(data);
 		return item;
 	},
 	datamorph_map: new spv.MorphMap({
+		is_array: true,
 		source: 'data',
 		props_map: {
 			nav_title: 'name',
@@ -136,7 +137,7 @@ var song_cloudcasts_sps = ['new', 'hot', 'popular'];
 var SongcardCloudcasts = function() {};
 BrowseMap.Model.extendTo(SongcardCloudcasts, {
 	init: function(opts, data) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 
 		var sub_pa_params = {};
 		spv.cloneObj(sub_pa_params, data);

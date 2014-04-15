@@ -60,7 +60,7 @@ provoda.View.extendTo(AppBaseView, {
 	dom_rp: true,
 	location_name: 'root_view',
 	init: function(opts, vopts) {
-		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), true);
+		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), true, 250);
 		return this._super.apply(this, arguments);
 	},
 	_getCallsFlow: function() {

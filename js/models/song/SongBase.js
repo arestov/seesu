@@ -6,7 +6,7 @@ provoda.addPrototype("SongBase",{
 	model_name: "song",
 	init: function(opts, omo, params){
 
-		this._super(opts);
+		this._super.apply(this, arguments);
 
 		this.neighbour_for = null;
 		this.marked_prev_song = null;
@@ -374,9 +374,8 @@ provoda.addPrototype("SongBase",{
 	req_map: [
 		[
 			['album_name', 'album_image', 'listeners', 'playcount', 'duration', 'top_tags'],
-			new spv.MorphMap({
+			{
 				source: 'track',
-				not_array: true,
 				props_map: {
 					album_name: 'album.title',
 					album_image: ['lfm_image', 'album.image'],
@@ -386,25 +385,18 @@ provoda.addPrototype("SongBase",{
 				},
 				parts_map: {
 					top_tags: {
+						is_array: true,
 						source: 'toptags.tag',
 						props_map: 'name'
 					}
 				}
-			}, {
-				num: function(value) {
-					return parseFloat(value);
-				},
-				lfm_image: function(value) {
-					return app_serv.getLFMImageWrap(value);
-				}
-			}),
-			function(opts) {
-				return this.app.lfm.get('track.getInfo', {
+			},
+			['lfm', 'get', function() {
+				return ['track.getInfo', {
 					artist: this.state('artist'),
 					track: this.state('track')
-				}, {nocache: opts.has_error});
-			},
-			['error']
+				}];
+			}]
 		]
 	],
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){

@@ -49,7 +49,7 @@ spv.Class.extendTo(GMessagesStore, {
 var BigContextNotify = function() {};
 provoda.Model.extendTo(BigContextNotify, {
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		var _this = this;
 		if (!this.cant_hide_notify){
 			if (!params.notf){

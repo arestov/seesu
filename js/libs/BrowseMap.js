@@ -866,10 +866,11 @@ var executePreload = function(md, nesting_name) {
 	}
 };
 
+//если есть состояние для предзагрузки
+//если изменилось гнездование
+
 var bindPreload = function(md, preload_state_name, nesting_name) {
-	if (typeof preload_state_name != 'string') {
-		preload_state_name = 'mp_has_focus';
-	}
+
 	md.wch(md, preload_state_name, function(e) {
 		if (e.value){
 			
@@ -885,21 +886,23 @@ var initOneDeclaredNesting = function(md, el) {
 	preload
 	init_state_name
 	*/
+	var preload_state_name = typeof el.preload == 'string' ? el.preload : 'mp_has_focus';
 	if (el.init_state_name) {
 		md.wch(md, el.init_state_name, function(e) {
 			if (e.value) {
 				this.updateNesting(el.nesting_name, getSubpages( this, el.subpages_names_list ));
-				if (el.preload && this.state('mp_has_focus')) {
+				if (preload_state_name && this.state(preload_state_name)) {
 					executePreload(this, el.nesting_name);
 				}
 			}
 		});
+		
 	} else {
 		md.updateNesting(el.nesting_name, getSubpages( md, el.subpages_names_list ));
 	}
 
 	if (el.preload) {
-		bindPreload(md, el.preload, el.nesting_name);
+		bindPreload(md, preload_state_name, el.nesting_name);
 	}
 
 };
@@ -926,82 +929,144 @@ var getSubpages = function(md, array) {
 
 BrowseMap.Model = function() {};
 
+var getSPOpts = function(md, name) {
+	var target = md.sub_pa[name];
+	var parts = name.split(':');
+
+
+	return [
+		{
+			url_part: '/' + name,
+			nav_title: target.title || (target.getTitle && target.getTitle.call(md))
+		},
+		{
+			simple_name: name,
+			name_spaced: parts[1]
+		}];
+};
+
 provoda.HModel.extendTo(BrowseMap.Model, {
-	init: function(opts) {
-		this._super(opts);
+	init: function(opts, data) {
+		this._super.apply(this, arguments);
 
 		this.lists_list = null;
 		this.lev = null;
 		this.map_level_num = null;
+		this.head_props = this.head_props || null;
+
+
+		if (this.hp_bound && !data) {
+			throw new Error('pass data arg!');
+		} else {
+			if (this.head_props) {
+				console.log('already has head_props');
+			} else if (this.hp_bound) {
+				
+				var complex_obj = {
+					'--data--': null
+				};
+				if (this.map_parent.sub_pa_params) {
+					spv.cloneObj(complex_obj, this.map_parent.sub_pa_params);
+				}
+
+				complex_obj['--data--'] = data;
+
+				this.head_props = this.hp_bound(complex_obj);
+			}
+		}
+
+		
+
 
 		opts = opts || {};
 		if (!this.skip_map_init){
-			if (opts.nav_opts){
-				if (opts.nav_opts['url_part']){
-					this.init_states['url_part'] = opts.nav_opts['url_part'];
+			if (data) {
+				if (data['url_part']){
+					this.init_states['url_part'] = data['url_part'];
 				}
-				if (opts.nav_opts['nav_title']){
-					this.init_states['nav_title'] = opts.nav_opts['nav_title'];
+				if (data['nav_title']){
+					this.init_states['nav_title'] = data['nav_title'];
 				}
 			}
 		}
+
+		if (this.data_by_hp && typeof this.data_by_hp == 'function') {
+			this.sub_pa_params = this.data_by_hp(data);
+		}
+
 		if (this.nestings_declarations) {
 			this.nextTick(function() {
 				initDeclaredNestings(this);
 			});
 		}
 		
-	},
-	getSPOpts: function(name) {
-		var parts = name.split(':');
-		var obj = {
-			url_part: '/' + name,
-			simple_name: name,
-			name_spaced: parts[1]
-		};
-		var target = this.sub_pa[name];
-		var title = target.title || (target.getTitle && target.getTitle.call(this));
-		if (title){
-			obj['nav_title'] = title;
+		if (this.allow_data_init) {
+			this.updateManyStates(data);
 		}
-		return obj;
 	},
 
-	getSPI: function(name, init) {
-		var instance;
 
+	getSPI: function(name) {
+		var instance;
 		if (this.sub_pages && this.sub_pages[name]){
 			instance = this.sub_pages[name];
-
 		}
+		var init_opts;
 		if (!instance){
 			var target = this.sub_pa && this.sub_pa[name];
 			if (target){
 				var Constr = target.constr || target.getConstr.call(this);
 				instance = new Constr();
 
-				instance.init_opts = [spv.cloneObj({
-					map_parent: this,
-					app: this.app
-				}, {
-					nav_opts: this.getSPOpts(name)
-				})];
-				if (this.sub_pa_params){
-					instance.init_opts.push(this.sub_pa_params);
+				/*
+				hp_bound
+				data_by_urlname
+				data_by_hp
+
+				берем данные из родителя
+				накладываем стандартные данные 
+				накладываем данные из урла
+				*/
+
+				var common_opts = getSPOpts(this, name);
+				var instance_data = {};
+				var params_from_parent = this.data_by_hp === true ? this.head_props : this.sub_pa_params;
+
+				var data_parts = [
+					params_from_parent,
+					common_opts[0],
+					instance.data_by_urlname && instance.data_by_urlname(common_opts[1])
+				];
+
+				for (var i = 0; i < data_parts.length; i++) {
+					if (!data_parts[i]) {
+						continue;
+					}
+					spv.cloneObj(instance_data, data_parts[i]);
 				}
+				init_opts = [this.getSiOpts(), instance_data];
+
 
 				this.sub_pages[name] = instance;
 			} else {
 				if (this.subPager){
-
-					instance = this.subPager(decodeURIComponent(name), name);
+					var sub_page = this.subPager(decodeURIComponent(name), name);
+					if (Array.isArray(sub_page)) {
+						instance = sub_page[0];
+						init_opts = [this.getSiOpts(), sub_page[1]];
+					} else {
+						instance = sub_page;
+					}
 				}
+			}
+			if (instance && init_opts){
+				this.useMotivator(instance, function(instance) {
+					instance.init.apply(instance, init_opts);
+				});
 			}
 		}
 		
-		if (instance && init){
-			instance.initOnce();
-		}
+		
 		return instance;
 	},
 	preloadNestings: function(array) {

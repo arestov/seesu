@@ -54,7 +54,7 @@ SongsList.extendTo(VkSongList, {
 			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
 		};
-		this._super(opts);
+		this._super.apply(this, arguments);
 
 		//var user_id = params.vk_userid;
 		
@@ -139,7 +139,7 @@ var VkUserTracks = function() {};
 BrowseMap.Model.extendTo(VkUserTracks, {
 	model_name: 'listoflists',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.sub_pa_params = {
 			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
@@ -188,7 +188,7 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 		}
 	},
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		var data = params.data;
 		this.mapStates(this.init_stmp, data, true);
 		this.initStates();
@@ -209,7 +209,7 @@ var VKFriendsList = function(){};
 LoadableList.extendTo(VKFriendsList, {
 	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		connectUserid.call(this, params);
 		this.sub_pa_params = {
 			vk_userid: params.vk_userid,
@@ -217,25 +217,12 @@ LoadableList.extendTo(VKFriendsList, {
 		};
 		this.initStates();
 	},
-	friendsParser: function(r, field_name) {
-		var result = [];
-		var array = spv.toRealArray(spv.getTargetField(r, field_name));
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			result.push(cur);
-		}
-		return result;
-	},
 	itemConstr: VkUserPreview,
 	makeDataItem:function(data) {
-		var item = new this.itemConstr();
-		item.init({
-			map_parent: this,
-			app: this.app
-		}, spv.cloneObj({
+		return this.initSi(this.itemConstr, spv.cloneObj({
 			data: data
 		}, this.sub_pa_params));
-		return item;
+
 	},
 	main_list_name: 'list_items',
 	model_name: 'vk_users',

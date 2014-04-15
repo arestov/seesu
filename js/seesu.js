@@ -863,6 +863,9 @@ AppModel.extendTo(SeesuApp, {
 			console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
 
 		});
+	},
+	handleNetworkSideData: function(source_name, ns, data) {
+		console.log(source_name, ns, data);
 	}
 
 });

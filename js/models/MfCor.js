@@ -180,7 +180,7 @@ provoda.HModel.extendTo(MfCor, {
 	},
 
 	init: function(opts, file) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.files_investg = null;
 		this.last_search_opts = null;
 		this.file = null;

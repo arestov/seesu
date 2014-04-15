@@ -82,7 +82,9 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (omo.image_url){
 				this.init_states['image_url'] = {url: omo.image_url};
 			}
-			if (omo.lfm_image){
+			if (omo.lfm_img) {
+				spec_image_wrap = omo.lfm_img;
+			} else if (omo.lfm_image){
 				spec_image_wrap = this.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
 				//this.updateState('lfm_image', omo.lfm_image);
 			}

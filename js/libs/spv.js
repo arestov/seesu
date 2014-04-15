@@ -1024,7 +1024,7 @@ var handlePropsMapScope = function(spec_data, cur, objects_list, scope, converte
 		//cur.map_opts.parts_map[prop_name];
 		var map_opts = cur.map_opts.parts_map[prop_name];
 
-		var result_value = map_opts.not_array ? {} : [];//объект используемый потомками создаётся в контексте родителя, что бы родитель знал о потомках
+		var result_value = map_opts.is_array ? [] : {} ;//объект используемый потомками создаётся в контексте родителя, что бы родитель знал о потомках
 		spv.setTargetField(result_value_item, prop_name, result_value);//здесь родитель записывает информацию о своих потомках
 
 		objects_list.push({
@@ -1045,7 +1045,7 @@ var executeMap = function(map, data, spec_data, converters) {
 		map_opts: map,
 		parent_data: data,
 		parent_map: null,
-		writeable_array: map.not_array ? {} : [],
+		writeable_array: map.is_array ? [] : {},
 		//writeable_array - объект или массив объектов получающихся в результате парсинга одной из областей видимости
 		//должен быть предоставлен потомку родителем
 
@@ -1070,7 +1070,7 @@ var executeMap = function(map, data, spec_data, converters) {
 			continue;
 		}
 
-		if (cur.map_opts.not_array) {
+		if (!cur.map_opts.is_array) {
 			cur.data_scope = cvalue;
 			result_item = handlePropsMapScope(spec_data, cur, objects_list, cur.data_scope, converters);
 			if (typeof result_item != 'object') {
@@ -1119,6 +1119,9 @@ MorphMap.prototype.execute = function(data, spec_data, converters) {
 //console.log(data_bymap);
 
 spv.MorphMap = MorphMap;
+spv.mmap = function(config, converters) {
+	return new MorphMap(config, converters);
+};
 //i should not rewrite fields
 
 

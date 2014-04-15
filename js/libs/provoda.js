@@ -1,4 +1,4 @@
-define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate'], function(spv, angbo, $, PvTemplate){
+define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers'], function(spv, angbo, $, PvTemplate, morph_helpers){
 "use strict";
 var push = Array.prototype.push;
 var DOT = '.';
@@ -831,9 +831,10 @@ var getBoxedRAFFunc = function(win) {
 
 
 	
-var CallbacksFlow = function(win, rendering_flow) {
+var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	this.flow = [];
 	this.busy = null;
+	this.iteration_time = iteration_time || 250;
 	this.iteration_delayed = null;
 	this.flow_steps_counter = 1;
 	this.flow_steps_sorted = false;
@@ -858,7 +859,7 @@ var CallbacksFlow = function(win, rendering_flow) {
 CallbacksFlow.prototype = {
 
 	iterateCallbacksFlow: function() {
-		var start = Date.now() + 100;
+		var start = Date.now() + this.iteration_time;
 		this.iteration_delayed = false;
 		this.callbacks_busy = true;
 		while (this.flow.length){
@@ -900,7 +901,7 @@ var main_calls_flow = new CallbacksFlow(window);
 
 
 
-
+var clean_obj = {};
 
 var cached_parsed_namespace = {};
 var parseNamespace = function(namespace) {
@@ -919,6 +920,18 @@ var EventSubscribingOpts = function(short_name, namespace, cb, once, context, im
 	this.wrapper = wrapper || null;
 };
 
+var findErrorByList = function(data, errors_selectors) {
+	var i, cur, has_error;
+	for (i = 0; i < errors_selectors.length; i++) {
+		cur = errors_selectors[i];
+		has_error = spv.getTargetField(data, cur);
+		if (has_error){
+			break;
+		}
+	}
+	return has_error;
+};
+
 var FastEventor = function(context) {
 	this.sputnik = context;
 	this.subscribes = {};
@@ -929,6 +942,7 @@ var FastEventor = function(context) {
 	}
 	this.requests = {};
 	this.mapped_reqs = this.sputnik.req_map ? {} : null;
+	this.nesting_requests = this.sputnik.has_reqnest_decls ? {} : null;
 };
 FastEventor.prototype = {
 	_pushCallbackToStack: function(opts) {
@@ -1376,11 +1390,35 @@ FastEventor.prototype = {
 
 		var store = this.mapped_reqs[selected_map_num];
 
-		store.process = true;
+		
 		states_list = selected_map[0];
 		this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
-		var send = selected_map[2], parse = selected_map[1], errors_selectors = selected_map[3];
-		var request = send.call(this.sputnik, {has_error: store.error});
+		var parse = selected_map[1], send_declr = selected_map[2];
+		var network_api = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(this.sputnik, {has_error: store.error}),
+			non_standart_api_opts = send_declr[3];
+
+		if (typeof network_api == 'string') {
+			network_api = spv.getTargetField(this.sputnik.app, network_api);
+		} else if (typeof network_api == 'function') {
+			network_api = network_api.call(this.sputnik);
+		}
+
+		if (!network_api.errors_fields && !network_api.checkResponse) {
+			throw new Error('provide a way to detect errors!');
+		}
+
+		if (!non_standart_api_opts) {
+			if (!api_args[2]) {
+				api_args[2] = {
+					nocache: store.error
+				};
+			} else {
+			}
+		}
+
+		store.process = true;
+
+		var request = network_api[ api_method ].apply(network_api, api_args);
 
 		var _this = this;
 		request
@@ -1392,41 +1430,34 @@ FastEventor.prototype = {
 					store.error = true;
 				})
 				.done(function(r){
-					var has_error;
+					var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
 					var i;
-					for (i = 0; i < errors_selectors.length; i++) {
-						var cur = errors_selectors[i];
-						has_error = spv.getTargetField(r, cur);
-						if (has_error){
-							break;
-						}
-					}
 					if (has_error){
 						store.error = true;
 					} else {
-						var result = parse.call(_this.sputnik, r);
+						var result = parse.call(_this.sputnik, r, null, morph_helpers);
 						if (result) {
+							var result_states;
 
 							if (Array.isArray(result)) {
 								if (result.length != states_list.length) {
 									throw new Error('values array does not match states array');
 								}
-								
 
-								var result_states = {};
+								result_states = {};
 								for (i = 0; i < states_list.length; i++) {
-									result_states[ states_list[i] ] = result[i];
+									result_states[ states_list[i] ] = result[ i ];
 								}
-								_this.sputnik.updateManyStates(result_states);
+
 							} else if (typeof result == 'object') {
 								for (i = 0; i < states_list.length; i++) {
 									if (!result.hasOwnProperty(states_list[i])) {
 										throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
 									}
 								}
-								_this.sputnik.updateManyStates(result);
+								result_states = result;
 							}
-							
+							_this.sputnik.updateManyStates( result_states );
 
 
 							store.error = false;
@@ -1450,6 +1481,161 @@ FastEventor.prototype = {
 			
 		}
 		return loading_marks;
+	},
+	requestNesting: function(dclt, nesting_name) {
+		if (!dclt) {
+			return;
+		}
+
+		if (!this.nesting_requests[ nesting_name ]) {
+			this.nesting_requests[ nesting_name ] = {
+				//has_items: false,
+				has_all_items: false,
+				last_page: 0,
+				error: false,
+				process: false
+			};
+		}
+
+		var store = this.nesting_requests[ nesting_name ];
+		if (store.process || store.has_all_items) {
+			return;
+		}
+
+		var is_main_list = nesting_name == this.sputnik.main_list_name;
+
+		this.sputnik.updateState('loading_nesting_' + nesting_name, true);
+		if (is_main_list) {
+			this.sputnik.updateState('main_list_loading', true);
+		}
+		var side_data_parsers = dclt[0][2];
+		var parse_items = dclt[0][0], parse_serv = dclt[0][1], send_declr = dclt[1];
+		var supports_paging = !!parse_serv;
+		var paging_opts = this.sputnik.getPagingInfo(nesting_name);
+
+		var network_api = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(this.sputnik, {paging: paging_opts, has_error: store.error}),
+			non_standart_api_opts = send_declr[3];
+
+		if (typeof network_api == 'string') {
+			network_api = spv.getTargetField(this.sputnik.app, network_api);
+		} else if (typeof network_api == 'function') {
+			network_api = network_api.call(this.sputnik);
+		}
+		var source_name = network_api.source_name;
+
+		
+
+		if (!network_api.errors_fields && !network_api.checkResponse) {
+			throw new Error('provide a way to detect errors!');
+		}
+
+		if (!non_standart_api_opts) {
+			if (!api_args[2]) {
+				api_args[2] = {
+					nocache: store.error,
+					paging: supports_paging && paging_opts
+				};
+			} else {
+			}
+		}
+
+		store.process = true;
+
+		var request = network_api[ api_method ].apply(network_api, api_args);
+
+		var _this = this;
+		request
+				.always(function() {
+					store.process = false;
+					_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
+					if (is_main_list) {
+						_this.sputnik.updateState('main_list_loading', false);
+					}
+					//_this.sputnik.updateManyStates(_this.makeLoadingMarks(states_list, false));
+				})
+				.fail(function(){
+					store.error = true;
+				})
+				.done(function(r){
+					var sputnik = _this.sputnik;
+					var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
+
+					if (has_error){
+						store.error = true;
+					} else {
+						var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers);
+						var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
+						
+				
+
+						if (!supports_paging) {
+							store.has_all_items = true;
+							sputnik.updateState("has_loader", false);
+						} else {
+							var has_more_data;
+							if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
+								if (!isNaN(serv_data.total_pages_num)) {
+									if ( (paging_opts.current_length + items.length) < serv_data.total && serv_data.total > paging_opts.page_limit) {
+										has_more_data = true;
+									}
+								} else {
+									if (serv_data.total_pages_num == serv_data.page_num) {
+										has_more_data = true;
+									}
+								}
+
+							} else {
+								has_more_data = items.length == sputnik.page_limit;
+							}
+
+
+
+							if (!has_more_data) {
+								store.has_all_items = true;
+								sputnik.updateState("has_loader", false);
+							}
+						}
+						items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
+
+						sputnik.nextTick(sputnik.insertDataAsSubitems, [nesting_name, items, serv_data], true);
+
+
+						if (!sputnik.loaded_nestings_items[nesting_name]) {
+							sputnik.loaded_nestings_items[nesting_name] = 0;
+						}
+						sputnik.loaded_nestings_items[nesting_name] += items.length;
+
+						if (side_data_parsers) {
+							for (var i = 0; i < side_data_parsers.length; i++) {
+								sputnik.nextTick(
+									_this.sputnik.handleNetworkSideData, [
+										source_name,
+										side_data_parsers[i][0],
+										side_data_parsers[i][1].call(sputnik, r, paging_opts, morph_helpers)
+									], true);
+
+							}
+
+						}
+
+
+						//сделать выводы о завершенности всех данных
+					}
+				});
+
+		this.addRequest(request);
+		return request;
+
+		/*
+		есть ли декларация
+		все ли возможные данные получены
+		в процессе запроса (пока можно запрашивать в один поток)
+
+
+		маркировка ошибок с прошлых запросов не участвует в принятиях решений, но используется для отказа от кеша при новых запросах
+
+
+		*/
 	}
 
 };
@@ -1482,8 +1668,9 @@ spv.Class.extendTo(provoda.Eventor, {
 		var old_value = item.current_motivator;
 		motivator = motivator || this.current_motivator;
 		item.current_motivator = motivator;
-		fn.call(this, item);
+		var result = fn.call(this, item);
 		item.current_motivator = old_value;
+		return result;
 	},
 	hndMotivationWrappper: hndMotivationWrappper,
 	nextTick: function(fn, args, use_current_motivator) {
@@ -1522,6 +1709,9 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	requestState: function() {
 		return this.evcompanion.requestState.apply(this.evcompanion, arguments);
+	},
+	requestNesting: function() {
+		return this.evcompanion.requestNesting.apply(this.evcompanion, arguments);
 	}
 });
 
@@ -1544,7 +1734,16 @@ var reversedIterateChList = function(changes_list, context, cb) {
 	}
 };
 
-
+var hasPrefixedProps = function(props, prefix) {
+	var has_prefixed;
+	for (var prop_name in props) {
+		if (props.hasOwnProperty(prop_name) && prop_name.indexOf(prefix) === 0){
+			has_prefixed = true;
+			break;
+		}
+	}
+	return has_prefixed;
+};
 
 var std_event_opt = {force_async: true};
 
@@ -1669,7 +1868,33 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (this.collectNestingsDeclarations) {
 			this.collectNestingsDeclarations(props);
 		}
+
+		if (this.changeDataMorphDeclarations) {
+			this.changeDataMorphDeclarations(props);
+		}
+
+		
+		for (var i = 0; i < this.xxxx_morph_props.length; i++) {
+			var cur = this.xxxx_morph_props[i];
+			var cur_name = Array.isArray(cur) ? cur[0] : cur;
+			var subfield = Array.isArray(cur) && cur[1];
+			if (props.hasOwnProperty(cur_name)) {
+				if (typeof this[cur_name] != 'function' && this[cur_name] !== true) {
+					var obj = {
+						props_map: this[cur_name]
+					};
+					if (subfield) {
+						obj.source = subfield;
+					}
+					this[cur_name] = spv.mmap(obj);
+				}
+				
+			}
+		}
+
+		
 	},
+	xxxx_morph_props: [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'],
 	hndExpandViewTree: function(e) {
 		if (!e.value) {
 			return;
@@ -2006,12 +2231,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (this.hasOwnProperty('complex_states')){
 			need_recalc = true;
 		} else {
-			for (var prop in props){
-				if (props.hasOwnProperty(prop) && prop.indexOf('compx-') === 0){
-					need_recalc = true;
-					break;
-				}
-			}
+			need_recalc = hasPrefixedProps(props, 'compx-');
 		}
 		if (!need_recalc){
 			return;
@@ -2041,13 +2261,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	collectRegFires: function(props) {
 		var need_recalc = false, prop;
-	
-		for (prop in props){
-			if (props.hasOwnProperty(prop) && prop.indexOf('regfr-') === 0){
-				need_recalc = true;
-				break;
-			}
-		}
+		
+
+		need_recalc = hasPrefixedProps(props, 'regfr-');
+
 		
 		if (!need_recalc){
 			return;
@@ -2402,16 +2619,14 @@ var getMDOfReplace = function(){
 	return this.md;
 };
 
+
+
+
 var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, {
 	collectNestingsDeclarations: function(props) {
-		var need_recalc = false, prop;
-		for (prop in props){
-			if (props.hasOwnProperty(prop) && prop.indexOf('nest-') === 0){
-				need_recalc = true;
-				break;
-			}
-		}
+		var need_recalc = hasPrefixedProps(props, 'nest-'), prop;
+
 		if (!need_recalc){
 			return;
 		}
@@ -2431,6 +2646,45 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 		this.nestings_declarations = result;
 
+	},
+	changeDataMorphDeclarations: function(props) {
+		var i, cur;
+		if (props.hasOwnProperty('req_map')) {
+			for (i = 0; i < props.req_map.length; i++) {
+				cur = props.req_map[i][1];
+				if (typeof cur != 'function') {
+					props.req_map[i][1] = spv.mmap( cur );
+				}
+				
+			}
+		}
+
+		var has_reqnest_decls = hasPrefixedProps(props, 'nest_req-');
+
+		if (has_reqnest_decls) {
+			this.has_reqnest_decls = true;
+			for (var prop_name in props) {
+				if (props.hasOwnProperty(prop_name) && prop_name.indexOf('nest_req-') === 0) {
+					cur = props[ prop_name ];
+					if (typeof cur[0][0] != 'function') {
+						cur[0][0] = spv.mmap(cur[0][0]);
+					}
+					if (cur[0][1] && cur[0][1] !== true && typeof cur[0][1] != 'function') {
+						cur[0][1] = spv.mmap(cur[0][1]);
+					}
+					var array = cur[0][2];
+					if (array) {
+						for (i = 0; i < array.length; i++) {
+							var spec_cur = array[i];
+							if (typeof spec_cur[1] != 'function') {
+								spec_cur[1] = spv.mmap(spec_cur[1]);
+							}
+						}
+					}
+					
+				}
+			}
+		}
 	},
 	'regfr-childchev': {
 		test: function(namespace) {
@@ -2456,7 +2710,25 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	getStrucParent: function() {
 		return this.map_parent;
 	},
+	getSiOpts: function() {
+		if (!this.initsbi_opts) {
+			this.initsbi_opts = {
+				map_parent: this,
+				app: this.app
+			};
+		}
+		return this.initsbi_opts;
+	},
+	initSi: function(Constr, data, params) {
+		var instance = new Constr();
+		var initsbi_opts = this.getSiOpts();
+		
+		this.useMotivator(instance, function(instance) {
+			instance.init(initsbi_opts, data, params);
+		});
 
+		return instance;
+	},
 	init: function(opts){
 		if (opts && opts.app){
 			this.app = opts.app;
@@ -2479,7 +2751,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.md_replacer = null;
 		this.mpx = null;
-
+		if (!this.initsbi_opts) {
+			this.initsbi_opts = null;
+		}
 		//
 		
 		this.prsStCon.connect.parent(this);
@@ -2808,7 +3082,6 @@ provoda.Model.extendTo(provoda.HModel, {
 			this.map_parent = null;
 		}
 		
-		//this.init_opts = null;
 		this.pmd_switch = null;
 		
 
@@ -2826,20 +3099,13 @@ provoda.Model.extendTo(provoda.HModel, {
 				}
 			}
 		}
-		this._super(opts);
+		this._super.apply(this, arguments);
 	},
 	mapStates: function(states_map, donor, acceptor) {
 		if (acceptor && typeof acceptor == 'boolean'){
 			acceptor = this.init_states;
 		}
 		return spv.mapProps(states_map, donor, acceptor);
-	},
-	initOnce: function() {
-		if (this.init_opts){
-			this.init.apply(this, this.init_opts);
-			this.init_opts = null;
-		}
-		return this;
 	},
 	initStates: function(more_states) {
 		if (more_states) {
@@ -3733,12 +3999,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (this.hasOwnProperty('state_change')){
 			need_recalc = true;
 		} else {
-			for (prop in props){
-				if (props.hasOwnProperty(prop) && prop.indexOf('stch-') === 0){
-					need_recalc = true;
-					break;
-				}
-			}
+			need_recalc = hasPrefixedProps(props, 'stch-');
+
 		}
 		if (!need_recalc){
 			return;

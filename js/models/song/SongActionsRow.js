@@ -12,7 +12,7 @@ var LfmLoveIt = function(opts, mo) {
 
 LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
 	init: function(opts, mo) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.song = mo;
 		this.app = mo.app;
 		this.setRequestDesc(localize('lastfm-loveit-access'));

@@ -1,12 +1,12 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './user_music_lfm', './Cloudcasts'],
-function(provoda, spv, app_serv, BrowseMap, user_music_lfm, Cloudcasts) {
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './user_music_lfm', './Cloudcasts', 'js/modules/declr_parsers'],
+function(provoda, spv, app_serv, BrowseMap, user_music_lfm, Cloudcasts, declr_parsers) {
 'use strict';
 var localize = app_serv.localize;
 
 var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.initStates(params);
 	},
 	getRqData: function() {
@@ -15,21 +15,17 @@ user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 			track: this.state('track_name')
 		};
 	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		return this.sendLFMDataRequest(paging_opts, request_info, {
-			method: 'track.getTopFans',
-			field_name: 'topfans.user',
-			data: this.getRqData(),
-			parser: this.friendsParser,
-			no_paging: true,
-			disallow_paging: true
-		});
-	},
+	'nest_req-list_items': [
+		declr_parsers.lfm.getUsers('topfans', true),
+		['lfm', 'get', function() {
+			return ['track.getTopFans', this.getRqData()];
+		}]
+	],
 	beforeReportChange: function(list) {
 		list.sort(function(a,b ){return spv.sortByRules(a, b, [
 			{
 				field: function(item) {
-					var image = item.state('lfm_image');
+					var image = item.state('lfm_img');
 					image = image && (image.lfm_id || image.url);
 					if (image && image.search(/gif$/) == -1){
 						return 1;
@@ -41,6 +37,7 @@ user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 				}
 			}
 		]);});
+		return list;
 	}
 });
 
@@ -48,7 +45,7 @@ var SongCard = function() {};
 BrowseMap.Model.extendTo(SongCard, {
 	model_name: 'songcard',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.sub_pa_params = {
 			artist_name: params.artist_name,
 			track_name: params.track_name
