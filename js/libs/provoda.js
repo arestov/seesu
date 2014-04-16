@@ -1,4 +1,4 @@
-define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers'], function(spv, angbo, $, PvTemplate, morph_helpers){
+define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers', 'hex_md5'], function(spv, angbo, $, PvTemplate, morph_helpers, hex_md5){
 "use strict";
 var push = Array.prototype.push;
 var DOT = '.';
@@ -900,6 +900,60 @@ provoda.CallbacksFlow = CallbacksFlow;
 var main_calls_flow = new CallbacksFlow(window);
 
 
+var requests_by_declarations = {};
+
+var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
+
+	var api_name = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(sputnik, opts),
+		non_standart_api_opts = send_declr[3];
+
+	var network_api;
+	if (typeof api_name == 'string') {
+		network_api = spv.getTargetField(sputnik.app, api_name);
+	} else if (typeof api_name == 'function') {
+		network_api = api_name.call(sputnik);
+	}
+
+	if (!network_api.errors_fields && !network_api.checkResponse) {
+		throw new Error('provide a way to detect errors!');
+	}
+
+	var manual_nocache = api_args[2] && api_args[2].nocache;
+
+	if (!non_standart_api_opts) {
+		if (!api_args[2]) {
+			api_args[2] = network_api_opts;
+		} else {
+		}
+	}
+	if (typeof api_name != 'string') {
+		api_name = Math.random();
+	}
+	var cache_key;
+	if (!non_standart_api_opts && !manual_nocache) {
+		var big_string = JSON.stringify([api_name, api_method, api_args]);
+		cache_key = hex_md5(big_string);
+		if (requests_by_declarations[cache_key]) {
+			return requests_by_declarations[cache_key];
+		}
+
+	}
+	
+
+
+	var request = network_api[ api_method ].apply(network_api, api_args);
+	request.network_api = network_api;
+	if (cache_key) {
+		requests_by_declarations[cache_key] = request;
+		request.always(function() {
+			delete requests_by_declarations[cache_key];
+		});
+	}
+
+	return request;
+};
+
+
 
 var clean_obj = {};
 
@@ -1394,32 +1448,16 @@ FastEventor.prototype = {
 		states_list = selected_map[0];
 		this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
 		var parse = selected_map[1], send_declr = selected_map[2];
-		var network_api = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(this.sputnik, {has_error: store.error}),
-			non_standart_api_opts = send_declr[3];
+		
 
-		if (typeof network_api == 'string') {
-			network_api = spv.getTargetField(this.sputnik.app, network_api);
-		} else if (typeof network_api == 'function') {
-			network_api = network_api.call(this.sputnik);
-		}
+		
 
-		if (!network_api.errors_fields && !network_api.checkResponse) {
-			throw new Error('provide a way to detect errors!');
-		}
-
-		if (!non_standart_api_opts) {
-			if (!api_args[2]) {
-				api_args[2] = {
-					nocache: store.error
-				};
-			} else {
-			}
-		}
+		var request = getRequestByDeclr(send_declr, this.sputnik, 
+			{has_error: store.error},
+			{nocache: store.error});
+		var network_api = request.network_api;
 
 		store.process = true;
-
-		var request = network_api[ api_method ].apply(network_api, api_args);
-
 		var _this = this;
 		request
 				.always(function() {
@@ -1513,36 +1551,24 @@ FastEventor.prototype = {
 		var supports_paging = !!parse_serv;
 		var paging_opts = this.sputnik.getPagingInfo(nesting_name);
 
-		var network_api = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(this.sputnik, {paging: paging_opts, has_error: store.error}),
-			non_standart_api_opts = send_declr[3];
+		var network_api_opts = {
+			nocache: store.error
+		};
 
-		if (typeof network_api == 'string') {
-			network_api = spv.getTargetField(this.sputnik.app, network_api);
-		} else if (typeof network_api == 'function') {
-			network_api = network_api.call(this.sputnik);
+		if (supports_paging) {
+			network_api_opts.paging = paging_opts;
 		}
-		var source_name = network_api.source_name;
-
 		
 
-		if (!network_api.errors_fields && !network_api.checkResponse) {
-			throw new Error('provide a way to detect errors!');
-		}
+		//var source_name = network_api.source_name;
 
-		if (!non_standart_api_opts) {
-			if (!api_args[2]) {
-				api_args[2] = {
-					nocache: store.error,
-					paging: supports_paging && paging_opts
-				};
-			} else {
-			}
-		}
+		var request = getRequestByDeclr(send_declr, this.sputnik,
+			{has_error: store.error, paging: paging_opts},
+			network_api_opts);
+		var network_api = request.network_api;
+
 
 		store.process = true;
-
-		var request = network_api[ api_method ].apply(network_api, api_args);
-
 		var _this = this;
 		request
 				.always(function() {

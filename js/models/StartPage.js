@@ -83,7 +83,7 @@ BrowseMap.Model.extendTo(StartPage, {
 			});
 		},
 		'cloudcasts': function(mixcloud_urlpiece) {
-			var full_name = 'blogs/' +  this.app.encodeURLPart(mixcloud_urlpiece);
+			var full_name = 'cloudcasts/' +  this.app.encodeURLPart(mixcloud_urlpiece);
 			return this.subPageInitWrap(Cloudcasts, full_name, {
 				key: mixcloud_urlpiece
 			});

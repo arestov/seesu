@@ -121,6 +121,7 @@ spv.Class.extendTo(MixcloudApi, {
 		this.queue = opts.queue;
 		this.crossdomain = opts.crossdomain;
 	},
+	errors_fields: ['error'],
 	thisOriginAllowed: true,
 	cache_namespace: 'mixcloud',
 	get: function(path, params, options) {
@@ -131,9 +132,14 @@ spv.Class.extendTo(MixcloudApi, {
 		}
 
 		options = options || {};
-		options.cache_key = options.cache_key || hex_md5("https://api.mixcloud.com/" + path + spv.stringifyParams(params));
 
-		var	params_full = params || {};
+		params = params || {};
+		if (options && options.paging) {
+			options.paging.limit = options.paging.page_limit;
+			options.paging.offset = (options.paging.next_page - 1) * options.paging.page_limit;
+		}
+
+		options.cache_key = options.cache_key || hex_md5("https://api.mixcloud.com/" + path + spv.stringifyParams(params));
 
 		//cache_ajax.get('vk_api', p.cache_key, function(r){
 
@@ -141,7 +147,7 @@ spv.Class.extendTo(MixcloudApi, {
 			url: "https://api.mixcloud.com/" + path,
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
-			data: params_full,
+			data: params,
 			timeout: 20000,
 			resourceCachingAvailable: true,
 			afterChange: function(opts) {

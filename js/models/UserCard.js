@@ -100,7 +100,7 @@ BrowseMap.Model.extendTo(UserCard, {
 		
 		return this;
 	},
-	'nest-users_acqutes':['acquaintances'],
+	'nest-users_acqutes': ['acquaintances'],
 	'stch-mp_has_focus': function(state) {
 		if (state){
 			var list_to_preload = [

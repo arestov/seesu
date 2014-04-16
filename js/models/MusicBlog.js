@@ -6,33 +6,26 @@ SongsList.extendTo(MusicBlogSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.initStates(params);
-	},
-	datamorph_map: new spv.MorphMap({
-		is_array: true,
-		source: 'songs',
-		props_map: {
-			artist: 'artist',
-			track: 'title'
-		}
-	}),
-	getRqData: function(paging_opts) {
-		return {
-			results: paging_opts.page_limit,
-			start: paging_opts.next_page
-		};
-	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
 
-		request_info.request = this.app.exfm.get(
-			'site/' + encodeURIComponent(this.state('url')) + '/songs',
-			this.getRqData(paging_opts)
-		)
-			.done(function(r){
-				var list = _this.datamorph_map(r);
-				_this.putRequestedData(request_info.request, list, r.error);
-			});
-	}
+	},
+	
+	'nest_req-songs-list': [
+		[{
+			is_array: true,
+			source: 'songs',
+			props_map: {
+				artist: 'artist',
+				track: 'title'
+			}
+		}, {
+			props_map: {
+				total: null
+			}
+		}],
+		['exfm', 'get', function() {
+			return ['site/' + encodeURIComponent(this.state('url')) + '/songs', null];
+		}]
+	]
 });
 
 var music_blog_sps = ['songs'];
@@ -44,6 +37,11 @@ BrowseMap.Model.extendTo(MusicBlog, {
 
 		this.initStates(params);
 		this.sub_pa_params = {url: params.blog_url};
+		this.wch(this, 'mp_show', function(e) {
+			if (e.value) {
+				this.requestState('nav_title');
+			}
+		});
 
 	},
 	'nest-lists_list':
@@ -58,7 +56,20 @@ BrowseMap.Model.extendTo(MusicBlog, {
 	},
 	addRawData: function(data) {
 		this.updateState('nav_title', data.nav_title);
-	}
+	},
+	req_map: [
+		[
+			['nav_title'],
+			{
+				props_map: {
+					'nav_title': 'site.title'
+				}
+			},
+			['exfm', 'get', function() {
+				return ['site/' + encodeURIComponent(this.state('blog_url')), null];
+			}]
+		]
+	]
 });
 
 var BlogsList = function() {};
@@ -73,38 +84,25 @@ LoadableList.extendTo(BlogsList, {
 		item.addRawData(data);
 		return item;
 	},
-	datamorph_map: new spv.MorphMap({
-		is_array: true,
-		source: 'sites',
-		props_map: {
-			nav_title: 'title',
-			url: 'url'
-		}
-	}),
-	getRqData: function(paging_opts) {
-		return {
-			results: paging_opts.page_limit,
-			start: paging_opts.next_page
-		};
-	},
-/*	'nest_req-lists_list': [
-		[{
 
-		}, true],
+	'nest_req-lists_list': [
+		[{
+			is_array: true,
+			source: 'sites',
+			props_map: {
+				nav_title: 'title',
+				url: 'url'
+			}
+		}, {
+			props_map: {
+				total: null
+			}
+		}],
 		['exfm', 'get', function() {
 			return [this.api_url_part, null];
 		}]
 
-	],*/
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-
-		request_info.request = this.app.exfm.get(this.api_url_part, this.getRqData(paging_opts))
-			.done(function(r){
-				var list = _this.datamorph_map(r);
-				_this.putRequestedData(request_info.request, list, r.error);
-			});
-	}
+	]
 });
 
 var FeaturedBlogs = function() {};

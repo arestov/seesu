@@ -15,39 +15,38 @@ SongsList.extendTo(Cloudcast, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.initStates(params);
+		this.wch(this, 'mp_show', function(e) {
+			if (e.value) {
+				this.requestState('nav_title');
+			}
+		});
 	},
-	datamorph_map: new spv.MorphMap({
-		is_array: true,
-		source: 'sections',
-		props_map: {
-			artist: 'track.artist.name',
-			track: 'track.name'
-		}
-	}),
-	getRqData: function(paging_opts) {
-
-		return {
-			limit: paging_opts.page_limit,
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		};
-	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-		request_info.request = this.app.mixcloud.get(this.state('key'), this.getRqData(paging_opts), {context: this})
-			.done(function(r){
-				var title = spv.getTargetField(r, 'name');
-				if (title) {
-					_this.updateState('nav_title', title);
+	req_map: [
+		[
+			['nav_title'],
+			{
+				props_map: {
+					nav_title: 'name'
 				}
-				
-				var list = _this.datamorph_map(r);
-				_this.putRequestedData(request_info.request, list, r.error);
-				if (!r.error) {
-					_this.setLoaderFinish();
-				}
-			});
-			
-	},
+			},
+			['mixcloud', 'get', function() {
+				return [this.state('key')];
+			}]
+		]
+	],
+	'nest_req-songs-list': [
+		[{
+			is_array: true,
+			source: 'sections',
+			props_map: {
+				artist: 'track.artist.name',
+				track: 'track.name'
+			}
+		}],
+		['mixcloud', 'get', function() {
+			return [this.state('key')];
+		}]
+	],
 	addRawData: function(data) {
 		this.updateState('nav_title', data.nav_title);
 	}
@@ -75,22 +74,19 @@ LoadableList.extendTo(CloudcastsList, {
 			key: 'key'
 		}
 	}),
-	getRqData: function(paging_opts) {
-
-		return {
-			limit: paging_opts.page_limit,
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		};
-	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-		request_info.request = this.app.mixcloud.get(this.getNDataPath(), this.getRqData(paging_opts), {context: this})
-			.done(function(r){
-				var list = _this.datamorph_map(r);
-				_this.putRequestedData(request_info.request, list, r.error);
-			});
-			
-	}
+	'nest_req-lists_list': [
+		[{
+			is_array: true,
+			source: 'data',
+			props_map: {
+				nav_title: 'name',
+				key: 'key'
+			}
+		}, true],
+		['mixcloud', 'get', function() {
+			return [this.getNDataPath(), null];
+		}]
+	]
 
 });
 var getNDataPathTrack = function() {
