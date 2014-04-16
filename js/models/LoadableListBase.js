@@ -20,13 +20,12 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	init: function(opts) {
 		this._super.apply(this, arguments);
 		this.loadable_lists = {};
-		this.request_info = null;
 		this.loadable_lists[ this.main_list_name ] = [];
 		this.updateNesting( this.main_list_name, []);
 
-		var has_loader = !!(this.sendMoreDataRequest || this[ 'nest_req-' + this.main_list_name]);
+		var has_loader = !!this[ 'nest_req-' + this.main_list_name];
 		if (has_loader){
-			this.updateState("has_loader", true);
+			this.updateState("has_data_loader", true);
 		}
 		this.wch(this, 'mp_has_focus', this.hndSPlOnFocus);
 		this.on('state_change-more_load_available', this.hndSPlOnLoadAllowing);
@@ -43,14 +42,22 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			return main_list_loading || prevw_loading;
 		}
 	},
+	'compx-can_load_data': [
+		['has_data_loader', 'loader_disallowed', 'has_no_access'],
+		function(has_data_loader, loader_disallowed, has_no_access) {
+			return has_data_loader && !loader_disallowed  && !has_no_access;
+		}
+	],
+	'compx-can_load_more': [
+		['can_load_data', 'all_data_loaded'],
+		function(can_load_data, all_data_loaded) {
+			return can_load_data && !all_data_loaded;
+		}
+	],
 	'compx-more_load_available': {
-		depends_on: ["has_loader", "list_loading", "loader_disallowed", 'has_no_access'],
-		fn: function(can_load_more, loading, loader_disallowed, has_no_access) {
-			if (can_load_more){
-				return !loader_disallowed && !has_no_access && !loading;
-			} else {
-
-			}
+		depends_on: ['can_load_more', "list_loading"],
+		fn: function(can_load_more, list_loading) {
+			return can_load_more && !list_loading;
 		}
 	},
 	handleNetworkSideData: function(source_name, ns, data) {
@@ -88,54 +95,14 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			this.requestMoreData();
 		}
 	},
-	setLoader: function(cb, trigger) {
-		this.updateState("has_loader", true);
-		this.sendMoreDataRequest = cb;
-
-		if (trigger){
-			this.requestMoreData();
-		}
-
-	},
 	requestMoreData: function() {
 		if (this[ 'nest_req-' + this.main_list_name ]) {
 			this.requestNesting( this[ 'nest_req-' + this.main_list_name ], this.main_list_name );
-		} else if (this.state("has_loader") && this.sendMoreDataRequest){
-			if (!this.request_info || this.request_info.done){
-				this.updateState('main_list_loading', true);
-				var request_info = {
-					request: null,
-					done: null
-				};
-				this.sendMoreDataRequest.call(this, this.getPagingInfo(), request_info);
-				this.request_info = request_info;
-				if (!this.request_info.request){
-					throw new Error('give me request');
-				} else {
-					var _this = this;
-					this.addRequest(this.request_info.request);
-					this.request_info.request
-						.fail(function(){
-							_this.requestComplete(request_info.request, true);
-						}).always(function() {
-							request_info.done = true;
-						});
-
-
-					
-				}
-			}
-			//this.trigger("load-more");
 		}
 	},
-	setLoaderFinish: function() {
-		this.updateState("has_loader", false);
-	},
-
-	insertDataAsSubitems: function(nesting_name, data_list, opts) {
+	insertDataAsSubitems: function(nesting_name, data_list) {
 		var items_list = [];
 		if (data_list && data_list.length){
-
 			var mlc_opts = this.getMainListChangeOpts();
 			for (var i = 0; i < data_list.length; i++) {
 				if (this.isDataItemValid && !this.isDataItemValid(data_list[i])) {
@@ -145,36 +112,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 				items_list.push(item);
 			}
 			this.dataListChange(mlc_opts, items_list);
-			
-			
-
 		}
-		
-	},
-	tickRequestedData: function(request, data_list, error) {
-		//console.profile('data list inject');
-		if (!this.request_info || this.request_info.request == request){
-			if (!error) {
-
-				if (!this.loaded_nestings_items[this.main_list_name]) {
-					this.loaded_nestings_items[this.main_list_name] = 0;
-				}
-				this.loaded_nestings_items[this.main_list_name] += data_list.length;
-
-				this.insertDataAsSubitems(this.main_list_name, data_list);
-			}
-			
-			if (!error && data_list.length < this.page_limit){
-				this.setLoaderFinish();
-			}
-			this.requestComplete(request, error);
-		}
-		//console.profileEnd();
-	},
-	putRequestedData: function(request, data_list, error) {
-		this.nextTick(this.tickRequestedData, [request, data_list, error]);
-		return this;
-
 	},
 	getRelativeRequestsGroups: function(space) {
 		var main_models = this.getNesting(this.main_list_name);
@@ -317,21 +255,6 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		this.updateNesting(nesting_name, work_array, ml_ch_opts);
 		return item;
 	},
-	requestComplete: function(request, error) {
-		if (!this.request_info || this.request_info.request == request){
-			var main_list = this.loadable_lists[ this.main_list_name ];
-
-			this.updateState('main_list_loading', false);
-			if (error && !main_list.length) {
-				this.updateState('error', true);
-			} else {
-				this.updateState('error', false);
-			}
-			this.request_info = null;
-		}
-		return this;
-	},
-
 
 	//auth things:
 

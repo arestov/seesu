@@ -303,7 +303,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 							}
 						}
 						
-					} else if (this.state('has_loader')){
+					} else if (this.state('can_load_more')){
 						this.setWaitingNextSong(mo);
 
 					} else {
@@ -585,7 +585,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 				addToArray(demonstration, v_song);
 				if (v_song.next_song){
 					addToArray(demonstration, v_song.next_song);
-				} else if (this.state('has_loader')){
+				} else if (this.state('can_load_more')){
 					addToArray(demonstration, this);
 				}
 				if (v_song.prev_song){

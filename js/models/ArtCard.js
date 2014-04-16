@@ -905,6 +905,12 @@ SongsList.extendTo(ArtistsListPlaylist, {
 			this.evcompanion.nesting_requests = {};
 		}
 	},
+	'compx-has_data_loader': [
+		['^has_data_loader'],
+		function(state) {
+			return state;
+		}
+	],
 
 	requestMoreData: function() {
 		var declr = this.map_parent[ 'nest_req-' + this.map_parent.main_list_name ];
@@ -914,10 +920,6 @@ SongsList.extendTo(ArtistsListPlaylist, {
 		} else {
 			this._super();
 		}
-	},
-	sendMoreDataRequest: function() {
-		//needs for check
-		return this.artists_list.sendMoreDataRequest.apply(this, arguments);
 	},
 	getRqData: function() {
 		return this.artists_list.getRqData.apply(this.artists_list, arguments);

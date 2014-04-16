@@ -1596,7 +1596,8 @@ FastEventor.prototype = {
 
 						if (!supports_paging) {
 							store.has_all_items = true;
-							sputnik.updateState("has_loader", false);
+
+							sputnik.updateState("all_data_loaded", true);
 						} else {
 							var has_more_data;
 							if (serv_data === true) {
@@ -1620,7 +1621,7 @@ FastEventor.prototype = {
 
 							if (!has_more_data) {
 								store.has_all_items = true;
-								sputnik.updateState("has_loader", false);
+								sputnik.updateState("all_data_loaded", true);
 							}
 						}
 						items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
@@ -1649,6 +1650,8 @@ FastEventor.prototype = {
 							}
 
 						}
+
+						
 
 
 						//сделать выводы о завершенности всех данных

@@ -271,7 +271,7 @@
 				white-space: nowrap;
 				}
 		.area_for_button .desc_prevw_list .desc_item:after{
-			content: " |";
+			content: " ";
 			visibility: hidden;
 			white-space: normal;
 			}

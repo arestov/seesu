@@ -725,7 +725,7 @@ provoda.addPrototype("SongBase",{
 		var result = [];
 		if (this.next_song){
 			result.push(this.next_song);
-		} else if (this.map_parent.state('has_loader')){
+		} else if (this.map_parent.state('has_data_loader')){
 			result.push( this.map_parent );
 		} else if ( this.next_preload_song ){
 			result.push( this.next_preload_song );
