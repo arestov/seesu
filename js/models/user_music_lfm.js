@@ -1,5 +1,5 @@
-define(['app_serv', 'js/libs/BrowseMap', './LoadableList', 'spv', './SongsList', './ArtCard', 'js/LfmAuth', 'js/modules/declr_parsers'],
-function(app_serv, BrowseMap, LoadableList, spv, SongsList, ArtCard, LfmAuth, declr_parsers) {
+define(['app_serv', 'js/libs/BrowseMap', './LoadableList', 'spv', './SongsList', './ArtCard', 'js/LfmAuth', 'js/modules/declr_parsers', 'jquery'],
+function(app_serv, BrowseMap, LoadableList, spv, SongsList, ArtCard, LfmAuth, declr_parsers, $) {
 "use strict";
 var localize = app_serv.localize;
 //
@@ -263,67 +263,71 @@ SongsList.extendTo(LfmLovedList, {
 	]
 });
 
-var RecommendatedToUserArtistsList = function() {};
-ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
+
+
+var RecommArtList = function() {};
+ArtCard.ArtistsList.extendTo(RecommArtList, {
 	page_limit: 30,
 	access_desc: localize('lastfm-reccoms-access'),
 	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
-
-
-		this.initStates();
+		this.initStates({
+			loader_disallowed: !app_serv.app_env.cross_domain_allowed
+		});
 		connectUserid.call(this, params);
 
-		if (params.lfm_userid){
-			if (this.app.env.cross_domain_allowed){
-				this.getRqData = this.getRqDataRss;
-				this.setLoader(this.loadMoreByRSS);
-			}
-		} else {
-			this.getRqData = this.getRqDataAPI;
-			this.setLoader(this.loadMoreByAPI);
-		}
 	},
-	getRqDataAPI: function() {
+	//this.app.env.cross_domain_allowed
+	getRqData: function() {
+		return this.state('userid');
+	},
+	'nest_req-artists_list': [
+		[function(xml) {
+			var data_list = [];
+			var artists = $(xml).find('channel item title');
+			if (artists && artists.length) {
+				
+				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
+					var artist = $(artists[i]).text();
+					data_list.push({
+						artist: artist
+					});
+				}
+			}
+			return data_list;
+		}],
+		[function() {
+			return {
+				get: function(url) {
+					return $.ajax({
+						url: 'http://ws.audioscrobbler.com/1.0/' + url,
+						type: "GET",
+						dataType: "xml"
+					});
+				},
+				errors_fields: []
+			};
+
+		}, 'get', function() {
+			return ['user/' + this.getRqData() + '/systemrecs.rss'];
+		}]
+	]
+});
+
+var RecommArtListForCurrentUser = function() {};
+RecommArtList.extendTo(RecommArtListForCurrentUser, {
+	getRqData: function() {
 		return {
 			sk: this.app.lfm.sk
 		};
 	},
-	getRqDataRss: function() {
-		return this.state('userid');
-	},
-	loadMoreByAPI: function(paging_opts, request_info) {
-		return this.sendLFMDataRequest(paging_opts, request_info, {
-			method: 'user.getRecommendedArtists',
-			field_name: 'recommendations.artist',
-			data: this.getRqData(),
-			parser: this.getLastfmArtistsList
-		});
-	},
-	loadMoreByRSS: function(paging_opts, request_info) {
-		var _this = this;
-		request_info.request = $.ajax({
-			url: 'http://ws.audioscrobbler.com/1.0/user/' + this.getRqData() + '/systemrecs.rss',
-			type: "GET",
-			dataType: "xml"
-		})
-			.done(function(xml) {
-				var artists = $(xml).find('channel item title');
-				if (artists && artists.length) {
-					var track_list_without_tracks = [];
-					for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-						var artist = $(artists[i]).text();
-						track_list_without_tracks.push({
-							artist: artist
-						});
-					}
-					_this.putRequestedData(request_info.request, track_list_without_tracks);
-					_this.setLoaderFinish();
-				}
-			});
-		return request_info;
-	}
+	'nest_req-artists_list': [
+		declr_parsers.lfm.getArtists('recommendations'),
+		['lfm', 'get', function() {
+			return ['user.getRecommendedArtists', this.getRqData()];
+		}]
+	]
 });
 
 
@@ -347,7 +351,13 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 		[user_artists_sp, true],
 	sub_pa: {
 		'recommended': {
-			constr: RecommendatedToUserArtistsList,
+			getConstr: function() {
+				if (this.userid) {
+					return RecommArtList;
+				} else {
+					return RecommArtListForCurrentUser;
+				}
+			},
 			getTitle: function() {
 				return this.userid ? (localize('reccoms-for') + ' ' + this.userid) : localize('reccoms-for-you');
 			}

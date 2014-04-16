@@ -975,9 +975,6 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 			}
 		}
 
-		
-
-
 		opts = opts || {};
 		if (!this.skip_map_init){
 			if (data) {
@@ -1015,8 +1012,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		if (!instance){
 			var target = this.sub_pa && this.sub_pa[name];
 			if (target){
-				var Constr = target.constr || target.getConstr.call(this);
-				instance = new Constr();
+				
 
 				/*
 				hp_bound
@@ -1029,23 +1025,32 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 				*/
 
 				var common_opts = getSPOpts(this, name);
-				var instance_data = {};
+				var pre_instance_data = {};
 				var params_from_parent = this.data_by_hp === true ? this.head_props : this.sub_pa_params;
 
 				var data_parts = [
 					params_from_parent,
-					common_opts[0],
-					instance.data_by_urlname && instance.data_by_urlname(common_opts[1])
+					common_opts[0]
 				];
 
 				for (var i = 0; i < data_parts.length; i++) {
 					if (!data_parts[i]) {
 						continue;
 					}
-					spv.cloneObj(instance_data, data_parts[i]);
+					spv.cloneObj(pre_instance_data, data_parts[i]);
 				}
+
+				var Constr = target.constr || target.getConstr.call(this, pre_instance_data);
+				instance = new Constr();
+				var instance_data = pre_instance_data;
+
+				var data_by_urlname = instance.data_by_urlname && instance.data_by_urlname(common_opts[1]);
+
+				spv.cloneObj(instance_data, data_by_urlname);
+
 				init_opts = [this.getSiOpts(), instance_data];
 
+				
 
 				this.sub_pages[name] = instance;
 			} else {

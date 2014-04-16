@@ -545,7 +545,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 			title:  localize('Top-tracks')
 		},
 		'+similar': {
-			getConstr: function(){
+			getConstr: function() {
 				return SimilarArtists;
 			},
 			getTitle: function() {
