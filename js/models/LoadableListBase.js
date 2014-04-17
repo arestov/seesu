@@ -34,7 +34,6 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 		this.excess_data_items = {};
 		this.loaded_nestings_items = {};
-		this.tumour_data_count = 0;
 	},
 	'compx-list_loading': {
 		depends_on: ['main_list_loading', 'preview_loading'],
@@ -86,8 +85,6 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	},
 	getLength: function(nesting_name) {
 		nesting_name = nesting_name || this.main_list_name;
-
-		//return this.getNesting( nesting_name ).length - this.tumour_data_count - (this.excess_data_items[ nesting_name ] && this.excess_data_items[ nesting_name ].length || 0);
 		return this.loaded_nestings_items[ nesting_name ] || 0;
 	},
 	loadStart: function() {
@@ -244,7 +241,6 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			this.excess_data_items[ nesting_name ].push(item);
 			work_array.push(item);
 		} else {
-			++this.tumour_data_count;
 			work_array.unshift(item);
 		}
 		if (this.beforeReportChange){
