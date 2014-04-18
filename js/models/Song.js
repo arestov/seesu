@@ -358,7 +358,11 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			}
 		},
 		submitNowPlaying: spv.debounce(function(){
-			var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
+			var mopla = this.getCurrentMopla();
+			if (!mopla) {
+				return;
+			}
+			var duration = Math.round(mopla.getDuration()/1000) || '';
 			if (this.app.settings['lfm-scrobbling']){
 				this.app.lfm.nowplay({
 					artist: this.artist,

@@ -64,6 +64,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	},
 	main_list_name: 'lists_list',
 	preview_mlist_name: 'preview_list',
+	preview_nesting_source: null,
 	getMainListChangeOpts: function() {},
 	page_limit: 30,
 	getPagingInfo: function(nesting_name) {

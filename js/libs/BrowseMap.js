@@ -1000,8 +1000,14 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		if (this.allow_data_init) {
 			this.updateManyStates(data);
 		}
-	},
 
+		if (this.preview_nesting_source) {
+			this.on('child_change-' + this.preview_nesting_source, function(e) {
+				this.updateNesting('preview_list', e.value);
+			});
+		}
+	},
+	preview_nesting_source: 'lists_list',
 
 	getSPI: function(name) {
 		var instance;

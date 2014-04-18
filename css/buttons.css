@@ -242,6 +242,7 @@
 		margin-bottom: 0;
 		border-color: transparent;
 		padding-bottom: 0rem;
+		min-height: 1.5rem;
 		}
 	
 	.page-scheme .area_for_button .area-button{
