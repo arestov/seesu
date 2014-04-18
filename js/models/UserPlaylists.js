@@ -9,7 +9,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		this.playlists = [];
 		this.updateNesting('lists_list', this.playlists);
 	},
-	preview_nesting_source: 'lists_list',
+	
 	savePlaylists: function(){
 		var _this = this;
 		if (this.save_timeout){clearTimeout(this.save_timeout);}
