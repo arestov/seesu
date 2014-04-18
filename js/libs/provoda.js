@@ -1560,13 +1560,13 @@ FastEventor.prototype = {
 		}
 		
 
-		//var source_name = network_api.source_name;
+		
 
 		var request = getRequestByDeclr(send_declr, this.sputnik,
 			{has_error: store.error, paging: paging_opts},
 			network_api_opts);
 		var network_api = request.network_api;
-
+		var source_name = network_api.source_name;
 
 		store.process = true;
 		var _this = this;
