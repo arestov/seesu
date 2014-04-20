@@ -49,15 +49,10 @@ LoadableList.extendTo(AlbumsList, {
 	makeDataItem: function(obj) {
 		return this.initSi(ArtistAlbumSongs, obj);
 	},
-	compareItemWithObj: function(item, data) {
-		if (item.album_artist == data.album_artist){
-			if (item.album_name == data.album_name){
-				if (item.original_artist == data.original_artist){
-					return true;
-				}
-			}
-		}
-	}
+	items_comparing_props: [
+		['album_artist', 'album_artist'],
+		['album_name', 'album_name'],
+		['original_artist', 'original_artist']]
 });
 var DiscogsAlbumSongs = function() {};
 SongsList.extendTo(DiscogsAlbumSongs, {
@@ -905,6 +900,7 @@ SongsList.extendTo(ArtistsListPlaylist, {
 			this.evcompanion.nesting_requests = {};
 		}
 	},
+	items_comparing_props: [['artist', 'artist']],
 	'compx-has_data_loader': [
 		['^has_data_loader'],
 		function(state) {

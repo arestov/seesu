@@ -142,6 +142,20 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 		this.updateNesting(this.main_list_name, array, mlc_opts);
 	},
+	compareItemWithObj: function(item, data) {
+		if (!this.items_comparing_props) {
+			return
+		}
+		for (var i = 0; i < this.items_comparing_props.length; i++) {
+			var cur = this.items_comparing_props[i];
+			var item_value = spv.getTargetField(item, cur[0]);
+			var data_value = spv.getTargetField(data, cur[1]);
+			if (item_value !== data_value) {
+				return false;
+			}
+		}
+		return true;
+	},
 	compareItemsWithObj: function(array, omo, soft) {
 		for (var i = 0; i < array.length; i++) {
 			if (this.compareItemWithObj(array[i], omo, soft)){

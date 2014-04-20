@@ -110,14 +110,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 				return true;
 			}
 		},
-		compareItemWithObj: function(song, omo, soft) {
-			var artist_match = song.artist == omo.artist;
-			if (artist_match){
-				if (song.track == omo.track || (soft && (!song.track || !omo.track))){
-					return true;
-				}
-			}
-		},
+		items_comparing_props: [['artist', 'artist'], ['track', 'track']],
+
 		
 		getLastSong: function(){
 			var name = this.main_list_name;
