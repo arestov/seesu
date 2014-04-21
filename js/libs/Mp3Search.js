@@ -114,9 +114,9 @@ provoda.Model.extendTo(FilesSourceTuner, {
 					return !disabled && must_load;
 				}
 			],
-			'files-list': {
-				depends_on: ['search_result', 'injected_files'],
-				fn: function(sarr, inj_f) {
+			'files-list': [
+				['search_result', 'injected_files'],
+				function(sarr, inj_f) {
 					var all = [];
 					if (sarr && sarr.length){
 						all = all.concat(sarr);
@@ -129,20 +129,20 @@ provoda.Model.extendTo(FilesSourceTuner, {
 
 					return !!all.length && all;
 				}
-			},
-			'has_mp3_files': {
-				depends_on: ['files-list'],
-				fn: function(sarr) {
+			],
+			'has_mp3_files': [
+				['files-list'],
+				function(sarr) {
 					for (var i = 0; i < sarr.length; i++) {
 						if (sarr[i].media_type =='mp3'){
 							return true;
 						}
 					}
 				}
-			},
-			'has_best_files': {
-				depends_on: ['files-list'],
-				fn: function(fslist) {
+			],
+			'has_best_files': [
+				['files-list'],
+				function(fslist) {
 					var field_name = 'query_match_index.' + this.mp3_search.getQueryString(this.msq).replace(/\./gi, '');
 					var best_songs = spv.filter(fslist, field_name, function(value){
 						if (value !== -1 && value < 20){
@@ -151,13 +151,13 @@ provoda.Model.extendTo(FilesSourceTuner, {
 					});
 					return !!best_songs.length;
 				}
-			},
-			'has_files': {
-				depends_on: ['files-list'],
-				fn: function(fslist) {
+			],
+			'has_files': [
+				['files-list'],
+				function(fslist) {
 					return !!fslist.length;
 				}
-			}
+			]
 		},
 		'stch-request_required': function(state) {
 			if (state) {
@@ -416,9 +416,9 @@ provoda.Model.extendTo(FilesSourceTuner, {
 			],
 			
 
-			'legacy-files-search': {
-				depends_on: ['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
-				fn: function(h_best_f, h_files, h_mp3_files, s_complete, exsrc_incomplete) {
+			'legacy-files-search': [
+				['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
+				function(h_best_f, h_files, h_mp3_files, s_complete, exsrc_incomplete) {
 					return {
 						search_complete: s_complete,
 						have_best_tracks: h_best_f,
@@ -427,13 +427,13 @@ provoda.Model.extendTo(FilesSourceTuner, {
 						exsrc_incomplete: exsrc_incomplete
 					};
 				}
-			},
-			'search_ready_to_use': {
-				depends_on: ['has_best_files', 'search_complete'],
-				fn: function(h_best_f, s_complete) {
+			],
+			'search_ready_to_use': [
+				['has_best_files', 'search_complete'],
+				function(h_best_f, s_complete) {
 					return h_best_f || s_complete;
 				}
-			}
+			]
 		},
 		startSearch: function(opts) {
 			return;

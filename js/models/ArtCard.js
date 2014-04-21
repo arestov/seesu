@@ -659,6 +659,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 			list[i].preloadStart();
 		}
 	},
+	//soundcloud_nickname
 	loadInfo: function(){
 		if (this.info_loaded){
 			return;
