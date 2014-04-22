@@ -1,4 +1,4 @@
-define(function() {
+define(['jquery'], function($) {
 "use strict";
 return function(request_params, options, complex_response){
 	complex_response = complex_response || {};
@@ -51,7 +51,8 @@ return function(request_params, options, complex_response){
 	if (!cache_used){
 		var sucessFn = function(r) {
 			if (options.responseFn){
-				options.responseFn(r);
+				r = options.responseFn(r);
+				arguments[0] = r;
 			}
 			deferred.resolve.apply(deferred, arguments);
 			if (!options.not_save_cache && options.cache_ajax){
@@ -80,7 +81,7 @@ return function(request_params, options, complex_response){
 					}
 					complex_response.xhr = request;
 					request
-						.fail(function(r){
+						.fail(function(){
 							deferred.reject.apply(deferred, arguments);
 						})
 						.done(sucessFn);
@@ -93,8 +94,8 @@ return function(request_params, options, complex_response){
 				}
 
 			} else{
-				options.manualSend(function(){
-					deferred.resolve();
+				options.manualSend(function(r){
+					deferred.resolve(r);
 				});
 			}
 			

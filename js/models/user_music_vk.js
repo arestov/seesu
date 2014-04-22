@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList'],
-function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList){
+define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList', 'js/modules/declr_parsers'],
+function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList, declr_parsers){
 'use strict';
 var localize = app_serv.localize;
 
@@ -50,13 +50,14 @@ var VkSongList = function() {};
 SongsList.extendTo(VkSongList, {
 	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
-		this._super(opts);
-
-		//var user_id = params.vk_userid;
 		this.sub_pa_params = {
 			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
 		};
+		this._super.apply(this, arguments);
+
+		//var user_id = params.vk_userid;
+		
 		connectUserid.call(this, params);
 		//this.user_id = user_id;
 
@@ -68,82 +69,54 @@ SongsList.extendTo(VkSongList, {
 
 var VkRecommendedTracks = function() {};
 VkSongList.extendTo(VkRecommendedTracks, {
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
+	'nest_req-songs-list': [
+		[declr_parsers.vk.getTracksFn('response'), function(r) {
+			return r && r.response && !!r.response.length;
+		}],
+		['vk_api', 'get', function() {
+			return ['audio.getRecommendations', {
+				user_id: this.state('userid')
+			}];
+		}]
 
-		request_info.request = this.app.vk_api.get('audio.getRecommendations', {
-			count: paging_opts.page_limit,
-			user_id: this.state('userid'),
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		})
-			.done(function(r){
-				if (!r || r.error){
-					_this.requestComplete(request_info.request, true);
-					return;
-				}
-				var vk_search = _this.app.mp3_search.getSearchByName('vk');
-				var track_list = [];
-
-				for (var i = 0; i < r.response.length; i++) {
-					var cur = r.response[i];
-					track_list.push({
-						artist: htmlencoding.decode(cur.artist),
-						track: htmlencoding.decode(cur.title),
-						file: vk_search.makeSongFile(cur)
-					});
-				}
-
-				_this.putRequestedData(request_info.request, track_list, r.error);
-
-			});
-		return request_info;
-	}
+	]
 });
 
 var MyVkAudioList = function() {};
 VkSongList.extendTo(MyVkAudioList, {
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
+	'nest_req-songs-list': [
+		[declr_parsers.vk.getTracksFn('response.items'), {
+			props_map: {
+				total: ['num', 'response.count'],
+				has_data_holes: [true]
+			}
+		}],
+		['vk_api', 'get', function() {
+			return ['audio.get', {
+				oid: this.state('userid')
+			}];
+		}]
 
-		request_info.request = this.app.vk_api.get('audio.get', {
-			count: paging_opts.page_limit,
-			oid: this.state('userid'),
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		})
-			.done(function(r){
-				if (!r || r.error){
-					_this.requestComplete(request_info.request, true);
-					return;
-				}
-				var vk_search = _this.app.mp3_search.getSearchByName('vk');
-				var track_list = [];
-
-				for (var i = 0; i < r.response.items.length; i++) {
-					var cur = r.response.items[i];
-					track_list.push({
-						artist: htmlencoding.decode(cur.artist),
-						track: htmlencoding.decode(cur.title),
-						file: vk_search.makeSongFile(cur)
-					});
-				}
-				_this.putRequestedData(request_info.request, track_list, r.error);
-			});
-		return request_info;
-	}
+	]
 });
+
+var vk_user_tracks_sp = ['my', 'recommended'];
 
 var VkUserTracks = function() {};
 BrowseMap.Model.extendTo(VkUserTracks, {
 	model_name: 'listoflists',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.sub_pa_params = {
 			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
 		};
 		this.initStates();
-		this.initListedModels(['my', 'recommended']);
 	},
+	'nest-lists_list':
+		[vk_user_tracks_sp],
+	'nest-preview_list':
+		[vk_user_tracks_sp, true],
 	sub_pa: {
 		'my': {
 			constr: MyVkAudioList,
@@ -182,7 +155,7 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 		}
 	},
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		var data = params.data;
 		this.mapStates(this.init_stmp, data, true);
 		this.initStates();
@@ -203,7 +176,7 @@ var VKFriendsList = function(){};
 LoadableList.extendTo(VKFriendsList, {
 	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		connectUserid.call(this, params);
 		this.sub_pa_params = {
 			vk_userid: params.vk_userid,
@@ -211,25 +184,12 @@ LoadableList.extendTo(VKFriendsList, {
 		};
 		this.initStates();
 	},
-	friendsParser: function(r, field_name) {
-		var result = [];
-		var array = spv.toRealArray(spv.getTargetField(r, field_name));
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			result.push(cur);
-		}
-		return result;
-	},
 	itemConstr: VkUserPreview,
 	makeDataItem:function(data) {
-		var item = new this.itemConstr();
-		item.init({
-			map_parent: this,
-			app: this.app
-		}, spv.cloneObj({
+		return this.initSi(this.itemConstr, spv.cloneObj({
 			data: data
 		}, this.sub_pa_params));
-		return item;
+
 	},
 	main_list_name: 'list_items',
 	model_name: 'vk_users',
@@ -240,27 +200,21 @@ LoadableList.extendTo(VKFriendsList, {
 			user: this.state('userid')
 		};
 	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-
-		request_info.request = this.app.vk_api.get('friends.get', {
-			user_id: this.state('userid'),
-			fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(','),
-			count: paging_opts.page_limit,
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		})
-			.done(function(r){
-				if (!r || r.error){
-					_this.requestComplete(request_info.request, true);
-					return;
-				}
-
-
-				_this.putRequestedData(request_info.request, r.response.items, r.error);
-
-			});
-		return request_info;
-	}
+	'nest_req-list_items': [
+		[function(r) {
+			return spv.getTargetField(r, 'response.items');
+		}, {
+			props_map: {
+				total: ['num', 'response.count']
+			}
+		}],
+		['vk_api', 'get', function() {
+			return ['friends.get', {
+				user_id: this.state('userid'),
+				fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
+			}];
+		}]
+	]
 });
 
 

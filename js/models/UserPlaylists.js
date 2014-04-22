@@ -5,10 +5,11 @@ var UserPlaylists = function() {};
 BrowseMap.Model.extendTo(UserPlaylists, {
 	model_name: 'user_playlists',
 	init: function(opts) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.playlists = [];
 		this.updateNesting('lists_list', this.playlists);
 	},
+	
 	savePlaylists: function(){
 		var _this = this;
 		if (this.save_timeout){clearTimeout(this.save_timeout);}

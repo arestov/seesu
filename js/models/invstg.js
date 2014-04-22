@@ -337,7 +337,7 @@ provoda.extendFromTo('Investigation', BrowseMap.Model, Investigation);
 SearchPage = function() {};
 Investigation.extendTo(SearchPage, {
 	init: function(opts) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.addSection('playlists', PlaylistsSection);
 		this.addSection('artists', ArtistsSection);
 		this.addSection('albums', AlbumsSection);

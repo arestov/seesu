@@ -92,7 +92,7 @@ var loadImage = function(opts) {
 	var async_obj = deferred.promise({
 		abort: function() {
 			if (node){
-				node.src = null;
+				node.src = '';
 			}
 			
 			if (this.queued){

@@ -60,7 +60,7 @@ provoda.View.extendTo(AppBaseView, {
 	dom_rp: true,
 	location_name: 'root_view',
 	init: function(opts, vopts) {
-		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), true);
+		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), true, 250);
 		return this._super.apply(this, arguments);
 	},
 	_getCallsFlow: function() {
@@ -299,7 +299,7 @@ provoda.View.extendTo(AppBaseView, {
 		if (this['spec-vget-' + model_name]){
 			return this['spec-vget-' + model_name](md);
 		} else {
-			return this.getChildView(this.getStoredMpx(md), 'main');
+			return this.findMpxViewInChildren(this.getStoredMpx(md));
 		}
 	},
 	getMapSliceChildInParenView: function(md) {
@@ -310,7 +310,7 @@ provoda.View.extendTo(AppBaseView, {
 		if (!parent_view){
 			return;
 		}
-		var target_in_parent = parent_view.getChildView(this.getStoredMpx(md), 'main');
+		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
 		if (!target_in_parent){
 			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
 			target_in_parent = view && view[0];
@@ -472,6 +472,7 @@ provoda.View.extendTo(AppBaseView, {
 		
 	},
 	'collch-$spec_common': {
+		by_model_name: true,
 		place: AppBaseView.viewOnLevelP
 	},
 	'coll-prio-map_slice': function(array) {
@@ -510,9 +511,9 @@ provoda.View.extendTo(AppBaseView, {
 			cur = array[i];
 			var model_name = cur.model_name;
 			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], model_name, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], nesname, cur);
 			} else {
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], model_name, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], nesname, cur);
 			}
 		}
 
@@ -587,9 +588,9 @@ provoda.View.extendTo(AppBaseView, {
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
 
-			var md_view = this.getChildView(md.mpx, 'main');
+			var md_view = this.findMpxViewInChildren(md.mpx);
 			if (md_view){
-				var hl_view = md_view.getChildView(source_md.mpx, 'main');
+				var hl_view = md_view.findMpxViewInChildren(source_md.mpx);
 				if (hl_view){
 					//this.scrollTo(hl_view.getC());
 				}
@@ -601,7 +602,7 @@ provoda.View.extendTo(AppBaseView, {
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
 		if (ov_highlight && ov_highlight.source_md){
 			var source_md = ov_highlight.source_md;
-			var mplev_item_view = source_md.getRooConPresentation();
+			var mplev_item_view = source_md.getRooConPresentation(this);
 			if (mplev_item_view){
 				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
@@ -620,7 +621,7 @@ provoda.View.extendTo(AppBaseView, {
 			}
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
-				var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(false, false, true);
+				var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(_this, false, false, true);
 				var con = mplev_item_view && mplev_item_view.getC();
 				if (con && con.height()){
 					_this.scrollTo(mplev_item_view.getC(), {
@@ -636,10 +637,6 @@ provoda.View.extendTo(AppBaseView, {
 
 
 
-
-
-		//var parent_md = md.getParentMapModel();
-		//this.getChildView(mpx)
 	},
 	"stch-doc_title": function(title) {
 		this.d.title = title || "";

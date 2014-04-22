@@ -19,29 +19,14 @@ lfm_share_url_replacers.forEach(function(el, i) {
 	Song = function(){};
 
 	SongBase.extendTo(Song, {
-		page_name: 'song page',
 		hndMpshowImp: function(e) {
-			var
-				_this = this,
-				oldCb = this.makePlayableOnNewSearch;
-
 			if (e.value){
-				if (!oldCb){
-					this.makePlayableOnNewSearch = function() {
-						_this.makeSongPlayalbe(true);
-					};
-					this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
-				}
-				_this.initOnShow();
+				this.initOnShow();
 			} else {
-				if (oldCb){
-					this.mp3_search.off('new-search', oldCb);
-					delete this.makePlayableOnNewSearch;
-				}
 			}
 		},
-		hndLoadSongcard: function(e) {
-			if (e.value){
+		'stch-can_load_songcard': function(state) {
+			if (state){
 				var songcard = this.app.getSongcard(this.artist, this.track);
 				if (songcard){
 					songcard.initForSong();
@@ -49,8 +34,8 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				}
 			}
 		},
-		hndLoadBaseArtInfo: function(e) {
-			if (e.value){
+		'stch-can_load_baseinfo': function(state) {
+			if (state){
 				var artcard = this.getNesting('artist');
 				if (artcard){
 					var req = artcard.requestState('bio');
@@ -63,8 +48,8 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				
 			}
 		},
-		hndLoadArtImages: function(e) {
-			if (e.value){
+		'stch-can_load_images':function(state) {
+			if (state){
 				var artcard = this.getNesting('artist');
 				if (artcard){
 					
@@ -80,8 +65,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				
 			}
 		},
-		init: function(opts) {
-			var omo = opts.omo;
+		init: function(opts, omo) {
 			var passed_artist = omo.artist;
 			omo.artist = omo.artist || " ";
 
@@ -92,16 +76,15 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			this.mopla = null;
 			this.start_time = null;
 			this.last_scrobble = null;
-			this.makePlayableOnNewSearch = null;
 
-
-			var _this = this;
 
 			var spec_image_wrap;
 			if (omo.image_url){
 				this.init_states['image_url'] = {url: omo.image_url};
 			}
-			if (omo.lfm_image){
+			if (omo.lfm_img) {
+				spec_image_wrap = omo.lfm_img;
+			} else if (omo.lfm_image){
 				spec_image_wrap = this.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
 				//this.updateState('lfm_image', omo.lfm_image);
 			}
@@ -132,9 +115,6 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			}
 			this.initStates();
 			this.nextTick(this.initHeavyPart);
-			this.on('state_change-can_load_baseinfo', this.hndLoadBaseArtInfo);
-			this.on('state_change-can_load_images', this.hndLoadArtImages);
-			this.on('state_change-can_load_songcard', this.hndLoadSongcard);
 		},
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
@@ -207,6 +187,8 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			this.mf_cor = new MfCor();
 			this.useMotivator(this.mf_cor, function() {
 				this.mf_cor.init({
+					app: this.app,
+					map_parent: this,
 					mo: this,
 					omo: this.omo
 				}, omo.file);
@@ -221,19 +203,27 @@ lfm_share_url_replacers.forEach(function(el, i) {
 					have_mp3_tracks: true
 				});
 			}
-			this.updateNesting('mf_cor', this.mf_cor);
+			
 			this.mf_cor
 				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())
 				.on("error", this.hndMfcError, this.getContextOpts());
 
-			this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
+			//this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
 
 			
 			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
 			this.on('state_change-is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);
+			this.updateNesting('mf_cor', this.mf_cor);
+			this.updateState('mf_cor', this.mf_cor);
 
 		}),
+		'compx-mf_cor_has_available_tracks': [
+			['@some:has_available_tracks:mf_cor'],
+			function(state) {
+				return state;
+			}
+		],
 		hndImportant: function(e) {
 			if (e.value){
 				this.initRelativeData();
@@ -368,7 +358,11 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			}
 		},
 		submitNowPlaying: spv.debounce(function(){
-			var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
+			var mopla = this.getCurrentMopla();
+			if (!mopla) {
+				return;
+			}
+			var duration = Math.round(mopla.getDuration()/1000) || '';
 			if (this.app.settings['lfm-scrobbling']){
 				this.app.lfm.nowplay({
 					artist: this.artist,

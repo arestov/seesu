@@ -40,15 +40,8 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			this.actionsrow = actionsrow;
 			this._super();
 
-			var _this = this;
 
-			var doNotReptPl = function(state) {
-				_this.updateState('dont_rept_pl', state);
-			};
-			if (su.settings['dont-rept-pl']){
-				doNotReptPl(true);
-			}
-			su.on('settings.dont-rept-pl', doNotReptPl);
+			this.wch(su, 'settings-dont-rept-pl', 'dont_rept_pl');
 
 
 		},
@@ -107,21 +100,14 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 			this.updateNesting('plarow', plarow);
 			
-			var _this = this;
-			
-			var doNotReptPl = function(state) {
-				_this.updateState('dont_rept_pl', state);
-			};
-			if (this.app.settings['dont-rept-pl']){
-				doNotReptPl(true);
-			}
-			this.app.on('settings.dont-rept-pl', doNotReptPl);
+
+
+			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
 			if (this.playlist_type){
 				this.updateState('url_part', this.getURL());
 			}
 			
 		},
-		page_name: 'playlist',
 		setBaseInfo: function(params) {
 			this.info = params.data || {};
 			if (params.title){
@@ -157,27 +143,15 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 		},
 		extendSong: function(omo){
 			if (!(omo instanceof Song)){
-				var mo = new Song();
-				this.useMotivator(mo, function(mo) {
-					mo.init({
-						map_parent: this,
-						app: this.app,
-						omo: omo,
-						plst_titl: this,
-						player: this.player,
-						mp3_search: this.mp3_search
-					}, {
-						file: omo.file
-					});
+				return this.initSi(Song,  omo, {
+					file: omo.file
 				});
-				
-				return mo;
 			} else{
 				return omo;
 			}
 		},
 		makeExternalPlaylist: function() {
-			var songs_list = this.getMainList();
+			var songs_list = this.getMainlist();
 			if (!songs_list.length){return false;}
 			var simple_playlist = [];
 			for (var i=0; i < songs_list.length; i++) {

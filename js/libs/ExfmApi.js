@@ -12,14 +12,24 @@ ExfmApi.prototype = {
 	constructor: ExfmApi,
 	cache_namespace: "exfm_api",
 	thisOriginAllowed: true,
+	errors_fields: ['error'],
+	source_name: 'exfm',
 	get: function(method, params, options) {
 
 
 		if (method) {
 			options = options || {};
+			params = params || {};
+
+			if (options && options.paging) {
+				params.results = options.paging.page_limit;
+				params.start = options.paging.next_page;
+			}
+
+
 			options.cache_key = options.cache_key || hex_md5(method + spv.stringifyParams(params));
 
-			var	params_full = params || {};
+			
 			//params_full.consumer_key = this.key;
 
 
@@ -29,7 +39,7 @@ ExfmApi.prototype = {
 				url: "http://ex.fm/api/v3/" + method,
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
-				data: params_full,
+				data: params,
 				timeout: 20000,
 				afterChange: function(opts) {
 					if (opts.dataType == 'json'){
@@ -83,9 +93,7 @@ ExfmMusicSearch.prototype = {
 			page_link	: cursor.sources && cursor.sources[0],
 			_id			: cursor.id,
 			type: 'mp3',
-			media_type: 'mp3',
-			models: {},
-			getSongFileModel: Mp3Search.getSongFileModel
+			media_type: 'mp3'
 		};
 		if (!entity.artist){
 			var guess_info = Mp3Search.guessArtist(entity.track, msq && msq.artist);

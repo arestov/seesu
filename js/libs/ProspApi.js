@@ -70,6 +70,7 @@ ProspApi.prototype = {
 //search?q=killers&page=1&limit=50
 
 var datamorph_map = new spv.MorphMap({
+	is_array: true,
 	source: 'tracks',
 	props_map: {
 		_id: 'id',
@@ -104,9 +105,7 @@ ProspMusicSearch.prototype = {
 	},
 	makeSong: function(cursor, msq){
 		cursor.artist = cursor.artist + '';
-		cursor.models = {};
-		cursor.getSongFileModel = Mp3Search.getSongFileModel;
-		cursor.duration = cursor.duration && cursor.duration * 1000; 
+		cursor.duration = cursor.duration && cursor.duration * 1000;
 		spv.cloneObj(cursor, standart_props);
 
 		if (!cursor.artist){

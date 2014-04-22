@@ -178,6 +178,12 @@
 .full-page .usual_page{
 	margin-top:1.72rem;
 }
+.preview_ffp {
+	display: none;
+}
+.full-page .preview_ffp {
+	display: block;
+}
 .art_card{
 	
 	overflow:hidden;
@@ -242,10 +248,7 @@
 	.page-scheme .art_card-image{
 		display: none;
 		}
-	.full-page .art_card-bio{
-		float: right;
-		width: 50%;
-		}
+
 
 		.art_card-bio.loading{
 			min-height:20px;
@@ -258,14 +261,8 @@
 	.page-scheme .art_card-bio{
 		display: none;
 		}
-	.full-page .art_card-image{
-		float:left;
-		width:50%;
-		}
-		
-		.full-page .art_card-image-padding{
-			padding-right:1.72rem;
-		}
+
+
 		.art_card-image img{
 			margin-bottom:1.72rem;
 			width:100%;

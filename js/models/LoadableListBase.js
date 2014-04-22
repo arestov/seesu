@@ -18,18 +18,22 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 	},
 	init: function(opts) {
-		this._super(opts);
-		this[this.main_list_name] = [];
-		if (this.sendMoreDataRequest){
-			this.updateState("has_loader", true);
+		this._super.apply(this, arguments);
+		this.loadable_lists = {};
+		this.loadable_lists[ this.main_list_name ] = [];
+		this.updateNesting( this.main_list_name, []);
+
+		var has_loader = !!this[ 'nest_req-' + this.main_list_name];
+		if (has_loader){
+			this.updateState("has_data_loader", true);
 		}
 		this.wch(this, 'mp_has_focus', this.hndSPlOnFocus);
 		this.on('state_change-more_load_available', this.hndSPlOnLoadAllowing);
 		if (!this.manual_previews){
 			this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
 		}
-		this.excess_data_items = [];
-		this.tumour_data_count = 0;
+		this.excess_data_items = {};
+		this.loaded_nestings_items = {};
 	},
 	'compx-list_loading': {
 		depends_on: ['main_list_loading', 'preview_loading'],
@@ -37,22 +41,34 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			return main_list_loading || prevw_loading;
 		}
 	},
-	'compx-more_load_available': {
-		depends_on: ["has_loader", "list_loading", "loader_disallowed", 'has_no_access'],
-		fn: function(can_load_more, loading, loader_disallowed, has_no_access) {
-			if (can_load_more){
-				return !loader_disallowed && !has_no_access && !loading;
-			} else {
-
-			}
+	'compx-can_load_data': [
+		['has_data_loader', 'loader_disallowed', 'has_no_access'],
+		function(has_data_loader, loader_disallowed, has_no_access) {
+			return has_data_loader && !loader_disallowed  && !has_no_access;
 		}
+	],
+	'compx-can_load_more': [
+		['can_load_data', 'all_data_loaded'],
+		function(can_load_data, all_data_loaded) {
+			return can_load_data && !all_data_loaded;
+		}
+	],
+	'compx-more_load_available': {
+		depends_on: ['can_load_more', "list_loading"],
+		fn: function(can_load_more, list_loading) {
+			return can_load_more && !list_loading;
+		}
+	},
+	handleNetworkSideData: function(source_name, ns, data) {
+		this.app.handleNetworkSideData(source_name, ns, data);
 	},
 	main_list_name: 'lists_list',
 	preview_mlist_name: 'preview_list',
+	preview_nesting_source: null,
 	getMainListChangeOpts: function() {},
 	page_limit: 30,
-	getPagingInfo: function() {
-		var length = this.getLength();
+	getPagingInfo: function(nesting_name) {
+		var length = this.getLength(nesting_name);
 		var has_pages = Math.floor(length/this.page_limit);
 		var remainder = length % this.page_limit;
 		var next_page = has_pages + 1;
@@ -68,88 +84,33 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	preloadStart: function() {
 		this.loadStart();
 	},
-	getLength: function() {
-		return this[this.main_list_name].length - this.tumour_data_count - (this.excess_data_items && this.excess_data_items.length);
+	getLength: function(nesting_name) {
+		nesting_name = nesting_name || this.main_list_name;
+		return this.loaded_nestings_items[ nesting_name ] || 0;
 	},
 	loadStart: function() {
 		if (this.state('more_load_available') && !this.getLength()){
 			this.requestMoreData();
 		}
 	},
-	setLoader: function(cb, trigger) {
-		this.updateState("has_loader", true);
-		this.sendMoreDataRequest = cb;
-
-		if (trigger){
-			this.requestMoreData();
-		}
-
-	},
 	requestMoreData: function() {
-		if (this.state("has_loader") && this.sendMoreDataRequest){
-			if (!this.request_info || this.request_info.done){
-				this.markLoading();
-				var request_info = {
-					request: null,
-					done: null
-				};
-				this.sendMoreDataRequest.call(this, this.getPagingInfo(), request_info);
-				this.request_info = request_info;
-				if (!this.request_info.request){
-					throw new Error('give me request');
-				} else {
-					var _this = this;
-					this.addRequest(this.request_info.request);
-					this.request_info.request
-						.fail(function(){
-							_this.requestComplete(request_info.request, true);
-						}).always(function() {
-							request_info.done = true;
-						});
-
-
-					
-				}
-			}
-			//this.trigger("load-more");
+		if (this[ 'nest_req-' + this.main_list_name ]) {
+			this.requestNesting( this[ 'nest_req-' + this.main_list_name ], this.main_list_name );
 		}
 	},
-	setLoaderFinish: function() {
-		this.updateState("has_loader", false);
-	},
-	markLoading: function(){
-		this.updateState('main_list_loading', true);
-		return this;
-	},
-	tickRequestedData: function(request, data_list, error) {
-		//console.profile('data list inject');
-		if (!this.request_info || this.request_info.request == request){
-
-			var items_list = new Array(data_list.length || 0);
-			if (!error && data_list && data_list.length){
-
-				var mlc_opts = this.getMainListChangeOpts();
-				for (var i = 0; i < data_list.length; i++) {
-					var item = this.addItemToDatalist(data_list[i], true);
-					items_list[i] = item;
+	insertDataAsSubitems: function(nesting_name, data_list) {
+		var items_list = [];
+		if (data_list && data_list.length){
+			var mlc_opts = this.getMainListChangeOpts();
+			for (var i = 0; i < data_list.length; i++) {
+				if (this.isDataItemValid && !this.isDataItemValid(data_list[i])) {
+					continue;
 				}
-				this.dataListChange(mlc_opts, items_list);
-
+				var item = this.addItemToDatalist(data_list[i], true);
+				items_list.push(item);
 			}
-			if (!error && request && data_list.length < this.page_limit){
-				this.setLoaderFinish();
-			}
-			this.requestComplete(request, error);
-			if (items_list.length){
-				return items_list;
-			}
+			this.dataListChange(mlc_opts, items_list);
 		}
-		//console.profileEnd();
-	},
-	putRequestedData: function(request, data_list, error) {
-		this.nextTick(this.tickRequestedData, [request, data_list, error]);
-		return this;
-
 	},
 	getRelativeRequestsGroups: function(space) {
 		var main_models = this.getNesting(this.main_list_name);
@@ -173,10 +134,27 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 	},
 	dataListChange: function(mlc_opts, items) {
+		var array = this.loadable_lists[this.main_list_name];
 		if (this.beforeReportChange){
-			this.beforeReportChange(this[this.main_list_name], items);
+
+			array = this.beforeReportChange(array, items);
+			this.loadable_lists[this.main_list_name] = array;
 		}
-		this.updateNesting(this.main_list_name, this[this.main_list_name], mlc_opts);
+		this.updateNesting(this.main_list_name, array, mlc_opts);
+	},
+	compareItemWithObj: function(item, data) {
+		if (!this.items_comparing_props) {
+			return
+		}
+		for (var i = 0; i < this.items_comparing_props.length; i++) {
+			var cur = this.items_comparing_props[i];
+			var item_value = spv.getTargetField(item, cur[0]);
+			var data_value = spv.getTargetField(data, cur[1]);
+			if (item_value !== data_value) {
+				return false;
+			}
+		}
+		return true;
 	},
 	compareItemsWithObj: function(array, omo, soft) {
 		for (var i = 0; i < array.length; i++) {
@@ -188,20 +166,25 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	addItemToDatalist: function(obj, silent) {
 		return this.addDataItem(obj, silent);
 	},
-	addDataItem: function(obj, skip_changes) {
+	addDataItem: function(obj, skip_changes, nesting_name) {
+		nesting_name = nesting_name || this.main_list_name;
+		if (!this.loadable_lists[ nesting_name ]) {
+			this.loadable_lists[ nesting_name ] = [];
+		}
 		var
 			item,
-			excess_items,
-			work_array = this[this.main_list_name],
+			work_array = this.loadable_lists[ nesting_name ],
 			ml_ch_opts = !skip_changes && this.getMainListChangeOpts();
 
-		if (this.excess_data_items && this.excess_data_items.length){
-			var matched = this.compareItemsWithObj(this.excess_data_items, obj);
+		var excess_items = this.excess_data_items[ nesting_name ];
+
+		if (excess_items && excess_items.length){
+			var matched = this.compareItemsWithObj(excess_items, obj);
 			/*
-			задача этого кода - сделать так, что бы при вставке новых данные всё что лежит в массиве
+			задача этого кода - сделать так, что бы при вставке новых данных всё что лежит в массиве
 			"излишек" должно оставаться в конце массива
 			*/
-			excess_items = this.excess_data_items;
+			//excess_items = this.excess_data_items[ nesting_name ];
 			if (matched){
 				item = matched;
 				/*если совпадает с предполагаемыми объектом, то ставим наш элемент в конец рабочего массива
@@ -220,19 +203,22 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 
 
 			}
-			this.excess_data_items = excess_items;
+			this.excess_data_items[ nesting_name ] = excess_items;
 		} else {
 			work_array.push(item = this.makeItemByData(obj));
 		}
-
-		this[this.main_list_name] = work_array;
+		this.loadable_lists[ nesting_name ] = work_array;
 		if (!skip_changes){
 			if (this.beforeReportChange){
-				this.beforeReportChange(work_array, [item]);
+				work_array = this.beforeReportChange( work_array, [item] );
+				this.loadable_lists[ nesting_name ] = work_array;
 			}
-			this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
+			this.updateNesting( nesting_name, work_array, ml_ch_opts );
 		}
 		return item;
+	},
+	getMainlist: function() {
+		return this.loadable_lists[ [this.main_list_name] ];
 	},
 	makeItemByData: function(data) {
 		if (this.subitemConstr){
@@ -247,52 +233,39 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		} else {
 			throw new Error('cant make item');
 		}
-		
-
-		
 	},
-	findMustBePresentDataItem: function(obj) {
-		var matched = this.compareItemsWithObj(this[this.main_list_name], obj);
-		return matched || this.injectExcessDataItem(obj);
+	findMustBePresentDataItem: function(obj, nesting_name) {
+		nesting_name = nesting_name || this.main_list_name;
+		var matched = this.compareItemsWithObj(this.getNesting( nesting_name ), obj);
+		return matched || this.injectExcessDataItem(obj, nesting_name);
 	},
-	injectExcessDataItem: function(obj) {
+	injectExcessDataItem: function(obj, nesting_name) {
+		nesting_name = nesting_name || this.main_list_name;
 		if (this.isDataInjValid && !this.isDataInjValid(obj)){
 			return;
 		}
 		var
-			work_array = this[this.main_list_name],
+			work_array = this.loadable_lists[ nesting_name ],
 			ml_ch_opts = this.getMainListChangeOpts(),
 			item = this.makeItemByData(obj);
 
 		if (!this.cant_find_dli_pos){
-			this.excess_data_items.push(item);
+			if (!this.excess_data_items[ nesting_name ]) {
+				this.excess_data_items[ nesting_name ] = [];
+			}
+			this.excess_data_items[ nesting_name ].push(item);
 			work_array.push(item);
 		} else {
-			++this.tumour_data_count;
 			work_array.unshift(item);
 		}
 		if (this.beforeReportChange){
-			this.beforeReportChange(work_array, [item]);
+			work_array = this.beforeReportChange(work_array, [item]);
+			this.loadable_lists[ nesting_name ] = work_array;
 		}
 
-		this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
+		this.updateNesting(nesting_name, work_array, ml_ch_opts);
 		return item;
 	},
-	requestComplete: function(request, error) {
-		if (!this.request_info || this.request_info.request == request){
-			var main_list = this[this.main_list_name];
-
-			this.updateState('main_list_loading', false);
-			if (error && !main_list.length) {
-				this.updateState('error', true);
-			} else {
-				this.updateState('error', false);
-			}
-			delete this.request_info;
-		}
-		return this;
-	},
-
 
 	//auth things:
 

@@ -427,7 +427,7 @@
 		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!vmp_show && 'hidden'}}">
 			<div pv-nest="list_items" class="lfm_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
-					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
+					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
 				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
 				<div class="lfm_friend-desc">
 					<span pv-text="{{big_desc}}"></span>
@@ -562,13 +562,13 @@
 					</div>
 					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 				</div>
-				<div class="aqc_preview" pv-anchor="users_acqutes"></div>
+				<div class="aqc_preview preview_ffp" pv-anchor="users_acqutes"></div>
 			</div>
 		</div>
 		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!vmp_show && 'hidden'}}">
 			<div class="lfm_user_page-header">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
-					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
+					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
 				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
 				<div class="lfm_friend-desc">
 					<span pv-text="{{big_desc}}"></span>
@@ -748,10 +748,10 @@
 			
 			
 			<div class="art_card-statinfo">
-				<div class="art_card-image">
-					<div class="art_card-image-padding" pv-anchor="bigimagec"></div>
+				<div class="leftcol art_card-image ">
+					<div class="" pv-anchor="bigimagec"></div>
 				</div>
-				<div class="art_card-bio" pv-anchor="bio" pv-class="art_card-bio {{bio__loading && 'loading'}}"></div>
+				<div class="rightcol art_card-bio " pv-anchor="bio" pv-class="rightcol art_card-bio {{bio__loading && 'loading'}}"></div>
 			</div>
 
 			
@@ -892,20 +892,63 @@
 					pv-class="moplas-list {{show_overstocked && 'want-overstocked-songs'}}"
 					pv-nest="sorted_completcs"
 					>
-					<a 
-						pv-props="href: {{dmca_url}}" 
-						pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
-						class="external hidden lang localize-report-abuse"></a>
-					<h4>
+					<div 
+
+						pv-nest="pioneer"
+						class="files-list-pioneer full_mb_part" 
+						pv-class="files-list-pioneer full_mb_part {{search_progress && 'list_loading'}}">
+						<div class="moplas-block-shift">
+							<span class="moplas_source-icon" pv-events="click::switchTunerVisibility"></span>
+							<a 
+								pv-type="way-point"
+								pv-props="href: {{dmca_url}}" 
+								pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
+								class="external hidden lang localize-report-abuse"></a>
+							<span pv-text="{{search_name}}" pv-class="{{ search_complete && !has_files && 'moplas_source-unavailable'}}"></span>
+						</div>
+						
+
+						<div
+							pv-nest="vis_tuner" 
+							class="moplas_source-tuner moplas-block-shift hidden"
+							pv-class="moplas_source-tuner moplas-block-shift {{hidden && 'hidden'}}">
+							<div>
+								<label>
+									<input type="checkbox" pv-events="click:changeTune" name="disable_search" pv-props="checked:{{disable_search}}">
+									Отключить поиск файлов в этом источнике
+								</label>
+							</div>
+							<div>
+								<label>
+									<input type="checkbox" pv-events="click:changeTune" name="wait_before_playing" 
+									pv-props="
+										checked: {{wait_before_playing}}
+										disabled: {{disable_search}}
+									">
+									<span pv-class="{{disable_search && 'desc'}}">
+										Дожидаться списка файлов из этого источника до воспроизведения.
+									</span>
+									
+								</label>
+							</div>
+							
+						</div>
+					</div>
+	
+
+
+
+					<ul pv-anchor='listc-start'></ul>
+					<div class="full_mb_part full_list_switch">
 						<a
-							class=""
-							pv-class="{{overstock && 'js-serv'}}"
-							pv-text="{{complect_name}}"
+							class="hidden lang localize-full-list"
 							pv-type="{{overstock && 'way-point'}}"
+							pv-class="js-serv {{!overstock && 'hidden'}}"
 							pv-events="click::toggleOverstocked"
-							></a>
-					</h4>
-					<ul pv-anchor='listc'></ul>
+							>full list</a>
+					</div>
+					<ul pv-anchor='listc-end'></ul>
+					
 				</div>
 
 			</div>
@@ -1181,7 +1224,7 @@
 					<div class="rept-song hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="rept-song {{!active_view && 'hidden'}}">
 						<label class="rept-song-label">
 							<input type="checkbox"/>
-							<span class="lang localize-rept-song">Repeat playling song</span>
+							<span class="lang localize-rept-song">Repeat playing song</span>
 						</label>
 						
 					</div>
@@ -1720,7 +1763,7 @@
 										<span class="lang localize-vk-audio">Vkontakte audio</span>
 									</div>
 								</div>
-								<div class="aqc_preview"></div>
+								<div class="aqc_preview preview_ffp"></div>
 
 								<div class="block-for-startpage relations-invites-wrap hidden"></div>
 								<div class="block-for-startpage relations-likes-wrap hidden"></div>
@@ -1728,13 +1771,67 @@
 							</div>
 							
 							<div class="for-startpage"></div>
+							
 							<div class="block-for-startpage music-conductor-preview">
-								<div class="no_arfb">
-									<div class="to-open-block area-button hidden">
-										<span class="lang localize-music-cond">Music Conductor</span>
+								<div class="leftcol">
+									
+
+									<div class="arb-union">
+										<div class="no_arfb">
+											<div class="to-open-block area-button hidden">
+												<span class="lang localize-music-cond">Music Conductor</span>
+											</div>
+										</div>
+										<div pv-nest="preview_hypem" class="arb-ally preview_ffp compact_playlist" pv-events="click::requestPage">
+											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
+											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
+												<div class="compact_song-image_con">
+													<img
+														alt=""
+														class="hidden"
+														pv-props="
+															alt: {{song_title}}
+															src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+														"
+														pv-class="{{!selected_image && 'hidden'}}"
+													>
+												</div>
+												
+												<div pv-text="{{artist}}" class="compact_song-artist_name"></div>
+												<div pv-text="{{track}}" class="compact_song-track_name"></div>
+											</div>
+										</div>
+										<div pv-nest="preview_lastfm_top" class="arb-ally preview_ffp compact_playlist" pv-events="click::requestPage">
+											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
+											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
+												<div class="compact_song-image_con">
+													<img
+														alt=""
+														class="hidden"
+														pv-props="
+															alt: {{song_title}}
+															src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+														"
+														pv-class="{{!selected_image && 'hidden'}}"
+													>
+												</div>
+												
+												<div pv-text="{{artist}}" class="compact_song-artist_name"></div>
+												<div pv-text="{{track}}" class="compact_song-track_name"></div>
+											</div>
+										</div>
 									</div>
+									
+									
+
+
+								</div>
+								<div class="rightcol tags_con">
+								
 								</div>
 							</div>
+							
+							
 							<div class="app-loading-mark"></div>
 							
 						</div>

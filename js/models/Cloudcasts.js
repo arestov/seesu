@@ -15,38 +15,38 @@ SongsList.extendTo(Cloudcast, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.initStates(params);
+		this.wch(this, 'mp_show', function(e) {
+			if (e.value) {
+				this.requestState('nav_title');
+			}
+		});
 	},
-	datamorph_map: new spv.MorphMap({
-		source: 'sections',
-		props_map: {
-			artist: 'track.artist.name',
-			track: 'track.name'
-		}
-	}),
-	getRqData: function(paging_opts) {
-
-		return {
-			limit: paging_opts.page_limit,
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		};
-	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-		request_info.request = this.app.mixcloud.get(this.state('key'), this.getRqData(paging_opts), {context: this})
-			.done(function(r){
-				var title = spv.getTargetField(r, 'name');
-				if (title) {
-					_this.updateState('nav_title', title);
+	req_map: [
+		[
+			['nav_title'],
+			{
+				props_map: {
+					nav_title: 'name'
 				}
-				
-				var list = _this.datamorph_map(r);
-				_this.putRequestedData(request_info.request, list, r.error);
-				if (!r.error) {
-					_this.setLoaderFinish();
-				}
-			});
-			
-	},
+			},
+			['mixcloud', 'get', function() {
+				return [this.state('key')];
+			}]
+		]
+	],
+	'nest_req-songs-list': [
+		[{
+			is_array: true,
+			source: 'sections',
+			props_map: {
+				artist: 'track.artist.name',
+				track: 'track.name'
+			}
+		}],
+		['mixcloud', 'get', function() {
+			return [this.state('key')];
+		}]
+	],
 	addRawData: function(data) {
 		this.updateState('nav_title', data.nav_title);
 	}
@@ -57,39 +57,36 @@ var CloudcastsList = function() {};
 LoadableList.extendTo(CloudcastsList, {
 	model_name: 'cloudcasts_list',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.sub_pa_params = params;
 		this.initStates(params);
 	},
-	//subitemConstr: Cloudcast,
 	makeDataItem: function(data) {
 		var item = this.app.start_page.getSPI('cloudcasts/' + this.app.encodeURLPart(data.key), true);
 		item.addRawData(data);
 		return item;
 	},
 	datamorph_map: new spv.MorphMap({
+		is_array: true,
 		source: 'data',
 		props_map: {
 			nav_title: 'name',
 			key: 'key'
 		}
 	}),
-	getRqData: function(paging_opts) {
-
-		return {
-			limit: paging_opts.page_limit,
-			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		};
-	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		var _this = this;
-		request_info.request = this.app.mixcloud.get(this.getNDataPath(), this.getRqData(paging_opts), {context: this})
-			.done(function(r){
-				var list = _this.datamorph_map(r);
-				_this.putRequestedData(request_info.request, list, r.error);
-			});
-			
-	}
+	'nest_req-lists_list': [
+		[{
+			is_array: true,
+			source: 'data',
+			props_map: {
+				nav_title: 'name',
+				key: 'key'
+			}
+		}, true],
+		['mixcloud', 'get', function() {
+			return [this.getNDataPath(), null];
+		}]
+	]
 
 });
 var getNDataPathTrack = function() {
@@ -132,30 +129,22 @@ var getMixcloudNameKey = function(string) {
 		.replace(/-+/g, '-');
 
 };
-
+var song_cloudcasts_sps = ['new', 'hot', 'popular'];
 var SongcardCloudcasts = function() {};
 BrowseMap.Model.extendTo(SongcardCloudcasts, {
-	init: function(opts, params) {
-		this._super(opts);
+	init: function(opts, data) {
+		this._super.apply(this, arguments);
 
 		var sub_pa_params = {};
-		spv.cloneObj(sub_pa_params, params);
+		spv.cloneObj(sub_pa_params, data);
 		spv.cloneObj(sub_pa_params, {
-			artist_key: getMixcloudNameKey(params.artist_name),
-			track_key: getMixcloudNameKey(params.track_name)
+			artist_key: getMixcloudNameKey(data.artist_name),
+			track_key: getMixcloudNameKey(data.track_name)
 		});
 		this.sub_pa_params = sub_pa_params;
-		this.initStates(params);
-		this.lists_list = ['new', 'hot', 'popular'];
-		this.initSubPages(this.lists_list);
-
-		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
-
-		this.updateNesting('lists_list', this.lists_list);
-		this.bindChildrenPreload();
-
-		//this.tag_name = params.tag_name;
+		this.initStates(data);
 	},
+	'nest-lists_list': [song_cloudcasts_sps, true],
 	model_name: 'songcard_cloudcasts',
 	sub_pa: {
 		'new': {

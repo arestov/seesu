@@ -4,7 +4,7 @@ var localize = app_serv.localize;
 var SuUsersPlaylists = function() {};
 UserPlaylists.extendTo(SuUsersPlaylists, {
 	init: function(opts) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this
 			.on('each-playlist-change', function() {
 				su.trackEvent('song actions', 'add to playlist');

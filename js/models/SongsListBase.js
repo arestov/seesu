@@ -6,7 +6,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			this.onChanges(last_usable_song);
 		},
 		init: function(opts){
-			this._super(opts);
+			this._super.apply(this, arguments);
 
 			this.idx_wplay_song = null;
 			this.idx_show_song = null;
@@ -91,9 +91,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 				this.checkNeighboursChanges(e.item);
 			}
 		},
-		getMainList: function() {
-			return this[this.main_list_name];
-		},
+
 		main_list_name: 'songs-list',
 		add: function(omo){
 			var mo = spv.cloneObj({}, omo, false, ['track', 'artist', 'file']);
@@ -102,6 +100,9 @@ define(['provoda', 'spv'], function(provoda, spv){
 		makeDataItem: function(obj) {
 			return this.extendSong(obj);
 		},
+		isDataItemValid: function(data_item) {
+			return !!data_item.artist;
+		},
 		isDataInjValid: function(obj) {
 			if (!obj.track && !obj.artist){
 				return;
@@ -109,14 +110,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 				return true;
 			}
 		},
-		compareItemWithObj: function(song, omo, soft) {
-			var artist_match = song.artist == omo.artist;
-			if (artist_match){
-				if (song.track == omo.track || (soft && (!song.track || !omo.track))){
-					return true;
-				}
-			}
-		},
+		items_comparing_props: [['artist', 'artist'], ['track', 'track']],
+
 		
 		getLastSong: function(){
 			var name = this.main_list_name;
@@ -146,16 +141,16 @@ define(['provoda', 'spv'], function(provoda, spv){
 				this.checkNeighboursChanges(p_song, false, false, "playlist load");
 			}
 			if (this.state('want_be_played')) {
-				if (this[this.main_list_name][0]) {
-					this[this.main_list_name][0].wantSong();
+				if (this.getMainlist()) {
+					this.getMainlist()[0].wantSong();
 				}
 			}
 		},
 		die: function(){
 			this.hideOnMap();
 			this._super();
-			for (var i = this[this.main_list_name].length - 1; i >= 0; i--){
-				this[this.main_list_name][i].die();
+			for (var i = this.getMainlist().length - 1; i >= 0; i--){
+				this.getMainlist()[i].die();
 			}
 
 		},
@@ -166,7 +161,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},
 		simplify: function(){
-			var npl = this[this.main_list_name].slice();
+			var npl = this.getMainlist().slice();
 			for (var i=0; i < npl.length; i++) {
 				npl[i] = npl[i].simplify();
 			}
@@ -189,11 +184,11 @@ define(['provoda', 'spv'], function(provoda, spv){
 				will_ignore_artist = true;
 			}
 			
+			var array  = this.getMainlist();
 			
-			
-			for (var i=0; i < this[this.main_list_name].length; i++) {
-				if (artist_track.track == this[this.main_list_name][i].track && (will_ignore_artist || artist_track.artist == this[this.main_list_name][i].artist)){
-					var matched = this[this.main_list_name][i];
+			for (var i=0; i < array.length; i++) {
+				if (artist_track.track == array[i].track && (will_ignore_artist || artist_track.artist == array[i].artist)){
+					var matched = array[i];
 					matched.showOnMap();
 					return true;
 				}
@@ -212,8 +207,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 		},
 		
 		makePlayable: function(full_allowing) {
-			for (var i = 0; i < this[this.main_list_name].length; i++) {
-				var mo = this[this.main_list_name][i];
+			for (var i = 0; i < this.getMainlist().length; i++) {
+				var mo = this.getMainlist()[i];
 				var pi = mo.playable_info || {};
 				mo.makeSongPlayalbe(pi.full_allowing || full_allowing, pi.packsearch, pi.last_in_collection);
 				
@@ -221,11 +216,11 @@ define(['provoda', 'spv'], function(provoda, spv){
 		},
 		markTracksForFilesPrefinding: function(){
 			var from_collection = + (new Date());
-			for (var i=0; i < this[this.main_list_name].length; i++) {
-				this[this.main_list_name][i]
+			for (var i=0; i < this.getMainlist().length; i++) {
+				this.getMainlist()[i]
 					.setPlayableInfo({
 						packsearch: from_collection,
-						last_in_collection: i == this[this.main_list_name].length-1
+						last_in_collection: i == this.getMainlist().length-1
 					});
 				
 			}
@@ -253,10 +248,10 @@ define(['provoda', 'spv'], function(provoda, spv){
 			this.player.removeCurrentWantedSong();
 			this.updateState('want_be_played', true);
 
-			if (!this[this.main_list_name][0]) {
+			if (!this.getMainlist()[0]) {
 				this.requestMoreData();
 			} else {
-				this[this.main_list_name][0].wantSong();
+				this.getMainlist()[0].wantSong();
 			}
 
 			var _this = this;
@@ -276,10 +271,10 @@ define(['provoda', 'spv'], function(provoda, spv){
 		switchTo: function(mo, direction) {
 	
 			var playlist = [];
-			for (var i=0; i < this[this.main_list_name].length; i++) {
-				var ts = this[this.main_list_name][i].canPlay();
+			for (var i=0; i < this.getMainlist().length; i++) {
+				var ts = this.getMainlist()[i].canPlay();
 				if (ts){
-					playlist.push(this[this.main_list_name][i]);
+					playlist.push(this.getMainlist()[i]);
 				}
 			}
 			var current_number  = playlist.indexOf(mo),
@@ -291,8 +286,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 					var next_preload_song = mo.next_preload_song;
 					var can_repeat = !this.state('dont_rept_pl');
 					if (next_preload_song){
-						var real_cur_pos = this[this.main_list_name].indexOf(mo);
-						var nps_pos = this[this.main_list_name].indexOf(next_preload_song);
+						var real_cur_pos = this.getMainlist().indexOf(mo);
+						var nps_pos = this.getMainlist().indexOf(next_preload_song);
 						if (can_repeat || nps_pos > real_cur_pos){
 							if (next_preload_song.canPlay()){
 								s = next_preload_song;
@@ -302,7 +297,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 							}
 						}
 						
-					} else if (this.state('has_loader')){
+					} else if (this.state('can_load_more')){
 						this.setWaitingNextSong(mo);
 
 					} else {
@@ -334,20 +329,20 @@ define(['provoda', 'spv'], function(provoda, spv){
 		},
 		getWantedSong: function(exept) {
 			
-			//return spv.filter(this[this.main_list_name], 'states.want_to_play', function(v) {return !!v;})[0];
+			//return spv.filter(this.getMainlist(), 'states.want_to_play', function(v) {return !!v;})[0];
 			return this.idx_wplay_song != exept && this.idx_wplay_song;
 		},
 		getViewingSong: function(exept) {
-			//var song = spv.filter(this[this.main_list_name], 'states.mp_show', function(v) {return !!v;})[0];
+			//var song = spv.filter(this.getMainlist(), 'states.mp_show', function(v) {return !!v;})[0];
 			return this.idx_show_song != exept && this.idx_show_song;
 		},
 		getPlayerSong: function(exept) {
-			//var song = spv.filter(this[this.main_list_name], "states.player_song", true)[0];
+			//var song = spv.filter(this.getMainlist(), "states.player_song", true)[0];
 			return this.idx_player_song != exept && this.idx_player_song;
 		},
 		getLastUsableSong: function(){
-			for (var i = this[this.main_list_name].length - 1; i >= 0; i--) {
-				var cur = this[this.main_list_name][i];
+			for (var i = this.getMainlist().length - 1; i >= 0; i--) {
+				var cur = this.getMainlist()[i];
 				if (cur.canUseAsNeighbour()){
 					return cur;
 				}
@@ -363,14 +358,14 @@ define(['provoda', 'spv'], function(provoda, spv){
 					}
 				}
 			}
-			var c_num = this[this.main_list_name].indexOf(mo);
+			var c_num = this.getMainlist().indexOf(mo);
 
 			if (!neitypes || neitypes.prev_song){
 				//ищем пред. композицию если нет ограничений 
 				//или ограничения не касаются пред. композиции
 				for (i = c_num - 1; i >= 0; i--) {
-					if (this[this.main_list_name][i].canUseAsNeighbour()){
-						obj.prev_song = this[this.main_list_name][i];
+					if (this.getMainlist()[i].canUseAsNeighbour()){
+						obj.prev_song = this.getMainlist()[i];
 						break;
 					}
 				}
@@ -379,9 +374,9 @@ define(['provoda', 'spv'], function(provoda, spv){
 			if (!neitypes || neitypes.next_song){
 				//ищем след. композицию если нет ограничений 
 				//или ограничения не касаются след. композиции
-				for (i = c_num + 1; i < this[this.main_list_name].length; i++) {
-					if (this[this.main_list_name][i].canUseAsNeighbour()){
-						obj.next_song = obj.next_preload_song = this[this.main_list_name][i];
+				for (i = c_num + 1; i < this.getMainlist().length; i++) {
+					if (this.getMainlist()[i].canUseAsNeighbour()){
+						obj.next_song = obj.next_preload_song = this.getMainlist()[i];
 						break;
 					}
 				}
@@ -392,8 +387,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 
 				//и при этого такая композиция ещё не была найдена
 				for (i = 0; i < c_num; i++) {
-					if (this[this.main_list_name][i].canUseAsNeighbour()){
-						obj.next_preload_song = this[this.main_list_name][i];
+					if (this.getMainlist()[i].canUseAsNeighbour()){
+						obj.next_preload_song = this.getMainlist()[i];
 						break;
 					}
 				}
@@ -412,7 +407,17 @@ define(['provoda', 'spv'], function(provoda, spv){
 				prev_song: true,
 				next_preload_song: true
 			});
-			spv.cloneObj(mo, changes);
+			this.applySongRolesChanges(mo, changes);
+		},
+		applySongRolesChanges: function(target_song, changes) {
+			spv.cloneObj(target_song, changes);
+			var result = {};
+			for (var prop in changes) {
+				result[ 'related_' + prop] = changes[prop];
+			}
+			target_song.updateManyStates(result);
+
+
 		},
 		getNeighboursChanges: function(target_song, changed_song) {
 			var
@@ -493,7 +498,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 			var changes = this.getNeighboursChanges(target_song, changed_neighbour);
 			//console.log("changes");
 			//console.log(); isImportant
-			spv.cloneObj(target_song, changes);
+			this.applySongRolesChanges(target_song, changes);
+			
 
 			//this.findNeighbours();
 
@@ -573,7 +579,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 				addToArray(demonstration, v_song);
 				if (v_song.next_song){
 					addToArray(demonstration, v_song.next_song);
-				} else if (this.state('has_loader')){
+				} else if (this.state('can_load_more')){
 					addToArray(demonstration, this);
 				}
 				if (v_song.prev_song){

@@ -14,6 +14,9 @@ spv.Class.extendTo(vkCoreApi, {
 			this.onAuthLost = params.onAuthLost;
 		}
 	},
+	checkResponse: function(r) {
+		return !r || !!r.error;
+	},
 	link: 'https://api.vk.com/method/',
 	setAccessToken: function(at){
 		this.access_token = at;
@@ -33,19 +36,26 @@ spv.Class.extendTo(vkCoreApi, {
 		
 		if (method) {
 			options = options || {};
+			params = params || {};
+
+			if (options && options.paging) {
+				params.count = options.paging.page_limit;
+				params.offset = options.paging.page_limit * (options.paging.next_page -1);
+			}
+
 			options.cache_key = options.cache_key || hex_md5(method + spv.stringifyParams(params));
 
-			var	params_full = params || {};
+			
 			if (this.access_token){
-				params_full.v = '5.0';
-				params_full.access_token = this.access_token;
+				params.v = '5.0';
+				params.access_token = this.access_token;
 			}
 
 			var wrap_def = wrapRequest({
 					url: this.link + method,
 					type: "GET",
 					dataType: this.jsonp ? 'jsonp' : 'json',
-					data: params_full,
+					data: params,
 					timeout: 20000,
 					context: options.context
 				}, {
@@ -63,6 +73,7 @@ spv.Class.extendTo(vkCoreApi, {
 							_this.onAuthLost();
 						}
 					}
+					return r;
 				},
 				queue: this.queue
 			});
@@ -107,9 +118,7 @@ VkSearch.prototype = {
 				downloadable: false,
 				_id			: cursor.owner_id + '_' + cursor.id,
 				type: 'mp3',
-				media_type: 'mp3',
-				models: {},
-				getSongFileModel: Mp3Search.getSongFileModel
+				media_type: 'mp3'
 			};
 			if (msq){
 				this.mp3_search.setFileQMI(entity, msq);

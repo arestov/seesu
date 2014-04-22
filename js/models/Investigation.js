@@ -3,14 +3,13 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 	provoda.addPrototype("Investigation", {
 		model_name: 'invstg',
 		init: function(opts) {
-			this._super(opts);
+			this._super.apply(this, arguments);
 			this.names = {};
 			this.enter_items = false;
 			this.updateNesting('section', []);
 			this.setInactiveAll();
 			this.updateState('url_part', this.getURL());
 		},
-		page_name: "search results",
 		addCallback: function(event_name, func){
 			this.on(event_name, func);
 		},

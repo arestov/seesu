@@ -195,17 +195,26 @@ AppBaseView.extendTo(AppView, {
 	'spec-vget-song': function(md) {
 		var playlist = md.getParentMapModel();
 		var playlist_mpx = this.getStoredMpx(playlist);
-		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
-		return playlist_view && playlist_view.getChildView(this.getStoredMpx(md));
+
+		var playlist_view = this.findMpxViewInChildren(playlist_mpx, 'all-sufficient-details');
+		return playlist_view && playlist_view.findMpxViewInChildren(this.getStoredMpx(md));
 	},
-	'collch-$spec-song': function(name, md) {
+	'collch-$spec-song': function(nesname, md) {
 		var playlist = md.getParentMapModel();
 
 		var playlist_mpx = this.getStoredMpx(playlist);
 
-		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		var location_id = provoda.$v.getViewLocationId(this, nesname, 'all-sufficient-details');
+
+
+
+		var view = playlist_mpx.getView(location_id);
 		if (!view){
-			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			view = this.getFreeChildView({
+				by_model_name: true,
+				nesting_name: nesname,
+				nesting_space: 'all-sufficient-details'
+			}, playlist);
 			var place = AppBaseView.viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
 			place.append(view.getA());
 			this.requestAll();
@@ -213,7 +222,8 @@ AppBaseView.extendTo(AppView, {
 	},
 	'collch-$spec-playlist': {
 		place: AppBaseView.viewOnLevelP,
-		opts: {overview: true}
+		opts: {overview: true},
+		by_model_name: true
 	},
 	tickCheckFocus: function() {
 		if (this.isAlive()){
@@ -221,8 +231,13 @@ AppBaseView.extendTo(AppView, {
 			this.search_input[0].select();
 		}
 	},
-	'collch-start_page': function(name, md) {
-		var view = this.getFreeChildView({name: name, space: 'main'}, md);
+	'collch-$spec-start_page': function(nesname, md) {
+		var view = this.getFreeChildView({
+			by_model_name: true,
+			nesting_name: nesname,
+			nesting_space: 'main'
+		}, md);
+
 		if (view){
 			var _this = this;
 
@@ -408,7 +423,7 @@ AppBaseView.extendTo(AppView, {
 			}
 		}
 		var md = this.getNesting('current_mp_md');
-		var view = md && this.getStoredMpx(md).getRooConPresentation(true);
+		var view = md && this.getStoredMpx(md).getRooConPresentation(this, true);
 		if (view){
 			view.setPrio();
 		}
@@ -556,7 +571,7 @@ AppBaseView.extendTo(AppView, {
 				};
 				var getCurrentNode = function() {
 					var current_md = _this.getNesting('current_mp_md');
-					return current_md && _this.getStoredMpx(current_md).getRooConPresentation(true, true).getC();
+					return current_md && _this.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
 				};
 
 				var readySteadyResize = function(){
@@ -872,7 +887,7 @@ AppBaseView.extendTo(AppView, {
 		if (cwp){
 			var cur_md_md = this.getNesting('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
-			if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation()){
+			if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation(this)){
 				this.scrollTo($(cwp.node), {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
@@ -886,7 +901,7 @@ AppBaseView.extendTo(AppView, {
 		}
 		if (nst) {
 			$(nst.node).addClass('surf_nav');
-			//if (nst.view.getRooConPresentation() ==)
+			//if (nst.view.getRooConPresentation(this) ==)
 
 			this.scrollToWP(nst);
 

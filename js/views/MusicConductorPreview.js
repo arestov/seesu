@@ -14,7 +14,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 		});
 		this.addWayPoint(this.button);
 		this.dom_related_props.push('button');
-
+		this.createTemplate();
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
 	'stch-vmp_show': function(state) {
@@ -42,14 +42,15 @@ provoda.View.extendTo(MusicConductorPreview, {
 						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
 						e.preventDefault();
 					}).appendTo(wrap);
-				wrap.append(document.createTextNode('  '));
+				c.append(document.createTextNode('  '));
 				_this.addWayPoint(link);
 				wrap.appendTo(c);
+
 
 			};
 
 			if (lastfm_data && lastfm_data.toptags.length){
-				var _c = $('<div class="block-for-startpage tags-hyped tags_list"></div>').appendTo(this.c);
+				var _c = $('<div class="tags-hyped tags_list"></div>').appendTo(this.c.parent().parent().find('.tags_con'));
 				$('<h3></h3>').appendTo(_c)
 								.append(localize('Pop-tags','Popular tags'));
 				for (var i=0; i < lastfm_data.toptags.length; i++) {

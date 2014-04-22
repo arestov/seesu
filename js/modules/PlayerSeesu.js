@@ -370,19 +370,24 @@ var app_env = app_serv.app_env;
 				e.song_file.mo.submitNowPlaying();
 			});
 
+			var _this = this;
+
 
 			var setVolume = function(fac){
-				if (su.p.c_song){
-					su.p.c_song.setVolume(false, fac);
+				if (_this.c_song){
+					_this.c_song.setVolume(false, fac);
 				} else {
-					su.p.setVolume(false, false, fac);
+					_this.setVolume(false, false, fac);
 				}
 				
 			};
-			if (su.settings['volume']){
-				setVolume(su.settings['volume']);
-			}
-			su.on('settings.volume', setVolume);
+
+			su.on('state_change-settings-volume', function(e) {
+				if (!e.value) {
+					return;
+				}
+				setVolume(e.value);
+			});
 
 
 			want_detecting = true;

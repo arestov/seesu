@@ -448,7 +448,7 @@ define({
 		"ru": "Сохранить пароль в Сису"
 	},
 	"rept-song": {
-		"original": "Repeat playling song",
+		"original": "Repeat playing song",
 		"ru": "Повторять играющую композицию"
 	},
 	"dont-rept-pl": {
@@ -637,9 +637,9 @@ define({
 		"original": "Countries",
 		"ru": "Страны"
 	},
-	"Cities of %county%":{
-		"original": "Cities of %county%",
-		"ru": "Города страны \"%county%\""
+	"Cities of %country%":{
+		"original": "Cities of %country%",
+		"ru": "Города страны \"%country%\""
 	},
 	
 	
