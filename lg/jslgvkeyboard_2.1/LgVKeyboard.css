@@ -1,0 +1,545 @@
+/*
+     LCD TV LABORATORY, LG ELECTRONICS INC., SEOUL, KOREA
+     Copyright(c) 2010 by LG Electronics Inc.
+
+     All rights reserved. Only for LG Smart TV Applications, Parts of this work can be reproduced,
+     stored in a retrieval system, or transmitted by any means without prior written permission of LG Electronics Inc.
+     
+     Developer : Sungsik Kim (sungsik74.kim@lge.com)
+                 Yejeong Park (yejeong.park@lge.com)
+*/
+
+@charset "utf-8";
+
+/*****************************************************/
+/******************** PopUp Style ********************/
+/*****************************************************/
+
+.popupLangSelection{
+    position: absolute;
+    top: 15px;
+    left: 148px;
+    width: 997px;
+    height: 623px;
+    
+    color:rgb(210, 210, 210);
+}
+
+.popupLangTitleTop{
+    position: relative;
+    width: 947px;
+    height: 25px;
+    float: left;
+    
+    background:url("./image/Popup_Back_Title_Top_M_Opa.png") top repeat-x;
+}
+
+.popupLangTitleTopLeft{
+    position: relative;
+    width: 25px;
+    height: 25px;
+    float: left;
+    
+    background:url("./image/Popup_Back_Title_Top_L_Opa.png") top no-repeat;
+}
+
+.popupLangTitleTopRight{
+    position: relative;
+    width: 25px;
+    height: 25px;
+    float: left;
+    
+    background:url("./image/Popup_Back_Title_Top_R_Opa.png") top no-repeat;
+}
+
+.popupLangTitleBody{
+    position: relative; 
+    width: 947px;
+    height: 85px;
+    float: left;
+    
+    background-color:rgb(41, 47, 54);
+}
+
+.popupLangTitleBodyLeft{
+    position: relative;
+    width: 25px;
+    height: 85px;
+    float: left;
+    
+    background:url("./image/Popup_Back_Title_L_Opa.png") top repeat-y;
+}
+
+.popupLangTitleBodyRight{
+    position: relative;
+    width: 25px;
+    height: 85px;
+    float: left;
+    
+    background:url("./image/Popup_Back_Title_R_Opa.png") top repeat-y;
+}
+
+.popupLangBody{
+    position: relative;
+    width: 787px;
+    height: 483px;
+    font-size: 16pt;
+    
+    float: left;
+    
+    background-color:rgb(52, 60, 68);
+}
+
+.popupLangBodyLeft{
+    position: relative;
+    width: 25px;
+    height: 483px;
+    float: left;
+    
+    background:url("./image/Popup_Back_L_Opa.png") left repeat-y;
+}
+
+.popupLangBodyRight{
+    position: relative;
+    width: 25px;
+    height: 483px;
+    float: left;
+    
+    background:url("./image/Popup_Back_R_Opa.png") right repeat-y;
+}
+
+.popupLangBodyArrowArea{
+    position: relative;
+    width: 80px;
+    height: 483px;
+    
+    float: left;
+    
+    background-color:rgb(52, 60, 68);
+}
+
+.popupLangBottom{
+    position: relative;
+    width: 947px;
+    height: 81px;
+    float: left;
+    padding-top:25px;
+    
+    background:url("./image/Popup_Back_Bottom_B_M_Opa.png") top repeat-x;
+}
+
+.popupLangBottomLeft{
+    position: relative;
+    width: 25px;
+    height: 106px;
+    float: left;
+    
+    background:url("./image/Popup_Back_Bottom_B_L_Opa.png") top no-repeat;
+}
+
+.popupLangBottomRight{
+    position: relative;
+    width: 25px;
+    height: 106px;
+    float: left;
+    
+    background:url("./image/Popup_Back_Bottom_B_R_Opa.png") top no-repeat;
+}
+
+.popupLangTitle{
+    position: relative;
+    font-size: 30pt;
+    text-align: center;
+    width: 100%;
+    height: 55px;
+    line-height: 55px;
+}
+
+.popupLangInfo{
+    position: relative;
+    font-size: 16pt;
+    width: 100%;
+    height: 30px;
+    line-height: 20px;
+}
+
+.popupLangSelCount{
+    text-align: left;       
+    position: relative;
+    width: 300px;
+    padding-left: 10px;
+    float: left;
+}
+
+.popupLangPageCount{    
+    text-align: right;      
+    position: relative;
+    width: 120px;
+    padding-right: 10px;
+    float: right;
+}
+
+.popupLangList{
+    position: relative;
+    width: 100%;
+    height: 448px;
+    font-size: 24pt;
+    
+    background:url("./image/Qwerty_Popup_List_BG.png") top center no-repeat;
+}
+
+.popupLangItemNone{
+    position: relative;
+    width: 212px;
+    height: 64px;
+    float: left;
+    line-height: 64px;
+    text-align: left;
+    padding-left: 50px;
+}
+
+.popupLangItemNormal{
+    position: relative;
+    width: 212px;
+    height: 64px;
+    background: url('./image/LANGUAGE_LIST_N.png') no-repeat;
+    float: left;
+    line-height: 64px;
+    text-align: left;
+    padding-left: 50px;
+}
+
+.popupLangItemNormalSelected{
+    position: relative;
+    width: 212px;
+    height: 64px;
+    background: url('./image/LANGUAGE_LIST_NS_.png') no-repeat;
+    float: left;
+    line-height: 64px; 
+    text-align: left;
+    padding-left: 50px;
+}
+
+.popupLangItemFocus{
+    position: relative;
+    width: 212px;
+    height: 64px;
+    background: url('./image/LANGUAGE_LIST_F.png') no-repeat;
+    float: left;
+    line-height: 64px; 
+    text-align: left;
+    padding-left: 50px;
+}
+
+.popupLangItemFocusSelected{
+    position: relative;
+    width: 212px;
+    height: 64px;
+    background: url('./image/LANGUAGE_LIST_FS.png') no-repeat;
+    float: left;
+    line-height: 64px;
+    text-align: left;
+    padding-left: 50px;
+}
+
+.popupLangItemDimmed{
+    position: relative;
+    width: 212px;
+    height: 64px;
+    background: url('./image/LANGUAGE_LIST_U.png') no-repeat;
+    float: left;
+    line-height: 64px;
+    text-align: left;
+    padding-left: 50px;
+}
+
+.popupLangItemFocusDimmed{
+    position: relative;
+    width: 212px;
+    height: 64px;
+    background: url('./image/LANGUAGE_LIST_FD.png') no-repeat;
+    float: left;
+    line-height: 64px;
+    text-align: left;
+    padding-left: 50px;
+    /*outline: 3px solid red*/;
+}
+
+.popupLangMessage{
+    position: relative;
+    width: 100%;
+    height: 35px;
+    text-align: center; 
+    font-size: 16pt;
+    line-height: 35px;
+}
+
+.popupBtnDiv{
+    width: 433px;
+    height: 54px;
+    position: relative;
+    float: left;
+    font-size: 20pt;
+    padding-left: 20px;
+    padding-right: 20px;
+    color:rgb(41, 47, 54);
+}
+
+.popupBtnNormal{
+    width: 230px;
+    height: 54px;
+    position: relative;
+    background: url('./image/LANGUAGE_BTN_N.png') no-repeat;
+    text-align: center;
+    line-height: 54px;
+}
+
+.popupBtnFocus{
+    width: 230px;
+    height: 54px;
+    position: relative;
+    background: url('./image/LANGUAGE_BTN_F.png') no-repeat;
+    text-align: center; 
+    line-height: 54px;
+}
+
+.popupBtnDown{
+    width: 230px;
+    height: 54px;
+    position: relative;
+    background: url('./image/LANGUAGE_BTN_S.png') no-repeat;
+    text-align: center; 
+    line-height: 54px;
+}
+
+.popupLeftArrow{
+    position: absolute;
+    top: 295px;
+    left: 28px;
+    width: 75px;
+    height: 76px;
+    background: url('./image/Qwerty_Popup_Arrow_L_N.png') no-repeat;
+}
+
+.popupLeftArrowFocus{
+    position: absolute;
+    top: 295px;
+    left: 28px;
+    width: 75px;
+    height: 76px;
+    background: url('./image/Qwerty_Popup_Arrow_L_F.png') no-repeat;
+}
+
+.popupLeftArrowDown{
+    position: absolute;
+    top: 295px;
+    left: 28px;
+    width: 75px;
+    height: 76px;
+    background: url('./image/Qwerty_Popup_Arrow_L_S.png') no-repeat;
+}
+
+.popupRightArrow{
+    position: absolute;
+    top: 295px;
+    left: 892px;
+    width: 75px;
+    height: 76px;
+    background: url('./image/Qwerty_Popup_Arrow_R_N.png') no-repeat;
+}
+
+.popupRightArrowFocus{
+    position: absolute;
+    top: 295px;
+    left: 892px;
+    width: 75px;
+    height: 76px;
+    background: url('./image/Qwerty_Popup_Arrow_R_F.png') no-repeat;
+}
+
+.popupRightArrowDown{
+    position: absolute;
+    top: 295px;
+    left: 892px;
+    width: 75px;
+    height: 76px;
+    background: url('./image/Qwerty_Popup_Arrow_R_S.png') no-repeat;
+}
+
+
+/*************************************************
+***************horizontal style*******************
+**************************************************/
+
+/*horizontal keyboardmain*/ 
+.keyboardArea { 
+    position: absolute;  
+    left: 0px;
+    top: 2000px;
+    width: 1252px;
+    height: 284px;
+    background-color:black;
+    padding-left: 28px;
+    padding-top: 28px;
+    
+    z-index: 1000;
+    
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.marskedPopup { 
+    position: absolute;  
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.0);
+    
+    z-index: 1001;
+    
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.horBtnLayer {  
+    position: relative;  
+    width: 1252px;
+    height: 52px;
+}
+
+.horBtnNormal {
+    width: 66px; 
+    height: 50px;
+    line-height:48px; 
+    vertical-align: middle;
+    font-size: 28px;
+    color: rgb(250,250,250);
+    text-align: center; 
+    position: relative;
+    background: url('./image/Qwerty_Btn1_N.png') no-repeat;
+    float: left;
+    margin: 1px;
+}
+
+.horBtnSmall {
+    width: 66px; 
+    height: 50px;
+    line-height:48px; 
+    vertical-align: middle;
+    font-size: 20px;
+    color: rgb(250,250,250);
+    text-align: center; 
+    position: relative;
+    background: url('./image/Qwerty_Btn1_N.png') no-repeat;
+    float: left;
+    margin: 1px;
+}
+
+/*horizontal middle button */
+.btnHorNormalMiddle {
+    width: 134px; 
+    height: 50px; 
+    color: rgb(250,250,250);
+    line-height:48px;
+    /*vertical-align: middle;*/
+    text-align: center; 
+    position: relative;
+    font-size: 24px;
+    float: left;
+    margin: 1px;
+    display: table;
+}
+
+#wkk_key_clear p {
+    width: 134px; 
+    height: 50px; 
+     display:table-cell;
+     vertical-align: middle;
+}
+
+.btnHorNormalImgMiddle {
+    width: 134px; 
+    height: 50px; 
+    color: rgb(250,250,250);
+    line-height:50px;
+    vertical-align: middle;
+    text-align: center; 
+    position: relative;
+    font-size: 24px;
+    float: left;
+    margin: 1px;
+}
+
+/* horizontal normal long button */
+.btnHorNormalLong {
+    width: 406px; 
+    height: 50px;
+    line-height:50px;
+    vertical-align: middle;
+    text-align: center; 
+    position: relative;
+    font-size: 26px;
+    float: left;
+    margin: 1px;
+}
+
+/*Mini pop up */
+
+.miniKeyPopup {
+    position:absolute;
+    background-color:black;
+    border:4px solid white;
+    border-radius:10px;
+    padding: 14px;
+    z-index:1001;
+}
+
+.horBtnMiniKeyNormal {
+    width: 66px; 
+    height: 50px;
+    line-height:49px;
+    font-size: 28px;
+    color: rgb(209,209,209);
+    text-align:center;
+    background:url('./image/Qwerty_Btn1_N.png') no-repeat;
+    float: left;
+    margin: 1px;
+    overflow:hidden;
+}
+
+.horBtnMiniKeyBack {
+    width: 66px; 
+    height: 50px;
+    line-height:49px;
+    font-size: 28px;
+    color: rgb(209,209,209);
+    text-align:center;
+    background:url('./image/Qwerty_Btn8_N.png') no-repeat;
+    float: right;
+    margin: 1px;
+    overflow:hidden;
+}
+
+.langPopUp {
+    position:absolute;
+    width:230px;
+    height:44px;
+    top:568px;
+    left:525px;
+    color:#FFFFFF;
+    padding-top:5px;  
+    font-size:30px;
+    text-align:center;
+    overflow:hidden;
+    background:url('image/KEYBOARD_LANGPOPUP_BG_01.png') no-repeat;
+    background-size:contain;
+    /*background-color:#000000;*/
+    z-index: 1001;
+}

@@ -1,6 +1,7 @@
 var big_timer;
 (function(){
 "use strict";
+window.lg_smarttv_app = true;
 requirejs.config({
 	paths: {
 		provoda: 'js/libs/provoda',
@@ -53,6 +54,25 @@ big_timer = {
 	if (need_ui){
 		requirejs(['spv', 'app_serv'], function(spv, app_serv) {
 			app_serv.handleDocument(window.document);
+		});
+		requirejs(['js/modules/fixCSSPixels', 'jquery'], function(fixCSSPixels, $) {
+			return;
+			var frame = document.createElement('iframe');
+			frame.src= 'cssom.html';
+
+			$(frame).on('load', function() {
+				setTimeout(function() {
+
+
+					window.CSSOM = frame.contentWindow.CSSOM;
+					fixCSSPixels(window.document, '/css/pv-layout.css');
+				}, 2000);
+			});
+
+			$(document.body).append(frame);
+
+			
+			
 		});
 	}
 	if (!need_ui){

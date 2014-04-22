@@ -606,10 +606,14 @@ AppBaseView.extendTo(AppView, {
 			var search_input =  $('#q', search_form);
 			_this.search_input = search_input;
 
-			search_input.on('keyup change input', function() {
+			search_input.on('keyup change input vkeyboard_change', spv.throttle(function() {
 				var input_value = this.value;
 				_this.overrideStateSilently('search_query', input_value);
 				_this.RPCLegacy('search', input_value);
+			}, 100));
+
+			search_input.on('activate_waypoint', function() {
+				search_input.focus();
 			});
 
 
@@ -621,14 +625,19 @@ AppBaseView.extendTo(AppView, {
 			//var shared_parts_c = app_map_con.children('.shared-parts');
 
 			var scrolling_viewport;
-			if (app_env.as_application){
+
+			if (screens_block.css('overflow') == 'auto') {
+				scrolling_viewport = {
+					node: screens_block
+				};
+			} else if (app_env.as_application){
 				scrolling_viewport = {
 					node: screens_block
 				};
 			} else {
 				if (app_env.lg_smarttv_app){
 					scrolling_viewport = {
-						node: $(slider)
+						node: screens_block
 					};
 				} else {
 					scrolling_viewport = {
@@ -765,8 +774,8 @@ AppBaseView.extendTo(AppView, {
 			//_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
 
 			var justhead = _this.els.navs;
-			var daddy = justhead.children('.daddy');
-			var np_button = daddy.children('.np-button');
+			var daddy = justhead.find('.daddy');
+			var np_button = justhead.find('.np-button');
 			_this.nav = {
 				justhead: justhead,
 				daddy: daddy,
@@ -853,7 +862,8 @@ AppBaseView.extendTo(AppView, {
 		if (key_name && allow_pd){
 			e.preventDefault();
 		}
-		if (key_name){
+		var allow_wpnav = !app_env.lg_smarttv_app || (!this.d.activeElement || this.d.activeElement.nodeName != 'INPUT');
+		if (key_name && allow_wpnav){
 			//this.RPCLegacy('keyNav', key_name);
 			this.wp_box.wayPointsNav(key_name);
 		}

@@ -1758,6 +1758,12 @@
 				if(textItem != null)
 				{		
 					textItem.value = value;
+					if (lgKb.onChange) {
+						setTimeout(function() {
+							lgKb.onChange(textItem);
+						}, 0);
+					}
+					
 				}
 			},
 		getKeyValue :

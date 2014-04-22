@@ -1,0 +1,90 @@
+html{
+	font-size:30px;
+}
+body{
+	overflow: hidden;
+	font-family: 'LG Display_Eng_Kor', 'LG Display', Arial, Helvetica ,sans-serif;
+	}
+input.surf_nav {
+	color:#eee;
+}
+
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 1rem;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 0.5rem rgba(0,0,0,0.3); 
+    -webkit-border-radius: 1rem;
+    border-radius: 1rem;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 1rem;
+    border-radius: 1rem;
+    background: #333; 
+    -webkit-box-shadow: inset 0 0 0.5rem rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(255,0,0,0.4); 
+}
+
+.playlist-container.show-zoom-to-track{
+	padding-left: 0.4rem;
+	padding-right: 0.4rem;
+
+}
+.navs {
+	padding-top:32px;
+	padding-left: 32px;
+	padding-right: 32px;
+	}
+	#slider-materail {
+		margin-top: 19px;
+	}
+#slider-materail{
+	margin-left:32px;
+	margin-right: 32px;
+}
+.screens {
+	height: 595px;
+	overflow: auto;
+}
+.app_map_con{
+	
+	margin: 0;
+	}
+/*
+
+*/
+
+.track-listeners {
+	display: none;
+}
+
+
+.song-actions *{
+	display: none;
+	}
+.playlist-actions{
+	display: none;
+}
+.you-tube-video-link.cant-show{
+	display: none;
+}
+
+
+.full-page .leftcol {
+	float:none;
+	width: auto;
+	padding-right: 0;
+}
+.full-page .rightcol {
+	float: none;
+	width: auto;
+	padding-left: 0;
+}

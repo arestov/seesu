@@ -436,6 +436,22 @@ AppModel.extendTo(SeesuApp, {
 					
 				}
 			});
+		} else if (app_env.lg_smarttv_app) {
+			spv.addEvent(window, 'keyup', function(e) {
+				if(e.keyCode  == 461){
+					//tizen.application.getCurrentApplication().exit();
+					var current_md = _this.map.getCurrentResident();
+					if (current_md) {
+						if (_this.start_page == current_md) {
+							window.NetCastBack();
+						} else {
+							current_md.getParentMapModel().requestPage();
+						}
+					}
+
+					
+				}
+			});
 		}
 
 		

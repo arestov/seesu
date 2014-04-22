@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 
 
-
+	<meta name="google" content="notranslate" />
 	<title>Seesu online</title>
 	<script type="text/javascript">
 		/*<![CDATA[*/
@@ -13,6 +13,10 @@
 		/* ]]>*/
 	</script>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<link rel="shortcut icon" id="dynamic-favicon"  href="icons/icon16.png"/>
+	
+
+
 	<link rel="stylesheet" type="text/css" media="screen" href="css2/base.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="css2/buttons.css"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css2/master.css"/>
@@ -23,7 +27,21 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="css2/buttmen.css"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css2/play-list-panel.css"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css2/abs_layout.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css2/lg_smart_tv.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/pv-layout.css">
+
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/lg_tv.css">
+
+<!--	<link rel="stylesheet" type="text/css" media="screen" href="css2/base.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/buttons.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/master.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/view_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/vkontakte_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/search_results.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/player.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/buttmen.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/play-list-panel.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/abs_layout.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css2/lg_smart_tv.css"/>-->
 
 	<meta name="keywords"  content="lg smart-tv" >
 	<meta name="description" content="LG smart tv app for searching and listening music. Hot last.fm acceleration"  >
@@ -36,8 +54,10 @@
 	<meta property="og:image" content="http://seesu.me/i/page-poster.png" />
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="jslgvkeyboard_1.5/LgVKeyboard.css"/>
-	<script type="text/javascript" src="jslgvkeyboard_1.5/LgVKeyboard.js"  id="mainVKScript"></script>
+	<link rel="stylesheet" type="text/css" media="screen" href="lg/jslgvkeyboard_2.1/LgVKeyboard.css"/>
+	<script type="text/javascript" src="lg/jslgvkeyboard_2.1/LgVKeyboard.js"  id="mainVKScript"></script>
+	<script type="text/javascript" src="lg/initKeyboard.js"  id="mainVKScript"></script>
+
 
 
 	<script data-main="loader" src="js/common-libs/require-2.1.10.min.js"></script>
@@ -55,20 +75,9 @@
 	
 	
 <!--
-	<meta name="google" content="notranslate" />
+	
 	<title>Seesu</title>
-	<link rel="shortcut icon" id="dynamic-favicon"  href="icons/icon16.png"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/base.css">
-	<link rel="stylesheet" type="text/css" media="screen" href="css/buttons.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/master.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/view_switcher.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/vkontakte_switcher.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/search_results.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/player.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/buttmen.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/play-list-panel.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/abs_layout.css"/>
-	<link rel="stylesheet" type="text/css" media="screen" href="css/pv-layout.css">
+	
 	<meta name="keywords"  content="seesu, seesu for iphone, seesu for android, seesu for mobile, seesu online, last.fm, vk.com music, vkontakte.ru and last.fm" >
 	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -99,7 +108,7 @@
 			class="common-nav nav-item"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
 			pv-class="
 				nav-item
@@ -119,7 +128,7 @@
 			title="Search results"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
 				nav-item nav-search_results
@@ -136,7 +145,7 @@
 			title="Seesu start page"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
 				nav-item nav-start
@@ -1618,24 +1627,28 @@
 	</div>
 <div id="slider">
 	<div class="navs ">
-		<div class="daddy not-inited">
-			<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+		<div class="appnav_wrap">
 			<a 
-				class="nav-item np-button hidden"
-				pv-props="title:{{now_playing_text}}"
-				pv-class="
-					nav-item np-button
-					{{!now_playing_text && 'hidden'}}
-					{{!viewing_playing && 'nav-button'}}
-					{{playing && 'player-played'}}
-				"><span class="np"></span></a>
+					class="nav-item np-button hidden"
+					pv-props="title:{{now_playing_text}}"
+					pv-class="
+						nav-item np-button
+						{{!now_playing_text && 'hidden'}}
+						{{!viewing_playing && 'nav-button'}}
+						{{playing && 'player-played'}}
+					"><span class="np"></span></a>
+			<div class="daddy not-inited">
+				<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+				
+			</div>
 		</div>
+		
 	</div>
 	<div id="slider-materail" class="shadowed">
 		
 			<div class="screens" id="screens"><div class="app_map_con">
 				<div class="shared-parts">
-					<form id="search" name="search" action='/o' method="get" class="root-lev-search-form" pv-class=" root-lev-search-form{{!show_search_form && 'hidden'}}">
+					<form id="search" name="search" action='/o' method="get" class="root-lev-search-form" pv-class=" root-lev-search-form {{!show_search_form && 'hidden'}}">
 						<!-- google stat for custom search in browsers -->
 						<div>
 							<input type="hidden" name="utm_source" value="web_app" id="app_type">
@@ -1646,7 +1659,9 @@
 						<p id="search-p">
 							<label>
 								<span class='main_search_label lang localize-search' pv-class="main_search_label {{search_query && 'hidden'}}">Search</span>
-								<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
+								<span class="inpt"><input 
+									type="search" name="q" id="q" size="50"  autocomplete="off"
+									pv-type="{{show_search_form && 'way-point'}}" /></span>
 								
 							</label>
 							

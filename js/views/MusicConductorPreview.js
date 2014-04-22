@@ -29,6 +29,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 	//'collch-allpas': 'ww_c',
 	parts_builder: {
 		'start-page-blocks': function() {
+			
 			var _this = this;
 
 
@@ -130,19 +131,22 @@ provoda.View.extendTo(MusicConductorPreview, {
 			var callback = function(){
 				users_play.addClass('loading');
 			};
-			su.s.susd.ligs.regCallback('start-page', showUsersListenings, callback);
-			this.onDie(function() {
-				su.s.susd.ligs.removeCallback('start-page', showUsersListenings);
-				try {
-					users_play.detach();
-					users_play.off();
-					users_play.remove();
-				} catch(e){}
-				
-				users_play = null;
-				this.root_view = null;
-				_this = null;
-			});
+			if (!app_serv.app_env.lg_smarttv_app) {
+				su.s.susd.ligs.regCallback('start-page', showUsersListenings, callback);
+				this.onDie(function() {
+					su.s.susd.ligs.removeCallback('start-page', showUsersListenings);
+					try {
+						users_play.detach();
+						users_play.off();
+						users_play.remove();
+					} catch(e){}
+					
+					users_play = null;
+					this.root_view = null;
+					_this = null;
+				});
+			}
+			
 			
 
 			return true;

@@ -355,7 +355,7 @@ var app_env = (function(wd){
 	if (has_transform_prop){
 		env.transform = has_transform_prop;
 	}
-	if (navigator.userAgent.search(/LG Browser/i) && (window.NetCastExit || window.NetCastBack)){
+	if (typeof lg_smarttv_app != 'undefined' || (navigator.userAgent.search(/LG Browser/i) && (window.NetCastExit || window.NetCastBack))){
 		env.deep_sanbdox = true;
 		env.as_application = false;
 		env.app_type = 'lg_smarttv_app';
@@ -752,244 +752,6 @@ app_serv.localize = localize;
 
 
 
-
-
-
-
-
-/*
-
-jsLoadComplete(function() {
-	yepnope({
-		load: [ 'CSSOM/spec/utils.js', 'CSSOM/src/loader.js'],
-		complete: function() {
-			console.log('ddddd');
-		}
-	});
-});
-
-var css = $filter(document.styleSheets, 'href')
-for (var i = 0; i < css.length; i++) {
-	css[i] = css[i].replace(location.origin, '').replace('css2', 'css');
-	if (css[i].indexOf('/css/') == 0){
-		checkPX(css[i]);
-	}
-	//
-
-	
-};
-
-
-//checkPX('/css/search_results.css');
-
-
-
-*/
-
-
-(function(global) {
-	
-
-
-	
-	var getTabs = function(count) {
-		var tabs_string = '';
-		while (count){
-			tabs_string += '\t';
-			--count;
-		}
-		return tabs_string;
-	};
-	
-	var getRulesString = function(arr, tabs_count) {
-		var string = '';
-		for (var i = 0; i < arr.length; i++) {
-			string += getTabs(tabs_count) + arr[i].name + ': ' + arr[i].new_values.join(' ') + ';\n';
-		}
-		return string;
-	};
-
-
-
-
-	var getRemUnitValue = function(value, root_font_size) {
-		return (value/root_font_size) + 'rem';
-	};
-
-	var culculateRemRule = function(rule, root_font_size) {
-		var result = [];
-		var parsed_rule = {};
-		var lines = rule.style.cssText.split(/\;\n|\;/);
-		var px_props = [];
-		for (var i = 0; i < lines.length; i++) {
-			var parts = lines[i] && lines[i].split(/\s?\:\s?/);
-			if (parts && parts[1].indexOf('px') != -1){
-				var values = parts[1].split(/\s/);
-				var new_values = [];
-				for (var j = 0; j < values.length; j++) {
-					var cur_val = values[j];
-					if (cur_val.indexOf('px') == -1){
-						new_values[j] = cur_val;
-					} else {
-						var real_val = parseFloat(cur_val.replace('px'));
-						if (real_val){
-							new_values[j] = getRemUnitValue(real_val, root_font_size);
-						} else {
-							new_values[j] = 0;
-						}
-						
-					}
-					
-				}
-				if (new_values.join(' ') != 0){
-					px_props.push({
-						name: parts[0].replace(/^\s*/,''),
-						original: parts[1],
-						value: values,
-						new_values: new_values
-					});
-				}
-
-
-				
-			}
-
-		}
-
-		var original_selector = rule.selectorText;
-		var selector_parts = original_selector.split(',');
-		for (var i = 0; i < selector_parts.length; i++) {
-			selector_parts[i] = '.stretch-all ' + selector_parts[i];
-		}
-
-		var rule_start = rule.__starts,
-			rule_end = rule.__ends,
-			style_start = rule.style.__starts;
-
-
-
-		return {
-			px_props: px_props,
-			rule_start: rule_start,
-			rule_end: rule_end,
-			style_start: style_start,
-
-			selector: original_selector,
-			stretch_selector: selector_parts.join(', '),
-			rule: rule,
-
-			string: px_props.length ? getRulesString(px_props) : ''
-		};
-
-	};
-
-	var getSimpleRules = function(sheet){
-		var simple_rules = [];
-
-		var iterating_rules = sheet.cssRules && [].concat(Array.prototype.slice.call(sheet.cssRules));
-		while (iterating_rules && iterating_rules.length){
-			var cur = iterating_rules.shift();
-			if (cur.cssRules){
-				iterating_rules = [].concat(Array.prototype.slice.call(cur.cssRules), iterating_rules);
-			} else {
-				simple_rules.push(cur);
-			}
-		}
-		return simple_rules;
-	};
-	app_env.getSimpleCSSRules = getSimpleRules;
-
-	var createStyleSheet = function(href, sheet_string, root_font_size, string) {
-		sheet = CSSOM.parse(sheet_string);
-		href = href || sheet.href;
-		if (href.indexOf('sizes.css') != -1){
-			return '';
-		}
-		var pos_shift = 0;
-
-		var big_result = sheet_string;
-
-
-	//	var big_string = '/* path: ' + href.replace(location.origin, '') + '*/\n';
-		var simple_rules = getSimpleRules(sheet);
-
-
-		/*
-		simple_rules.sort(function(a, b){
-			return spv.sortByRules(a, b, [''])
-		});*/
-
-		var complects = [];
-		for (var i = 0; i < simple_rules.length; i++) {
-			var cur = simple_rules[i];
-			//cur.selectorText
-			if (cur.style && cur.style.cssText.indexOf('px') != -1){
-				var rulll = culculateRemRule(cur, root_font_size);
-
-				var sel_prev_text = sheet_string.slice(0, rulll.rule_start);
-
-				var sel_tabs = sel_prev_text.match(/\t+(?:$)/gi);
-				var sel_tabs_count = sel_tabs && sel_tabs[0].length || 0;
-				//sel_tabs_count += 1;
-				
-			//	console.log(sel_tabs_count);
-				complects.push(rulll);
-				if (rulll.px_props.length){
-					rulll.full_string = '\n' +
-						getTabs(sel_tabs_count) + rulll.stretch_selector + '{\n' +
-						getTabs(sel_tabs_count + 1) + '/* rem hack */\n' +
-						getRulesString(rulll.px_props, sel_tabs_count + 1) +
-						getTabs(sel_tabs_count + 1) + '}\n';
-
-
-					var rules_string = '\n' +
-						getTabs(sel_tabs_count + 1) + '/* rem hack */\n' +
-						getRulesString(rulll.px_props, sel_tabs_count + 1);
-
-					var big_start = big_result.slice(0, rulll.rule_end -1 + pos_shift);
-					var big_end = big_result.slice(rulll.rule_end -1 + pos_shift);
-
-					big_result = big_start + rules_string + big_end;
-					pos_shift += rules_string.length;
-
-				//	big_string += rulll.full_string;
-
-					//getRulesString
-				//	big_string += rulll.stretch_selector + ' {\n' + '\t/* rem hack */\n' + rulll.string + '}\n\n';
-				}
-				
-			}
-			
-		}
-
-		return string ? big_result : complects;
-	};
-	var checkPX = function(url) {
-		var complects = [];
-
-	
-		var root_font_size = $(document.documentElement).css('font-size');
-		root_font_size = parseFloat(root_font_size.replace('px'));
-
-
-		var big_string = '';
-
-
-		var requests = [];
-
-		$.ajax({
-			url: url
-		})
-		.done(function(r) {
-			var test = createStyleSheet(url, r, root_font_size, true);
-			console.log("url: " + url);
-			console.log(test);
-			window.open('data:text/plain;base64,' + btoa(test));
-		});
-		
-		return big_string;
-
-	};
 	;(function () {
 
 	var
@@ -1049,18 +811,151 @@ for (var i = 0; i < css.length; i++) {
 		});
 
 	}());
-	var replaceSVGHImage = function(rule, style){
+
+(function(global) {
+	
+
+
+	
+	var getTabs = function(count) {
+		var tabs_string = '';
+		while (count){
+			tabs_string += '\t';
+			--count;
+		}
+		return tabs_string;
+	};
+	app_serv.getTabs = getTabs;
+	
+	var getRulesString = function(arr, tabs_count) {
+		var string = '';
+		for (var i = 0; i < arr.length; i++) {
+			string += getTabs(tabs_count) + arr[i].name + ': ' + arr[i].new_values.join(' ') + ';\n';
+		}
+		return string;
+	};
+
+	app_serv.getRulesString = getRulesString;
+
+
+	var getRemUnitValue = function(value, root_font_size) {
+		return (value/root_font_size) + 'rem';
+	};
+
+	app_serv.getRemUnitValue = getRemUnitValue;
+
+	var culculateRemRule = function(rule, root_font_size) {
+		//var result = [];
+		//var parsed_rule = {};
+
+		var replaceFunc = function (str, p1) {
+			var real_val = parseFloat(p1);
+			if (real_val){
+				return getRemUnitValue(real_val, root_font_size);
+			} else {
+				return 0;
+			}
+
+
+
+			return p1 + 'rem';
+		};
+		var lines = rule.style.cssText.split(/\;\n|\;/);
+		var px_props = [];
+		for (var i = 0; i < lines.length; i++) {
+			var parts = lines[i] && lines[i].split(/\s?\:\s?/);
+			if (parts && parts[1].indexOf('px') != -1){
+				var values = parts[1].split(/\s/);
+				var new_values = [];
+				for (var j = 0; j < values.length; j++) {
+					var cur_val = values[j];
+					if (cur_val.indexOf('px') == -1){
+						new_values[j] = cur_val;
+					} else {
+						new_values[j] =  cur_val.replace(/(\d+)px/gi, replaceFunc);
+						
+					}
+					
+				}
+				if (new_values.join(' ') != 0){
+					px_props.push({
+						name: parts[0].replace(/^\s*/,''),
+						original: parts[1],
+						value: values,
+						new_values: new_values
+					});
+				}
+
+
+				
+			}
+
+		}
+
+		var original_selector = rule.selectorText;
+		var selector_parts = original_selector.split(',');
+		for (var i = 0; i < selector_parts.length; i++) {
+			selector_parts[i] = '.stretch-all ' + selector_parts[i];
+		}
+
+		var rule_start = rule.__starts,
+			rule_end = rule.__ends,
+			style_start = rule.style.__starts;
+
+
+
+		return {
+			px_props: px_props,
+			rule_start: rule_start,
+			rule_end: rule_end,
+			style_start: style_start,
+
+			selector: original_selector,
+			stretch_selector: selector_parts.join(', '),
+			rule: rule,
+
+			string: px_props.length ? getRulesString(px_props) : ''
+		};
+
+	};
+	app_serv.culculateRemRule = culculateRemRule;
+
+	var getSimpleRules = function(sheet){
+		var simple_rules = [];
+
+		var iterating_rules = sheet.cssRules && [].concat(Array.prototype.slice.call(sheet.cssRules));
+		while (iterating_rules && iterating_rules.length){
+			var cur = iterating_rules.shift();
+			if (cur.cssRules){
+				iterating_rules = [].concat(Array.prototype.slice.call(cur.cssRules), iterating_rules);
+			} else {
+				simple_rules.push(cur);
+			}
+		}
+		return simple_rules;
+	};
+	app_serv.getSimpleCSSRules = getSimpleRules;
+
+	
+
+	var replaceSVGHImage = function(rule, style, $){
 
 		var bgIString = rule.style.backgroundImage;
-		bgIString = decodeURIComponent(bgIString)
-			.replace('url(\'data:text/plain;utf8,svg-hack,', '')
+		bgIString = bgIString
+			.replace(/^url\(\s*[\"\']?/, '')
+			.replace('data:text/plain;utf8,svg-hack,', '')
+			.replace(/[\"\']?\s*\)$/, '');
+
+		/*
+			.replace('url(\'', '')
 			.replace('}\'\)','}')
 			.replace('url(data:text/plain;utf8,svg-hack,', '')
 			.replace('}\)','}')
 			.replace('url(\"data:text/plain;utf8,svg-hack,', '')
 			.replace('}\"\)','}');
-
+*/
 		var structure;
+		var errors = [];
 		try {
 			structure = JSON.parse(bgIString);
 		} catch (e){
@@ -1081,7 +976,7 @@ for (var i = 0; i < css.length; i++) {
 			}
 		}
 		if (!structure){
-			console.log('cant parse svg structure string :((( ')
+			console.log(errors);
 			return;
 		}
 		 
@@ -1152,7 +1047,7 @@ for (var i = 0; i < css.length; i++) {
 		$(doc.documentElement.firstChild).append(style);
 		//console.log(svg_hacked);
 		$.each(svg_hacked, function(i, el){
-			replaceSVGHImage(el, style);
+			replaceSVGHImage(el, style, $);
 		});
 	};
 
