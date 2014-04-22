@@ -32,16 +32,16 @@ view_switcher.css
 }
 .daddy{
 	overflow: hidden;
+	
 	margin-right:19px;
 	height: 31px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	
+
 	/* rem hack */
 	margin-right: 1.3571428571428572rem;
 	height: 2.2142857142857144rem;
 }
-
 .appnav_wrap {
 	position: relative;
 }
@@ -216,6 +216,12 @@ view_switcher.css
 .full-page .usual_page{
 	margin-top:1.72rem;
 }
+.preview_ffp {
+	display: none;
+}
+.full-page .preview_ffp {
+	display: block;
+}
 .art_card{
 	
 	overflow:hidden;
@@ -287,10 +293,7 @@ view_switcher.css
 	.page-scheme .art_card-image{
 		display: none;
 		}
-	.full-page .art_card-bio{
-		float: right;
-		width: 50%;
-		}
+
 
 		.art_card-bio.loading{
 			min-height:20px;
@@ -306,14 +309,8 @@ view_switcher.css
 	.page-scheme .art_card-bio{
 		display: none;
 		}
-	.full-page .art_card-image{
-		float:left;
-		width:50%;
-		}
-		
-		.full-page .art_card-image-padding{
-			padding-right:1.72rem;
-		}
+
+
 		.art_card-image img{
 			margin-bottom:1.72rem;
 			width:100%;

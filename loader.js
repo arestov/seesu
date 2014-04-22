@@ -65,7 +65,7 @@ big_timer = {
 
 
 					window.CSSOM = frame.contentWindow.CSSOM;
-					fixCSSPixels(window.document, '/css/pv-layout.css');
+					fixCSSPixels(window.document);
 				}, 2000);
 			});
 
