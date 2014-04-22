@@ -3337,16 +3337,38 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var _this = this;
 		this.triggerTPLevents = function(e) {
-			if (!e.pv_repeat_context){
-				if (!e.callback_data[0] && e.callback_data[1]){
-					e.callback_data.shift();
-					_this.RPCLegacy.apply(_this, e.callback_data);
-				} else {
-					_this.tpl_events[e.callback_name].call(_this, e.event, e.node, e.callback_data);
+			var cb_data = e.callback_data;
+
+
+
+			for (var i = 0; i < cb_data.length; i++) {
+				var cur = cb_data[i];
+				if (typeof cur == 'function') {
+					cb_data[i] = cur(e.scope || this.states);
 				}
-			} else {
-				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
 			}
+
+			if (!cb_data[0] && cb_data[1]){
+				var target_view;
+				//var view =
+				
+				if (cb_data[1].indexOf('#') === 0) {
+					target_view = _this.root_view;
+					cb_data[1] = cb_data[1].replace('#', '');
+				} else {
+					target_view = _this;
+				}
+
+				cb_data.shift();
+				target_view.RPCLegacy.apply(target_view, cb_data);
+			} else {
+				if (!e.pv_repeat_context){
+					_this.tpl_events[e.callback_name].call(_this, e.event, e.node, cb_data);
+				} else {
+					_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
+				}
+			}
+			
 		};
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);

@@ -28,7 +28,7 @@ LoadableList.extendTo(TagsList, {
 	addItemToDatalist: function(obj, silent) {
 		this.addTag(obj, silent);
 	},
-	'compx-data-list': {
+	'compx-simple_tags_list': {
 		depends_on: ['tags_list', 'preview_list'],
 		fn: function(tag_list, preview_list){
 			return tag_list || preview_list;

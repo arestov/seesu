@@ -551,7 +551,17 @@
 
 
 		<div class="tags_list_page usual_page">
-			<div class="tags_list" pv-anchor="listc"></div>
+			<div class="tags_list">
+				<span pv-repeat="tag in simple_tags_list">
+					<a 
+						class="js-serv"
+						pv-text="{{tag.name}}"
+						pv-type="way-point"
+						pv-events="click::#show_tag:{{tag.name}}"
+						></a>
+				</span>
+
+			</div>
 		</div>
 		
 
@@ -1719,7 +1729,10 @@
 												<span class="lang localize-music-cond">Music Conductor</span>
 											</div>
 										</div>
-										<div pv-nest="preview_hypem" class="arb-ally preview_ffp compact_playlist" pv-events="click::requestPage">
+										<div 
+											pv-nest="preview_hypem" class="arb-ally preview_ffp compact_playlist" 
+											pv-events="click::requestPage"
+											pv-type="way-point">
 											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
 											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
 												<div class="compact_song-image_con">
@@ -1738,7 +1751,11 @@
 												<div pv-text="{{track}}" class="compact_song-track_name"></div>
 											</div>
 										</div>
-										<div pv-nest="preview_lastfm_top" class="arb-ally preview_ffp compact_playlist" pv-events="click::requestPage">
+										<div 
+										pv-nest="preview_lastfm_top" 
+										class="arb-ally preview_ffp compact_playlist"
+										pv-events="click::requestPage"
+										pv-type="way-point">
 											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
 											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
 												<div class="compact_song-image_con">
