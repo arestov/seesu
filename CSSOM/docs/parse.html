@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>CSSOM.js parse method</title>
+	<script src="../src/loader.js"></script>
+	<link rel="stylesheet" href="parse.css">
+</head>
+<body>
+<table id="labels">
+	<tr><td><h1>CSSOM.parse</h1></td><td>.toString</td></tr>
+</table>
+<table id="content">
+	<tr>
+		<td class="style-cell">
+<textarea id="style" spellcheck="false" rows="40">img {
+  border: none
+}</textarea></td>
+		<td class="output-cell"><pre id="output"></pre></td>
+		<td class="serialized-cell"><pre id="serialized"></pre></td>
+	</tr>
+</table>
+<div id="message"></div>
+<script src="../spec/utils.js"></script>
+<script src="parse.js" defer></script>
+</body>
+</html>
