@@ -910,18 +910,23 @@ AppModel.extendTo(SeesuApp, {
 			}
 		},
 		request_rewind: function() {
-			var mopla = this.p.c_song && this.p.c_song.mopla;
+			if (this.p.c_song) {
+				this.p.c_song.playPrev();
+			}
+
+
+			
+
+			/*var mopla = this.p.c_song && this.p.c_song.mopla;
 			var cpos = mopla && mopla.state('play_position');
 			if (mopla && !isNaN(cpos)) {
 				//mopla.setPosition(cpos - 5000, false, true);
-			}
+			}*/
 
 		},
 		request_fastforward: function() {
-			var mopla = this.p.c_song && this.p.c_song.mopla;
-			var cpos = mopla && mopla.state('play_position');
-			if (mopla && !isNaN(cpos)) {
-				//mopla.setPosition(cpos + 5000, false, true);
+			if (this.p.c_song) {
+				this.p.c_song.playNext();
 			}
 		}
 	}
