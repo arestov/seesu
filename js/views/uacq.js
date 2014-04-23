@@ -43,7 +43,7 @@ provoda.View.extendTo(UserAcquaintanceView, {
 	'stch-userlink': function(state) {
 		if (state){
 			if (!this.ulink){
-				this.ulink = $('<a class="external"></a>').appendTo(this.link_place);
+				this.ulink = $('<a class=""></a>').appendTo(this.link_place);
 			}
 			this.ulink
 				.attr('href', state.href)

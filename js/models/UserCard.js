@@ -177,8 +177,34 @@ BrowseMap.Model.extendTo(VkUserCard, {
 			this.updateNesting('vk__' + cur, this.getSPI(cur, true));
 		}
 	},
+	req_map: [
+		[
+			['first_name', 'last_name', 'photo', 'ava_image', 'selected_image'],
+			{
+				source: 'response.0',
+				props_map: {
+
+					first_name: 'first_name',
+					last_name: 'last_name',
+					photo: 'photo',
+					'ava_image.url': 'photo_medium',
+					'selected_image.url': 'photo'
+				}
+			},
+			['vk_api', 'get', function() {
+				return ['users.get', {
+					user_ids: [this.state('userid')],
+					fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
+				}];
+			}]
+		]
+	],
 	'stch-mp_has_focus': function(state) {
 		if (state){
+
+			this.requestState('first_name', 'last_name', 'photo', 'ava_image');
+
+
 			var list_to_preload = [
 				this.getNesting('vk__friends')
 
