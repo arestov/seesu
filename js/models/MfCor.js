@@ -160,6 +160,9 @@ var file_id_counter = 0;
 var MfCor = function() {};
 provoda.HModel.extendTo(MfCor, {
 	hndMoImportant: function(e) {
+		if (app_serv.app_env.lg_smarttv_app) {
+			return;
+		}
 			
 		if (e.value && e.value){
 			this.nextTick(this.loadVideos);

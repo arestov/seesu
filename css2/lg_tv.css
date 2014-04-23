@@ -88,3 +88,12 @@ input.surf_nav {
 	width: auto;
 	padding-left: 0;
 }
+
+
+.track-video {
+	display: none;
+}
+
+.moplas-block {
+	min-height: 2.357142857142857rem;
+}
