@@ -18,7 +18,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		this.wch(opts.pmd, 'active_view');
 		
 
-		this.wch(this.app.getArtcard(this.mo.state('artist')).getTagsModel(), 'data-list', 'artist_tags');
+		this.wch(this.app.getArtcard(this.mo.state('artist')).getTagsModel(), 'simple_tags_list', 'artist_tags');
 
 
 		this.on('state_change-canload_personal', function(e) {

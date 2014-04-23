@@ -1,9 +1,9 @@
 define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
-'./StartPageView', './SearchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
+'./StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
 './SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
 './lul', './SongcardPage', './AppBaseView', './modules/WPBox'],
 function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
-StartPageView, SearchPageView, ArtcardUI, TagsListPage, ArtistListView,
+StartPageView, SearchPageView, ArtcardUI, ArtistListView,
 SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
 lul, SongcardPage, AppBaseView, WPBox) {
 "use strict";
@@ -65,7 +65,7 @@ AppBaseView.extendTo(AppView, {
 			nav: nav.baseNavUI
 		},
 		tagslist: {
-			main: TagsListPage,
+			main: TagPageView.TagsListPage,
 			nav: nav.baseNavUI
 		},
 		user_playlists: {

@@ -295,10 +295,21 @@ var parser = {
 				var decr_parts =  declarations[i].split('|');
 				var cur = decr_parts[0].split(':');
 				var dom_event = cur.shift();
-				result.push(this.createPVEventData(dom_event, cur, decr_parts[1]));
+
+				result.push(this.createPVEventData(dom_event, this.createEventParams(cur), decr_parts[1]));
 			}
 			return result;
 		}
+	},
+	createEventParams: function(array) {
+
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			if (cur.indexOf('{{') != -1) {
+				array[i] = angbo.interpolateExpressions( cur );
+			}
+		}
+		return array;
 	},
 	scope_generators_p:{
 		'pv-nest': function(node, full_declaration) {

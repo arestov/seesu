@@ -620,7 +620,17 @@
 
 
 		<div class="tags_list_page usual_page">
-			<div class="tags_list" pv-anchor="listc"></div>
+			<div class="tags_list">
+				<span pv-repeat="tag in simple_tags_list">
+					<a 
+						class="js-serv"
+						pv-text="{{tag.name}}"
+						pv-type="way-point"
+						pv-events="click::#show_tag:{{tag.name}}"
+						></a>  
+				</span>
+
+			</div>
 		</div>
 		
 
@@ -1776,19 +1786,21 @@
 
 							</div>
 							
-							<div class="for-startpage"></div>
 							
-							<div class="block-for-startpage music-conductor-preview">
-								<div class="leftcol">
+							<div class="block-for-startpage">
+								<div class="leftcol  music-conductor-preview">
 									
 
 									<div class="arb-union">
 										<div class="no_arfb">
-											<div class="to-open-block area-button hidden">
+											<div class="to-open-block area-button">
 												<span class="lang localize-music-cond">Music Conductor</span>
 											</div>
 										</div>
-										<div pv-nest="preview_hypem" class="arb-ally preview_ffp compact_playlist" pv-events="click::requestPage">
+										<div 
+											pv-nest="preview_hypem" class="arb-ally preview_ffp compact_playlist" 
+											pv-events="click::requestPage"
+											pv-type="way-point">
 											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
 											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
 												<div class="compact_song-image_con">
@@ -1807,7 +1819,11 @@
 												<div pv-text="{{track}}" class="compact_song-track_name"></div>
 											</div>
 										</div>
-										<div pv-nest="preview_lastfm_top" class="arb-ally preview_ffp compact_playlist" pv-events="click::requestPage">
+										<div 
+										pv-nest="preview_lastfm_top" 
+										class="arb-ally preview_ffp compact_playlist"
+										pv-events="click::requestPage"
+										pv-type="way-point">
 											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
 											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
 												<div class="compact_song-image_con">
@@ -1832,8 +1848,35 @@
 
 
 								</div>
-								<div class="rightcol tags_con">
-								
+								<div class="rightcol ">
+									<div class="arb-union" pv-nest="tags">
+										<div class="no_arfb">
+											<div class="to-open-block area-button" pv-anchor="button_area">
+												<span class="lang localize-Tags">Tags</span>
+											</div>
+										</div>
+										<div class="hidden" pv-class="{{!inited && ''}}">
+											
+											<div class="preview_ffp tags_list">
+										
+												<span pv-repeat="tag in preview_list">
+													<a 
+														class="js-serv"
+														pv-text="{{tag.name}}"
+														pv-type="way-point"
+														pv-events="click::#show_tag:{{tag.name}}"
+														></a> 
+												</span>
+
+												
+											</div>
+											<div class="preview_ffp tags_con"></div>
+
+										</div>
+										
+									</div>
+									
+
 								</div>
 							</div>
 							

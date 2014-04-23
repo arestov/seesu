@@ -30,6 +30,9 @@ provoda.View.extendTo(ListPreview, {
 		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
+		if (!this.tpl.ancs.listc) {
+			return;
+		}
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	'stch-vmp_show': function(state) {
@@ -285,7 +288,7 @@ var tagListChange = function(array) {
 };
 var TagsListPreview = function() {};
 ListPreview.extendTo(TagsListPreview, {
-	'stch-data-list': tagListChange,
+	'stch-simple_tags_list': tagListChange,
 	createTagLink: function(name) {
 		return $('<span></span>').text(name);
 	}
