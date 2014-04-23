@@ -837,6 +837,13 @@ AppBaseView.extendTo(AppView, {
 
 			var kd_callback = function(e){
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
+				if (d.activeElement && d.activeElement.nodeName == 'INPUT'){
+					if (e.keyCode == 27) {
+						d.activeElement.blur();
+						return;
+					}
+				}
+
 				_this.arrowsKeysNav(e);
 			};
 

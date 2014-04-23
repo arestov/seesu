@@ -142,13 +142,13 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 		'ava_image.url': 'photo_medium',
 		'selected_image.url': 'photo'
 	},
-	'compx-big_desc': {
-		depends_on: ['nav_title'],
-		fn: function(nav_title){
-			return nav_title;
+	'compx-nav_title': {
+		depends_on: ['big_desc'],
+		fn: function(big_desc){
+			return big_desc;
 		}
 	},
-	'compx-nav_title': {
+	'compx-big_desc': {
 		depends_on: ['first_name', 'last_name'],
 		fn: function(first_name, last_name){
 			return [first_name, last_name].join(' ');
