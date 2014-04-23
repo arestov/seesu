@@ -834,6 +834,15 @@ AppBaseView.extendTo(AppView, {
 
 			_this.onDomBuild();
 
+			var playing_controlls = {
+				'413': 'stop',
+				'415': 'play',
+				'19':  'pause',
+				'412': 'rewind',
+				'417': 'fastforward'
+			};
+
+
 
 			var kd_callback = function(e){
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
@@ -845,6 +854,15 @@ AppBaseView.extendTo(AppView, {
 				}
 
 				_this.arrowsKeysNav(e);
+
+				var act_name = playing_controlls[e.keyCode];
+
+				if (act_name) {
+					_this.RPCLegacy('request_' + act_name);
+				}
+
+
+
 			};
 
 			$(d).on('keydown', kd_callback);

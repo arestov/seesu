@@ -885,6 +885,45 @@ AppModel.extendTo(SeesuApp, {
 	},
 	handleNetworkSideData: function(source_name, ns, data) {
 		console.log(source_name, ns, data);
+	},
+	rpc_legacy: {
+		request_stop: function() {
+			if (this.p.c_song) {
+				this.p.c_song.stop();
+			}
+		},
+		request_play: function() {
+			if (this.p.c_song) {
+				this.p.c_song.play();
+			} else {
+				var md = this.map.getCurrentResident();
+				if (md.model_name == 'song') {
+					md.play();
+				} else if (md.model_name == 'playlist') {
+					md.wantListPlaying();
+				}
+			}
+		},
+		request_pause: function() {
+			if (this.p.c_song) {
+				this.p.c_song.pause();
+			}
+		},
+		request_rewind: function() {
+			var mopla = this.p.c_song && this.p.c_song.mopla;
+			var cpos = mopla && mopla.state('play_position');
+			if (mopla && !isNaN(cpos)) {
+				mopla.setPosition(cpos - 5000, false, true);
+			}
+
+		},
+		request_fastforward: function() {
+			var mopla = this.p.c_song && this.p.c_song.mopla;
+			var cpos = mopla && mopla.state('play_position');
+			if (mopla && !isNaN(cpos)) {
+				mopla.setPosition(cpos + 5000, false, true);
+			}
+		}
 	}
 
 });
