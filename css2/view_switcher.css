@@ -71,6 +71,7 @@ view_switcher.css
 }
 .page-scheme .usual_page{
 	padding-top: 1rem;
+	padding-bottom: 1rem;
 }
 #search {
 	margin: 0 auto;
@@ -79,7 +80,7 @@ view_switcher.css
 	}
 
 
-.block-for-startpage, .for-startpage{
+.block-for-startpage{
 	margin-top:2rem;
 }
 
@@ -110,20 +111,20 @@ view_switcher.css
 .tags-hyped{
 
 	}
-	.page-scheme .tags-hyped a{
+	.page-scheme .tags_list a{
 		display: block;
 		padding:0.2rem 0.5rem;
 		border: 0;
 		border-radius: 0;
 		}
-	.page-scheme .tags-hyped span:nth-of-type(even) a{
+	.page-scheme .tags_list span:nth-of-type(even) a{
 		background-color: #4D4D4D;
 
 		}
-	.page-scheme .tags-hyped a:hover{
+	.page-scheme .tags_list a:hover{
 		background-color: #535353;
 		}
-	#slider .page-scheme .tags-hyped a.surf_nav{
+	#slider .page-scheme .tags_list a.surf_nav{
 		background-color: #000;
 		}
 
