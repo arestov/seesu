@@ -25,6 +25,7 @@ BrowseMap.Model.extendTo(StartPage, {
 	},
 	'nest-pstuff': ['users/me'],
 	'nest-muco': ['conductor'],
+	'nest-tags': ['tags'],
 	rpc_legacy: {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');

@@ -1717,15 +1717,14 @@
 
 							</div>
 							
-							<div class="for-startpage"></div>
 							
-							<div class="block-for-startpage music-conductor-preview">
-								<div class="leftcol">
+							<div class="block-for-startpage">
+								<div class="leftcol  music-conductor-preview">
 									
 
 									<div class="arb-union">
 										<div class="no_arfb">
-											<div class="to-open-block area-button hidden">
+											<div class="to-open-block area-button">
 												<span class="lang localize-music-cond">Music Conductor</span>
 											</div>
 										</div>
@@ -1780,8 +1779,35 @@
 
 
 								</div>
-								<div class="rightcol tags_con">
-								
+								<div class="rightcol ">
+									<div class="arb-union" pv-nest="tags">
+										<div class="no_arfb">
+											<div class="to-open-block area-button" pv-anchor="button_area">
+												<span class="lang localize-Tags">Tags</span>
+											</div>
+										</div>
+										<div class="hidden" pv-class="{{!inited && ''}}">
+											
+											<div class="preview_ffp tags_list">
+										
+												<span pv-repeat="tag in preview_list">
+													<a 
+														class="js-serv"
+														pv-text="{{tag.name}}"
+														pv-type="way-point"
+														pv-events="click::#show_tag:{{tag.name}}"
+														></a> 
+												</span>
+
+												
+											</div>
+											<div class="preview_ffp tags_con"></div>
+
+										</div>
+										
+									</div>
+									
+
 								</div>
 							</div>
 							

@@ -32,33 +32,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 			var _this = this;
 
 
-			var wow_tags= function(tag,c){
-				var wrap = $('<span></span>');
-				var link = $('<a class="hyped-tag js-serv"></a>')
-					.text(tag)
-					.click(function(e){
-						_this.root_view.RPCLegacy('show_tag', tag);
-						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
-						e.preventDefault();
-					}).appendTo(wrap);
-				c.append(document.createTextNode('  '));
-				_this.addWayPoint(link);
-				wrap.appendTo(c);
-
-
-			};
-
-			if (lastfm_data && lastfm_data.toptags.length){
-				var _c = $('<div class="tags-hyped tags_list"></div>').appendTo(this.c.parent().parent().find('.tags_con'));
-				$('<h3></h3>').appendTo(_c)
-								.append(localize('Pop-tags','Popular tags'));
-				for (var i=0; i < lastfm_data.toptags.length; i++) {
-					wow_tags(lastfm_data.toptags[i], _c);
-				}
-			}
-
-
-			var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(this.c);
+			var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(this.c.parent());
 			var users_limit = 6;
 			var showUsers = function(listenings,c, above_limit_value){
 				if (listenings.length){

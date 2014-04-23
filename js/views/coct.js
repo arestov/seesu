@@ -30,6 +30,9 @@ provoda.View.extendTo(ListPreview, {
 		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
+		if (!this.tpl.ancs.listc) {
+			return;
+		}
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	'stch-vmp_show': function(state) {

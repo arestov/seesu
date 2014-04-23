@@ -105,11 +105,11 @@ var sync_sender = {
 
 var MDProxy = function(_provoda_id, states, children_models, md) {
 	this._provoda_id = _provoda_id;
-	this.views = [];
-	this.views_index = {};
+	this.views = null;
+	this.views_index = null;
 	this.states = states;
-	this.vstates = {};
-	this.children_models = children_models;
+	this.vstates = null;
+	//this.children_models = children_models;
 	this.md = md;
 	this.nestings = spv.cloneObj({}, children_models);
 };
@@ -123,6 +123,9 @@ MDProxy.prototype = {
 	updateStates: function() {},
 	updateNesting: function() {},
 	updateManyStates: function(obj) {
+		if (!this.vstates) {
+			this.vstates = {};
+		}
 		var changes_list = [];
 		for (var name in obj) {
 			this.vstates[name] = obj[name];
@@ -138,14 +141,20 @@ MDProxy.prototype = {
 		/*if (name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop name: ' + name);
 		}*/
+		if (!this.vstates) {
+			this.vstates = {};
+		}
 		this.vstates[name] = value;
 		this.sendStatesToViews([name, value]);
 		return this;
 	},
 	state: function(state_name) {
-		return this.vstates[state_name];
+		return this.vstates && this.vstates[state_name];
 	},
 	removeView: function(view){
+		if (!this.views) {
+			return;
+		}
 		var views = [];
 		for (var i = 0; i < this.views.length; i++) {
 			if (views[i] !== view){
@@ -159,6 +168,10 @@ MDProxy.prototype = {
 	sendCollectionChange: function(collection_name, array) {
 		var old_value = this.nestings[collection_name];
 		this.nestings[collection_name] = array;
+
+		if (!this.views) {
+			return;
+		}
 		var removed;
 		if (Array.isArray(array)){
 			removed = spv.arrayExclude(array, old_value);
@@ -174,6 +187,9 @@ MDProxy.prototype = {
 		view.recieveStatesChanges(states_list);
 	},
 	sendStatesToViews: function(states_list) {
+		if (!this.views) {
+			return;
+		}
 		for (var i = 0; i < this.views.length; i++) {
 			this.sendStatesToView(this.views[i], states_list);
 		}
@@ -192,27 +208,30 @@ MDProxy.prototype = {
 			}
 			
 		}
-		var dead = [], alive = [];
-		for (i = 0; i < this.views.length; i++) {
-			if (this.views[i].dead){
-				dead.push(this.views[i]);
-			} else {
-				alive.push(this.views[i]);
-			}
-		}
-
-		if (alive.length != this.views.length){
-			this.views = alive;
-		}
-		if (dead.length){
-			for (var a in this.views_index){
-				var cur = this.views_index[a];
-				if (dead.indexOf(cur) != -1) {
-					this.views_index[a] = null;
+		if (this.views) {
+			var dead = [], alive = [];
+			for (i = 0; i < this.views.length; i++) {
+				if (this.views[i].dead){
+					dead.push(this.views[i]);
+				} else {
+					alive.push(this.views[i]);
 				}
-				// = spv.arrayExclude(this.views_index[a], dead);
+			}
+
+			if (alive.length != this.views.length){
+				this.views = alive;
+			}
+			if (dead.length){
+				for (var a in this.views_index){
+					var cur = this.views_index[a];
+					if (dead.indexOf(cur) != -1) {
+						this.views_index[a] = null;
+					}
+					// = spv.arrayExclude(this.views_index[a], dead);
+				}
 			}
 		}
+		
 
 		return this;
 	},
@@ -222,6 +241,9 @@ MDProxy.prototype = {
 	killViews: function() {
 		//this.views[i] can be changed in proccess, so cache it!
 		var views = this.views;
+		if (!views) {
+			return;
+		}
 		for (var i = 0; i < views.length; i++) {
 			views[i].die({skip_md_call: true});
 		}
@@ -229,6 +251,9 @@ MDProxy.prototype = {
 		return this;
 	},
 	collectViewsGarbadge: function() {
+		if (!this.views){
+			return;
+		}
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].checkDeadChildren();
 		}
@@ -236,9 +261,9 @@ MDProxy.prototype = {
 	getViews: function(complex_id, hard_deads_check) {
 		this.removeDeadViews(hard_deads_check);
 		if (complex_id){
-			return [this.views_index[complex_id]];
+			return [this.views_index && this.views_index[complex_id]];
 		} else {
-			return this.views;
+			return this.views || [];
 		}
 	},
 	getView: function(complex_id){
@@ -247,11 +272,17 @@ MDProxy.prototype = {
 			throw new Error('complex_id');
 		}
 		//complex_id = complex_id || 'main';
-		return this.views_index[complex_id];// && this.views_index[complex_id][0];
+		return this.views_index && this.views_index[complex_id];// && this.views_index[complex_id][0];
 	},
 	addView: function(v, complex_id) {
 		this.removeDeadViews(true, complex_id);
+		if (!this.views) {
+			this.views = [];
+		}
 		this.views.push( v );
+		if (!this.views_index) {
+			this.views_index = {};
+		}
 		this.views_index[complex_id] = v;
 		//(= this.views_index[complex_id] || []).push(v);
 		return this;
@@ -536,7 +567,8 @@ SyncReciever.prototype = {
 			var fakes_models = idToModel(this.models_index, message.value);
 			
 
-			target_model.children_models[message.name] = target_md_proxy.children_models[message.name] = fakes_models;
+			target_model.children_models[message.name]= fakes_models;
+			//target_md_proxy.children_models[message.name] = fakes_models;
 			target_md_proxy.sendCollectionChange(message.name, fakes_models);
 		}
 	}
@@ -988,18 +1020,22 @@ var findErrorByList = function(data, errors_selectors) {
 
 var FastEventor = function(context) {
 	this.sputnik = context;
-	this.subscribes = {};
-	this.subscribes_cache = {};
+	this.subscribes = null;
+	this.subscribes_cache = null;
 	this.reg_fires = null;
 	if (context.reg_fires){
 		this.reg_fires = context.reg_fires;
 	}
-	this.requests = {};
-	this.mapped_reqs = this.sputnik.req_map ? {} : null;
-	this.nesting_requests = this.sputnik.has_reqnest_decls ? {} : null;
+	this.requests = null;
+	this.mapped_reqs = null;//this.sputnik.req_map ? {} : null;
+	this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
 };
 FastEventor.prototype = {
 	_pushCallbackToStack: function(opts) {
+		if (!this.subscribes) {
+			this.subscribes = {};
+		}
+
 		if (!this.subscribes[opts.short_name]){
 			this.subscribes[opts.short_name] = [];
 		}
@@ -1130,11 +1166,11 @@ FastEventor.prototype = {
 			namespace = this.convertEventName(name);
 		}
 		var
-			clean = [],
 			short_name = parseNamespace(namespace)[0],
 			queried = this.getMatchedCallbacks(namespace);
 
-		if (this.subscribes[short_name]){
+		if (this.subscribes && this.subscribes[short_name]){
+			var clean = [];
 			if (cb || obj){
 				for (var i = 0; i < queried.matched.length; i++) {
 					var cur = queried.matched[i];
@@ -1162,6 +1198,9 @@ FastEventor.prototype = {
 		return this.sputnik;
 	},
 	resetSubscribesCache: function(short_name) {
+		if (!this.subscribes_cache) {
+			return;
+		}
 
 		//fixme - bug for "state_change-window_width.song_file_progress" ( "state_change-window_width" stays valid, but must be invalid)
 		for (var cur_namespace in this.subscribes_cache){
@@ -1185,9 +1224,9 @@ FastEventor.prototype = {
 		var
 			r, short_name = parseNamespace(namespace)[0];
 
-		var cb_cs = this.subscribes[short_name];
+		var cb_cs = this.subscribes && this.subscribes[short_name];
 		if (cb_cs){
-			var cached_r = this.subscribes_cache[namespace];
+			var cached_r = this.subscribes_cache && this.subscribes_cache[namespace];
 			if (cached_r){
 				return cached_r;
 			} else {
@@ -1206,6 +1245,9 @@ FastEventor.prototype = {
 					} else {
 						not_matched.push(cb_cs[i]);
 					}
+				}
+				if (!this.subscribes_cache) {
+					this.subscribes_cache = {};
 				}
 				this.subscribes_cache[namespace] = r = {matched: matched, not_matched: not_matched};
 			}
@@ -1266,7 +1308,7 @@ FastEventor.prototype = {
 	default_requests_space: 'nav',
 	getRequests: function(space) {
 		space = space || this.default_requests_space;
-		return this.requests[space] || [];
+		return (this.requests && this.requests[space]) || [];
 	},
 	getQueued: function(space) {
 		//must return new array;
@@ -1289,6 +1331,9 @@ FastEventor.prototype = {
 				spv.setTargetField(req, this.sputnik.getReqsOrderField(), opts.order);
 				req.order = opts.order;
 			}
+		}
+		if (!this.requests) {
+			this.requests = {};
 		}
 
 		if (!this.requests[space]){
@@ -1337,7 +1382,10 @@ FastEventor.prototype = {
 	},
 
 	sortRequests: function(space) {
-		var requests = this.requests[space || this.default_requests_space];
+		var requests = this.requests && this.requests[space || this.default_requests_space];
+		if (!this.requests) {
+			return;
+		}
 
 		var field_name = this.sputnik.getReqsOrderField();
 
@@ -1356,6 +1404,9 @@ FastEventor.prototype = {
 	},
 	getAllRequests: function() {
 		var all_requests = [];
+		if (!this.requests) {
+			return all_requests;
+		}
 		for (var space in this.requests){
 			if (this.requests[space].length){
 				all_requests.push.apply(all_requests, this.requests[space]);
@@ -1421,19 +1472,27 @@ FastEventor.prototype = {
 			}
 		}
 		var cant_request;
-		for (i = 0; i < maps_for_state.length; i+=2) {
-			cur = this.mapped_reqs[maps_for_state[i]];
-			if (cur && (cur.done || cur.process)) {
-				cant_request = true;
-				break;
+		if (this.mapped_reqs) {
+			for (i = 0; i < maps_for_state.length; i+=2) {
+				cur = this.mapped_reqs[maps_for_state[i]];
+				if (cur && (cur.done || cur.process)) {
+					cant_request = true;
+					break;
+				}
 			}
 		}
+		
 		if (cant_request) {
 			return;
 		}
 
 		var selected_map = maps_for_state[1];
 		var selected_map_num = maps_for_state[0];
+		if (!this.mapped_reqs) {
+			this.mapped_reqs = {};
+		}
+
+
 		if ( !this.mapped_reqs[selected_map_num] ) {
 			this.mapped_reqs[selected_map_num] = {
 				done: false,
@@ -1523,6 +1582,9 @@ FastEventor.prototype = {
 	requestNesting: function(dclt, nesting_name) {
 		if (!dclt) {
 			return;
+		}
+		if (!this.nesting_requests) {
+			this.nesting_requests = {};
 		}
 
 		if (!this.nesting_requests[ nesting_name ]) {
@@ -1809,7 +1871,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 
 		this.states = {};
-		this.states_changing_stack = [];
+		this.states_changing_stack = null;
 
 		//this.collectCompxs();
 
@@ -1992,14 +2054,20 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 
 		if (state_name && this.dclrs_expandable) {
-			if (this.dclrs_expandable[state_name] && !this.handled_expandable_dclrs[state_name]) {
-				this.handled_expandable_dclrs[state_name] = true;
-				for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
-					this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
+			if (this.dclrs_expandable[state_name]) {
+				if (!this.handled_expandable_dclrs) {
+					this.handled_expandable_dclrs = {};
 				}
+				if (!this.handled_expandable_dclrs[state_name]) {
+					this.handled_expandable_dclrs[state_name] = true;
+					for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
+						this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
+					}
 
-				this.checkChildrenModelsRendering();
-				this.requestAll();
+					this.checkChildrenModelsRendering();
+					this.requestAll();
+				}
+				
 			}
 		}
 		
@@ -2498,6 +2566,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			iterateChList(changes_list, this, this._setUndetailedState);
 			return this;
 		}
+		if (!this.states_changing_stack) {
+			this.states_changing_stack = [];
+		}
 		this.states_changing_stack.push(changes_list, opts);
 
 		if (this.collecting_states_changing){
@@ -2781,7 +2852,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.states = {};
 		
-		this.children_models = {};
+		this.children_models = null;
 
 
 		this.md_replacer = null;
@@ -2908,7 +2979,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 	},
 	getNesting: function(collection_name) {
-		return this.children_models[collection_name];
+		return this.children_models && this.children_models[collection_name];
 	},
 	updateNesting: function(collection_name, array, opts, spec_data) {
 		if (collection_name.indexOf(DOT) != -1){
@@ -2917,6 +2988,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (Array.isArray(array)){
 			array = array.slice(0);
 		}
+		if (!this.children_models) {
+			this.children_models = {};
+		}
+
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
 		// !?
@@ -3283,7 +3358,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
 		}
 
-		this.handled_expandable_dclrs = this.dclrs_expandable ? {} : null;
+		this.handled_expandable_dclrs = null;
 
 		this.view_id = views_counter++;
 		this.parent_view = null;
@@ -3325,7 +3400,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		spv.cloneObj(this.undetailed_states, this.mpx.states);
 		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
-		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
+		spv.cloneObj(this.undetailed_children_models, this.mpx.nestings);
 
 
 		if (this.base_tree_expand_states) {
