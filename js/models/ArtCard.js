@@ -56,8 +56,8 @@ LoadableList.extendTo(AlbumsList, {
 });
 var DiscogsAlbumSongs = function() {};
 SongsList.extendTo(DiscogsAlbumSongs, {
-	init: function(opts, params, start_song) {
-		this._super(opts, false, start_song);
+	init: function(opts, params) {
+		this._super(opts, false);
 		this.playlist_artist = this.album_artist = params.artist;
 		this.album_name = params.title;
 		this.album_id = params.id;
@@ -174,8 +174,8 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		}
 	},
 	page_limit: 50,
-	makeDataItem: function(obj, start_song) {
-		return this.initSi(DiscogsAlbumSongs, obj, start_song);
+	makeDataItem: function(obj) {
+		return this.initSi(DiscogsAlbumSongs, obj);
 
 	},
 	manual_previews: false,
@@ -232,8 +232,8 @@ AlbumsList.extendTo(ArtistAlbums, {
 
 ArtistAlbumSongs = function() {};
 SongsList.extendTo(ArtistAlbumSongs, {
-	init: function(opts, params, start_song) {
-		this._super(opts, false, start_song);
+	init: function(opts, params) {
+		this._super(opts, false);
 		this.playlist_artist = this.album_artist = params.album_artist;
 		this.album_name = params.album_name;
 		this.original_artist = params.original_artist;
@@ -246,16 +246,9 @@ SongsList.extendTo(ArtistAlbumSongs, {
 			'url_part': '/' + this.getAlbumURL()
 		});
 
-		/*
-		var pl = this.app.createSonglist(this, {
-			title: '(' + params.album_artist + ') ' + params.album_name,
-			type: 'album',
-			data: {artist: this.artist || params.album_artist, album: params.album_name}
-		}, start_song);
-		*/
+
 
 		this.playlist_type = 'album';
-		this.info = {artist: this.playlist_artist, album: this.album_name};
 		if (params.lfm_image){
 			
 			this.updateState('lfm_image', this.app.art_images.getImageWrap(params.lfm_image.array));
@@ -432,11 +425,10 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 
 var TopArtistSongs = function() {};
 SongsList.extendTo(TopArtistSongs, {
-	init: function(opts, params, start_song) {
-		this._super(opts, params, start_song);
+	init: function(opts, params) {
+		this._super(opts, params);
 		this.artist = params.artist;
 
-		this.info = {artist: this.artist};
 		this.playlist_type = 'artist';
 		this.playlist_artist = params.artist;
 
@@ -630,7 +622,6 @@ BrowseMap.Model.extendTo(ArtCard, {
 			var song = pl.findMustBePresentDataItem(start_song);
 			song.showOnMap();
 			pl.preloadStart();
-			//pl.showTrack(start_song);
 		}
 		return pl;
 	},
@@ -641,7 +632,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		artl.showOnMap();
 		return artl;
 	},
-	showAlbum: function(params, start_song) {
+	showAlbum: function(params) {
 
 		if (!params.album_artist){
 			params.album_artist = this.artist;
@@ -649,7 +640,6 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 		var pl = this.getSPI('albums_lfm', true).getSPI(params.album_artist + ',' + params.album_name, true);
 		
-		//var pl = this.getAlbum(params, start_song);
 		pl.showOnMap();
 		return pl;
 	},
@@ -839,24 +829,17 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.updateNesting('top_songs', pl);
 		return pl;
 	},
-	getAlbum: function(params, start_song) {
+	getAlbum: function(params) {
 		var kystring = spv.stringifyParams({artist: params.album_artist, name: params.album_name}, false, '=', '&');
 		if (this.albums_models[kystring]){
 			return this.albums_models[kystring];
 		}
 
-		/*
-		var pl = this.app.createSonglist(this, {
-			title: '(' + params.album_artist + ') ' + params.album_name,
-			type: 'album',
-			data: {artist: this.artist || params.album_artist, album: params.album_name}
-		}, start_song);*/
-
 		var pl = this.initSi(ArtistAlbumSongs, {
 			album_artist: params.album_artist,
 			album_name: params.album_name,
 			original_artist: this.artist
-		}, start_song);
+		});
 
 		this.albums_models[kystring] = pl;
 		return pl;

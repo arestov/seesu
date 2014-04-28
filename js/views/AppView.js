@@ -160,6 +160,10 @@ AppBaseView.extendTo(AppView, {
 			main: SongcardPage,
 			nav: nav.baseNavUI
 		},
+		justlists: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
 		songcard_cloudcasts: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
@@ -840,6 +844,7 @@ AppBaseView.extendTo(AppView, {
 				if (d.activeElement && d.activeElement.nodeName == 'INPUT'){
 					if (e.keyCode == 27) {
 						d.activeElement.blur();
+						e.preventDefault();
 						return;
 					}
 				}

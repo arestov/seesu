@@ -67,21 +67,7 @@ PlayerBase.extendTo(PlayerComplex, {
 			
 		}
 	},
-	isPlaying: function(playlist, force){
-		if (this.c_song){
-			var pl = this.c_song && this.c_song.map_parent;
-			if (pl){
-				if (playlist === pl ){
-					return pl;
-				} else if (force || (pl.belongsToArtist())){
-					if (pl.compare(playlist)){
-						return pl;
-					}
-				}
-			}
-			
-		}
-	},
+
 	changeNowPlaying: function(mo, playing){
 		if (this.setPlayMark){
 			this.setPlayMark(playing);

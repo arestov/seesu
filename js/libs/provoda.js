@@ -845,7 +845,7 @@ var getBoxedSetImmFunc = function(win) {
 };
 
 var getBoxedRAFFunc = function(win) {
-	return false;
+	return;
 	var raf;
 
 	if ( win.requestAnimationFrame ){
@@ -1119,7 +1119,7 @@ FastEventor.prototype = {
 				if (typeof soft_reg != 'undefined' && !soft_reg){
 					cb.apply(mo_context, reg_args);
 				} else {
-					this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, false, callbacks_wrapper, this.sputnik, this.current_motivator);
+					this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, false, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
 				}
 			}
 		}

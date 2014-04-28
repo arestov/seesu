@@ -13,7 +13,7 @@ var playlistSuggest = function(data){
 };
 invstg.BaseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
-		return this.pl.playlist_title;
+		return this.pl.state('nav_title');
 	},
 	onView: function(){
 		this.pl.add(this.mo);

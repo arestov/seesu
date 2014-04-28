@@ -17,7 +17,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			this.updateNesting(this.preview_mlist_name, e.value);
 		}
 	},
-	init: function(opts) {
+	init: function(opts, data, params) {
 		this._super.apply(this, arguments);
 		this.loadable_lists = {};
 		this.loadable_lists[ this.main_list_name ] = [];
@@ -34,6 +34,12 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 		this.excess_data_items = {};
 		this.loaded_nestings_items = {};
+
+		if (params && params.subitems) {
+			if (params.subitems[this.main_list_name]) {
+				this.insertDataAsSubitems(this.main_list_name, params.subitems[this.main_list_name]);
+			}
+		}
 	},
 	'compx-list_loading': {
 		depends_on: ['main_list_loading', 'preview_loading'],
@@ -98,15 +104,23 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			this.requestNesting( this[ 'nest_req-' + this.main_list_name ], this.main_list_name );
 		}
 	},
+
 	insertDataAsSubitems: function(nesting_name, data_list) {
 		var items_list = [];
 		if (data_list && data_list.length){
 			var mlc_opts = this.getMainListChangeOpts();
+
+
+
 			for (var i = 0; i < data_list.length; i++) {
-				if (this.isDataItemValid && !this.isDataItemValid(data_list[i])) {
+				var splited_data = this.splitItemData && this.splitItemData(data_list[i]);
+				var cur_data = splited_data ? splited_data[0] : data_list[i],
+					cur_params = splited_data && splited_data[1];
+
+				if (this.isDataItemValid && !this.isDataItemValid(cur_data)) {
 					continue;
 				}
-				var item = this.addItemToDatalist(data_list[i], true);
+				var item = this.addItemToDatalist(cur_data, true, cur_params);
 				items_list.push(item);
 			}
 			this.dataListChange(mlc_opts, items_list);
@@ -144,7 +158,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	},
 	compareItemWithObj: function(item, data) {
 		if (!this.items_comparing_props) {
-			return
+			return;
 		}
 		for (var i = 0; i < this.items_comparing_props.length; i++) {
 			var cur = this.items_comparing_props[i];
@@ -163,10 +177,10 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			}
 		}
 	},
-	addItemToDatalist: function(obj, silent) {
-		return this.addDataItem(obj, silent);
+	addItemToDatalist: function(obj, silent, item_params) {
+		return this.addDataItem(obj, silent, false, item_params);
 	},
-	addDataItem: function(obj, skip_changes, nesting_name) {
+	addDataItem: function(obj, skip_changes, nesting_name, item_params) {
 		nesting_name = nesting_name || this.main_list_name;
 		if (!this.loadable_lists[ nesting_name ]) {
 			this.loadable_lists[ nesting_name ] = [];
@@ -198,14 +212,14 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 				/* если объект не совпадает ни с одним элементом, то извлекаем все излишки,
 				вставляем объект, вставляем элементы обратно */
 				work_array = spv.arrayExclude(work_array, excess_items);
-				work_array.push(item = this.makeItemByData(obj));
+				work_array.push(item = this.makeItemByData(obj, item_params));
 				work_array = work_array.concat(excess_items);
 
 
 			}
 			this.excess_data_items[ nesting_name ] = excess_items;
 		} else {
-			work_array.push(item = this.makeItemByData(obj));
+			work_array.push(item = this.makeItemByData(obj, item_params));
 		}
 		this.loadable_lists[ nesting_name ] = work_array;
 		if (!skip_changes){
@@ -218,18 +232,18 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		return item;
 	},
 	getMainlist: function() {
-		return this.loadable_lists[ [this.main_list_name] ];
+		return this.loadable_lists[ this.main_list_name ];
 	},
-	makeItemByData: function(data) {
+	makeItemByData: function(data, item_params) {
 		if (this.subitemConstr){
 			var item = new this.subitemConstr();
 			item.init({
 				map_parent: this,
 				app: this.app
-			}, data);
+			}, data, item_params);
 			return item;
 		} else if (this.makeDataItem){
-			return this.makeDataItem(data);
+			return this.makeDataItem(data, item_params);
 		} else {
 			throw new Error('cant make item');
 		}

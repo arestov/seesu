@@ -101,7 +101,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			return this.extendSong(obj);
 		},
 		isDataItemValid: function(data_item) {
-			return !!data_item.artist;
+			return !!data_item.artist && !!data_item.artist.trim();
 		},
 		isDataInjValid: function(obj) {
 			if (!obj.track && !obj.artist){
@@ -111,8 +111,6 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 		},
 		items_comparing_props: [['artist', 'artist'], ['track', 'track']],
-
-		
 		getLastSong: function(){
 			var name = this.main_list_name;
 			return this[name].length ? this[name][this[name].length - 1] : false;
@@ -154,53 +152,19 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 
 		},
-		compare: function(puppet){
-			var key_string_o = spv.stringifyParams(this.info);
-			var key_string_p = spv.stringifyParams(puppet.info);
-			
-			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
-		},
 		simplify: function(){
-			var npl = this.getMainlist().slice();
-			for (var i=0; i < npl.length; i++) {
-				npl[i] = npl[i].simplify();
+			var list = this.getMainlist();
+			var npl = new Array(list && list.length);
+
+			for (var i=0; i < list.length; i++) {
+				npl[i] = list[i].simplify();
 			}
-			npl = spv.cloneObj({
+			
+			return spv.cloneObj({
 				length: npl.length,
 				playlist_title: this.playlist_title,
 				playlist_type: this.playlist_type
 			}, npl);
-			
-			
-			return npl;
-		},
-		belongsToArtist: function(v){
-			return !!(this.info && this.info.artist) && (!v || this.info.artist == v);
-		},
-		showTrack: function(artist_track){
-			var will_ignore_artist;
-			var artist_match_playlist = this.playlist_type == 'artist' && this.info.artist == artist_track.artist;
-			if (!artist_track.artist || artist_match_playlist){
-				will_ignore_artist = true;
-			}
-			
-			var array  = this.getMainlist();
-			
-			for (var i=0; i < array.length; i++) {
-				if (artist_track.track == array[i].track && (will_ignore_artist || artist_track.artist == array[i].artist)){
-					var matched = array[i];
-					matched.showOnMap();
-					return true;
-				}
-			}
-			/*
-			if (artist_track.artist && artist_track.track){
-				this.add(artist_track, true);
-				
-			}*/
-			
-			return this;
-			
 		},
 		markAsPlayable: function() {
 			this.updateState('can_play', true);
