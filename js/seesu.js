@@ -707,7 +707,7 @@ AppModel.extendTo(SeesuApp, {
 					if (cur.playlist_title == query){
 						r.unshift(cur);
 
-					} else if (cur.playlist_title.match(spv.getStringPattern(query))){
+					} else if (cur.playlist_title && cur.playlist_title.match(spv.getStringPattern(query))){
 						r.push(cur);
 					}
 				} else {
