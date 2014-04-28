@@ -49,10 +49,12 @@ input.surf_nav {
 #slider-materail{
 	margin-left:32px;
 	margin-right: 32px;
+	margin-bottom: 32px;
 }
 .screens {
 	height: 595px;
 	overflow: auto;
+	overflow-x: hidden;
 }
 .app_map_con{
 	
@@ -96,4 +98,8 @@ input.surf_nav {
 
 .moplas-block {
 	min-height: 2.357142857142857rem;
+}
+
+.personal-stuff-preview {
+	display: none;
 }
