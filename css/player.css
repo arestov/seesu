@@ -35,6 +35,8 @@ a.track-node{
 	border:0 !important;
 	color: hsl(0, 0%, 65%);
 	cursor:pointer;
+	border-top-right-radius: inherit;
+	border-top-left-radius: inherit;
 	}
 	a.track-node:hover{
 		color:#aaa;
