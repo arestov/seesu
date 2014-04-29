@@ -27,7 +27,10 @@ play-list-panel.css
 				}
 			.pla-panel .pla-button:hover{
 				color:#666;
-				}
+				
+				/* bg hover hack */
+				background-color:#a82c53;
+}
 				
 			.playlist_panel .playlist-actions .pla-button{
 				float:left;
@@ -109,7 +112,10 @@ play-list-panel.css
 	.buttons-panel .track-buttons li.volume-control:hover{
 		border-color: #4F4F4F;
 		background-color: #5A5A5A;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.v-hole{
 		position: relative;
 		border: 1px solid transparent;
@@ -141,7 +147,10 @@ play-list-panel.css
 }
 		.buttons-panel .track-buttons li.volume-control:hover .v-bar{
 			background-color: #5f5f5f;
-		}
+		
+			/* bg hover hack */
+			background-color:#a82c53;
+}
 	.buttons-panel .track-buttons li.volume-control.interactive-state{
 		border-color:transparent;
 		background-color:transparent;
@@ -159,7 +168,10 @@ play-list-panel.css
 	}
 	.scrobbling-button .trackbutton:hover{
 		
-	}
+	
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.scrobbling-button .trackbutton:active{
 	}
 
@@ -209,7 +221,10 @@ play-list-panel.css
 }
 			.track-buttons>li>a:hover{
 				background-color: #555;
-				}
+				
+				/* bg hover hack */
+				background-color:#a82c53;
+}
 				.track-buttons>li>a:active{
 					background-position: 0 1px;
 					box-shadow: inset 0 0 2px 1px #444;

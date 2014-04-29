@@ -117,7 +117,10 @@ search_results.css
 		{
 			background-color:#666  !important;
 			color:#f6f0e1;
-			}
+			
+			/* bg hover hack */
+			background-color:#a82c53;
+}
 		
 			.search_results-container	ul.results-suggests img{
 				float:left;
@@ -191,7 +194,10 @@ search_results.css
 			background:inherit  !important;
 			color:inherit  !important;
 			cursor:default  !important;
-		}
+		
+			/* bg hover hack */
+			background-color:#a82c53;
+}
 	.search_results-container button span{
 		border-bottom:1px dashed #5c5c5c;
 	

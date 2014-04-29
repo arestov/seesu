@@ -123,7 +123,10 @@ view_switcher.css
 		}
 	.page-scheme .tags_list a:hover{
 		background-color: #535353;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	#slider .page-scheme .tags_list a.surf_nav{
 		background-color: #000;
 		}

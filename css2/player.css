@@ -57,7 +57,10 @@ a.track-node{
 }
 	a.track-node:hover{
 		color:#aaa;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	#slider .track-node.surf_nav{
 		background: #000;
 		}
@@ -91,7 +94,10 @@ ul.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node,
 ul.tracks-for-play.list-overview > li > a.track-node:hover,
 .page-scheme ul.tracks-for-play > li > a.track-node:hover{
 	background-color:#535353;
-	}
+	
+	/* bg hover hack */
+	background-color:#a82c53;
+}
 
 
 
@@ -368,7 +374,10 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		border-top-color:#6e6e6e;
 		border-bottom-color: #4e4e4e;
 		background-color: #5e5e5e;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	a.track-node:active .nothing-toy{
 		border-top-color:#444;
 		border-bottom-color: #666;
@@ -424,7 +433,10 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .show-zoom-to-track a.track-node:hover{
 	background-color:#535353;
-	}
+	
+	/* bg hover hack */
+	background-color:#a82c53;
+}
 .show-zoom-to-track ul.tracks-for-play > li.viewing-song > a.track-node{
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -582,10 +594,16 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 }
 	.show-zoom-to-track .v-song-sibling:hover a.track-node{
 		background-color: transparent; 
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 		.show-zoom-to-track .v-song-sibling:hover{
 			background-color: #595959;
-			}
+			
+			/* bg hover hack */
+			background-color:#a82c53;
+}
 
 .show-zoom-to-track .track-node {
 

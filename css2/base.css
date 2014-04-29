@@ -42,7 +42,10 @@ a[href]{
 	a[href]:hover{
 		border-bottom-color:#9C9C9C;
 		color:#E6E6E6;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	a[href]:active{
 		color:#999;
 		}
@@ -67,7 +70,10 @@ a.js-serv{
 	a.js-serv:hover{
 		background-color: #4a4a4a;
 		border-color:#434343;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	a.js-serv:active{
 		background-color: #444;
 		border-color:#3a3a3a;
@@ -86,7 +92,10 @@ a.bbcode_tag{
 	a.bbcode_artist:hover,
 	a.bbcode_tag:hover{
 		border-bottom-color:#9C9C9C   !important;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	a.bbcode_artist:active,
 	a.bbcode_tag:active{
 		border-bottom-color:#999  !important;
@@ -101,7 +110,10 @@ a.desc{
 	a.desc:hover{
 		border-bottom-color:#5a5a5a !important;
 		color:#5e5e5e;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 
 		
 
@@ -270,11 +282,17 @@ a.desc{
 	background-image:url(../i/nav/button-gradient-hover.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"hover-state"}');
 	color:#fff;
-	}
+	
+	/* bg hover hack */
+	background-color:#a82c53;
+}
 	.nnav.nav_clickable:hover b{
 		background-image:url(../i/nav/button-arrow-hover.png) ;
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 .nnav.nav_clickable:active, .nav-button:active{
 	border-top-color: #666;
 	background-image:url(../i/nav/button-gradient-active.png);

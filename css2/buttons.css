@@ -21,7 +21,10 @@ buttons.css
 }
 		.play-control:hover,.play-control.hover{
 			background-image:url(../i/buttons_hover.png) ;
-			}
+			
+			/* bg hover hack */
+			background-color:#a82c53;
+}
 		.play-control:active{
 			background-image:url(../i/buttons_active.png) !important;
 			}
@@ -95,7 +98,10 @@ buttons.css
 	.pc-play:hover{
 		background-image:url(../i/buttons/pc-m-play-h.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"play-button"}');
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-play:active{
 		background-image:url(../i/buttons/pc-m-play-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"play-button"}');
@@ -110,7 +116,10 @@ buttons.css
 	.pc-add:hover{
 		background-image:url(../i/buttons/pc-m-add-h.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"add-button"}');
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-add:active{
 		background-image:url(../i/buttons/pc-m-add-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"add-button"}');
@@ -123,7 +132,10 @@ buttons.css
 	}
 	.pc-remove:hover{
 		background-image:url(../i/buttons/pc-m-remove-h.png);
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-remove:active{
 		background-image:url(../i/buttons/pc-m-remove-a.png);
 		}
@@ -135,7 +147,10 @@ buttons.css
 	.pc-rupor:hover{
 		background-image:url(../i/buttons/pc-m-rupor-h.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"rupor-button"}');
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-rupor:active{
 		background-image:url(../i/buttons/pc-m-rupor-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"rupor-button"}');
@@ -150,7 +165,10 @@ buttons.css
 	.pc-love:hover{
 		background-image:url(../i/buttons/pc-m-love-h.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"love-button"}');
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-love:active{
 		background-image:url(../i/buttons/pc-m-love-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"love-button"}');
@@ -163,7 +181,10 @@ buttons.css
 	}
 	.pc-stop:hover{
 		background-image:url(../i/buttons/pc-m-stop-h.png);
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-stop:active{
 		background-image:url(../i/buttons/pc-m-stop-a.png);
 		}		
@@ -175,7 +196,10 @@ buttons.css
 	.pc-tag:hover{
 		background-image:url(../i/buttons/pc-m-tag-h.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"tag-button"}');
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-tag:active{
 		background-image:url(../i/buttons/pc-m-tag-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"tag-button"}');
@@ -188,7 +212,10 @@ buttons.css
 	}
 	.pc-next:hover{
 		background-image:url(../i/buttons/pc-m-next-h.png);
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-next:active{
 		background-image:url(../i/buttons/pc-m-next-a.png);
 		}
@@ -197,7 +224,10 @@ buttons.css
 	}
 	.pc-prev:hover{
 		background-image:url(../i/buttons/pc-m-prev-h.png);
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-prev:active{
 		background-image:url(../i/buttons/pc-m-prev-a.png);
 		}
@@ -208,7 +238,10 @@ buttons.css
 	.pc-play.big-control:hover{
 		background-image:url(../i/buttons/pc-b-play-h.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.pc-play.big-control:active{
 		background-image:url(../i/buttons/pc-b-play-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
@@ -387,6 +420,9 @@ buttons.css
 		/* rem hack */
 		border-top: 0.07142857142857142rem solid #5E5E5E;
 		border-bottom: 0.07142857142857142rem solid #474747;
+
+		/* bg hover hack */
+		background-color:#a82c53;
 }
 	.area_for_button:active,
 	.no_arfb .area-button:active{
@@ -428,7 +464,10 @@ buttons.css
 }
 		.arb-union .arb-ally:hover {
 			background: #555;
-			}
+			
+			/* bg hover hack */
+			background-color:#a82c53;
+}
 .button_selected{
 	background-color: #444;
 	border: 1px solid transparent;
@@ -460,7 +499,10 @@ buttons.css
 	
 	.button-hole:hover{
 		background-color:#4a4a4a;
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 
 
 .nicebutton{ 
@@ -485,7 +527,10 @@ buttons.css
 		background-image: -moz-linear-gradient(100% 0% 270deg, #5a5a5a, #444);
 		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#444)) ;
 		background-image: linear-gradient(#5a5a5a,#444);
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 
 .has-dark-buttons{
 
@@ -502,7 +547,10 @@ buttons.css
 		}
 		.has-dark-buttons .nicebutton:hover{
 			
-			}
+			
+			/* bg hover hack */
+			background-color:#a82c53;
+}
 .nicebutton.surf_nav{
 	border-color: transparent;
 	background-image: none;
@@ -589,7 +637,10 @@ buttons.css
 		background-image: -moz-linear-gradient(100% 0% 270deg, #666, #555);
 		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#555));
 		background-image: linear-gradient(#666,#555);
-		}
+		
+		/* bg hover hack */
+		background-color:#a82c53;
+}
 	.min_details:active,.min_details.active,.max_details:active,.max_details.active{
 			box-shadow: inset 0 0 10px 1px #3F3F3F;
 		
