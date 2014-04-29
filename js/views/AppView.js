@@ -631,6 +631,12 @@ AppBaseView.extendTo(AppView, {
 				_this.RPCLegacy('search', input_value);
 			}, 100));
 
+			search_input.on('keyup', spv.throttle(function(e) {
+				if (e.keyCode == 13) {
+					_this.RPCLegacy('refreshSearchRequest', Date.now());
+				}
+			}, 100));
+
 			search_input.on('activate_waypoint', function() {
 				search_input.focus();
 			});
