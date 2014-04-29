@@ -125,9 +125,9 @@ view_switcher.css
 		background-color: #535353;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
-	#slider .page-scheme .tags_list a.surf_nav{
+	#slider .page-scheme .tags_list a.surf_nav, .lg_smarttv_app #slider .page-scheme .tags_list a:hover{
 		background-color: #000;
 		}
 

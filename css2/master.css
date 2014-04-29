@@ -225,7 +225,7 @@ a.track_name_loading .song-track-name,
 			color:#ccc;
 			
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 		.moplas-block .show-all-songs a:active{
 			box-shadow: inset 0 0 0.8rem 0 #444;
@@ -387,7 +387,7 @@ a.track_name_loading .song-track-name,
 			background-color: #666;
 			
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 		.moplas_source-icon:active {
 			background-color: #444;
@@ -479,7 +479,7 @@ a.track_name_loading .song-track-name,
 		color:#E52573;
 	
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	#close-widget:active{
 		color:#F4AF16;
@@ -693,7 +693,7 @@ a.track_name_loading .song-track-name,
 		background-color: #595959;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 
 
@@ -908,7 +908,7 @@ a.track_name_loading .song-track-name,
 				color:#777;
 				
 				/* bg hover hack */
-				background-color:#a82c53;
+				background-color:#000;
 }
 	.artist_preview-base .extend-switcher{
 		float:right;
@@ -941,13 +941,13 @@ a.track_name_loading .song-track-name,
 			background-color:#555;
 			
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 			.artist_preview-base .extend-switcher:hover .big-space{
 				border-bottom-color:transparent; 
 				
 				/* bg hover hack */
-				background-color:#a82c53;
+				background-color:#000;
 }
 		.track-context .want-more-info .extend-switcher{
 			text-shadow:0;
@@ -956,7 +956,7 @@ a.track_name_loading .song-track-name,
 			background-color:#585858;
 		
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 	
 
@@ -1082,7 +1082,7 @@ a.track_name_loading .song-track-name,
 			
 		
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 .has_session .scrobbling-switches{ 
 	opacity:1;
@@ -1112,7 +1112,7 @@ a.track_name_loading .song-track-name,
 	padding: 0.14285714285714285rem 0;
 }
 
-#q.surf_nav{
+#q.surf_nav, .lg_smarttv_app #q:hover{
 	color:#fff;
 }
 
@@ -1424,7 +1424,7 @@ a.track_name_loading .song-track-name,
 			background-color:#555;
 		
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 		.song-listeners-list li.song-listener:active{
 			background-color:#5a5a5a;
@@ -1566,7 +1566,7 @@ iframe.you-tube-video,embed.you-tube-video{
 			border-color:#9C9C9C;
 			
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 			
 
@@ -1622,7 +1622,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		box-shadow: 0 0 0.6428571428571429rem #999;
 
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 		.minimize-button:active{
 			box-shadow: inset 0 0 7px #000;
@@ -1692,7 +1692,7 @@ iframe.you-tube-video,embed.you-tube-video{
 			color:#ccc;
 			
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 .moplas-block .moplas-list li .download-song-link{
 	float:right;
@@ -1857,7 +1857,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		background-color: #494949;	
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 .protect_clicks{
 	position: relative;
@@ -1878,7 +1878,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		border-bottom: 0.2rem solid #fff;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 .compact_share {
 
@@ -1953,7 +1953,7 @@ iframe.you-tube-video,embed.you-tube-video{
 				background-color: #494949;
 				
 				/* bg hover hack */
-				background-color:#a82c53;
+				background-color:#000;
 }
 		.addsong-to-playlist .list-of-playlists{
 			width:200px;
@@ -1983,7 +1983,7 @@ iframe.you-tube-video,embed.you-tube-video{
 
 	
 	/* bg hover hack */
-	background-color:#a82c53;
+	background-color:#000;
 }
 body .surf_nav{
 	background-color: #000;
@@ -2051,10 +2051,10 @@ body .surf_nav{
 		background-color: #444;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 
-	.artist_in_list.surf_nav{
+	.artist_in_list.surf_nav, .lg_smarttv_app .artist_in_list:hover{
 		background-color: #000;
 		color:#fff;
 		}
@@ -2093,7 +2093,7 @@ body .surf_nav{
 		opacity: 0.8;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	.user_acqes-preview:active{
 		opacity: 1;
@@ -2115,7 +2115,7 @@ body .surf_nav{
 		background: #555;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 .full-page .album_preview-big{
 	float:left;
@@ -2216,7 +2216,7 @@ body .surf_nav{
 		background-color:#555;	
 	
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	.lfm_friend-ava{
 		float:left;
@@ -2249,7 +2249,7 @@ body .surf_nav{
 		background-color:#555;	
 	
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	.vk_friend-ava{
 		float:left;
@@ -2309,7 +2309,7 @@ body .surf_nav{
 		border-top-color: #505050;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 .intrack_page-h{
 	margin-left: 1rem;

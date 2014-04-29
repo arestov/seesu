@@ -44,7 +44,7 @@ a[href]{
 		color:#E6E6E6;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	a[href]:active{
 		color:#999;
@@ -72,13 +72,13 @@ a.js-serv{
 		border-color:#434343;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	a.js-serv:active{
 		background-color: #444;
 		border-color:#3a3a3a;
 		}
-	a.js-serv.surf_nav{
+	a.js-serv.surf_nav, .lg_smarttv_app a.js-serv:hover{
 		background: #000;
 		color:#eee;
 		}
@@ -94,7 +94,7 @@ a.bbcode_tag{
 		border-bottom-color:#9C9C9C   !important;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	a.bbcode_artist:active,
 	a.bbcode_tag:active{
@@ -112,7 +112,7 @@ a.desc{
 		color:#5e5e5e;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 
 		
@@ -282,17 +282,11 @@ a.desc{
 	background-image:url(../i/nav/button-gradient-hover.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"hover-state"}');
 	color:#fff;
-	
-	/* bg hover hack */
-	background-color:#a82c53;
-}
+	}
 	.nnav.nav_clickable:hover b{
 		background-image:url(../i/nav/button-arrow-hover.png) ;
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
-		
-		/* bg hover hack */
-		background-color:#a82c53;
-}
+		}
 .nnav.nav_clickable:active, .nav-button:active{
 	border-top-color: #666;
 	background-image:url(../i/nav/button-gradient-active.png);
@@ -304,11 +298,11 @@ a.desc{
 		background-image:url(../i/nav/button-arrow-active.png) ;
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"active-state"}');
 		}
-.nnav.surf_nav, .nav-button.surf_nav{
+.nav_clickable.nnav.surf_nav, .nav_clickable.nav-button.surf_nav, .lg_smarttv_app .nav_clickable.nnav:hover, .lg_smarttv_app .nav_clickable.nav-button:hover{
 	border-top-color: #555;
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"surf_nav-state"}');
 	}
-	.nnav.surf_nav b{
+	.nav_clickable.nnav.surf_nav b, .lg_smarttv_app .nav_clickable.nnav:hover b{
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"surf_nav-state"}');
 		}
 		

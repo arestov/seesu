@@ -119,7 +119,7 @@ search_results.css
 			color:#f6f0e1;
 			
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 		
 			.search_results-container	ul.results-suggests img{
@@ -196,7 +196,7 @@ search_results.css
 			cursor:default  !important;
 		
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 	.search_results-container button span{
 		border-bottom:1px dashed #5c5c5c;

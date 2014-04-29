@@ -191,7 +191,7 @@
 		background-image:url(../i/buttons/pc-b-play-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
 		}	
-	.surf_nav .pc-play.big-control{
+	.play-button-place.surf_nav .pc-play.big-control{
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
 		}
 .play-button-place.surf_nav{
@@ -350,6 +350,10 @@
 		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#545454), to(#4D4D4D)) ;
 		background-image: linear-gradient(#545454,#4D4D4D);
 		}
+	.area_for_button:hover,
+	.no_arfb .area-button:hover {
+		/*waiting "hover hack"*/
+	}
 	.area_for_button:active,
 	.no_arfb .area-button:active{
 		

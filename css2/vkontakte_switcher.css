@@ -75,7 +75,7 @@ vkontakte_switcher.css
 		color:#a1d404;
 	
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	.vk-login-context.attention-focuser .js-serv{
 		background: #fff;
@@ -97,7 +97,7 @@ vkontakte_switcher.css
 			
 		
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 	.vk-login-context .vk-captcha-context{
 		display:none;

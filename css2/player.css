@@ -51,6 +51,8 @@ a.track-node{
 	border:0 !important;
 	color: hsl(0, 0%, 65%);
 	cursor:pointer;
+	border-top-right-radius: inherit;
+	border-top-left-radius: inherit;
 	
 	/* rem hack */
 	padding: 0.42857142857142855rem 0.42857142857142855rem 0.42857142857142855rem 2rem;
@@ -59,12 +61,12 @@ a.track-node{
 		color:#aaa;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
-	#slider .track-node.surf_nav{
+	#slider .track-node.surf_nav, .lg_smarttv_app #slider .track-node:hover{
 		background: #000;
 		}
-		.track-node.surf_nav .full-song_title, .track-node.surf_nav .song-artist_name {
+		.track-node.surf_nav .full-song_title, .track-node.surf_nav .song-artist_name, .lg_smarttv_app .track-node:hover .full-song_title, .lg_smarttv_app .track-node:hover .song-artist_name {
 			color:#fff;
 			}
 .playing-song a.track-node {
@@ -96,7 +98,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	background-color:#535353;
 	
 	/* bg hover hack */
-	background-color:#a82c53;
+	background-color:#000;
 }
 
 
@@ -376,7 +378,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		background-color: #5e5e5e;
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 	a.track-node:active .nothing-toy{
 		border-top-color:#444;
@@ -435,7 +437,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	background-color:#535353;
 	
 	/* bg hover hack */
-	background-color:#a82c53;
+	background-color:#000;
 }
 .show-zoom-to-track ul.tracks-for-play > li.viewing-song > a.track-node{
 	padding-top: 2px;
@@ -596,13 +598,13 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		background-color: transparent; 
 		
 		/* bg hover hack */
-		background-color:#a82c53;
+		background-color:#000;
 }
 		.show-zoom-to-track .v-song-sibling:hover{
 			background-color: #595959;
 			
 			/* bg hover hack */
-			background-color:#a82c53;
+			background-color:#000;
 }
 
 .show-zoom-to-track .track-node {

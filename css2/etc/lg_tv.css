@@ -103,3 +103,10 @@ input.surf_nav {
 .personal-stuff-preview {
 	display: none;
 }
+
+.lg_smarttv_app #slider .show-zoom-to-track .viewing-song .track-node:hover{
+	background-color: transparent;
+}
+.area_for_button:hover, .no_arfb .area-button:hover {
+	background: #000;
+	}
