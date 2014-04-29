@@ -110,3 +110,12 @@ input.surf_nav {
 .area_for_button:hover, .no_arfb .area-button:hover {
 	background: #000;
 	}
+
+
+.full-page .tags_list {
+	padding-right: 1rem;
+}
+.full-page .tags_list span {
+	display: inline-block;
+	/* float: left; */
+	}
