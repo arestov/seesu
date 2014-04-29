@@ -84,19 +84,12 @@ AppModelBase.extendTo(AppModel, {
 	notPlaying: function() {
 		this.updateState('playing', false);
 	},
-	createSonglist: function(map_parent, params, first_song) {
+	createSonglist: function(map_parent, params) {
 		var pl = new SongsList();
 		pl.init({
 			app: this,
 			map_parent: map_parent
-		}, params, first_song);
-		return pl;
-	},
-	preparePlaylist: function(params, first_song){
-		var pl = new SongsList();
-		pl.init({
-			app: this
-		}, params, first_song);
+		}, params);
 		return pl;
 	},
 	keyNav: function(key_name) {
@@ -122,12 +115,10 @@ AppModelBase.extendTo(AppModel, {
 			md.showOnMap();*/
 			return md;
 		},
-		showArtistAlbum: function(params, page_md, start_song){
+		showArtistAlbum: function(params, page_md){
 			var artcard = this.showArtcardPage(params.album_artist, page_md);
-			var pl = artcard.showAlbum(params, start_song);
-			if (start_song) {
-				pl.showTrack(start_song);
-			}
+			var pl = artcard.showAlbum(params);
+
 			return pl;
 		},
 		showNowPlaying: function(no_stat) {

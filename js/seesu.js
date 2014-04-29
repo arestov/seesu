@@ -688,10 +688,10 @@ AppModel.extendTo(SeesuApp, {
 			for (i=0; i < this.gena.playlists.length; i++) {
 				var cur = this.gena.playlists[i];
 				if (query){
-					if (cur.playlist_title == query){
+					if (cur.state('nav_title') == query){
 						r.unshift(cur);
 
-					} else if (cur.playlist_title.match(spv.getStringPattern(query))){
+					} else if (cur.state('nav_title') && cur.state('nav_title').match(spv.getStringPattern(query))){
 						r.push(cur);
 					}
 				} else {

@@ -9,6 +9,9 @@ return {
 	},
 	timestamp: function(value) {
 		return value * 1000;
+	},
+	urlp: function(value) {
+		return '/' + value;
 	}
 };
 });

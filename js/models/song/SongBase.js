@@ -110,10 +110,10 @@ provoda.addPrototype("SongBase",{
 			}
 		},
 		'has_none_files_to_play': {
-			depends_on: ['search_complete', 'no_track_title', 'mf_cor_has_available_tracks'],
-			fn: function(scomt, ntt, mf_cor_tracks) {
-				if (this.getMFCore() && !mf_cor_tracks){
-					if (this.getMFCore().isSearchAllowed()){
+			depends_on: ['mf_cor', 'search_complete', 'no_track_title', 'mf_cor_has_available_tracks'],
+			fn: function(mf_cor, scomt, ntt, mf_cor_tracks) {
+				if (mf_cor && !mf_cor_tracks){
+					if (mf_cor.isSearchAllowed()){
 						if (scomt){
 							return true;
 						}
