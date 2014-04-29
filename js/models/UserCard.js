@@ -91,7 +91,7 @@ BrowseMap.Model.extendTo(UserCard, {
 			_this.updateState('has_playlists', !!items.length);
 		};
 		hasPlaylistCheck(this.app.gena.playlists);
-		this.app.gena.on('playlsits-change', hasPlaylistCheck);
+		this.app.gena.on('playlists-change', hasPlaylistCheck);
 
 		//знакомства
 

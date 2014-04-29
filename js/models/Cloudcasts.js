@@ -66,14 +66,6 @@ LoadableList.extendTo(CloudcastsList, {
 		item.addRawData(data);
 		return item;
 	},
-	datamorph_map: new spv.MorphMap({
-		is_array: true,
-		source: 'data',
-		props_map: {
-			nav_title: 'name',
-			key: 'key'
-		}
-	}),
 	'nest_req-lists_list': [
 		[{
 			is_array: true,

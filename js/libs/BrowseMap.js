@@ -808,7 +808,6 @@ BrowseMap.routePathByModels = function(start_md, pth_string) {
 		#/loved/Beastie+boys/Phone+Call
 		#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
 		#?q=be/directsearch/vk/345345
-		'artists by loved'
 		#/ds/vk/25325_2344446
 		http://www.lastfm.ru/music/65daysofstatic/+similar
 		*/

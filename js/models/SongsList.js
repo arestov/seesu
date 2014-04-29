@@ -81,65 +81,17 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 	var SongsList = function(){};
 	SongsListBase.extendTo(SongsList, {
-		init: function(opts, params, first_song) {
+		init: function() {
 			//playlist_title, playlist_type, info
-			//params.title, params.type, params.data
+
 			
 			this._super.apply(this, arguments);
-			if (params){
-				this.setBaseInfo(params);
-			}
-			
-			if (first_song){
-				this.findSongOwnPosition(first_song);
-			}
-			
 
 			var plarow = new PlARow();
 			plarow.init(this);
-
 			this.updateNesting('plarow', plarow);
-			
-
 
 			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
-			if (this.playlist_type){
-				this.updateState('url_part', this.getURL());
-			}
-			
-		},
-		setBaseInfo: function(params) {
-			this.info = params.data || {};
-			if (params.title){
-				this.playlist_title = params.title;
-			}
-			if (params.type){
-				this.playlist_type = params.type;
-				this.updateState('nav_title', this.playlist_title);
-			}
-		},
-		getURL: function(){
-			var url ='';
-			if (this.playlist_type == 'artist'){
-				url += '/_';
-			} else if (this.playlist_type == 'album'){
-				url += '/' + this.app.encodeURLPart(this.info.album);
-			} else if (this.playlist_type == 'similar artists'){
-				url += '/+similar';
-			} else if (this.playlist_type == 'artists by tag'){
-				url += '/tags/' + this.app.encodeURLPart(this.info.tag);
-			} else if (this.playlist_type == 'tracks'){
-				url += '/ds';
-			} else if (this.playlist_type == 'artists by recommendations'){
-				url += '/recommendations';
-			} else if (this.playlist_type == 'artists by loved'){
-				url += '/loved';
-			} else if (this.playlist_type == 'cplaylist'){
-				url += '/playlist/' + this.app.encodeURLPart(this.info.name);
-			} else if (this.playlist_type == 'chart'){
-				url += '/chart/' +  this.app.encodeURLPart(this.info.country) + '/' + this.app.encodeURLPart(this.info.metro);
-			}
-			return url;
 		},
 		extendSong: function(omo){
 			if (!(omo instanceof Song)){

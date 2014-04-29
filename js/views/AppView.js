@@ -160,6 +160,10 @@ AppBaseView.extendTo(AppView, {
 			main: SongcardPage,
 			nav: nav.baseNavUI
 		},
+		justlists: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
 		songcard_cloudcasts: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
@@ -627,6 +631,12 @@ AppBaseView.extendTo(AppView, {
 				_this.RPCLegacy('search', input_value);
 			}, 100));
 
+			search_input.on('keyup', spv.throttle(function(e) {
+				if (e.keyCode == 13) {
+					_this.RPCLegacy('refreshSearchRequest', Date.now());
+				}
+			}, 100));
+
 			search_input.on('activate_waypoint', function() {
 				search_input.focus();
 			});
@@ -849,6 +859,7 @@ AppBaseView.extendTo(AppView, {
 				if (d.activeElement && d.activeElement.nodeName == 'INPUT'){
 					if (e.keyCode == 27) {
 						d.activeElement.blur();
+						e.preventDefault();
 						return;
 					}
 				}
