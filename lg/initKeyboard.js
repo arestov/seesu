@@ -18,6 +18,11 @@ window.lgKb.setInitEventHandler(function() {
 		}
 		
 	};
+	window.lgKb.onInterest = function(node) {
+		$(node).trigger('vkeyboard_interest');
+	};
+
+
 	
 });
 

@@ -636,6 +636,9 @@ AppBaseView.extendTo(AppView, {
 					_this.RPCLegacy('refreshSearchRequest', Date.now());
 				}
 			}, 100));
+			search_input.on('vkeyboard_interest', spv.throttle(function() {
+				_this.RPCLegacy('refreshSearchRequest', Date.now());
+			}, 100));
 
 			search_input.on('activate_waypoint', function() {
 				search_input.focus();

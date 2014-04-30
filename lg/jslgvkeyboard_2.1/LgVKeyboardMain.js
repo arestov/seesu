@@ -3007,6 +3007,16 @@
                 {
                     lgKb.bCaretActivated = false;
                 }
+
+                var textItem = lgKb.targetElement;
+                if(textItem) {       
+                    
+                    if (lgKb.onInterest) {
+                        setTimeout(function() {
+                            lgKb.onInterest(textItem);
+                        }, 0);
+                    }
+                }
             },
         addStrIntoFld :
             function (c , isNew)
@@ -3181,7 +3191,16 @@
                 {
                     lgKb.clearCaretInfo();  
                     lgKb.addStrIntoFld("\n", true);
-                }   
+                }
+                var textItem = lgKb.targetElement;
+                if(textItem) {       
+                    
+                    if (lgKb.onInterest) {
+                        setTimeout(function() {
+                            lgKb.onInterest(textItem);
+                        }, 0);
+                    }
+                }
             },
         setKeyText :
             function (keyId, value, expKeys)
