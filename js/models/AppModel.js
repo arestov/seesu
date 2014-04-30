@@ -201,6 +201,16 @@ AppModelBase.extendTo(AppModel, {
 		}
 		this.updateState('search_query', query);
 	},
+	'stch-search_request_freshness': function() {
+		var query = this.state('search_query');
+		if (query) {
+			this.showResultsPage(query);
+		}
+
+	},
+	refreshSearchRequest: function(time) {
+		this.updateState('search_request_freshness', time);
+	},
 	checkActingRequestsPriority: function() {
 		var raw_array = [];
 		var acting = [];
