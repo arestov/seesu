@@ -830,9 +830,9 @@ var getAverageDurations = function(mu_array, time_limit){
 	provoda.Model.extendTo(Mp3Search,  {
 		'regfr-listchange': {
 			event_name: 'list-changed',
-			fn: function(cb) {
+			fn: function() {
 				if (this.se_list.length){
-					cb(this.se_list);
+					return [this.se_list];
 				}
 			}
 		},

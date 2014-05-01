@@ -908,7 +908,7 @@
 				pv-class="
 					{{player_song && 'player_song'}}
 					{{play && 'playing-song'}}
-					{{marked_as && 'v-song-sibling'}}
+					{{!vmp_show && marked_as && 'v-song-sibling'}}
 					{{marked_as == 'next' && 'to-play-next'}}
 					{{marked_as == 'prev' && 'to-play-previous'}}
 					{{vmp_show && 'viewing-song'}}

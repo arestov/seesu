@@ -361,7 +361,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	position: relative;
 	}
 	
-	.show-zoom-to-track .to-play-previous{
+	.show-zoom-to-track .v-song-sibling.to-play-previous{
 		
 		right:50%;
 		left: 0;
@@ -369,7 +369,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		margin-right: 20px;
 		border-top-left-radius:10px;
 		}
-	.show-zoom-to-track .to-play-next {
+	.show-zoom-to-track .v-song-sibling.to-play-next {
 		right: 0;
 		left:50%;
 		margin-left: 20px;

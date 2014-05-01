@@ -5,6 +5,12 @@ define(['provoda', 'spv'], function(provoda, spv){
 		tickListChanges: function(last_usable_song) {
 			this.onChanges(last_usable_song);
 		},
+		'compx-active_use': [
+			['mp_show', 'want_be_played'],
+			function (mp_show, want_be_played) {
+				return mp_show || want_be_played;
+			}
+		],
 		init: function(opts){
 			this._super.apply(this, arguments);
 

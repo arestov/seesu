@@ -1099,16 +1099,21 @@ FastEventor.prototype = {
 			this.off(namespace);
 		}
 
-		var reg_args = null;
+		var reg_args = null, one_reg_arg = null;
 
 		var callbacks_wrapper = this.hndUsualEvCallbacksWrapper;
 
 		var reg_fires = this.getPossibleRegfires(namespace);
 		if (reg_fires && reg_fires.length){
-			reg_fires[0].fn.call(this.sputnik, function() {
-				reg_args = arguments;
+			reg_args = reg_fires[0].fn.call(this.sputnik, namespace, name_parts);
+			if (reg_args) {
 				fired = true;
-			}, namespace, {opts: false}, name_parts);
+				if (!Array.isArray(reg_args)) {
+					one_reg_arg = reg_args;
+					reg_args = null;
+				}
+			}
+			
 		}
 		if (fired){
 			if (reg_fires[0].getWrapper){
@@ -1117,9 +1122,14 @@ FastEventor.prototype = {
 			if (!skip_reg){
 				var mo_context = context || _this.sputnik;
 				if (typeof soft_reg != 'undefined' && !soft_reg){
-					cb.apply(mo_context, reg_args);
+					if (one_reg_arg) {
+						cb.call(mo_context, one_reg_arg);
+					} else {
+						cb.apply(mo_context, reg_args);
+					}
+					
 				} else {
-					this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, false, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
+					this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
 				}
 			}
 		}
@@ -1308,12 +1318,12 @@ FastEventor.prototype = {
 	default_requests_space: 'nav',
 	getRequests: function(space) {
 		space = space || this.default_requests_space;
-		return (this.requests && this.requests[space]) || [];
+		return this.requests && this.requests[space];
 	},
 	getQueued: function(space) {
 		//must return new array;
 		var requests = this.getRequests(space);
-		return spv.filter(requests, 'queued');
+		return requests && spv.filter(requests, 'queued');
 	},
 	addRequest: function(rq, opts){
 		this.addRequests([rq], opts);
@@ -1881,12 +1891,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		test: function(namespace) {
 			return namespace.indexOf('vip_state_change-') === 0;
 		},
-		fn: function(cb, namespace) {
+		fn: function(namespace) {
 			var state_name = namespace.replace('vip_state_change-', '');
-			cb({
+			return {
 				value: this.state(state_name),
 				target: this
-			});
+			};
 		},
 		getWrapper: function() {
 			return this.hndMotivationWrappper;
@@ -1896,12 +1906,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		test: function(namespace) {
 			return namespace.indexOf('state_change-') === 0;
 		},
-		fn: function(cb, namespace) {
+		fn: function(namespace) {
 			var state_name = namespace.replace('state_change-', '');
-			cb({
+			return {
 				value: this.state(state_name),
 				target: this
-			});
+			};
 		},
 		getWrapper: function() {
 			return this.hndMotivationWrappper;
@@ -2796,14 +2806,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		test: function(namespace) {
 			return namespace.indexOf('child_change-') === 0;
 		},
-		fn: function(cb, namespace) {
+		fn: function(namespace) {
 			var nesting_name = namespace.replace('child_change-', '');
 			var child = this.getNesting(nesting_name);
 			if (child){
-				cb({
+				return {
 					value: child,
 					target: this
-				});
+				};
 			}
 		},
 		getWrapper: function() {
@@ -2874,16 +2884,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (!this.mpx) {
 			this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
 		}
-
 		return this.mpx;
 	},
 
 	getReqsOrderField: function() {
-		if (this.req_order_field){
-			return this.req_order_field;
-		} else {
-			return (this.req_order_field = ['mdata', 'm', this._provoda_id, 'order']);
+		if (!this.req_order_field) {
+			this.req_order_field = ['mdata', 'm', this._provoda_id, 'order'];
 		}
+		return this.req_order_field;
 	},
 	getMDReplacer: function() {
 		if (!this.md_replacer) {

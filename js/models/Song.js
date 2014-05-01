@@ -1,6 +1,6 @@
 define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
 function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
-	"use strict";
+"use strict";
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
 	lfm_share_url_replacers[i] = {
@@ -114,7 +114,10 @@ lfm_share_url_replacers.forEach(function(el, i) {
 				still_init = false;
 			}
 			this.initStates();
-			this.nextTick(this.initHeavyPart);
+			//this.nextTick(this.initHeavyPart);
+		},
+		twistStates: function() {
+			this.initHeavyPart();
 		},
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
