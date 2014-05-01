@@ -41,13 +41,30 @@ provoda.addPrototype("SongBase",{
 		//this.updateManyStates(states);
 
 		this.on('requests', this.hndRequestsPrio, this.getContextOptsI());
+		this.states_was_twisted = false;
 
 	},
 	hndRequestsPrio: function() {
 		this.map_parent.checkRequestsPriority();
 		
 	},
+	'stch-needs_states_connecting': function(state) {
+		if (!this.states_was_twisted) {
+
+			if (this.twistStates) {
+				this.twistStates();
+				this.states_was_twisted = true;
+
+			}
+		}
+	},
 	complex_states: {
+		'needs_states_connecting': [
+			['^active_use'],
+			function(state) {
+				return state;
+			}
+		],
 		'file_almost_loaded': [
 			['@every:almost_loaded:mf_cor'],
 			function(state) {

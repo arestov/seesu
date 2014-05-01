@@ -37,7 +37,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 
 		if (params && params.subitems) {
 			if (params.subitems[this.main_list_name]) {
-				this.insertDataAsSubitems(this.main_list_name, params.subitems[this.main_list_name]);
+				this.nextTick(this.insertDataAsSubitems, [this.main_list_name, params.subitems[this.main_list_name]], true);
 			}
 		}
 	},
