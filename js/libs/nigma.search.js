@@ -123,7 +123,7 @@ NigmaMusicSearch.prototype = {
 			from		: 'exfm',
 			page_link	: cursor.sources && cursor.sources[0],
 			_id			: cursor.id,
-			type: 'mp3'
+			media_type: 'mp3'
 		};
 		
 		
@@ -196,12 +196,7 @@ NigmaMusicSearch.prototype = {
 									//throw "shii!"
 								}
 								file.media_type = 'mp3';
-								_this.mp3_search.setFileQMI(file, msq);
-								
-
-								if (_this.mp3_search.getFileQMI(file, msq) != -1){
-									music_list.push(file);
-								}
+								music_list.push(file);
 
 								
 								

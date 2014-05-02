@@ -102,11 +102,7 @@ ExfmMusicSearch.prototype = {
 				entity.track = guess_info.track;
 			}
 		}
-		if (msq){
-			this.mp3_search.setFileQMI(entity, msq);
-			
-			
-		}
+
 		
 		
 		return entity;
@@ -137,15 +133,12 @@ ExfmMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.songs.length){
 						for (var i=0; i < r.songs.length; i++) {
-							if (!r.songs[i] || !r.songs[i].url || r.songs[i].url.indexOf('api.soundcloud.com/tracks/') != -1){
+							var cur = r.songs[i];
+							if (!cur || !cur.url || cur.url.indexOf('api.soundcloud.com/tracks/') != -1){
 								continue;
 							}
 							var ent = _this.makeSong(r.songs[i], msq);
-							if (_this.mp3_search.getFileQMI(ent, msq) == -1){
-								//console.log(ent)
-							} else {
-								music_list.push(ent);
-							}
+							music_list.push(ent);
 
 
 						

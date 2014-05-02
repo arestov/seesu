@@ -104,9 +104,6 @@ ScMusicSearch.prototype = {
 				type: 'mp3',
 				media_type: 'mp3',
 			};
-			if (msq){
-				this.mp3_search.setFileQMI(entity, msq);
-			}
 			
 			
 		}
@@ -139,9 +136,7 @@ ScMusicSearch.prototype = {
 						for (var i=0; i < r.length; i++) {
 							var ent = _this.makeSong(r[i], msq);
 							if (ent){
-								if (_this.mp3_search.getFileQMI(ent, msq) == -1){
-									//console.log(ent)
-								} else if (!Mp3Search.hasMusicCopy(music_list,ent)){
+								if (!Mp3Search.hasMusicCopy(music_list,ent)){
 									music_list.push(ent);
 								}
 							}

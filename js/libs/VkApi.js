@@ -120,10 +120,7 @@ VkSearch.prototype = {
 				type: 'mp3',
 				media_type: 'mp3'
 			};
-			if (msq){
-				this.mp3_search.setFileQMI(entity, msq);
-				
-			}
+
 			return entity;
 		}
 	},
@@ -134,9 +131,7 @@ VkSearch.prototype = {
 			
 			if (entity){
 
-				if (this.mp3_search.getFileQMI(entity, msq) == -1){
-					//console.log(entity)
-				} else if (!entity.link.match(/audio\/.mp3$/) && !Mp3Search.hasMusicCopy( music_list, entity)){
+				if (!entity.link.match(/audio\/.mp3$/) && !Mp3Search.hasMusicCopy( music_list, entity)){
 					music_list.push(entity);
 				}
 			}
