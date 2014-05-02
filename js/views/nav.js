@@ -10,9 +10,9 @@ provoda.View.extendTo( baseNavUI, {
 	},
 
 	'compx-nav_clickable':{
-		depends_on: ['mp_stack'],
-		fn : function(mp_stack) {
-			return (mp_stack == !!mp_stack) || mp_stack == 'top';
+		depends_on: ['mp_stack', 'mp_has_focus'],
+		fn : function(mp_stack, mp_has_focus) {
+			return !mp_has_focus && ((mp_stack == Boolean(mp_stack)) || mp_stack == 'top');
 		}
 	},
 	tpl_events:{

@@ -211,6 +211,10 @@ define({
 		"original": "Search",
 		"ru": "Поиск"
 	},
+	"search-big": {
+		"original": "Search artists, albums, songs, tags",
+		"ru": "Ищи артистов, альбомы, композиции, тэги"
+	},
 	"trysearches": {
 		"original": "try to search",
 		"ru": "Попробуй найти"

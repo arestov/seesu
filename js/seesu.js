@@ -864,8 +864,42 @@ AppModel.extendTo(SeesuApp, {
 
 		});
 	},
-	handleNetworkSideData: function(source_name, ns, data) {
-		console.log(source_name, ns, data);
+	nsd_handlers: {
+		vk_users: function(list, source_name) {
+			
+		},
+		files: function(list, source_name, md) {
+
+			var second_msq = md && md.model_name == 'song' && {
+				artist: md.state('artist'),
+				track: md.state('track')
+			};
+
+			//var result = [];
+			for (var i = 0; i < list.length; i++) {
+				var cur = list[i];
+				cur.from = source_name;
+				if (!cur.media_type) {
+					cur.media_type = 'mp3';
+				}
+				//result.puhs(list);
+				this.mp3_search.addFileToInvestg(cur, cur);
+				if (second_msq) {
+					this.mp3_search.addFileToInvestg(cur, second_msq);
+				}
+			}
+
+
+
+		}
+	},
+	handleNetworkSideData: function(source_name, ns, data, md) {
+		if (this.nsd_handlers[ns]) {
+			this.nsd_handlers[ns].call(this, data, source_name, md);
+		} else {
+			console.log(source_name, ns, data);
+		}
+		
 	}
 
 });

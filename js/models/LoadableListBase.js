@@ -66,7 +66,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 	},
 	handleNetworkSideData: function(source_name, ns, data) {
-		this.app.handleNetworkSideData(source_name, ns, data);
+		this.app.handleNetworkSideData(source_name, ns, data, this);
 	},
 	main_list_name: 'lists_list',
 	preview_mlist_name: 'preview_list',

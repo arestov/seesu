@@ -1,6 +1,247 @@
 define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, SongFileModel){
 "use strict";
 
+
+var guessArtist = function(track_title, query_artist){
+
+
+	var r = {};
+	if (!track_title){
+		return r;
+	}
+	var remove_digits = !query_artist || query_artist.search(/^\d+?\s?\S*?\s/) === 0;
+
+	if (remove_digits){
+		var matched_spaces = track_title.match(/\s?[\—\-\—\–]\s/gi);
+		if (matched_spaces && matched_spaces.length > 1){
+			track_title = track_title.replace(/^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/,"");
+		}
+		///^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/  for "813 - Elastique ( Rinse FM Rip )"
+		
+		//01 The Killers - Song - ::remove number
+	}
+
+	var title_parts = track_title.split(/\s?[\—\-\—\–]\s/);
+	var artist_name_match = track_title.match(/([\s\S]*?)\s?[\—\-\—\–]\s/);
+	if (title_parts && title_parts.length > 1){
+		if (title_parts[0] == query_artist){
+			r.artist = artist_name_match[1];
+			r.track = track_title.replace(artist_name_match[0], '');
+		} else if (title_parts[title_parts.length-1] == query_artist){
+			var end_artist_name_match = track_title.match(/\s?[\—\-\—\–]\s([\s\S]*?)$/);
+			if (end_artist_name_match && end_artist_name_match[1]){
+				r.artist = end_artist_name_match[1];
+				r.track = track_title.replace(end_artist_name_match[0], '');
+			}
+		}
+	}
+	if (!r.artist){
+		var wordby_match = track_title.match(/by[\s]+?(.+)/);
+		if (query_artist && wordby_match && wordby_match[1] && wordby_match[1] == query_artist){
+			r.artist = query_artist;
+			r.track = track_title.replace(wordby_match[0], '');
+		} else if (title_parts && title_parts.length > 1){
+			r.artist = artist_name_match[1];
+			r.track = track_title.replace(artist_name_match[0], '');
+		} else if (query_artist && wordby_match){
+			r.artist = query_artist;
+			r.track = track_title.replace(wordby_match[0], '');
+		}
+	}
+	return r;
+};
+
+var QueryMatchIndex = function() {};
+var letter_regexp = /[\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
+//http://stackoverflow.com/questions/150033/regular-expression-to-match-non-english-characters#comment22322603_150078
+spv.Class.extendTo(QueryMatchIndex, {
+	init: function(file, query) {
+
+	},
+	match: function(){
+		if (!this.trim_index) {
+			this.trim_index = {};
+		}
+		for (var i = 0; i < this.match_order.length; i++) {
+			var match_index = this.match_order[i].call(this, this.under_consideration, this.query);
+			if (typeof match_index == 'number'){
+				if (match_index !== 0){
+					while (match_index >= 10){
+						match_index = match_index/10;
+					}
+				}
+				this.match_index = i * 10 + match_index * 1;
+				break;
+			}
+			
+		}
+		if (typeof this.match_index != 'number'){
+			this.match_index = -1;
+		}
+		this.trim_index = null;
+	},
+	toQueryString: function(msq) {
+		return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
+	},
+	valueOf: function(){
+		return this.match_index;
+	},
+	hardTrim: function(string, min_length){
+		var trimmed;
+		if (!this.trim_index[string]) {
+			var letters = string.match(letter_regexp);
+			trimmed = letters ? letters.join('').toLowerCase() : '';
+			/*
+			trimmed = string.toLowerCase()
+				.replace(/^The /, '')
+				.replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '')
+				.replace(/(^\s+)|(\s+$)/gi, '')
+				.replace(/\s+/gi, ' ');*/
+			this.trim_index[string] = trimmed;
+		}
+
+		
+
+		trimmed = this.trim_index[string];
+
+		
+		if (!min_length){
+			return trimmed;
+		} else {
+			if (trimmed.length >= min_length){
+				return trimmed;
+			} else {
+				return string;
+			}
+		}
+	}
+});
+
+
+var SongQueryMatchIndex = function(song_item, query){
+	this.trim_index = null;
+	this.under_consideration = song_item;
+	this.query = query;
+	this.query_string = this.toQueryString(this.query);
+	this.match_order = [this.matchers.full, this.matchers.almost, this.matchers.anyGood, this.matchers.byWordsInTrackField, this.matchers.byWordsInFullTitle, this.matchers.inDescription];
+	this.match();
+};
+
+QueryMatchIndex.extendTo(SongQueryMatchIndex, {
+
+	matchers: {
+		full: function(file_song, query){
+			return (file_song.artist == query.artist && (!query.track || file_song.track == query.track)) && 0;
+		},
+		almost: function(file_song, query){
+			if (query.artist && file_song.artist){
+				if (this.hardTrim(query.artist).length >= 3 && (!query.track || this.hardTrim(query.track).length >= 3)){
+					return (this.hardTrim(query.artist) == this.hardTrim(file_song.artist) && (!query.track || this.hardTrim(query.track) == this.hardTrim(file_song.track))) && 0;
+					
+				}
+			}
+			
+		},
+		anyGood: function(file_song, query){
+			var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
+
+			if (query.q){
+
+				if (full_title.indexOf(this.hardTrim(query.q, 3)) != -1){
+					return 0;
+				}
+			} else {
+				var query_artist = this.hardTrim(query.artist, 3);
+				var artist_match = file_song.artist && query_artist && this.hardTrim(file_song.artist, 3).indexOf(query_artist) != -1;
+
+				if (!query.track){
+					if (artist_match){
+						return 0;
+					}
+				} else {
+					var query_track = this.hardTrim(query.track, 3);
+					var track_match  = file_song.track && query_track && this.hardTrim(file_song.track, 3).indexOf(query_track) != -1;
+					if (artist_match && track_match){
+						return 0;
+					} else {
+						this.artist_in_full_title = query_artist && full_title.indexOf(query_artist) != -1;
+						var hard_track_match = file_song.track && query_track && full_title.indexOf(query_track) != -1;
+						if (this.artist_in_full_title && hard_track_match){
+							return 5;
+						}
+					}
+				}
+				
+
+			}
+		},
+		byWordsInTrackField: function(file_song, query){
+			if (this.artist_in_full_title && query.track){
+				var match = spv.matchWords(this.hardTrim(file_song.track, 3), this.hardTrim(query.track, 3));
+				if (match.forward){
+					return 0;
+				} else if (match.any){
+					return 5;
+				}
+			}
+		},
+		byWordsInFullTitle: function(file_song, query){
+			if (this.artist_in_full_title && query.q || query.track){
+				var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
+				var full_query =  query.q || ((query.artist || '') + ' - ' + (query.track || ''));
+				var match = spv.matchWords(full_title, this.hardTrim(full_query, 3));
+				if (match.forward){
+					return 0;
+				} else if (match.any){
+					return 5;
+				}
+			}
+		},
+		inDescription: function(file_song, query){
+			if (file_song.description){
+				if (!query.track){
+					return;
+				}
+				var full_title = this.hardTrim(file_song.description, 3);
+				if (!full_title){
+					return false;
+				}
+				var query_artist = this.hardTrim(query.artist, 3);
+				var query_track = this.hardTrim(query.track, 3);
+
+
+				var raw = file_song.description.split(/\n/);
+				if (raw.length > 1){
+					for (var i = 0; i < raw.length; i++) {
+						if (!raw[i] || !raw[i].replace(/\s/gi, '')){
+							continue;
+						}
+						var guess_info  = guessArtist(raw[i], query.artist);
+						if (!guess_info.artist){
+							continue;
+							//guess_info.track = full_title; - why!?!?
+						}
+						var maindex = new SongQueryMatchIndex(guess_info, query);
+						if (maindex != -1){
+							return maindex * 1;
+						}
+					}
+				} else {
+					var artist_match = file_song.artist && query_artist && full_title.indexOf(query_artist) != -1;
+					var track_match = file_song.track && query_track && full_title.indexOf(query_track) != -1;
+					if (artist_match && track_match){
+						return 9;
+					}
+				}
+				
+
+				
+			}
+		}
+	}
+});
+
+
 var FilesSourceTuner = function() {};
 provoda.Model.extendTo(FilesSourceTuner, {
 	init: function(opts, data) {
@@ -42,7 +283,35 @@ provoda.Model.extendTo(FilesSourceTuner, {
 	}
 
 });
+var getQueryString = function(msq) {
+	return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
+};
+var setFileQMI = function(file, msq, Constr, force_rewrite) {
+	var query_string = getQueryString(msq);
+	file.query_match_index = file.query_match_index || {};
+	if (file.query_match_index[ query_string ] && !force_rewrite) {
+		return file.query_match_index[ query_string ];
+	}
+	file.query_match_index[ query_string.replace(/\./gi, '') ] = Constr ? ( new Constr(file, msq) * 1 ) : ( new SongQueryMatchIndex(file, msq) * 1 );
+	return file.query_match_index[ query_string ];
+};
+var getMatchedSongs = function(music_list, msq) {
 
+	var result = [];
+	if (!music_list) {
+		return result;
+	}
+
+	for (var i = 0; i < music_list.length; i++) {
+		var cur = music_list[i];
+		var qmi = setFileQMI(cur, msq);
+
+		if (qmi != -1){
+			result.push(cur);
+		}
+	}
+	return result;
+};
 
 	var FilesBySource = function() {};
 	provoda.Model.extendTo(FilesBySource, {
@@ -143,7 +412,7 @@ provoda.Model.extendTo(FilesSourceTuner, {
 			'has_best_files': [
 				['files-list'],
 				function(fslist) {
-					var field_name = 'query_match_index.' + this.mp3_search.getQueryString(this.msq).replace(/\./gi, '');
+					var field_name = 'query_match_index.' + getQueryString(this.msq).replace(/\./gi, '');
 					var best_songs = spv.filter(fslist, field_name, function(value){
 						if (value !== -1 && value < 20){
 							return true;
@@ -192,13 +461,13 @@ provoda.Model.extendTo(FilesSourceTuner, {
 					if (typeof music_list == 'function') {
 						
 						music_list(function(list) {
-							_this.updateState('search_result', list);
+							_this.updateState('search_result', getMatchedSongs(list, msq));
 						});
 						_this.updateState('search_fail', false);
 
 					} else {
 						_this.updateManyStates({
-							search_result: music_list,
+							search_result: getMatchedSongs(music_list, msq),
 							search_fail: false
 						});
 					}
@@ -487,10 +756,8 @@ provoda.Model.extendTo(FilesSourceTuner, {
 			if (!checked){
 				this.checked_files[search_name] = this.checked_files[search_name] || {};
 				this.checked_files[search_name][file_id] = true;
-				var qmi = this.mp3_search.getFileQMI(file, this.msq);
-				if (typeof qmi == 'undefined'){
-					qmi = this.mp3_search.setFileQMI(file, this.msq);
-				}
+				var qmi = this.mp3_search.setFileQMI(file, this.msq);
+	
 				if (qmi !== -1 && qmi < 20){
 					this.addFile(file, search_name);
 				}
@@ -525,244 +792,6 @@ var hasMusicCopy = function (array, entity, from_position){
 };
 
 
-var guessArtist = function(track_title, query_artist){
-
-
-	var r = {};
-	if (!track_title){
-		return r;
-	}
-	var remove_digits = !query_artist || query_artist.search(/^\d+?\s?\S*?\s/) === 0;
-
-	if (remove_digits){
-		var matched_spaces = track_title.match(/\s?[\—\-\—\–]\s/gi);
-		if (matched_spaces && matched_spaces.length > 1){
-			track_title = track_title.replace(/^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/,"");
-		}
-		///^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/  for "813 - Elastique ( Rinse FM Rip )"
-		
-		//01 The Killers - Song - ::remove number
-	}
-
-	var title_parts = track_title.split(/\s?[\—\-\—\–]\s/);
-	var artist_name_match = track_title.match(/([\s\S]*?)\s?[\—\-\—\–]\s/);
-	if (title_parts && title_parts.length > 1){
-		if (title_parts[0] == query_artist){
-			r.artist = artist_name_match[1];
-			r.track = track_title.replace(artist_name_match[0], '');
-		} else if (title_parts[title_parts.length-1] == query_artist){
-			var end_artist_name_match = track_title.match(/\s?[\—\-\—\–]\s([\s\S]*?)$/);
-			if (end_artist_name_match && end_artist_name_match[1]){
-				r.artist = end_artist_name_match[1];
-				r.track = track_title.replace(end_artist_name_match[0], '');
-			}
-		}
-	}
-	if (!r.artist){
-		var wordby_match = track_title.match(/by[\s]+?(.+)/);
-		if (query_artist && wordby_match && wordby_match[1] && wordby_match[1] == query_artist){
-			r.artist = query_artist;
-			r.track = track_title.replace(wordby_match[0], '');
-		} else if (title_parts && title_parts.length > 1){
-			r.artist = artist_name_match[1];
-			r.track = track_title.replace(artist_name_match[0], '');
-		} else if (query_artist && wordby_match){
-			r.artist = query_artist;
-			r.track = track_title.replace(wordby_match[0], '');
-		}
-	}
-	return r;
-};
-
-var QueryMatchIndex = function() {};
-var letter_regexp = /[\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
-//http://stackoverflow.com/questions/150033/regular-expression-to-match-non-english-characters#comment22322603_150078
-spv.Class.extendTo(QueryMatchIndex, {
-	init: function(file, query) {
-
-	},
-	match: function(){
-		if (!this.trim_index) {
-			this.trim_index = {};
-		}
-		for (var i = 0; i < this.match_order.length; i++) {
-			var match_index = this.match_order[i].call(this, this.under_consideration, this.query);
-			if (typeof match_index == 'number'){
-				if (match_index !== 0){
-					while (match_index >= 10){
-						match_index = match_index/10;
-					}
-				}
-				this.match_index = i * 10 + match_index * 1;
-				break;
-			}
-			
-		}
-		if (typeof this.match_index != 'number'){
-			this.match_index = -1;
-		}
-		this.trim_index = null;
-	},
-	toQueryString: function(msq) {
-		return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
-	},
-	valueOf: function(){
-		return this.match_index;
-	},
-	hardTrim: function(string, min_length){
-		var trimmed;
-		if (!this.trim_index[string]) {
-			var letters = string.match(letter_regexp);
-			trimmed = letters ? letters.join('').toLowerCase() : '';
-			/*
-			trimmed = string.toLowerCase()
-				.replace(/^The /, '')
-				.replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '')
-				.replace(/(^\s+)|(\s+$)/gi, '')
-				.replace(/\s+/gi, ' ');*/
-			this.trim_index[string] = trimmed;
-		}
-
-		
-
-		trimmed = this.trim_index[string];
-
-		
-		if (!min_length){
-			return trimmed;
-		} else {
-			if (trimmed.length >= min_length){
-				return trimmed;
-			} else {
-				return string;
-			}
-		}
-	}
-});
-
-
-var SongQueryMatchIndex = function(song_item, query){
-	this.trim_index = null;
-	this.under_consideration = song_item;
-	this.query = query;
-	this.query_string = this.toQueryString(this.query);
-	this.match_order = [this.matchers.full, this.matchers.almost, this.matchers.anyGood, this.matchers.byWordsInTrackField, this.matchers.byWordsInFullTitle, this.matchers.inDescription];
-	this.match();
-};
-
-QueryMatchIndex.extendTo(SongQueryMatchIndex, {
-
-	matchers: {
-		full: function(file_song, query){
-			return (file_song.artist == query.artist && (!query.track || file_song.track == query.track)) && 0;
-		},
-		almost: function(file_song, query){
-			if (query.artist && file_song.artist){
-				if (this.hardTrim(query.artist).length >= 3 && (!query.track || this.hardTrim(query.track).length >= 3)){
-					return (this.hardTrim(query.artist) == this.hardTrim(file_song.artist) && (!query.track || this.hardTrim(query.track) == this.hardTrim(file_song.track))) && 0;
-					
-				}
-			}
-			
-		},
-		anyGood: function(file_song, query){
-			var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
-
-			if (query.q){
-
-				if (full_title.indexOf(this.hardTrim(query.q, 3)) != -1){
-					return 0;
-				}
-			} else {
-				var query_artist = this.hardTrim(query.artist, 3);
-				var artist_match = file_song.artist && query_artist && this.hardTrim(file_song.artist, 3).indexOf(query_artist) != -1;
-
-				if (!query.track){
-					if (artist_match){
-						return 0;
-					}
-				} else {
-					var query_track = this.hardTrim(query.track, 3);
-					var track_match  = file_song.track && query_track && this.hardTrim(file_song.track, 3).indexOf(query_track) != -1;
-					if (artist_match && track_match){
-						return 0;
-					} else {
-						this.artist_in_full_title = query_artist && full_title.indexOf(query_artist) != -1;
-						var hard_track_match = file_song.track && query_track && full_title.indexOf(query_track) != -1;
-						if (this.artist_in_full_title && hard_track_match){
-							return 5;
-						}
-					}
-				}
-				
-
-			}
-		},
-		byWordsInTrackField: function(file_song, query){
-			if (this.artist_in_full_title && query.track){
-				var match = spv.matchWords(this.hardTrim(file_song.track, 3), this.hardTrim(query.track, 3));
-				if (match.forward){
-					return 0;
-				} else if (match.any){
-					return 5;
-				}
-			}
-		},
-		byWordsInFullTitle: function(file_song, query){
-			if (this.artist_in_full_title && query.q || query.track){
-				var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
-				var full_query =  query.q || ((query.artist || '') + ' - ' + (query.track || ''));
-				var match = spv.matchWords(full_title, this.hardTrim(full_query, 3));
-				if (match.forward){
-					return 0;
-				} else if (match.any){
-					return 5;
-				}
-			}
-		},
-		inDescription: function(file_song, query){
-			if (file_song.description){
-				if (!query.track){
-					return;
-				}
-				var full_title = this.hardTrim(file_song.description, 3);
-				if (!full_title){
-					return false;
-				}
-				var query_artist = this.hardTrim(query.artist, 3);
-				var query_track = this.hardTrim(query.track, 3);
-
-
-				var raw = file_song.description.split(/\n/);
-				if (raw.length > 1){
-					for (var i = 0; i < raw.length; i++) {
-						if (!raw[i] || !raw[i].replace(/\s/gi, '')){
-							continue;
-						}
-						var guess_info  = guessArtist(raw[i], query.artist);
-						if (!guess_info.artist){
-							continue;
-							//guess_info.track = full_title; - why!?!?
-						}
-						var maindex = new SongQueryMatchIndex(guess_info, query);
-						if (maindex != -1){
-							return maindex * 1;
-						}
-					}
-				} else {
-					var artist_match = file_song.artist && query_artist && full_title.indexOf(query_artist) != -1;
-					var track_match = file_song.track && query_track && full_title.indexOf(query_track) != -1;
-					if (artist_match && track_match){
-						return 9;
-					}
-				}
-				
-
-				
-			}
-		}
-	}
-});
 
 var getAverageDurations = function(mu_array, time_limit){
 	var r = {};
@@ -844,13 +873,11 @@ var getAverageDurations = function(mu_array, time_limit){
 			}
 			return this.tuners[search_name];
 		},
-		getQueryString: function(msq) {
-			return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
-		},
+		getQueryString: getQueryString,
 		sortMusicFilesArray: function(music_list, msq, time_limit) {
 			var searches_pr = this.searches_pr;
 
-			var query_string = this.getQueryString(msq);
+			var query_string = getQueryString(msq);
 			time_limit = time_limit || 30000;
 
 			var field_name = ['query_match_index', query_string.replace(/\./gi, '')];
@@ -894,17 +921,12 @@ var getAverageDurations = function(mu_array, time_limit){
 
 		},
 		getFileQMI: function(file, msq) {
-			var query_string = this.getQueryString(msq);
+			var query_string = getQueryString(msq);
 			return spv.getTargetField(file, [ 'query_match_index', query_string.replace(/\./gi, '') ]);
 		},
-		setFileQMI: function(file, msq, Constr) {
-			var query_string = this.getQueryString(msq);
-			file.query_match_index = file.query_match_index || {};
-			file.query_match_index[ query_string.replace(/\./gi, '') ] = Constr ? ( new Constr(file, msq) * 1 ) : ( new SongQueryMatchIndex(file, msq) * 1 );
-			return file.query_match_index[ query_string ];
-		},
+		setFileQMI: setFileQMI,
 		getFilesInvestg: function(msq, motivator) {
-			var query_string = msq.q || this.getQueryString(msq);
+			var query_string = msq.q || getQueryString(msq);
 			var investg = this.investgs[ query_string ];
 			if (!investg){
 				investg = new FilesInvestg();
@@ -981,6 +1003,16 @@ var getAverageDurations = function(mu_array, time_limit){
 				}
 			}
 			return o;
+		},
+		addFileToInvestg: function(file, msq) {
+			var qmi = this.setFileQMI(file, msq);
+			if (qmi != -1) {
+				var investg = this.getFilesInvestg(msq);
+				investg.addFile(file, file.from);
+			}
+			
+
+			
 		},
 		pushSomeResults: function(music_list) {
 			var allowed_files = [];
