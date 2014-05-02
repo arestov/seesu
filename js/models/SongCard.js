@@ -125,7 +125,14 @@ LoadableListBase.extendTo(VKPostsList, {
 				}, 'attachments']
 
 			}
-		}],
+		},
+		true,
+		[
+			['vk_users',
+			function(r) {
+				return r.response.profiles;
+			}]
+		]],
 		['vk_api', 'get', function() {
 			return ['newsfeed.search', {
 				q: this.head_props.artist_name + ' ' + this.head_props.track_name + ' has:audio',
