@@ -1,7 +1,7 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap',
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
 './user_music_lfm', './Cloudcasts', './LoadableListBase', './SongsList',
 'js/modules/declr_parsers'],
-function(provoda, spv, app_serv, BrowseMap,
+function(provoda, spv, app_serv, BrowseMap, morph_helpers,
 user_music_lfm, Cloudcasts, LoadableListBase, SongsList,
 declr_parsers) {
 'use strict';
@@ -12,6 +12,7 @@ user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.initStates(params);
+		
 	},
 	getRqData: function() {
 		return {
@@ -47,17 +48,25 @@ user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 
 var parseVKPostSong = spv.mmap({
 	props_map: {
-		artist: null,
-		track: 'title'
+		artist: 'artist',
+		track: 'title',
+		side_file: {
+			artist: 'artist',
+			track: 'title',
+			from: ['vk'],
+			media_type: ['mp3'],
+			duration: ['seconds', 'duration'],
+			link: 'url'
+		}
 	}
-});
+}, morph_helpers);
 
 
 var VKPostSongs = function() {};
 SongsList.extendTo(VKPostSongs, {
-	init: function() {
+	init: function(opts, data) {
 		this._super.apply(this, arguments);
-		this.initStates();
+		this.initStates(data);
 	},
 /*	'nest_req-songs-list': [
 		declr_parsers.lfm.getUsers('topfans', true),
@@ -69,12 +78,21 @@ SongsList.extendTo(VKPostSongs, {
 
 var VKPostsList = function() {};
 LoadableListBase.extendTo(VKPostsList, {
-	init: function(opts, params) {
+	init: function(opts, data) {
 		this._super.apply(this, arguments);
 		//this.sub_pa_params = params;
-		this.initStates(params);
+		this.initStates(data);
+
+
+		//получить информацию о разместившем пользователе
+
+		//получить информацию об авторе
+
+		//дата публикации
+
+
 	},
-	model_name: 'justlists',
+	model_name: 'vk_posts',
 	hp_bound: {
 		artist_name: null,
 		track_name: null
@@ -106,18 +124,38 @@ LoadableListBase.extendTo(VKPostsList, {
 			props_map: {
 				props: {
 					nav_title: 'owner_id',
-					url_part: ['urlp', 'owner_id']
+					url_part: ['urlp', 'owner_id'],
+					from_id: null,
+					owner_id: null,
+					date: ['timestamp', 'date'],
+
+
+					photos: [function(array) {
+						var photos = [];
+						for (var i = 0; i < array.length; i++) {
+							var cur = array[i];
+			
+							if (cur.type == 'photo') {
+								photos.push(cur.photo);
+								
+							}
+						}
+						return photos;
+
+					}, 'attachments']
 				},
 				attachments: [function(array) {
 					if (!array) {
 						return;
 					}
 					var songs = [];
+					
 					for (var i = 0; i < array.length; i++) {
 						var cur = array[i];
 						if (cur.type == 'audio') {
 							songs.push(parseVKPostSong(cur.audio));
 						}
+				
 					}
 					return {
 						songs: songs
@@ -131,6 +169,10 @@ LoadableListBase.extendTo(VKPostsList, {
 			['vk_users',
 			function(r) {
 				return r.response.profiles;
+			}],
+			['vk_groups',
+			function(r) {
+				return r.response.groups;
 			}]
 		]],
 		['vk_api', 'get', function() {

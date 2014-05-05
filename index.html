@@ -1616,6 +1616,22 @@
 				</div>
 			</div>
 		</div>
+		<div class="vk_posts_page usual_page">
+			<div pv-nest="lists_list">
+				<div>
+					<span pv-repeat="photo in photos" pv-class="{{!hidden && ''}}" class="hidden">
+						<img src="" alt="" height="100" pv-props="src:{{photo.photo_130}}">
+					</span>
+
+				</div>
+				<div class='' pv-nest="songs-list">
+					<div pv-text="{{artist}}"></div>
+					<div pv-text="{{track}}"></div>
+				</div>
+				<hr>
+			</div>
+			
+		</div>
 		<!-- // ui samples -->
 	</div>
 <div id="slider">
