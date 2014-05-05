@@ -8,6 +8,9 @@ provoda.addPrototype("SongBase",{
 
 		this._super.apply(this, arguments);
 
+
+		
+
 		this.neighbour_for = null;
 		this.marked_prev_song = null;
 		this.marked_next_song = null;
@@ -20,6 +23,7 @@ provoda.addPrototype("SongBase",{
 		
 		this.mp3_search = opts.app.mp3_search;
 		this.player = opts.app.player;
+		
 		
 		this.uid = ++counter;
 		if (omo.track){
@@ -282,9 +286,6 @@ provoda.addPrototype("SongBase",{
 	playPrev: function() {
 		this.map_parent.switchTo(this);
 	},
-	findNeighbours: function(){
-		this.map_parent.findNeighbours(this);
-	},
 	/*
 	downloadLazy: spv.debounce(function(){
 		var song = spv.getTargetField(this.mf_cor.songs(), "0.t.0");
@@ -368,9 +369,6 @@ provoda.addPrototype("SongBase",{
 		return this.state('is_important');
 	},
 	
-	checkNeighboursChanges: function(changed_neighbour, viewing, log) {
-		this.map_parent.checkNeighboursChanges(this, changed_neighbour, viewing, log);
-	},
 	hasNextSong: function(){
 		return !!this.next_song;
 	},

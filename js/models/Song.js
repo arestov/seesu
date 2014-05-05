@@ -8,7 +8,9 @@ lfm_share_url_replacers.forEach(function(el, i) {
 		str: window.escape(el)
 	};
 });
-
+var album_placeholder = {
+	url: 'i/album_placeholder.png'
+};
 
 
 	var app_env = app_serv.app_env;
@@ -134,9 +136,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 					arr.push(album_image);
 				} else {
 
-					arr.push({
-						url: 'i/album_placeholder.png'
-					});
+					arr.push(album_placeholder);
 				}
 				if (artist_images) {
 					arr.push.apply(arr, artist_images);
@@ -186,6 +186,12 @@ lfm_share_url_replacers.forEach(function(el, i) {
 		},
 		initHeavyPart: provoda.getOCF('izheavy', function() {
 			var omo = this.omo;
+
+
+			if (omo.side_file) {
+				this.mp3_search.addFileToInvestg(omo.side_file, omo.side_file);
+				omo.side_file = null;
+			}
 
 			this.mf_cor = new MfCor();
 			this.useMotivator(this.mf_cor, function() {

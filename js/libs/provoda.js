@@ -783,7 +783,12 @@ FlowStep.prototype.call = function() {
 		this.cb_wrapper.call(this.real_context, this, this.fn, this.context, this.args, this.arg);
 	} else {
 		if (this.args){
-			this.fn.apply(this.context, this.args);
+			if (this.args.length > 1) {
+				this.fn.apply(this.context, this.args);
+			} else {
+				this.fn.call(this.context, this.args[0]);
+			}
+			
 		} else {
 			this.fn.call(this.context, this.arg);
 		}
@@ -2824,7 +2829,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			if (child){
 				return {
 					value: child,
-					target: this
+					target: this,
+					nesting_name: nesting_name
 				};
 			}
 		},
