@@ -296,7 +296,12 @@ ListPreview.extendTo(TagsListPreview, {
 
 
 
-
+var VKPostsView = function() {};
+SPView.extendTo(VKPostsView, {
+	base_tree: {
+		sample_name: 'vk_posts_page'
+	}
+});
 return {
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
@@ -312,7 +317,8 @@ return {
 	AlbumsListPreview:AlbumsListPreview,
 	TagsListPreview: TagsListPreview,
 	ListSimplePreview: ListSimplePreview,
-	ImagedListPreview: ImagedListPreview
+	ImagedListPreview: ImagedListPreview,
+	VKPostsView: VKPostsView
 };
 
 });

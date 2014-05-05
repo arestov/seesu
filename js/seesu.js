@@ -369,6 +369,8 @@ AppModel.extendTo(SeesuApp, {
 		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();
 
+		
+
 		if (app_env.check_resize){
 			this.updateState('slice-for-height', true);
 		}
@@ -865,8 +867,11 @@ AppModel.extendTo(SeesuApp, {
 		});
 	},
 	nsd_handlers: {
-		vk_users: function(list, source_name) {
-			
+		vk_groups: function(list) {
+			console.log(list);
+		},
+		vk_users: function(list) {
+			console.log(list);
 		},
 		files: function(list, source_name, md) {
 

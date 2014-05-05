@@ -17,8 +17,18 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			this.updateNesting(this.preview_mlist_name, e.value);
 		}
 	},
+	bindStaCons: function() {
+		this.wch(this, 'mp_has_focus', this.hndSPlOnFocus);
+		this.on('state_change-more_load_available', this.hndSPlOnLoadAllowing);
+		if (!this.manual_previews){
+			this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
+		}
+	},
 	init: function(opts, data, params) {
 		this._super.apply(this, arguments);
+
+		this.excess_data_items = {};
+		this.loaded_nestings_items = {};
 		this.loadable_lists = {};
 		this.loadable_lists[ this.main_list_name ] = [];
 		this.updateNesting( this.main_list_name, []);
@@ -27,13 +37,8 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		if (has_loader){
 			this.updateState("has_data_loader", true);
 		}
-		this.wch(this, 'mp_has_focus', this.hndSPlOnFocus);
-		this.on('state_change-more_load_available', this.hndSPlOnLoadAllowing);
-		if (!this.manual_previews){
-			this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
-		}
-		this.excess_data_items = {};
-		this.loaded_nestings_items = {};
+
+		this.bindStaCons();
 
 		if (params && params.subitems) {
 			if (params.subitems[this.main_list_name]) {

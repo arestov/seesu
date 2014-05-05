@@ -7,6 +7,9 @@ return {
 	lfm_image: function(value) {
 		return app_serv.getLFMImageWrap(value);
 	},
+	'seconds': function(value) {
+		return value * 1000;
+	},
 	timestamp: function(value) {
 		return value * 1000;
 	},

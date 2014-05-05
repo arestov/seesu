@@ -1130,5 +1130,19 @@ spv.mmap = function(config, converters) {
 //i should not rewrite fields
 
 
+
+
+spv.coe = function(cb) {
+	var result = {};
+	var add = function(obj) {
+		spv.cloneObj(result, obj);
+	};
+	cb(add);
+	return result;
+};
+
 })();
+
+
+
 define(function(){return spv;});

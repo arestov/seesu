@@ -91,6 +91,10 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			plarow.init(this);
 			this.updateNesting('plarow', plarow);
 
+			
+		},
+		bindStaCons: function() {
+			this._super();
 			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
 		},
 		extendSong: function(omo){

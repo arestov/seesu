@@ -164,6 +164,10 @@ AppBaseView.extendTo(AppView, {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		},
+		vk_posts: {
+			main: coct.VKPostsView,
+			nav: nav.baseNavUI
+		},
 		songcard_cloudcasts: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
