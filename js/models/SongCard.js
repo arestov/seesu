@@ -67,7 +67,30 @@ SongsList.extendTo(VKPostSongs, {
 	init: function(opts, data) {
 		this._super.apply(this, arguments);
 		this.initStates(data);
+
+		this.app.watchVKCharacter( this, (data.post_type == 'reply' ? data.from_id : data.owner_id), 'owner_info' );
+		if (data.owner_id != data.from_id) {
+			this.app.watchVKCharacter(this, data.from_id, 'author_info');
+		}
+
+		/*
+		date
+		*/
+
+			//получить информацию о разместившем пользователе
+
+			//получить информацию об авторе
+
+			//дата публикации
+
+			
 	},
+	'compx-date_desc': [
+		['date'],
+		function(date) {
+			return date && (new Date(date)).toLocaleString();
+		}
+	]
 /*	'nest_req-songs-list': [
 		declr_parsers.lfm.getUsers('topfans', true),
 		['lfm', 'get', function() {
@@ -76,6 +99,7 @@ SongsList.extendTo(VKPostSongs, {
 	]*/
 });
 
+
 var VKPostsList = function() {};
 LoadableListBase.extendTo(VKPostsList, {
 	init: function(opts, data) {
@@ -83,12 +107,8 @@ LoadableListBase.extendTo(VKPostsList, {
 		//this.sub_pa_params = params;
 		this.initStates(data);
 
+		
 
-		//получить информацию о разместившем пользователе
-
-		//получить информацию об авторе
-
-		//дата публикации
 
 
 	},
@@ -125,12 +145,19 @@ LoadableListBase.extendTo(VKPostsList, {
 				props: {
 					nav_title: 'owner_id',
 					url_part: ['urlp', 'owner_id'],
-					from_id: null,
-					owner_id: null,
+					from_id: 'from_id',
+					owner_id: 'owner_id',
 					date: ['timestamp', 'date'],
-
+					post_type: 'post_type',
+					text_body: 'text',
+					likes: 'likes.count',
+					reposts: 'reposts.count',
 
 					photos: [function(array) {
+
+						if (!array) {
+							return;
+						}
 						var photos = [];
 						for (var i = 0; i < array.length; i++) {
 							var cur = array[i];
