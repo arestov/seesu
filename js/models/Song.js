@@ -187,10 +187,15 @@ var album_placeholder = {
 		initHeavyPart: provoda.getOCF('izheavy', function() {
 			var omo = this.omo;
 
-
+			if (omo.side_file && !omo.side_file.link) {
+				omo.side_file = null;
+			}
 			if (omo.side_file) {
 				this.mp3_search.addFileToInvestg(omo.side_file, omo.side_file);
 				omo.side_file = null;
+			}
+			if (omo.file && !omo.file.link) {
+				omo.file = null;
 			}
 
 			this.mf_cor = new MfCor();

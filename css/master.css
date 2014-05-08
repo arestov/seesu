@@ -2004,17 +2004,24 @@ body .surf_nav{
 	padding: 0.4rem;
 	margin: 0 -0.4rem;
 }
-.compact_song-image_con {
-	float:left;
-	width: 2rem;
-	height: 2rem;
-	margin-right: 0.4rem;
-}
+	.compact_song-image_con {
+		float:left;
+		width: 2rem;
+		height: 2rem;
+		margin-right: 0.4rem;
+		border-radius: 50%;
+		background: #595959;
+	}
+		.compact_song-image_con img{
+			height: 100%;
+			width: 100%;
+			border-radius: 50%;
+		}
 	.compact_song-artist_name, .compact_song-track_name{
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		width: 10rem;
+		
 	}
 	.compact_song-artist_name {
 		height: 1em;
@@ -2026,10 +2033,9 @@ body .surf_nav{
 		height: 1.4em;
 		line-height: 1.4em;
 	}
-	.compact_song-image_con img{
-		height: 100%;
-		width: 100%;
-	}
+.compact_playlist .compact_song-artist_name, .compact_playlist .compact_song-track_name{
+	width: 10rem;
+}
 .compact_playlist .compact_song{
 	background: #505050;
 	}
@@ -2039,3 +2045,36 @@ body .surf_nav{
 	.compact_playlist-header {
 		margin: 0.2rem 0;
 		}
+
+
+.vk_post {
+	margin-bottom:2rem;
+	overflow:hidden;
+	cursor:pointer;
+	padding:1rem;
+	border-radius:1rem;
+	background-image: linear-gradient(#5A5A5A 2rem,#505050 10rem);
+	border: 1px solid #505050;
+	border-top: 1px solid #646464;
+}
+	.vk_post:hover {
+		border:1px solid #606060;
+		border-top: 1px solid #676767;
+	}
+	.vk_post_header {
+		overflow:hidden
+	}
+	.vk_post_owner {
+		float:left;margin-right:0.5rem;
+	}
+	.vk_post_text_body {
+		white-space: pre;
+		max-height:100px;
+		overflow:hidden;
+		text-overflow: ellipsis;
+		margin-bottom:1rem;
+	}
+	.vk_post_oneimage {
+		max-height:310px;
+		max-width: 100%;
+	}

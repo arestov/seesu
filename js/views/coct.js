@@ -297,7 +297,7 @@ ListPreview.extendTo(TagsListPreview, {
 
 
 var VKPostsView = function() {};
-SPView.extendTo(VKPostsView, {
+PageView.extendTo(VKPostsView, {
 	base_tree: {
 		sample_name: 'vk_posts_page'
 	}
