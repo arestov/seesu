@@ -369,7 +369,8 @@ AppModel.extendTo(SeesuApp, {
 		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();
 
-		
+		this.vk_users = (new provoda.Model()).init();
+		this.vk_groups = (new provoda.Model()).init();
 
 		if (app_env.check_resize){
 			this.updateState('slice-for-height', true);
@@ -538,6 +539,21 @@ AppModel.extendTo(SeesuApp, {
 			})();
 
 		}
+	},
+	watchVKCharacter: function(md, key, result_state) {
+		var store, character_id;
+
+		if (key > 0) {
+			store = this.vk_users;
+			character_id = key;
+		} else {
+
+
+			store = this.vk_groups;
+			character_id = key * -1;
+		}
+		md.wch(store, character_id, result_state);
+
 	},
 	migrateStorage: function(ver){
 		if (!ver){
@@ -868,10 +884,18 @@ AppModel.extendTo(SeesuApp, {
 	},
 	nsd_handlers: {
 		vk_groups: function(list) {
-			console.log(list);
+			var store = this.vk_groups;
+			for (var i = 0; i < list.length; i++) {
+				store.updateState(list[i].id, list[i]);
+			}
+			//console.log(list);
 		},
 		vk_users: function(list) {
-			console.log(list);
+			var store = this.vk_users;
+			for (var i = 0; i < list.length; i++) {
+				store.updateState(list[i].id, list[i]);
+			}
+			//console.log(list);
 		},
 		files: function(list, source_name, md) {
 
@@ -883,7 +907,15 @@ AppModel.extendTo(SeesuApp, {
 			//var result = [];
 			for (var i = 0; i < list.length; i++) {
 				var cur = list[i];
-				cur.from = source_name;
+				if (!cur.link) {
+					debugger;
+					continue;
+					
+				}
+				if (!cur.from) {
+					cur.from = source_name;
+				}
+				
 				if (!cur.media_type) {
 					cur.media_type = 'mp3';
 				}

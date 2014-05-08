@@ -1103,7 +1103,7 @@ FastEventor.prototype = {
 	_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
 		//common opts allowed
 		if (this.sputnik.convertEventName){
-			namespace = this.sputnik.convertEventName(name);
+			namespace = this.sputnik.convertEventName(namespace);
 		}
 
 		var
@@ -1190,7 +1190,7 @@ FastEventor.prototype = {
 	},
 	off: function(namespace, cb, obj, context){
 		if (this.convertEventName){
-			namespace = this.convertEventName(name);
+			namespace = this.convertEventName(namespace);
 		}
 		var
 			short_name = parseNamespace(namespace)[0],
@@ -1410,7 +1410,7 @@ FastEventor.prototype = {
 
 	sortRequests: function(space) {
 		var requests = this.requests && this.requests[space || this.default_requests_space];
-		if (!this.requests) {
+		if (!this.requests || !this.requests.length) {
 			return;
 		}
 
@@ -1887,18 +1887,33 @@ var PVStateChangeEvent = function(type, value, old_value, target) {
 	this.target = target;
 };
 
+
+var EvConxOpts = function(context, immediately) {
+	this.context = context;
+	this.immediately = immediately;
+};
+
+var StatesLabour = function() {
+	this.collecting_states_changing = false;
+	this.original_states = {};
+	this.states_changing_stack = [];
+	this.all_i_cg = [];
+	this.all_ch_compxs = [];
+	this.changed_states = [];
+	this.total_ch = [];
+
+};
+
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	init: function(){
 		this._super();
 		this.conx_optsi = null;
 		this.conx_opts = null;
-		this.collecting_states_changing = null;
 		this.zdsv = null;
 		this.current_motivator = this.current_motivator || null;
 
 
 		this.states = {};
-		this.states_changing_stack = null;
 
 		//this.collectCompxs();
 
@@ -1937,13 +1952,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 	getContextOptsI: function() {
 		if (!this.conx_optsi){
-			this.conx_optsi = {context: this, immediately: true};
+			this.conx_optsi = new EvConxOpts(this, true);
 		}
 		return this.conx_optsi;
 	},
 	getContextOpts: function() {
 		if (!this.conx_opts){
-			this.conx_opts = {context: this};
+			this.conx_opts = new EvConxOpts(this);
 		}
 		return this.conx_opts;
 	},
@@ -2082,11 +2097,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		if (state_name && this.dclrs_expandable) {
 			if (this.dclrs_expandable[state_name]) {
-				if (!this.handled_expandable_dclrs) {
-					this.handled_expandable_dclrs = {};
+				if (!this._lbr.handled_expandable_dclrs) {
+					this._lbr.handled_expandable_dclrs = {};
 				}
-				if (!this.handled_expandable_dclrs[state_name]) {
-					this.handled_expandable_dclrs[state_name] = true;
+				if (!this._lbr.handled_expandable_dclrs[state_name]) {
+					this._lbr.handled_expandable_dclrs[state_name] = true;
 					for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
 						this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
 					}
@@ -2524,7 +2539,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 	},
 	_setUndetailedState: function(i, name, value) {
-		this.undetailed_states[name] = value;
+		this._lbr.undetailed_states[name] = value;
 	},
 	updateManyStates: function(obj) {
 		var changes_list = [];
@@ -2589,38 +2604,37 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 
 	_updateProxy: function(changes_list, opts) {
-		if (this.undetailed_states){
+		if (this._lbr && this._lbr.undetailed_states){
 			iterateChList(changes_list, this, this._setUndetailedState);
 			return this;
 		}
-		if (!this.states_changing_stack) {
-			this.states_changing_stack = [];
-		}
-		this.states_changing_stack.push(changes_list, opts);
-
-		if (this.collecting_states_changing){
-			return this;
-		}
-		this.collecting_states_changing = true;
 
 		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
 		//для пользователя пока пользователь не перестанет изменять новые состояния
 		if (!this.zdsv){
-			this.zdsv = {
-				original_states: {},
-				all_i_cg: [],
-				all_ch_compxs: [],
-				changed_states: [],
-				total_ch: []
-			};
+			this.zdsv = new StatesLabour();
 		}
-		var total_ch = this.zdsv.total_ch;
-		var original_states = this.zdsv.original_states;
-		var all_i_cg = this.zdsv.all_i_cg;
-		var all_ch_compxs = this.zdsv.all_ch_compxs;
-		var changed_states = this.zdsv.changed_states;
+		var zdsv = this.zdsv;
+
+
+		zdsv.states_changing_stack.push(changes_list, opts);
+
+		if (zdsv.collecting_states_changing){
+			return this;
+		}
+
 		
-		while (this.states_changing_stack.length){
+
+		zdsv.collecting_states_changing = true;
+
+
+		var total_ch = zdsv.total_ch;
+		var original_states = zdsv.original_states;
+		var all_i_cg = zdsv.all_i_cg;
+		var all_ch_compxs = zdsv.all_ch_compxs;
+		var changed_states = zdsv.changed_states;
+		
+		while (zdsv.states_changing_stack.length){
 
 			wipeObj(original_states);
 			all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
@@ -2629,8 +2643,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 			spv.cloneObj(original_states, this.states);
 
-			var cur_changes_list = this.states_changing_stack.shift();
-			var cur_changes_opts = this.states_changing_stack.shift();
+			var cur_changes_list = zdsv.states_changing_stack.shift();
+			var cur_changes_opts = zdsv.states_changing_stack.shift();
 
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
 			this.getChanges(cur_changes_list, cur_changes_opts, changed_states);
@@ -2688,7 +2702,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 
 
-		this.collecting_states_changing = false;
+		zdsv.collecting_states_changing = false;
 		return this;
 	},
 	sendChangesAfterDelay: function() {
@@ -2752,8 +2766,20 @@ var getMDOfReplace = function(){
 	return this.md;
 };
 
+var si_opts_cache = {};
+var SIOpts = function(md) {
+	this.map_parent = md;
+	this.app = md.app;
+};
 
 
+var getSiOpts = function(md) {
+	var provoda_id = md._provoda_id;
+	if (!si_opts_cache[provoda_id]) {
+		si_opts_cache[provoda_id] = new SIOpts(md);
+	}
+	return si_opts_cache[provoda_id];
+};
 
 var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, {
@@ -2845,13 +2871,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return this.map_parent;
 	},
 	getSiOpts: function() {
-		if (!this.initsbi_opts) {
-			this.initsbi_opts = {
-				map_parent: this,
-				app: this.app
-			};
-		}
-		return this.initsbi_opts;
+		return getSiOpts(this);
 	},
 	initSi: function(Constr, data, params) {
 		var instance = new Constr();
@@ -2867,8 +2887,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (opts && opts.app){
 			this.app = opts.app;
 		}
+		if (!this.app) {
+			this.app = null;
+		}
 		if (opts && opts.map_parent){
 			this.map_parent = opts.map_parent;
+		}
+		if (!this.map_parent) {
+			this.map_parent = null;
 		}
 
 		this._super();
@@ -2885,9 +2911,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.md_replacer = null;
 		this.mpx = null;
-		if (!this.initsbi_opts) {
-			this.initsbi_opts = null;
-		}
+
 		//
 		
 		this.prsStCon.connect.parent(this);
@@ -3349,33 +3373,51 @@ var $v = {
 };
 provoda.$v = $v;
 
+
+var ViewLabour = function() {
+	this.has_details = null;
+	this._detailed = null;
+	this.dettree_incomplete = null;
+	this.detltree_depth = null;
+	this._states_set_processing = null;
+	this._collections_set_processing = null;
+	this.dclrs_fpckgs_is_clonned = false;
+	this.innesting_pos_current = null;
+	this.innest_prev_view = null;
+	this.innest_next_view = null;
+
+	this.demensions_key_start = null;
+
+	this.handled_expandable_dclrs = null;
+
+	this._anchor = null;
+	//this.innesting_pos_old = null;
+
+	this.detached = null;
+
+	this.hndTriggerTPLevents = null;
+
+	this.marked_as_dead = null;
+
+
+	this.undetailed_states = {};
+	this.undetailed_children_models = {};
+};
+
 var views_counter = 1;
 var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
-		this.demensions_key_start = null;
+		this._lbr = new ViewLabour();
+		
 		this.req_order_field = null;
 		this.tpl = null;
 		this.c = null;
-		this.has_details = null;
-		this._detailed = null;
+
 		this.dead = null;
 		this.pv_view_node = null;
-		this._anchor = null;
-		this.marked_as_dead = null;
-		this.dettree_incomplete = null;
-		this.detltree_depth = null;
-		this._states_set_processing = null;
-		this._collections_set_processing = null;
 		this.dclrs_fpckgs = this.dclrs_fpckgs;
-		this.dclrs_fpckgs_is_clonned = false;
-		this.detached = null;
 		this.base_skeleton = null;
-
-		this.innesting_pos_current = null;
-		this.innest_prev_view = null;
-		this.innest_next_view = null;
-		//this.innesting_pos_old = null;
 
 		this.nesting_space = view_otps.nesting_space;
 		this.nesting_name = view_otps.nesting_name;
@@ -3384,7 +3426,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
 		}
 
-		this.handled_expandable_dclrs = null;
+		
 
 		this.view_id = views_counter++;
 		this.parent_view = null;
@@ -3416,17 +3458,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		
 		this.mpx = view_otps.mpx;
 		this.proxies_space = view_otps.proxies_space || null;
-		this.undetailed_states = {};
-		this.undetailed_children_models = {};
+		
 		this.way_points = [];
 		this.dom_related_props = null;
 		if (this.dom_rp){
 			this.dom_related_props = [];
 		}
 
-		spv.cloneObj(this.undetailed_states, this.mpx.states);
-		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
-		spv.cloneObj(this.undetailed_children_models, this.mpx.nestings);
+		spv.cloneObj(this._lbr.undetailed_states, this.mpx.states);
+		spv.cloneObj(this._lbr.undetailed_states, this.mpx.vstates);
+		spv.cloneObj(this._lbr.undetailed_children_models, this.mpx.nestings);
 
 
 		if (this.base_tree_expand_states) {
@@ -3435,42 +3476,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}
 
-
-		var _this = this;
-		this.triggerTPLevents = function(e) {
-			var cb_data = e.callback_data;
-
-
-
-			for (var i = 0; i < cb_data.length; i++) {
-				var cur = cb_data[i];
-				if (typeof cur == 'function') {
-					cb_data[i] = cur(e.scope || this.states);
-				}
-			}
-
-			if (!cb_data[0] && cb_data[1]){
-				var target_view;
-				//var view =
-				
-				if (cb_data[1].indexOf('#') === 0) {
-					target_view = _this.root_view;
-					cb_data[1] = cb_data[1].replace('#', '');
-				} else {
-					target_view = _this;
-				}
-
-				cb_data.shift();
-				target_view.RPCLegacy.apply(target_view, cb_data);
-			} else {
-				if (!e.pv_repeat_context){
-					_this.tpl_events[e.callback_name].call(_this, e.event, e.node, cb_data);
-				} else {
-					_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
-				}
-			}
-			
-		};
+		
+		
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 		return this;
@@ -3494,8 +3501,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	demensions_cache: {},
 	checkDemensionsKeyStart: function() {
-		if (!this.demensions_key_start){
-			this.demensions_key_start = this.location_name + '-' + (this.parent_view && this.parent_view.location_name + '-');
+		if (!this._lbr.demensions_key_start){
+			this._lbr.demensions_key_start = this.location_name + '-' + (this.parent_view && this.parent_view.location_name + '-');
 		}
 	},
 	getBoxDemensionKey: function() {
@@ -3505,7 +3512,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			
 		}
 		this.checkDemensionsKeyStart();
-		return this.demensions_key_start.concat(args.join('-'));
+		return this._lbr.demensions_key_start.concat(args.join('-'));
 
 	},
 	getBoxDemensionByKey: function(cb, key) {
@@ -3615,7 +3622,47 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			throw new Error('cant create template');
 		}
 		var _this = this;
-		var tpl = this.getTemplate(con, this.triggerTPLevents, function(arr_arr) {
+
+
+		if (!this._lbr.hndTriggerTPLevents) {
+			this._lbr.hndTriggerTPLevents = function(e) {
+				var cb_data = e.callback_data;
+
+
+
+				for (var i = 0; i < cb_data.length; i++) {
+					var cur = cb_data[i];
+					if (typeof cur == 'function') {
+						cb_data[i] = cur(e.scope || this.states);
+					}
+				}
+
+				if (!cb_data[0] && cb_data[1]){
+					var target_view;
+					//var view =
+					
+					if (cb_data[1].indexOf('#') === 0) {
+						target_view = _this.root_view;
+						cb_data[1] = cb_data[1].replace('#', '');
+					} else {
+						target_view = _this;
+					}
+
+					cb_data.shift();
+					target_view.RPCLegacy.apply(target_view, cb_data);
+				} else {
+					if (!e.pv_repeat_context){
+						_this.tpl_events[e.callback_name].call(_this, e.event, e.node, cb_data);
+					} else {
+						_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
+					}
+				}
+				
+			};
+		}
+
+
+		var tpl = this.getTemplate(con, this._lbr.hndTriggerTPLevents, function(arr_arr) {
 			//pvTypesChange
 			//this == template
 			//this != provoda.View
@@ -3684,14 +3731,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	connectChildrenModels: function() {
-		var udchm = this.undetailed_children_models;
-		this.undetailed_children_models = null;
+		var udchm = this._lbr.undetailed_children_models;
+		this._lbr.undetailed_children_models = null;
 		this.setMdChildren(udchm);
 
 	},
 	connectStates: function() {
-		var states = this.undetailed_states;
-		this.undetailed_states = null;
+		var states = this._lbr.undetailed_states;
+		this._lbr.undetailed_states = null;
 		this._setStates(states);
 
 	},
@@ -3720,14 +3767,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	requestDetailesCreating: function() {
-		if (!this.has_details){
-			this.has_details = true;
+		if (!this._lbr.has_details){
+			this._lbr.has_details = true;
 			this.createDetails();
 		}
 	},
 	requestDetailes: function(){
 		this.requestDetailesCreating();
-		this._detailed = true;
+		this._lbr._detailed = true;
 		if (!this.manual_states_connect){
 			this.connectChildrenModels();
 			this.connectStates();
@@ -3739,11 +3786,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		var con = this.getC();
-		var anchor = this._anchor;
+		var anchor = this._lbr._anchor;
 		if (con && anchor && anchor.parentNode){
 			$(anchor).after(con);
 			//anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
-			this._anchor = null;
+			this._lbr._anchor = null;
 			$(anchor).detach();
 			this.setVisState('con_appended', true);
 		} else if (con && con.parent()[0]){
@@ -3955,7 +4002,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (this.proxies_space) {
 			views_proxies.removeSpaceById(this.proxies_space);
 		}
-		this.nextTick(this.remove, [this.getC(), this._anchor]);
+		this.nextTick(this.remove, [this.getC(), this._lbr._anchor]);
 		this.dead = true; //new DeathMarker();
 		this.stopRequests();
 
@@ -3965,7 +4012,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		this.c = null;
-		this._anchor = null;
+		this._lbr._anchor = null;
 		this.tpl = null;
 		if (this.tpls){
 			this.tpls = null;
@@ -4005,7 +4052,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			con.remove();
 		}
 		if (!anchor){
-			anchor = this._anchor;
+			anchor = this._lbr._anchor;
 		}
 		if (anchor){
 			$(anchor).remove();
@@ -4013,9 +4060,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 	},
 	die: function(opts){
-		if (!this.marked_as_dead){
+		if (!this._lbr.marked_as_dead){
 			this.markAsDead(opts && opts.skip_md_call);
-			this.marked_as_dead = true;
+			this._lbr.marked_as_dead = true;
 		}
 		return this;
 	},
@@ -4026,7 +4073,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.c;
 	},
 	getA: function(){
-		return this._anchor || (this._anchor = document.createComment(''));
+		return this._lbr._anchor || (this._lbr._anchor = document.createComment(''));
 
 		//document.createTextNode('')
 	},
@@ -4037,33 +4084,28 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!this.isAlive()){
 			return;
 		}
-		this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
-		this.detltree_depth++;
-		if (this.dettree_incomplete){
+		this._lbr.dettree_incomplete = this.requestDetalizationLevel(this._lbr.detltree_depth);
+		this._lbr.detltree_depth++;
+		if (this._lbr.dettree_incomplete){
 			this.nextTick(this.__tickDetRequest);
 		}
 	},
 	requestDeepDetLevels: function(){
-		if (this._states_set_processing || this._collections_set_processing){
+		if (this._lbr._states_set_processing || this._lbr._collections_set_processing){
 			return this;
 		}
 		//iterate TREE
-		this.detltree_depth = 1;
-		this.dettree_incomplete = true;
+		this._lbr.detltree_depth = 1;
+		this._lbr.dettree_incomplete = true;
 
-		
-		/*
-		while (this.dettree_incomplete) {
-			this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
-			this.detltree_depth++;
-		}*/
+
 
 		this.nextTick(this.__tickDetRequest);
 		
 		return this;
 	},
 	softRequestChildrenDetLev: function(rel_depth) {
-		if (this._states_set_processing || this._collections_set_processing){
+		if (this._lbr._states_set_processing || this._lbr._collections_set_processing){
 			return this;
 		}
 		this.requestChildrenDetLev(rel_depth);
@@ -4081,7 +4123,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	requestDetalizationLevel: function(rel_depth){
-		if (!this._detailed){
+		if (!this._lbr._detailed){
 			this.requestDetailes();
 		}
 		return this.requestChildrenDetLev(rel_depth - 1);
@@ -4110,7 +4152,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	_setStates: function(states){
-		this._states_set_processing = true;
+		this._lbr._states_set_processing = true;
 		//disallow chilren request untill all states will be setted
 
 		this.states = {};
@@ -4127,7 +4169,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		this._updateProxy(states_list);
-		this._states_set_processing = null;
+		this._lbr._states_set_processing = null;
 		return this;
 	},
 	updateTemplatesStates: function(total_ch) {
@@ -4257,12 +4299,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.setMdChildren(obj);
 	},
 	setMdChildren: function(collections) {
-		this._collections_set_processing = true;
+		this._lbr._collections_set_processing = true;
 		//вью только что создана, присоединяем подчинённые views без деталей (детали создаются позже)
 		for (var i in collections) {
 			this.collectionChange(i, collections[i]);
 		}
-		this._collections_set_processing = null;
+		this._lbr._collections_set_processing = null;
 	},
 	getMdChild: function(name) {
 		return this.children_models[name];
@@ -4400,8 +4442,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			throw new Error('constant declaration exist for nesting named "' + nesname + '"');
 		}
 
-		if (!this.dclrs_fpckgs_is_clonned){
-			this.dclrs_fpckgs_is_clonned = true;
+		if (!this._lbr.dclrs_fpckgs_is_clonned){
+			this._lbr.dclrs_fpckgs_is_clonned = true;
 			var new_cache = {};
 			spv.cloneObj(new_cache, this.dclrs_fpckgs);
 			this.dclrs_fpckgs = new_cache;
@@ -4420,8 +4462,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!this.isAlive()){
 			return;
 		}
-		if (this.undetailed_children_models){
-			this.undetailed_children_models[nesname] = array;
+		if (this._lbr.undetailed_children_models){
+			this._lbr.undetailed_children_models[nesname] = array;
 			return this;
 		}
 
@@ -4608,7 +4650,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		for (; i >= 0; i--) {
 			var view = this.getStoredMpx(array[i]).getView(location_id);
-			var dom_hook = view && !view.detached && view.getT();
+			var dom_hook = view && !view._lbr.detached && view.getT();
 			if (dom_hook){
 				if (view_itself){
 					return view;
@@ -4626,7 +4668,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		for (; i < array.length; i++) {
 			var view = this.getStoredMpx(array[i]).getView(location_id);
-			var dom_hook = view && !view.detached && view.getT();
+			var dom_hook = view && !view._lbr.detached && view.getT();
 			if (dom_hook){
 				if (view_itself){
 					return view;
@@ -4679,8 +4721,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (var i = 0; i < array.length; i++) {
 			var view = this.getStoredMpx(array[i]).getView(location_id);
 			if (view) {
-				//view.innesting_pos_old = view.innesting_pos_current;
-				view.innesting_pos_current = i;
+				view._lbr.innesting_pos_current = i;
 			}
 		}
 
@@ -4752,7 +4793,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 						}
 						view.setVisState('con_appended', false);
 
-						view.detached = true;
+						view._lbr.detached = true;
 						detached.push(view);
 					}
 				}
@@ -4775,7 +4816,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			view = this.getStoredMpx(cur).getView(location_id);
-			if (view && !view.detached){
+			if (view && !view._lbr.detached){
 				continue;
 			}
 			if (!view && ordered_part && ordered_part.indexOf(cur) == -1){
@@ -4813,7 +4854,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//append_data.complect.fragt.appendChild(view.getT()[0]);
 			//$(.fragt).append();
 		}
-		if (!this._collections_set_processing){
+		if (!this._lbr._collections_set_processing){
 			for (i = array.length - 1; i >= 0; i--) {
 				view = this.getStoredMpx(array[i]).getView(location_id);
 				if (view){
@@ -4821,7 +4862,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				}
 			}
 			if (!not_request){
-				//this._collections_set_processing
+				//this._lbr._collections_set_processing
 				this.requestAll();
 			}
 		}
@@ -4837,7 +4878,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}
 		for (i = 0; i < detached.length; i++) {
-			detached[i].detached = null;
+			detached[i]._lbr.detached = null;
 		}
 		if (ordered_part && ordered_part.length){
 			this.nextTick(this.appendOrderedCollection, [space, funcs, view_opts, array, not_request, ordered_rend_list]);
@@ -4848,8 +4889,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (i = 0; i < array.length; i++) {
 			view = this.getStoredMpx(array[i]).getView(location_id);
 			if (view){
-				view.innest_prev_view = this.getPrevView(array, i, location_id, true);
-				view.innest_next_view = this.getNextView(array, i, location_id, true);
+				view._lbr.innest_prev_view = this.getPrevView(array, i, location_id, true);
+				view._lbr.innest_next_view = this.getNextView(array, i, location_id, true);
 				
 			}
 			
