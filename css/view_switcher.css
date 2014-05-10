@@ -7,7 +7,7 @@
 	padding-left:1rem;
 	min-height:36px;
 	border-bottom:1px solid #252525;
-	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
+	background:#444 url(../i/nav/head-gradient.png) repeat-x;
 	
 	background-image: -o-linear-gradient(#525252,#363636);
 	background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #363636);

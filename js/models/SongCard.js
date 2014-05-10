@@ -107,7 +107,9 @@ LoadableListBase.extendTo(VKPostsList, {
 		//this.sub_pa_params = params;
 		this.initStates(data);
 
-		
+		this.archivateChildrenStates('lists_list', 'owner_info', function(array) {
+			return array && spv.filter(array, 'photo_50');
+		}, 'image_previews');
 
 
 

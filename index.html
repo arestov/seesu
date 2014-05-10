@@ -1226,8 +1226,20 @@
 				</div>
 				<div class="intrack_page" 
 					pv-nest="vk_posts" pv-events="click::requestPage" pv-type="way-point">
-					<div class="intrack_page-h">Posts form vk.com</div>
-					<span pv-nest="lists_list" pv-text="{{nav_title}} "></span>
+					<div class="intrack_page-h">Posts form<br/>vk.com</div>
+					<div class="song_fans-l-intrack" >
+						<div
+							pv-repeat="image in image_previews | limitTo: 13"
+							class="song_fan-b-tck"
+							
+							>
+							<img src="" alt=""
+								class=""
+			
+								pv-props="src:{{image}}">
+						</div>
+					</div>
+					
 				</div>
 			</div>
 		</div>
