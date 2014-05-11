@@ -827,7 +827,7 @@
 			</div>
 			<div class="messages-c" pv-anchor='messages_c'>
 				<div class="cant_play_music_message hidden" pv-class="cant_play_music_message {{!cant_play_music && 'hidden'}}" >
-					Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)
+					<span class="lang localize-need-audioplayers"></span>
 				</div>
 			</div>
 			<div class="music-files-lists" pv-anchor='mufils_c'>
@@ -862,7 +862,8 @@
 							<div>
 								<label>
 									<input type="checkbox" pv-events="click:changeTune" name="disable_search" pv-props="checked:{{disable_search}}">
-									Отключить поиск файлов в этом источнике
+									<span class="lang localize-disable-search"></span>
+									
 								</label>
 							</div>
 							<div>
@@ -872,8 +873,8 @@
 										checked: {{wait_before_playing}}
 										disabled: {{disable_search}}
 									">
-									<span pv-class="{{disable_search && 'desc'}}">
-										Дожидаться списка файлов из этого источника до воспроизведения.
+									<span pv-class="{{disable_search && 'desc'}}" class="lang localize-wait-before-play">
+										
 									</span>
 									
 								</label>
@@ -1218,15 +1219,9 @@
 					</div>
 					
 				</div>
-				
-				<div class="song_cloudcasts-b-intrack intrack_page" 
-					pv-nest="cloudcasts" pv-events="click::requestPage" pv-type="way-point">
-					<div class="intrack_page-h">Cloudcasts</div>
-					<span pv-nest="lists_list" pv-text="{{nav_title}} "></span>
-				</div>
 				<div class="intrack_page" 
 					pv-nest="vk_posts" pv-events="click::requestPage" pv-type="way-point">
-					<div class="intrack_page-h">Posts form<br/>vk.com</div>
+					<div class="intrack_page-h"><span class="lang localize-posts-from">Posts form</span><br/>vk.com</div>
 					<div class="song_fans-l-intrack" >
 						<div
 							pv-repeat="image in image_previews | limitTo: 13"
@@ -1241,6 +1236,12 @@
 					</div>
 					
 				</div>
+				<div class="song_cloudcasts-b-intrack intrack_page" 
+					pv-nest="cloudcasts" pv-events="click::requestPage" pv-type="way-point">
+					<div class="intrack_page-h">Cloudcasts</div>
+					<span pv-nest="lists_list" pv-text="{{nav_title}} "></span>
+				</div>
+				
 			</div>
 		</div>
 	

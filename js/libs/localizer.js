@@ -772,5 +772,26 @@ define({
 	"":{
 		"original": "",
 		"ru": ""
+	},
+	"disable-search":{
+		"original": "Disable searching in this source",
+		"ru": "Отключить поиск файлов в этом источнике"
+	},
+	"wait-before-play":{
+		"original": "Wait for files from this source before start playing",
+		"ru": "Дожидаться списка файлов из этого источника до воспроизведения"
+	},
+	"need-audioplayers":{
+		"original": "To play music you must install flash or use browser which supports mp3 HTML5 Audio",
+		"ru": "Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)"
+	},
+	"posts-from":{
+		"original": "Posts form",
+		"ru": "Записи из"
+	},
+
+	"":{
+		"original": "",
+		"ru": ""
 	}
 });
