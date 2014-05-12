@@ -108,7 +108,17 @@ LoadableListBase.extendTo(VKPostsList, {
 		this.initStates(data);
 
 		this.archivateChildrenStates('lists_list', 'owner_info', function(array) {
-			return array && spv.filter(array, 'photo_50');
+			var result = [];
+			for (var i = 0; i < array.length; i++) {
+				var cur= array[i];
+				if (!cur) {
+					continue;
+				}
+				
+				result.push(cur.photo_medium_rec || cur.photo_50);
+			}
+			
+			return result;
 		}, 'image_previews');
 
 
