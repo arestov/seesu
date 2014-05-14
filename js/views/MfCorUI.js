@@ -89,10 +89,10 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		},
 		"vis_progress-c-width": {
-			depends_on: ['can-progress', '^^want_more_songs', '#window_width'],
-			fn: function(can, p_wmss, window_width){
+			depends_on: ['can-progress', '^^want_more_songs', '#window_width', '^^must_be_expandable'],
+			fn: function(can, p_wmss, window_width, must_be_expandable){
 				if (can){
-					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss);
+					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss, !!must_be_expandable);
 				} else {
 					return 0;
 				}
