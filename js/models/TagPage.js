@@ -105,7 +105,7 @@ HypemTagPlaylist.extendTo(AllHypemTagSongs, {
 	}
 });
 
-var ExplorableTagSongs = function() {};
+/*var ExplorableTagSongs = function() {};
 SongsList.extendTo(ExplorableTagSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
@@ -142,7 +142,7 @@ SongsList.extendTo(TrendingTagSongs, {
 			}];
 		}]
 	]
-});
+});*/
 
 var FreeTagSongs = function() {};
 SongsList.extendTo(FreeTagSongs, {
@@ -215,7 +215,7 @@ BrowseMap.Model.extendTo(SongsLists, {
 
 		this.sub_pa_params = {tag_name:this.tag_name};
 	},
-	'nest-lists_list': [['_', 'free', 'trending_exfm', 'explore_exfm',
+	'nest-lists_list': [['_', 'free', /*'trending_exfm', 'explore_exfm',*/
 			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], true],
 	model_name: 'tag_songs',
 	sub_pa: {
@@ -227,14 +227,14 @@ BrowseMap.Model.extendTo(SongsLists, {
 			constr: FreeTagSongs,
 			title: localize('Free-songs')
 		},
-		'trending_exfm': {
+	/*	'trending_exfm': {
 			constr: TrendingTagSongs,
 			title: localize('Trending-songs-exfm')
 		},
 		'explore_exfm': {
 			constr: ExplorableTagSongs,
 			title: localize('Explore-songs-exfm')
-		},
+		},*/
 		'blogged': {
 			constr: AllHypemTagSongs,
 			title: localize('Blogged-all-hypem')

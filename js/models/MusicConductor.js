@@ -1,5 +1,5 @@
-define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', './MusicBlog', 'js/modules/declr_parsers'],
-function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, MusicBlog, declr_parsers){
+define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', 'js/modules/declr_parsers'],
+function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, declr_parsers){
 "use strict";
 var MusicConductor;
 //http://hypem.com/latest
@@ -224,11 +224,11 @@ BrowseMap.Model.extendTo(AllPlaces, {
 		'artists': {
 			constr: AllPlacesArtistsLists,
 			title: localize('Artists')
-		},
+		}/*,
 		'blogs': {
 			constr: MusicBlog.BlogsConductor,
 			title: 'Blogs'
-		}
+		}*/
 	}
 });
 

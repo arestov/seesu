@@ -1,11 +1,11 @@
 var su, seesu;
 define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
-'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
+'js/libs/ScApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
 'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax', 'js/libs/ProspApi'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
-ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
+ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, ProspApi) {
 'use strict';
@@ -980,7 +980,7 @@ provoda.sync_s.setRootModel(su);
 		}));
 	}
 
-	var exfm_api = new ExfmApi(new FuncsQueue({
+	/*var exfm_api = new ExfmApi(new FuncsQueue({
 		time: [3500, 5000, 4],
 		resortQueue: resortQueue,
 		init: addQueue
@@ -991,7 +991,7 @@ provoda.sync_s.setRootModel(su);
 		api: exfm_api,
 		mp3_search: su.mp3_search
 	}));
-
+	*/
 
 	if (app_env.nodewebkit) {
 		requirejs(['js/libs/TorrentsAudioSearch'], function(TorrentsAudioSearch) {
