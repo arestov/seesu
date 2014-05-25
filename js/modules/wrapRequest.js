@@ -56,7 +56,11 @@ return function(request_params, options, complex_response){
 			}
 			deferred.resolve.apply(deferred, arguments);
 			if (!options.not_save_cache && options.cache_ajax){
-				options.cache_ajax.set(options.cache_namespace, options.cache_key, r, options.cache_timeout);
+				var error = options.checkResponse && options.checkResponse(r);
+				if (!error) {
+					options.cache_ajax.set(options.cache_namespace, options.cache_key, r, options.cache_timeout);
+				}
+				
 			}
 		};
 		var sendRequest = function(){

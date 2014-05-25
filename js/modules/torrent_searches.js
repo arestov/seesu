@@ -94,6 +94,7 @@ isohuntTorrentSearch.prototype = {
 var BtdiggTorrentSearch = function(opts) {
 	this.mp3_search = opts.mp3_search;
 	this.cache_ajax = opts.cache_ajax;
+	this.queue = opts.queue;
 };
 
 BtdiggTorrentSearch.prototype = {

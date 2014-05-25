@@ -112,11 +112,23 @@ AppModel.extendTo(SeesuApp, {
 
 		this.once("vk-site-api", function() {
 			window.documentScrollSizeChangeHandler = function(height){
-				VK.callMethod("resizeWindow", 800, Math.max(700, height));
+				window.VK.callMethod("resizeWindow", 800, Math.max(700, height));
 			};
-			_this.vk_auth.trigger('vk-site-api', VK);
+			_this.vk_auth.trigger('vk-site-api', window.VK);
 		});
 
+		this.vk_queue = new FuncsQueue({
+			time: [700, 8000 , 7],
+			resortQueue: resortQueue,
+			init: addQueue
+		});
+
+		this.vk_open_api = new VkApi(null, {
+			queue: _this.vk_queue,
+			jsonp: !app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax
+		});
+		this.vktapi = this.vk_open_api;
 
 
 		this.hypem = new net_apis.HypemApi();
@@ -164,16 +176,6 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-
-		this.delayed_search = {
-			vk_api:{
-				queue:  new FuncsQueue({
-					time: [700, 8000 , 7],
-					resortQueue: resortQueue,
-					init: addQueue
-				})
-			}
-		};
 
 
 
@@ -686,6 +688,7 @@ AppModel.extendTo(SeesuApp, {
 	},
 	setVkApi: function(vkapi, user_id) {
 		this.vk_api = vkapi;
+		this.vktapi = vkapi;
 		this.trigger('vk-api', vkapi, user_id);
 	},
 	createSearchPage: function() {
@@ -812,12 +815,13 @@ AppModel.extendTo(SeesuApp, {
 			_this.mp3_search.remove(vkapi.asearch);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
-				delete _this.vkapi;
+				_this.vkapi = null;
+				_this.vktapi = this.vk_open_api;
 			}
 
 		};
 		var vkapi = new VkApi(vk_token, {
-			queue: _this.delayed_search.vk_api.queue,
+			queue: _this.vk_queue,
 			jsonp: !app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			onAuthLost: function() {
@@ -995,6 +999,11 @@ provoda.sync_s.setRootModel(su);
 				cache_ajax: cache_ajax,
 				mp3_search: su.mp3_search,
 				torrent_search: new torrent_searches.BtdiggTorrentSearch({
+					queue: new FuncsQueue({
+						time: [3500, 5000, 4],
+						resortQueue: resortQueue,
+						init: addQueue
+					}),
 					cache_ajax: cache_ajax,
 					mp3_search: su.mp3_search
 				})
@@ -1007,6 +1016,11 @@ provoda.sync_s.setRootModel(su);
 		if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
 			if (app_env.torrents_support) {
 				su.mp3_search.add(new torrent_searches.BtdiggTorrentSearch({
+					queue: new FuncsQueue({
+						time: [3500, 5000, 4],
+						resortQueue: resortQueue,
+						init: addQueue
+					}),
 					cache_ajax: cache_ajax,
 					mp3_search: su.mp3_search
 				}));

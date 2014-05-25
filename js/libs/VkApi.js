@@ -45,9 +45,10 @@ spv.Class.extendTo(vkCoreApi, {
 
 			options.cache_key = options.cache_key || hex_md5(method + spv.stringifyParams(params));
 
-			
-			if (this.access_token){
+			if (!params.v) {
 				params.v = '5.0';
+			}
+			if (this.access_token){
 				params.access_token = this.access_token;
 			}
 
@@ -201,7 +202,10 @@ var VkApi = function(vk_t, params) {
 	if (p.cache_ajax){
 		this.cache_ajax = p.cache_ajax;
 	}
-	this.setAccessToken(vk_t.access_token);
+	if (vk_t) {
+		this.setAccessToken(vk_t.access_token);
+	}
+	
 
 	if (p.queue){
 		this.queue = p.queue;

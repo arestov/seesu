@@ -1,8 +1,22 @@
 define(['jquery', 'js/libs/FuncsStack', 'spv', 'provoda', 'js/libs/Mp3Search'], function($, FuncsStack, spv, provoda, Mp3Search) {
 
+var trackers = ["udp://tracker.openbittorrent.com:80",
+					'udp://tracker.ccc.de:80',
+					'udp://tracker.istole.it:80',
+					//'udp://tracker.istole.it:6969',
+					"udp://tracker.publicbt.com:80"];
+var getTroxent = require('./nodejs/troxent/troxent');
+var engine_opts = {
+	connections: 23,
+	trackers: trackers,
+	prevalidate: function(info) {
+		if (info.files && info.files.length > 420) {
+			return new Error('too much files in torrent');
+		}
+	}
+};
 
-var getPeerflix = require('./nodejs/peerflix_n/troxent.js');
-
+var disallowed_links = {};
 
 var FileNameSQMatchIndex = function(file, query) {
 	this.trim_index = null;
@@ -27,6 +41,9 @@ Mp3Search.QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 	matchers: {
 		bestMatch: function(file, query) {
 
+		},
+		almostMatch: function(file, query) {
+			//если имя артиста в названиях папоп, а имя композиции совпадает с именем файла без порядкового номера
 		},
 		/*
 		anyGood: function(filename, query) {
@@ -139,16 +156,18 @@ provoda.Model.extendTo(Torrent, {
 	init: function(opts, data) {
 		this._super();
 		this.remove_timeout = null;
-		this.peerflix = null;
+		this.troxent = null;
 		this.updateManyStates(data);
 
 		var _this = this;
 		this.hndList = function(list) {
 			//console.log(list);
+
 			_this.updateState('list_loaded', !!list && true);
 
+
 			var result = list && list.map(function(el) {
-				return getTorrentFile(el, _this.peerflix.torrent, _this);
+				return getTorrentFile(el, _this.troxent.torrent, _this);
 			});
 
 			_this.updateState('files_list', result);
@@ -165,36 +184,51 @@ provoda.Model.extendTo(Torrent, {
 	'stch-torrent_required': function(state) {
 		if (state ) {
 			clearTimeout(this.remove_timeout);
-			if (!this.peerflix) {
-				this.peerflix = getPeerflix(this.state('url'), {connections: 23});
+			if (!this.troxent) {
+				this.troxent = getTroxent(this.state('url'), engine_opts);
+				var link = this.state('url');
+				this.troxent.on('prevalidation-error', function() {
+					disallowed_links[link] = true;
+				});
 
 				if (!this.state('list_loaded')) {
-					this.peerflix.on('served-files-list', this.hndList);
+					this.troxent.on('served-files-list', this.hndList);
 				}
+				var _this = this, troxent = this.troxent;
+				
 				
 
 
-
-				if (!this.peerflix.reffs) {
-					this.peerflix.reffs = [];
+				/*if (!this.troxent.reffs) {
+					this.troxent.reffs = [];
 				}
-				this.peerflix.reffs.push(this);
+				this.troxent.reffs.push(this);*/
+
+				troxent.on('destroy', function() {
+					if (_this.troxent == troxent) {
+						_this.destroyPeerflix();
+					}
+				});
+
 			}
 			
-			//peerflix
+			//troxent
 		} else {
-			if (this.peerflix) {
+			if (this.troxent) {
 				var _this = this;
 				this.remove_timeout = setTimeout(function() {
 					_this.destroyPeerflix();
-				}, 3000);
+				}, 7000);
 			}
 		}
 	},
 	destroyPeerflix: function() {
-		this.peerflix.removeListener('served-files-list', this.hndList);
-		this.peerflix.destroy();
-		this.peerflix = null;
+		if (!this.troxent) {
+			return;
+		}
+		this.troxent.removeListener('served-files-list', this.hndList);
+		this.troxent.destroy();
+		this.troxent = null;
 	}
 });
 
@@ -232,7 +266,7 @@ TorqueSearch.prototype = {
 			};
 		deferred.promise(complex_response);
 
-		//запросить peerflix 
+		//запросить troxent 
 
 		var push = Array.prototype.push;
 		FuncsStack.chain([
@@ -296,6 +330,9 @@ TorqueSearch.prototype = {
 				};
 
 				links_list.slice(0, 6).forEach(function(el) {
+					if (disallowed_links[el.torrent_link]) {
+						return;
+					}
 					var obj = {
 						items: null
 					};
@@ -332,6 +369,9 @@ TorqueSearch.prototype = {
 					//console.log(el);
 
 				});
+				if (!links_list.length) {
+					getRFunc();
+				}
 				
 				//deferred.resolve();
 			}

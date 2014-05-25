@@ -214,7 +214,7 @@ LoadableListBase.extendTo(VKPostsList, {
 				return r.response.groups;
 			}]
 		]],
-		['vk_api', 'get', function() {
+		['vktapi', 'get', function() {
 			return ['newsfeed.search', {
 				q: this.head_props.artist_name + ' ' + this.head_props.track_name + ' has:audio',
 				extended: 1

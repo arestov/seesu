@@ -6,9 +6,9 @@
   },
   "window": {
 	"icon": "icons/icon64.png",
-	"width": 800,
-	"height": 600,
-	"min_width": 800,
-	"min_height": 600
+	"width": 1024,
+	"height": 768,
+	"min_width": 640,
+	"min_height": 480
   }
 }

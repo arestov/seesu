@@ -51,7 +51,7 @@ html.not-as-application, .not-as-application  body{
 .desc_prevw_list.list_loading:after,
 .search-mp3 .files-load-states:after,
 a.track_name_loading .song-track-name,
-.files-list-pioneer.list_loading:after{
+.moplas-block-shift.list_loading:after{
 	position: absolute;
 	top:0;
 	left:0;
@@ -233,6 +233,9 @@ a.track_name_loading .song-track-name,
 		color:#d5d5d5;
 		overflow: hidden;
 		}
+		.files-list-pioneer .disabled_search {
+			text-decoration: line-through;
+		}
 	.moplas-block ul {
 		
 		}
@@ -307,6 +310,7 @@ a.track_name_loading .song-track-name,
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
 	}
+
 	.moplas_source-unavailable {
 		color: #666;
 	}

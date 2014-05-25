@@ -458,7 +458,9 @@ var getMatchedSongs = function(music_list, msq) {
 					_this.updateState('search_progress', true);
 				})
 				.done(function(music_list){
-					if (typeof music_list == 'function') {
+					if (music_list instanceof Error) {
+						_this.updateState('search_fail', true);
+					} else if (typeof music_list == 'function') {
 						
 						music_list(function(list) {
 							_this.updateState('search_result', getMatchedSongs(list, msq));

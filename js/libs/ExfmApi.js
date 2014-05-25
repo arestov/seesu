@@ -12,7 +12,9 @@ ExfmApi.prototype = {
 	constructor: ExfmApi,
 	cache_namespace: "exfm_api",
 	thisOriginAllowed: true,
-	errors_fields: ['error'],
+	checkResponse: function(r) {
+		return r && !!(r.error || r.status_text == 'Error');
+	},
 	source_name: 'exfm',
 	get: function(method, params, options) {
 
@@ -55,6 +57,7 @@ ExfmApi.prototype = {
 				cache_key: options.cache_key,
 				cache_timeout: options.cache_timeout,
 				cache_namespace: this.cache_namespace,
+				checkResponse: this.checkResponse,
 				requestFn: function() {
 					return aReq.apply(this, arguments);
 				},
@@ -127,25 +130,36 @@ ExfmMusicSearch.prototype = {
 		var olddone = async_ans.done,
 			result;
 
+		var checkResponse = this.api.checkResponse;
+
 		async_ans.done = function(cb) {
 			olddone.call(this, function(r) {
 				if (!result){
-					var music_list = [];
-					if (r && r.songs.length){
-						for (var i=0; i < r.songs.length; i++) {
-							var cur = r.songs[i];
-							if (!cur || !cur.url || cur.url.indexOf('api.soundcloud.com/tracks/') != -1){
-								continue;
+
+					var error = checkResponse(r);
+					if (!error) {
+						var music_list = [];
+						if (r && r.songs.length){
+							for (var i=0; i < r.songs.length; i++) {
+								var cur = r.songs[i];
+								if (!cur || !cur.url || cur.url.indexOf('api.soundcloud.com/tracks/') != -1){
+									continue;
+								}
+								var ent = _this.makeSong(r.songs[i], msq);
+								music_list.push(ent);
+
+
+							
 							}
-							var ent = _this.makeSong(r.songs[i], msq);
-							music_list.push(ent);
-
-
-						
 						}
+						
+						result = music_list;
+					} else {
+						result = new Error('bad response from server');
 					}
+
+
 					
-					result = music_list;
 				}
 				cb(result, 'mp3');
 
