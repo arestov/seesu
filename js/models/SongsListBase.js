@@ -164,7 +164,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			}
 		}
-		if (shuffle && (!neitypes || neitypes.next_preload_song)){
+		if (shuffle && !obj.next_preload_song && (!neitypes || neitypes.next_preload_song)){
 			var array = mdpl.getMainlist();
 			var allowed = [];
 			for (i = 0; i < array.length; i++) {
