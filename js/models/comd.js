@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv'], function(provoda, spv, app_serv){
+define(['provoda', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(provoda, spv, app_serv, morph_helpers){
 "use strict";
 var localize = app_serv.localize;
 
@@ -169,7 +169,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		}
 		return this.getImageWrap(obj.array || obj.item);
 	},
-	getImageWrap: app_serv.getLFMImageWrap,
+	getImageWrap: morph_helpers.lfm_image,
 	setArtistImage: function(artist_name, lfm_arr, source) {
 		this.getArtistImagesModel(artist_name).addImage(this.getImageWrap(lfm_arr), source);
 	},
