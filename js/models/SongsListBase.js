@@ -164,7 +164,9 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			}
 		}
-		if (shuffle && !obj.next_preload_song && (!neitypes || neitypes.next_preload_song)){
+		if (shuffle && !mo.next_preload_song && (!neitypes || neitypes.next_preload_song)){
+			//использование mo.next_preload_song - неправильно!!!! fixme
+			//нужные связанные композиции должны запраживаться через neitypes
 			var array = mdpl.getMainlist();
 			var allowed = [];
 			for (i = 0; i < array.length; i++) {
