@@ -998,6 +998,9 @@
 							<li class="scrobbling-button"  title="Last.fm scrobbling">
 								<a  class="trackbutton lfm-scrobbling-button" pv-anchor="btrow-lastfm" pv-events="click::switchPart:row-lastfm" pv-type="way-point"></a>
 							</li>
+							<li class="pl-shuffle-button-wrap">
+								<a  class="trackbutton pl-shuffle-button" pv-anchor="btrow-pl-shuffle" pv-events="click::switchPart:row-pl-shuffle" pv-type="way-point"></a>
+							</li>
 							<li class="rept-song-button-wrap">
 								<a  class="trackbutton rept-song-button" pv-anchor="btrow-repeat-song" pv-events="click::switchPart:row-repeat-song" pv-type="way-point"></a>
 							</li>
@@ -1169,10 +1172,17 @@
 					<div class="love-song hidden" pv-nest="context_parts for_model:row-love" pv-class="love-song {{!active_view && 'hidden'}}"></div>
 					<div class="song-tagging hidden" pv-nest="context_parts for_model:row-tag" pv-class="song-tagging {{!active_view && 'hidden'}}"></div>
 					<div class="last-fm-scrobbling hidden" pv-nest="context_parts for_model:row-lastfm" pv-class="last-fm-scrobbling {{!active_view && 'hidden'}}"></div>
-					<div class="rept-song hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="rept-song {{!active_view && 'hidden'}}">
-						<label class="rept-song-label">
-							<input type="checkbox"/>
+					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="simple_row_setting {{!active_view && 'hidden'}}">
+						<label class="song-row-label">
+							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
 							<span class="lang localize-rept-song">Repeat playing song</span>
+						</label>
+						
+					</div>
+					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-pl-shuffle" pv-class="simple_row_setting {{!active_view && 'hidden'}}">
+						<label class="song-row-label">
+							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
+							<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
 						</label>
 						
 					</div>

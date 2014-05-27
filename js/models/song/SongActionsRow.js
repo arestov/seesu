@@ -90,7 +90,27 @@ comd.BaseCRow.extendTo(ScrobbleRow, {
 
 
 
+var ShuffleListRow = function(actionsrow) {
+	this.init(actionsrow);
+};
+comd.BaseCRow.extendTo(ShuffleListRow, {
+	model_name: 'row-pl-shuffle',
+	init: function(actionsrow) {
+		this.actionsrow = actionsrow;
+		this._super();
 
+		this.wch(su, 'settings-pl-shuffle', function(e) {
+			this.updateState('pl_shuffle', e.value);
+			this.actionsrow.mo.updateState('pl-shuffle', e.value);
+		});
+	},
+	switchSetting: function(state) {
+		this.updateState('pl_shuffle', state);
+		su.setSetting('pl-shuffle', state);
+	}
+
+
+});
 
 
 
@@ -98,26 +118,27 @@ var RepeatSongRow = function(actionsrow){
 	this.init(actionsrow);
 };
 comd.BaseCRow.extendTo(RepeatSongRow, {
+	model_name: 'row-repeat-song',
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
 
 		this.wch(su, 'settings-rept-song', function(e) {
-			this.updateState('rept-song', e.value);
+			this.updateState('rept_song', e.value);
 			this.actionsrow.mo.updateState('rept-song', e.value);
 		});
 
 
 	},
-	setDnRp: function(state) {
-		this.updateState('rept-song', state);
+	switchSetting: function(state) {
+		this.updateState('rept_song', state);
 		su.setSetting('rept-song', state);
-	},
-	model_name: 'row-repeat-song'
+	}
+	
 });
 
 var parts_storage = {};
-[ScrobbleRow, RepeatSongRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging].forEach(function(el) {
+[ScrobbleRow, RepeatSongRow, ShuffleListRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging].forEach(function(el) {
 	parts_storage[el.prototype.model_name] = el;
 });
 

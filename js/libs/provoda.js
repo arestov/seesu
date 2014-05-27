@@ -3647,6 +3647,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					} else {
 						target_view = _this;
 					}
+					if (cb_data[2]) {
+						var stringed_variable = cb_data[2].match(/\%(.*?)\%/);
+						if (stringed_variable) {
+							cb_data[2] = spv.getTargetField(e.node, stringed_variable[1]);
+						}
+					}
 
 					cb_data.shift();
 					target_view.RPCLegacy.apply(target_view, cb_data);

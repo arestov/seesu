@@ -96,6 +96,7 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 		bindStaCons: function() {
 			this._super();
 			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
+			this.wch(this.app, 'settings-pl-shuffle', 'pl-shuffle');
 		},
 		extendSong: function(omo){
 			if (!(omo instanceof Song)){

@@ -109,6 +109,13 @@ define(['provoda', 'spv'], function(provoda, spv){
 	};
 	var hndChangedImportant = function(e) {
 		if (e.item.isImportant()){
+
+			if (this.state('pl-shuffle')) {
+				applySongRolesChanges(e.item, {
+					next_preload_song: null
+				});
+			}
+
 			checkNeighboursChanges(this, e.item);
 		}
 	};
@@ -140,16 +147,37 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 		}
 
+		var shuffle = mdpl.state('pl-shuffle');
+
 		if (!neitypes || neitypes.next_song){
 			//ищем след. композицию если нет ограничений 
 			//или ограничения не касаются след. композиции
+
 			for (i = c_num + 1; i < mdpl.getMainlist().length; i++) {
 				if (mdpl.getMainlist()[i].canUseAsNeighbour()){
-					obj.next_song = obj.next_preload_song = mdpl.getMainlist()[i];
+					obj.next_song = mdpl.getMainlist()[i];
+					if (!shuffle) {
+						obj.next_preload_song = obj.next_song;
+					}
+
 					break;
 				}
 			}
 		}
+		if (shuffle && (!neitypes || neitypes.next_preload_song)){
+			var array = mdpl.getMainlist();
+			var allowed = [];
+			for (i = 0; i < array.length; i++) {
+				if (array[i].canUseAsNeighbour()) {
+					allowed.push(array[i]);
+				}
+			}
+			obj.next_preload_song = allowed[ Math.round( (Math.random() * allowed.length) ) ];
+		}
+
+
+
+
 		if ((!neitypes || neitypes.next_preload_song) && !obj.next_preload_song){
 			//ищем композицю для предзагрузки если нет ограничений
 			//или ограничения не касаются композиции для предзагрузки
@@ -338,6 +366,9 @@ define(['provoda', 'spv'], function(provoda, spv){
 				return mp_show || want_be_played;
 			}
 		],
+		'stch-pl-shuffle': function() {
+			checkNeighboursStatesCh(this);
+		},
 		bindStaCons: function() {
 			this._super();
 			this.on('child_change-' + this.main_list_name, hndChangedPlaylist);
@@ -482,10 +513,11 @@ define(['provoda', 'spv'], function(provoda, spv){
 				if (direction) {
 					var next_preload_song = mo.next_preload_song;
 					var can_repeat = !this.state('dont_rept_pl');
+					var shuffle = this.state('pl-shuffle');
 					if (next_preload_song){
 						var real_cur_pos = this.getMainlist().indexOf(mo);
 						var nps_pos = this.getMainlist().indexOf(next_preload_song);
-						if (can_repeat || nps_pos > real_cur_pos){
+						if (shuffle || can_repeat || nps_pos > real_cur_pos){
 							if (next_preload_song.canPlay()){
 								s = next_preload_song;
 							} else {

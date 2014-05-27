@@ -749,6 +749,10 @@ define({
 		"original": "scrobbling to last.fm",
 		"ru": "last.fm скроблинг"
 	},
+	"shuffl-list": {
+		"original": "Shuffled playlist playing",
+		"ru": "Воспроизводить плейлист случайным образом"
+	},
 	"your_tags":{
 		"original": "Your tags",
 		"ru": "Твои теги"

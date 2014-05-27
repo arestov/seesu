@@ -98,10 +98,10 @@ a.track_name_loading .song-track-name,
 	border-bottom: 1px solid #6e6e6e;
 	background: #5a5a5a;
 	}
-	.song-row-content .rept-song{
+	.song-row-content .simple_row_setting{
 		padding-top:1rem;
 		}
-		.rept-song-label{
+		.song-row-label{
 			padding: 0.3rem 0.5rem;
 			}
 	.song-row-content{
@@ -1111,7 +1111,9 @@ a.track_name_loading .song-track-name,
 .serv-container{
 	display:none;
 }
-
+.nodewebkit .track-listeners{
+	display: none;
+}
 .track-listeners{
 	margin:0.5rem 0 0;
 	min-height:6rem;

@@ -577,7 +577,7 @@ AppModel.extendTo(SeesuApp, {
 		}
 		return this;
 	},
-	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume', 'files_sources'],
+	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume', 'files_sources', 'pl-shuffle'],
 	letAppKnowSetting: function(name, value){
 		this.settings[name] = value;
 		this.updateState('settings-' + name, value);

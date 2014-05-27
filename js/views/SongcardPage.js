@@ -126,6 +126,9 @@ provoda.View.extendTo(SongcardController, {
 		if (!this.expanded){
 			return;
 		}
+		if (app_serv.app_env.nodewebkit) {
+			return;
+		}
 		var su = window.su;
 		var _this = this;
 		var last_update = this.t_users.last_update;
