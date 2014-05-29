@@ -1176,11 +1176,11 @@ FastEventor.prototype = {
 			true,
 			opts && opts.easy_bind_control);
 	},
-	on: function(namespace, cb, opts){
+	on: function(namespace, cb, opts, context){
 		return this._addEventHandler(
 			namespace,
 			cb,
-			opts && opts.context,
+			opts && opts.context || context,
 			opts && opts.immediately,
 			opts && opts.exlusive,
 			opts && opts.skip_reg,
@@ -1852,11 +1852,7 @@ var iterateChList = function(changes_list, context, cb) {
 		cb.call(context, i, changes_list[i], changes_list[i+1]);
 	}
 };
-var reversedIterateChList = function(changes_list, context, cb) {
-	for (var i = changes_list.length - 1; i >= 0; i-=2) {
-		cb.call(context, i, changes_list[i-1], changes_list[i]);
-	}
-};
+
 
 var hasPrefixedProps = function(props, prefix) {
 	var has_prefixed;
@@ -1904,7 +1900,8 @@ var StatesLabour = function() {
 
 };
 
-provoda.Eventor.extendTo(provoda.StatesEmitter, {
+provoda.Eventor.extendTo(provoda.StatesEmitter, function(add) {
+add({
 	init: function(){
 		this._super();
 		this.conx_optsi = null;
@@ -2439,41 +2436,39 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	state: function(name){
 		return this.states[name];
-	},
+	}
+});
+
+
+var compressChangesList = function(changes_list, i, prop_name, value, counter) {
+	if (this[prop_name] !== true){
+		var num = (changes_list.length - 1) - counter * 2;
+		changes_list[ num - 1 ] = prop_name;
+		changes_list[ num ] = value;
+
+		this[prop_name] = true;
+		return true;
+	}
+
+};
+var reversedIterateChList = function(changes_list, context, cb) {
+	var counter = 0;
+	for (var i = changes_list.length - 1; i >= 0; i-=2) {
+		if (cb.call(context, changes_list, i, changes_list[i-1], changes_list[i], counter)){
+			counter++;
+		}
+	}
+	return counter;
+};
+
+add({
 	compressStatesChanges: function(changes_list) {
 		var result_changes = {};
-		var counter = 0;
-
-		//reversedIterateChList()
-
-		/*iterateChList(changes_list, result_changes, function(i, name, value) {
-			delete this[name]; //reorder fields! hack!?
-			this[name] = value;
-		});*/
-		reversedIterateChList(changes_list, result_changes, function(i, name, value) {
-			if (!this.hasOwnProperty(name)){
-				
-
-				var num = (changes_list.length - 1) - counter * 2;
-				changes_list[ num - 1 ] = name;
-				changes_list[ num ] = value;
-
-				counter++;
-				this[name] = true;
-			}
-			//delete this[name]; //reorder fields! hack!?
-			//this[name] = value;
-		});
-		//changes_list.length = 0;
+		var counter = reversedIterateChList(changes_list, result_changes, compressChangesList);
 		counter = counter * 2;
 		while (changes_list.length != counter){
 			changes_list.shift();
 		}
-
-		/*for ( var name in result_changes ){
-			changes_list.push( name, result_changes[name] );
-		}*/
-
 		return changes_list;
 	},
 	state_ch_h_prefix: 'stch-',
@@ -2760,6 +2755,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		return temp_comx.fn.apply(this, values);
 	}
+});
 });
 
 var getMDOfReplace = function(){

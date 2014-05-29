@@ -130,19 +130,36 @@ spv.hasCommonItems = function(arr1, arr2) {
 	}
 	return false;
 };
+
+
+var arExclSimple = function(result, arr, obj) {
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i] !== obj) {
+			result.push(arr[i]);
+		}
+	}
+	return result;
+};
+var arExclComplex = function(result, arr, obj) {
+	for (var i = 0; i < arr.length; i++) {
+		if (obj.indexOf(arr[i]) == -1){
+			result.push(arr[i]);
+		}
+	}
+	return result;
+};
+
 arrayExclude = spv.arrayExclude = function(arr, obj){
 	var r = [];
 	if (!arr){
 		return r;
 	}
 
-	obj = spv.toRealArray(obj);
-	for (var i = 0; i < arr.length; i++) {
-		if (obj.indexOf(arr[i]) == -1){
-			r.push(arr[i]);
-		}
+	if (obj instanceof Array){
+		return arExclComplex(r, arr, obj);
+	} else {
+		return arExclSimple(r, arr, obj);
 	}
-	return r;
 };
 
 shuffleArray = spv.shuffleArray = function(obj) {
@@ -620,7 +637,12 @@ separateNum = function(num){
 	Class = function(){};
 
 	// Create a new Class that inherits from this class
-	Class.extendTo = function(namedClass, prop) {
+	Class.extendTo = function(namedClass, props) {
+		if (typeof props == 'function') {
+			//props
+			props = spv.coe(props);
+		}
+
 		var _super = this.prototype;
 
 		// Instantiate a base class (but only create the instance,
@@ -628,12 +650,12 @@ separateNum = function(num){
 		var prototype = new this();
 
 		// Copy the properties over onto the new prototype
-		for (var name in prop) {
+		for (var prop_name in props) {
 			// Check if we're overwriting an existing function
-			prototype[name] = typeof prop[name] == "function" &&
-				typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-				allowParentCall(name, prop[name], _super) :
-				prop[name];
+			prototype[prop_name] = typeof props[prop_name] == "function" &&
+				typeof _super[prop_name] == "function" && fnTest.test(props[prop_name]) ?
+				allowParentCall(prop_name, props[prop_name], _super) :
+				props[prop_name];
 		}
 
 		// Populate our constructed prototype object
@@ -643,7 +665,7 @@ separateNum = function(num){
 		namedClass.prototype.constructor = namedClass;
 
 		if (namedClass.prototype.onExtend){
-			namedClass.prototype.onExtend.call(namedClass.prototype, prop);
+			namedClass.prototype.onExtend.call(namedClass.prototype, props);
 		}
 
 		// And make this class extendable
