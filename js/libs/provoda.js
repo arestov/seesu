@@ -1164,11 +1164,11 @@ FastEventor.prototype = {
 			return this.sputnik;
 		}
 	},
-	once: function(namespace, cb, opts){
+	once: function(namespace, cb, opts, context){
 		return this._addEventHandler(
 			namespace,
 			cb,
-			opts && opts.context,
+			opts && opts.context || context,
 			opts && opts.immediately,
 			opts && opts.exlusive,
 			opts && opts.skip_reg,
@@ -1800,11 +1800,11 @@ spv.Class.extendTo(provoda.Eventor, {
 	nextTick: function(fn, args, use_current_motivator) {
 		this._getCallsFlow().pushToFlow(fn, this, args, false, this.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
-	once: function(namespace, cb, opts) {
-		return this.evcompanion.once(namespace, cb, opts);
+	once: function(namespace, cb, opts, context) {
+		return this.evcompanion.once(namespace, cb, opts, context);
 	},
-	on: function(namespace, cb, opts) {
-		return this.evcompanion.on(namespace, cb, opts);
+	on: function(namespace, cb, opts, context) {
+		return this.evcompanion.on(namespace, cb, opts, context);
 	},
 	off: function(namespace, cb, obj, context) {
 		return this.evcompanion.off(namespace, cb, obj, context);
@@ -2975,8 +2975,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			_this.current_motivator = old_value;
 		});
 		this.on('child_change-' + collection_name, function(e) {
-			items_events.setItems(e.value, this.current_motivator);
-		});
+			this.setItems(e.value, e.target.current_motivator);
+		}, null, items_events);
 	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
 		var _this = this;
@@ -2990,8 +2990,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			calculateResult: statesCalcFunc
 		});
 		this.on('child_change-' + collection_name, function(e) {
-			archiver.setItems(e.value, this.current_motivator);
-		});
+			this.setItems(e.value, e.target.current_motivator);
+		}, null, archiver);
 	},
 	getRelativeRequestsGroups: function(space, only_models) {
 		var all_models = [];
