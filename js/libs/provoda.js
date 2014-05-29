@@ -681,9 +681,9 @@ ItemsEvents.prototype = {
 		var old_value = this.md.current_motivator;
 		this.md.current_motivator = e.target.current_motivator;
 		this.callback.call(this.md, {
+			target: this.md,
 			item: e.target,
-			value: arguments && arguments[0] && arguments[0].value,
-			args: arguments,
+			value: e.value,
 			items: this.items_list
 		});
 		this.md.current_motivator = old_value;
