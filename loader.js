@@ -80,26 +80,48 @@ big_timer = {
 		requirejs(['su', 'js/views/AppView', 'angbo', 'provoda'], function(su, AppView, angbo, provoda) {
 			var can_die = false;
 			var md = su;
-			var views_proxies = provoda.views_proxies;
 
 			var proxies_space = Date.now();
-			var view = new AppView();
-			//md.mpx.addView(view, 'root');
+			var views_proxies = provoda.views_proxies;
+			views_proxies.addSpaceById(proxies_space, md);
+			var mpx = views_proxies.getMPX(proxies_space, md);
+
+			
 			md.updateLVTime();
 
-			views_proxies.addSpaceById(proxies_space, md);
+			(function() {
+				var view = new AppView();
+				mpx.addView(view, 'root');
+				view.init({
+					mpx: mpx,
+					proxies_space: proxies_space
+				}, {d: window.document, can_die: can_die, angbo: angbo});
+				view.onDie(function() {
+					views_proxies.removeSpaceById(proxies_space);
+					view = null;
+				});
+				view.requestAll();
+			})();
 
-			var mpx = views_proxies.getMPX(proxies_space, md);
-			mpx.addView(view, 'root');
-			view.init({
-				mpx: mpx,
-				proxies_space: proxies_space
-			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
-			view.onDie(function() {
-				views_proxies.removeSpaceById(proxies_space);
-				view = null;
-			});
-			view.requestAll();
+
+			(function() {
+				var exposed_view = new AppView.AppExposedView();
+				mpx.addView(exposed_view, 'exp_root');
+				exposed_view.init({
+					mpx: mpx,
+					proxies_space: proxies_space
+				}, {d: window.document, can_die: can_die, angbo: angbo, usual_flow: true});
+				exposed_view.requestAll();
+			})();
+
+			
+
+
+
+		
+
+
+			
 			
 
 

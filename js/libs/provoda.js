@@ -338,7 +338,7 @@ var views_proxies = {
 	spaces_list: [],
 	//инициализация простанства
 	//поддержка простанства в актуальном состоянии
-	//очистка простанства
+	//очистка пространства
 
 	addRootView: function(view, root_md) {
 		return this.addSpaceById(view.view_id, root_md);

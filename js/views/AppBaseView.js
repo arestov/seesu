@@ -53,32 +53,71 @@ LevContainer.prototype = {
 };
 
 
-
-var AppBaseView = function() {};
-AppBaseView.viewOnLevelP = viewOnLevelP;
-provoda.View.extendTo(AppBaseView, {
+var BrowserAppRootView = function() {};
+provoda.View.extendTo(BrowserAppRootView, {
 	dom_rp: true,
-	location_name: 'root_view',
-	init: function(opts, vopts) {
-		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), true, 250);
-		return this._super.apply(this, arguments);
-	},
+	
 	_getCallsFlow: function() {
 		return this.calls_flow;
 	},
+	init: function(opts, vopts) {
+		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
+		return this._super.apply(this, arguments);
+	},
 	createDetails: function() {
-		
 		this.root_view = this;
 		this.d = this.opts.d;
+		this.dom_related_props.push('calls_flow');
 
-		
+		var _this = this;
+		if (this.opts.can_die && spv.getDefaultView(this.d)){
+			this.can_die = true;
+			this.checkLiveState = function() {
+				if (!spv.getDefaultView(_this.d)){
+					_this.reportDomDeath();
+					return true;
+				}
+			};
+
+			this.lst_interval = setInterval(this.checkLiveState, 1000);
+
+		}
+
+	},
+	reportDomDeath: function() {
+		if (this.can_die && !this.dead){
+			this.dead = true;
+			clearInterval(this.lst_interval);
+		//	var d = this.d;
+		//	delete this.d;
+			this.die();
+			console.log('DOM dead! ' + this.nums);
+
+		}
+	},
+	isAlive: function(){
+		if (this.dead){
+			return false;
+		}
+		return !this.checkLiveState || !this.checkLiveState();
+	}
+});
+
+
+var AppBaseView = function() {};
+AppBaseView.BrowserAppRootView = BrowserAppRootView;
+AppBaseView.viewOnLevelP = viewOnLevelP;
+BrowserAppRootView.extendTo(AppBaseView, {
+	location_name: 'root_view',
+	createDetails: function() {
+		this._super();
 
 		this.tpls = [];
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
 		this.max_level_num = -1;
-		this.dom_related_props.push('samples', 'lev_containers', 'els', 'calls_flow');
+		this.dom_related_props.push('samples', 'lev_containers', 'els');
 		this.completely_rendered_once = {};
 
 	},
@@ -637,9 +676,6 @@ provoda.View.extendTo(AppBaseView, {
 
 
 
-	},
-	"stch-doc_title": function(title) {
-		this.d.title = title || "";
 	}
 
 });

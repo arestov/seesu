@@ -12,7 +12,53 @@ var localize = app_serv.localize;
 
 
 
+var AppExposedView = function() {};
+AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
+	location_name: 'exposed_root_view',
+	"stch-doc_title": function(title) {
+		this.d.title = title || "";
+	},
+	'stch-playing': function(state) {
+		if (app_env.need_favicon){
+			if (state){
+				this.changeFavicon('playing');
+			} else {
+				this.changeFavicon('usual');
+			}
+		}
+	},
+	changeFaviconNode: function(d, src, type) {
+		var link = d.createElement('link'),
+			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
+		link.id = 'dynamic-favicon';
+		link.rel = 'shortcut icon';
+		if (type){
+			link.type = type;
+		}
+		
+		link.href = src;
+		d.head.replaceChild(link, oldLink);
+		this.favicon_node = link;
+	},
+	changeFavicon: spv.debounce(function(state){
+		if (this.isAlive()){
+			if (state && this.favicon_states[state]){
+				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
+			} else{
+				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
+			}
+		}
+
+	},300),
+	favicon_states: {
+		playing: 'icons/icon16p.png',
+		usual: 'icons/icon16.png'
+	}
+});
+
+
 var AppView = function(){};
+AppView.AppExposedView = AppExposedView;
 AppBaseView.extendTo(AppView, {
 	children_views: {
 		start_page : {
@@ -290,15 +336,6 @@ AppBaseView.extendTo(AppView, {
 
 		"search_query": function(state) {
 			this.search_input.val(state || '');
-		},
-		playing: function(state) {
-			if (app_env.need_favicon){
-				if (state){
-					this.changeFavicon('playing');
-				} else {
-					this.changeFavicon('usual');
-				}
-			}
 		}
 		
 	},
@@ -362,18 +399,6 @@ AppBaseView.extendTo(AppView, {
 			});
 		});
 
-		if (this.opts.can_die && spv.getDefaultView(this.d)){
-			this.can_die = true;
-			this.checkLiveState = function() {
-				if (!spv.getDefaultView(_this.d)){
-					_this.reportDomDeath();
-					return true;
-				}
-			};
-
-			this.lst_interval = setInterval(this.checkLiveState, 1000);
-
-		}
 		
 		this.on('die', function() {
 			this.RPCLegacy('detachUI', this.view_id);
@@ -450,23 +475,7 @@ AppBaseView.extendTo(AppView, {
 
 
 	},
-	reportDomDeath: function() {
-		if (this.can_die && !this.dead){
-			this.dead = true;
-			clearInterval(this.lst_interval);
-		//	var d = this.d;
-		//	delete this.d;
-			this.die();
-			console.log('DOM dead! ' + this.nums);
-
-		}
-	},
-	isAlive: function(){
-		if (this.dead){
-			return false;
-		}
-		return !this.checkLiveState || !this.checkLiveState();
-	},
+	
 	
 	
 	
@@ -478,33 +487,7 @@ AppBaseView.extendTo(AppView, {
 			this.c.removeClass(class_name);
 		}
 	},
-	changeFaviconNode: function(d, src, type) {
-		var link = d.createElement('link'),
-			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
-		link.id = 'dynamic-favicon';
-		link.rel = 'shortcut icon';
-		if (type){
-			link.type = type;
-		}
-		
-		link.href = src;
-		d.head.replaceChild(link, oldLink);
-		this.favicon_node = link;
-	},
-	changeFavicon: spv.debounce(function(state){
-		if (this.isAlive()){
-			if (state && this.favicon_states[state]){
-				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
-			} else{
-				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
-			}
-		}
-
-	},300),
-	favicon_states: {
-		playing: 'icons/icon16p.png',
-		usual: 'icons/icon16.png'
-	},
+	
 	parts_builder: {
 		//samples
 		alb_prev_big: function() {
