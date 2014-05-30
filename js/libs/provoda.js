@@ -887,7 +887,6 @@ var getBoxedSetImmFunc = function(win) {
 };
 
 var getBoxedRAFFunc = function(win) {
-	return;
 	var raf;
 
 	if ( win.requestAnimationFrame ){
