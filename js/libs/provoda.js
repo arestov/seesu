@@ -2496,14 +2496,13 @@ add({
 		return changes_list;
 	},
 	state_ch_h_prefix: 'stch-',
-	_replaceState: function(name, value, skip_handler, stack) {
-		if (name){
-			var obj_to_change	= this.states,
-				old_value		= obj_to_change[name],
+	_replaceState: function(state_name, value, skip_handler, stack) {
+		if (state_name){
+			var old_value = this.states[state_name],
 				method;
 			if (old_value != value){
 
-				var stateChanger = !skip_handler && (this[ this.state_ch_h_prefix + name] || (this.state_change && this.state_change[name]));
+				var stateChanger = !skip_handler && (this[ this.state_ch_h_prefix + state_name] || (this.state_change && this.state_change[state_name]));
 				if (stateChanger){
 					if (typeof stateChanger == 'function'){
 						method = stateChanger;
@@ -2518,25 +2517,27 @@ add({
 				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 				//
 
-				
+				if (!this.zdsv.original_states.hasOwnProperty(state_name)) {
+					this.zdsv.original_states[state_name] = this.states[state_name];
+				}
 
-				obj_to_change[name] = value;
+				this.states[state_name] = value;
 
 				if (method){
-					this.nextTick(method, [value, old_value, name], true);
+					this.nextTick(method, [value, old_value, state_name], true);
 					//method.call(this, value, old_value);
 				}
-				stack.push(name, value);
+				stack.push(state_name, value);
 				//return [old_value];
 			}
 		}
 	},
 	st_event_name_default: 'state_change-',
 	st_event_name_vip: 'vip_state_change-',
-	_triggerStChanges: function(i, name, value) {
+	_triggerStChanges: function(i, state_name, value) {
 
-		var vip_name = this.st_event_name_vip + name;
-		var default_name = this.st_event_name_default + name;
+		var vip_name = this.st_event_name_vip + state_name;
+		var default_name = this.st_event_name_default + state_name;
 
 		var vip_cb_cs = this.evcompanion.getMatchedCallbacks(vip_name).matched;
 		var default_cb_cs = this.evcompanion.getMatchedCallbacks(default_name).matched;
@@ -2544,7 +2545,7 @@ add({
 
 
 		if (vip_cb_cs.length || default_cb_cs.length){
-			var event_arg = new PVStateChangeEvent(name, value, this.zdsv.original_states[name], this);
+			var event_arg = new PVStateChangeEvent(state_name, value, this.zdsv.original_states[state_name], this);
 
 			if (vip_cb_cs.length){
 				//вызов внутреннего для самого объекта события
@@ -2557,14 +2558,14 @@ add({
 		}
 
 	},
-	_setUndetailedState: function(i, name, value) {
-		this._lbr.undetailed_states[name] = value;
+	_setUndetailedState: function(i, state_name, value) {
+		this._lbr.undetailed_states[state_name] = value;
 	},
 	updateManyStates: function(obj) {
 		var changes_list = [];
-		for (var name in obj) {
-			if (obj.hasOwnProperty(name)){
-				changes_list.push(name, obj[name]);
+		for (var state_name in obj) {
+			if (obj.hasOwnProperty(state_name)){
+				changes_list.push(state_name, obj[state_name]);
 			}
 		}
 		this._updateProxy(changes_list);
@@ -2574,14 +2575,14 @@ add({
 			return obj && !!obj.count;
 		}
 	},
-	updateState: function(name, value){
-		/*if (name.indexOf('-') != -1 && console.warn){
-			console.warn('fix prop name: ' + name);
+	updateState: function(state_name, value){
+		/*if (state_name.indexOf('-') != -1 && console.warn){
+			console.warn('fix prop state_name: ' + state_name);
 		}*/
-		if (this.hasComplexStateFn(name)){
+		if (this.hasComplexStateFn(state_name)){
 			throw new Error("you can't change complex state in this way");
 		}
-		return this._updateProxy([name, value]);
+		return this._updateProxy([state_name, value]);
 	},
 	hndRDep: function(state, oldstate, state_name) {
 		var target_name = state_name.split(':');
@@ -2660,7 +2661,7 @@ add({
 			//объекты используются повторно, ради выиграша в производительности
 			//которые заключается в исчезновении пауз на сборку мусора 
 
-			spv.cloneObj(original_states, this.states);
+			//spv.cloneObj(original_states, this.states);
 
 			var cur_changes_list = zdsv.states_changing_stack.shift();
 			var cur_changes_opts = zdsv.states_changing_stack.shift();
