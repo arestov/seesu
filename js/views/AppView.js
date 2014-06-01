@@ -366,6 +366,9 @@ AppBaseView.extendTo(AppView, {
 		var _this = this;
 		this.wp_box = new WPBox();
 		this.wp_box.init(this);
+
+		_this.dom_related_props.push('favicon_node', 'wp_box');
+
 		this.all_queues = [];
 		var addQueue = function() {
 			this.reverse_default_prio = true;
@@ -521,7 +524,8 @@ AppBaseView.extendTo(AppView, {
 			node: start_page_wrap,
 			spec_states: {
 				'$lev_num': -1
-			}
+			},
+			struc_store: this.struc_store
 		});
 
 		this.tpls.push(tpl);
@@ -544,7 +548,6 @@ AppBaseView.extendTo(AppView, {
 		});
 		
 			console.log('dom ready');
-			_this.dom_related_props.push('els');
 
 			var slider = d.getElementById('slider');
 			var screens_block = $('#screens',d);
@@ -611,6 +614,7 @@ AppBaseView.extendTo(AppView, {
 			search_form.submit(function(){return false;});
 			var search_input =  $('#q', search_form);
 			_this.search_input = search_input;
+			_this.dom_related_props.push('search_input');
 
 			search_input.on('keyup change input', spv.throttle(function() {
 				var input_value = this.value;
@@ -798,6 +802,7 @@ AppBaseView.extendTo(AppView, {
 			};
 
 			_this.nav.daddy.empty().removeClass('not-inited');
+			_this.dom_related_props.push('nav');
 
 
 			var npbClickCallback = function(){
@@ -816,7 +821,8 @@ AppBaseView.extendTo(AppView, {
 			});
 
 			var nptpl = new _this.PvTemplate({
-				node: np_button
+				node: np_button,
+				struc_store: this.struc_store
 			});
 			_this.tpls.push(nptpl);
 

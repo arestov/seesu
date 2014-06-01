@@ -979,6 +979,11 @@ provoda.CallbacksFlow = CallbacksFlow;
 var main_calls_flow = new CallbacksFlow(window);
 
 
+
+var stackEmergency = function(fn, eventor, args) {
+	main_calls_flow.pushToFlow(fn, eventor, args);
+};
+
 var requests_by_declarations = {};
 
 var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
@@ -3637,10 +3642,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	PvTemplate: PvTemplate,
 	getTemplate: function(node, callCallbacks, pvTypesChange) {
 		node = node[0] || node;
-		return new PvTemplate({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange});
+		return new PvTemplate({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange, struc_store: this.root_view.struc_store});
 	},
 	parseAppendedTPLPart: function(node) {
-		this.tpl.parseAppended(node);
+		this.tpl.parseAppended(node, this.root_view.struc_store);
 		this.tpl.setStates(this.states);
 	},
 	createTemplate: function(ext_node) {
@@ -4032,10 +4037,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.on('die', cb);
 	},
 	markAsDead: function(skip_md_call) {
+		var i = 0;
 		if (this.proxies_space) {
 			views_proxies.removeSpaceById(this.proxies_space);
 		}
-		this.nextTick(this.remove, [this.getC(), this._lbr._anchor]);
+		stackEmergency(this.remove, this, [this.getC(), this._lbr._anchor]);
 		this.dead = true; //new DeathMarker();
 		this.stopRequests();
 
@@ -4046,8 +4052,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		this.c = null;
 		this._lbr._anchor = null;
-		this.tpl = null;
+		if (this.tpl) {
+			this.tpl.destroy();
+			this.tpl = null;
+		}
+		
 		if (this.tpls){
+			for (i = 0; i < this.tpls.length; i++) {
+				this.tpls[i].destroy();
+			}
 			this.tpls = null;
 		}
 		this.way_points = null;
@@ -4060,7 +4073,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		
 
-		var i = 0;
+		
 		if (this.dom_related_props){
 			for (i = 0; i < this.dom_related_props.length; i++) {
 				this[this.dom_related_props[i]] = null;
