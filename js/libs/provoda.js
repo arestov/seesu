@@ -192,18 +192,24 @@ MDProxy.prototype = {
 		}
 		
 		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].collectionChange(collection_name, array, old_value, removed);
+			this.views[i].stackCollectionChange(collection_name, array, old_value, removed);
 		}
 	},
-	sendStatesToView: function(view, states_list) {
-		view.recieveStatesChanges(states_list);
+
+	stackReceivedStates: function(states_list) {
+		if (!this.views) {
+			return;
+		}
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].stackReceivedChanges(states_list);
+		}
 	},
 	sendStatesToViews: function(states_list) {
 		if (!this.views) {
 			return;
 		}
 		for (var i = 0; i < this.views.length; i++) {
-			this.sendStatesToView(this.views[i], states_list);
+			this.views[i].receiveStatesChanges(states_list);
 		}
 	},
 	removeDeadViews: function(hard_deads_check, complex_id){
@@ -442,7 +448,7 @@ var views_proxies = {
 		for (var i = 0; i < this.spaces_list.length; i++) {
 			var cur = this.spaces_list[i];
 			if (cur.ids_index[md._provoda_id]) {
-				cur.mpxes_index[md._provoda_id].sendStatesToViews(states_list);
+				cur.mpxes_index[md._provoda_id].stackReceivedStates(states_list);
 
 			}
 		}
@@ -505,14 +511,14 @@ FakeModel.prototype = {
 	}
 };
 
-var SyncReciever = function(stream){
+var SyncReceiver = function(stream){
 	this.stream = stream;
 	this.md_proxs_index = {};
 	this.models_index = {};
 
 };
 
-SyncReciever.prototype = {
+SyncReceiver.prototype = {
 	
 	buildTree: function(array) {
 		var i, cur, cur_pvid;
@@ -566,7 +572,7 @@ SyncReciever.prototype = {
 			}
 
 			
-			this.md_proxs_index[message._provoda_id].sendStatesToViews(message.value);
+			this.md_proxs_index[message._provoda_id].stackReceivedStates(message.value);
 		},
 		update_nesting: function(message) {
 			if (message.struc) {
@@ -597,7 +603,7 @@ provoda = {
 	},
 	MDProxy: MDProxy,
 	sync_s: sync_sender,
-	SyncR: SyncReciever,
+	SyncR: SyncReceiver,
 	Eventor: function(){},
 	StatesEmitter: function(){},
 	Model: function(){},
@@ -1321,24 +1327,26 @@ FastEventor.prototype = {
 		} else {
 			var callback_context = cur.context || this.sputnik;
 			var wrapper_context = this.sputnik;
-			this.sputnik._getCallsFlow().pushToFlow(cur.cb, callback_context, args, arg, cur.wrapper, wrapper_context, this.sputnik.current_motivator);
+
+			var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
+			calls_flow.pushToFlow(cur.cb, callback_context, args, arg, cur.wrapper, wrapper_context, this.sputnik.current_motivator);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
 			},1);*/
 		}
 	},
-	triggerCallbacks: function(cb_cs, args, opts, name, arg){
+	triggerCallbacks: function(cb_cs, args, opts, ev_name, arg){
 		for (var i = 0; i < cb_cs.length; i++) {
 			var cur = cb_cs[i];
 			this.callEventCallback(cur, args, opts, arg);
 			if (cur.once){
-				this.off(name, false, cur);
+				this.off(ev_name, false, cur);
 			}
 		}
 	},
-	trigger: function(name){
-		var cb_cs = this.getMatchedCallbacks(name).matched;
+	trigger: function(ev_name){
+		var cb_cs = this.getMatchedCallbacks(ev_name).matched;
 		if (cb_cs){
 			var i = 0;
 			var args = new Array(arguments.length - 1);
@@ -1350,7 +1358,7 @@ FastEventor.prototype = {
 				var cur = cb_cs[i];
 				this.callEventCallback(cur, args, (args && args[ args.length -1 ]));
 				if (cur.once){
-					this.off(name, false, cur);
+					this.off(ev_name, false, cur);
 				}
 			}
 		}
@@ -2715,7 +2723,7 @@ add({
 		wipeObj(original_states);
 		all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
-		if (this.sendStatesToViews && total_ch.length){
+		if (this.sendStatesToMPX && total_ch.length){
 			this.nextTick(this.sendChangesAfterDelay);
 		} else {
 			total_ch.length = 0;
@@ -2727,7 +2735,7 @@ add({
 	},
 	sendChangesAfterDelay: function() {
 		if (this.zdsv.total_ch.length){
-			this.sendStatesToViews(this.zdsv.total_ch);
+			this.sendStatesToMPX(this.zdsv.total_ch);
 			this.zdsv.total_ch.length = 0;
 		}
 	},
@@ -2800,6 +2808,17 @@ var getSiOpts = function(md) {
 		si_opts_cache[provoda_id] = new SIOpts(md);
 	}
 	return si_opts_cache[provoda_id];
+};
+
+var emergency_opt = {
+	emergency: true
+};
+
+var triggerDestroy = function(md) {
+	var array = md.evcompanion.getMatchedCallbacks('die').matched;
+	if (array.length) {
+		md.evcompanion.triggerCallbacks(array, false, emergency_opt, 'die');
+	}
 };
 
 var models_counters = 1;
@@ -2982,7 +3001,7 @@ add({
 		this.stopRequests();
 		//this.mpx.die();
 		views_proxies.killMD(this);
-		this.trigger('die');
+		triggerDestroy(this);
 		big_index[this._provoda_id] = null;
 		return this;
 	}
@@ -3099,12 +3118,12 @@ add({
 	},
 	complex_st_prefix: 'compx-',
 
-	sendStatesToViews: function(states_list) {
+	sendStatesToMPX: function(states_list) {
 		//this.removeDeadViews();
 		sync_sender.pushStates(this, states_list);
-		views_proxies.pushStates(this, states_list);
+		views_proxies.pushStates(this, states_list.slice());
 		if (this.mpx) {
-			this.mpx.sendStatesToViews(states_list);
+			this.mpx.stackReceivedStates(states_list.slice());
 		}
 		//
 	},
@@ -4020,7 +4039,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.dead = true; //new DeathMarker();
 		this.stopRequests();
 
-		this.trigger('die');
+		triggerDestroy(this);
 		if (!skip_md_call){
 			this.mpx.removeDeadViews();
 		}
@@ -4293,7 +4312,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return has_all_dependings;
 	},
-	recieveStatesChanges: function(changes_list) {
+	stackReceivedChanges: function() {
+		if (!this.isAlive()){
+			return;
+		}
+		this.nextTick(this._updateProxy, arguments);
+	},
+	receiveStatesChanges: function(changes_list) {
 		if (!this.isAlive()){
 			return;
 		}
@@ -4472,6 +4497,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	collch_h_prefix: 'collch-',
+	stackCollectionChange: function() {
+		this.nextTick(this.collectionChange, arguments);
+	},
 	collectionChange: function(nesname, array, rold_value, removed) {
 		if (!this.isAlive()){
 			return;
