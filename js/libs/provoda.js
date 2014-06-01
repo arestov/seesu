@@ -2729,7 +2729,9 @@ add({
 		all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
 		if (this.sendStatesToMPX && total_ch.length){
-			this.nextTick(this.sendChangesAfterDelay);
+			//this.nextTick(this.sendChangesAfterDelay);
+			this.sendStatesToMPX(this.zdsv.total_ch);
+			this.zdsv.total_ch.length = 0;
 		} else {
 			total_ch.length = 0;
 		}
@@ -3125,10 +3127,11 @@ add({
 
 	sendStatesToMPX: function(states_list) {
 		//this.removeDeadViews();
-		sync_sender.pushStates(this, states_list);
-		views_proxies.pushStates(this, states_list.slice());
+		var dubl = states_list.slice();
+		sync_sender.pushStates(this, dubl);
+		views_proxies.pushStates(this, dubl);
 		if (this.mpx) {
-			this.mpx.stackReceivedStates(states_list.slice());
+			this.mpx.stackReceivedStates(dubl);
 		}
 		//
 	},
