@@ -113,11 +113,12 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		this._super();
 
 		this.tpls = [];
+		this.struc_store = {};
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
 		this.max_level_num = -1;
-		this.dom_related_props.push('samples', 'lev_containers', 'els');
+		this.dom_related_props.push('samples', 'lev_containers', 'els', 'struc_store');
 		this.completely_rendered_once = {};
 
 	},
@@ -144,7 +145,8 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				node: node,
 				spec_states: {
 					'$lev_num': num
-				}
+				},
+				struc_store: this.struc_store
 			});
 
 			this.tpls.push(tpl);
@@ -289,7 +291,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			sample_node = this.els.ui_samples.children('.' + sample_name);
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
 			}
 			
 		}
@@ -297,7 +299,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			sample_node = $(this.requirePart(sample_name));
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
 			}
 			
 		}
