@@ -26,25 +26,30 @@ if (need_ui){
 		var md = su;
 
 		var views_proxies = provoda.views_proxies;
-
 		var proxies_space = Date.now();
+		views_proxies.addSpaceById(proxies_space, md);
+		var mpx = views_proxies.getMPX(proxies_space, md);
 
-
-		var view = new AppView();
-		//md.mpx.addView(view, 'root');
+		
+		
 		md.updateLVTime();
 
-		views_proxies.addSpaceById(proxies_space, md);
+		
+		(function() {
+			var view = new AppView();
+			mpx.addView(view, 'root');
 
-		var mpx = views_proxies.getMPX(proxies_space, md);
-		mpx.addView(view, 'root');
-
-		view.init({
-			mpx: mpx,
-			proxies_space: proxies_space
-		}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
-
-		view.requestAll();
+			view.init({
+				mpx: mpx,
+				proxies_space: proxies_space
+			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
+			view.onDie(function() {
+				//views_proxies.removeSpaceById(proxies_space);
+				view = null;
+			});
+			view.requestAll();
+		})();
+		
 		//provoda.sync_r.connectAppRoot();
 	});
 }
