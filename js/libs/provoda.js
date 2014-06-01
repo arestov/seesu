@@ -2729,7 +2729,9 @@ add({
 		all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
 		if (this.sendStatesToMPX && total_ch.length){
-			this.nextTick(this.sendChangesAfterDelay);
+			//this.nextTick(this.sendChangesAfterDelay);
+			this.sendStatesToMPX(this.zdsv.total_ch);
+			this.zdsv.total_ch.length = 0;
 		} else {
 			total_ch.length = 0;
 		}
