@@ -97,7 +97,7 @@ big_timer = {
 					proxies_space: proxies_space
 				}, {d: window.document, can_die: can_die, angbo: angbo});
 				view.onDie(function() {
-					views_proxies.removeSpaceById(proxies_space);
+					//views_proxies.removeSpaceById(proxies_space);
 					view = null;
 				});
 				view.requestAll();
