@@ -112,6 +112,11 @@ provoda.Model.extendTo(AppModelBase, {
 		*/
 		
 
+		if (tree){
+			this.updateNesting('navigation', tree);
+		}
+
+		
 		if (target_md){
 			if (this.current_mp_md) {
 				this.current_mp_md.updateState('mp_has_focus', false);
@@ -129,9 +134,7 @@ provoda.Model.extendTo(AppModelBase, {
 		}
 
 
-		if (tree){
-			this.updateNesting('navigation', tree);
-		}
+		
 		if (target_md){
 			changes.target = target_md && target_md.getMDReplacer();
 		}
