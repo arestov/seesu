@@ -628,6 +628,9 @@ AppBaseView.extendTo(AppView, {
 				search_input.focus();
 			});
 
+			_this.onDie(function() {
+				search_input = null;
+			});
 
 
 			
