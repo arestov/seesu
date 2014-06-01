@@ -12,7 +12,7 @@ var LfmLoveIt = function(opts, mo) {
 
 LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
 	init: function(opts, mo) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.song = mo;
 		this.app = mo.app;
 		this.setRequestDesc(localize('lastfm-loveit-access'));
@@ -90,7 +90,27 @@ comd.BaseCRow.extendTo(ScrobbleRow, {
 
 
 
+var ShuffleListRow = function(actionsrow) {
+	this.init(actionsrow);
+};
+comd.BaseCRow.extendTo(ShuffleListRow, {
+	model_name: 'row-pl-shuffle',
+	init: function(actionsrow) {
+		this.actionsrow = actionsrow;
+		this._super();
 
+		this.wch(su, 'settings-pl-shuffle', function(e) {
+			this.updateState('pl_shuffle', e.value);
+			this.actionsrow.mo.updateState('pl-shuffle', e.value);
+		});
+	},
+	switchSetting: function(state) {
+		this.updateState('pl_shuffle', state);
+		su.setSetting('pl-shuffle', state);
+	}
+
+
+});
 
 
 
@@ -98,32 +118,27 @@ var RepeatSongRow = function(actionsrow){
 	this.init(actionsrow);
 };
 comd.BaseCRow.extendTo(RepeatSongRow, {
+	model_name: 'row-repeat-song',
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
 
-		var _this = this;
-
-		var doNotReptPl = function(state) {
-			_this.updateState('rept-song', state);
-			actionsrow.mo.updateState('rept-song', state);
-		};
-		if (su.settings['rept-song']){
-			doNotReptPl(true);
-		}
-		su.on('settings.rept-song', doNotReptPl);
+		this.wch(su, 'settings-rept-song', function(e) {
+			this.updateState('rept_song', e.value);
+			this.actionsrow.mo.updateState('rept-song', e.value);
+		});
 
 
 	},
-	setDnRp: function(state) {
-		this.updateState('rept-song', state);
+	switchSetting: function(state) {
+		this.updateState('rept_song', state);
 		su.setSetting('rept-song', state);
-	},
-	model_name: 'row-repeat-song'
+	}
+	
 });
 
 var parts_storage = {};
-[ScrobbleRow, RepeatSongRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging].forEach(function(el) {
+[ScrobbleRow, RepeatSongRow, ShuffleListRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging].forEach(function(el) {
 	parts_storage[el.prototype.model_name] = el;
 });
 
@@ -150,10 +165,13 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		}
 	},
 	initHeavyPart: function() {
-		if (this.app.settings['volume']){
-			this.setVolumeState(this.app.settings['volume']);
-		}
-		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
+
+		this.wch(this.app, 'settings-volume', function(e) {
+			if (!e.value) {
+				return;
+			}
+			this.setVolumeState(e.value);
+		});
 	},
 	switchPart: function(name) {
 		this.initPart(name);

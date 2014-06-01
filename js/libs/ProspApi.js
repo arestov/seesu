@@ -70,6 +70,7 @@ ProspApi.prototype = {
 //search?q=killers&page=1&limit=50
 
 var datamorph_map = new spv.MorphMap({
+	is_array: true,
 	source: 'tracks',
 	props_map: {
 		_id: 'id',
@@ -104,9 +105,7 @@ ProspMusicSearch.prototype = {
 	},
 	makeSong: function(cursor, msq){
 		cursor.artist = cursor.artist + '';
-		cursor.models = {};
-		cursor.getSongFileModel = Mp3Search.getSongFileModel;
-		cursor.duration = cursor.duration && cursor.duration * 1000; 
+		cursor.duration = cursor.duration && cursor.duration * 1000;
 		spv.cloneObj(cursor, standart_props);
 
 		if (!cursor.artist){
@@ -118,10 +117,7 @@ ProspMusicSearch.prototype = {
 		}
 
 		
-		if (msq){
-			this.mp3_search.setFileQMI(cursor, msq);
-		}
-		
+
 		return cursor;
 	},
 	findAudio: function(msq, opts) {
@@ -158,32 +154,11 @@ ProspMusicSearch.prototype = {
 
 					for (var i = 0; i < list.length; i++) {
 						var item = _this.makeSong(list[i], msq);
-						if (_this.mp3_search.getFileQMI(item, msq) == -1){
-							//console.log(ent)
-						} else {
-							music_list.push(item);
-						}
+						music_list.push(item);
 					}
 
 					
-					/*
-					if (r && r.songs.length){
-						for (var i=0; i < r.songs.length; i++) {
-							if (!r.songs[i] || !r.songs[i].url || r.songs[i].url.indexOf('api.soundcloud.com/tracks/') != -1){
-								continue;
-							}
-							var ent = _this.makeSong(r.songs[i], msq);
-							if (_this.mp3_search.getFileQMI(ent, msq) == -1){
-								//console.log(ent)
-							} else {
-								music_list.push(ent);
-							}
 
-
-						
-						}
-					}*/
-					
 					result = music_list;
 				}
 				cb(result, 'mp3');

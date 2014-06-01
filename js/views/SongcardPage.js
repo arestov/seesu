@@ -18,6 +18,7 @@ coct.SPView.extendTo(SongcardPage, {
 	},
 	children_views: {
 		fans: coct.ImagedListPreview,
+		cloudcasts: coct.ImagedListPreview,
 		artist: ArtcardUI.ArtistInSongConstroller
 	}
 });
@@ -123,6 +124,9 @@ provoda.View.extendTo(SongcardController, {
 	},
 	updateSongListeners: function(){
 		if (!this.expanded){
+			return;
+		}
+		if (app_serv.app_env.nodewebkit) {
 			return;
 		}
 		var su = window.su;

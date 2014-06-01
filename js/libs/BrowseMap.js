@@ -789,115 +789,307 @@ provoda.Eventor.extendTo(BrowseMap, {
 	
 });
 
+BrowseMap.routePathByModels = function(start_md, pth_string) {
+
+		/*
+		catalog
+		users
+		tags
+		*/
+
+
+		/*
+		#/catalog/The+Killers/_/Try me
+		#?q=be/tags/beautiful
+		#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
+		#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
+		#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
+		#/recommendations/Beastie+boys/Phone+Call
+		#/loved/Beastie+boys/Phone+Call
+		#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
+		#?q=be/directsearch/vk/345345
+		#/ds/vk/25325_2344446
+		http://www.lastfm.ru/music/65daysofstatic/+similar
+		*/
+		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
+
+		var cur_md = start_md;
+		var tree_parts_group = null;
+		for (var i = 0; i < pth.length; i++) {
+			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
+				if (!tree_parts_group){
+					tree_parts_group = [];
+				}
+				tree_parts_group.push(pth[i]);
+				continue;
+			} else {
+				var path_full_string;
+				if (tree_parts_group){
+					path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
+				} else {
+					path_full_string = pth[i];
+				}
+				tree_parts_group = null;
+				var md = cur_md.getSPI(path_full_string, true);
+				if (md){
+					cur_md = md;
+				} else {
+					break;
+				}
+
+			}
+
+
+		}
+		return cur_md;
+};
+
+
+
+var executePreload = function(md, nesting_name) {
+	var lists_list = md.getNesting(nesting_name);
+
+	if (!lists_list) {return;}
+	if (Array.isArray(lists_list)) {
+		for (var i = 0; i < lists_list.length; i++) {
+			var cur = lists_list[i];
+			if (cur.preloadStart){
+				cur.preloadStart();
+			}
+
+		}
+	} else {
+		if (lists_list.preloadStart){
+			lists_list.preloadStart();
+		}
+	}
+};
+
+//если есть состояние для предзагрузки
+//если изменилось гнездование
+
+var bindPreload = function(md, preload_state_name, nesting_name) {
+
+	md.wch(md, preload_state_name, function(e) {
+		if (e.value){
+			
+			executePreload(md, nesting_name);
+		}
+	});
+};
+
+var initOneDeclaredNesting = function(md, el) {
+	/*
+	nesting_name
+	subpages_names_list
+	preload
+	init_state_name
+	*/
+	var preload_state_name = typeof el.preload == 'string' ? el.preload : 'mp_has_focus';
+	if (el.init_state_name) {
+		md.wch(md, el.init_state_name, function(e) {
+			if (e.value) {
+				this.updateNesting(el.nesting_name, getSubpages( this, el.subpages_names_list ));
+				if (preload_state_name && this.state(preload_state_name)) {
+					executePreload(this, el.nesting_name);
+				}
+			}
+		});
+		
+	} else {
+		md.updateNesting(el.nesting_name, getSubpages( md, el.subpages_names_list ));
+	}
+
+	if (el.preload) {
+		bindPreload(md, preload_state_name, el.nesting_name);
+	}
+
+};
+
+var initDeclaredNestings = function(md) {
+	for (var i = 0; i < md.nestings_declarations.length; i++) {
+		initOneDeclaredNesting(md, md.nestings_declarations[i]);
+	}
+};
+
+
+var getSubpages = function(md, array) {
+	var result;
+	if (Array.isArray( array )) {
+		result = new Array(array);
+		for (var i = 0; i < array.length; i++) {
+			result[i] = BrowseMap.routePathByModels(md, array[i]);
+		}
+	} else {
+		result = BrowseMap.routePathByModels(md, array);
+	}
+	return result;
+};
+
 BrowseMap.Model = function() {};
 
+var getSPOpts = function(md, name) {
+	var target = md.sub_pa[name];
+	var parts = name.split(':');
+
+
+	return [
+		{
+			url_part: '/' + name,
+			nav_title: target.title || (target.getTitle && target.getTitle.call(md))
+		},
+		{
+			simple_name: name,
+			name_spaced: parts[1]
+		}];
+};
+
 provoda.HModel.extendTo(BrowseMap.Model, {
-	init: function(opts) {
-		this._super(opts);
+	init: function(opts, data) {
+		this._super.apply(this, arguments);
 
 		this.lists_list = null;
 		this.lev = null;
 		this.map_level_num = null;
+		this.head_props = this.head_props || null;
+
+
+		if (this.hp_bound && !data) {
+			throw new Error('pass data arg!');
+		} else {
+			if (this.head_props) {
+				console.log('already has head_props');
+			} else if (this.hp_bound) {
+				
+				var complex_obj = {
+					'--data--': null
+				};
+				if (this.map_parent.sub_pa_params) {
+					spv.cloneObj(complex_obj, this.map_parent.sub_pa_params);
+				}
+
+				complex_obj['--data--'] = data;
+
+				this.head_props = this.hp_bound(complex_obj);
+			}
+		}
 
 		opts = opts || {};
 		if (!this.skip_map_init){
-			if (opts.nav_opts){
-				if (opts.nav_opts['url_part']){
-					this.init_states['url_part'] = opts.nav_opts['url_part'];
+			if (data) {
+				if (data['url_part']){
+					this.init_states['url_part'] = data['url_part'];
 				}
-				if (opts.nav_opts['nav_title']){
-					this.init_states['nav_title'] = opts.nav_opts['nav_title'];
+				if (data['nav_title']){
+					this.init_states['nav_title'] = data['nav_title'];
 				}
 			}
 		}
-	},
-	getSPOpts: function(name) {
-		var parts = name.split(':');
-		var obj = {
-			url_part: '/' + name,
-			simple_name: name,
-			name_spaced: parts[1]
-		};
-		var target = this.sub_pa[name];
-		var title = target.title || (target.getTitle && target.getTitle.call(this));
-		if (title){
-			obj['nav_title'] = title;
-		}
-		return obj;
-	},
-	findSPbyURLPart: function(name) {
-		return this.getSPI(name, true);
-	},
-	getSPI: function(name, init) {
-		var instance;
 
+		if (this.data_by_hp && typeof this.data_by_hp == 'function') {
+			this.sub_pa_params = this.data_by_hp(data);
+		}
+
+		if (this.nestings_declarations) {
+			this.nextTick(function() {
+				initDeclaredNestings(this);
+			});
+		}
+		
+		if (this.allow_data_init) {
+			this.updateManyStates(data);
+		}
+
+		if (this.preview_nesting_source) {
+			this.on('child_change-' + this.preview_nesting_source, function(e) {
+				this.updateNesting('preview_list', e.value);
+			});
+		}
+	},
+	preview_nesting_source: 'lists_list',
+
+	getSPI: function(name) {
+		var instance;
 		if (this.sub_pages && this.sub_pages[name]){
 			instance = this.sub_pages[name];
-
 		}
+		var init_opts;
 		if (!instance){
 			var target = this.sub_pa && this.sub_pa[name];
 			if (target){
-				var Constr = target.constr || target.getConstr.call(this);
-				instance = new Constr();
+				
 
-				instance.init_opts = [spv.cloneObj({
-					map_parent: this,
-					app: this.app
-				}, {
-					nav_opts: this.getSPOpts(name)
-				})];
-				if (this.sub_pa_params){
-					instance.init_opts.push(this.sub_pa_params);
+				/*
+				hp_bound
+				data_by_urlname
+				data_by_hp
+
+				берем данные из родителя
+				накладываем стандартные данные 
+				накладываем данные из урла
+				*/
+
+				var common_opts = getSPOpts(this, name);
+				var pre_instance_data = {};
+				var params_from_parent = this.data_by_hp === true ? this.head_props : this.sub_pa_params;
+
+				var data_parts = [
+					params_from_parent,
+					common_opts[0]
+				];
+
+				for (var i = 0; i < data_parts.length; i++) {
+					if (!data_parts[i]) {
+						continue;
+					}
+					spv.cloneObj(pre_instance_data, data_parts[i]);
 				}
+
+				var Constr = target.constr || target.getConstr.call(this, pre_instance_data);
+				instance = new Constr();
+				var instance_data = pre_instance_data;
+
+				var data_by_urlname = instance.data_by_urlname && instance.data_by_urlname(common_opts[1]);
+
+				spv.cloneObj(instance_data, data_by_urlname);
+
+				init_opts = [this.getSiOpts(), instance_data];
+
+				
 
 				this.sub_pages[name] = instance;
 			} else {
 				if (this.subPager){
-
-					instance = this.subPager(decodeURIComponent(name), name);
+					var sub_page = this.subPager(decodeURIComponent(name), name);
+					if (Array.isArray(sub_page)) {
+						instance = sub_page[0];
+						init_opts = [this.getSiOpts(), sub_page[1]];
+					} else {
+						instance = sub_page;
+					}
 				}
+			}
+			if (instance && init_opts){
+				this.useMotivator(instance, function(instance) {
+					instance.init.apply(instance, init_opts);
+				});
 			}
 		}
 		
-		if (instance && init){
-			instance.initOnce();
-		}
+		
 		return instance;
 	},
-	initListedModels: function(array) {
-		this.lists_list = array;
-		this.initSubPages(this.lists_list);
-		this.updateNesting('lists_list', this.lists_list);
-		this.updateNesting('preview_list', this.lists_list);
-		this.bindChildrenPreload();
-	},
-	initSubPages: function(array) {
+	preloadNestings: function(array) {
+		//var full_list = [];
 		for (var i = 0; i < array.length; i++) {
-			var instance = this.getSPI(array[i]);
-			instance.initOnce();
-			array[i] = instance;
-		}
-	},
-	initItems: function(lists_list, opts, params) {
-		for (var i = 0; i < lists_list.length; i++) {
-			lists_list[i].init(opts, params);
-		}
-	},
-	bindChildrenPreload: function(array) {
-		var lists_list = array || this.lists_list;
-		this.wch(this, 'mp_has_focus', function(e) {
-			if (e.value){
-				for (var i = 0; i < lists_list.length; i++) {
-					var cur = lists_list[i];
-					if (cur.preloadStart){
-						cur.preloadStart();
-					}
-
-				}
+			var md = this.getNesting(array[i]);
+			if (md) {
+				md.preloadStart();
 			}
-		});
+			
+		}
 	},
+
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
@@ -946,5 +1138,9 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		return '';
 	}
 });
+
+
+
+
 return BrowseMap;
 });

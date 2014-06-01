@@ -35,6 +35,8 @@ a.track-node{
 	border:0 !important;
 	color: hsl(0, 0%, 65%);
 	cursor:pointer;
+	border-top-right-radius: inherit;
+	border-top-left-radius: inherit;
 	}
 	a.track-node:hover{
 		color:#aaa;
@@ -241,7 +243,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .files-load-states{
 	position: absolute;
-	top: 6px;
+	top: 0.2rem;
 	left: 5px;
 	width: 16px;
 	height: 16px;
@@ -251,6 +253,24 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		width: 100%;
 
 	}
+.list_rel_pos_mark {
+	display: none;
+	position: absolute;
+	top: 1.6rem;
+	left: 0.7rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	background: no-repeat 0 0;
+	opacity: 0.2;
+}
+.to-play-previous .list_rel_pos_mark{
+	display: block;
+	background-image: url(../i/nano-prev.svg);
+}
+.to-play-next .list_rel_pos_mark{
+	display: block;
+	background-image: url(../i/nano-next.svg);
+}
 	
 .nothing-toy{
 	position: absolute;
@@ -341,7 +361,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	position: relative;
 	}
 	
-	.show-zoom-to-track .to-play-previous{
+	.show-zoom-to-track .v-song-sibling.to-play-previous{
 		
 		right:50%;
 		left: 0;
@@ -349,7 +369,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		margin-right: 20px;
 		border-top-left-radius:10px;
 		}
-	.show-zoom-to-track .to-play-next {
+	.show-zoom-to-track .v-song-sibling.to-play-next {
 		right: 0;
 		left:50%;
 		margin-left: 20px;

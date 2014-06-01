@@ -130,19 +130,36 @@ spv.hasCommonItems = function(arr1, arr2) {
 	}
 	return false;
 };
+
+
+var arExclSimple = function(result, arr, obj) {
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i] !== obj) {
+			result.push(arr[i]);
+		}
+	}
+	return result;
+};
+var arExclComplex = function(result, arr, obj) {
+	for (var i = 0; i < arr.length; i++) {
+		if (obj.indexOf(arr[i]) == -1){
+			result.push(arr[i]);
+		}
+	}
+	return result;
+};
+
 arrayExclude = spv.arrayExclude = function(arr, obj){
 	var r = [];
 	if (!arr){
 		return r;
 	}
 
-	obj = spv.toRealArray(obj);
-	for (var i = 0; i < arr.length; i++) {
-		if (obj.indexOf(arr[i]) == -1){
-			r.push(arr[i]);
-		}
+	if (obj instanceof Array){
+		return arExclComplex(r, arr, obj);
+	} else {
+		return arExclSimple(r, arr, obj);
 	}
-	return r;
 };
 
 shuffleArray = spv.shuffleArray = function(obj) {
@@ -620,7 +637,12 @@ separateNum = function(num){
 	Class = function(){};
 
 	// Create a new Class that inherits from this class
-	Class.extendTo = function(namedClass, prop) {
+	Class.extendTo = function(namedClass, props) {
+		if (typeof props == 'function') {
+			//props
+			props = spv.coe(props);
+		}
+
 		var _super = this.prototype;
 
 		// Instantiate a base class (but only create the instance,
@@ -628,12 +650,12 @@ separateNum = function(num){
 		var prototype = new this();
 
 		// Copy the properties over onto the new prototype
-		for (var name in prop) {
+		for (var prop_name in props) {
 			// Check if we're overwriting an existing function
-			prototype[name] = typeof prop[name] == "function" &&
-				typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-				allowParentCall(name, prop[name], _super) :
-				prop[name];
+			prototype[prop_name] = typeof props[prop_name] == "function" &&
+				typeof _super[prop_name] == "function" && fnTest.test(props[prop_name]) ?
+				allowParentCall(prop_name, props[prop_name], _super) :
+				props[prop_name];
 		}
 
 		// Populate our constructed prototype object
@@ -643,7 +665,7 @@ separateNum = function(num){
 		namedClass.prototype.constructor = namedClass;
 
 		if (namedClass.prototype.onExtend){
-			namedClass.prototype.onExtend.call(namedClass.prototype, prop);
+			namedClass.prototype.onExtend.call(namedClass.prototype, props);
 		}
 
 		// And make this class extendable
@@ -985,13 +1007,18 @@ var getComplexPropValueByField = function(fpv, scope, iter, spec_data, converter
 	if (typeof fpv == 'string') {
 		cur_value = getPropValueByField(fpv, iter, scope, spec_data);
 	} else if (Array.isArray(fpv)) {
-		var convert = fpv[0];
+		if (fpv.length > 1) {
+			var convert = fpv[0];
 
-		if (typeof convert == 'string' ) {
-			convert = converters[convert];
+			if (typeof convert == 'string' ) {
+				convert = converters[convert];
+			}
+
+			cur_value = convert(fpv[1] && getPropValueByField(fpv[1], iter, scope, spec_data));
+		} else {
+			cur_value = fpv[0];
 		}
-
-		cur_value = convert(getPropValueByField(fpv[1], iter, scope, spec_data));
+		
 	}
 	return cur_value;
 };
@@ -1024,7 +1051,7 @@ var handlePropsMapScope = function(spec_data, cur, objects_list, scope, converte
 		//cur.map_opts.parts_map[prop_name];
 		var map_opts = cur.map_opts.parts_map[prop_name];
 
-		var result_value = map_opts.not_array ? {} : [];//объект используемый потомками создаётся в контексте родителя, что бы родитель знал о потомках
+		var result_value = map_opts.is_array ? [] : {} ;//объект используемый потомками создаётся в контексте родителя, что бы родитель знал о потомках
 		spv.setTargetField(result_value_item, prop_name, result_value);//здесь родитель записывает информацию о своих потомках
 
 		objects_list.push({
@@ -1045,7 +1072,7 @@ var executeMap = function(map, data, spec_data, converters) {
 		map_opts: map,
 		parent_data: data,
 		parent_map: null,
-		writeable_array: map.not_array ? {} : [],
+		writeable_array: map.is_array ? [] : {},
 		//writeable_array - объект или массив объектов получающихся в результате парсинга одной из областей видимости
 		//должен быть предоставлен потомку родителем
 
@@ -1070,7 +1097,7 @@ var executeMap = function(map, data, spec_data, converters) {
 			continue;
 		}
 
-		if (cur.map_opts.not_array) {
+		if (!cur.map_opts.is_array) {
 			cur.data_scope = cvalue;
 			result_item = handlePropsMapScope(spec_data, cur, objects_list, cur.data_scope, converters);
 			if (typeof result_item != 'object') {
@@ -1119,8 +1146,25 @@ MorphMap.prototype.execute = function(data, spec_data, converters) {
 //console.log(data_bymap);
 
 spv.MorphMap = MorphMap;
+spv.mmap = function(config, converters) {
+	return new MorphMap(config, converters);
+};
 //i should not rewrite fields
 
 
+
+
+spv.coe = function(cb) {
+	var result = {};
+	var add = function(obj) {
+		spv.cloneObj(result, obj);
+	};
+	cb(add);
+	return result;
+};
+
 })();
+
+
+
 define(function(){return spv;});

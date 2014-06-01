@@ -1,9 +1,11 @@
 define(function() {
 "use strict";
-var FuncsStack;
+var none = function() {};
+
 var FstackAtom = function(stack, func, done, data) {
 	this.stack = stack;
 	this.func = func;
+	this.func_result = null;
 	this.done = done;
 	
 	this.data = null;
@@ -12,18 +14,24 @@ var FstackAtom = function(stack, func, done, data) {
 	if (data){
 		this.data = data;
 	}
+	this.completePart = done;
 };
-FstackAtom.prototype.abort = function() {
+FstackAtom.prototype.destroy = function() {
 	this.stack = null;
 	this.func = null;
-	this.done = null;
+	this.done = none;
+	this.completePart = none;
+	this.fail = none;
 	this.data = null;
 	this.qf = null;
-
+};
+FstackAtom.prototype.abort = function() {
+	this.destroy();
 	this.aborted = true;
 };
 
-FuncsStack = function(selectNext, initAtom) {
+var FuncsStack = function(selectNext, initAtom) {
+	this.chained = null;
 	this.arr = [];
 
 
@@ -83,8 +91,8 @@ FuncsStack.prototype = {
 		this.wait_next = args;
 	},
 	goAhead: function(atom, args) {
-		delete this.wait_next;
-		atom.func.apply(atom, args);
+		this.wait_next = null;
+		atom.func_result = atom.func.apply(atom, args);
 	},
 	start: function() {
 		if (!this.want_start){
@@ -106,5 +114,21 @@ FuncsStack.prototype = {
 		return this.arr;
 	}
 };
+
+
+FuncsStack.chain = function(arr) {
+	var fstack = new FuncsStack();
+	for (var i = 0; i < arr.length; i++) {
+		fstack.next(arr[i]);
+	}
+	fstack.start(function() {
+
+	});
+
+	return fstack;
+};
+
+
+
 return FuncsStack;
 });

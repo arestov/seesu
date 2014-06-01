@@ -83,9 +83,8 @@ isohuntTorrentSearch.prototype = {
 			media_type: 'torrent',
 			torrent_link: 'http://isohunt.com/download/' + sitem.guid,
 			query: query,
-			models: {},
 			getSongFileModel: function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
+				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			}
 		});
 	}
@@ -95,6 +94,7 @@ isohuntTorrentSearch.prototype = {
 var BtdiggTorrentSearch = function(opts) {
 	this.mp3_search = opts.mp3_search;
 	this.cache_ajax = opts.cache_ajax;
+	this.queue = opts.queue;
 };
 
 BtdiggTorrentSearch.prototype = {
@@ -116,7 +116,7 @@ BtdiggTorrentSearch.prototype = {
 			var wrap_def = wrapRequest({
 				url: "http://btdigg.org/search?info_hash",
 				type: "GET",
-				dataType: "html",
+				dataType: "text",
 				data: {
 
 					q: query //"allintext:" + song + '.mp3'
@@ -158,7 +158,10 @@ BtdiggTorrentSearch.prototype = {
 			olddone.call(this, function(r) {
 				if (!result){
 					result = [];
-					$(r).find('.torrent_name').each(function() {
+					var safe_node = document.createElement('html');
+					safe_node.innerHTML = r.replace(/src\=/gi, 'none=');
+				//	debugger;
+					$(safe_node).find('.torrent_name').each(function() {
 						_this.wrapItem(result, this, msq);
 					});
 				}
@@ -188,7 +191,7 @@ BtdiggTorrentSearch.prototype = {
 			return;
 		}
 
-		console.log(magnet_link);
+		//console.log(magnet_link);
 
 		r.push({
 			torrent_link: magnet_link,
@@ -198,8 +201,7 @@ BtdiggTorrentSearch.prototype = {
 			media_type: 'torrent',
 			models: {},
 			getSongFileModel: function(mo, player) {
-				this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
-				return this.models[mo.uid];
+				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			}
 		});
 	}
@@ -295,7 +297,7 @@ googleTorrentSearch.prototype = {
 			item.title = item.titleNoFormatting = htmlencoding.decode(item.titleNoFormatting);
 			item.models = {};
 			item.getSongFileModel = function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
+				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			};
 		}
 		

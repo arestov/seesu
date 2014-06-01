@@ -29,7 +29,7 @@ spv.Class.extendTo(WPBox, {
 		var _this = this;
 
 		var cur_mp_md = this.root_view.getNesting('current_mp_md');
-		var roocon_view =  cur_mp_md && this.root_view.getStoredMpx(cur_mp_md).getRooConPresentation(true);
+		var roocon_view =  cur_mp_md && this.root_view.getStoredMpx(cur_mp_md).getRooConPresentation(this.root_view, true);
 		if (roocon_view){
 			var dems_storage = {};
 
@@ -37,6 +37,7 @@ spv.Class.extendTo(WPBox, {
 			if (nav_type == 'Enter'){
 				if (cwp){
 					$(cwp.node).click();
+					$(cwp.node).trigger('activate_waypoint');
 
 					this.cwp_check = setTimeout(function() {
 						var still_in_use = _this.checkCurrentWPoint(dems_storage);
@@ -198,8 +199,14 @@ spv.Class.extendTo(WPBox, {
 		var parents = [];
 		var p_cur = cur.parent();
 		while (p_cur[0]){
-			parents.push(p_cur);
-			p_cur = p_cur.parent();
+			if (p_cur[0].ownerDocument) {
+				
+				parents.push(p_cur);
+				p_cur = p_cur.parent();
+			} else {
+				break;
+			}
+			
 		}
 
 		var break_of_disnone = false;

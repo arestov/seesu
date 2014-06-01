@@ -7,7 +7,7 @@
 	padding-left:1rem;
 	min-height:36px;
 	border-bottom:1px solid #252525;
-	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
+	background:#444 url(../i/nav/head-gradient.png) repeat-x;
 	
 	background-image: -o-linear-gradient(#525252,#363636);
 	background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #363636);
@@ -24,10 +24,14 @@
 }
 .daddy{
 	overflow: hidden;
+	
 	margin-right:19px;
 	height: 31px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+.appnav_wrap {
+	position: relative;
 }
 
 .player-played .np{
@@ -52,6 +56,7 @@
 }
 .page-scheme .usual_page{
 	padding-top: 1rem;
+	padding-bottom: 1rem;
 }
 #search {
 	margin: 0 auto;
@@ -60,7 +65,7 @@
 	}
 
 
-.block-for-startpage, .for-startpage{
+.block-for-startpage{
 	margin-top:2rem;
 }
 
@@ -91,20 +96,20 @@
 .tags-hyped{
 
 	}
-	.page-scheme .tags-hyped a{
+	.page-scheme .tags_list a{
 		display: block;
 		padding:0.2rem 0.5rem;
 		border: 0;
 		border-radius: 0;
 		}
-	.page-scheme .tags-hyped span:nth-of-type(even) a{
+	.page-scheme .tags_list span:nth-of-type(even) a{
 		background-color: #4D4D4D;
 
 		}
-	.page-scheme .tags-hyped a:hover{
+	.page-scheme .tags_list a:hover{
 		background-color: #535353;
 		}
-	#slider .page-scheme .tags-hyped a.surf_nav{
+	#slider .page-scheme .tags_list a.surf_nav{
 		background-color: #000;
 		}
 
@@ -150,8 +155,8 @@
 
 .np-button{	
 	position:absolute;
-	top:8px;
-	right:1rem;
+	top:0;
+	right:0;
 	padding: 4px 8px;
 	width:20px;
 	border-right: 1px solid transparent;
@@ -171,6 +176,12 @@
 }
 .full-page .usual_page{
 	margin-top:1.72rem;
+}
+.preview_ffp {
+	display: none;
+}
+.full-page .preview_ffp {
+	display: block;
 }
 .art_card{
 	
@@ -236,10 +247,7 @@
 	.page-scheme .art_card-image{
 		display: none;
 		}
-	.full-page .art_card-bio{
-		float: right;
-		width: 50%;
-		}
+
 
 		.art_card-bio.loading{
 			min-height:20px;
@@ -252,14 +260,8 @@
 	.page-scheme .art_card-bio{
 		display: none;
 		}
-	.full-page .art_card-image{
-		float:left;
-		width:50%;
-		}
-		
-		.full-page .art_card-image-padding{
-			padding-right:1.72rem;
-		}
+
+
 		.art_card-image img{
 			margin-bottom:1.72rem;
 			width:100%;

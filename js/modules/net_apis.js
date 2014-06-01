@@ -52,6 +52,7 @@ spv.Class.extendTo(DiscogsApi, {
 		this.queue = opts.queue;
 		this.crossdomain = opts.crossdomain;
 	},
+	errors_fields: ['error'],
 	cache_namespace: 'discogs',
 	get: function(path, params, options) {
 
@@ -61,9 +62,19 @@ spv.Class.extendTo(DiscogsApi, {
 		}
 
 		options = options || {};
+		params = params || {};
+
+		if (options && options.paging) {
+
+
+			params.per_page = options.paging.page_limit;
+			params.page = options.paging.next_page;
+		}
+
+
 		options.cache_key = options.cache_key || hex_md5("http://api.discogs.com" + path + spv.stringifyParams(params));
 
-		var	params_full = params || {};
+		
 
 		//cache_ajax.get('vk_api', p.cache_key, function(r){
 
@@ -71,7 +82,7 @@ spv.Class.extendTo(DiscogsApi, {
 			url: "http://api.discogs.com" + path,
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
-			data: params_full,
+			data: params,
 			timeout: 20000,
 			resourceCachingAvailable: true,
 			afterChange: function(opts) {
@@ -90,7 +101,13 @@ spv.Class.extendTo(DiscogsApi, {
 			requestFn: function() {
 				return aReq.apply(this, arguments);
 			},
-			queue: this.queue
+			queue: this.queue,
+			responseFn: function(r) {
+				if (r.meta && r.data){
+					r = r.data;
+				}
+				return r;
+			}
 		});
 
 		return wrap_def.complex;
@@ -104,6 +121,7 @@ spv.Class.extendTo(MixcloudApi, {
 		this.queue = opts.queue;
 		this.crossdomain = opts.crossdomain;
 	},
+	errors_fields: ['error'],
 	thisOriginAllowed: true,
 	cache_namespace: 'mixcloud',
 	get: function(path, params, options) {
@@ -114,9 +132,14 @@ spv.Class.extendTo(MixcloudApi, {
 		}
 
 		options = options || {};
-		options.cache_key = options.cache_key || hex_md5("https://api.mixcloud.com/" + path + spv.stringifyParams(params));
 
-		var	params_full = params || {};
+		params = params || {};
+		if (options && options.paging) {
+			options.paging.limit = options.paging.page_limit;
+			options.paging.offset = (options.paging.next_page - 1) * options.paging.page_limit;
+		}
+
+		options.cache_key = options.cache_key || hex_md5("https://api.mixcloud.com/" + path + spv.stringifyParams(params));
 
 		//cache_ajax.get('vk_api', p.cache_key, function(r){
 
@@ -124,7 +147,7 @@ spv.Class.extendTo(MixcloudApi, {
 			url: "https://api.mixcloud.com/" + path,
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
-			data: params_full,
+			data: params,
 			timeout: 20000,
 			resourceCachingAvailable: true,
 			afterChange: function(opts) {
@@ -159,6 +182,9 @@ spv.Class.extendTo(HypemApi, {
 		this.crossdomain = opts.crossdomain;
 		this.can_send = this.xhr2 || this.crossdomain;
 
+	},
+	checkResponse: function(r) {
+		return !r.version;
 	},
 	cache_namespace: 'hypem',
 	get: function(path, params, options) {

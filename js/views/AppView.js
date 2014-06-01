@@ -1,9 +1,9 @@
 define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
-'./StartPageView', './SearchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
+'./StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
 './SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
 './lul', './SongcardPage', './AppBaseView', './modules/WPBox'],
 function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
-StartPageView, SearchPageView, ArtcardUI, TagsListPage, ArtistListView,
+StartPageView, SearchPageView, ArtcardUI, ArtistListView,
 SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
 lul, SongcardPage, AppBaseView, WPBox) {
 "use strict";
@@ -12,7 +12,53 @@ var localize = app_serv.localize;
 
 
 
+var AppExposedView = function() {};
+AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
+	location_name: 'exposed_root_view',
+	"stch-doc_title": function(title) {
+		this.d.title = title || "";
+	},
+	'stch-playing': function(state) {
+		if (app_env.need_favicon){
+			if (state){
+				this.changeFavicon('playing');
+			} else {
+				this.changeFavicon('usual');
+			}
+		}
+	},
+	changeFaviconNode: function(d, src, type) {
+		var link = d.createElement('link'),
+			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
+		link.id = 'dynamic-favicon';
+		link.rel = 'shortcut icon';
+		if (type){
+			link.type = type;
+		}
+		
+		link.href = src;
+		d.head.replaceChild(link, oldLink);
+		this.favicon_node = link;
+	},
+	changeFavicon: spv.debounce(function(state){
+		if (this.isAlive()){
+			if (state && this.favicon_states[state]){
+				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
+			} else{
+				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
+			}
+		}
+
+	},300),
+	favicon_states: {
+		playing: 'icons/icon16p.png',
+		usual: 'icons/icon16.png'
+	}
+});
+
+
 var AppView = function(){};
+AppView.AppExposedView = AppExposedView;
 AppBaseView.extendTo(AppView, {
 	children_views: {
 		start_page : {
@@ -65,7 +111,7 @@ AppBaseView.extendTo(AppView, {
 			nav: nav.baseNavUI
 		},
 		tagslist: {
-			main: TagsListPage,
+			main: TagPageView.TagsListPage,
 			nav: nav.baseNavUI
 		},
 		user_playlists: {
@@ -160,6 +206,14 @@ AppBaseView.extendTo(AppView, {
 			main: SongcardPage,
 			nav: nav.baseNavUI
 		},
+		justlists: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		vk_posts: {
+			main: coct.VKPostsView,
+			nav: nav.baseNavUI
+		},
 		songcard_cloudcasts: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
@@ -195,17 +249,26 @@ AppBaseView.extendTo(AppView, {
 	'spec-vget-song': function(md) {
 		var playlist = md.getParentMapModel();
 		var playlist_mpx = this.getStoredMpx(playlist);
-		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
-		return playlist_view && playlist_view.getChildView(this.getStoredMpx(md));
+
+		var playlist_view = this.findMpxViewInChildren(playlist_mpx, 'all-sufficient-details');
+		return playlist_view && playlist_view.findMpxViewInChildren(this.getStoredMpx(md));
 	},
-	'collch-$spec-song': function(name, md) {
+	'collch-$spec-song': function(nesname, md) {
 		var playlist = md.getParentMapModel();
 
 		var playlist_mpx = this.getStoredMpx(playlist);
 
-		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		var location_id = provoda.$v.getViewLocationId(this, nesname, 'all-sufficient-details');
+
+
+
+		var view = playlist_mpx.getView(location_id);
 		if (!view){
-			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			view = this.getFreeChildView({
+				by_model_name: true,
+				nesting_name: nesname,
+				nesting_space: 'all-sufficient-details'
+			}, playlist);
 			var place = AppBaseView.viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
 			place.append(view.getA());
 			this.requestAll();
@@ -213,7 +276,8 @@ AppBaseView.extendTo(AppView, {
 	},
 	'collch-$spec-playlist': {
 		place: AppBaseView.viewOnLevelP,
-		opts: {overview: true}
+		opts: {overview: true},
+		by_model_name: true
 	},
 	tickCheckFocus: function() {
 		if (this.isAlive()){
@@ -221,8 +285,13 @@ AppBaseView.extendTo(AppView, {
 			this.search_input[0].select();
 		}
 	},
-	'collch-start_page': function(name, md) {
-		var view = this.getFreeChildView({name: name, space: 'main'}, md);
+	'collch-$spec-start_page': function(nesname, md) {
+		var view = this.getFreeChildView({
+			by_model_name: true,
+			nesting_name: nesname,
+			nesting_space: 'main'
+		}, md);
+
 		if (view){
 			var _this = this;
 
@@ -246,7 +315,6 @@ AppBaseView.extendTo(AppView, {
 		this.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
 	'stch-show_search_form': function(state) {
-		this.els.search_form.toggleClass('hidden', !state);
 		if (!state){
 			this.search_input[0].blur();
 		}
@@ -268,15 +336,6 @@ AppBaseView.extendTo(AppView, {
 
 		"search_query": function(state) {
 			this.search_input.val(state || '');
-		},
-		playing: function(state) {
-			if (app_env.need_favicon){
-				if (state){
-					this.changeFavicon('playing');
-				} else {
-					this.changeFavicon('usual');
-				}
-			}
 		}
 		
 	},
@@ -340,18 +399,6 @@ AppBaseView.extendTo(AppView, {
 			});
 		});
 
-		if (this.opts.can_die && spv.getDefaultView(this.d)){
-			this.can_die = true;
-			this.checkLiveState = function() {
-				if (!spv.getDefaultView(_this.d)){
-					_this.reportDomDeath();
-					return true;
-				}
-			};
-
-			this.lst_interval = setInterval(this.checkLiveState, 1000);
-
-		}
 		
 		this.on('die', function() {
 			this.RPCLegacy('detachUI', this.view_id);
@@ -409,7 +456,7 @@ AppBaseView.extendTo(AppView, {
 			}
 		}
 		var md = this.getNesting('current_mp_md');
-		var view = md && this.getStoredMpx(md).getRooConPresentation(true);
+		var view = md && this.getStoredMpx(md).getRooConPresentation(this, true);
 		if (view){
 			view.setPrio();
 		}
@@ -428,23 +475,7 @@ AppBaseView.extendTo(AppView, {
 
 
 	},
-	reportDomDeath: function() {
-		if (this.can_die && !this.dead){
-			this.dead = true;
-			clearInterval(this.lst_interval);
-		//	var d = this.d;
-		//	delete this.d;
-			this.die();
-			console.log('DOM dead! ' + this.nums);
-
-		}
-	},
-	isAlive: function(){
-		if (this.dead){
-			return false;
-		}
-		return !this.checkLiveState || !this.checkLiveState();
-	},
+	
 	
 	
 	
@@ -456,33 +487,7 @@ AppBaseView.extendTo(AppView, {
 			this.c.removeClass(class_name);
 		}
 	},
-	changeFaviconNode: function(d, src, type) {
-		var link = d.createElement('link'),
-			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
-		link.id = 'dynamic-favicon';
-		link.rel = 'shortcut icon';
-		if (type){
-			link.type = type;
-		}
-		
-		link.href = src;
-		d.head.replaceChild(link, oldLink);
-		this.favicon_node = link;
-	},
-	changeFavicon: spv.debounce(function(state){
-		if (this.isAlive()){
-			if (state && this.favicon_states[state]){
-				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
-			} else{
-				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
-			}
-		}
-
-	},300),
-	favicon_states: {
-		playing: 'icons/icon16p.png',
-		usual: 'icons/icon16.png'
-	},
+	
 	parts_builder: {
 		//samples
 		alb_prev_big: function() {
@@ -503,6 +508,11 @@ AppBaseView.extendTo(AppView, {
 		lfm_scrobling: function() {
 			return this.els.ui_samples.children('.scrobbling-switches');
 		}
+	},
+	handleSearchForm: function(form_node) {
+		var tpl = this.createTemplate(form_node);
+		this.tpls.push(tpl);
+
 	},
 	handleStartScreen: function(start_screen) {
 		var st_scr_scrl_con = start_screen.parent();
@@ -552,7 +562,7 @@ AppBaseView.extendTo(AppView, {
 				};
 				var getCurrentNode = function() {
 					var current_md = _this.getNesting('current_mp_md');
-					return current_md && _this.getStoredMpx(current_md).getRooConPresentation(true, true).getC();
+					return current_md && _this.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
 				};
 
 				var readySteadyResize = function(){
@@ -597,6 +607,28 @@ AppBaseView.extendTo(AppView, {
 
 
 			var search_form = $('#search',d);
+			search_form.find('#app_type').val(app_env.app_type);
+			search_form.submit(function(){return false;});
+			var search_input =  $('#q', search_form);
+			_this.search_input = search_input;
+
+			search_input.on('keyup change input', spv.throttle(function() {
+				var input_value = this.value;
+				_this.overrideStateSilently('search_query', input_value);
+				_this.RPCLegacy('search', input_value);
+			}, 100));
+
+			search_input.on('keyup', spv.throttle(function(e) {
+				if (e.keyCode == 13) {
+					_this.RPCLegacy('refreshSearchRequest', Date.now());
+				}
+			}, 100));
+
+			search_input.on('activate_waypoint', function() {
+				search_input.focus();
+			});
+
+
 
 			
 			var app_map_con = screens_block.children('.app_map_con');
@@ -605,14 +637,19 @@ AppBaseView.extendTo(AppView, {
 			//var shared_parts_c = app_map_con.children('.shared-parts');
 
 			var scrolling_viewport;
-			if (app_env.as_application){
+
+			if (screens_block.css('overflow') == 'auto') {
+				scrolling_viewport = {
+					node: screens_block
+				};
+			} else if (app_env.as_application){
 				scrolling_viewport = {
 					node: screens_block
 				};
 			} else {
 				if (app_env.lg_smarttv_app){
 					scrolling_viewport = {
-						node: $(slider)
+						node: screens_block
 					};
 				} else {
 					scrolling_viewport = {
@@ -626,6 +663,10 @@ AppBaseView.extendTo(AppView, {
 			}
 
 			var start_screen = $('#start-screen',d);
+
+			_this.handleSearchForm(search_form);
+
+
 			_this.handleStartScreen(start_screen);
 			spv.cloneObj(_this.els, {
 				ui_samples: ui_samples,
@@ -635,26 +676,17 @@ AppBaseView.extendTo(AppView, {
 				slider: slider,
 				navs: $(slider).children('.navs'),
 				start_screen: start_screen,
-				search_input: $('#q',d),
+				search_input: search_input,
 				search_form: search_form,
 				pestf_preview: start_screen.children('.personal-stuff-preview')
 			});
 
 
 
-			_this.els.search_form.find('#app_type').val(app_env.app_type);
-
-			_this.els.search_form.submit(function(){return false;});
+			
 
 
-			_this.search_input = _this.els.search_input;
-
-			_this.search_input.on('keyup change', function() {
-				var input_value = this.value;
-				_this.overrideStateSilently('search_query', input_value);
-				_this.RPCLegacy('search', input_value);
-			});
-
+			
 
 
 
@@ -754,8 +786,8 @@ AppBaseView.extendTo(AppView, {
 			//_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
 
 			var justhead = _this.els.navs;
-			var daddy = justhead.children('.daddy');
-			var np_button = daddy.children('.np-button');
+			var daddy = justhead.find('.daddy');
+			var np_button = justhead.find('.np-button');
 			_this.nav = {
 				justhead: justhead,
 				daddy: daddy,
@@ -802,6 +834,14 @@ AppBaseView.extendTo(AppView, {
 
 			var kd_callback = function(e){
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
+				if (d.activeElement && d.activeElement.nodeName == 'INPUT'){
+					if (e.keyCode == 27) {
+						d.activeElement.blur();
+						e.preventDefault();
+						return;
+					}
+				}
+
 				_this.arrowsKeysNav(e);
 			};
 
@@ -851,7 +891,7 @@ AppBaseView.extendTo(AppView, {
 		if (cwp){
 			var cur_md_md = this.getNesting('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
-			if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation()){
+			if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation(this)){
 				this.scrollTo($(cwp.node), {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
@@ -865,7 +905,7 @@ AppBaseView.extendTo(AppView, {
 		}
 		if (nst) {
 			$(nst.node).addClass('surf_nav');
-			//if (nst.view.getRooConPresentation() ==)
+			//if (nst.view.getRooConPresentation(this) ==)
 
 			this.scrollToWP(nst);
 

@@ -30,6 +30,9 @@ provoda.View.extendTo(ListPreview, {
 		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
+		if (!this.tpl.ancs.listc) {
+			return;
+		}
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	'stch-vmp_show': function(state) {
@@ -113,7 +116,7 @@ var ListSimplePreview = function() {};
 ListPreview.extendTo(ListSimplePreview, {
 	children_views: {
 		preview_list: ListPreviewLine,
-		lists_list: ListPreviewLine,
+//		lists_list: ListPreviewLine,
 		auth_block_lfm: etc_views.LfmLoginView,
 		auth_block_vk: SoftVkLoginUI
 	},
@@ -124,10 +127,10 @@ ListPreview.extendTo(ListSimplePreview, {
 		place: 'tpl.ancs.listc',
 		limit: 9
 	},
-	'collch-lists_list': {
+/*	'collch-lists_list': {
 		place: 'tpl.ancs.listc',
 		limit: 9
-	},
+	},*/
 	'collch-auth_part': {
 		place: 'tpl.ancs.auth_con',
 		by_model_name: true
@@ -138,7 +141,7 @@ var ImagedListPreview = function() {};
 ListSimplePreview.extendTo(ImagedListPreview, {
 	children_views: {
 		preview_list: ArtistsListPreviewLine,
-		lists_list: ListPreviewLine,
+//		lists_list: ListPreviewLine,
 		auth_block_lfm: etc_views.LfmLoginView,
 		auth_block_vk: SoftVkLoginUI
 	}
@@ -154,10 +157,10 @@ ListPreview.extendTo(ItemOfLL, {
 		place: 'tpl.ancs.listc',
 		limit: 9
 	},
-	'collch-lists_list': {
+/*	'collch-lists_list': {
 		place: 'tpl.ancs.listc',
 		limit: 9
-	}
+	}*/
 });
 
 
@@ -285,7 +288,7 @@ var tagListChange = function(array) {
 };
 var TagsListPreview = function() {};
 ListPreview.extendTo(TagsListPreview, {
-	'stch-data-list': tagListChange,
+	'stch-simple_tags_list': tagListChange,
 	createTagLink: function(name) {
 		return $('<span></span>').text(name);
 	}
@@ -293,7 +296,12 @@ ListPreview.extendTo(TagsListPreview, {
 
 
 
-
+var VKPostsView = function() {};
+PageView.extendTo(VKPostsView, {
+	base_tree: {
+		sample_name: 'vk_posts_page'
+	}
+});
 return {
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
@@ -309,7 +317,8 @@ return {
 	AlbumsListPreview:AlbumsListPreview,
 	TagsListPreview: TagsListPreview,
 	ListSimplePreview: ListSimplePreview,
-	ImagedListPreview: ImagedListPreview
+	ImagedListPreview: ImagedListPreview,
+	VKPostsView: VKPostsView
 };
 
 });

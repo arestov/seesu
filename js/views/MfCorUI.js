@@ -89,10 +89,10 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		},
 		"vis_progress-c-width": {
-			depends_on: ['can-progress', '^^want_more_songs', '#window_width'],
-			fn: function(can, p_wmss, window_width){
+			depends_on: ['can-progress', '^^want_more_songs', '#window_width', '^^must_be_expandable'],
+			fn: function(can, p_wmss, window_width, must_be_expandable){
 				if (can){
-					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss);
+					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss, !!must_be_expandable);
 				} else {
 					return 0;
 				}
@@ -240,14 +240,47 @@ provoda.View.extendTo(SongFileModelUI, {
 });
 
 
+var FilesSourceTunerView = function(){};
+provoda.View.extendTo(FilesSourceTunerView, {
+	tpl_events: {
+		changeTune: function(e, node){
+			var tune_name = node.name;
+			this.overrideStateSilently(tune_name, node.checked);
+			this.RPCLegacy('changeTune', tune_name, node.checked);
+			
+			//disable_search
+			//wait_before_playing
+			//changeTuneconsole.log(arguments);
+
+		}
+	}
+});
+
+
+var ComplectPionerView = function(){};
+provoda.View.extendTo(ComplectPionerView, {
+	children_views: {
+		vis_tuner: FilesSourceTunerView
+	}
+});
+
+
+
+
 var mfComplectUI = function() {};
 provoda.View.extendTo(mfComplectUI, {
 	children_views: {
 		'file-torrent': FileInTorrentUI,
-		'file-http': SongFileModelUI
+		'file-http': SongFileModelUI,
+		'pioneer': ComplectPionerView
 	},
-	'collch-moplas_list': {
-		place: 'tpl.ancs.listc',
+
+	'collch-moplas_list_start': {
+		place: 'tpl.ancs.listc-start',
+		by_model_name: true
+	},
+	'collch-moplas_list_end': {
+		place: 'tpl.ancs.listc-end',
 		by_model_name: true
 	}
 });

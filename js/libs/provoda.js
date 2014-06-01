@@ -1,4 +1,4 @@
-define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate'], function(spv, angbo, $, PvTemplate){
+define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers', 'hex_md5'], function(spv, angbo, $, PvTemplate, morph_helpers, hex_md5){
 "use strict";
 var push = Array.prototype.push;
 var DOT = '.';
@@ -105,11 +105,11 @@ var sync_sender = {
 
 var MDProxy = function(_provoda_id, states, children_models, md) {
 	this._provoda_id = _provoda_id;
-	this.views = [];
-	this.views_index = {};
+	this.views = null;
+	this.views_index = null;
 	this.states = states;
-	this.vstates = {};
-	this.children_models = children_models;
+	this.vstates = null;
+	//this.children_models = children_models;
 	this.md = md;
 	this.nestings = spv.cloneObj({}, children_models);
 };
@@ -123,6 +123,9 @@ MDProxy.prototype = {
 	updateStates: function() {},
 	updateNesting: function() {},
 	updateManyStates: function(obj) {
+		if (!this.vstates) {
+			this.vstates = {};
+		}
 		var changes_list = [];
 		for (var name in obj) {
 			this.vstates[name] = obj[name];
@@ -134,17 +137,24 @@ MDProxy.prototype = {
 	updateState: function(name, value){
 		//fixme если вьюха ещё не создана у неё не будет этого состояния
 		//эклюзивные состояния для вьюх не хранятся и не передаются при создании
-		if (name.indexOf('-') != -1 && console.warn){
+
+		/*if (name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop name: ' + name);
+		}*/
+		if (!this.vstates) {
+			this.vstates = {};
 		}
 		this.vstates[name] = value;
 		this.sendStatesToViews([name, value]);
 		return this;
 	},
 	state: function(state_name) {
-		return this.vstates[state_name];
+		return this.vstates && this.vstates[state_name];
 	},
 	removeView: function(view){
+		if (!this.views) {
+			return;
+		}
 		var views = [];
 		for (var i = 0; i < this.views.length; i++) {
 			if (views[i] !== view){
@@ -158,29 +168,55 @@ MDProxy.prototype = {
 	sendCollectionChange: function(collection_name, array) {
 		var old_value = this.nestings[collection_name];
 		this.nestings[collection_name] = array;
+
+		if (!this.views) {
+			return;
+		}
 		var removed;
-		if (Array.isArray(array)){
-			removed = spv.arrayExclude(array, old_value);
+
+		if (Array.isArray(old_value)){
+			if (!array){
+				removed = old_value.slice(0);
+			} else {
+				removed = [];
+				for (var i = 0; i < old_value.length; i++) {
+					var cur = old_value[i];
+					if (array.indexOf(cur) == -1){
+						removed.push(cur);
+					}
+				}
+			}
+			//console.log(removed);
 		} else if (old_value && array != old_value) {
 			removed = [old_value];
 		}
 		
 		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].collectionChange(collection_name, array, old_value, removed);
+			this.views[i].stackCollectionChange(collection_name, array, old_value, removed);
 		}
 	},
-	sendStatesToView: function(view, states_list) {
-		view.recieveStatesChanges(states_list);
+
+	stackReceivedStates: function(states_list) {
+		if (!this.views) {
+			return;
+		}
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].stackReceivedChanges(states_list);
+		}
 	},
 	sendStatesToViews: function(states_list) {
+		if (!this.views) {
+			return;
+		}
 		for (var i = 0; i < this.views.length; i++) {
-			this.sendStatesToView(this.views[i], states_list);
+			this.views[i].receiveStatesChanges(states_list);
 		}
 	},
 	removeDeadViews: function(hard_deads_check, complex_id){
 		var i = 0;
 		if (hard_deads_check){
-			var checklist = complex_id ? (this.views_index && this.views_index[complex_id]) : this.views;
+			var target_view = complex_id && this.views_index && this.views_index[complex_id];
+			var checklist = complex_id ? (target_view && [target_view]) : this.views;
 			if (checklist){
 				for (i = 0; i < checklist.length; i++) {
 					if (checklist[i].isAlive){
@@ -190,23 +226,30 @@ MDProxy.prototype = {
 			}
 			
 		}
-		var dead = [], alive = [];
-		for (i = 0; i < this.views.length; i++) {
-			if (this.views[i].dead){
-				dead.push(this.views[i]);
-			} else {
-				alive.push(this.views[i]);
+		if (this.views) {
+			var dead = [], alive = [];
+			for (i = 0; i < this.views.length; i++) {
+				if (this.views[i].dead){
+					dead.push(this.views[i]);
+				} else {
+					alive.push(this.views[i]);
+				}
 			}
-		}
 
-		if (alive.length != this.views.length){
-			this.views = alive;
-		}
-		if (dead.length){
-			for (var a in this.views_index){
-				this.views_index[a] = spv.arrayExclude(this.views_index[a], dead);
+			if (alive.length != this.views.length){
+				this.views = alive;
+			}
+			if (dead.length){
+				for (var a in this.views_index){
+					var cur = this.views_index[a];
+					if (dead.indexOf(cur) != -1) {
+						this.views_index[a] = null;
+					}
+					// = spv.arrayExclude(this.views_index[a], dead);
+				}
 			}
 		}
+		
 
 		return this;
 	},
@@ -216,6 +259,9 @@ MDProxy.prototype = {
 	killViews: function() {
 		//this.views[i] can be changed in proccess, so cache it!
 		var views = this.views;
+		if (!views) {
+			return;
+		}
 		for (var i = 0; i < views.length; i++) {
 			views[i].die({skip_md_call: true});
 		}
@@ -223,40 +269,53 @@ MDProxy.prototype = {
 		return this;
 	},
 	collectViewsGarbadge: function() {
+		if (!this.views){
+			return;
+		}
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].checkDeadChildren();
 		}
 	},
-	getViews: function(name, hard_deads_check) {
+	getViews: function(complex_id, hard_deads_check) {
 		this.removeDeadViews(hard_deads_check);
-		if (name){
-			return this.views_index[name];
+		if (complex_id){
+			return [this.views_index && this.views_index[complex_id]];
 		} else {
-			return this.views;
+			return this.views || [];
 		}
 	},
 	getView: function(complex_id){
 		this.removeDeadViews(true, complex_id);
-		complex_id = complex_id || 'main';
-		return this.views_index[complex_id] && this.views_index[complex_id][0];
+		if (!complex_id) {
+			throw new Error('complex_id');
+		}
+		//complex_id = complex_id || 'main';
+		return this.views_index && this.views_index[complex_id];// && this.views_index[complex_id][0];
 	},
 	addView: function(v, complex_id) {
 		this.removeDeadViews(true, complex_id);
+		if (!this.views) {
+			this.views = [];
+		}
 		this.views.push( v );
-		complex_id = complex_id || 'main';
-		(this.views_index[complex_id] = this.views_index[complex_id] || []).push(v);
+		if (!this.views_index) {
+			this.views_index = {};
+		}
+		this.views_index[complex_id] = v;
+		//(= this.views_index[complex_id] || []).push(v);
 		return this;
 	},
-	getRooConPresentation: function(mplev_view, get_ancestor, only_by_ancestor) {
+	getRooConPresentation: function(root_view, mplev_view, get_ancestor, only_by_ancestor) {
 		var views = this.getViews();
 		var cur;
 		if (!only_by_ancestor){
 			for (var i = 0; i < views.length; i++) {
 				cur = views[i];
-				var target = cur.root_view.getChildView(this, 'main');
-				if (target == cur){
+				if ( root_view.matchCildrenView( cur ) ) {
 					return cur;
 				}
+
+			
 			}
 		}
 		for (var jj = 0; jj < views.length; jj++) {
@@ -285,7 +344,7 @@ var views_proxies = {
 	spaces_list: [],
 	//инициализация простанства
 	//поддержка простанства в актуальном состоянии
-	//очистка простанства
+	//очистка пространства
 
 	addRootView: function(view, root_md) {
 		return this.addSpaceById(view.view_id, root_md);
@@ -389,7 +448,7 @@ var views_proxies = {
 		for (var i = 0; i < this.spaces_list.length; i++) {
 			var cur = this.spaces_list[i];
 			if (cur.ids_index[md._provoda_id]) {
-				cur.mpxes_index[md._provoda_id].sendStatesToViews(states_list);
+				cur.mpxes_index[md._provoda_id].stackReceivedStates(states_list);
 
 			}
 		}
@@ -452,14 +511,14 @@ FakeModel.prototype = {
 	}
 };
 
-var SyncReciever = function(stream){
+var SyncReceiver = function(stream){
 	this.stream = stream;
 	this.md_proxs_index = {};
 	this.models_index = {};
 
 };
 
-SyncReciever.prototype = {
+SyncReceiver.prototype = {
 	
 	buildTree: function(array) {
 		var i, cur, cur_pvid;
@@ -513,7 +572,7 @@ SyncReciever.prototype = {
 			}
 
 			
-			this.md_proxs_index[message._provoda_id].sendStatesToViews(message.value);
+			this.md_proxs_index[message._provoda_id].stackReceivedStates(message.value);
 		},
 		update_nesting: function(message) {
 			if (message.struc) {
@@ -526,7 +585,8 @@ SyncReciever.prototype = {
 			var fakes_models = idToModel(this.models_index, message.value);
 			
 
-			target_model.children_models[message.name] = target_md_proxy.children_models[message.name] = fakes_models;
+			target_model.children_models[message.name]= fakes_models;
+			//target_md_proxy.children_models[message.name] = fakes_models;
 			target_md_proxy.sendCollectionChange(message.name, fakes_models);
 		}
 	}
@@ -543,7 +603,7 @@ provoda = {
 	},
 	MDProxy: MDProxy,
 	sync_s: sync_sender,
-	SyncR: SyncReciever,
+	SyncR: SyncReceiver,
 	Eventor: function(){},
 	StatesEmitter: function(){},
 	Model: function(){},
@@ -583,11 +643,11 @@ var DeathMarker = function() {
 	//helper to find memory leaks; if there is memory leaking DeathMarker will be available in memory heap snapshot;
 };
 
-var setEvLiItems = function(items_list, current_motivator) {
+var setEvLiItems = function(items_list) {
 	var old_value = this.current_motivator;
 	this.current_motivator = this.current_motivator;
 
-	items_list = items_list && spv.toRealArray(items_list);
+	items_list = spv.toRealArray(items_list);
 	this.unsubcribeOld();
 	this.items_list = items_list;
 	this.controls_list.length = 0;
@@ -596,25 +656,44 @@ var setEvLiItems = function(items_list, current_motivator) {
 		var cur = items_list[i];
 		var oldv = cur.current_motivator;
 		cur.current_motivator = this.current_motivator;
-		this.controls_list[i] = cur.on(this.event_name, this.eventCallback, {
+
+		this.controls_list[i] = cur.evcompanion._addEventHandler(this.event_name, this.event_callback, this, false, false, this.skip_reg, false, false, true);
+		//_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
+
+		/*this.controls_list[i] = cur.on(this.event_name, this.event_callback, {
 			easy_bind_control: true,
-			context: this.event_context,
+			context: this,
 			skip_reg: this.skip_reg
-		});
+		});*/
+	
 		cur.current_motivator = oldv;
 	}
 	this.current_motivator = old_value;
 };
-var ItemsEvents = function(event_name, eventCallback) {
+
+
+
+var ItemsEvents = function(event_name, md, callback) {
 	this.items_list = null;
+	this.md = md;
 	this.controls_list = [];
 	this.event_name = event_name;
-	this.eventCallback = eventCallback;
-	this.skip_reg = null;
-	this.event_context = this;
+	this.callback = callback;
+	this.skip_reg = false;
 	this.current_motivator = null;
 };
 ItemsEvents.prototype = {
+	event_callback: function(e) {
+		var old_value = this.md.current_motivator;
+		this.md.current_motivator = e.target.current_motivator;
+		this.callback.call(this.md, {
+			target: this.md,
+			item: e.target,
+			value: e.value,
+			items: this.items_list
+		});
+		this.md.current_motivator = old_value;
+	},
 	unsubcribeOld: function() {
 		if (this.controls_list.length){
 			for (var i = 0; i < this.controls_list.length; i++) {
@@ -625,46 +704,52 @@ ItemsEvents.prototype = {
 	setItems: setEvLiItems
 };
 
+
 var hasargfn = function(cur) {return cur;};
-var StatesArchiver = function(state_name, opts) {
+var StatesArchiver = function(state_name, result_state_name, md, calculateResult) {
 	this.items_list = null;
 	this.controls_list = [];
 	this.current_motivator = null;
+	this.md = md;
+	this.result_state_name = result_state_name;
 
-	var _this = this;
-	this.checkFunc = function(e) {
-		_this.getItemsValues(e && e.target);
-	};
 	this.state_name = state_name;
 	this.event_name = 'state_change-' + this.state_name;
-	this.eventCallback = this.checkFunc;
 	this.skip_reg = true;
 
-	this.returnResult = opts.returnResult;
-	var calcR = opts.calculateResult;
+	var calcR = calculateResult;
 	if (calcR){
 		if (typeof calcR == 'function'){
-			this.calculateResult = calcR;
+			this.calculate_result = calcR;
 		} else {
 			if (calcR == 'some'){
-				this.calculateResult = this.some;
+				this.calculate_result = this.some;
 			} else if (calcR == 'every'){
-				this.calculateResult = this.every;
+				this.calculate_result = this.every;
 			}
 		}
 
 	} else {
-		this.calculateResult = this.some;
+		this.calculate_result = this.some;
 	}
 
 
 };
 StatesArchiver.prototype = {
+	event_callback: function(e) {
+		this.getItemsValues(e && e.target);
+	},
 	every: function(values_array) {
 		return !!values_array.every(hasargfn);
 	},
 	some: function(values_array) {
 		return !!values_array.some(hasargfn);
+	},
+	setResult: function(value) {
+		var old_value = this.md.current_motivator;
+		this.md.current_motivator = this.current_motivator;
+		this.md.updateState(this.result_state_name, value);
+		this.md.current_motivator = old_value;
 	},
 	getItemsValues: function(item) {
 		var current_motivator = (item && item.current_motivator) || this.current_motivator;
@@ -674,7 +759,7 @@ StatesArchiver.prototype = {
 		}
 		var old_value = this.current_motivator;
 		this.current_motivator = current_motivator;
-		this.returnResult.call(this, this.calculateResult.call(this, values_list));
+		this.setResult(this.calculate_result.call(this, values_list));
 		this.current_motivator = old_value;
 		return values_list;
 	},
@@ -689,7 +774,7 @@ StatesArchiver.prototype = {
 	setItems: function(items_list) {
 		items_list = items_list && spv.toRealArray(items_list);
 		this.setItemsReal(items_list);
-		this.checkFunc();
+		this.event_callback();
 	}
 };
 
@@ -729,7 +814,12 @@ FlowStep.prototype.call = function() {
 		this.cb_wrapper.call(this.real_context, this, this.fn, this.context, this.args, this.arg);
 	} else {
 		if (this.args){
-			this.fn.apply(this.context, this.args);
+			if (this.args.length > 1) {
+				this.fn.apply(this.context, this.args);
+			} else {
+				this.fn.call(this.context, this.args[0]);
+			}
+			
 		} else {
 			this.fn.call(this.context, this.arg);
 		}
@@ -803,7 +893,6 @@ var getBoxedSetImmFunc = function(win) {
 };
 
 var getBoxedRAFFunc = function(win) {
-	return false;
 	var raf;
 
 	if ( win.requestAnimationFrame ){
@@ -821,9 +910,10 @@ var getBoxedRAFFunc = function(win) {
 
 
 	
-var CallbacksFlow = function(win, rendering_flow) {
+var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	this.flow = [];
 	this.busy = null;
+	this.iteration_time = iteration_time || 250;
 	this.iteration_delayed = null;
 	this.flow_steps_counter = 1;
 	this.flow_steps_sorted = false;
@@ -848,7 +938,7 @@ var CallbacksFlow = function(win, rendering_flow) {
 CallbacksFlow.prototype = {
 
 	iterateCallbacksFlow: function() {
-		var start = Date.now() + 100;
+		var start = Date.now() + this.iteration_time;
 		this.iteration_delayed = false;
 		this.callbacks_busy = true;
 		while (this.flow.length){
@@ -889,8 +979,62 @@ provoda.CallbacksFlow = CallbacksFlow;
 var main_calls_flow = new CallbacksFlow(window);
 
 
+var requests_by_declarations = {};
+
+var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
+
+	var api_name = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(sputnik, opts),
+		non_standart_api_opts = send_declr[3];
+
+	var network_api;
+	if (typeof api_name == 'string') {
+		network_api = spv.getTargetField(sputnik.app, api_name);
+	} else if (typeof api_name == 'function') {
+		network_api = api_name.call(sputnik);
+	}
+
+	if (!network_api.errors_fields && !network_api.checkResponse) {
+		throw new Error('provide a way to detect errors!');
+	}
+
+	var manual_nocache = api_args[2] && api_args[2].nocache;
+
+	if (!non_standart_api_opts) {
+		if (!api_args[2]) {
+			api_args[2] = network_api_opts;
+		} else {
+		}
+	}
+	if (typeof api_name != 'string') {
+		api_name = Math.random();
+	}
+	var cache_key;
+	if (!non_standart_api_opts && !manual_nocache) {
+		var big_string = JSON.stringify([api_name, api_method, api_args]);
+		cache_key = hex_md5(big_string);
+		if (requests_by_declarations[cache_key]) {
+			return requests_by_declarations[cache_key];
+		}
+
+	}
+	
 
 
+	var request = network_api[ api_method ].apply(network_api, api_args);
+	request.network_api = network_api;
+	if (cache_key) {
+		requests_by_declarations[cache_key] = request;
+		request.always(function() {
+			delete requests_by_declarations[cache_key];
+		});
+	}
+
+	return request;
+};
+
+
+
+var clean_obj = {};
 
 var cached_parsed_namespace = {};
 var parseNamespace = function(namespace) {
@@ -909,19 +1053,36 @@ var EventSubscribingOpts = function(short_name, namespace, cb, once, context, im
 	this.wrapper = wrapper || null;
 };
 
+var findErrorByList = function(data, errors_selectors) {
+	var i, cur, has_error;
+	for (i = 0; i < errors_selectors.length; i++) {
+		cur = errors_selectors[i];
+		has_error = spv.getTargetField(data, cur);
+		if (has_error){
+			break;
+		}
+	}
+	return has_error;
+};
+
 var FastEventor = function(context) {
 	this.sputnik = context;
-	this.subscribes = {};
-	this.subscribes_cache = {};
+	this.subscribes = null;
+	this.subscribes_cache = null;
 	this.reg_fires = null;
 	if (context.reg_fires){
 		this.reg_fires = context.reg_fires;
 	}
-	this.requests = {};
-	this.mapped_reqs = this.sputnik.req_map ? {} : null;
+	this.requests = null;
+	this.mapped_reqs = null;//this.sputnik.req_map ? {} : null;
+	this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
 };
 FastEventor.prototype = {
 	_pushCallbackToStack: function(opts) {
+		if (!this.subscribes) {
+			this.subscribes = {};
+		}
+
 		if (!this.subscribes[opts.short_name]){
 			this.subscribes[opts.short_name] = [];
 		}
@@ -972,7 +1133,7 @@ FastEventor.prototype = {
 	_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
 		//common opts allowed
 		if (this.sputnik.convertEventName){
-			namespace = this.sputnik.convertEventName(name);
+			namespace = this.sputnik.convertEventName(namespace);
 		}
 
 		var
@@ -985,16 +1146,21 @@ FastEventor.prototype = {
 			this.off(namespace);
 		}
 
-		var reg_args = null;
+		var reg_args = null, one_reg_arg = null;
 
 		var callbacks_wrapper = this.hndUsualEvCallbacksWrapper;
 
 		var reg_fires = this.getPossibleRegfires(namespace);
 		if (reg_fires && reg_fires.length){
-			reg_fires[0].fn.call(this.sputnik, function() {
-				reg_args = arguments;
+			reg_args = reg_fires[0].fn.call(this.sputnik, namespace, name_parts);
+			if (reg_args) {
 				fired = true;
-			}, namespace, {opts: false}, name_parts);
+				if (!Array.isArray(reg_args)) {
+					one_reg_arg = reg_args;
+					reg_args = null;
+				}
+			}
+			
 		}
 		if (fired){
 			if (reg_fires[0].getWrapper){
@@ -1003,9 +1169,14 @@ FastEventor.prototype = {
 			if (!skip_reg){
 				var mo_context = context || _this.sputnik;
 				if (typeof soft_reg != 'undefined' && !soft_reg){
-					cb.apply(mo_context, reg_args);
+					if (one_reg_arg) {
+						cb.call(mo_context, one_reg_arg);
+					} else {
+						cb.apply(mo_context, reg_args);
+					}
+					
 				} else {
-					this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, false, callbacks_wrapper, this.sputnik, this.current_motivator);
+					this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
 				}
 			}
 		}
@@ -1023,11 +1194,11 @@ FastEventor.prototype = {
 			return this.sputnik;
 		}
 	},
-	once: function(namespace, cb, opts){
+	once: function(namespace, cb, opts, context){
 		return this._addEventHandler(
 			namespace,
 			cb,
-			opts && opts.context,
+			opts && opts.context || context,
 			opts && opts.immediately,
 			opts && opts.exlusive,
 			opts && opts.skip_reg,
@@ -1035,11 +1206,11 @@ FastEventor.prototype = {
 			true,
 			opts && opts.easy_bind_control);
 	},
-	on: function(namespace, cb, opts){
+	on: function(namespace, cb, opts, context){
 		return this._addEventHandler(
 			namespace,
 			cb,
-			opts && opts.context,
+			opts && opts.context || context,
 			opts && opts.immediately,
 			opts && opts.exlusive,
 			opts && opts.skip_reg,
@@ -1049,14 +1220,14 @@ FastEventor.prototype = {
 	},
 	off: function(namespace, cb, obj, context){
 		if (this.convertEventName){
-			namespace = this.convertEventName(name);
+			namespace = this.convertEventName(namespace);
 		}
 		var
-			clean = [],
 			short_name = parseNamespace(namespace)[0],
 			queried = this.getMatchedCallbacks(namespace);
 
-		if (this.subscribes[short_name]){
+		if (this.subscribes && this.subscribes[short_name]){
+			var clean = [];
 			if (cb || obj){
 				for (var i = 0; i < queried.matched.length; i++) {
 					var cur = queried.matched[i];
@@ -1084,6 +1255,9 @@ FastEventor.prototype = {
 		return this.sputnik;
 	},
 	resetSubscribesCache: function(short_name) {
+		if (!this.subscribes_cache) {
+			return;
+		}
 
 		//fixme - bug for "state_change-window_width.song_file_progress" ( "state_change-window_width" stays valid, but must be invalid)
 		for (var cur_namespace in this.subscribes_cache){
@@ -1107,9 +1281,9 @@ FastEventor.prototype = {
 		var
 			r, short_name = parseNamespace(namespace)[0];
 
-		var cb_cs = this.subscribes[short_name];
+		var cb_cs = this.subscribes && this.subscribes[short_name];
 		if (cb_cs){
-			var cached_r = this.subscribes_cache[namespace];
+			var cached_r = this.subscribes_cache && this.subscribes_cache[namespace];
 			if (cached_r){
 				return cached_r;
 			} else {
@@ -1128,6 +1302,9 @@ FastEventor.prototype = {
 					} else {
 						not_matched.push(cb_cs[i]);
 					}
+				}
+				if (!this.subscribes_cache) {
+					this.subscribes_cache = {};
 				}
 				this.subscribes_cache[namespace] = r = {matched: matched, not_matched: not_matched};
 			}
@@ -1150,24 +1327,26 @@ FastEventor.prototype = {
 		} else {
 			var callback_context = cur.context || this.sputnik;
 			var wrapper_context = this.sputnik;
-			this.sputnik._getCallsFlow().pushToFlow(cur.cb, callback_context, args, arg, cur.wrapper, wrapper_context, this.sputnik.current_motivator);
+
+			var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
+			calls_flow.pushToFlow(cur.cb, callback_context, args, arg, cur.wrapper, wrapper_context, this.sputnik.current_motivator);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
 			},1);*/
 		}
 	},
-	triggerCallbacks: function(cb_cs, args, opts, name, arg){
+	triggerCallbacks: function(cb_cs, args, opts, ev_name, arg){
 		for (var i = 0; i < cb_cs.length; i++) {
 			var cur = cb_cs[i];
 			this.callEventCallback(cur, args, opts, arg);
 			if (cur.once){
-				this.off(name, false, cur);
+				this.off(ev_name, false, cur);
 			}
 		}
 	},
-	trigger: function(name){
-		var cb_cs = this.getMatchedCallbacks(name).matched;
+	trigger: function(ev_name){
+		var cb_cs = this.getMatchedCallbacks(ev_name).matched;
 		if (cb_cs){
 			var i = 0;
 			var args = new Array(arguments.length - 1);
@@ -1179,7 +1358,7 @@ FastEventor.prototype = {
 				var cur = cb_cs[i];
 				this.callEventCallback(cur, args, (args && args[ args.length -1 ]));
 				if (cur.once){
-					this.off(name, false, cur);
+					this.off(ev_name, false, cur);
 				}
 			}
 		}
@@ -1188,12 +1367,12 @@ FastEventor.prototype = {
 	default_requests_space: 'nav',
 	getRequests: function(space) {
 		space = space || this.default_requests_space;
-		return this.requests[space] || [];
+		return this.requests && this.requests[space];
 	},
 	getQueued: function(space) {
 		//must return new array;
 		var requests = this.getRequests(space);
-		return spv.filter(requests, 'queued');
+		return requests && spv.filter(requests, 'queued');
 	},
 	addRequest: function(rq, opts){
 		this.addRequests([rq], opts);
@@ -1211,6 +1390,9 @@ FastEventor.prototype = {
 				spv.setTargetField(req, this.sputnik.getReqsOrderField(), opts.order);
 				req.order = opts.order;
 			}
+		}
+		if (!this.requests) {
+			this.requests = {};
 		}
 
 		if (!this.requests[space]){
@@ -1259,7 +1441,10 @@ FastEventor.prototype = {
 	},
 
 	sortRequests: function(space) {
-		var requests = this.requests[space || this.default_requests_space];
+		var requests = this.requests && this.requests[space || this.default_requests_space];
+		if (!this.requests || !this.requests.length) {
+			return;
+		}
 
 		var field_name = this.sputnik.getReqsOrderField();
 
@@ -1278,6 +1463,9 @@ FastEventor.prototype = {
 	},
 	getAllRequests: function() {
 		var all_requests = [];
+		if (!this.requests) {
+			return all_requests;
+		}
 		for (var space in this.requests){
 			if (this.requests[space].length){
 				all_requests.push.apply(all_requests, this.requests[space]);
@@ -1343,19 +1531,27 @@ FastEventor.prototype = {
 			}
 		}
 		var cant_request;
-		for (i = 0; i < maps_for_state.length; i+=2) {
-			cur = this.mapped_reqs[maps_for_state[i]];
-			if (cur && (cur.done || cur.process)) {
-				cant_request = true;
-				break;
+		if (this.mapped_reqs) {
+			for (i = 0; i < maps_for_state.length; i+=2) {
+				cur = this.mapped_reqs[maps_for_state[i]];
+				if (cur && (cur.done || cur.process)) {
+					cant_request = true;
+					break;
+				}
 			}
 		}
+		
 		if (cant_request) {
 			return;
 		}
 
 		var selected_map = maps_for_state[1];
 		var selected_map_num = maps_for_state[0];
+		if (!this.mapped_reqs) {
+			this.mapped_reqs = {};
+		}
+
+
 		if ( !this.mapped_reqs[selected_map_num] ) {
 			this.mapped_reqs[selected_map_num] = {
 				done: false,
@@ -1366,12 +1562,20 @@ FastEventor.prototype = {
 
 		var store = this.mapped_reqs[selected_map_num];
 
-		store.process = true;
+		
 		states_list = selected_map[0];
 		this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
-		var send = selected_map[2], parse = selected_map[1], errors_selectors = selected_map[3];
-		var request = send.call(this.sputnik, {has_error: store.error});
+		var parse = selected_map[1], send_declr = selected_map[2];
+		
 
+		
+
+		var request = getRequestByDeclr(send_declr, this.sputnik, 
+			{has_error: store.error},
+			{nocache: store.error});
+		var network_api = request.network_api;
+
+		store.process = true;
 		var _this = this;
 		request
 				.always(function() {
@@ -1382,41 +1586,34 @@ FastEventor.prototype = {
 					store.error = true;
 				})
 				.done(function(r){
-					var has_error;
+					var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
 					var i;
-					for (i = 0; i < errors_selectors.length; i++) {
-						var cur = errors_selectors[i];
-						has_error = spv.getTargetField(r, cur);
-						if (has_error){
-							break;
-						}
-					}
 					if (has_error){
 						store.error = true;
 					} else {
-						var result = parse.call(_this.sputnik, r);
+						var result = parse.call(_this.sputnik, r, null, morph_helpers);
 						if (result) {
+							var result_states;
 
 							if (Array.isArray(result)) {
 								if (result.length != states_list.length) {
 									throw new Error('values array does not match states array');
 								}
-								
 
-								var result_states = {};
+								result_states = {};
 								for (i = 0; i < states_list.length; i++) {
-									result_states[ states_list[i] ] = result[i];
+									result_states[ states_list[i] ] = result[ i ];
 								}
-								_this.sputnik.updateManyStates(result_states);
+
 							} else if (typeof result == 'object') {
 								for (i = 0; i < states_list.length; i++) {
 									if (!result.hasOwnProperty(states_list[i])) {
 										throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
 									}
 								}
-								_this.sputnik.updateManyStates(result);
+								result_states = result;
 							}
-							
+							_this.sputnik.updateManyStates( result_states );
 
 
 							store.error = false;
@@ -1440,6 +1637,161 @@ FastEventor.prototype = {
 			
 		}
 		return loading_marks;
+	},
+	requestNesting: function(dclt, nesting_name) {
+		if (!dclt) {
+			return;
+		}
+		if (!this.nesting_requests) {
+			this.nesting_requests = {};
+		}
+
+		if (!this.nesting_requests[ nesting_name ]) {
+			this.nesting_requests[ nesting_name ] = {
+				//has_items: false,
+				has_all_items: false,
+				last_page: 0,
+				error: false,
+				process: false
+			};
+		}
+
+		var store = this.nesting_requests[ nesting_name ];
+		if (store.process || store.has_all_items) {
+			return;
+		}
+
+		var is_main_list = nesting_name == this.sputnik.main_list_name;
+
+		this.sputnik.updateState('loading_nesting_' + nesting_name, true);
+		if (is_main_list) {
+			this.sputnik.updateState('main_list_loading', true);
+		}
+		var side_data_parsers = dclt[0][2];
+		var parse_items = dclt[0][0], parse_serv = dclt[0][1], send_declr = dclt[1];
+		var supports_paging = !!parse_serv;
+		var paging_opts = this.sputnik.getPagingInfo(nesting_name);
+
+		var network_api_opts = {
+			nocache: store.error
+		};
+
+		if (supports_paging) {
+			network_api_opts.paging = paging_opts;
+		}
+		
+
+		
+
+		var request = getRequestByDeclr(send_declr, this.sputnik,
+			{has_error: store.error, paging: paging_opts},
+			network_api_opts);
+		var network_api = request.network_api;
+		var source_name = network_api.source_name;
+
+		store.process = true;
+		var _this = this;
+		request
+				.always(function() {
+					store.process = false;
+					_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
+					if (is_main_list) {
+						_this.sputnik.updateState('main_list_loading', false);
+					}
+					//_this.sputnik.updateManyStates(_this.makeLoadingMarks(states_list, false));
+				})
+				.fail(function(){
+					store.error = true;
+				})
+				.done(function(r){
+					var sputnik = _this.sputnik;
+					var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
+
+					if (has_error){
+						store.error = true;
+					} else {
+						var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers);
+						var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
+						
+				
+
+						if (!supports_paging) {
+							store.has_all_items = true;
+
+							sputnik.updateState("all_data_loaded", true);
+						} else {
+							var has_more_data;
+							if (serv_data === true) {
+								has_more_data = true;
+							} else if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
+								if (!isNaN(serv_data.total)) {
+									if ( (paging_opts.current_length + items.length) < serv_data.total && serv_data.total > paging_opts.page_limit) {
+										has_more_data = true;
+									}
+								} else {
+									if (serv_data.page_num < serv_data.total_pages_num) {
+										has_more_data = true;
+									}
+								}
+
+							} else {
+								has_more_data = items.length == sputnik.page_limit;
+							}
+
+
+
+							if (!has_more_data) {
+								store.has_all_items = true;
+								sputnik.updateState("all_data_loaded", true);
+							}
+						}
+						items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
+
+						sputnik.nextTick(sputnik.insertDataAsSubitems, [nesting_name, items, serv_data], true);
+
+
+						if (!sputnik.loaded_nestings_items[nesting_name]) {
+							sputnik.loaded_nestings_items[nesting_name] = 0;
+						}
+						var has_data_holes = serv_data === true || (serv_data && serv_data.has_data_holes === true);
+
+						sputnik.loaded_nestings_items[nesting_name] += has_data_holes ? paging_opts.page_limit : items.length;
+						//special logic where server send us page without few items. but it can be more pages available
+						//so serv_data in this case is answer for question "Is more data available?"
+
+						if (side_data_parsers) {
+							for (var i = 0; i < side_data_parsers.length; i++) {
+								sputnik.nextTick(
+									_this.sputnik.handleNetworkSideData, [
+										source_name,
+										side_data_parsers[i][0],
+										side_data_parsers[i][1].call(sputnik, r, paging_opts, morph_helpers)
+									], true);
+
+							}
+
+						}
+
+						
+
+
+						//сделать выводы о завершенности всех данных
+					}
+				});
+
+		this.addRequest(request);
+		return request;
+
+		/*
+		есть ли декларация
+		все ли возможные данные получены
+		в процессе запроса (пока можно запрашивать в один поток)
+
+
+		маркировка ошибок с прошлых запросов не участвует в принятиях решений, но используется для отказа от кеша при новых запросах
+
+
+		*/
 	}
 
 };
@@ -1472,18 +1824,19 @@ spv.Class.extendTo(provoda.Eventor, {
 		var old_value = item.current_motivator;
 		motivator = motivator || this.current_motivator;
 		item.current_motivator = motivator;
-		fn.call(this, item);
+		var result = fn.call(this, item);
 		item.current_motivator = old_value;
+		return result;
 	},
 	hndMotivationWrappper: hndMotivationWrappper,
 	nextTick: function(fn, args, use_current_motivator) {
 		this._getCallsFlow().pushToFlow(fn, this, args, false, this.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
-	once: function(namespace, cb, opts) {
-		return this.evcompanion.once(namespace, cb, opts);
+	once: function(namespace, cb, opts, context) {
+		return this.evcompanion.once(namespace, cb, opts, context);
 	},
-	on: function(namespace, cb, opts) {
-		return this.evcompanion.on(namespace, cb, opts);
+	on: function(namespace, cb, opts, context) {
+		return this.evcompanion.on(namespace, cb, opts, context);
 	},
 	off: function(namespace, cb, obj, context) {
 		return this.evcompanion.off(namespace, cb, obj, context);
@@ -1512,6 +1865,9 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	requestState: function() {
 		return this.evcompanion.requestState.apply(this.evcompanion, arguments);
+	},
+	requestNesting: function() {
+		return this.evcompanion.requestNesting.apply(this.evcompanion, arguments);
 	}
 });
 
@@ -1528,13 +1884,18 @@ var iterateChList = function(changes_list, context, cb) {
 		cb.call(context, i, changes_list[i], changes_list[i+1]);
 	}
 };
-var reversedIterateChList = function(changes_list, context, cb) {
-	for (var i = changes_list.length - 1; i >= 0; i-=2) {
-		cb.call(context, i, changes_list[i-1], changes_list[i]);
+
+
+var hasPrefixedProps = function(props, prefix) {
+	var has_prefixed;
+	for (var prop_name in props) {
+		if (props.hasOwnProperty(prop_name) && prop_name.indexOf(prefix) === 0){
+			has_prefixed = true;
+			break;
+		}
 	}
+	return has_prefixed;
 };
-
-
 
 var std_event_opt = {force_async: true};
 
@@ -1554,18 +1915,34 @@ var PVStateChangeEvent = function(type, value, old_value, target) {
 	this.target = target;
 };
 
-provoda.Eventor.extendTo(provoda.StatesEmitter, {
+
+var EvConxOpts = function(context, immediately) {
+	this.context = context;
+	this.immediately = immediately;
+};
+
+var StatesLabour = function() {
+	this.collecting_states_changing = false;
+	this.original_states = {};
+	this.states_changing_stack = [];
+	this.all_i_cg = [];
+	this.all_ch_compxs = [];
+	this.changed_states = [];
+	this.total_ch = [];
+
+};
+
+provoda.Eventor.extendTo(provoda.StatesEmitter, function(add) {
+add({
 	init: function(){
 		this._super();
 		this.conx_optsi = null;
 		this.conx_opts = null;
-		this.collecting_states_changing = null;
 		this.zdsv = null;
 		this.current_motivator = this.current_motivator || null;
 
 
 		this.states = {};
-		this.states_changing_stack = [];
 
 		//this.collectCompxs();
 
@@ -1575,12 +1952,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		test: function(namespace) {
 			return namespace.indexOf('vip_state_change-') === 0;
 		},
-		fn: function(cb, namespace) {
+		fn: function(namespace) {
 			var state_name = namespace.replace('vip_state_change-', '');
-			cb({
+			return {
 				value: this.state(state_name),
 				target: this
-			});
+			};
 		},
 		getWrapper: function() {
 			return this.hndMotivationWrappper;
@@ -1590,12 +1967,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		test: function(namespace) {
 			return namespace.indexOf('state_change-') === 0;
 		},
-		fn: function(cb, namespace) {
+		fn: function(namespace) {
 			var state_name = namespace.replace('state_change-', '');
-			cb({
+			return {
 				value: this.state(state_name),
 				target: this
-			});
+			};
 		},
 		getWrapper: function() {
 			return this.hndMotivationWrappper;
@@ -1604,13 +1981,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 	getContextOptsI: function() {
 		if (!this.conx_optsi){
-			this.conx_optsi = {context: this, immediately: true};
+			this.conx_optsi = new EvConxOpts(this, true);
 		}
 		return this.conx_optsi;
 	},
 	getContextOpts: function() {
 		if (!this.conx_opts){
-			this.conx_opts = {context: this};
+			this.conx_opts = new EvConxOpts(this);
 		}
 		return this.conx_opts;
 	},
@@ -1655,7 +2032,37 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (collches_modified || base_tree_mofified) {
 			this.collectBaseExtendStates();
 		}
+
+		if (this.collectNestingsDeclarations) {
+			this.collectNestingsDeclarations(props);
+		}
+
+		if (this.changeDataMorphDeclarations) {
+			this.changeDataMorphDeclarations(props);
+		}
+
+		
+		for (var i = 0; i < this.xxxx_morph_props.length; i++) {
+			var cur = this.xxxx_morph_props[i];
+			var cur_name = Array.isArray(cur) ? cur[0] : cur;
+			var subfield = Array.isArray(cur) && cur[1];
+			if (props.hasOwnProperty(cur_name)) {
+				if (typeof this[cur_name] != 'function' && this[cur_name] !== true) {
+					var obj = {
+						props_map: this[cur_name]
+					};
+					if (subfield) {
+						obj.source = subfield;
+					}
+					this[cur_name] = spv.mmap(obj);
+				}
+				
+			}
+		}
+
+		
 	},
+	xxxx_morph_props: [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'],
 	hndExpandViewTree: function(e) {
 		if (!e.value) {
 			return;
@@ -1718,14 +2125,20 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 
 		if (state_name && this.dclrs_expandable) {
-			if (this.dclrs_expandable[state_name] && !this.handled_expandable_dclrs[state_name]) {
-				this.handled_expandable_dclrs[state_name] = true;
-				for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
-					this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
+			if (this.dclrs_expandable[state_name]) {
+				if (!this._lbr.handled_expandable_dclrs) {
+					this._lbr.handled_expandable_dclrs = {};
 				}
+				if (!this._lbr.handled_expandable_dclrs[state_name]) {
+					this._lbr.handled_expandable_dclrs[state_name] = true;
+					for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
+						this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
+					}
 
-				this.checkChildrenModelsRendering();
-				this.requestAll();
+					this.checkChildrenModelsRendering();
+					this.requestAll();
+				}
+				
 			}
 		}
 		
@@ -1785,42 +2198,52 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		cache: {},
 		parent_count_regexp: /^\^+/gi,
 		parent: function(string) {
-			if (this.cache[string]){
-				return this.cache[string];
+			//example: '^visible'
+
+			if (!this.cache[string]){
+				var state_name = string.replace(this.parent_count_regexp, '');
+				var count = string.length - state_name.length;
+				this.cache[string] = {
+					full_name: string,
+					ancestors: count,
+					state_name: state_name
+				};
 			}
-			var state_name = string.replace(this.parent_count_regexp, '');
-			var count = string.length - state_name.length;
-			this.cache[string] = {
-				full_name: string,
-				ancestors: count,
-				state_name: state_name
-			};
+			
 			return this.cache[string];
 		},
 		nesting: function(string) {
-			if (this.cache[string]){
-				return this.cache[string];
-			}
-			var nesting_and_state_name = string.replace('@', '');
-			var parts = nesting_and_state_name.split(':');
+			//example:  '@some:complete:list'
+			if (!this.cache[string]){
+				var nesting_and_state_name = string.replace('@', '');
+				var parts = nesting_and_state_name.split(':');
 
-			this.cache[string] = {
-				full_name: string,
-				nesting_name: parts[0],
-				state_name: parts[1]
-			};
+				var nesting_name = parts.pop();
+				var state_name = parts.pop();
+				var zin_func = parts.pop();
+				if (!zin_func) {
+					zin_func = function(list) {return list;};
+				}
+
+				this.cache[string] = {
+					full_name: string,
+					nesting_name: nesting_name,
+					state_name: state_name,
+					zin_func: zin_func
+				};
+			}
+			
 
 			return this.cache[string];
 		},
 		root: function(string) {
-			if (this.cache[string]){
-				return this.cache[string];
+			//example: '#vk_id'
+			if (!this.cache[string]){
+				this.cache[string] = {
+					full_name: string,
+					state_name: string.replace('#', '')
+				};
 			}
-
-			this.cache[string] = {
-				full_name: string,
-				state_name: string.replace('#', '')
-			};
 
 			return this.cache[string];
 		},
@@ -1855,7 +2278,22 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 			},
 			nesting: function(md) {
+				var list = md.conndst_nesting;
+				if (!list){
+					return;
+				}
+				if (!md.archivateChildrenStates) {
+					throw new Error('cant calculate nesting based complex states for view (only for models)');
+				}
+				for (var i = 0; i < list.length; i++) {
+					var cur = list[i];
+					
+					
+					
+					
+					md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
 
+				}
 			},
 			root: function(md) {
 				var list = md.conndst_root;
@@ -1876,7 +2314,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	collectStatesConnectionsProps: function() {
 		/*
-		'compx-some_state': [['^visible', '@list:complete', '#vk_id'], function(visible, complete){
+		'compx-some_state': [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
 	
 		}]
 		*/
@@ -1967,12 +2405,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (this.hasOwnProperty('complex_states')){
 			need_recalc = true;
 		} else {
-			for (var prop in props){
-				if (props.hasOwnProperty(prop) && prop.indexOf('compx-') === 0){
-					need_recalc = true;
-					break;
-				}
-			}
+			need_recalc = hasPrefixedProps(props, 'compx-');
 		}
 		if (!need_recalc){
 			return;
@@ -2002,13 +2435,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	collectRegFires: function(props) {
 		var need_recalc = false, prop;
-	
-		for (prop in props){
-			if (props.hasOwnProperty(prop) && prop.indexOf('regfr-') === 0){
-				need_recalc = true;
-				break;
-			}
-		}
+		
+
+		need_recalc = hasPrefixedProps(props, 'regfr-');
+
 		
 		if (!need_recalc){
 			return;
@@ -2038,52 +2468,49 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	state: function(name){
 		return this.states[name];
-	},
+	}
+});
+
+
+var compressChangesList = function(changes_list, i, prop_name, value, counter) {
+	if (this[prop_name] !== true){
+		var num = (changes_list.length - 1) - counter * 2;
+		changes_list[ num - 1 ] = prop_name;
+		changes_list[ num ] = value;
+
+		this[prop_name] = true;
+		return true;
+	}
+
+};
+var reversedIterateChList = function(changes_list, context, cb) {
+	var counter = 0;
+	for (var i = changes_list.length - 1; i >= 0; i-=2) {
+		if (cb.call(context, changes_list, i, changes_list[i-1], changes_list[i], counter)){
+			counter++;
+		}
+	}
+	return counter;
+};
+
+add({
 	compressStatesChanges: function(changes_list) {
 		var result_changes = {};
-		var counter = 0;
-
-		//reversedIterateChList()
-
-		/*iterateChList(changes_list, result_changes, function(i, name, value) {
-			delete this[name]; //reorder fields! hack!?
-			this[name] = value;
-		});*/
-		reversedIterateChList(changes_list, result_changes, function(i, name, value) {
-			if (!this.hasOwnProperty(name)){
-				
-
-				var num = (changes_list.length - 1) - counter * 2;
-				changes_list[ num - 1 ] = name;
-				changes_list[ num ] = value;
-
-				counter++;
-				this[name] = true;
-			}
-			//delete this[name]; //reorder fields! hack!?
-			//this[name] = value;
-		});
-		//changes_list.length = 0;
+		var counter = reversedIterateChList(changes_list, result_changes, compressChangesList);
 		counter = counter * 2;
 		while (changes_list.length != counter){
 			changes_list.shift();
 		}
-
-		/*for ( var name in result_changes ){
-			changes_list.push( name, result_changes[name] );
-		}*/
-
 		return changes_list;
 	},
 	state_ch_h_prefix: 'stch-',
-	_replaceState: function(name, value, skip_handler, stack) {
-		if (name){
-			var obj_to_change	= this.states,
-				old_value		= obj_to_change[name],
+	_replaceState: function(state_name, value, skip_handler, stack) {
+		if (state_name){
+			var old_value = this.states[state_name],
 				method;
 			if (old_value != value){
 
-				var stateChanger = !skip_handler && (this[ this.state_ch_h_prefix + name] || (this.state_change && this.state_change[name]));
+				var stateChanger = !skip_handler && (this[ this.state_ch_h_prefix + state_name] || (this.state_change && this.state_change[state_name]));
 				if (stateChanger){
 					if (typeof stateChanger == 'function'){
 						method = stateChanger;
@@ -2098,25 +2525,27 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 				//
 
-				
+				if (!this.zdsv.original_states.hasOwnProperty(state_name)) {
+					this.zdsv.original_states[state_name] = this.states[state_name];
+				}
 
-				obj_to_change[name] = value;
+				this.states[state_name] = value;
 
 				if (method){
-					this.nextTick(method, [value, old_value], true);
+					this.nextTick(method, [value, old_value, state_name], true);
 					//method.call(this, value, old_value);
 				}
-				stack.push(name, value);
+				stack.push(state_name, value);
 				//return [old_value];
 			}
 		}
 	},
 	st_event_name_default: 'state_change-',
 	st_event_name_vip: 'vip_state_change-',
-	_triggerStChanges: function(i, name, value) {
+	_triggerStChanges: function(i, state_name, value) {
 
-		var vip_name = this.st_event_name_vip + name;
-		var default_name = this.st_event_name_default + name;
+		var vip_name = this.st_event_name_vip + state_name;
+		var default_name = this.st_event_name_default + state_name;
 
 		var vip_cb_cs = this.evcompanion.getMatchedCallbacks(vip_name).matched;
 		var default_cb_cs = this.evcompanion.getMatchedCallbacks(default_name).matched;
@@ -2124,7 +2553,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 
 		if (vip_cb_cs.length || default_cb_cs.length){
-			var event_arg = new PVStateChangeEvent(name, value, this.zdsv.original_states[name], this);
+			var event_arg = new PVStateChangeEvent(state_name, value, this.zdsv.original_states[state_name], this);
 
 			if (vip_cb_cs.length){
 				//вызов внутреннего для самого объекта события
@@ -2137,71 +2566,113 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 
 	},
-	_setUndetailedState: function(i, name, value) {
-		this.undetailed_states[name] = value;
+	_setUndetailedState: function(i, state_name, value) {
+		this._lbr.undetailed_states[state_name] = value;
 	},
 	updateManyStates: function(obj) {
 		var changes_list = [];
-		for (var name in obj) {
-			if (obj.hasOwnProperty(name)){
-				changes_list.push(name, obj[name]);
+		for (var state_name in obj) {
+			if (obj.hasOwnProperty(state_name)){
+				changes_list.push(state_name, obj[state_name]);
 			}
 		}
 		this._updateProxy(changes_list);
 	},
-	updateState: function(name, value){
-		if (name.indexOf('-') != -1 && console.warn){
-			console.warn('fix prop name: ' + name);
+	utils: {
+		isDepend: function(obj) {
+			return obj && !!obj.count;
 		}
-		if (this.hasComplexStateFn(name)){
+	},
+	updateState: function(state_name, value){
+		/*if (state_name.indexOf('-') != -1 && console.warn){
+			console.warn('fix prop state_name: ' + state_name);
+		}*/
+		if (this.hasComplexStateFn(state_name)){
 			throw new Error("you can't change complex state in this way");
 		}
-		return this._updateProxy([name, value]);
+		return this._updateProxy([state_name, value]);
+	},
+	hndRDep: function(state, oldstate, state_name) {
+		var target_name = state_name.split(':');
+		target_name = target_name[ 1 ];
+		if (oldstate) {
+			oldstate.setStateDependence(target_name, this, false);
+		}
+		if (state) {
+			state.setStateDependence(target_name, this, true);
+		}
+	},
+	setStateDependence: function(state_name, source_id, value) {
+		if (typeof source_id == 'object') {
+			source_id = source_id._provoda_id;
+		}
+		var old_value = this.state(state_name) || {index: {}, count: 0};
+		old_value.index[source_id] = value ? true: false;
+
+		var count = 0;
+
+		for (var prop in old_value.index) {
+			if (!old_value.index.hasOwnProperty(prop)) {
+				continue;
+			}
+			if (old_value.index[prop]) {
+				count++;
+			}
+		}
+
+		this.updateState(state_name, {
+			index: old_value.index,
+			count: count
+		});
+
+
 	},
 	hasComplexStateFn: function(state_name) {
 		return this.compx_check[state_name];
 	},
 
 	_updateProxy: function(changes_list, opts) {
-		if (this.undetailed_states){
+		if (this._lbr && this._lbr.undetailed_states){
 			iterateChList(changes_list, this, this._setUndetailedState);
 			return this;
 		}
-		this.states_changing_stack.push(changes_list, opts);
-
-		if (this.collecting_states_changing){
-			return this;
-		}
-		this.collecting_states_changing = true;
 
 		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
 		//для пользователя пока пользователь не перестанет изменять новые состояния
 		if (!this.zdsv){
-			this.zdsv = {
-				original_states: {},
-				all_i_cg: [],
-				all_ch_compxs: [],
-				changed_states: [],
-				total_ch: []
-			};
+			this.zdsv = new StatesLabour();
 		}
-		var total_ch = this.zdsv.total_ch;
-		var original_states = this.zdsv.original_states;
-		var all_i_cg = this.zdsv.all_i_cg;
-		var all_ch_compxs = this.zdsv.all_ch_compxs;
-		var changed_states = this.zdsv.changed_states;
+		var zdsv = this.zdsv;
+
+
+		zdsv.states_changing_stack.push(changes_list, opts);
+
+		if (zdsv.collecting_states_changing){
+			return this;
+		}
+
 		
-		while (this.states_changing_stack.length){
+
+		zdsv.collecting_states_changing = true;
+
+
+		var total_ch = zdsv.total_ch;
+		var original_states = zdsv.original_states;
+		var all_i_cg = zdsv.all_i_cg;
+		var all_ch_compxs = zdsv.all_ch_compxs;
+		var changed_states = zdsv.changed_states;
+		
+		while (zdsv.states_changing_stack.length){
 
 			wipeObj(original_states);
 			all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 			//объекты используются повторно, ради выиграша в производительности
 			//которые заключается в исчезновении пауз на сборку мусора 
 
-			spv.cloneObj(original_states, this.states);
+			//spv.cloneObj(original_states, this.states);
 
-			var cur_changes_list = this.states_changing_stack.shift();
-			var cur_changes_opts = this.states_changing_stack.shift();
+			var cur_changes_list = zdsv.states_changing_stack.shift();
+			var cur_changes_opts = zdsv.states_changing_stack.shift();
 
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
 			this.getChanges(cur_changes_list, cur_changes_opts, changed_states);
@@ -2252,19 +2723,19 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		wipeObj(original_states);
 		all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
-		if (this.sendStatesToViews && total_ch.length){
+		if (this.sendStatesToMPX && total_ch.length){
 			this.nextTick(this.sendChangesAfterDelay);
 		} else {
 			total_ch.length = 0;
 		}
 
 
-		this.collecting_states_changing = false;
+		zdsv.collecting_states_changing = false;
 		return this;
 	},
 	sendChangesAfterDelay: function() {
 		if (this.zdsv.total_ch.length){
-			this.sendStatesToViews(this.zdsv.total_ch);
+			this.sendStatesToMPX(this.zdsv.total_ch);
 			this.zdsv.total_ch.length = 0;
 		}
 	},
@@ -2318,25 +2789,116 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		return temp_comx.fn.apply(this, values);
 	}
 });
+});
 
 var getMDOfReplace = function(){
 	return this.md;
 };
 
+var si_opts_cache = {};
+var SIOpts = function(md) {
+	this.map_parent = md;
+	this.app = md.app;
+};
+
+
+var getSiOpts = function(md) {
+	var provoda_id = md._provoda_id;
+	if (!si_opts_cache[provoda_id]) {
+		si_opts_cache[provoda_id] = new SIOpts(md);
+	}
+	return si_opts_cache[provoda_id];
+};
+
+var emergency_opt = {
+	emergency: true
+};
+
+var triggerDestroy = function(md) {
+	var array = md.evcompanion.getMatchedCallbacks('die').matched;
+	if (array.length) {
+		md.evcompanion.triggerCallbacks(array, false, emergency_opt, 'die');
+	}
+};
+
 var models_counters = 1;
-provoda.StatesEmitter.extendTo(provoda.Model, {
+provoda.StatesEmitter.extendTo(provoda.Model, function(add) {
+add({
+	collectNestingsDeclarations: function(props) {
+		var need_recalc = hasPrefixedProps(props, 'nest-'), prop;
+
+		if (!need_recalc){
+			return;
+		}
+		var result = [];
+
+
+		for (prop in this) {
+			if (prop.indexOf('nest-') === 0) {
+				var real_name = prop.replace('nest-','');
+				result.push({
+					nesting_name: real_name,
+					subpages_names_list: this[prop][0],
+					preload: this[prop][1],
+					init_state_name: this[prop][2],
+				});
+			}
+		}
+		this.nestings_declarations = result;
+
+	},
+	changeDataMorphDeclarations: function(props) {
+		var i, cur;
+		if (props.hasOwnProperty('req_map')) {
+			for (i = 0; i < props.req_map.length; i++) {
+				cur = props.req_map[i][1];
+				if (typeof cur != 'function') {
+					props.req_map[i][1] = spv.mmap( cur );
+				}
+				
+			}
+		}
+
+		var has_reqnest_decls = hasPrefixedProps(props, 'nest_req-');
+
+		if (has_reqnest_decls) {
+			this.has_reqnest_decls = true;
+			for (var prop_name in props) {
+				if (props.hasOwnProperty(prop_name) && prop_name.indexOf('nest_req-') === 0) {
+					cur = props[ prop_name ];
+					if (typeof cur[0][0] != 'function') {
+						cur[0][0] = spv.mmap(cur[0][0]);
+					}
+					if (cur[0][1] && cur[0][1] !== true && typeof cur[0][1] != 'function') {
+						cur[0][1] = spv.mmap(cur[0][1]);
+					}
+					var array = cur[0][2];
+					if (array) {
+						for (i = 0; i < array.length; i++) {
+							var spec_cur = array[i];
+							if (typeof spec_cur[1] != 'function') {
+								spec_cur[1] = spv.mmap(spec_cur[1]);
+							}
+						}
+					}
+					
+				}
+			}
+		}
+	},
 	'regfr-childchev': {
 		test: function(namespace) {
 			return namespace.indexOf('child_change-') === 0;
 		},
-		fn: function(cb, namespace) {
+		fn: function(namespace) {
 			var nesting_name = namespace.replace('child_change-', '');
 			var child = this.getNesting(nesting_name);
 			if (child){
-				cb({
+				return {
 					value: child,
-					target: this
-				});
+					target: this,
+					nesting_name: nesting_name
+				};
 			}
 		},
 		getWrapper: function() {
@@ -2349,13 +2911,31 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	getStrucParent: function() {
 		return this.map_parent;
 	},
+	getSiOpts: function() {
+		return getSiOpts(this);
+	},
+	initSi: function(Constr, data, params) {
+		var instance = new Constr();
+		var initsbi_opts = this.getSiOpts();
+		
+		this.useMotivator(instance, function(instance) {
+			instance.init(initsbi_opts, data, params);
+		});
 
+		return instance;
+	},
 	init: function(opts){
 		if (opts && opts.app){
 			this.app = opts.app;
 		}
+		if (!this.app) {
+			this.app = null;
+		}
 		if (opts && opts.map_parent){
 			this.map_parent = opts.map_parent;
+		}
+		if (!this.map_parent) {
+			this.map_parent = null;
 		}
 
 		this._super();
@@ -2367,16 +2947,19 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.states = {};
 		
-		this.children_models = {};
+		this.children_models = null;
 
 
 		this.md_replacer = null;
 		this.mpx = null;
 
 		//
-
+		
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
+		this.prsStCon.connect.nesting(this);
+
+		
 
 		return this;
 	},
@@ -2384,16 +2967,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (!this.mpx) {
 			this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
 		}
-
 		return this.mpx;
 	},
 
 	getReqsOrderField: function() {
-		if (this.req_order_field){
-			return this.req_order_field;
-		} else {
-			return (this.req_order_field = ['mdata', 'm', this._provoda_id, 'order']);
+		if (!this.req_order_field) {
+			this.req_order_field = ['mdata', 'm', this._provoda_id, 'order'];
 		}
+		return this.req_order_field;
 	},
 	getMDReplacer: function() {
 		if (!this.md_replacer) {
@@ -2420,42 +3001,27 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.stopRequests();
 		//this.mpx.die();
 		views_proxies.killMD(this);
-		this.trigger('die');
+		triggerDestroy(this);
 		big_index[this._provoda_id] = null;
 		return this;
-	},
+	}
+});
+
+
+
+var passCollectionsChange = function(e) {
+	this.setItems(e.value, e.target.current_motivator);
+};
+
+add({
 	watchChildrenStates: function(collection_name, state_name, callback) {
 		//
-		var _this = this;
-		var items_events = new ItemsEvents('state_change-' + state_name, function(e) {
-			var old_value = _this.current_motivator;
-			_this.current_motivator = e.target.current_motivator;
-			callback.call(_this, {
-				item: e.target,
-				value: arguments && arguments[0] && arguments[0].value,
-				args: arguments,
-				items: this.items_list
-			});
-			_this.current_motivator = old_value;
-		});
-		this.on('child_change-' + collection_name, function(e) {
-			items_events.setItems(e.value, this.current_motivator);
-		});
+		var items_events = new ItemsEvents('state_change-' + state_name, this, callback);
+		this.on('child_change-' + collection_name, passCollectionsChange, null, items_events);
 	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
-		var _this = this;
-		var archiver = new StatesArchiver(collection_state, {
-			returnResult: function(value) {
-				var old_value = _this.current_motivator;
-				_this.current_motivator = this.current_motivator;
-				_this.updateState(result_state_name || collection_state, value);
-				_this.current_motivator = old_value;
-			},
-			calculateResult: statesCalcFunc
-		});
-		this.on('child_change-' + collection_name, function(e) {
-			archiver.setItems(e.value, this.current_motivator);
-		});
+		var archiver = new StatesArchiver(collection_state, result_state_name || collection_state, this, statesCalcFunc);
+		this.on('child_change-' + collection_name, passCollectionsChange, null, archiver);
 	},
 	getRelativeRequestsGroups: function(space, only_models) {
 		var all_models = [];
@@ -2489,7 +3055,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 	},
 	getNesting: function(collection_name) {
-		return this.children_models[collection_name];
+		return this.children_models && this.children_models[collection_name];
 	},
 	updateNesting: function(collection_name, array, opts, spec_data) {
 		if (collection_name.indexOf(DOT) != -1){
@@ -2498,6 +3064,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (Array.isArray(array)){
 			array = array.slice(0);
 		}
+		if (!this.children_models) {
+			this.children_models = {};
+		}
+
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
 		// !?
@@ -2548,12 +3118,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	complex_st_prefix: 'compx-',
 
-	sendStatesToViews: function(states_list) {
+	sendStatesToMPX: function(states_list) {
 		//this.removeDeadViews();
 		sync_sender.pushStates(this, states_list);
-		views_proxies.pushStates(this, states_list);
+		views_proxies.pushStates(this, states_list.slice());
 		if (this.mpx) {
-			this.mpx.sendStatesToViews(states_list);
+			this.mpx.stackReceivedStates(states_list.slice());
 		}
 		//
 	},
@@ -2683,6 +3253,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return big_result;
 	}
 });
+});
 provoda.Model.extendTo(provoda.HModel, {
 	init: function(opts) {
 		
@@ -2698,7 +3269,6 @@ provoda.Model.extendTo(provoda.HModel, {
 			this.map_parent = null;
 		}
 		
-		//this.init_opts = null;
 		this.pmd_switch = null;
 		
 
@@ -2716,20 +3286,13 @@ provoda.Model.extendTo(provoda.HModel, {
 				}
 			}
 		}
-		this._super(opts);
+		this._super.apply(this, arguments);
 	},
 	mapStates: function(states_map, donor, acceptor) {
 		if (acceptor && typeof acceptor == 'boolean'){
 			acceptor = this.init_states;
 		}
 		return spv.mapProps(states_map, donor, acceptor);
-	},
-	initOnce: function() {
-		if (this.init_opts){
-			this.init.apply(this, this.init_opts);
-			this.init_opts = null;
-		}
-		return this;
 	},
 	initStates: function(more_states) {
 		if (more_states) {
@@ -2823,41 +3386,74 @@ var getBaseTreeSkeleton = function(array) {
 	}
 	return result;
 };
+var $v = {
+	getViewLocationId: function(parent_view, nesting_name, nesting_space) {
+		if (!nesting_name) {
+			throw new Error('no nesting_name');
+		}
+		/*
+		помогает определить есть ли у модели вьюха, ассоциированная с локацией - с родительской вьюхой (а также с гнездом внутри родительской вьюхи) 
 
+		*/
+		return parent_view.view_id + ':' +  nesting_space + ':' + nesting_name;
+	}
+};
+provoda.$v = $v;
+
+
+var ViewLabour = function() {
+	this.has_details = null;
+	this._detailed = null;
+	this.dettree_incomplete = null;
+	this.detltree_depth = null;
+	this._states_set_processing = null;
+	this._collections_set_processing = null;
+	this.dclrs_fpckgs_is_clonned = false;
+	this.innesting_pos_current = null;
+	this.innest_prev_view = null;
+	this.innest_next_view = null;
+
+	this.demensions_key_start = null;
+
+	this.handled_expandable_dclrs = null;
+
+	this._anchor = null;
+	//this.innesting_pos_old = null;
+
+	this.detached = null;
+
+	this.hndTriggerTPLevents = null;
+
+	this.marked_as_dead = null;
+
+
+	this.undetailed_states = {};
+	this.undetailed_children_models = {};
+};
 
 var views_counter = 1;
 var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
-		this.demensions_key_start = null;
+		this._lbr = new ViewLabour();
+		
 		this.req_order_field = null;
 		this.tpl = null;
 		this.c = null;
-		this.has_details = null;
-		this._detailed = null;
+
 		this.dead = null;
 		this.pv_view_node = null;
-		this._anchor = null;
-		this.marked_as_dead = null;
-		this.dettree_incomplete = null;
-		this.detltree_depth = null;
-		this._states_set_processing = null;
-		this._collections_set_processing = null;
 		this.dclrs_fpckgs = this.dclrs_fpckgs;
-		this.dclrs_fpckgs_is_clonned = false;
-		this.detached = null;
 		this.base_skeleton = null;
 
-		this.innesting_pos_current = null;
-		this.innest_prev_view = null;
-		this.innest_next_view = null;
-		//this.innesting_pos_old = null;
+		this.nesting_space = view_otps.nesting_space;
+		this.nesting_name = view_otps.nesting_name;
 
 		if (this.base_tree_list) {
 			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
 		}
 
-		this.handled_expandable_dclrs = this.dclrs_expandable ? {} : null;
+		
 
 		this.view_id = views_counter++;
 		this.parent_view = null;
@@ -2889,17 +3485,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		
 		this.mpx = view_otps.mpx;
 		this.proxies_space = view_otps.proxies_space || null;
-		this.undetailed_states = {};
-		this.undetailed_children_models = {};
+		
 		this.way_points = [];
 		this.dom_related_props = null;
 		if (this.dom_rp){
 			this.dom_related_props = [];
 		}
 
-		spv.cloneObj(this.undetailed_states, this.mpx.states);
-		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
-		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
+		spv.cloneObj(this._lbr.undetailed_states, this.mpx.states);
+		spv.cloneObj(this._lbr.undetailed_states, this.mpx.vstates);
+		spv.cloneObj(this._lbr.undetailed_children_models, this.mpx.nestings);
 
 
 		if (this.base_tree_expand_states) {
@@ -2908,20 +3503,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}
 
-
-		var _this = this;
-		this.triggerTPLevents = function(e) {
-			if (!e.pv_repeat_context){
-				if (!e.callback_data[0] && e.callback_data[1]){
-					e.callback_data.shift();
-					_this.RPCLegacy.apply(_this, e.callback_data);
-				} else {
-					_this.tpl_events[e.callback_name].call(_this, e.event, e.node, e.callback_data);
-				}
-			} else {
-				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
-			}
-		};
+		
+		
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 		return this;
@@ -2945,8 +3528,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	demensions_cache: {},
 	checkDemensionsKeyStart: function() {
-		if (!this.demensions_key_start){
-			this.demensions_key_start = this.location_name + '-' + (this.parent_view && this.parent_view.location_name + '-');
+		if (!this._lbr.demensions_key_start){
+			this._lbr.demensions_key_start = this.location_name + '-' + (this.parent_view && this.parent_view.location_name + '-');
 		}
 	},
 	getBoxDemensionKey: function() {
@@ -2956,7 +3539,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			
 		}
 		this.checkDemensionsKeyStart();
-		return this.demensions_key_start.concat(args.join('-'));
+		return this._lbr.demensions_key_start.concat(args.join('-'));
 
 	},
 	getBoxDemensionByKey: function(cb, key) {
@@ -3060,13 +3643,59 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.tpl.parseAppended(node);
 		this.tpl.setStates(this.states);
 	},
-	createTemplate: function(con) {
-		con = con || this.c;
+	createTemplate: function(ext_node) {
+		var con = ext_node || this.c;
 		if (!con){
 			throw new Error('cant create template');
 		}
 		var _this = this;
-		this.tpl = this.getTemplate(con, this.triggerTPLevents, function(arr_arr) {
+
+
+		if (!this._lbr.hndTriggerTPLevents) {
+			this._lbr.hndTriggerTPLevents = function(e) {
+				var cb_data = e.callback_data;
+
+
+
+				for (var i = 0; i < cb_data.length; i++) {
+					var cur = cb_data[i];
+					if (typeof cur == 'function') {
+						cb_data[i] = cur(e.scope || this.states);
+					}
+				}
+
+				if (!cb_data[0] && cb_data[1]){
+					var target_view;
+					//var view =
+					
+					if (cb_data[1].indexOf('#') === 0) {
+						target_view = _this.root_view;
+						cb_data[1] = cb_data[1].replace('#', '');
+					} else {
+						target_view = _this;
+					}
+					if (cb_data[2]) {
+						var stringed_variable = cb_data[2].match(/\%(.*?)\%/);
+						if (stringed_variable) {
+							cb_data[2] = spv.getTargetField(e.node, stringed_variable[1]);
+						}
+					}
+
+					cb_data.shift();
+					target_view.RPCLegacy.apply(target_view, cb_data);
+				} else {
+					if (!e.pv_repeat_context){
+						_this.tpl_events[e.callback_name].call(_this, e.event, e.node, cb_data);
+					} else {
+						_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
+					}
+				}
+				
+			};
+		}
+
+
+		var tpl = this.getTemplate(con, this._lbr.hndTriggerTPLevents, function(arr_arr) {
 			//pvTypesChange
 			//this == template
 			//this != provoda.View
@@ -3094,6 +3723,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.waypoints = matched;
 			_this.updateTemplatedWaypoints(matched, to_remove);
 		});
+		if (!ext_node) {
+			this.tpl = tpl;
+		}
+
+		return tpl;
 	},
 	addTemplatedWaypoint: function(wp_wrap) {
 		if (!this.hasWaypoint(wp_wrap.node)){
@@ -3130,14 +3764,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	connectChildrenModels: function() {
-		var udchm = this.undetailed_children_models;
-		this.undetailed_children_models = null;
+		var udchm = this._lbr.undetailed_children_models;
+		this._lbr.undetailed_children_models = null;
 		this.setMdChildren(udchm);
 
 	},
 	connectStates: function() {
-		var states = this.undetailed_states;
-		this.undetailed_states = null;
+		var states = this._lbr.undetailed_states;
+		this._lbr.undetailed_states = null;
 		this._setStates(states);
 
 	},
@@ -3166,14 +3800,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	requestDetailesCreating: function() {
-		if (!this.has_details){
-			this.has_details = true;
+		if (!this._lbr.has_details){
+			this._lbr.has_details = true;
 			this.createDetails();
 		}
 	},
 	requestDetailes: function(){
 		this.requestDetailesCreating();
-		this._detailed = true;
+		this._lbr._detailed = true;
 		if (!this.manual_states_connect){
 			this.connectChildrenModels();
 			this.connectStates();
@@ -3185,11 +3819,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		var con = this.getC();
-		var anchor = this._anchor;
+		var anchor = this._lbr._anchor;
 		if (con && anchor && anchor.parentNode){
 			$(anchor).after(con);
 			//anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
-			this._anchor = null;
+			this._lbr._anchor = null;
 			$(anchor).detach();
 			this.setVisState('con_appended', true);
 		} else if (con && con.parent()[0]){
@@ -3201,7 +3835,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getFreeCV: function(child_name, view_space, opts) {
 		var md = this.getMdChild(child_name);
 		if (md){
-			var view = this.getFreeChildView({name: child_name, space: view_space}, md, opts);
+			var view = this.getFreeChildView({
+				by_model_name: false,
+				nesting_name: child_name,
+				nesting_space: view_space
+			}, md, opts);
 			return view;
 		} else {
 			throw new Error('there is no ' + child_name + ' child model');
@@ -3219,7 +3857,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		
 	},
-	getAncestorByRooViCon: function(view_space, strict) {
+	getAncestorByRooViCon: function(view_space, strict) { //находит родительскую вьюху соеденённую с корневой вьюхой
 		//by root view connection
 		var target_ancestor;
 		var cur_ancestor = this;
@@ -3231,10 +3869,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				break;
 			} else {
 				if (cur_ancestor.parent_view == this.root_view){
-					if (cur_ancestor == this.root_view.getChildView(cur_ancestor.mpx, view_space)){
+					if ( this.root_view.matchCildrenView( cur_ancestor, view_space ) ) {
 						target_ancestor = cur_ancestor;
 						break;
 					}
+
 				}
 			}
 
@@ -3242,22 +3881,42 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return target_ancestor;
 	},
-	getChildView: function(mpx, view_space) {
-		var complex_id = this.view_id + '_' + view_space;
-		return mpx.getView(complex_id, true);
+	findMpxViewInChildren: function(mpx, nesting_space) {
+		nesting_space = nesting_space || 'main';
+		var views = mpx.getViews();
+		for (var i = 0; i < views.length; i++) {
+			var cur = views[i];
+			if (this.matchCildrenView( cur, nesting_space )) {
+				return cur;
+			}
+		}
+	},
+	matchCildrenView: function(target_view, nesting_space) {
+		nesting_space = nesting_space || 'main';
+		for (var i = 0; i < this.children.length; i++) {
+			if (this.children[i] != target_view) {
+				continue;
+			}
+			if (this.children[i].nesting_space == nesting_space) {
+				return true;
+			}
+			
+		}
+		return false;
 	},
 	getFreeChildView: function(address_opts, md, opts) {
 		var mpx = this.getStoredMpx(md);
 		var
-			child_name = address_opts.name,
-			view_space = address_opts.space || 'main',
-			complex_id = this.view_id + '_' + view_space,
-			view = mpx.getView(complex_id, true);
+			child_name = address_opts.nesting_name,
+			constructor_name = address_opts.by_model_name ? md.model_name : address_opts.nesting_name,
+			view_space = address_opts.nesting_space || 'main',
+			location_id = $v.getViewLocationId(this, address_opts.nesting_name, view_space),
+			view = mpx.getView(location_id);
 
 		if (view){
 			return false;
 		} else {
-			var ConstrObj = this.children_views[child_name];
+			var ConstrObj = this.children_views[constructor_name];
 			
 			var Constr;
 			if (typeof ConstrObj == 'function' && view_space == 'main'){
@@ -3269,7 +3928,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				Constr = address_opts.sampleController;
 			}
 			if (!Constr) {
-				throw new Error('there is no View for ' + child_name);
+				throw new Error('there is no View for ' + constructor_name);
 			}
 
 			view = new Constr();
@@ -3277,9 +3936,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				mpx: mpx,
 				parent_view: this,
 				root_view: this.root_view,
-				location_name: child_name + '-' + view_space
+				location_name: child_name + '-' + view_space,
+				nesting_space: view_space,
+				nesting_name: child_name
 			}, opts);
-			mpx.addView(view, complex_id);
+			mpx.addView(view, location_id);
 			this.addChildView(view, child_name);
 			return view;
 		}
@@ -3305,14 +3966,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return all_requests;
 	},
-	addChildView: function(view, child_name) {
+	addChildView: function(view) {
 		this.children.push.call(this.children, view);
 		//fixme - possible memory leak when child is dead (this.children) 
-	},
-	addChild: function(view, child_name) {
-		if (this.children.indexOf(view) == -1){
-			this.children.push.call(this.children, view);
-		}
 	},
 	getChildViewsByMpx: function(mpx) {
 		var result = [];
@@ -3379,17 +4035,17 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (this.proxies_space) {
 			views_proxies.removeSpaceById(this.proxies_space);
 		}
-		this.nextTick(this.remove, [this.getC(), this._anchor]);
+		this.nextTick(this.remove, [this.getC(), this._lbr._anchor]);
 		this.dead = true; //new DeathMarker();
 		this.stopRequests();
 
-		this.trigger('die');
+		triggerDestroy(this);
 		if (!skip_md_call){
 			this.mpx.removeDeadViews();
 		}
 
 		this.c = null;
-		this._anchor = null;
+		this._lbr._anchor = null;
 		this.tpl = null;
 		if (this.tpls){
 			this.tpls = null;
@@ -3429,7 +4085,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			con.remove();
 		}
 		if (!anchor){
-			anchor = this._anchor;
+			anchor = this._lbr._anchor;
 		}
 		if (anchor){
 			$(anchor).remove();
@@ -3437,9 +4093,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 	},
 	die: function(opts){
-		if (!this.marked_as_dead){
+		if (!this._lbr.marked_as_dead){
 			this.markAsDead(opts && opts.skip_md_call);
-			this.marked_as_dead = true;
+			this._lbr.marked_as_dead = true;
 		}
 		return this;
 	},
@@ -3450,7 +4106,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.c;
 	},
 	getA: function(){
-		return this._anchor || (this._anchor = document.createComment(''));
+		return this._lbr._anchor || (this._lbr._anchor = document.createComment(''));
 
 		//document.createTextNode('')
 	},
@@ -3461,33 +4117,28 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!this.isAlive()){
 			return;
 		}
-		this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
-		this.detltree_depth++;
-		if (this.dettree_incomplete){
+		this._lbr.dettree_incomplete = this.requestDetalizationLevel(this._lbr.detltree_depth);
+		this._lbr.detltree_depth++;
+		if (this._lbr.dettree_incomplete){
 			this.nextTick(this.__tickDetRequest);
 		}
 	},
 	requestDeepDetLevels: function(){
-		if (this._states_set_processing || this._collections_set_processing){
+		if (this._lbr._states_set_processing || this._lbr._collections_set_processing){
 			return this;
 		}
 		//iterate TREE
-		this.detltree_depth = 1;
-		this.dettree_incomplete = true;
+		this._lbr.detltree_depth = 1;
+		this._lbr.dettree_incomplete = true;
 
-		
-		/*
-		while (this.dettree_incomplete) {
-			this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
-			this.detltree_depth++;
-		}*/
+
 
 		this.nextTick(this.__tickDetRequest);
 		
 		return this;
 	},
 	softRequestChildrenDetLev: function(rel_depth) {
-		if (this._states_set_processing || this._collections_set_processing){
+		if (this._lbr._states_set_processing || this._lbr._collections_set_processing){
 			return this;
 		}
 		this.requestChildrenDetLev(rel_depth);
@@ -3505,7 +4156,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	requestDetalizationLevel: function(rel_depth){
-		if (!this._detailed){
+		if (!this._lbr._detailed){
 			this.requestDetailes();
 		}
 		return this.requestChildrenDetLev(rel_depth - 1);
@@ -3534,7 +4185,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	_setStates: function(states){
-		this._states_set_processing = true;
+		this._lbr._states_set_processing = true;
 		//disallow chilren request untill all states will be setted
 
 		this.states = {};
@@ -3551,7 +4202,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		this._updateProxy(states_list);
-		this._states_set_processing = null;
+		this._lbr._states_set_processing = null;
 		return this;
 	},
 	updateTemplatesStates: function(total_ch) {
@@ -3573,20 +4224,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return this;
 	},
-	getPart: function(name) {
-		return this.view_parts && this.view_parts[name];
+	getPart: function(part_name) {
+		return this.view_parts && this.view_parts[part_name];
 	},
 	collectStateChangeHandlers: function(props) {
-		var need_recalc = false;
+		var need_recalc = false, prop;
 		if (this.hasOwnProperty('state_change')){
 			need_recalc = true;
 		} else {
-			for (var prop in props){
-				if (props.hasOwnProperty(prop) && prop.indexOf('stch-') === 0){
-					need_recalc = true;
-					break;
-				}
-			}
+			need_recalc = hasPrefixedProps(props, 'stch-');
+
 		}
 		if (!need_recalc){
 			return;
@@ -3594,26 +4241,26 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var has_stchh = {};
 		var result = [];
-		var name;
+		
 
-		for (name in this) {
-			if (name.indexOf('stch-') === 0){
-				var real_name = name.replace('stch-','');
+		for (prop in this) {
+			if (prop.indexOf('stch-') === 0){
+				var real_name = prop.replace('stch-','');
 				has_stchh[real_name] = true;
 				result.push({
 					name: real_name,
-					item: this[name]
+					item: this[prop]
 				});
 			}
 		}
 
 		if (this.state_change){
-			for (name in this.state_change) {
-				if (!has_stchh[name]){
-					has_stchh[name] = true;
+			for (prop in this.state_change) {
+				if (!has_stchh[prop]){
+					has_stchh[prop] = true;
 					result.push({
-						name: name,
-						item: this.state_change[name]
+						name: prop,
+						item: this.state_change[prop]
 					});
 				}
 
@@ -3622,31 +4269,31 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		this.stch_hs = result;
 	},
-	requirePart: function(name) {
+	requirePart: function(part_name) {
 		if (!this.isAlive()){
 			return $();
 		}
-		if (this.view_parts && this.view_parts[name]){
-			return this.view_parts[name];
+		if (this.view_parts && this.view_parts[part_name]){
+			return this.view_parts[part_name];
 		} else {
 			if (!this.view_parts){
 				this.view_parts = {};
 			}
-			this.view_parts[name] = this.parts_builder[name].call(this);
-			if (!this.view_parts[name]){
+			this.view_parts[part_name] = this.parts_builder[part_name].call(this);
+			if (!this.view_parts[part_name]){
 				throw new Error('"return" me some build result please');
 			}
 
 			for (var i = 0; i < this.stch_hs.length; i++) {
 				var cur = this.stch_hs[i];
 				if (this.states.hasOwnProperty(cur.name) && typeof cur.item != 'function'){
-					if (this.checkDepVP(cur.item, name)){
+					if (this.checkDepVP(cur.item, part_name)){
 						cur.item.fn.call(this, this.states[cur.name]);
 					}
 				}
 				
 			}
-			return this.view_parts[name];
+			return this.view_parts[part_name];
 		}
 	},
 	checkDepVP: function(state_changer, builded_vp_name) {
@@ -3665,7 +4312,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return has_all_dependings;
 	},
-	recieveStatesChanges: function(changes_list) {
+	stackReceivedChanges: function() {
+		if (!this.isAlive()){
+			return;
+		}
+		this.nextTick(this._updateProxy, arguments);
+	},
+	receiveStatesChanges: function(changes_list) {
 		if (!this.isAlive()){
 			return;
 		}
@@ -3685,12 +4338,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.setMdChildren(obj);
 	},
 	setMdChildren: function(collections) {
-		this._collections_set_processing = true;
+		this._lbr._collections_set_processing = true;
 		//вью только что создана, присоединяем подчинённые views без деталей (детали создаются позже)
 		for (var i in collections) {
 			this.collectionChange(i, collections[i]);
 		}
-		this._collections_set_processing = null;
+		this._lbr._collections_set_processing = null;
 	},
 	getMdChild: function(name) {
 		return this.children_models[name];
@@ -3707,8 +4360,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			getFreeView: function(cur_md, node_to_use) {
 				var pv_view = this.pv_view;
 				var view = this.view.getFreeChildView({
-					name: this.name,
-					space: this.space_name,
+					by_model_name: false,
+					nesting_name: this.nesname,
+					nesting_space: this.space_name,
 					sampleController: provoda.Controller
 				}, cur_md);
 
@@ -3739,8 +4393,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				}
 
 				var view = this.view.getFreeChildView({
-					name: cur_md.model_name,
-					space: this.space_name,
+					by_model_name: true,
+					nesting_name: this.nesname,
+					nesting_space: this.space_name,
 					sampleController: provoda.Controller
 				}, cur_md);
 
@@ -3779,6 +4434,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.appendCollection(space_name, {
 
 			view: this,
+			nesname: nesname,
 			pv_v_data: pv_v_data,
 			space_name: space_name,
 			getFreeView: this.pvserv.bymodel.getFreeView,
@@ -3806,7 +4462,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.appendCollection(space_name, {
 			view: this,
 			pv_view: pv_view,
-			name: nesname,
+			nesname: nesname,
 			space_name: space_name,
 			getView: pv_view.node && this.pvserv.simple.getView,
 			appendDirectly: this.pvserv.simple.appendDirectly,
@@ -3825,8 +4481,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			throw new Error('constant declaration exist for nesting named "' + nesname + '"');
 		}
 
-		if (!this.dclrs_fpckgs_is_clonned){
-			this.dclrs_fpckgs_is_clonned = true;
+		if (!this._lbr.dclrs_fpckgs_is_clonned){
+			this._lbr.dclrs_fpckgs_is_clonned = true;
 			var new_cache = {};
 			spv.cloneObj(new_cache, this.dclrs_fpckgs);
 			this.dclrs_fpckgs = new_cache;
@@ -3841,12 +4497,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	collch_h_prefix: 'collch-',
+	stackCollectionChange: function() {
+		this.nextTick(this.collectionChange, arguments);
+	},
 	collectionChange: function(nesname, array, rold_value, removed) {
 		if (!this.isAlive()){
 			return;
 		}
-		if (this.undetailed_children_models){
-			this.undetailed_children_models[nesname] = array;
+		if (this._lbr.undetailed_children_models){
+			this._lbr.undetailed_children_models[nesname] = array;
 			return this;
 		}
 
@@ -3858,10 +4517,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			var space_name;
 			array = spv.toRealArray(array);
 			for (space_name in pv_views_complex_index.usual){
-				this.removeViewsByMds(removed, space_name);
+				this.removeViewsByMds(removed, nesname, space_name);
 			}
 			for (space_name in pv_views_complex_index.by_model_name){
-				this.removeViewsByMds(removed, space_name);
+				this.removeViewsByMds(removed, nesname, space_name);
 			}
 
 			for (space_name in pv_views_complex_index.usual){
@@ -3891,12 +4550,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.checkDeadChildren();
 		return this;
 	},
-	removeViewsByMds: function(array, space) {
+	removeViewsByMds: function(array, nesname, space) {
 		if (!array){
 			return;
 		}
+		var location_id = $v.getViewLocationId(this, nesname, space || 'main');
 		for (var i = 0; i < array.length; i++) {
-			var view = this.getChildView(this.getStoredMpx(array[i]), space || 'main');
+
+			var view = this.getStoredMpx(array[i]).getView(location_id);
 			if (view){
 				view.die();
 			} else {
@@ -3975,7 +4636,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					}
 				}
 				var opts = declr.opts;
-				this.removeViewsByMds(removed, declr.space);
+				this.removeViewsByMds(removed, nesname, declr.space);
 				if (typeof declr.place == 'function' || !declr.place){
 					this.simpleAppendNestingViews(declr, opts, nesname, min_array);
 					if (!dclr_fpckg.not_request){
@@ -4012,7 +4673,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			var cur = array[bb];
 			this.appendFVAncorByVN({
 				md: cur,
-				name: (declr.by_model_name ? cur.model_name : nesname),
+				by_model_name: declr.by_model_name,
+				name: nesname,
 				opts: (typeof opts == 'function' ? opts.call(this, cur) : opts),
 				place: declr.place,
 				space: declr.space,
@@ -4021,17 +4683,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 	},
-	getPrevView: function(array, start_index, view_space, view_itself) {
-		view_space = view_space || 'main';
-		var complex_id = this.view_id + '_' + view_space;
+	getPrevView: function(array, start_index, location_id, view_itself) {
+		
 
 		var i = start_index - 1;
 		if (i >= array.length || i < 0){
 			return;
 		}
 		for (; i >= 0; i--) {
-			var view = this.getStoredMpx(array[i]).getView(complex_id);
-			var dom_hook = view && !view.detached && view.getT();
+			var view = this.getStoredMpx(array[i]).getView(location_id);
+			var dom_hook = view && !view._lbr.detached && view.getT();
 			if (dom_hook){
 				if (view_itself){
 					return view;
@@ -4042,17 +4703,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		}
 	},
-	getNextView: function(array, start_index, view_space, view_itself) {
-		view_space = view_space || 'main';
-		var complex_id = this.view_id + '_' + view_space;
-
+	getNextView: function(array, start_index, location_id, view_itself) {
 		var i = start_index + 1;
 		if (i >= array.length || i < 0){
 			return;
 		}
 		for (; i < array.length; i++) {
-			var view = this.getStoredMpx(array[i]).getView(complex_id);
-			var dom_hook = view && !view.detached && view.getT();
+			var view = this.getStoredMpx(array[i]).getView(location_id);
+			var dom_hook = view && !view._lbr.detached && view.getT();
 			if (dom_hook){
 				if (view_itself){
 					return view;
@@ -4068,8 +4726,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		},
 		getFreeView: function(cur) {
 			return this.view.getFreeChildView({
-				name: (this.by_model_name ? cur.model_name : this.nesname),
-				space: this.space
+				by_model_name: this.by_model_name,
+				nesting_name: this.nesname,
+				nesting_space: this.space
 			}, cur, (typeof this.view_opts == 'function' ? this.view_opts.call(this.view, cur) : this.view_opts));
 		}
 	},
@@ -4098,12 +4757,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return getCollPriority && getCollPriority.call(this, array);
 	},
 	appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
+		var location_id = $v.getViewLocationId(this, nesname, space || 'main');
+
 		//исправляем порядковый номер вьюхи в нэстинге
 		for (var i = 0; i < array.length; i++) {
-			var view = this.getChildView(this.getStoredMpx(array[i]), space);
+			var view = this.getStoredMpx(array[i]).getView(location_id);
 			if (view) {
-				//view.innesting_pos_old = view.innesting_pos_current;
-				view.innesting_pos_current = i;
+				view._lbr.innesting_pos_current = i;
 			}
 		}
 
@@ -4132,6 +4792,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		var cur = null, view = null, i = 0, prev_view = null, next_view = null;
+
+		var location_id = $v.getViewLocationId(this, funcs.nesname, space || 'main');
 		var detached = [];
 		var ordered_part;
 
@@ -4144,7 +4806,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				//если у всех приоритезированных моделей уже есть вьюхи, то не не используем преоритезацию
 				var has_any_nonviewed = false;
 				for (i = 0; i < ordered_part.length; i++) {
-					if (!this.getChildView(this.getStoredMpx(ordered_part[i]), space)){
+					if (this.getStoredMpx(ordered_part[i]).getView(location_id)){
 						has_any_nonviewed = true;
 					}
 				}
@@ -4160,9 +4822,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
-			view = this.getChildView(this.getStoredMpx(cur), space);
+			view = this.getStoredMpx(cur).getView(location_id);
 			if (view){
-				prev_view = this.getPrevView(array, i, space, true);
+				prev_view = this.getPrevView(array, i, location_id, true);
 				if (prev_view){
 					var current_node = view.getT();
 					var prev_node = prev_view.getT();
@@ -4173,7 +4835,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 						}
 						view.setVisState('con_appended', false);
 
-						view.detached = true;
+						view._lbr.detached = true;
 						detached.push(view);
 					}
 				}
@@ -4195,19 +4857,19 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
-			view = this.getChildView(this.getStoredMpx(cur), space);
-			if (view && !view.detached){
+			view = this.getStoredMpx(cur).getView(location_id);
+			if (view && !view._lbr.detached){
 				continue;
 			}
 			if (!view && ordered_part && ordered_part.indexOf(cur) == -1){
 				continue;
 			}
-			prev_view = this.getPrevView(array, i, space, true);
+			prev_view = this.getPrevView(array, i, location_id, true);
 
 			if (prev_view && prev_view.state('vis_con_appended')) {
 				append_list.push(cur, this.createDOMComplect(complects, ordered_complects, prev_view, 'after'));
 			} else {
-				next_view = this.getNextView(array, i, space, true);
+				next_view = this.getNextView(array, i, location_id, true);
 				if (next_view && next_view.state('vis_con_appended')){
 					append_list.push(cur, this.createDOMComplect(complects, ordered_complects, next_view, 'before'));
 				} else {
@@ -4221,7 +4883,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			cur = append_list[ i ];
 			var complect = append_list[ i + 1 ];
 
-			view = this.getChildView(this.getStoredMpx(cur), space);
+			view = this.getStoredMpx(cur).getView(location_id);
 			if (!view){
 				view = funcs.getFreeView(cur);
 			}
@@ -4234,15 +4896,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//append_data.complect.fragt.appendChild(view.getT()[0]);
 			//$(.fragt).append();
 		}
-		if (!this._collections_set_processing){
+		if (!this._lbr._collections_set_processing){
 			for (i = array.length - 1; i >= 0; i--) {
-				view = this.getChildView(this.getStoredMpx(array[i]), space);
+				view = this.getStoredMpx(array[i]).getView(location_id);
 				if (view){
 					view.requestDetailesCreating();
 				}
 			}
 			if (!not_request){
-				//this._collections_set_processing
+				//this._lbr._collections_set_processing
 				this.requestAll();
 			}
 		}
@@ -4258,7 +4920,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}
 		for (i = 0; i < detached.length; i++) {
-			detached[i].detached = null;
+			detached[i]._lbr.detached = null;
 		}
 		if (ordered_part && ordered_part.length){
 			this.nextTick(this.appendOrderedCollection, [space, funcs, view_opts, array, not_request, ordered_rend_list]);
@@ -4267,10 +4929,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 
 		for (i = 0; i < array.length; i++) {
-			view = this.getChildView(this.getStoredMpx(array[i]), space);
+			view = this.getStoredMpx(array[i]).getView(location_id);
 			if (view){
-				view.innest_prev_view = this.getPrevView(array, i, space, true);
-				view.innest_next_view = this.getNextView(array, i, space, true);
+				view._lbr.innest_prev_view = this.getPrevView(array, i, location_id, true);
+				view._lbr.innest_next_view = this.getNextView(array, i, location_id, true);
 				
 			}
 			
@@ -4287,10 +4949,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		//отсортировать существующее
 		//сгруппировать новое
 		//присоединить новое
-		//view: this.getChildView(opts.md.mpx, opts.space)
 	},
 	appendFVAncorByVN: function(opts) {
-		var view = this.getFreeChildView({name: opts.name, space: opts.space}, opts.md, opts.opts);
+		var view = this.getFreeChildView({
+			by_model_name: opts.by_model_name,
+			nesting_name: opts.name,
+			nesting_space: opts.space
+		}, opts.md, opts.opts);
 		var place = opts.place;
 		if (place && typeof opts.place == 'function'){
 			if ((opts.strict || view) && place){

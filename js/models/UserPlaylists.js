@@ -1,13 +1,25 @@
-define(['js/libs/BrowseMap', 'spv'], function(BrowseMap, spv){
+define(['js/libs/BrowseMap', 'spv', './SongsList'], function(BrowseMap, spv, SongsList){
 "use strict";
+
+var ManualPlaylist = function() {};
+SongsList.extendTo(ManualPlaylist, {
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
+		this.initStates();
+		
+	}
+});
 
 var UserPlaylists = function() {};
 BrowseMap.Model.extendTo(UserPlaylists, {
 	model_name: 'user_playlists',
 	init: function(opts) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.playlists = [];
 		this.updateNesting('lists_list', this.playlists);
+	},
+	subPager: function(name) {
+		return this.matchTitleStrictly(name);
 	},
 	savePlaylists: function(){
 		var _this = this;
@@ -28,7 +40,8 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		var matched;
 		for (var i = 0; i < this.playlists.length; i++) {
 			var cur = this.playlists[i];
-			if (cur.info && cur.info.name == title){
+			
+			if (cur.state('nav_title') == title){
 				matched = cur;
 				break;
 			}
@@ -42,16 +55,15 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 	},
 
 	createUserPlaylist: function(title){
-
-		var pl_r = this.createEnvPlaylist({
-			title: title,
-			type: "cplaylist",
-			data: {name: title}
+		var pl_r = this.initSi(ManualPlaylist, {
+			nav_title: title,
+			url_part: '/' + title
 		});
+
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
 		this.updateNesting('lists_list', this.playlists);
-		this.trigger('playlsits-change', this.playlists);
+		this.trigger('playlists-change', this.playlists);
 		return pl_r;
 	},
 	watchOwnPlaylist: function(pl) {
@@ -67,23 +79,32 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		var length = this.playlists.length;
 		this.playlists = spv.arrayExclude(this.playlists, pl);
 		if (this.playlists.length != length){
-			this.trigger('playlsits-change', this.playlists);
+			this.trigger('playlists-change', this.playlists);
 			this.updateNesting('lists_list', this.playlists);
 			this.savePlaylists();
 		}
 
 	},
 	rebuildPlaylist: function(saved_pl){
-		var p = this.createEnvPlaylist({
+		/*var p = this.createEnvPlaylist({
 			title: saved_pl.playlist_title,
 			type: saved_pl.playlist_type,
 			data: {name: saved_pl.playlist_title}
+		});*/
+
+		var pl_r = this.initSi(ManualPlaylist, {
+			nav_title: saved_pl.playlist_title,
+			url_part: '/' + saved_pl.playlist_title
+		}, {
+			subitems: {
+				'songs-list': saved_pl
+			}
 		});
-		for (var i=0; i < saved_pl.length; i++) {
-			p.addDataItem(saved_pl[i]);
-		}
-		this.watchOwnPlaylist(p);
-		return p;
+
+		//p.insertDataAsSubitems(this.main_list_name, saved_pl);
+
+		this.watchOwnPlaylist(pl_r);
+		return pl_r;
 	},
 	setSavedPlaylists: function(spls) {
 		var recovered = [];
@@ -95,7 +116,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		}
 
 		this.playlists = recovered;
-		this.trigger('playlsits-change', this.playlists);
+		this.trigger('playlists-change', this.playlists);
 		this.updateNesting('lists_list', this.playlists);
 	}
 });

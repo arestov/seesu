@@ -246,44 +246,6 @@ provoda.View.extendTo(ScrobbleRowUI, {
 
 
 
-var RepeatSongRowView = function(){};
-provoda.View.extendTo(RepeatSongRowView, {
-	"stch-rept-song": {
-		fn: function(state) {
-			this.getPart('rept-chbx').prop('checked', !!state);
-		},
-		dep_vp: ["rept-chbx"]
-	},
-	parts_builder: {
-		"rept-chbx": function() {
-			var _this = this;
-			var input = this.c.find('.rept-song-label input').click(function() {
-				_this.RPCLegacy('setDnRp', $(this).prop('checked'));
-			});
-			this.addWayPoint(input);
-			return input;
-		}
-	},
-
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-		}
-	},
-	expand: function() {
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-
-
-		this.requirePart("rept-chbx");
-	}
-});
-
 
 var SongActionsRowUI = function() {};
 etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
@@ -300,9 +262,6 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	},
 
 	children_views: {
-		"row-repeat-song": {
-			main: RepeatSongRowView
-		},
 		'row-lastfm': {
 			main: ScrobbleRowUI
 		},

@@ -18,7 +18,7 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 
 		var tpl_con = this.root_view.getSample('song-act-tagging');
 
-		this.createTemplate(tpl_con);
+		this.tpl = this.createTemplate(tpl_con);
 
 		this.c.append(tpl_con);
 		/*

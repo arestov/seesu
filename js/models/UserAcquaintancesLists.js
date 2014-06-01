@@ -37,7 +37,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 				if (accepted){
 					if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
 						return {
-							href: 'https://vk.com/' + user_info.domain,
+							href: '#/users/vk:' + user_info.uid,
 							text: user_info.full_name
 						};
 					}
@@ -88,7 +88,7 @@ var UserAcquaintancesLists = function() {};
 BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 	model_name: 'user_acqs_list',
 	init: function(opts) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		var _this = this;
 
 		this.wch(this.app, 'su_userid', 'current_user');
@@ -101,14 +101,11 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 			}
 		});
 
-		this.archivateChildrenStates('acqs_from_someone', 'accepted', 'every', 'not_wait_me');
-		this.archivateChildrenStates('acqs_from_me', 'accepted', 'every', 'not_wait_someone');
+		this.initStates();
 
-		this.updateState('nav_title', localize('Acquaintances'));
-		this.updateState('url_part', '/acquaintances');
 	},
 	'compx-wait_me_desc': {
-		depends_on: ['not_wait_me'],
+		depends_on: ['@every:accepted:acqs_from_someone'],
 		fn: function(not_wait_me) {
 			if (!not_wait_me){
 				return localize('if-you-accept-one-i') + ' ' + localize('will-get-link');
@@ -116,7 +113,7 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		}
 	},
 	'compx-wait_someone_desc': {
-		depends_on: ['not_wait_someone'],
+		depends_on: ['@every:accepted:acqs_from_me'],
 		fn: function(not_wait_someone) {
 			if (!not_wait_someone){
 				return localize('if-one-accept-i') + ' ' + localize('will-get-link');

@@ -42,7 +42,7 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 	init: function(opts) {
 		this.app = opts.app;
 		this.map_parent = opts.map_parent;
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
 		var _this = this;
@@ -213,7 +213,7 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 	init: function(opts) {
 		this.app = opts.app;
 		this.map_parent = opts.map_parent;
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
 
@@ -314,7 +314,7 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 	init: function(opts) {
 		this.app = opts.app;
 		this.map_parent = opts.map_parent;
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
 

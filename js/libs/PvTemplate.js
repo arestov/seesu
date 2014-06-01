@@ -12,7 +12,8 @@ var PvTemplate = function(opts) {
 	this.stwat_index = null;
 
 	this.root_node = opts.node;
-	this.root_node_raw = this.root_node[0] || this.root_node;
+
+	this.root_node_raw = this.root_node.hasOwnProperty('nodeType') ? this.root_node : this.root_node[0];
 	this.pv_repeat_context = null;
 	if (opts.pv_repeat_context){
 		this.pv_repeat_context = opts.pv_repeat_context;
@@ -294,10 +295,21 @@ var parser = {
 				var decr_parts =  declarations[i].split('|');
 				var cur = decr_parts[0].split(':');
 				var dom_event = cur.shift();
-				result.push(this.createPVEventData(dom_event, cur, decr_parts[1]));
+
+				result.push(this.createPVEventData(dom_event, this.createEventParams(cur), decr_parts[1]));
 			}
 			return result;
 		}
+	},
+	createEventParams: function(array) {
+
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			if (cur.indexOf('{{') != -1) {
+				array[i] = angbo.interpolateExpressions( cur );
+			}
+		}
+		return array;
 	},
 	scope_generators_p:{
 		'pv-nest': function(node, full_declaration) {
@@ -1011,7 +1023,7 @@ spv.Class.extendTo(PvTemplate, {
 		}
 	},
 	parsePvDirectives: function(start_node) {
-		start_node = start_node && start_node[0] || start_node;
+		start_node = start_node.hasOwnProperty('nodeType') ? start_node : start_node[0];
 
 		var vroot_node = this.root_node_raw;
 
