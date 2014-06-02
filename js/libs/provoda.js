@@ -714,7 +714,7 @@ var StatesArchiver = function(state_name, result_state_name, md, calculateResult
 	this.result_state_name = result_state_name;
 
 	this.state_name = state_name;
-	this.event_name = 'state_change-' + this.state_name;
+	this.event_name = 'lgh_sch-' + this.state_name;
 	this.skip_reg = true;
 
 	var calcR = calculateResult;
@@ -736,8 +736,8 @@ var StatesArchiver = function(state_name, result_state_name, md, calculateResult
 
 };
 StatesArchiver.prototype = {
-	event_callback: function(e) {
-		this.getItemsValues(e && e.target);
+	event_callback: function() {
+		this.getItemsValues();
 	},
 	every: function(values_array) {
 		return !!values_array.every(hasargfn);
@@ -751,16 +751,12 @@ StatesArchiver.prototype = {
 		this.md.updateState(this.result_state_name, value);
 		this.md.current_motivator = old_value;
 	},
-	getItemsValues: function(item) {
-		var current_motivator = (item && item.current_motivator) || this.current_motivator;
+	getItemsValues: function() {
 		var values_list = new Array(this.items_list.length);
 		for (var i = 0; i < this.items_list.length; i++) {
 			values_list[i] = this.items_list[i].state(this.state_name);
 		}
-		var old_value = this.current_motivator;
-		this.current_motivator = current_motivator;
 		this.setResult(this.calculate_result.call(this, values_list));
-		this.current_motivator = old_value;
 		return values_list;
 	},
 	unsubcribeOld: function() {
@@ -811,6 +807,11 @@ var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, p
 };
 FlowStep.prototype.call = function() {
 	if (this.cb_wrapper){
+		/*
+		вместо того, что бы просто выполнить отложенную функцию мы можем вызвать специальный обработчик, который сможет сделать некие действиями, имея в распоряжении
+		в первую очередь мотиватор, далее контекст для самого себя, контекст колбэка, сам колбэк и аргументы для колбэка
+
+		*/
 		this.cb_wrapper.call(this.real_context, this, this.fn, this.context, this.args, this.arg);
 	} else {
 		if (this.args){
@@ -1169,7 +1170,7 @@ FastEventor.prototype = {
 		}
 		if (fired){
 			if (reg_fires[0].getWrapper){
-				callbacks_wrapper = reg_fires[0].getWrapper.call(this);
+				callbacks_wrapper = reg_fires[0].getWrapper.call(this.sputnik);
 			}
 			if (!skip_reg){
 				var mo_context = context || _this.sputnik;
@@ -1224,8 +1225,8 @@ FastEventor.prototype = {
 			opts && opts.easy_bind_control);
 	},
 	off: function(namespace, cb, obj, context){
-		if (this.convertEventName){
-			namespace = this.convertEventName(namespace);
+		if (this.sputnik.convertEventName){
+			namespace = this.sputnik.convertEventName(namespace);
 		}
 		var
 			short_name = parseNamespace(namespace)[0],
@@ -1280,8 +1281,8 @@ FastEventor.prototype = {
 		not_matched: []
 	},
 	getMatchedCallbacks: function(namespace){
-		if (this.convertEventName){
-			namespace = this.convertEventName(namespace);
+		if (this.sputnik.convertEventName){
+			namespace = this.sputnik.convertEventName(namespace);
 		}
 		var
 			r, short_name = parseNamespace(namespace)[0];
@@ -1427,7 +1428,7 @@ FastEventor.prototype = {
 			}
 			if (opts.depend){
 				if (req){
-					req.addDepend(this);
+					req.addDepend(this.sputnik);
 				}
 			}
 			target_arr.push(req);
@@ -1486,9 +1487,9 @@ FastEventor.prototype = {
 			var rq = all_requests.pop();
 			if (rq) {
 				if (rq.softAbort){
-					rq.softAbort(this);
+					rq.softAbort(this.sputnik);
 				} else if (rq.abort){
-					rq.abort(this);
+					rq.abort(this.sputnik);
 				}
 			}
 		}
@@ -1801,21 +1802,48 @@ FastEventor.prototype = {
 
 };
 var hndMotivationWrappper = function(motivator, fn, context, args, arg) {
-	if (this.isAliveFast && !this.isAliveFast() && fn !== this.remove) {
+	if (this.isAliveFast && !this.isAliveFast() && this == context && fn !== this.remove) {
 		return;
 	}
 
-	var old_value = this.current_motivator;
-	this.current_motivator = motivator;
+	//устанавливаем мотиватор конечному пользователю события
+	var ov_c = context.current_motivator;
+	context.current_motivator = motivator;
+
+	
+
+	var ov_t;
+
+	if (this != context) {
+		//устанавливаем мотиватор реальному владельцу события, чтобы его могли взять вручную
+		//что-то вроде api
+		ov_t = this.current_motivator;
+		this.current_motivator = motivator;
+	}
+
+
+
 	if (args){
 		fn.apply(context, args);
 	} else {
 		fn.call(context, arg);
 	}
-	if (this.current_motivator != motivator){
-		throw new Error('wrong motivator'); //fixme
+
+
+	if (context.current_motivator != motivator){
+		throw new Error('wrong motivator'); //тот кто поменял current_motivator должен был вернуть его обратно
 	}
-	this.current_motivator = old_value;
+	context.current_motivator = ov_c;
+
+
+	if (this != context) {
+		if (this.current_motivator != motivator){
+			throw new Error('wrong motivator'); //тот кто поменял current_motivator должен был вернуть его обратно
+		}
+		this.current_motivator = ov_t;
+	}
+
+	
 };
 spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
@@ -1902,7 +1930,7 @@ var hasPrefixedProps = function(props, prefix) {
 	return has_prefixed;
 };
 
-var std_event_opt = {force_async: true};
+
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -1913,6 +1941,17 @@ var getConnector = function(state_name) {
 	}
 	return connects_store[state_name];
 };
+
+var light_con_store = {};
+var getLightConnector = function(state_name) {
+	if (!light_con_store[state_name]){
+		light_con_store[state_name] = function(value) {
+			this.updateState(state_name, value);
+		};
+	}
+	return light_con_store[state_name];
+};
+
 var PVStateChangeEvent = function(type, value, old_value, target) {
 	this.type = type;
 	this.value = value;
@@ -1983,7 +2022,17 @@ add({
 			return this.hndMotivationWrappper;
 		}
 	},
-
+	'regfr-lightstev': {
+		test: function(namespace) {
+			return namespace.indexOf('lgh_sch-') === 0;
+		},
+		fn: function(namespace) {
+			return this.state(namespace.replace('lgh_sch-', ''));
+		},
+		getWrapper: function() {
+			return this.hndMotivationWrappper;
+		}
+	},
 	getContextOptsI: function() {
 		if (!this.conx_optsi){
 			this.conx_optsi = new EvConxOpts(this, true);
@@ -1995,6 +2044,21 @@ add({
 			this.conx_opts = new EvConxOpts(this);
 		}
 		return this.conx_opts;
+	},
+	wlch: function(donor, donor_state, acceptor_state) {
+		var event_name = 'lgh_sch-' + donor_state;
+		var acceptor_state_name = acceptor_state || donor_state;
+		var cb = getLightConnector(acceptor_state_name);
+		donor.evcompanion._addEventHandler(event_name, cb, this);
+
+		if (this != donor && this instanceof provoda.View){
+			this.onDie(function() {
+				donor.off(event_name, cb, false, this);
+				donor = null;
+				cb = null;
+			});
+		}
+
 	},
 	wch: function(donor, donor_state, acceptor_state, immediately) {
 	
@@ -2012,6 +2076,8 @@ add({
 		if (this != donor && this instanceof provoda.View){
 			this.onDie(function() {
 				donor.off(event_name, cb, false, this);
+				donor = null;
+				cb = null;
 			});
 		}
 
@@ -2278,7 +2344,7 @@ add({
 					if (!target){
 						throw new Error();
 					}
-					md.wch(target, cur.state_name, cur.full_name);
+					md.wlch(target, cur.state_name, cur.full_name);
 				}
 
 			},
@@ -2311,7 +2377,7 @@ add({
 					if (!target){
 						throw new Error();
 					}
-					md.wch(target, cur.state_name, cur.full_name);
+					md.wlch(target, cur.state_name, cur.full_name);
 				}
 				
 			}
@@ -2498,6 +2564,13 @@ var reversedIterateChList = function(changes_list, context, cb) {
 	return counter;
 };
 
+
+var st_event_name_default = 'state_change-';
+var st_event_name_vip = 'vip_state_change-';
+var st_event_name_light = 'lgh_sch-';
+
+var st_event_opt = {force_async: true};
+
 add({
 	compressStatesChanges: function(changes_list) {
 		var result_changes = {};
@@ -2545,29 +2618,32 @@ add({
 			}
 		}
 	},
-	st_event_name_default: 'state_change-',
-	st_event_name_vip: 'vip_state_change-',
 	_triggerStChanges: function(i, state_name, value) {
 
-		var vip_name = this.st_event_name_vip + state_name;
-		var default_name = this.st_event_name_default + state_name;
+		var vip_name = st_event_name_vip + state_name;
+		var default_name = st_event_name_default + state_name;
+		var light_name = st_event_name_light + state_name;
 
 		var vip_cb_cs = this.evcompanion.getMatchedCallbacks(vip_name).matched;
 		var default_cb_cs = this.evcompanion.getMatchedCallbacks(default_name).matched;
+		var light_cb_cs = this.evcompanion.getMatchedCallbacks(light_name).matched;
 
 
+		var event_arg = (vip_cb_cs.length || default_cb_cs.length) && new PVStateChangeEvent(state_name, value, this.zdsv.original_states[state_name], this);
 
-		if (vip_cb_cs.length || default_cb_cs.length){
-			var event_arg = new PVStateChangeEvent(state_name, value, this.zdsv.original_states[state_name], this);
+		if (vip_cb_cs.length){
+			//вызов внутреннего для самого объекта события
+			this.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg);
+		}
 
-			if (vip_cb_cs.length){
-				//вызов внутреннего для самого объекта события
-				this.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg);
-			}
-			if (default_cb_cs.length){
-				//вызов стандартного события
-				this.evcompanion.triggerCallbacks(default_cb_cs, false, std_event_opt, default_name, event_arg);
-			}
+		if (light_cb_cs.length) {
+			this.evcompanion.triggerCallbacks(light_cb_cs, false, false, light_name, value);
+		}
+
+
+		if (default_cb_cs.length) {
+			//вызов стандартного события
+			this.evcompanion.triggerCallbacks(default_cb_cs, false, st_event_opt, default_name, event_arg);
 		}
 
 	},
