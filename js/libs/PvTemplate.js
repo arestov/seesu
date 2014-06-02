@@ -13,7 +13,7 @@ var PvTemplate = function(opts) {
 
 	this.root_node = opts.node;
 
-	this.root_node_raw = this.root_node.hasOwnProperty('nodeType') ? this.root_node : this.root_node[0];
+	this.root_node_raw = 'nodeType' in this.root_node ? this.root_node : this.root_node[0];
 	this.pv_repeat_context = null;
 	if (opts.pv_repeat_context){
 		this.pv_repeat_context = opts.pv_repeat_context;
@@ -1052,7 +1052,7 @@ spv.Class.extendTo(PvTemplate, {
 		}
 	},
 	parsePvDirectives: function(start_node, struc_store) {
-		start_node = start_node.hasOwnProperty('nodeType') ? start_node : start_node[0];
+		start_node = 'nodeType' in start_node ? start_node : start_node[0];
 
 		var vroot_node = this.root_node_raw;
 
