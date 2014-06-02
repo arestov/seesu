@@ -816,7 +816,7 @@ AppModel.extendTo(SeesuApp, {
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
 				_this.vkapi = null;
-				_this.vktapi = this.vk_open_api;
+				_this.vktapi = _this.vk_open_api;
 			}
 
 		};
