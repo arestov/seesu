@@ -2747,10 +2747,8 @@ add({
 		
 		while (zdsv.states_changing_stack.length){
 
-			wipeObj(original_states);
-			all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
-			//объекты используются повторно, ради выиграша в производительности
-			//которые заключается в исчезновении пауз на сборку мусора 
+			
+			
 
 			//spv.cloneObj(original_states, this.states);
 
@@ -2797,18 +2795,24 @@ add({
 			if (all_i_cg.length){
 				push.apply(total_ch, all_i_cg);
 			}
+
+
+			wipeObj(original_states);
+			all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
+			//объекты используются повторно, ради выиграша в производительности
+			//которые заключается в исчезновении пауз на сборку мусора 
 		}
 
 		//устраняем измененное дважды и более
 		this.compressStatesChanges(total_ch);
 
 
-		wipeObj(original_states);
-		all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
+		//wipeObj(original_states);
+		//all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
 		if (this.sendStatesToMPX && total_ch.length){
-			this.sendStatesToMPX(zdsv.total_ch);
-			zdsv.total_ch.length = 0;
+			this.sendStatesToMPX(total_ch);
+			total_ch.length = 0;
 		} else {
 			total_ch.length = 0;
 		}
@@ -4192,6 +4196,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	die: function(opts){
 		if (!this._lbr.marked_as_dead){
+			$(this.getC()).remove();
 			this.markAsDead(opts && opts.skip_md_call);
 			this._lbr.marked_as_dead = true;
 		}
