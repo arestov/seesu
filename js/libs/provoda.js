@@ -1912,9 +1912,9 @@ var wipeObj = function (obj){
 		}
 	}
 };
-var iterateChList = function(changes_list, context, cb) {
+var iterateChList = function(changes_list, context, cb, original_states) {
 	for (var i = 0; i < changes_list.length; i+=2) {
-		cb.call(context, i, changes_list[i], changes_list[i+1]);
+		cb.call(context, i, changes_list[i], changes_list[i+1], original_states);
 	}
 };
 
@@ -2582,7 +2582,7 @@ add({
 		return changes_list;
 	},
 	state_ch_h_prefix: 'stch-',
-	_replaceState: function(state_name, value, skip_handler, stack) {
+	_replaceState: function(original_states, state_name, value, skip_handler, stack) {
 		if (state_name){
 			var old_value = this.states[state_name],
 				method;
@@ -2603,8 +2603,8 @@ add({
 				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 				//
 
-				if (!this.zdsv.original_states.hasOwnProperty(state_name)) {
-					this.zdsv.original_states[state_name] = this.states[state_name];
+				if (!original_states.hasOwnProperty(state_name)) {
+					original_states[state_name] = this.states[state_name];
 				}
 
 				this.states[state_name] = value;
@@ -2618,7 +2618,7 @@ add({
 			}
 		}
 	},
-	_triggerStChanges: function(i, state_name, value) {
+	_triggerStChanges: function(i, state_name, value, original_states) {
 
 		var vip_name = st_event_name_vip + state_name;
 		var default_name = st_event_name_default + state_name;
@@ -2629,7 +2629,7 @@ add({
 		var light_cb_cs = this.evcompanion.getMatchedCallbacks(light_name).matched;
 
 
-		var event_arg = (vip_cb_cs.length || default_cb_cs.length) && new PVStateChangeEvent(state_name, value, this.zdsv.original_states[state_name], this);
+		var event_arg = (vip_cb_cs.length || default_cb_cs.length) && new PVStateChangeEvent(state_name, value, original_states[state_name], this);
 
 		if (vip_cb_cs.length){
 			//вызов внутреннего для самого объекта события
@@ -2735,6 +2735,8 @@ add({
 		
 
 		zdsv.collecting_states_changing = true;
+		//this.zdsv is important for this!!!
+		//this.zdsv.collecting_states_changing - must be semi public;
 
 
 		var total_ch = zdsv.total_ch;
@@ -2756,13 +2758,13 @@ add({
 			var cur_changes_opts = zdsv.states_changing_stack.shift();
 
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
-			this.getChanges(cur_changes_list, cur_changes_opts, changed_states);
+			this.getChanges(original_states, cur_changes_list, cur_changes_opts, changed_states);
 			//var changed_states = ... ↑
 
 			cur_changes_list = cur_changes_opts = null;
 
 			//проверить комплексные состояния
-			var first_compxs_chs = this.getComplexChanges(changed_states);
+			var first_compxs_chs = this.getComplexChanges(original_states, changed_states);
 			if (first_compxs_chs.length){
 				push.apply(all_ch_compxs, first_compxs_chs);
 			}
@@ -2770,7 +2772,7 @@ add({
 			var current_compx_chs = first_compxs_chs;
 			//довести изменения комплексных состояний до самого конца
 			while (current_compx_chs.length){
-				var cascade_part = this.getComplexChanges(current_compx_chs);
+				var cascade_part = this.getComplexChanges(original_states, current_compx_chs);
 				current_compx_chs = cascade_part;
 				if (cascade_part.length){
 					push.apply(all_ch_compxs, cascade_part);
@@ -2790,7 +2792,7 @@ add({
 			this.compressStatesChanges(all_i_cg);
 
 
-			iterateChList(all_i_cg, this, this._triggerStChanges);
+			iterateChList(all_i_cg, this, this._triggerStChanges, original_states);
 
 			if (all_i_cg.length){
 				push.apply(total_ch, all_i_cg);
@@ -2805,30 +2807,25 @@ add({
 		all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
 		if (this.sendStatesToMPX && total_ch.length){
-			//this.nextTick(this.sendChangesAfterDelay);
-			this.sendStatesToMPX(this.zdsv.total_ch);
-			this.zdsv.total_ch.length = 0;
+			this.sendStatesToMPX(zdsv.total_ch);
+			zdsv.total_ch.length = 0;
 		} else {
 			total_ch.length = 0;
 		}
 
 
 		zdsv.collecting_states_changing = false;
+		//this.zdsv = null;
 		return this;
 	},
-	sendChangesAfterDelay: function() {
-		if (this.zdsv.total_ch.length){
-			this.sendStatesToMPX(this.zdsv.total_ch);
-			this.zdsv.total_ch.length = 0;
-		}
+
+	getComplexChanges: function(original_states, changes_list) {
+		return this.getChanges(original_states, this.checkComplexStates(changes_list));
 	},
-	getComplexChanges: function(changes_list) {
-		return this.getChanges(this.checkComplexStates(changes_list));
-	},
-	getChanges: function(changes_list, opts, result_arr) {
+	getChanges: function(original_states, changes_list, opts, result_arr) {
 		var changed_states = result_arr || [];
 		for (var i = 0; i < changes_list.length; i+=2) {
-			this._replaceState(changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
+			this._replaceState(original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
 		}
 		if (this.updateTemplatesStates){
 			this.updateTemplatesStates(changes_list);
