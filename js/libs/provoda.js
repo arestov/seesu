@@ -4130,6 +4130,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		this.c = null;
+
+		if (this.base_skeleton) {
+			for (i = 0; i < this.base_skeleton.length; i++) {
+				$(this.base_skeleton[i].node);
+			}
+			this.base_skeleton = null;
+		}
+
+
 		this._lbr._anchor = null;
 		if (this.tpl) {
 			this.tpl.destroy();
