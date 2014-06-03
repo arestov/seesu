@@ -685,7 +685,7 @@ var ItemsEvents = function(event_name, md, callback) {
 ItemsEvents.prototype = {
 	event_callback: function(e) {
 		var old_value = this.md.current_motivator;
-		this.md.current_motivator = e.target.current_motivator;
+		this.md.current_motivator = this.current_motivator;
 		this.callback.call(this.md, {
 			target: this.md,
 			item: e.target,
@@ -1802,7 +1802,7 @@ FastEventor.prototype = {
 
 };
 var hndMotivationWrappper = function(motivator, fn, context, args, arg) {
-	if (this.isAliveFast && !this.isAliveFast() && this == context && fn !== this.remove) {
+	if (this.isAliveFast && !this.isAliveFast()) {
 		return;
 	}
 
