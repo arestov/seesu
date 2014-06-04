@@ -99,6 +99,18 @@ var app_env = app_serv.app_env;
 			case "sm2-proxy":
 				useLib(function() {
 					spv.domReady(window.document, function(){
+
+						var only_strings = false;
+						try {
+							window.postMessage({
+								toString: function(){
+									only_strings = true;
+								}
+							},"*");
+						} catch(e){}
+						sm2opts.modern_messaging = !only_strings;
+
+
 						var pcore = new AudioCoreSm2Proxy("http://arestov.github.io", "/SoundManager2/?" + su.version, sm2opts);
 						var pcon = $(pcore.getC());
 						var complete;

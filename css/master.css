@@ -66,10 +66,13 @@ a.track_name_loading .song-track-name,
 	}
 	
 .app-loading-mark{
-	margin: 1rem 0;
 	height: 1.72rem;
-	
-	position: relative;
+	width: 1.72rem;
+	margin-left: -0.86rem;
+	margin-top: -0.86rem;
+	position: absolute;
+	top: 50%;
+	left: 50%;
 	}
 
 	.app-loaded .app-loading-mark{
