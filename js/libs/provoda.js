@@ -904,7 +904,7 @@ var getBoxedRAFFunc = function(win) {
 			raf = win[vendors[x]+'RequestAnimationFrame'];
 		}
 	}
-	return function(fn) {
+	return raf && function(fn) {
 		return raf.call(win, fn);
 	};
 };
@@ -2053,6 +2053,9 @@ add({
 
 		if (this != donor && this instanceof provoda.View){
 			this.onDie(function() {
+				if (!donor) {
+					return;
+				}
 				donor.off(event_name, cb, false, this);
 				donor = null;
 				cb = null;
