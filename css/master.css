@@ -69,9 +69,8 @@ a.track_name_loading .song-track-name,
 	height: 1.72rem;
 	width: 1.72rem;
 	margin-left: -0.86rem;
-	margin-top: -0.86rem;
 	position: absolute;
-	top: 50%;
+	top: 0.5rem;
 	left: 50%;
 	}
 
