@@ -106,7 +106,8 @@ AppModel.extendTo(SeesuApp, {
 			open_api: false,
 			deep_sanbdox: app_env.deep_sanbdox,
 			vksite_app: app_env.vkontakte,
-			vksite_settings: this._url.api_settings
+			vksite_settings: this._url.api_settings,
+			display_type: app_env.tizen_app && 'mobile'
 		});
 
 

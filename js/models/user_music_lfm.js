@@ -331,7 +331,7 @@ RecommArtList.extendTo(RecommArtListForCurrentUser, {
 });
 
 
-var user_artists_sp = ['recommended', 'library', 'top:7day', 'top:1month',
+var user_artists_sp = ['recommended', 'library', 'top:7day', /* 'top:1month',*/
 		'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 var LfmUserArtists = function() {};
 BrowseMap.Model.extendTo(LfmUserArtists, {
@@ -370,10 +370,10 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 			constr: TopLUArt,
 			title: 'top of 7day'
 		},
-		'top:1month':{
+		/*'top:1month':{
 			constr: TopLUArt,
 			title: 'top of month'
-		},
+		},*/
 		'top:3month':{
 			constr: TopLUArt,
 			title: 'top of 3 months'
@@ -427,7 +427,7 @@ SongsList.extendTo(LfmRecentUserTracks, {
 	]
 });
 var user_tracks_sp = [
-	'loved', 'recent', 'top:7day', 'top:1month',
+	'loved', 'recent', 'top:7day', /*'top:1month',*/
 	'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 var LfmUserTracks = function() {};
 BrowseMap.Model.extendTo(LfmUserTracks, {
@@ -462,10 +462,10 @@ BrowseMap.Model.extendTo(LfmUserTracks, {
 			constr: TopUserTracks,
 			title: 'top of 7day'
 		},
-		'top:1month':{
+		/*'top:1month':{
 			constr: TopUserTracks,
 			title: 'top of month'
-		},
+		},*/
 		'top:3month':{
 			constr: TopUserTracks,
 			title: 'top of 3 months'
@@ -570,7 +570,7 @@ ArtCard.AlbumsList.extendTo(LfmUserTopAlbums, {
 
 
 
-var user_albums_sp = ['recommended', 'new_releases', 'top:7day', 'top:1month',
+var user_albums_sp = ['recommended', 'new_releases', 'top:7day', /*'top:1month',*/
 		'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 
 var LfmUserAlbums = function() {};
@@ -612,10 +612,10 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 			constr: LfmUserTopAlbums,
 			title: 'Top of 7 days'
 		},
-		'top:1month':{
+		/*'top:1month':{
 			constr: LfmUserTopAlbums,
 			title: 'Top of 1 month'
-		},
+		},*/
 		'top:3month':{
 			constr: LfmUserTopAlbums,
 			title: 'Top of 3 months'
