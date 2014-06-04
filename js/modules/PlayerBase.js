@@ -11,17 +11,17 @@ provoda.Eventor.extendTo(PlayerBase, {
 	},
 	'regfr-cready': {
 		event_name: 'core-ready',
-		fn: function(cb) {
+		fn: function() {
 			if (this.core){
-				cb();
+				return true;
 			}
 		}
 	},
 	'regfr-cfail': {
 		event_name: 'core-fail',
-		fn: function(cb) {
+		fn: function() {
 			if (this.core_failed){
-				cb();
+				return true;
 			}
 		}
 	},

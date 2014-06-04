@@ -12,14 +12,26 @@ ExfmApi.prototype = {
 	constructor: ExfmApi,
 	cache_namespace: "exfm_api",
 	thisOriginAllowed: true,
+	checkResponse: function(r) {
+		return r && !!(r.error || r.status_text == 'Error');
+	},
+	source_name: 'exfm',
 	get: function(method, params, options) {
 
 
 		if (method) {
 			options = options || {};
+			params = params || {};
+
+			if (options && options.paging) {
+				params.results = options.paging.page_limit;
+				params.start = options.paging.next_page;
+			}
+
+
 			options.cache_key = options.cache_key || hex_md5(method + spv.stringifyParams(params));
 
-			var	params_full = params || {};
+			
 			//params_full.consumer_key = this.key;
 
 
@@ -29,7 +41,7 @@ ExfmApi.prototype = {
 				url: "http://ex.fm/api/v3/" + method,
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
-				data: params_full,
+				data: params,
 				timeout: 20000,
 				afterChange: function(opts) {
 					if (opts.dataType == 'json'){
@@ -45,6 +57,7 @@ ExfmApi.prototype = {
 				cache_key: options.cache_key,
 				cache_timeout: options.cache_timeout,
 				cache_namespace: this.cache_namespace,
+				checkResponse: this.checkResponse,
 				requestFn: function() {
 					return aReq.apply(this, arguments);
 				},
@@ -83,9 +96,7 @@ ExfmMusicSearch.prototype = {
 			page_link	: cursor.sources && cursor.sources[0],
 			_id			: cursor.id,
 			type: 'mp3',
-			media_type: 'mp3',
-			models: {},
-			getSongFileModel: Mp3Search.getSongFileModel
+			media_type: 'mp3'
 		};
 		if (!entity.artist){
 			var guess_info = Mp3Search.guessArtist(entity.track, msq && msq.artist);
@@ -94,11 +105,7 @@ ExfmMusicSearch.prototype = {
 				entity.track = guess_info.track;
 			}
 		}
-		if (msq){
-			this.mp3_search.setFileQMI(entity, msq);
-			
-			
-		}
+
 		
 		
 		return entity;
@@ -123,28 +130,36 @@ ExfmMusicSearch.prototype = {
 		var olddone = async_ans.done,
 			result;
 
+		var checkResponse = this.api.checkResponse;
+
 		async_ans.done = function(cb) {
 			olddone.call(this, function(r) {
 				if (!result){
-					var music_list = [];
-					if (r && r.songs.length){
-						for (var i=0; i < r.songs.length; i++) {
-							if (!r.songs[i] || !r.songs[i].url || r.songs[i].url.indexOf('api.soundcloud.com/tracks/') != -1){
-								continue;
-							}
-							var ent = _this.makeSong(r.songs[i], msq);
-							if (_this.mp3_search.getFileQMI(ent, msq) == -1){
-								//console.log(ent)
-							} else {
+
+					var error = checkResponse(r);
+					if (!error) {
+						var music_list = [];
+						if (r && r.songs.length){
+							for (var i=0; i < r.songs.length; i++) {
+								var cur = r.songs[i];
+								if (!cur || !cur.url || cur.url.indexOf('api.soundcloud.com/tracks/') != -1){
+									continue;
+								}
+								var ent = _this.makeSong(r.songs[i], msq);
 								music_list.push(ent);
+
+
+							
 							}
-
-
-						
 						}
+						
+						result = music_list;
+					} else {
+						result = new Error('bad response from server');
 					}
+
+
 					
-					result = music_list;
 				}
 				cb(result, 'mp3');
 

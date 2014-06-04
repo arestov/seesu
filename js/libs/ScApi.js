@@ -8,6 +8,7 @@ var ScApi = function(key, queue, crossdomain, cache_ajax) {
 };
 
 ScApi.prototype = {
+	errors_fields: [],
 	constructor: ScApi,
 	cache_namespace: "soundcloud_api",
 	thisOriginAllowed: true,
@@ -15,10 +16,21 @@ ScApi.prototype = {
 
 		if (method) {
 			options = options || {};
+			params = params || {};
+
+			if (options && options.paging) {
+				params.limit = options.paging.page_limit;
+				params.offset = options.paging.page_limit * (options.paging.next_page -1);
+			}
+
+			
+
+	
+			params.consumer_key = this.key;
+
 			options.cache_key = options.cache_key || hex_md5("http://api.soundcloud.com/" + method + spv.stringifyParams(params));
 
-			var	params_full = params || {};
-			params_full.consumer_key = this.key;
+			
 
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
@@ -27,7 +39,7 @@ ScApi.prototype = {
 				url: "http://api.soundcloud.com/" + method + ".js",
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
-				data: params_full,
+				data: params,
 				timeout: 20000,
 				resourceCachingAvailable: true,
 				afterChange: function(opts) {
@@ -91,12 +103,7 @@ ScMusicSearch.prototype = {
 				_id			: cursor.id,
 				type: 'mp3',
 				media_type: 'mp3',
-				models: {},
-				getSongFileModel: Mp3Search.getSongFileModel
 			};
-			if (msq){
-				this.mp3_search.setFileQMI(entity, msq);
-			}
 			
 			
 		}
@@ -129,9 +136,7 @@ ScMusicSearch.prototype = {
 						for (var i=0; i < r.length; i++) {
 							var ent = _this.makeSong(r[i], msq);
 							if (ent){
-								if (_this.mp3_search.getFileQMI(ent, msq) == -1){
-									//console.log(ent)
-								} else if (!Mp3Search.hasMusicCopy(music_list,ent)){
+								if (!Mp3Search.hasMusicCopy(music_list,ent)){
 									music_list.push(ent);
 								}
 							}

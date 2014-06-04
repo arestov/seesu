@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv'], function(provoda, spv, app_serv){
+define(['provoda', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(provoda, spv, app_serv, morph_helpers){
 "use strict";
 var localize = app_serv.localize;
 
@@ -49,7 +49,7 @@ spv.Class.extendTo(GMessagesStore, {
 var BigContextNotify = function() {};
 provoda.Model.extendTo(BigContextNotify, {
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		var _this = this;
 		if (!this.cant_hide_notify){
 			if (!params.notf){
@@ -169,7 +169,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		}
 		return this.getImageWrap(obj.array || obj.item);
 	},
-	getImageWrap: app_serv.getLFMImageWrap,
+	getImageWrap: morph_helpers.lfm_image,
 	setArtistImage: function(artist_name, lfm_arr, source) {
 		this.getArtistImagesModel(artist_name).addImage(this.getImageWrap(lfm_arr), source);
 	},

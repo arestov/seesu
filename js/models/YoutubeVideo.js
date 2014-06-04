@@ -5,7 +5,7 @@ var YoutubeVideo = function() {};
 BrowseMap.Model.extendTo(YoutubeVideo, {
 	model_name: 'youtube_video',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 
 
 		this.mo = params.mo;
