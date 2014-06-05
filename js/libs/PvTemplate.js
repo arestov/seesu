@@ -583,6 +583,10 @@ var parser = {
 			}
 		}
 
+		for (var i = 0; i < attributes_list.length; i++) {
+			cur_node.removeAttributeNode(attributes_list[i].node);
+		}
+
 		if ( directives_data.scope_root && directives_data.instructions['pv-nest'] ) {
 			if (!directives_data.scope_root.children_scopes) {
 				directives_data.scope_root.children_scopes = [];
