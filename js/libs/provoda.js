@@ -796,6 +796,8 @@ var ev_na_cache = {};
 
 var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, parent_motivator) {
 	this.aborted = false;
+	this.p_space = '';
+	this.p_index_key = '';
 	this.num = num;
 	this.fn = fn;
 	this.context = context;
@@ -1836,6 +1838,14 @@ FastEventor.prototype = {
 
 };
 var hndMotivationWrappper = function(motivator, fn, context, args, arg) {
+
+	if (motivator.p_space) {
+		this.zdsv.removeFlowStep(motivator.p_space, motivator.p_index_key, motivator);
+	}
+
+	
+
+
 	if (this.isAliveFast && !this.isAliveFast()) {
 		return;
 	}
@@ -2009,7 +2019,7 @@ var StatesLabour = function() {
 	this.changed_states = [];
 	this.total_ch = [];
 };
-StatesLabour.prototype.abortFlowSteps = function(space, index_key) {
+StatesLabour.prototype.abortFlowSteps = function(space, index_key, is_one_item) {
 	var full_space = 'flow_steps_' + space;
 
 	if (!this[full_space]){
@@ -2020,33 +2030,52 @@ StatesLabour.prototype.abortFlowSteps = function(space, index_key) {
 	if (!array) {
 		return;
 	}
-	while (array.length) {
-		var cur = array.shift();
-		cur.abort();
+	if (!is_one_item) {
+		while (array.length) {
+			var cur = array.shift();
+			cur.abort();
+		}
+	} else {
+		array.abort();
+		this[full_space][index_key] = null;
 	}
+	
 	return;
 };
-StatesLabour.prototype.createFlowStepsArray = function(space, index_key) {
+StatesLabour.prototype.createFlowStepsArray = function(space, index_key, one_item) {
 	var full_space = 'flow_steps_' + space;
 	if (!this[full_space]){
 		this[full_space] = {};
 	}
-	if (!this[full_space][index_key]){
+	if (one_item) {
+		this[full_space][index_key] = one_item;
+	} else if (!this[full_space][index_key]) {
 		this[full_space][index_key] = [];
 	}
+
 	return this[full_space][index_key];
 };
 
-
-
-var stateCheckMW = function(motivator, fn, context, args, e) {
-	if (e.value == this.state()) {
-
+StatesLabour.prototype.removeFlowStep = function(space, index_key, item) {
+	var full_space = 'flow_steps_' + space;
+	var target = this[full_space][index_key];
+	if (!target) {
+		return;
 	}
-	//motivator, fn, context, args, arg
-	//if ()
+	if (Array.isArray(target)) {
+		var pos = target.indexOf(item);
+		target.splice(pos, 1);
+	} else {
+		if (target == item) {
+			this[full_space][index_key] = null;
+		} else {
+			console.log('wrong motivator !?')
+		}
+	}
+	
+
 };
-//hndMotivationWrappper
+
 
 
 
@@ -2055,6 +2084,8 @@ var stackStateFlowStep = function(flow_step, state_name) {
 		this.zdsv = new StatesLabour();
 		//debugger;
 	}
+	flow_step.p_space = 'stev';
+	flow_step.p_index_key = state_name;
 	this.zdsv.createFlowStepsArray('stev', state_name).push(flow_step);
 };
 
@@ -2063,6 +2094,8 @@ var stackNestingFlowStep = function(flow_step, nesting_name) {
 		this.zdsv = new StatesLabour();
 		//debugger;
 	}
+	flow_step.p_space = 'collch';
+	flow_step.p_index_key = nesting_name;
 	this.zdsv.createFlowStepsArray('collch', nesting_name).push(flow_step);
 };
 
@@ -2716,13 +2749,12 @@ add({
 				this.states[state_name] = value;
 
 				if (method){
+					this.zdsv.abortFlowSteps('stch', state_name, true);
 					var flow_step = this.nextTick(method, [value, old_value, state_name], true);
+					flow_step.p_space = 'stch';
+					flow_step.p_index_key = state_name;
+					this.zdsv.createFlowStepsArray('stch', state_name, flow_step);
 
-					this.zdsv.abortFlowSteps('stch', state_name);
-
-					var flow_steps = this.zdsv.createFlowStepsArray('stch', state_name);
-
-					flow_steps.push(flow_step);
 
 					
 					//method.call(this, value, old_value);
@@ -2751,6 +2783,11 @@ add({
 		if (vip_cb_cs.length || light_cb_cs.length || default_cb_cs.length) {
 	
 			flow_steps = zdsv.createFlowStepsArray('stev', state_name);
+			for (var vv = 0; vv < flow_steps.length; vv++) {
+				var cur = flow_steps[vv];
+				cur.p_space = 'stev';
+				cur.p_index_key = state_name;
+			}
 		}
 
 		
@@ -3315,9 +3352,10 @@ add({
 		var chch_cb_cs = this.evcompanion.getMatchedCallbacks(full_ev_name).matched;
 
 		var zdsv = this.zdsv;
-		
+		if (zdsv) {
+			zdsv.abortFlowSteps('collch', collection_name);
+		}
 		var flow_steps;
-		zdsv && zdsv.abortFlowSteps('collch', collection_name);
 
 
 		
@@ -3328,6 +3366,11 @@ add({
 			}
 			zdsv = this.zdsv;
 			flow_steps = zdsv.createFlowStepsArray('collch', collection_name);
+			for (var vv = 0; vv < flow_steps.length; vv++) {
+				var curf = flow_steps[vv];
+				curf.p_space = 'collch';
+				curf.p_index_key = collection_name;
+			}
 
 			var event_obj = {
 				value: null,
