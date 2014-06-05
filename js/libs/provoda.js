@@ -1159,6 +1159,9 @@ FastEventor.prototype = {
 	},
 
 	hndUsualEvCallbacksWrapper: function(motivator, fn, context, args, arg) {
+		if (motivator.p_space) {
+			this.zdsv.removeFlowStep(motivator.p_space, motivator.p_index_key, motivator);
+		}
 		if (args){
 			fn.apply(context, args);
 		} else {
@@ -2060,11 +2063,16 @@ StatesLabour.prototype.removeFlowStep = function(space, index_key, item) {
 	var full_space = 'flow_steps_' + space;
 	var target = this[full_space][index_key];
 	if (!target) {
+		debugger;
 		return;
 	}
 	if (Array.isArray(target)) {
 		var pos = target.indexOf(item);
-		target.splice(pos, 1);
+		var arr = target.splice(pos, 1);
+		if (!arr.length) {
+			debugger;
+		}
+		
 	} else {
 		if (target == item) {
 			this[full_space][index_key] = null;
@@ -2783,11 +2791,7 @@ add({
 		if (vip_cb_cs.length || light_cb_cs.length || default_cb_cs.length) {
 	
 			flow_steps = zdsv.createFlowStepsArray('stev', state_name);
-			for (var vv = 0; vv < flow_steps.length; vv++) {
-				var cur = flow_steps[vv];
-				cur.p_space = 'stev';
-				cur.p_index_key = state_name;
-			}
+			
 		}
 
 		
@@ -2811,7 +2815,13 @@ add({
 			//вызов стандартного события
 			this.evcompanion.triggerCallbacks(default_cb_cs, false, st_event_opt, default_name, event_arg, flow_steps);
 		}
-
+		if (flow_steps) {
+			for (var vv = 0; vv < flow_steps.length; vv++) {
+				var cur = flow_steps[vv];
+				cur.p_space = 'stev';
+				cur.p_index_key = state_name;
+			}
+		}
 
 	},
 	_setUndetailedState: function(i, state_name, value) {
@@ -3366,11 +3376,7 @@ add({
 			}
 			zdsv = this.zdsv;
 			flow_steps = zdsv.createFlowStepsArray('collch', collection_name);
-			for (var vv = 0; vv < flow_steps.length; vv++) {
-				var curf = flow_steps[vv];
-				curf.p_space = 'collch';
-				curf.p_index_key = collection_name;
-			}
+			
 
 			var event_obj = {
 				value: null,
@@ -3388,6 +3394,12 @@ add({
 			//this.trigger(full_ev_name, event_obj);
 
 			this.evcompanion.triggerCallbacks(chch_cb_cs, false, false, full_ev_name, event_obj, flow_steps);
+
+			for (var vv = 0; vv < flow_steps.length; vv++) {
+				var curf = flow_steps[vv];
+				curf.p_space = 'collch';
+				curf.p_index_key = collection_name;
+			}
 		}
 
 
