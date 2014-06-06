@@ -7,11 +7,15 @@ define(['provoda', 'spv'], function(provoda, spv){
 
 	var hndNeighboursRemarks = function(e) {
 		var direction =  e.nesting_name.replace('vis_neig_', '');
-		if (e.value != e.old_value) {
-			if (e.old_value) {
-				e.old_value.updateState('marked_as', false);
+		var key_name = 'cur_' + e.nesting_name;
+		if (e.value != this[key_name]) {
+			if (this[key_name]) {
+				this[key_name].updateState('marked_as', false);
 			}
+			this[key_name] = e.value;
 			if (e.value) {
+				
+
 				e.value.updateState('marked_as', direction);
 			}
 		}
@@ -375,10 +379,11 @@ define(['provoda', 'spv'], function(provoda, spv){
 			this._super();
 			this.on('child_change-' + this.main_list_name, hndChangedPlaylist);
 			this.watchChildrenStates(this.main_list_name, 'want_to_play', hndChangedWantPlay);
-			this.watchChildrenStates(this.main_list_name, 'mp_show', hndChangedMPShow);
+			
 			this.watchChildrenStates(this.main_list_name, 'player_song', hndChangedPlayerSong);
 			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', hndChangedNeigUse);
 			this.watchChildrenStates(this.main_list_name, 'is_important', hndChangedImportant);
+			this.watchChildrenStates(this.main_list_name, 'mp_show', hndChangedMPShow);
 			
 			this.on('child_change-' + 'vis_neig_prev', hndNeighboursRemarks);
 			this.on('child_change-' + 'vis_neig_next', hndNeighboursRemarks);
