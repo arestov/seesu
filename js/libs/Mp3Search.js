@@ -332,7 +332,10 @@ var getMatchedSongs = function(music_list, msq) {
 			});
 
 			this.tuner = this.mp3_search.getSourceTuner(search_eng_name);
-			this.wch(this.tuner, 'disable_search');
+			this.wch(this.tuner, 'disable_search', function(e) {
+				//debugger;
+				this.updateState('disable_search', e.value);
+			});
 			this.wch(this.tuner, 'wait_before_playing');
 
 			//this.wch(this.map_parent, 'must_load');
