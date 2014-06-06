@@ -90,7 +90,7 @@ spv.Class.extendTo(DiscogsApi, {
 					opts.headers = null;
 				}
 			},
-			thisOriginAllowed: true,
+			thisOriginAllowed: false,
 			context: options.context
 		}, {
 			cache_ajax: this.cache_ajax,
