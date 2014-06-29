@@ -3,6 +3,8 @@ define(['jquery', 'spv', 'app_serv', 'js/modules/aReq', 'js/modules/wrapRequest'
 
 var LastfmAPI = function(){};
 spv.Class.extendTo(LastfmAPI, {
+	errors_fields: ['error'],
+	source_name: 'lastfm',
 	init: function(apikey, s, stGet, stSet, cache_ajax, crossdomain, queue){
 		this.apikey = apikey;
 		this.stGet = stGet;
@@ -84,6 +86,11 @@ spv.Class.extendTo(LastfmAPI, {
 		}
 
 
+		if (options && options.paging) {
+			params.limit = options.paging.page_limit;
+			params.page = options.paging.next_page;
+		}
+
 		var apisig_hash =  hex_md5(spv.stringifyParams(params, ['format', 'callback']) + this.s);
 
 		if (apisig || !options.nocache) {
@@ -106,6 +113,7 @@ spv.Class.extendTo(LastfmAPI, {
 				if (!post && _this.checkMethodResponse){
 					_this.checkMethodResponse(method, params, r);
 				}
+				return r;
 			},
 			queue: this.queue
 		};
@@ -123,7 +131,8 @@ spv.Class.extendTo(LastfmAPI, {
 			dataType: this.crossdomain ? 'json' : 'jsonp',
 			data: params,
 			resourceCachingAvailable: true,
-			thisOriginAllowed: this.thisOriginAllowed
+			thisOriginAllowed: this.thisOriginAllowed,
+			context: options.context
 		}, wraprq_opts, complex_response);
 
 		return wrap_def.complex;

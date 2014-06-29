@@ -45,7 +45,7 @@
 	}
 	.vk-login-context .auth-container{
 		display:none;
-		margin-top:1.5rem;
+		margin-top:1rem;
 		}
 		.vk-login-context.vk-finishing .auth-container{
 			display:block;

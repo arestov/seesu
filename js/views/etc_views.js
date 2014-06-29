@@ -162,6 +162,13 @@ provoda.View.extendTo(VkLoginUI, {
 			_this.RPCLegacy('removeNotifyMark');
 		});
 
+		var inpco = this.c.find('.js-input-code').click(function() {
+			_this.RPCLegacy('waitData');
+		});
+		
+		if (inpco[0]) {
+			this.addWayPoint(inpco);
+		}
 	}
 });
 
@@ -207,6 +214,9 @@ provoda.View.extendTo(LfmLoginView, {
 			return false;
 		});
 		this.addWayPoint(use_code_button);
+
+
+
 	}
 });
 

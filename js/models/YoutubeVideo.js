@@ -5,7 +5,7 @@ var YoutubeVideo = function() {};
 BrowseMap.Model.extendTo(YoutubeVideo, {
 	model_name: 'youtube_video',
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 
 
 		this.mo = params.mo;
@@ -19,8 +19,8 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 
 		var _this = this;
 
-		this.on('vip_state_change-mp_show', function(e) {
-			if (e.value && e.value.userwant){
+		this.on('vip_state_change-mp_has_focus', function(e) {
+			if (e.value){
 				su.trackEvent('Navigation', 'youtube video');
 				_this.mo.pause();
 			}

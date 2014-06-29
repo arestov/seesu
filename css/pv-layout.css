@@ -1,12 +1,16 @@
 .complex-page{
 	position: relative;
 
+
 	max-width: 750px;
 	-webkit-transform-origin: 0 0;
 	-moz-transform-origin: 0 0;
 	-o-transform-origin: 0 0;
 	transform-origin: 0 0;
 	}
+.complex-page-scroll_con{
+	-webkit-transform: translateZ(0);
+}
 .shared-parts{
 	position: relative;
 	max-width: 750px;
@@ -39,11 +43,17 @@
 		padding-right: 240px;
 		-moz-box-sizing:border-box;
 		box-sizing: border-box;
-	}
+		}
+		.full_page_need .app_map_con {
+			padding-right: 0;
+			}
 
 	.complex-page{
 		left: 240px;
 		}
+		.full_page_need .complex-page {
+			left: auto;
+			}
 	.shared-parts {
 		left: 240px;
 		}
@@ -60,6 +70,15 @@
 		transform: translateX(240px);
 
 		}
+		.yes-transform_support .full_page_need .complex-page{
+			left: auto;
+
+			-webkit-transform: translateX(0);
+			-moz-transform: translateX(0);
+			-o-transform: translateX(0);
+			transform: translateX(0);
+
+			}
 	.yes-transform_support .shared-parts {
 		left: auto;
 

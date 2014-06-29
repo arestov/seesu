@@ -28,7 +28,8 @@ spv.Class.extendTo(GoogleSoundcloud, {
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
 			data: params_data,
-			timeout: 20000
+			timeout: 20000,
+			context: options.context
 		}, {
 			cache_ajax: this.cache_ajax,
 			nocache: options.nocache,
@@ -51,6 +52,7 @@ spv.Class.extendTo(DiscogsApi, {
 		this.queue = opts.queue;
 		this.crossdomain = opts.crossdomain;
 	},
+	errors_fields: ['error'],
 	cache_namespace: 'discogs',
 	get: function(path, params, options) {
 
@@ -60,9 +62,19 @@ spv.Class.extendTo(DiscogsApi, {
 		}
 
 		options = options || {};
+		params = params || {};
+
+		if (options && options.paging) {
+
+
+			params.per_page = options.paging.page_limit;
+			params.page = options.paging.next_page;
+		}
+
+
 		options.cache_key = options.cache_key || hex_md5("http://api.discogs.com" + path + spv.stringifyParams(params));
 
-		var	params_full = params || {};
+		
 
 		//cache_ajax.get('vk_api', p.cache_key, function(r){
 
@@ -70,9 +82,81 @@ spv.Class.extendTo(DiscogsApi, {
 			url: "http://api.discogs.com" + path,
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
-			data: params_full,
+			data: params,
 			timeout: 20000,
-			resourceCachingAvailable: true
+			resourceCachingAvailable: true,
+			afterChange: function(opts) {
+				if (opts.dataType == 'json'){
+					opts.headers = null;
+				}
+			},
+			thisOriginAllowed: false,
+			context: options.context
+		}, {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			requestFn: function() {
+				return aReq.apply(this, arguments);
+			},
+			queue: this.queue,
+			responseFn: function(r) {
+				if (r.meta && r.data){
+					r = r.data;
+				}
+				return r;
+			}
+		});
+
+		return wrap_def.complex;
+	}
+});
+
+var MixcloudApi = function() {};
+spv.Class.extendTo(MixcloudApi, {
+	init: function(opts) {
+		this.cache_ajax = opts.cache_ajax;
+		this.queue = opts.queue;
+		this.crossdomain = opts.crossdomain;
+	},
+	errors_fields: ['error'],
+	thisOriginAllowed: true,
+	cache_namespace: 'mixcloud',
+	get: function(path, params, options) {
+
+
+		if (!path){
+			throw new Error('wrong path');
+		}
+
+		options = options || {};
+
+		params = params || {};
+		if (options && options.paging) {
+			options.paging.limit = options.paging.page_limit;
+			options.paging.offset = (options.paging.next_page - 1) * options.paging.page_limit;
+		}
+
+		options.cache_key = options.cache_key || hex_md5("https://api.mixcloud.com/" + path + spv.stringifyParams(params));
+
+		//cache_ajax.get('vk_api', p.cache_key, function(r){
+
+		var wrap_def = wrapRequest({
+			url: "https://api.mixcloud.com/" + path,
+			type: "GET",
+			dataType: this.crossdomain ? "json": "jsonp",
+			data: params,
+			timeout: 20000,
+			resourceCachingAvailable: true,
+			afterChange: function(opts) {
+				if (opts.dataType == 'json'){
+					opts.headers = null;
+				}
+			},
+			thisOriginAllowed: this.thisOriginAllowed,
+			context: options.context
 		}, {
 			cache_ajax: this.cache_ajax,
 			nocache: options.nocache,
@@ -99,6 +183,9 @@ spv.Class.extendTo(HypemApi, {
 		this.can_send = this.xhr2 || this.crossdomain;
 
 	},
+	checkResponse: function(r) {
+		return !r.version;
+	},
 	cache_namespace: 'hypem',
 	get: function(path, params, options) {
 		if (!path){
@@ -122,7 +209,8 @@ spv.Class.extendTo(HypemApi, {
 					opts.headers = null;
 				}
 
-			}
+			},
+			context: options.context
 		}, {
 			cache_ajax: this.cache_ajax,
 			nocache: options.nocache,
@@ -138,6 +226,7 @@ spv.Class.extendTo(HypemApi, {
 return {
 	GoogleSoundcloud: GoogleSoundcloud,
 	DiscogsApi: DiscogsApi,
+	MixcloudApi: MixcloudApi,
 	HypemApi:HypemApi
 };
 

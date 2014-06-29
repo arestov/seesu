@@ -6,6 +6,7 @@ provoda.Model.extendTo(AppModelBase, {
 		this._super();
 		this.navigation = [];
 		this.map = new BrowseMap();
+		this.current_mp_md = null;
 	},
 	setDocTitle: function(title) {
 		this.updateState('doc_title', title);
@@ -85,11 +86,11 @@ provoda.Model.extendTo(AppModelBase, {
 
 		all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
 		//var models = spv.filter(all_changhes, 'target');
-		//this.animationMark(models, changes.anid);
+		//this.animationMark(models, changes.changes_number);
 
 		for (i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
-		//	change.anid = changes.anid;
+		//	change.changes_number = changes.changes_number;
 			var handler = this['model-mapch'][change.type];
 			if (handler){
 				handler.call(this, change);
@@ -109,26 +110,48 @@ provoda.Model.extendTo(AppModelBase, {
 			проскроллить к источнику при отдалении
 			просроллить к источнику при приближении
 		*/
+		
 
+		if (tree){
+			this.updateNesting('navigation', tree);
+		}
+
+		
 		if (target_md){
+			if (this.current_mp_md) {
+				this.current_mp_md.updateState('mp_has_focus', false);
+			}
+			this.current_mp_md = target_md;
 			target_md.updateState('mp_has_focus', true);
 
 			this.updateState('show_search_form', !!target_md.state('needs_search_from'));
 			this.updateState('full_page_need', !!target_md.full_page_need);
-			this.updateState('current_mp_md', target_md);
+		//	this.updateState('current_mp_md', target_md._provoda_id);
+			this.updateNesting('current_mp_md', target_md);
 			//target_md.updateState('mp-highlight', false);
 
 
 		}
 
-		if (tree){
-			this.updateNesting('navigation', tree);
-		}
+
+		
 		if (target_md){
 			changes.target = target_md && target_md.getMDReplacer();
 		}
+
+		var mp_show_wrap;
+		if (residents){
+			mp_show_wrap = {
+				items: residents,
+				mp_show_states: []
+			};
+			for (i = 0; i < residents.length; i++) {
+				mp_show_wrap.mp_show_states.push(residents[i].state('mp_show'));
+			}
+		}
+
 		this.updateNesting('map_slice', {
-			items: residents,
+			residents_struc: mp_show_wrap,
 			transaction: changes
 		});
 	
@@ -199,7 +222,7 @@ provoda.Model.extendTo(AppModelBase, {
 				this.all_queues[i].removePrioMarks();
 			}
 		}
-		var md = this.state('current_mp_md');
+		var md = this.getNesting('current_mp_md');
 		if (md){
 			if (md.checkRequestsPriority){
 				md.checkRequestsPriority();

@@ -53,20 +53,74 @@ LevContainer.prototype = {
 };
 
 
-
-var AppBaseView = function() {};
-AppBaseView.viewOnLevelP = viewOnLevelP;
-provoda.View.extendTo(AppBaseView, {
+var BrowserAppRootView = function() {};
+provoda.View.extendTo(BrowserAppRootView, {
 	dom_rp: true,
-	location_name: 'root_view',
+	
+	_getCallsFlow: function() {
+		return this.calls_flow;
+	},
+	init: function(opts, vopts) {
+		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
+		return this._super.apply(this, arguments);
+	},
 	createDetails: function() {
 		this.root_view = this;
 		this.d = this.opts.d;
+		this.dom_related_props.push('calls_flow');
+
+		var _this = this;
+		if (this.opts.can_die && spv.getDefaultView(this.d)){
+			this.can_die = true;
+			this.checkLiveState = function() {
+				if (!spv.getDefaultView(_this.d)){
+					_this.reportDomDeath();
+					return true;
+				}
+			};
+
+			this.lst_interval = setInterval(this.checkLiveState, 1000);
+
+		}
+
+	},
+	reportDomDeath: function() {
+		if (this.can_die && !this.dead){
+			this.dead = true;
+			clearInterval(this.lst_interval);
+		//	var d = this.d;
+		//	delete this.d;
+			this.die();
+			console.log('DOM dead! ' + this.nums);
+
+		}
+	},
+	isAlive: function(){
+		if (this.dead){
+			return false;
+		}
+		return !this.checkLiveState || !this.checkLiveState();
+	}
+});
+
+
+var AppBaseView = function() {};
+AppBaseView.BrowserAppRootView = BrowserAppRootView;
+AppBaseView.viewOnLevelP = viewOnLevelP;
+BrowserAppRootView.extendTo(AppBaseView, {
+	location_name: 'root_view',
+	createDetails: function() {
+		this._super();
+
 		this.tpls = [];
+		this.struc_store = {};
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
-		this.dom_related_props.push('samples', 'lev_containers', 'els');
+		this.max_level_num = -1;
+		this.dom_related_props.push('samples', 'lev_containers', 'els', 'struc_store');
+		this.completely_rendered_once = {};
+
 	},
 	completeDomBuilding: function() {
 		this.connectStates();
@@ -84,24 +138,46 @@ provoda.View.extendTo(AppBaseView, {
 			if (num == -1){
 				throw new Error('start_screen must exist');
 			}
+
 			var node = this.getSample('complex-page');
 
 			var tpl = new this.PvTemplate({
 				node: node,
 				spec_states: {
 					'$lev_num': num
-				}
+				},
+				struc_store: this.struc_store
 			});
 
 			this.tpls.push(tpl);
 			tpl.setStates(this.states);
+			
+
+
+
+			var next_lev_con;
+			for (var i = num; i <= this.max_level_num; i++) {
+				if (this.lev_containers[i]) {
+					next_lev_con = this.lev_containers[i];
+					break;
+				}
+			}
+			if (next_lev_con) {
+				node.insertBefore(next_lev_con.c);
+			} else {
+				node.appendTo(this.els.app_map_con);
+			}
+			
+
 			var lev_con = new LevContainer
-					(node.appendTo(this.els.app_map_con),
+					(node,
 					tpl.ancs['scroll_con'],
 					tpl.ancs['material'],
 					tpl,
 					this);
 			this.lev_containers[num] = lev_con;
+
+			this.max_level_num = Math.max(this.max_level_num, num);
 			return lev_con;
 		}
 	},
@@ -147,7 +223,6 @@ provoda.View.extendTo(AppBaseView, {
 	},
 	scrollTo: function(jnode, view_port, opts) {
 		if (!jnode){return false;}
-		opts = opts || {};
 	//	if (!this.view_port || !this.view_port.node){return false;}
 
 		//var scrollingv_port = ;
@@ -159,7 +234,7 @@ provoda.View.extendTo(AppBaseView, {
 			return;
 		}
 
-		var view_port_limit = opts.vp_limit || 1;
+		var view_port_limit = (opts && opts.vp_limit) || 1;
 
 		var svp = view_port || this.getScrollVP(),
 			scroll_c = svp.offset ? svp.node :  svp.node,
@@ -197,7 +272,7 @@ provoda.View.extendTo(AppBaseView, {
 			//new_position =  node_position - scrolling_viewport_height/2;
 		}
 		if (new_position){
-			if (opts.animate){
+			if (opts && opts.animate){
 				scroll_c
 					.stop(false, true)
 					.animate({
@@ -210,38 +285,53 @@ provoda.View.extendTo(AppBaseView, {
 
 		}
 	},
-	getSample: function(name) {
-		var sampler = this.samples[name], sample_node;
-
-		//
+	getSampler: function(sample_name) {
+		var sampler = this.samples[sample_name], sample_node;
 		if (!sampler){
-			sample_node = this.els.ui_samples.children('.' + name);
+			sample_node = this.els.ui_samples.children('.' + sample_name);
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
 			}
 			
 		}
 		if (!sampler){
-			sample_node = $(this.requirePart(name));
+			sample_node = $(this.requirePart(sample_name));
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
 			}
 			
 		}
 		if (!sampler){
 			throw new Error('no such sample');
 		}
+		return sampler;
+	},
+	getSample: function(sample_name) {
+		var sampler = this.getSampler(sample_name);
+		
 		if (sampler.getClone){
 			return $(sampler.getClone());
 		} else {
 			return $(sampler).clone();
 		}
 	},
-	animationMark: function(models, prop, anid) {
+	
+	markAnimationStart: function(models, changes_number) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].getMD().mpx.updateState(prop, anid);
+			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number);
+			////MUST UPDATE VIEW, NOT MODEL!!!!!
+		}
+	},
+	markAnimationEnd: function(models, changes_number) {
+		for (var i = 0; i < models.length; i++) {
+			//
+			var mpx = this.getStoredMpx(models[i].getMD());
+
+			if (mpx.state('animation_started') == changes_number){
+				mpx.updateState('animation_completed', changes_number);
+			}
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
@@ -250,7 +340,7 @@ provoda.View.extendTo(AppBaseView, {
 		if (this['spec-vget-' + model_name]){
 			return this['spec-vget-' + model_name](md);
 		} else {
-			return this.getChildView(md.mpx, 'main');
+			return this.findMpxViewInChildren(this.getStoredMpx(md));
 		}
 	},
 	getMapSliceChildInParenView: function(md) {
@@ -261,9 +351,9 @@ provoda.View.extendTo(AppBaseView, {
 		if (!parent_view){
 			return;
 		}
-		var target_in_parent = parent_view.getChildView(md.mpx, 'main');
+		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
 		if (!target_in_parent){
-			var view = parent_view.getChildViewsByMpx(md.mpx);
+			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
 			target_in_parent = view && view[0];
 		}
 		return target_in_parent;
@@ -330,23 +420,25 @@ provoda.View.extendTo(AppBaseView, {
 			}
 		}
 	},
+	setVMpshow: function(target_mpx, value) {
+		target_mpx.updateState('vmp_show', value);
+	},
 	'model-mapch': {
 		'move-view': function(change) {
 			var parent = change.target.getMD().getParentMapModel();
 			if (parent){
 			//	parent.updateState('mp_has_focus', false);
 			}
-			//mpx.updateState(prop, anid);
-
-			change.target.getMD().mpx.updateState('vmp_show', change.value);
+			//mpx.updateState(prop, changes_number);
+			this.setVMpshow(this.getStoredMpx(change.target.getMD()), change.value);
 		},
 		'zoom-out': function(change) {
-			change.target.getMD().mpx.updateState('vmp_show', false);
+			this.setVMpshow(this.getStoredMpx(change.target.getMD()), false);
 		},
 		'destroy': function(change) {
 			var md = change.target.getMD();
 		//	md.mlmDie();
-			md.mpx.updateState('vmp_show', false);
+			this.setVMpshow(this.getStoredMpx(md), false);
 		}
 	},
 	animateMapSlice: function(transaction_data, animation_data) {
@@ -355,19 +447,19 @@ provoda.View.extendTo(AppBaseView, {
 		var models = spv.filter(all_changhes, 'target');
 		var i, cur;
 
-		this.animationMark(models, 'animation_started', transaction_data.anid);
+		this.markAnimationStart(models, transaction_data.changes_number);
 
 		for (i = 0; i < all_changhes.length; i++) {
 			cur = all_changhes[i];
 			var target = cur.target.getMD();
 			if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(target.mpx);
+				this.removeChildViewsByMd(this.getStoredMpx(target));
 			}
 		}
 
 		for (i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
-		//	change.anid = changes.anid;
+		//	change.changes_number = changes.changes_number;
 			var handler = this['model-mapch'][change.type];
 			if (handler){
 				handler.call(this, change);
@@ -401,25 +493,53 @@ provoda.View.extendTo(AppBaseView, {
 			}
 
 		}
+		var _this = this;
+		var completeAnimation = function() {
+			_this.markAnimationEnd(models, transaction_data.changes_number);
+		};
+		setTimeout(completeAnimation, 16*21*4);
 		if (!animation_data){
 			//
-			this.animationMark(models, 'animation_completed', transaction_data.anid);
+			this.markAnimationEnd(models, transaction_data.changes_number);
 			/*this.nextTick(function() {
 				
 			});*/
 		} else {
-			animation_data.lc.onTransitionEnd(function() {
-				this.animationMark(models, 'animation_completed', transaction_data.anid);
-			});
+			animation_data.lc.onTransitionEnd(completeAnimation);
+
 		}
+
 
 		
 	},
 	'collch-$spec_common': {
+		by_model_name: true,
 		place: AppBaseView.viewOnLevelP
 	},
-	'collch-map_slice': function(nesname, nesting_data){
-		var array = nesting_data.items;
+	'coll-prio-map_slice': function(array) {
+	
+		/*for (var i = 0; i < array.length; i++) {
+			if (array[i].mpx.states.mp_has_focus){
+				return [[array[i]]];
+			}
+		}*/
+		return array;
+
+	},
+	findBMapTarget: function(array) {
+		var target_md, i;
+		for (i = 0; i < array.length; i++) {
+			if (this.getStoredMpx(array[i]).states.mp_has_focus) {
+				target_md = array[i];
+				break;
+			}
+			
+		}
+		return target_md;
+	},
+	'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
+		var target_md;
+		var array = nesting_data.residents_struc && nesting_data.residents_struc.items;
 		var transaction_data = nesting_data.transaction;
 		array = this.getRendOrderedNesting(nesname, array) || array;
 		var i, cur;
@@ -427,27 +547,55 @@ provoda.View.extendTo(AppBaseView, {
 
 		var animation_data = this.readMapSliceAnimationData(transaction_data);
 
-		for (i = 0; i < array.length; i++) {
+
+		for (i = array.length - 1; i >= 0; i--) {
 			cur = array[i];
 			var model_name = cur.model_name;
 			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], model_name, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], nesname, cur);
 			} else {
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], model_name, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], nesname, cur);
 			}
 		}
 
-		if (transaction_data){
-			this.animateMapSlice(transaction_data, animation_data);
-			
-			
+		//avoid nextTick method!
+
+		if (this.completely_rendered_once['map_slice'] && old_nesting_data && old_nesting_data.transaction.changes_number + 1 === nesting_data.transaction.changes_number){
+			if (transaction_data){
+				this.animateMapSlice(transaction_data, animation_data);
+				if (!transaction_data.target){
+					target_md = this.findBMapTarget(array);
+
+					if (target_md){
+						this.updateState('current_lev_num', target_md.map_level_num);
+					}
+					
+				}
+			}
+		} else {
+			var models = new Array(array.length);
+			for (i = 0; i < array.length; i++) {
+				models[i] = array[i].md_replacer;
+			}
+			target_md = this.findBMapTarget(array);
+			if (!target_md){
+				throw new Error('there is no model with focus!');
+			}
+			this.markAnimationStart(models, -1);
+			for (i = 0; i < array.length; i++) {
+				this.setVMpshow(this.getStoredMpx(array[i]), nesting_data.residents_struc.mp_show_states[i]);
+			}
+			this.updateState('current_lev_num', target_md.map_level_num);
+			this.markAnimationEnd(models, -1);
+			this.completely_rendered_once['map_slice'] = true;
 		}
+		
 
 
 	},
 
 	transform_props: transform_props,
-	'stch-current_mp_md': function(md, old_md) {
+	'stch-current_mp_md': function() {
 
 		//map_level_num
 		//md.map_level_num
@@ -481,9 +629,9 @@ provoda.View.extendTo(AppBaseView, {
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
 
-			var md_view = this.getChildView(md.mpx, 'main');
+			var md_view = this.findMpxViewInChildren(md.mpx);
 			if (md_view){
-				var hl_view = md_view.getChildView(source_md.mpx, 'main');
+				var hl_view = md_view.findMpxViewInChildren(source_md.mpx);
 				if (hl_view){
 					//this.scrollTo(hl_view.getC());
 				}
@@ -495,7 +643,7 @@ provoda.View.extendTo(AppBaseView, {
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
 		if (ov_highlight && ov_highlight.source_md){
 			var source_md = ov_highlight.source_md;
-			var mplev_item_view = source_md.getRooConPresentation();
+			var mplev_item_view = source_md.getRooConPresentation(this);
 			if (mplev_item_view){
 				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
@@ -504,13 +652,17 @@ provoda.View.extendTo(AppBaseView, {
 
 			
 		}*/
-
+		var md = this.getNesting('current_mp_md');
 
 		var _this = this;
 		setTimeout(function() {
+			if (!_this.isAlive()){
+				_this = null;
+				return;
+			}
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
-				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
+				var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(_this, false, false, true);
 				var con = mplev_item_view && mplev_item_view.getC();
 				if (con && con.height()){
 					_this.scrollTo(mplev_item_view.getC(), {
@@ -526,13 +678,6 @@ provoda.View.extendTo(AppBaseView, {
 
 
 
-
-
-		//var parent_md = md.getParentMapModel();
-		//this.getChildView(mpx)
-	},
-	"stch-doc_title": function(title) {
-		this.d.title = title || "";
 	}
 
 });

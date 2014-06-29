@@ -50,9 +50,8 @@ provoda.View.extendTo(ArtcardUI, {
 			}
 		}
 	},
-	createBase: function() {
-		this.c = this.root_view.getSample('artcard');
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'artcard'
 	}
 });
 
@@ -146,10 +145,10 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		}
 	},
 	'compx-pvm_key':{
-		depends_on: ['^mp_show_end'],
-		fn: function(parent_viewing_mode) {
+		depends_on: ['^mp_show_end','mp_has_focus'],
+		fn: function(parent_viewing_mode, focus) {
 			if (parent_viewing_mode){
-				return parent_viewing_mode.userwant ? 1 : 2;
+				return focus ? 1 : 2;
 			}
 		}
 	},

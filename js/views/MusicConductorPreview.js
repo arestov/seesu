@@ -14,7 +14,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 		});
 		this.addWayPoint(this.button);
 		this.dom_related_props.push('button');
-
+		this.createTemplate();
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
 	'stch-vmp_show': function(state) {
@@ -32,32 +32,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 			var _this = this;
 
 
-			var wow_tags= function(tag,c){
-				var wrap = $('<span></span>');
-				var link = $('<a class="hyped-tag js-serv"></a>')
-					.text(tag)
-					.click(function(e){
-						_this.root_view.RPCLegacy('show_tag', tag);
-						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
-						e.preventDefault();
-					}).appendTo(wrap);
-				wrap.append(document.createTextNode('  '));
-				_this.addWayPoint(link);
-				wrap.appendTo(c);
-
-			};
-
-			if (lastfm_data && lastfm_data.toptags.length){
-				var _c = $('<div class="block-for-startpage tags-hyped tags_list"></div>').appendTo(this.c);
-				$('<h3></h3>').appendTo(_c)
-								.append(localize('Pop-tags','Popular tags'));
-				for (var i=0; i < lastfm_data.toptags.length; i++) {
-					wow_tags(lastfm_data.toptags[i], _c);
-				}
-			}
-
-
-			var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(this.c);
+			var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(this.c.parent());
 			var users_limit = 6;
 			var showUsers = function(listenings,c, above_limit_value){
 				if (listenings.length){
@@ -78,7 +53,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 							$('<div class="desc-row"></div>')
-								.append($('<a class="external"></a>').attr('href', 'https://vk.com/id' + lig.vk_id).text(lig.info.first_name))
+								.append($('<a class=""></a>').attr('href', '#/users/vk:' + lig.vk_id).text(lig.info.first_name))
 								.append(document.createTextNode(' ' + localize ('listening') + ' '))
 								.appendTo(list_item);
 
@@ -127,9 +102,23 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 			};
-			su.s.susd.ligs.regCallback('start-page', showUsersListenings, function(){
+			var callback = function(){
 				users_play.addClass('loading');
+			};
+			su.s.susd.ligs.regCallback('start-page', showUsersListenings, callback);
+			this.onDie(function() {
+				su.s.susd.ligs.removeCallback('start-page', showUsersListenings);
+				try {
+					users_play.detach();
+					users_play.off();
+					users_play.remove();
+				} catch(e){}
+				
+				users_play = null;
+				this.root_view = null;
+				_this = null;
 			});
+			
 
 			return true;
 

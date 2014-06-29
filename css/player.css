@@ -35,6 +35,8 @@ a.track-node{
 	border:0 !important;
 	color: hsl(0, 0%, 65%);
 	cursor:pointer;
+	border-top-right-radius: inherit;
+	border-top-left-radius: inherit;
 	}
 	a.track-node:hover{
 		color:#aaa;
@@ -96,16 +98,18 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 	
 	.mf-text{
+		position: relative;
+		z-index: 2;
 		margin:0 5px;
 		}
 	.selected-mf .mf-text{
 		margin:0 4px;
 		color: hsl(0, 0%, 55%);
 		}
-.track-progress, .moplas-block .moplas-list li .mf-progress{
+.moplas-block .moplas-list li .mf-progress{
 	line-height:1.2;
 	}
-.track-progress, .moplas-block .moplas-list li.selected-mf .mf-progress{	
+.moplas-block .moplas-list li.selected-mf .mf-progress{	
 	position:relative;
 	right:0;
 	left:0;
@@ -126,14 +130,11 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	
 	
 	}
-	.track-progress{
-		
-		text-align:right;
-	}
+
 	.mf-load-progress, .mf-play-progress{
 		display: none;
 	}
-	.track-load-progress,  .selected-mf .mf-load-progress{
+	.selected-mf .mf-load-progress{
 		position:absolute;
 		top:0;
 		left:0;
@@ -150,7 +151,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	
 	
 		}
-	.track-play-progress, .selected-mf .mf-play-progress{
+	.selected-mf .mf-play-progress{
 		position:absolute;
 		top:0;
 		left:0;
@@ -165,20 +166,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		cursor:pointer;
 	
 		}
-	.track-node-text, .mf-text{
-		position: relative;
-		z-index: 2;
-	}
-	.track-node-text{
-		display:none;
-		
-		margin-right: 7px;
-		color: #666;
-		font-size: 0.85rem;
-	}
-	.track-progress:hover .track-node-text{
-		display:inline;
-	}
 
 
 
@@ -256,7 +243,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .files-load-states{
 	position: absolute;
-	top: 6px;
+	top: 0.2rem;
 	left: 5px;
 	width: 16px;
 	height: 16px;
@@ -266,6 +253,24 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		width: 100%;
 
 	}
+.list_rel_pos_mark {
+	display: none;
+	position: absolute;
+	top: 1.6rem;
+	left: 0.7rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	background: no-repeat 0 0;
+	opacity: 0.2;
+}
+.to-play-previous .list_rel_pos_mark{
+	display: block;
+	background-image: url(../i/nano-prev.svg);
+}
+.to-play-next .list_rel_pos_mark{
+	display: block;
+	background-image: url(../i/nano-next.svg);
+}
 	
 .nothing-toy{
 	position: absolute;
@@ -356,7 +361,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	position: relative;
 	}
 	
-	.show-zoom-to-track .to-play-previous{
+	.show-zoom-to-track .v-song-sibling.to-play-previous{
 		
 		right:50%;
 		left: 0;
@@ -364,7 +369,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		margin-right: 20px;
 		border-top-left-radius:10px;
 		}
-	.show-zoom-to-track .to-play-next {
+	.show-zoom-to-track .v-song-sibling.to-play-next {
 		right: 0;
 		left:50%;
 		margin-left: 20px;

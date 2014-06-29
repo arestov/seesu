@@ -125,6 +125,11 @@ a.desc{
   	-o-transition: margin-left 0.1s ease-out; 
   	transition: margin-left 0.1s ease-out; 
 }
+
+.nodewebkit .nav-item {
+	float:left;
+	/*fixme checkme, v0.8.2 - Dec 6, 2013*/
+}
 	.nav-item span{
 		display:block;
 		overflow:hidden;

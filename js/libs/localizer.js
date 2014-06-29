@@ -20,8 +20,12 @@ define({
 		"ru": "Из soundcloud профиля"
 	},
 	"Sc-profile-not-found": {
-		"original": "Artist soundcloud profile was not found",
+		"original": "Artist's soundcloud profile was not found",
 		"ru": "Soundcloud профиль артиста не был найден"
+	},
+	"no-soundcloud-profile": {
+		"original": "Artist does not have soundcloud profile",
+		"ru": "У артиста нет страницы на soundcloud"
 	},
 	"Blogged-all-hypem": {
 		"original": "Blogged, all and sundry (hypem.com)",
@@ -40,7 +44,7 @@ define({
 		"ru": "Знакомства"
 	},
 	"vk_photo_meet_need": {
-		"original": "If you want to meet this man you need to upload photo to your vk.com profile and press \"%button_name%\" button",
+		"original": "If you want to meet this person you need to upload photo to your vk.com profile and press \"%button_name%\" button",
 		"ru":  "Чтобы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
 	},
 	"vk_photo_update": {
@@ -56,7 +60,7 @@ define({
 		"ru": "Твоя персональная музыка, друзья и знакомства"
 	},
 	"listeners-looks":{
-		"original": "People who listened to this track, look like this",
+		"original": "People who have listened to this track, look like this",
 		"ru": "Люди, слушавшие эту композицию, выглядят примерно так:"
 	},
 	"rels-people-you":{
@@ -175,6 +179,10 @@ define({
 		"original": "use code",
 		"ru": "использовать код"
 	},
+	"input-code":{
+		"original": "input code",
+		"ru": "ввести код"
+	},
 	"refresh": {
 		"original": "refresh",
 		"ru": "обновить"
@@ -196,7 +204,7 @@ define({
 		"ru": "Последнюю неделю город"
 	},
 	"reg":{
-		"original": "regisration",
+		"original": "registration",
 		"ru": "регистрация"
 	},
 	"listening": {
@@ -210,6 +218,10 @@ define({
 	"search": {
 		"original": "Search",
 		"ru": "Поиск"
+	},
+	"search-big": {
+		"original": "Search artists, albums, songs, tags",
+		"ru": "Ищи артистов, альбомы, композиции, тэги"
 	},
 	"trysearches": {
 		"original": "try to search",
@@ -448,7 +460,7 @@ define({
 		"ru": "Сохранить пароль в Сису"
 	},
 	"rept-song": {
-		"original": "Repeat playling song",
+		"original": "Repeat playing song",
 		"ru": "Повторять играющую композицию"
 	},
 	"dont-rept-pl": {
@@ -637,9 +649,9 @@ define({
 		"original": "Countries",
 		"ru": "Страны"
 	},
-	"Cities of %county%":{
-		"original": "Cities of %county%",
-		"ru": "Города страны \"%county%\""
+	"Cities of %country%":{
+		"original": "Cities of %country%",
+		"ru": "Города страны \"%country%\""
 	},
 	
 	
@@ -745,6 +757,10 @@ define({
 		"original": "scrobbling to last.fm",
 		"ru": "last.fm скроблинг"
 	},
+	"shuffl-list": {
+		"original": "Shuffled playlist playing",
+		"ru": "Воспроизводить плейлист случайным образом"
+	},
 	"your_tags":{
 		"original": "Your tags",
 		"ru": "Твои теги"
@@ -765,6 +781,27 @@ define({
 		"original": "report abuse",
 		"ru": "пожаловаться"
 	},
+	"":{
+		"original": "",
+		"ru": ""
+	},
+	"disable-search":{
+		"original": "Disable searching in this source",
+		"ru": "Отключить поиск файлов в этом источнике"
+	},
+	"wait-before-play":{
+		"original": "Wait for files from this source before start playing",
+		"ru": "Дожидаться списка файлов из этого источника до воспроизведения"
+	},
+	"need-audioplayers":{
+		"original": "To play music you must install flash or use browser which supports mp3 HTML5 Audio",
+		"ru": "Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)"
+	},
+	"posts-from":{
+		"original": "Posts form",
+		"ru": "Записи из"
+	},
+
 	"":{
 		"original": "",
 		"ru": ""

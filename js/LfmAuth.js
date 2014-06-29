@@ -79,17 +79,10 @@ var LfmScrobble = function(auth){
 };
 LfmLogin.extendTo(LfmScrobble, {
 	init: function(opts){
-		this._super(opts);
+		this._super.apply(this, arguments);
 
-		var _this = this;
 
-		var setScrobbling = function(state) {
-			_this.updateState('scrobbling', state);
-		};
-		if (su.settings['lfm-scrobbling']){
-			setScrobbling(true);
-		}
-		su.on('settings.lfm-scrobbling', setScrobbling);
+		this.wch(su, 'settings-lfm-scrobbling', 'scrobbling');
 
 
 	
@@ -129,6 +122,9 @@ provoda.Eventor.extendTo(LfmAuth, {
 		if (this.api.sk){
 			this.has_session = true;
 		}
+		if (opts.deep_sanbdox){
+			this.deep_sanbdox = true;
+		}
 	},
 	requestAuth: function(p){
 		
@@ -165,6 +161,10 @@ provoda.Eventor.extendTo(LfmAuth, {
 		var _this = this;
 		var i = this.auth_frame = document.createElement('iframe');
 		spv.addEvent(window, 'message', function(e){
+			var iframe_win = _this.auth_frame && _this.auth_frame.contentWindow;
+			if (e.source != iframe_win) {
+				return;
+			}
 			if (e.data == 'lastfm_bridge_ready:'){
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('lastfm_token:') === 0){

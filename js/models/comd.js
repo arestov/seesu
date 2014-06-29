@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv'], function(provoda, spv, app_serv){
+define(['provoda', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(provoda, spv, app_serv, morph_helpers){
 "use strict";
 var localize = app_serv.localize;
 
@@ -49,7 +49,7 @@ spv.Class.extendTo(GMessagesStore, {
 var BigContextNotify = function() {};
 provoda.Model.extendTo(BigContextNotify, {
 	init: function(opts, params) {
-		this._super(opts);
+		this._super.apply(this, arguments);
 		var _this = this;
 		if (!this.cant_hide_notify){
 			if (!params.notf){
@@ -169,49 +169,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		}
 		return this.getImageWrap(obj.array || obj.item);
 	},
-	getImageWrap: function(array) {
-		if (!array){
-			return;
-		}
-		var
-			url,
-			lfm_id;
-
-		if (typeof array == 'string'){
-			url = array;
-		} else {
-			url = spv.getTargetField(array, '3.#text');
-		}
-		if (url){
-			if (url.indexOf('http://cdn.last.fm/flatness/catalogue/noimage') === 0){
-				return;
-			} else {
-				lfm_id = this.getLFMImageId(url);
-
-				if (lfm_id){
-					return {
-						lfm_id: lfm_id
-					};
-				} else {
-					return {
-						url: url
-					};
-				}
-			}
-
-			
-		}
-
-		
-	},
-	getLFMImageId: function(url) {
-		var url_parts = url.split(/\/+/);
-		if (url_parts[1] == 'userserve-ak.last.fm'){
-			return url_parts[4].replace(/png$/, 'jpg');
-
-		}
-		
-	},
+	getImageWrap: morph_helpers.lfm_image,
 	setArtistImage: function(artist_name, lfm_arr, source) {
 		this.getArtistImagesModel(artist_name).addImage(this.getImageWrap(lfm_arr), source);
 	},

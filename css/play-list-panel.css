@@ -111,6 +111,9 @@
 .rept-song-button-wrap .trackbutton{
 	background-image: url(../i/repeat-icon.png);
 }
+.pl-shuffle-button-wrap .trackbutton{
+	background-image: url(../i/icon-shuffle.png);
+}
 
 .scrobbling-button .trackbutton{
 	background-image: url(../i/lfm-icon.png);

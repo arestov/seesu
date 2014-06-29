@@ -1,30 +1,31 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv'],
-function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_serv) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts'],
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
 "use strict";
 var StartPage = function() {};
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
-	page_name: 'start page',
 	zero_map_level: true,
 	showPlaylists: function(){
 		su.search(':playlists');
 	},
 	init: function(opts){
-		this._super(opts);
+		this._super.apply(this, arguments);
 		this.su = opts.app;
 		this.updateState('needs_search_from', true);
 		this.updateState('nav_title', 'Seesu start page');
 		this.updateState('nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
-		this.updateNesting('pstuff', this.getSPI('users/me').initOnce());
-		this.updateNesting('muco', this.getSPI('conductor').initOnce());
+
 
 
 		this.closed_messages = app_serv.store('closed-messages') || {};
 		return this;
 	},
+	'nest-pstuff': ['users/me'],
+	'nest-muco': ['conductor'],
+	'nest-tags': ['tags'],
 	rpc_legacy: {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');
@@ -33,22 +34,19 @@ BrowseMap.Model.extendTo(StartPage, {
 			su.trackEvent('Navigation', 'hint artist');
 		}
 	},
-	subPageInitWrap: function(Constr, full_name, params) {
+	subPageInitWrap: function(Constr, full_name, data) {
 		var instance = new Constr();
-			instance.init_opts = [{
-				app: this.app,
-				map_parent: this,
-				nav_opts: {
-					url_part: '/' + full_name
-				}
-			}, params];
-		return instance;
+		if (!data) {
+			data = {};
+		}
+		data['url_part'] = '/' + full_name;
+		return [instance, data];
+
 	},
 	sub_pages_routes: {
 		'catalog': function(name) {
 			var full_name = 'catalog/' + name;
 			return this.subPageInitWrap(ArtCard, full_name, {
-				urp_name: name,
 				artist: name
 			});
 		},
@@ -65,25 +63,38 @@ BrowseMap.Model.extendTo(StartPage, {
 			}
 		
 		},
-		'tags': function(name) {
-			var full_name = 'tags/' + name;
-			return this.subPageInitWrap(TagPage, full_name, {
-				urp_name: name,
-				tag_name: name
-			});
-		},
 		'users': function(name) {
 			var full_name = 'users/' + name;
 			if (name == 'me'){
-				return this.subPageInitWrap(UserCard, full_name, {urp_name: name});
-			} else if (name.indexOf('lfm:') === 0){
-				return this.subPageInitWrap(UserCard.LfmUserCard, full_name, {urp_name: name});
-			} else if (name.indexOf('vk:') === 0){
-				return this.subPageInitWrap(UserCard.VkUserCard, full_name, {urp_name: name});
+				return this.subPageInitWrap(UserCard, full_name);
+			} else {
+				var name_spaced = name.split(':');
+				var namespace = name_spaced[0];
+				if (namespace == 'lfm') {
+					return this.subPageInitWrap(UserCard.LfmUserCard, full_name, {userid: name_spaced[1]});
+				} else if (namespace == 'vk') {
+					return this.subPageInitWrap(UserCard.VkUserCard, full_name, {userid: name_spaced[1]});
+				}
 			}
+		},
+		'blogs': function(blog_url) {
+			var full_name = 'blogs/' +  this.app.encodeURLPart(blog_url);
+			return this.subPageInitWrap(MusicBlog, full_name, {
+				blog_url: blog_url
+			});
+		},
+		'cloudcasts': function(mixcloud_urlpiece) {
+			var full_name = 'cloudcasts/' +  this.app.encodeURLPart(mixcloud_urlpiece);
+			return this.subPageInitWrap(Cloudcasts, full_name, {
+				key: mixcloud_urlpiece
+			});
 		}
 	},
 	sub_pa: {
+		'tags': {
+			title: localize('Pop-tags'),
+			constr: TagsList
+		},
 		'conductor': {
 			title: localize('music-cond'),
 			constr: MusicConductor
@@ -92,24 +103,31 @@ BrowseMap.Model.extendTo(StartPage, {
 	subPager: function(parsed_str, path_string) {
 		var parts = path_string.split('/');
 		var first_part = parts[0];
-		var full_name;
+		var full_name = first_part;
 
 		if (parts[1]){
 			full_name += '/' + parts[1];
 		}
-		if (this.sub_pages[full_name]){
-			return this.sub_pages[full_name];
-		} else {
+		if (!this.sub_pages[full_name]){
 			if (!parts[1]){
 				return;
 			}
 			var handler = this.sub_pages_routes[first_part];
-			var instance = handler && handler.call(this, decodeURIComponent(parts[1]), parts[1]);
+			var instance_data = handler && handler.call(this, decodeURIComponent(parts[1]), parts[1]);
+			var instance;
+			if (instance_data) {
+				if (Array.isArray(instance_data)) {
+					instance = instance_data[0];
+				} else {
+					instance = instance_data;
+				}
+			}
 			if (instance){
 				this.sub_pages[full_name] = instance;
 			}
-			return instance;
+			return instance_data;
 		}
+		return this.sub_pages[full_name];
 	},
 	short_title: 'Seesu',
 	getTitle: function() {

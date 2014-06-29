@@ -107,11 +107,17 @@ AsyncDataSteam.prototype = {
 		var f;
 		for (var a in this._callbacks) {
 			f = this._callbacks[a];
+			if (!f){
+				continue;
+			}
 			f = real ? f.cb : f.lcb;
 			if (f){f(this._store);}
 		}
 		for (var i = this._onetime_callbacks.length - 1; i >= 0; i--){
 			f = this._onetime_callbacks.pop();
+			if (!f){
+				continue;
+			}
 			f = real ? f.cb : f.lcb;
 			if (f){f(this._store);}
 		}
@@ -155,6 +161,9 @@ var SeesuServerAPI = function(app, auth, url){
 			url: _this.url + 'last_listenings/',
 			type: "GET",
 			dataType: "json",
+			headers:{
+				'X-Requested-With': 'XMLHttpRequest'
+			},
 			error: function(){
 				callback();
 			},
@@ -284,6 +293,9 @@ provoda.Eventor.extendTo(SeesuServerAPI, {
 			type: "GET",
 			url: _this.url + 'api/',
 			data: params,
+			headers:{
+				'X-Requested-With': 'XMLHttpRequest'
+			},
 			success: function(r){
 				if (r){
 					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){

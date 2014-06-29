@@ -1,6 +1,24 @@
-define(['provoda', 'app_serv'], function(provoda, app_serv){
+define(['provoda', 'app_serv', 'spv'], function(provoda, app_serv, spv){
 "use strict";
 var app_env = app_serv.app_env;
+
+
+
+var MusicFile = function() {};
+provoda.Model.extendTo(MusicFile, {
+	init: function(opts, data) {
+		this._super();
+		this.updateManyStates(data);
+		models: {}
+	},
+	getSongFileModel: function(mo, player){
+		if (!this.models[mo.uid]) {
+			this.models[mo.uid] = new SongFileModel();
+			this.models[mo.uid].init({file: this, mo: mo}).setPlayer(player);
+		}
+		return this.models[mo.uid];
+	}
+});
 
 var FileInTorrent = function(sr_item){
 	this.sr_item = sr_item;
@@ -55,8 +73,12 @@ provoda.Model.extendTo(FileInTorrent, {
 				this.parent = file;
 			}
 
+
 			this.uid = 'song-file-' + counter++;
 			this.createTextStates();
+			if (opts.player) {
+				this.setPlayer(opts.player);
+			}
 			return this;
 		},
 		createTextStates: function() {
@@ -73,12 +95,51 @@ provoda.Model.extendTo(FileInTorrent, {
 			}
 			this.updateManyStates(states);
 		},
-		complex_states: {
-			"visible_duration": {
-				depends_on: ['duration', 'loaded_duration'],
-				fn: function(duration, loaded_duration) {
-					return duration || loaded_duration;
+		'compx-visible_duration': [
+			['duration', 'loaded_duration'],
+			function(duration, loaded_duration) {
+				return duration || loaded_duration;
+			}
+		],
+		'compx-play_position': [
+			['visible_duration', 'playing_progress'],
+			function(duration, playing_progress) {
+				return Math.round(duration * playing_progress);
+			}
+		],
+		getNiceSeconds: function(state) {
+			if (typeof state == 'number'){
+				var duration = Math.round(state/1000);
+				if (duration){
+					var digits = duration % 60;
+					return  spv.zerofyString(Math.floor(duration/60), 2) + ':' + spv.zerofyString(digits, 2);
 				}
+			}
+		},
+		'compx-visible_duration_text': [
+			['visible_duration'],
+			function (state) {
+				return this.getNiceSeconds(state);
+			}
+		],
+		'compx-play_position_text': [
+			['play_position'],
+			function (state) {
+				return this.getNiceSeconds(state);
+			}
+		],
+		'compx-load_file': [
+			['file_to_load-for-player_song', 'file_to_load-for-preload_current_file'],
+			function(player_song, preload_current_file) {
+				return this.utils.isDepend(player_song) || this.utils.isDepend(preload_current_file);
+			}
+		],
+		'stch-load_file': function(state) {
+			if (state) {
+				
+				this.load();
+			} else {
+				this.removeCache();
 			}
 		},
 		getTitle: function() {
@@ -128,13 +189,6 @@ provoda.Model.extendTo(FileInTorrent, {
 				}
 				if (factor){
 					this.updateState('loading_progress', factor);
-				}
-				
-
-				
-				var mo = ((this == this.mo.mopla) && this.mo);
-				if (mo){
-					mo.waitToLoadNext(factor > 0.8);
 				}
 			},
 			pause: function(){

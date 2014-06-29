@@ -31,18 +31,20 @@ coct.SPView.extendTo(StartPageView, {
 	},
 	'collch-muco': true,
 	'collch-pstuff': true,
+	'collch-tags': true,
 	children_views: {
 		muco:{
 			main: MusicConductorPreview
 		},
 		pstuff: {
 			main: UserCardPreview
-		}
+		},
+		tags: coct.ListPreview
 	},
 	'compx-autofocus': {
 		depends_on: ['mp_show_end', 'mp_has_focus'],
 		fn: function(shw_end, focus) {
-			return focus && shw_end && shw_end.userwant;
+			return focus && shw_end;
 		}
 	},
 	state_change: {

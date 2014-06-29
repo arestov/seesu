@@ -6,7 +6,7 @@ requirejs.config({
 		provoda: 'js/libs/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
-		jquery: 'js/common-libs/jquery-2.0.0.min',
+		jquery: 'js/common-libs/jquery-2.1.0.min',
 		localizer: 'js/libs/localizer',
 		cache_ajax: 'js/libs/cache_ajax',
 		app_serv: "js/app_serv",
@@ -51,7 +51,7 @@ big_timer = {
 	//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
 	var need_ui = (!cbp || cbp != window) && (!opera || !opera.contexts);
 	if (need_ui){
-		require(['spv', 'app_serv'], function(spv, app_serv) {
+		requirejs(['spv', 'app_serv'], function(spv, app_serv) {
 			app_serv.handleDocument(window.document);
 		});
 	}
@@ -70,25 +70,62 @@ big_timer = {
 			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
 	}
-	require(['su'], function() {
+	requirejs(['su'], function() {
 		
 		//app thread;
 	});
 	if (need_ui){
+
 		//ui thread;
-		require(['su', 'js/views/AppView', 'angbo'], function(su, AppView, angbo) {
+		requirejs(['su', 'js/views/AppView', 'angbo', 'provoda'], function(su, AppView, angbo, provoda) {
 			var can_die = false;
 			var md = su;
-			var view = new AppView();
-			md.mpx.addView(view, 'root');
+
+			var proxies_space = Date.now();
+			var views_proxies = provoda.views_proxies;
+			views_proxies.addSpaceById(proxies_space, md);
+			var mpx = views_proxies.getMPX(proxies_space, md);
+
+			
 			md.updateLVTime();
 
-			view.init({
-				mpx: md.mpx
-			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
-			view.requestAll();
-			//provoda.sync_r.connectAppRoot();
-			window.app_view = view;
+			(function() {
+				var view = new AppView();
+				mpx.addView(view, 'root');
+				view.init({
+					mpx: mpx,
+					proxies_space: proxies_space
+				}, {d: window.document, can_die: can_die, angbo: angbo});
+				view.onDie(function() {
+					//views_proxies.removeSpaceById(proxies_space);
+					view = null;
+				});
+				view.requestAll();
+			})();
+
+
+			(function() {
+				var exposed_view = new AppView.AppExposedView();
+				mpx.addView(exposed_view, 'exp_root');
+				exposed_view.init({
+					mpx: mpx,
+					proxies_space: proxies_space
+				}, {d: window.document, can_die: can_die, angbo: angbo, usual_flow: true});
+				exposed_view.requestAll();
+			})();
+
+			
+
+
+
+		
+
+
+			
+			
+
+
+
 		});
 	}
 

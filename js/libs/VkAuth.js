@@ -25,6 +25,9 @@ provoda.Eventor.extendTo(VkAuth, {
 		if (opts.open_api){
 			this.open_api = true;
 		}
+		if (opts.display_type) {
+			this.display_type = opts.display_type;
+		}
 		if (opts.vksite_app){
 			this.vksite_app = true;
 			if (opts.vksite_settings){
@@ -110,7 +113,9 @@ provoda.Eventor.extendTo(VkAuth, {
 
 		var base = this.open_api ? 'https://api.vk.com/oauth/authorize?' : "http://oauth.vk.com/authorize?" ;
 
-		o.link = base + 'client_id=' + this.app_id +'&scope=' + this.permissions.join(',')+ '&display=page&response_type=token';
+		var display_type = this.display_type || 'page';
+
+		o.link = base + 'client_id=' + this.app_id +'&scope=' + this.permissions.join(',')+ '&display=' + display_type + '&response_type=token';
 		var link_tag = this.urls.callbacker;
 
 		if (!this.deep_sanbdox){
@@ -131,6 +136,10 @@ provoda.Eventor.extendTo(VkAuth, {
 		}
 		var i = this.auth_frame = document.createElement('iframe');
 		spv.addEvent(window, 'message', function(e){
+			var iframe_win = _this.auth_frame && _this.auth_frame.contentWindow;
+			if (e.source != iframe_win) {
+				return;
+			}
 			if (e.data == 'vk_bridge_ready:'){
 			//	console.log('vk_bridge_ready');
 				_this.trigger('vk-bridge-ready');

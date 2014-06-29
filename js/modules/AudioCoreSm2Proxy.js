@@ -1,5 +1,8 @@
 define(['spv', 'jquery'], function(spv, $) {
 'use strict';
+
+
+
 var AudioCoreSm2Proxy = function(origin, path, opts) {
 	var _this = this;
 	this.origin = origin;
@@ -19,6 +22,7 @@ var AudioCoreSm2Proxy = function(origin, path, opts) {
 			path = path + '#' + params_string;
 		}
 	}
+	this.modern_messaging = opts.modern_messaging;
 
 	this.frame = document.createElement('iframe');
 	this.frame.src = this.origin + path;
@@ -66,7 +70,7 @@ AudioCoreSm2Proxy.prototype = {
 	sendMsg: function(){
 		var args = Array.prototype.slice.call(arguments);
 		if (args.length){
-			this.frame.contentWindow.postMessage(JSON.stringify(args), '*');
+			this.frame.contentWindow.postMessage(this.modern_messaging ? args : JSON.stringify(args), '*');
 		}
 	},
 	callSongMethod: function() {

@@ -23,12 +23,20 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 	comd.PartsSwitcher.extendTo(PlARow, {
 		init: function(pl) {
+			this.map_parent = pl;
 			this._super();
 			this.pl = pl;
+
 			this.updateState('active_part', false);
 			this.addPart(new MultiAtcsRow(this, pl));
 			this.addPart(new PlaylistSettingsRow(this, pl));
-		}
+		},
+		'compx-loader_disallowing_desc': [
+			['^loader_disallowing_desc'],
+			function(loader_disallowing_desc) {
+				return loader_disallowing_desc;
+			}
+		]
 	});
 
 
@@ -40,15 +48,8 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			this.actionsrow = actionsrow;
 			this._super();
 
-			var _this = this;
 
-			var doNotReptPl = function(state) {
-				_this.updateState('dont_rept_pl', state);
-			};
-			if (su.settings['dont-rept-pl']){
-				doNotReptPl(true);
-			}
-			su.on('settings.dont-rept-pl', doNotReptPl);
+			this.wch(su, 'settings-dont-rept-pl', 'dont_rept_pl');
 
 
 		},
@@ -88,96 +89,34 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 	var SongsList = function(){};
 	SongsListBase.extendTo(SongsList, {
-		init: function(opts, params, first_song) {
+		init: function() {
 			//playlist_title, playlist_type, info
-			//params.title, params.type, params.data
+
 			
 			this._super.apply(this, arguments);
-			if (params){
-				this.setBaseInfo(params);
-			}
-			
-			if (first_song){
-				this.findSongOwnPosition(first_song);
-			}
-			
 
 			var plarow = new PlARow();
 			plarow.init(this);
-
 			this.updateNesting('plarow', plarow);
-			
-			var _this = this;
-			
-			var doNotReptPl = function(state) {
-				_this.updateState('dont_rept_pl', state);
-			};
-			if (this.app.settings['dont-rept-pl']){
-				doNotReptPl(true);
-			}
-			this.app.on('settings.dont-rept-pl', doNotReptPl);
-			if (this.playlist_type){
-				this.updateState('url_part', this.getURL());
-			}
+
 			
 		},
-		page_name: 'playlist',
-		setBaseInfo: function(params) {
-			this.info = params.data || {};
-			if (params.title){
-				this.playlist_title = params.title;
-			}
-			if (params.type){
-				this.playlist_type = params.type;
-				this.updateState('nav_title', this.playlist_title);
-			}
-		},
-		getURL: function(){
-			var url ='';
-			if (this.playlist_type == 'artist'){
-				url += '/_';
-			} else if (this.playlist_type == 'album'){
-				url += '/' + this.app.encodeURLPart(this.info.album);
-			} else if (this.playlist_type == 'similar artists'){
-				url += '/+similar';
-			} else if (this.playlist_type == 'artists by tag'){
-				url += '/tags/' + this.app.encodeURLPart(this.info.tag);
-			} else if (this.playlist_type == 'tracks'){
-				url += '/ds';
-			} else if (this.playlist_type == 'artists by recommendations'){
-				url += '/recommendations';
-			} else if (this.playlist_type == 'artists by loved'){
-				url += '/loved';
-			} else if (this.playlist_type == 'cplaylist'){
-				url += '/playlist/' + this.app.encodeURLPart(this.info.name);
-			} else if (this.playlist_type == 'chart'){
-				url += '/chart/' +  this.app.encodeURLPart(this.info.country) + '/' + this.app.encodeURLPart(this.info.metro);
-			}
-			return url;
+		bindStaCons: function() {
+			this._super();
+			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
+			this.wch(this.app, 'settings-pl-shuffle', 'pl-shuffle');
 		},
 		extendSong: function(omo){
 			if (!(omo instanceof Song)){
-				var mo = new Song();
-				this.useMotivator(mo, function(mo) {
-					mo.init({
-						map_parent: this,
-						app: this.app,
-						omo: omo,
-						plst_titl: this,
-						player: this.player,
-						mp3_search: this.mp3_search
-					}, {
-						file: omo.file
-					});
+				return this.initSi(Song,  omo, {
+					file: omo.file
 				});
-				
-				return mo;
 			} else{
 				return omo;
 			}
 		},
 		makeExternalPlaylist: function() {
-			var songs_list = this.getMainList();
+			var songs_list = this.getMainlist();
 			if (!songs_list.length){return false;}
 			var simple_playlist = [];
 			for (var i=0; i < songs_list.length; i++) {
