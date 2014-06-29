@@ -367,6 +367,23 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 		this.wch(this.map_parent, 'soundcloud_profile', 'artist_id', true);
 
 	},
+	'compx-id_searching': [
+		['profile_searching'],
+		function(profile_searching) {
+			return profile_searching;
+		}
+	],
+	'compx-possible_loader_disallowing': [
+		['^no_soundcloud_profile', 'artist_id', '^soundcloud_profile'],
+		function(no_soundcloud_profile, artist_id) {
+			if (no_soundcloud_profile) {
+				return localize('no-soundcloud-profile');
+			}
+			if (!artist_id) {
+				return localize('Sc-profile-not-found');
+			}
+		}
+	],
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
 		fn: function(searching, disallowed, desc) {
@@ -683,6 +700,10 @@ BrowseMap.Model.extendTo(ArtCard, {
 						if (artist_nickname){
 							stack_atom.done(artist_nickname);
 						} else {
+							_this.updateManyStates({
+								'no_soundcloud_profile': true,
+								'sc_profile_searching': false
+							});
 							//stack_atom.reset();
 						}
 						
@@ -716,6 +737,8 @@ BrowseMap.Model.extendTo(ArtCard, {
 								_this.preloadNestings(['soundc_prof', 'soundc_likes']);
 
 								//_this.preloadChildren([_this.soundc_prof, _this.soundc_likes]);
+							} else {
+								_this.updateState('no_soundcloud_profile', true);
 							}
 						}
 					})
@@ -754,8 +777,9 @@ BrowseMap.Model.extendTo(ArtCard, {
 					}
 				}
 				if (artist_info){
-					_this.updateState('discogs_id_searching', false);
+					
 					_this.updateState('discogs_id', artist_info.id);
+					_this.updateState('discogs_id_searching', false);
 					_this.preloadNestings(['dgs_albums', 'soundc_likes']);
 
 				}

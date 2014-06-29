@@ -47,9 +47,9 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 	},
 	'compx-list_loading': {
-		depends_on: ['main_list_loading', 'preview_loading'],
-		fn: function(main_list_loading, prevw_loading) {
-			return main_list_loading || prevw_loading;
+		depends_on: ['main_list_loading', 'preview_loading', 'id_searching'],
+		fn: function(main_list_loading, prevw_loading, id_searching) {
+			return main_list_loading || prevw_loading || id_searching;
 		}
 	},
 	'compx-can_load_data': [

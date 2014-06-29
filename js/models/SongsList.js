@@ -23,12 +23,20 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 	comd.PartsSwitcher.extendTo(PlARow, {
 		init: function(pl) {
+			this.map_parent = pl;
 			this._super();
 			this.pl = pl;
+
 			this.updateState('active_part', false);
 			this.addPart(new MultiAtcsRow(this, pl));
 			this.addPart(new PlaylistSettingsRow(this, pl));
-		}
+		},
+		'compx-loader_disallowing_desc': [
+			['^loader_disallowing_desc'],
+			function(loader_disallowing_desc) {
+				return loader_disallowing_desc;
+			}
+		]
 	});
 
 

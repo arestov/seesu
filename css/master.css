@@ -2100,3 +2100,7 @@ body .surf_nav{
 	.waiting-auth .fast-code-input-access{
 		display: none;
 	}
+
+.loader_disallowing_desc {
+	margin-top: 2rem;
+}

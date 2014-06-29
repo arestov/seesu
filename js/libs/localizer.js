@@ -20,8 +20,12 @@ define({
 		"ru": "Из soundcloud профиля"
 	},
 	"Sc-profile-not-found": {
-		"original": "Artist soundcloud profile was not found",
+		"original": "Artist's soundcloud profile was not found",
 		"ru": "Soundcloud профиль артиста не был найден"
+	},
+	"no-soundcloud-profile": {
+		"original": "Artist does not have soundcloud profile",
+		"ru": "У артиста нет страницы на soundcloud"
 	},
 	"Blogged-all-hypem": {
 		"original": "Blogged, all and sundry (hypem.com)",
