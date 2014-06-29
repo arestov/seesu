@@ -86,7 +86,7 @@ AppModel.extendTo(SeesuApp, {
 	initAPIs: function() {
 		var _this = this;
 		this.lfm_auth = new LfmAuth(lfm, {
-			deep_sanbdox: app_env.deep_sanbdox,
+			deep_sanbdox: true || app_env.deep_sanbdox,
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
@@ -104,7 +104,7 @@ AppModel.extendTo(SeesuApp, {
 			},
 			permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
 			open_api: false,
-			deep_sanbdox: app_env.deep_sanbdox,
+			deep_sanbdox: true || app_env.deep_sanbdox,
 			vksite_app: app_env.vkontakte,
 			vksite_settings: this._url.api_settings,
 			display_type: app_env.tizen_app && 'mobile'

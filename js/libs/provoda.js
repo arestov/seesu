@@ -2222,6 +2222,9 @@ add({
 
 		if (this != donor && this instanceof provoda.View){
 			this.onDie(function() {
+				if (!donor) {
+					return;
+				}
 				donor.off(event_name, cb, false, this);
 				donor = null;
 				cb = null;

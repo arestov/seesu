@@ -362,7 +362,7 @@
 
 		<!-- userslist -->
 		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!vmp_show && 'hidden'}}">
-			<div pv-nest="list_items" class="lfm_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
+			<div pv-nest="list_items" class="lfm_friend-base-preview hidden" pv-events="click::requestPage" pv-type="way-point" pv-class="lfm_friend-base-preview">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
 				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
@@ -1347,6 +1347,9 @@
 					<span class="lang localize-music-files-from-vk">music files you</span> 
 					<span class="lang localize-vk-auth-invitation">need to login to vk.com (vkontakte.ru)</span>.
 				</span>
+				<div class="fast-code-input-access">
+					<a class="js-serv js-input-code lang localize-input-code">input code</a>
+				</div>
 				<div class="auth-container">
 					<input type="text" placeholder='Put your code here' class="vk-code"/> 
 					<button class="use-vk-code lang localize-use-code">Use code</button>
@@ -1362,6 +1365,7 @@
 					</span>
 					<span class="lfm-auth-request-desc"></span>
 				</p>
+
 				<div class="lfm-finish">
 					<div class="lang localize-enter-code">
 						Enter here code

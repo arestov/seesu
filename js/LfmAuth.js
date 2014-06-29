@@ -122,6 +122,9 @@ provoda.Eventor.extendTo(LfmAuth, {
 		if (this.api.sk){
 			this.has_session = true;
 		}
+		if (opts.deep_sanbdox){
+			this.deep_sanbdox = true;
+		}
 	},
 	requestAuth: function(p){
 		

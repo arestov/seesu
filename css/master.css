@@ -2086,3 +2086,17 @@ body .surf_nav{
 		max-height:310px;
 		max-width: 100%;
 	}
+
+
+
+.fast-code-input-access {
+	display: none;
+	margin-top: 1rem;
+	padding-bottom: 0.3rem;
+}
+	.deep-sandbox .fast-code-input-access{
+		display: block;
+	}
+	.waiting-auth .fast-code-input-access{
+		display: none;
+	}

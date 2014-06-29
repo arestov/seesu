@@ -175,6 +175,10 @@ define({
 		"original": "use code",
 		"ru": "использовать код"
 	},
+	"input-code":{
+		"original": "input code",
+		"ru": "ввести код"
+	},
 	"refresh": {
 		"original": "refresh",
 		"ru": "обновить"
