@@ -17,18 +17,15 @@ coct.SPView.extendTo(SongViewBase, {
 			this.RPCLegacy('requestPage');
 
 		}
-	},
-	expandBase: function(){
-		this.setVisState('lite_view', this.opts && this.opts.lite);
-	},
-	canUseDeepWaypoints: function() {
-		return !(this.opts && this.opts.lite) && !!this.state('vmp_show');
 	}
 });
 
 var SongUI = function(){};
 
 SongViewBase.extendTo(SongUI, {
+	canUseDeepWaypoints: function() {
+		return !!this.state('vmp_show');
+	},
 	dom_rp: true,
 	state_change : {
 		"vmp_show": function(opts, old_opts) {
@@ -102,7 +99,12 @@ SongViewBase.extendTo(SongUI, {
 var SongViewLite = function() {};
 
 SongViewBase.extendTo(SongViewLite, {
-
+	canUseDeepWaypoints: function() {
+		return false;
+	},
+	expandBase: function(){
+		this.setVisState('lite_view', true);
+	},
 	base_tree: {
 		sample_name: 'song-view'
 	}

@@ -115,7 +115,7 @@ provoda.View.extendTo(VkLoginUI, {
 		"request_description": function(state) {
 			this.login_desc.text(state || "");
 		},
-		'deep-sandbox': function(state) {
+		'deep_sandbox': function(state) {
 			this.c.toggleClass('deep-sandbox', !!state);
 		}
 	},
@@ -183,7 +183,7 @@ provoda.View.extendTo(LfmLoginView, {
 			this.c.addClass("hidden");
 		}
 	},
-	'stch-deep-sandbox': function(state){
+	'stch-deep_sandbox': function(state){
 		this.c.toggleClass('deep-sandbox', !!state);
 	},
 	'stch-data_wait': function(state) {

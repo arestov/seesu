@@ -299,6 +299,8 @@ ArtCard.ArtistsList.extendTo(RecommArtList, {
 		}],
 		[function() {
 			return {
+				api_name: 'last_fm_xml',
+				source_name: 'last.fm',
 				get: function(url) {
 					return $.ajax({
 						url: 'http://ws.audioscrobbler.com/1.0/' + url,

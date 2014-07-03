@@ -8,6 +8,7 @@ spv.Class.extendTo(GoogleSoundcloud, {
 		this.crossdomain = opts.crossdomain;
 	},
 	thisOriginAllowed: true,
+	source_name: 'google.com',
 	cache_namespace: 'goog_sc',
 	get: function(query, params, options) {
 		if (!query){
@@ -53,6 +54,7 @@ spv.Class.extendTo(DiscogsApi, {
 		this.crossdomain = opts.crossdomain;
 	},
 	errors_fields: ['error'],
+	source_name: 'discogs.com',
 	cache_namespace: 'discogs',
 	get: function(path, params, options) {
 
@@ -123,6 +125,7 @@ spv.Class.extendTo(MixcloudApi, {
 	},
 	errors_fields: ['error'],
 	thisOriginAllowed: true,
+	source_name: 'mixcloud.com',
 	cache_namespace: 'mixcloud',
 	get: function(path, params, options) {
 
@@ -186,6 +189,7 @@ spv.Class.extendTo(HypemApi, {
 	checkResponse: function(r) {
 		return !r.version;
 	},
+	source_name: 'hypem.com',
 	cache_namespace: 'hypem',
 	get: function(path, params, options) {
 		if (!path){

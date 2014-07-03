@@ -379,7 +379,7 @@ AppModel.extendTo(SeesuApp, {
 			this.updateState('slice-for-height', true);
 		}
 		if (app_env.deep_sanbdox){
-			this.updateState('deep-sandbox', true);
+			this.updateState('deep_sandbox', true);
 		}
 
 
