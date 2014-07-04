@@ -3758,15 +3758,16 @@ var getBaseTreeCheckList = function(start) {
 		cur.chunk_num = chunks_counter;
 
 		if (cur.children_by_selector) {
-			for (i = 0; i < cur.children_by_selector.length; i++) {
+			for (i = cur.children_by_selector.length - 1; i >= 0; i--) {
 				all_items.push( cur, cur.children_by_selector[i] );
 			}
 		}
 		
 		if (cur.children_by_anchor) {
-			for (i = 0; i < cur.children_by_anchor.length; i++) {
+			for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
 				all_items.push( cur, cur.children_by_anchor[i] );
 			}
+
 		}
 
 		result.push( cur );
