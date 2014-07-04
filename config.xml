@@ -12,5 +12,7 @@
     <name xml:lang="en">Seesu Music</name>
     <name xml:lang="ru">Сису музыкальная</name>
     <feature name="http://tizen.org/feature/screen.size.normal"/>
-    <tizen:setting screen-orientation="auto-rotation" context-menu="enable" background-support="enable" encryption="disable" install-location="auto" hwkey-event="enable"/>      
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <tizen:setting screen-orientation="auto-rotation" context-menu="enable" background-support="enable" encryption="disable" install-location="auto" hwkey-event="enable"/>
+    
 </widget>
