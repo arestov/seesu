@@ -17,7 +17,8 @@ requirejs.config({
 		hex_md5: {
 			exports: 'hex_md5'
 		}
-	}
+	},
+	waitSeconds: window.tizen && 0
 });
 
 window._gaq = window._gaq || [];

@@ -22,7 +22,7 @@ provoda.Model.extendTo(LfmLogin, {
 		}
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep-sandbox', true);
+			_this.updateState('deep_sandbox', true);
 		}
 		if (this.auth.has_session){
 			this.triggerSession();

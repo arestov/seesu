@@ -590,6 +590,18 @@ if (typeof widget != 'object'){
 		openURL = function(){
 			return pokki.openURLInDefaultBrowser.apply(pokki, arguments);
 		};
+	} else if (app_env.tizen_app) {
+		openURL = function(url) {
+			var appControl = new window.tizen.ApplicationControl( "http://tizen.org/appcontrol/operation/view", url );
+			window.tizen.application.launchAppControl(
+				appControl,
+				null,
+				function(){console.log("launch appControl succeeded");},
+				function(e){console.log("launch appControl failed. Reason: " + e && e.name);}
+			);
+			
+
+		};
 	} else {
 		openURL = function(url){
 			return window.open(url);

@@ -10,6 +10,7 @@ var ScApi = function(key, queue, crossdomain, cache_ajax) {
 ScApi.prototype = {
 	errors_fields: [],
 	constructor: ScApi,
+	source_name: 'soundcloud.com',
 	cache_namespace: "soundcloud_api",
 	thisOriginAllowed: true,
 	get: function(method, params, options) {

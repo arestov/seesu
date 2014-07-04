@@ -270,11 +270,18 @@ provoda.View.extendTo(ComplectPionerView, {
 var mfComplectUI = function() {};
 provoda.View.extendTo(mfComplectUI, {
 	children_views: {
-		'file-torrent': FileInTorrentUI,
-		'file-http': SongFileModelUI,
 		'pioneer': ComplectPionerView
 	},
-
+	children_views_by_mn: {
+		moplas_list_start: {
+			'file-torrent': FileInTorrentUI,
+			'file-http': SongFileModelUI
+		},
+		moplas_list_end: {
+			'file-torrent': FileInTorrentUI,
+			'file-http': SongFileModelUI
+		}
+	},
 	'collch-moplas_list_start': {
 		place: 'tpl.ancs.listc-start',
 		by_model_name: true

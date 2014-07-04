@@ -59,9 +59,14 @@ ShareSearchSection.extendTo(LFMShareSectionView, {
 var ShareSearchCtr = function() {};
 provoda.View.extendTo(ShareSearchCtr, {
 	children_views:{
-		'lfm_auth': etc_views.LfmLoginView,
-		'section-vk-users': VkShareSectionView,
-		'section-lfm-friends': LFMShareSectionView
+		'lfm_auth': etc_views.LfmLoginView
+		
+	},
+	children_views_by_mn: {
+		section: {
+			'section-vk-users': VkShareSectionView,
+			'section-lfm-friends': LFMShareSectionView
+		}
 	},
 	'collch-lfm_auth': 'tpl.ancs.lfm_auth_con'
 });
@@ -260,22 +265,13 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 		});
 
 	},
-
-	children_views: {
-		'row-lastfm': {
-			main: ScrobbleRowUI
-		},
-		'row-love': {
-			main: LoveRowUI
-		},
-		'row-share': {
-			main: ShareRowUI
-		},
-		'row-tag': {
-			main: SongActTaggingControl
-		},
-		'row-playlist-add': {
-			main: SongActPlaylistingUI
+	children_views_by_mn: {
+		context_parts: {
+			'row-lastfm': ScrobbleRowUI,
+			'row-love': LoveRowUI,
+			'row-share': ShareRowUI,
+			'row-tag': SongActTaggingControl,
+			'row-playlist-add': SongActPlaylistingUI,
 		}
 	},
 

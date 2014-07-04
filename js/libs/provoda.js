@@ -1028,8 +1028,21 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		network_api = api_name.call(sputnik);
 	}
 
+	if (!network_api.source_name) {
+		throw new Error('network_api must have source_name!');
+	}
+
 	if (!network_api.errors_fields && !network_api.checkResponse) {
 		throw new Error('provide a way to detect errors!');
+	}
+
+
+	if (typeof api_name != 'string') {
+		api_name = network_api.api_name;
+	}
+
+	if (typeof api_name != 'string') {
+		throw new Error('network_api must have api_name!');
 	}
 
 	var manual_nocache = api_args[2] && api_args[2].nocache;
@@ -1040,9 +1053,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		} else {
 		}
 	}
-	if (typeof api_name != 'string') {
-		api_name = Math.random();
-	}
+	
 	var cache_key;
 	if (!non_standart_api_opts && !manual_nocache) {
 		var big_string = JSON.stringify([api_name, api_method, api_args]);
@@ -1615,7 +1626,7 @@ FastEventor.prototype = {
 
 		
 
-		var request = getRequestByDeclr(send_declr, this.sputnik, 
+		var request = getRequestByDeclr(send_declr, this.sputnik,
 			{has_error: store.error},
 			{nocache: store.error});
 		var network_api = request.network_api;
@@ -1743,7 +1754,6 @@ FastEventor.prototype = {
 					if (is_main_list) {
 						_this.sputnik.updateState('main_list_loading', false);
 					}
-					//_this.sputnik.updateManyStates(_this.makeLoadingMarks(states_list, false));
 				})
 				.fail(function(){
 					store.error = true;
@@ -1792,7 +1802,7 @@ FastEventor.prototype = {
 						}
 						items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
 
-						sputnik.nextTick(sputnik.insertDataAsSubitems, [nesting_name, items, serv_data], true);
+						sputnik.nextTick(sputnik.insertDataAsSubitems, [nesting_name, items, serv_data, source_name], true);
 
 
 						if (!sputnik.loaded_nestings_items[nesting_name]) {
@@ -2325,11 +2335,14 @@ add({
 				cur = append_list.pop();
 				if (cur.parent && cur.parent.node) {
 					cur_config = this.base_tree_list[ cur.chunk_num ];
-					if (cur_config.selector) {
-						$(cur.parent.node).find(cur_config.selector).append(cur.node);
+					var target_node = cur_config.selector ? $(cur.parent.node).find(cur_config.selector) : $(cur.parent.node);
+
+					if (!cur_config.prepend) {
+						target_node.append(cur.node);
 					} else {
-						$(cur.parent.node).append(cur.node);
+						target_node.prepend(cur.node);
 					}
+
 					if (cur_config.parse_as_tplpart) {
 						this.parseAppendedTPLPart(cur.node);
 					}
@@ -3088,6 +3101,39 @@ var triggerDestroy = function(md) {
 	}
 };
 
+
+var changeSources = function(store, netapi_declr) {
+	if (typeof netapi_declr[0] == 'string') {
+		store.api_names.push(netapi_declr[0]);
+	} else {
+		var network_api = netapi_declr[0].call();
+		if (!network_api.source_name) {
+			throw new Error('no source_name');
+		}
+		store.sources_names.push(network_api.source_name);
+	}
+};
+
+var changeSourcesByApiNames = function(md, store) {
+	if (!store.api_names_converted) {
+		store.api_names_converted = true;
+		for (var i = 0; i < store.api_names.length; i++) {
+			var api_name = store.api_names[i];
+			var network_api;
+			if (typeof api_name == 'string') {
+				network_api = spv.getTargetField(md.app, api_name);
+			} else if (typeof api_name == 'function') {
+				network_api = api_name.call(md);
+			}
+			if (!network_api.source_name) {
+				throw new Error('network_api must have source_name!');
+			}
+
+			store.sources_names.push(network_api.source_name);
+		}
+	}
+};
+
 var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, function(add) {
 add({
@@ -3116,20 +3162,38 @@ add({
 	},
 	changeDataMorphDeclarations: function(props) {
 		var i, cur;
+
+
+		var has_changes = false;
+
 		if (props.hasOwnProperty('req_map')) {
+			this.netsources_of_states = {
+				api_names: [],
+				api_names_converted: false,
+				sources_names: []
+			};
+			has_changes = true;
 			for (i = 0; i < props.req_map.length; i++) {
 				cur = props.req_map[i][1];
 				if (typeof cur != 'function') {
 					props.req_map[i][1] = spv.mmap( cur );
 				}
+				changeSources(this.netsources_of_states, props.req_map[i][2]);
 				
 			}
+
 		}
 
 		var has_reqnest_decls = hasPrefixedProps(props, 'nest_req-');
 
 		if (has_reqnest_decls) {
 			this.has_reqnest_decls = true;
+			this.netsources_of_nestings = {
+				api_names: [],
+				api_names_converted: false,
+				sources_names: []
+			};
+			has_changes = true;
 			for (var prop_name in props) {
 				if (props.hasOwnProperty(prop_name) && prop_name.indexOf('nest_req-') === 0) {
 					cur = props[ prop_name ];
@@ -3148,10 +3212,38 @@ add({
 							}
 						}
 					}
+					changeSources(this.netsources_of_nestings, cur[1]);
 					
 				}
 			}
 		}
+		if (has_changes) {
+			this.netsources_of_all = {
+				nestings: this.netsources_of_nestings,
+				states: this.netsources_of_states
+			};
+		}
+	},
+	getNetworkSources: function() {
+		if (!this.netsources_of_all) {
+			return;
+		}
+		if (!this.netsources_of_all.done) {
+			this.netsources_of_all.done = true;
+			this.netsources_of_all.full_list = [];
+
+			if (this.netsources_of_all.nestings) {
+				changeSourcesByApiNames(this, this.netsources_of_all.nestings);
+				push.apply(this.netsources_of_all.full_list, this.netsources_of_all.nestings.sources_names);
+			}
+
+			if (this.netsources_of_all.states) {
+				changeSourcesByApiNames(this, this.netsources_of_all.states);
+				push.apply(this.netsources_of_all.full_list, this.netsources_of_all.states.sources_names);
+			}
+		}
+
+		return this.netsources_of_all.full_list;
 	},
 	'regfr-childchev': {
 		test: function(namespace) {
@@ -4194,13 +4286,29 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return target_ancestor;
 	},
-	findMpxViewInChildren: function(mpx, nesting_space) {
+	findMpxViewInChildren: function(mpx, nesting_space, nesting_name) {
 		nesting_space = nesting_space || 'main';
+		var i;
 		var views = mpx.getViews();
-		for (var i = 0; i < views.length; i++) {
-			var cur = views[i];
-			if (this.matchCildrenView( cur, nesting_space )) {
-				return cur;
+
+
+		var children = [];
+
+		for (i = 0; i < this.children.length; i++) {
+			var cur = this.children[i];
+			if (cur.nesting_space != nesting_space) {
+				continue;
+			}
+			if (nesting_name && cur.nesting_name != nesting_name) {
+				continue;
+			}
+			children.push(cur);
+		}
+
+
+		for (i = 0; i < views.length; i++) {
+			if (children.indexOf(views[i]) != -1) {
+				return views[i];
 			}
 		}
 	},
@@ -4221,7 +4329,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var mpx = this.getStoredMpx(md);
 		var
 			child_name = address_opts.nesting_name,
-			constructor_name = address_opts.by_model_name ? md.model_name : address_opts.nesting_name,
 			view_space = address_opts.nesting_space || 'main',
 			location_id = $v.getViewLocationId(this, address_opts.nesting_name, view_space),
 			view = mpx.getView(location_id);
@@ -4229,7 +4336,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (view){
 			return false;
 		} else {
-			var ConstrObj = this.children_views[constructor_name];
+
+			var ConstrObj;
+			if (address_opts.by_model_name) {
+
+				ConstrObj = this.children_views_by_mn &&
+					(this.children_views_by_mn[address_opts.nesting_name][md.model_name] ||
+					this.children_views_by_mn[address_opts.nesting_name]['$default']);
+				
+			} else {
+				ConstrObj = this.children_views[address_opts.nesting_name];
+			}
+
 			
 			var Constr;
 			if (typeof ConstrObj == 'function' && view_space == 'main'){
@@ -4241,7 +4359,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				Constr = address_opts.sampleController;
 			}
 			if (!Constr) {
-				throw new Error('there is no View for ' + constructor_name);
+				throw new Error('there is no View for ' + address_opts.nesting_name);
 			}
 
 			view = new Constr();

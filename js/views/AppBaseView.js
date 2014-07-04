@@ -340,7 +340,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (this['spec-vget-' + model_name]){
 			return this['spec-vget-' + model_name](md);
 		} else {
-			return this.findMpxViewInChildren(this.getStoredMpx(md));
+			return this.findMpxViewInChildren(this.getStoredMpx(md), false, 'map_slice');
 		}
 	},
 	getMapSliceChildInParenView: function(md) {
@@ -351,7 +351,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (!parent_view){
 			return;
 		}
-		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
+		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md), false, 'map_slice');
 		if (!target_in_parent){
 			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
 			target_in_parent = view && view[0];

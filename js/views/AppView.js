@@ -60,180 +60,63 @@ AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
 var AppView = function(){};
 AppView.AppExposedView = AppExposedView;
 AppBaseView.extendTo(AppView, {
-	children_views: {
-		start_page : {
-			main: StartPageView,
-			nav: nav.StartPageNavView
+	children_views_by_mn: {
+		map_slice: {
+			$default: coct.ListOfListsView,
+			start_page : StartPageView,
+			invstg: SearchPageView,
+			artcard: ArtcardUI,
+			artslist: ArtistListView,
+			playlist: {
+				'main': SongsListView,
+				'all-sufficient-details': SongsListView.SongsListDetailedView,
+			},
+			vk_usercard: UserCardPage.VkUsercardPageView,
+			lfm_usercard: UserCardPage.LfmUsercardPageView,
+			usercard: UserCardPage,
+			allplaces: coct.ListOfListsView,
+			mconductor: MusicConductorPage,
+			tag_page: TagPageView,
+			tagslist: TagPageView.TagsListPage,
+			user_playlists: coct.ListOfListsView,
+			songs_lists: coct.ListOfListsView,
+			artists_lists: coct.ListOfListsView,
+			сountries_list: coct.ListOfListsView,
+			city_place: coct.ListOfListsView,
+			cities_list: coct.ListOfListsView,
+			country_place: coct.ListOfListsView,
+			tag_artists: coct.ListOfListsView,
+			tag_songs: coct.ListOfListsView,
+			youtube_video: YoutubeVideoView,
+			vk_users: UserCardPage.VkUsersPageView,
+			lfm_users: lul.LfmUsersPageView,
+			lfm_listened_artists: coct.ListOfListsView,
+			lfm_listened_tracks: coct.ListOfListsView,
+			lfm_listened_albums: coct.ListOfListsView,
+			lfm_listened_tags: lul.UserTagsPageView,
+			listoflists: coct.ListOfListsView,
+			lfm_user_tag: coct.ListOfListsView,
+			user_acqs_list: uacq.UserAcquaintancesListView,
+			albslist: coct.AlbumsListView,
+			lula: lul.LULAPageVIew,
+			lulas: lul.LULAsPageVIew,
+			songcard: SongcardPage,
+			justlists: coct.ListOfListsView,
+			vk_posts: coct.VKPostsView,
+			songcard_cloudcasts: coct.ListOfListsView,
+			cloudcasts_list: coct.ListOfListsView,
+			blogs_conductor: coct.ListOfListsView,
+			blogs_list: coct.ListOfListsView,
+			music_blog: coct.ListOfListsView,
 		},
-		invstg: {
-			main: SearchPageView,
-			nav: nav.investgNavUI
-		},
-		artcard: {
-			main: ArtcardUI,
-			nav: nav.baseNavUI
-		},
-
-		artslist: {
-			main: ArtistListView,
-			nav: nav.baseNavUI
-		},
-		playlist: {
-			main: SongsListView,
-			'all-sufficient-details': SongsListView.SongsListDetailedView,
-			nav: nav.baseNavUI
-		},
-		vk_usercard: {
-			nav: nav.baseNavUI,
-			main: UserCardPage.VkUsercardPageView
-		},
-		lfm_usercard:{
-			nav: nav.baseNavUI,
-			main: UserCardPage.LfmUsercardPageView
-		},
-		usercard: {
-			nav: nav.baseNavUI,
-			main: UserCardPage
-		},
-		song: {
-			nav: nav.baseNavUI
-		},
-		allplaces: {
-			nav: nav.baseNavUI,
-			main: coct.ListOfListsView
-		},
-		mconductor: {
-			nav: nav.baseNavUI,
-			main: MusicConductorPage
-		},
-		tag_page: {
-			main: TagPageView,
-			nav: nav.baseNavUI
-		},
-		tagslist: {
-			main: TagPageView.TagsListPage,
-			nav: nav.baseNavUI
-		},
-		user_playlists: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		songs_lists: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		artists_lists:{
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		сountries_list: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		city_place: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		cities_list: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		country_place: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		tag_artists: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		tag_songs: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		youtube_video: {
-			main: YoutubeVideoView,
-			nav: nav.baseNavUI
-		},
-		vk_users:{
-			main: UserCardPage.VkUsersPageView,
-			nav: nav.baseNavUI
-		},
-		lfm_users:{
-			main: lul.LfmUsersPageView,
-			nav: nav.baseNavUI
-		},
-		lfm_listened_artists: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		lfm_listened_tracks: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		lfm_listened_albums: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		lfm_listened_tags: {
-			main: lul.UserTagsPageView,
-			nav: nav.baseNavUI
-		},
-		listoflists: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		lfm_user_tag: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		user_acqs_list: {
-			main: uacq.UserAcquaintancesListView,
-			nav: nav.baseNavUI
-		},
-		albslist: {
-			main: coct.AlbumsListView,
-			nav: nav.baseNavUI
-		},
-		lula: {
-			main: lul.LULAPageVIew,
-			nav: nav.baseNavUI
-		},
-		lulas: {
-			main: lul.LULAsPageVIew,
-			nav: nav.baseNavUI
-		},
-		songcard: {
-			main: SongcardPage,
-			nav: nav.baseNavUI
-		},
-		justlists: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		vk_posts: {
-			main: coct.VKPostsView,
-			nav: nav.baseNavUI
-		},
-		songcard_cloudcasts: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		cloudcasts_list: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		blogs_conductor: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		blogs_list: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
-		},
-		music_blog: {
-			main: coct.ListOfListsView,
-			nav: nav.baseNavUI
+		navigation: {
+			$default: nav.baseNavUI,
+			start_page: nav.StartPageNavView,
+			invstg: nav.investgNavUI
 		}
+	},
+	children_views: {
+		
 		
 	},
 	'collch-current_mp_md': function(name, value) {
@@ -241,7 +124,6 @@ AppBaseView.extendTo(AppView, {
 	},
 	'collch-navigation': {
 		place: 'nav.daddy',
-		space: 'nav',
 		by_model_name: true
 	},
 
@@ -275,9 +157,8 @@ AppBaseView.extendTo(AppView, {
 		}
 	},
 	'collch-$spec-playlist': {
-		place: AppBaseView.viewOnLevelP,
-		opts: {overview: true},
-		by_model_name: true
+		by_model_name: true,
+		place: AppBaseView.viewOnLevelP
 	},
 	tickCheckFocus: function() {
 		if (this.isAlive()){
@@ -330,7 +211,7 @@ AppBaseView.extendTo(AppView, {
 		"slice-for-height": function(state){
 			this.toggleBodyClass(state, 'slice-for-height');
 		},
-		"deep-sandbox": function(state){
+		"deep_sandbox": function(state){
 			this.toggleBodyClass(state, 'deep-sandbox');
 		},
 

@@ -115,10 +115,14 @@ ListPreviewLine.extendTo(ArtistsListPreviewLine, {
 var ListSimplePreview = function() {};
 ListPreview.extendTo(ListSimplePreview, {
 	children_views: {
-		preview_list: ListPreviewLine,
-//		lists_list: ListPreviewLine,
-		auth_block_lfm: etc_views.LfmLoginView,
-		auth_block_vk: SoftVkLoginUI
+		preview_list: ListPreviewLine
+		
+	},
+	children_views_by_mn: {
+		auth_part: {
+			auth_block_lfm: etc_views.LfmLoginView,
+			auth_block_vk: SoftVkLoginUI
+		}
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
@@ -140,10 +144,7 @@ ListPreview.extendTo(ListSimplePreview, {
 var ImagedListPreview = function() {};
 ListSimplePreview.extendTo(ImagedListPreview, {
 	children_views: {
-		preview_list: ArtistsListPreviewLine,
-//		lists_list: ListPreviewLine,
-		auth_block_lfm: etc_views.LfmLoginView,
-		auth_block_vk: SoftVkLoginUI
+		preview_list: ArtistsListPreviewLine
 	}
 });
 
@@ -242,23 +243,14 @@ provoda.View.extendTo(BigAlbumPreview, {
 
 var AlbumsListView = function() {};
 PageView.extendTo(AlbumsListView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('albums_page');
-		this.createTemplate();
-		
-		var _this = this;
-		this.tpl.ancs.load_m_b.click(function() {
-			_this.RPCLegacy('requestMoreData');
-			return false;
-		});
+	base_tree: {
+		sample_name: 'albums_page'
 	},
 	children_views: {
 		preview_list: BigAlbumPreview
 	},
-	'collch-preview_list': 'tpl.ancs.albums_list_c',
-	'stch-more_load_available': function(state) {
-		this.tpl.ancs.load_m_b.toggleClass('hidden', !state);
-	}
+	'collch-preview_list': 'tpl.ancs.albums_list_c'
+
 });
 
 var AlbumsListPreview = function() {};
