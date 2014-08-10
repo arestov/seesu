@@ -1,5 +1,6 @@
 define(['provoda', 'spv', '../libs/BrowseMap'], function(provoda, spv, BrowseMap) {
 "use strict";
+var binded_models = {};
 var AppModelBase = function() {};
 provoda.Model.extendTo(AppModelBase, {
 	init: function() {
@@ -158,6 +159,10 @@ provoda.Model.extendTo(AppModelBase, {
 		
 	},
 	bindMMapStateChanges: function(md) {
+		if (binded_models[md._provoda_id]) {
+			return;
+		}
+		binded_models[md._provoda_id] = true;
 		md.on('mpl-attach', function() {
 			md.updateState('mpl_attached', true);
 
@@ -165,6 +170,8 @@ provoda.Model.extendTo(AppModelBase, {
 		md.on('mpl-detach', function(){
 			md.updateState('mpl_attached', false);
 		}, {immediately: true});
+		this.pushVDS(md);
+
 	},
 	showMOnMap: function(model) {
 

@@ -21,21 +21,16 @@ var album_placeholder = {
 	Song = function(){};
 
 	SongBase.extendTo(Song, {
-		hndMpshowImp: function(e) {
-			if (e.value){
-				this.initOnShow();
-			} else {
+
+		'nest-songcard': ['#tracks/[:artist],[:track]', false, 'can_load_songcard'],
+		'compx-$relation:songcard-for-active_song': [
+			['can_load_songcard', '@songcard'],
+			function(can_load_songcard, songcard) {
+				return can_load_songcard && songcard;
 			}
-		},
-		'stch-can_load_songcard': function(state) {
-			if (state){
-				var songcard = this.app.getSongcard(this.artist, this.track);
-				if (songcard){
-					songcard.initForSong();
-					this.updateNesting('songcard', songcard);
-				}
-			}
-		},
+		],
+		'stch-$relation:songcard-for-active_song': provoda.Model.prototype.hndRDep,
+
 		'stch-can_load_baseinfo': function(state) {
 			if (state){
 				var artcard = this.getNesting('artist');
@@ -175,11 +170,7 @@ var album_placeholder = {
 				}
 			}
 		],
-
-		initOnShow: provoda.getOCF('izonshow', function() {
-			var actionsrow = new SongActionsRow(this);
-			this.updateNesting('actionsrow', actionsrow);
-		}),
+		'nest-actionsrow': [SongActionsRow, false, 'mp_show'],
 		getMFCore: function(){
 			this.initHeavyPart();
 			return this.mf_cor;
@@ -198,15 +189,8 @@ var album_placeholder = {
 				omo.file = null;
 			}
 
-			this.mf_cor = new MfCor();
-			this.useMotivator(this.mf_cor, function() {
-				this.mf_cor.init({
-					app: this.app,
-					map_parent: this,
-					mo: this,
-					omo: this.omo
-				}, omo.file);
-			});
+			this.mf_cor = this.initSi(MfCor, null, omo);
+
 			
 
 			if (omo.file){
@@ -225,9 +209,6 @@ var album_placeholder = {
 			//this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
 
 			
-			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
-			this.on('state_change-is_important', this.hndImportant);
-			this.nextTick(this.initRelativeData);
 			this.updateNesting('mf_cor', this.mf_cor);
 			this.updateState('mf_cor', this.mf_cor);
 
@@ -238,11 +219,7 @@ var album_placeholder = {
 				return state;
 			}
 		],
-		hndImportant: function(e) {
-			if (e.value){
-				this.initRelativeData();
-			}
-		},
+
 		hndMfcBeforePlay: function(mopla) {
 			this.player.changeNowPlaying(this, mopla.state('play'));
 			this.mopla = mopla;
@@ -395,18 +372,25 @@ var album_placeholder = {
 				});
 			}
 		},200),
-		initRelativeData: provoda.getOCF('izrelative', function() {
-			if (this.artist){
-				var artcard = this.app.getArtcard(this.artist);
-				this.updateNesting('artist', artcard);
-				this.updateState('has_nested_artist', true);
-				if (artcard) {
-					this.wch(artcard, 'available_images', 'artist_images');
-				}
-				//this.wch()
+		'compx-artist_images': [
+			['@available_images:artist'],
+			function (available_images) {
+				return available_images && available_images[0];
 			}
-			//this.loadSongListeners();
-		})
+		],
+		'compx-has_nested_artist': [
+			['@artist'],
+			function(artist) {
+				return !!artist;
+			}
+		],
+		'compx-load_artcard': [
+			['needs_states_connecting', 'artist', 'is_important'],
+			function (artist, needs_states_connecting, is_important) {
+				return artist && (needs_states_connecting || is_important);
+			}
+		],
+		'nest-artist': ['#catalog/[:artist]', false, 'load_artcard']
 	});
 return Song;
 });

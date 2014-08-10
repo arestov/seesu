@@ -79,23 +79,24 @@ var LULA = function() {};//artist, один артист с треками
 BrowseMap.Model.extendTo(LULA, {
 	model_name: 'lula',
 	'compx-has_no_access': no_access_compx,
-	init: function(opts, params) {
+	init: function(opts, data) {
 		this._super.apply(this, arguments);
 		var states = {};
 
-		var artist = params.data.artist;
+
+		var artist = data.artist;
 		this.sub_pa_params = {
-			lfm_userid: params.lfm_userid,
-			for_current_user: params.for_current_user,
+			lfm_userid: this.map_parent.sub_pa_params.lfm_userid,
+			for_current_user: this.map_parent.sub_pa_params.for_current_user,
 			artist: artist
 		};
-		connectUserid.call(this, params);
+		connectUserid.call(this, this.sub_pa_params);
 		spv.cloneObj(states, {
 			'url_part': artist,
 			'nav_title': artist,
 			'artist_name': artist,
-			'playcount': params.data.playcount,
-			'lfm_image': params.data.lfm_img
+			'playcount': data.playcount,
+			'lfm_image': data.lfm_img
 		});
 		this.updateManyStates(states);
 	},
@@ -112,9 +113,6 @@ BrowseMap.Model.extendTo(LULA, {
 			constr: LULATracks,
 			title: 'All Time'
 		}
-	},
-	subPager: function() {
-		//daterange
 	}
 });
 
@@ -123,11 +121,8 @@ var UserArtists = function() {};
 LoadableList.extendTo(UserArtists, {
 	model_name: 'lulas',
 	main_list_name: 'artists',
-	makeDataItem: function(data) {
-		return this.initSi(LULA, spv.cloneObj({
-			data: data
-		}, this.sub_pa_params));
-	},
+	'nest_rqc-artists': LULA,
+
 	artistListPlaycountParser: function(r, field_name) {
 		var result = [];
 		var array = spv.toRealArray(spv.getTargetField(r, field_name));
@@ -353,15 +348,9 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 		[user_artists_sp, true],
 	sub_pa: {
 		'recommended': {
-			getConstr: function() {
-				if (this.userid) {
-					return RecommArtList;
-				} else {
-					return RecommArtListForCurrentUser;
-				}
-			},
+			constr: RecommArtList,
 			getTitle: function() {
-				return this.userid ? (localize('reccoms-for') + ' ' + this.userid) : localize('reccoms-for-you');
+				return localize('reccoms-for') + ' ' + this.userid;
 			}
 		},
 		'library': {
@@ -399,6 +388,17 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 		//недельные чарты - отрезки по 7 дней
 	}
 });
+
+LfmUserArtists.LfmUserArtistsForCU = function() {};
+LfmUserArtists.extendTo(LfmUserArtists.LfmUserArtistsForCU, {
+	'sub_pa-recommended': {
+		constr: RecommArtListForCurrentUser,
+		title: localize('reccoms-for-you')
+	}
+});
+
+
+
 var LfmRecentUserTracks = function() {};
 SongsList.extendTo(LfmRecentUserTracks, {
 	'compx-has_no_access': no_access_compx,
@@ -720,17 +720,17 @@ var user_tag_sp = ['artists', 'tracks', 'albums'];
 var UserTag = function() {};
 BrowseMap.Model.extendTo(UserTag, {
 	model_name: 'lfm_user_tag',
-	init: function(opts, params) {
+	init: function(opts, data) {
 		this._super.apply(this, arguments);
-		var tag_name = params.data.tag_name;
+		var tag_name = data.tag_name;
 		this.sub_pa_params = {
-			lfm_userid: params.lfm_userid,
-			for_current_user: params.for_current_user,
+			lfm_userid: this.map_parent.sub_pa_params.lfm_userid,
+			for_current_user: this.map_parent.sub_pa_params.for_current_user,
 			tag_name: tag_name
 		};
 		this.initStates({
 			tag_name: tag_name,
-			count: params.data.count,
+			count: data.count,
 			nav_title: tag_name,
 			url_part: tag_name
 		});
@@ -791,12 +791,9 @@ LoadableList.extendTo(LfmUserTags, {
 			return ['user.getTopTags', this.getRqData()];
 		}]
 	],
+	'nest_rqc-tags': UserTag,
 	
-	makeDataItem:function(data) {
-		return this.initSi(UserTag, spv.cloneObj({
-			data: data
-		}, this.sub_pa_params));
-	},
+
 	tagsParser: function(r, field_name) {
 		var result = [];
 		var array = spv.toRealArray(spv.getTargetField(r, field_name));
@@ -813,9 +810,8 @@ LoadableList.extendTo(LfmUserTags, {
 
 var LfmUserPreview = function() {};
 BrowseMap.Model.extendTo(LfmUserPreview, {
-	init: function(opts, params) {
+	init: function(opts, data) {
 		this._super.apply(this, arguments);
-		var data = params.data;
 
 		var song, song_time;
 		var artist = spv.getTargetField(data, 'recenttrack.artist.name');
@@ -873,13 +869,8 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 
 var LfmUsersList = function() {};
 LoadableList.extendTo(LfmUsersList, {
+	'nest_rqc-list_items': LfmUserPreview,
 
-	itemConstr: LfmUserPreview,
-	makeDataItem:function(data) {
-		return this.initSi(this.itemConstr, spv.cloneObj({
-			data: data
-		}, this.sub_pa_params));
-	},
 	main_list_name: 'list_items',
 	model_name: 'lfm_users',
 	page_limit: 200

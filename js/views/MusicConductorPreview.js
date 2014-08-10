@@ -22,13 +22,13 @@ provoda.View.extendTo(MusicConductorPreview, {
 	},
 	'stch-can_expand': function(state){
 		if (state){
-			this.requirePart('start-page-blocks');
+			this.requirePart('current-seesu-users');
 		}
 	},
 
 	//'collch-allpas': 'ww_c',
 	parts_builder: {
-		'start-page-blocks': function() {
+		'current-seesu-users': function() {
 			var _this = this;
 
 

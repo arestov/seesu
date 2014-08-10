@@ -237,6 +237,7 @@
 	.art_card-statinfo{
 		clear: both;
 		padding-top:1rem;
+		overflow: hidden;
 		}
 		.area_for_button .albums_previews{
 			height: 9.4rem;

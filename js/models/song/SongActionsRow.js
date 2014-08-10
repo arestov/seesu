@@ -6,18 +6,15 @@ var localize = app_serv.localize;
 
 
 
-var LfmLoveIt = function(opts, mo) {
-	this.init(opts, mo);
-};
+var LfmLoveIt = function() {};
 
 LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
-	init: function(opts, mo) {
+	init: function() {
 		this._super.apply(this, arguments);
-		this.song = mo;
-		this.app = mo.app;
-		this.setRequestDesc(localize('lastfm-loveit-access'));
+		this.song = this.map_parent.mo;
 		this.updateState('active', true);
 	},
+	access_desc: localize('lastfm-loveit-access'),
 	beforeRequest: function() {
 		this.bindAuthCallback();
 	},
@@ -41,25 +38,39 @@ LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
 					_this.updateState('wait_love_done', false);
 					_this.trigger('love-success');
 				});
-			seesu.trackEvent('song actions', 'love');
+			this.app.trackEvent('song actions', 'love');
 		}
 		
 		
 	}
 });
-var LoveRow = function(actionsrow, mo){
-	this.init(actionsrow, mo);
-};
+var LoveRow = function(){};
 comd.BaseCRow.extendTo(LoveRow, {
-	init: function(actionsrow, mo){
+	'nest-lfm_loveit': [LfmLoveIt, false, 'active_view'],//ver important to not init this each song selected
+	init: function(){
 		var _this = this;
-		this.actionsrow = actionsrow;
-		this.mo = mo;
-		this._super();
-		this.lfm_loveit = new LfmLoveIt({auth: su.lfm_auth, pmd: this}, this.mo);
-		this.updateNesting('lfm_loveit', this.lfm_loveit);
-		this.lfm_loveit.on('love-success', function() {
+		this._super.apply(this, arguments);
+		this.actionsrow = this.map_parent;
+		this.mo = this.map_parent.map_parent;
+		this.nestings_opts = {
+			auth: this.app.lfm_auth,
+			pmd: this
+		};
+		
+
+		var old_lit = null;
+		var hide_on_love = function() {
 			_this.hide();
+		};
+		this.on('child_change-lfm_loveit', function(e) {
+			if (old_lit) {
+				old_lit.off('love-success', hide_on_love);
+			}
+
+			if (e.value) {
+				e.value.on('love-success', hide_on_love);
+			}
+			old_lit = e.value;
 		});
 		
 	},
@@ -73,15 +84,17 @@ comd.BaseCRow.extendTo(LoveRow, {
 
 
 
-var ScrobbleRow = function(actionsrow){
-	this.init(actionsrow);
-};
+var ScrobbleRow = function(){};
 comd.BaseCRow.extendTo(ScrobbleRow, {
-	init: function(actionsrow){
-		this.actionsrow = actionsrow;
-		this._super();
-		this.lfm_scrobble = new LfmAuth.LfmScrobble({auth: su.lfm_auth, pmd: this});
-		this.updateNesting('lfm_scrobble', this.lfm_scrobble);
+	'nest-lfm_scrobble': [LfmAuth.LfmScrobble],
+	init: function(){
+		
+		this._super.apply(this, arguments);
+		this.nestings_opts = {
+			auth: this.app.lfm_auth,
+			pmd: this
+		};
+		this.actionsrow = this.map_parent;
 	},
 	model_name: 'row-lastfm'
 });
@@ -90,16 +103,15 @@ comd.BaseCRow.extendTo(ScrobbleRow, {
 
 
 
-var ShuffleListRow = function(actionsrow) {
-	this.init(actionsrow);
-};
+var ShuffleListRow = function() {};
 comd.BaseCRow.extendTo(ShuffleListRow, {
 	model_name: 'row-pl-shuffle',
-	init: function(actionsrow) {
-		this.actionsrow = actionsrow;
-		this._super();
+	init: function() {
+		this._super.apply(this, arguments);
+		this.actionsrow = this.map_parent;
+		
 
-		this.wch(su, 'settings-pl-shuffle', function(e) {
+		this.wch(this.app, 'settings-pl-shuffle', function(e) {
 			this.updateState('pl_shuffle', e.value);
 			this.actionsrow.mo.updateState('pl-shuffle', e.value);
 		});
@@ -114,16 +126,14 @@ comd.BaseCRow.extendTo(ShuffleListRow, {
 
 
 
-var RepeatSongRow = function(actionsrow){
-	this.init(actionsrow);
-};
+var RepeatSongRow = function(){};
 comd.BaseCRow.extendTo(RepeatSongRow, {
 	model_name: 'row-repeat-song',
-	init: function(actionsrow){
-		this.actionsrow = actionsrow;
-		this._super();
+	init: function(){
+		this._super.apply(this, arguments);
+		this.actionsrow = this.map_parent;
 
-		this.wch(su, 'settings-rept-song', function(e) {
+		this.wch(this.app, 'settings-rept-song', function(e) {
 			this.updateState('rept_song', e.value);
 			this.actionsrow.mo.updateState('rept-song', e.value);
 		});
@@ -137,27 +147,28 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 	
 });
 
+var constrs = [ScrobbleRow, RepeatSongRow, ShuffleListRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging];
+
 var parts_storage = {};
-[ScrobbleRow, RepeatSongRow, ShuffleListRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging].forEach(function(el) {
+constrs.forEach(function(el) {
 	parts_storage[el.prototype.model_name] = el;
 });
 
 
 
-var SongActionsRow = function(mo) {
-	this.init(mo);
-};
+var SongActionsRow = function() {};
 comd.PartsSwitcher.extendTo(SongActionsRow, {
-	init: function(mo) {
-		this._super();
-		this.mo = mo;
+	'nest_posb-context_parts': constrs,
+	init: function() {
+		this._super.apply(this, arguments);
+		this.mo = this.map_parent;
 		this.updateState('active_part', false);
-		this.app = mo.app;
+		//this.app = mo.app;
 		this.inited_parts = {};
 
 		this.nextTick(this.initHeavyPart);
 
-		this.wch(this.mo, 'mp_show', this.hndSongHide);
+		this.wch(this.map_parent, 'mp_show', this.hndSongHide);
 	},
 	hndSongHide: function(e) {
 		if (!e.value) {
@@ -173,16 +184,16 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 			this.setVolumeState(e.value);
 		});
 	},
-	switchPart: function(name) {
-		this.initPart(name);
+	switchPart: function(part_name) {
+		this.initPart(part_name);
 		//this.realyHeavyPart();
-		this._super(name);
+		this._super(part_name);
 	},
-	initPart: function(name) {
-		if (name){
-			if (!this.inited_parts[name]){
-				var part = new parts_storage[name](this, this.mo);
-				this.inited_parts[name] = true;
+	initPart: function(part_name) {
+		if (part_name){
+			if (!this.inited_parts[part_name]){
+				var part = this.initSi(parts_storage[part_name]);
+				this.inited_parts[part_name] = true;
 				this.addPart(part);
 			}
 		}

@@ -310,19 +310,53 @@ provoda.View.extendTo(ActionsRowUI, {
 		var current_button = this.getCurrentButton();
 		return current_button.offset();
 	},
-	'compx-arrow_pos':{
-		depends_on: ['#window_width', 'active_part'],
-		fn: function(window_width, active_part) {
-			if (window_width && active_part){
-				var button_width = this.getBoxDemension(this.getCurrentButtonOWidth, 'button_owidth', active_part);
+	
+	'compx-key-button_owidth': [
+		['#workarea_width', 'active_part'],
+		function(workarea_width, active_part) {
+			if (workarea_width && active_part){
 				//ширина кнопки, зависит типа вьюхи и активной части
-
-				var button_offset = this.getBoxDemension(this.getCurrentButtonOffset, 'button_offset', window_width, active_part);
+				return this.getBoxDemensionKey('button_owidth', active_part);
+			}
+		}
+	],
+	'compx-key-button_offset': [
+		['#workarea_width', 'active_part'],
+		function(workarea_width, active_part) {
+			if (workarea_width && active_part){
 				//расположение кнопки, зависит от ширины окна и названия части
-
-				var parent_offset = this.getBoxDemension(this.getArPaOffset, 'arrow_parent_offset', window_width);
+				return this.getBoxDemensionKey('button_offset', workarea_width, active_part);
+			}
+		}
+	],
+	'compx-key-arrow_parent_offset': [
+		['#workarea_width', 'active_part'],
+		function(workarea_width, active_part) {
+			if (workarea_width && active_part){
 				//расположенние позиционного родителя стрелки, зависит от ширины окна
-
+				return this.getBoxDemensionKey('arrow_parent_offset', workarea_width);
+			}
+		}
+	],
+	'stch-key-button_owidth': function(state) {
+		if (state) {
+			this.updateState('button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
+		}
+	},
+	'stch-key-button_offset': function(state) {
+		if (state) {
+			this.updateState('button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
+		}
+	},
+	'stch-key-arrow_parent_offset': function(state) {
+		if (state) {
+			this.updateState('arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
+		}
+	},
+	'compx-arrow_pos':{
+		depends_on: ['button_owidth', 'button_offset', 'arrow_parent_offset'],
+		fn: function(button_width, button_offset, parent_offset) {
+			if (button_offset && parent_offset){
 				return ((button_offset.left + button_width/2) - parent_offset.left) + 'px';
 			}
 		}

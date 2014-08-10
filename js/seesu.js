@@ -189,7 +189,10 @@ AppModel.extendTo(SeesuApp, {
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
-			_this.getAuthAndTransferVKInfo(vkapi, user_id);
+			if (vkapi) {
+				_this.getAuthAndTransferVKInfo(vkapi, user_id);
+			}
+			
 		});
 
 
@@ -700,8 +703,8 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return sp;
 	},
-	routePathByModels: function(pth_string) {
-		return BrowseMap.routePathByModels(this.start_page, pth_string);
+	routePathByModels: function(pth_string, start_md, need_constr) {
+		return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
 	
 	},
 	getPlaylists: function(query) {
@@ -816,8 +819,9 @@ AppModel.extendTo(SeesuApp, {
 			_this.mp3_search.remove(vkapi.asearch);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
-				_this.vkapi = null;
+				_this.vk_api = null;
 				_this.vktapi = _this.vk_open_api;
+				_this.trigger('vk-api', null);
 			}
 
 		};
@@ -913,7 +917,7 @@ AppModel.extendTo(SeesuApp, {
 			for (var i = 0; i < list.length; i++) {
 				var cur = list[i];
 				if (!cur.link) {
-					debugger;
+					//debugger;
 					continue;
 					
 				}

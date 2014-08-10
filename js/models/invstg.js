@@ -120,7 +120,7 @@ var ArtistsSection = function(){};
 seesuSection.extendTo(ArtistsSection, {
 	model_name: 'section-artist',
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.updateState('section_title', localize('Artists','Artists'));
 	},
 	getButtonText: function(have_results, q){
@@ -187,7 +187,7 @@ var TracksSection = function() {};
 seesuSection.extendTo(TracksSection, {
 	model_name: 'section-track',
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.updateState('section_title', localize('Tracks','Tracks'));
 	},
 	getButtonText: function(have_results, q){
@@ -244,7 +244,7 @@ var TagsSection = function() {};
 seesuSection.extendTo(TagsSection, {
 	model_name: 'section-tag',
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.updateState('section_title',  localize('Tags'));
 	},
 	getButtonText: function(have_results, q){
@@ -309,7 +309,7 @@ var AlbumsSection = function() {};
 seesuSection.extendTo(AlbumsSection, {
 	model_name: 'section-album',
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.updateState('section_title', localize('Albums', 'Albums'));
 	},
 	getButtonText: function(have_results, q){
@@ -338,14 +338,11 @@ SearchPage = function() {};
 Investigation.extendTo(SearchPage, {
 	init: function(opts) {
 		this._super.apply(this, arguments);
-		this.addSection('playlists', PlaylistsSection);
-		this.addSection('artists', ArtistsSection);
-		this.addSection('albums', AlbumsSection);
-		this.addSection('tags', TagsSection);
-		this.addSection('tracks', TracksSection);
+
 		this.updateState('mp_freezed', false);
 		
 	},
+	'nest-section': [[PlaylistsSection, ArtistsSection, AlbumsSection, TagsSection, TracksSection]],
 	setItemForEnter: function() {
 		
 	},
@@ -380,8 +377,8 @@ Investigation.extendTo(SearchPage, {
 		
 
 		if (':playlists'.match(spv.getStringPattern(this.q))){
-			this.setInactiveAll('playlists');
-			pl_sec = this.g('playlists');
+			this.setInactiveAll('section-playlist');
+			pl_sec = this.g('section-playlist');
 			pl_sec.setActive();
 			pl_sec.changeQuery(this.q);
 
@@ -398,7 +395,7 @@ Investigation.extendTo(SearchPage, {
 			pl_sec.appendResults(pl_results);
 			pl_sec.renderSuggests(true);
 		} else if (!this.q.match(/^:/)){
-			this.setActiveAll('playlists');
+			this.setActiveAll('section-playlist');
 			//playlist search
 			
 
@@ -412,11 +409,13 @@ Investigation.extendTo(SearchPage, {
 			}
 			
 			if (pl_results.length){
-				pl_sec =  this.g('playlists');
-				
-				pl_sec.setActive();
-				pl_sec.appendResults(pl_results);
-				pl_sec.renderSuggests(true);
+				pl_sec =  this.g('section-playlist');
+				if (pl_sec) {
+						pl_sec.setActive();
+					pl_sec.appendResults(pl_results);
+					pl_sec.renderSuggests(true);
+				}
+			
 			}
 			
 			//===playlists search
@@ -425,7 +424,7 @@ Investigation.extendTo(SearchPage, {
 		}
 	},
 	searchOffline: spv.debounce(function(q){
-		var tags = this.g('tags');
+		var tags = this.g('section-tag');
 		var r = this.searchTags(q);
 		if (r.length){
 			tags.appendResults(r);
@@ -455,13 +454,19 @@ Investigation.extendTo(SearchPage, {
 				lfmhelp.fast_suggestion(r, q, _this);
 			});
 			if (!cache_used) {
-				var all_parts = [this.g('artists'), this.g('tracks'), this.g('tags'), this.g('albums')];
+				var all_parts = [this.g('section-artist'), this.g('section-track'), this.g('section-tag'), this.g('section-album')];
 				$.each(all_parts, function(i, el) {
-					el.loading();
+					if (el) {
+						el.loading();
+					}
+					
 				});
 				lfmhelp.get_fast_suggests(q, function(r){
 					$.each(all_parts, function(i, el) {
-						el.loaded();
+						if (el) {
+							el.loaded();
+						}
+						
 					});
 					lfmhelp.fast_suggestion(r, q, _this);
 				}, hash, this);
@@ -470,10 +475,10 @@ Investigation.extendTo(SearchPage, {
 		}
 		:
 		spv.debounce(function(q){
-			lfmhelp.getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), suParseArtistsResults);
-			lfmhelp.getLastfmSuggests('track.search', {track: q}, q, this.g('tracks'), suParseTracksResults);
-			lfmhelp.getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), suParseTagsResults);
-			lfmhelp.getLastfmSuggests('album.search', {album: q}, q, this.g('albums'), suParseAlbumsResults);
+			lfmhelp.getLastfmSuggests('artist.search', {artist: q}, q, this.g('section-artist'), suParseArtistsResults);
+			lfmhelp.getLastfmSuggests('track.search', {track: q}, q, this.g('section-track'), suParseTracksResults);
+			lfmhelp.getLastfmSuggests('tag.search', {tag: q}, q, this.g('section-tag'), suParseTagsResults);
+			lfmhelp.getLastfmSuggests('album.search', {album: q}, q, this.g('section-album'), suParseAlbumsResults);
 		}, 400),
 	getTitleString: function(text){
 		var original = localize('Search-resuls');

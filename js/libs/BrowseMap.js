@@ -561,10 +561,10 @@ provoda.Eventor.extendTo(BrowseMap, {
 			this.hideLevel(this.levels[i], false, only_free);
 		}
 	},
-	sProp: function(name, nv, cb) {
-		if (this[name] != nv){
-			var ov = this[name];
-			this[name] = nv;
+	sProp: function(prop_name, nv, cb) {
+		if (this[prop_name] != nv){
+			var ov = this[prop_name];
+			this[prop_name] = nv;
 			if (cb) {
 				cb(nv, ov);
 			}
@@ -789,7 +789,9 @@ provoda.Eventor.extendTo(BrowseMap, {
 	
 });
 
-BrowseMap.routePathByModels = function(start_md, pth_string) {
+
+
+BrowseMap.routePathByModels = function(start_md, pth_string, need_constr) {
 
 		/*
 		catalog
@@ -814,6 +816,7 @@ BrowseMap.routePathByModels = function(start_md, pth_string) {
 		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
 
 		var cur_md = start_md;
+		var result = cur_md;
 		var tree_parts_group = null;
 		for (var i = 0; i < pth.length; i++) {
 			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
@@ -830,119 +833,226 @@ BrowseMap.routePathByModels = function(start_md, pth_string) {
 					path_full_string = pth[i];
 				}
 				tree_parts_group = null;
-				var md = cur_md.getSPI(path_full_string, true);
-				if (md){
-					cur_md = md;
+
+				if (need_constr) {
+					var Constr = cur_md.getSPIConstr(path_full_string);
+					if (!Constr) {
+						throw new Error('you must use supported path');
+					} else {
+						cur_md = Constr.prototype;
+						result = Constr;
+					}
+
 				} else {
-					break;
+					var md = cur_md.getSPI(path_full_string);
+					if (md){
+						cur_md = md;
+						result = md;
+					} else {
+						break;
+					}
 				}
+				
 
 			}
 
 
 		}
-		return cur_md;
+		return result;
 };
 
 
 
-var executePreload = function(md, nesting_name) {
-	var lists_list = md.getNesting(nesting_name);
-
-	if (!lists_list) {return;}
-	if (Array.isArray(lists_list)) {
-		for (var i = 0; i < lists_list.length; i++) {
-			var cur = lists_list[i];
-			if (cur.preloadStart){
-				cur.preloadStart();
-			}
-
-		}
-	} else {
-		if (lists_list.preloadStart){
-			lists_list.preloadStart();
-		}
-	}
-};
-
-//если есть состояние для предзагрузки
-//если изменилось гнездование
-
-var bindPreload = function(md, preload_state_name, nesting_name) {
-
-	md.wch(md, preload_state_name, function(e) {
-		if (e.value){
-			
-			executePreload(md, nesting_name);
-		}
-	});
-};
-
-var initOneDeclaredNesting = function(md, el) {
-	/*
-	nesting_name
-	subpages_names_list
-	preload
-	init_state_name
-	*/
-	var preload_state_name = typeof el.preload == 'string' ? el.preload : 'mp_has_focus';
-	if (el.init_state_name) {
-		md.wch(md, el.init_state_name, function(e) {
-			if (e.value) {
-				this.updateNesting(el.nesting_name, getSubpages( this, el.subpages_names_list ));
-				if (preload_state_name && this.state(preload_state_name)) {
-					executePreload(this, el.nesting_name);
-				}
-			}
-		});
-		
-	} else {
-		md.updateNesting(el.nesting_name, getSubpages( md, el.subpages_names_list ));
-	}
-
-	if (el.preload) {
-		bindPreload(md, preload_state_name, el.nesting_name);
-	}
-
-};
-
-var initDeclaredNestings = function(md) {
-	for (var i = 0; i < md.nestings_declarations.length; i++) {
-		initOneDeclaredNesting(md, md.nestings_declarations[i]);
-	}
-};
 
 
-var getSubpages = function(md, array) {
-	var result;
-	if (Array.isArray( array )) {
-		result = new Array(array);
-		for (var i = 0; i < array.length; i++) {
-			result[i] = BrowseMap.routePathByModels(md, array[i]);
-		}
-	} else {
-		result = BrowseMap.routePathByModels(md, array);
-	}
-	return result;
-};
+
+
+
+
 
 BrowseMap.Model = function() {};
 
-var getSPOpts = function(md, name) {
-	var target = md.sub_pa[name];
-	var parts = name.split(':');
+var getSPOpts = function(md, sp_name) {
+	var target = md[ 'sub_pa-' + sp_name] || md.sub_pa[sp_name];
+	var parts = sp_name.split(':');
 
 
 	return [
 		{
-			url_part: '/' + name,
+			url_part: '/' + sp_name,
 			nav_title: target.title || (target.getTitle && target.getTitle.call(md))
 		},
 		{
-			simple_name: name,
+			simple_name: sp_name,
 			name_spaced: parts[1]
 		}];
 };
+
+var getInitData = function(md, common_opts) {
+	var pre_instance_data = {};
+				
+	
+	var params_from_parent = md.data_by_hp === true ? md.head_props : md.sub_pa_params;
+
+	var data_parts = [
+		params_from_parent,
+		common_opts && common_opts[0]
+	];
+
+	for (var i = 0; i < data_parts.length; i++) {
+		if (!data_parts[i]) {
+			continue;
+		}
+		spv.cloneObj(pre_instance_data, data_parts[i]);
+	}
+
+	return pre_instance_data;
+};
+
+var getDeclrConstr = function(app, md, item) {
+	if (typeof item == 'function') {
+		return item;
+	} else {
+		return md.getConstrByPathTemplate(app, item);
+	}
+};
+
+var getRightNestingName =function(md, nesting_name) {
+	if (md.preview_nesting_source && nesting_name == 'preview_list') {
+		nesting_name = md.preview_nesting_source;
+	} else if (nesting_name == md.preview_mlist_name){
+		nesting_name = md.main_list_name;
+	}
+	return nesting_name;
+};
+
+
+var getNestingConstr = function(app, md, nesting_name) {
+	nesting_name = getRightNestingName(md, nesting_name);
+
+
+	if (md[ 'nest_rqc-' + nesting_name ]) {
+		return md[ 'nest_rqc-' + nesting_name ];
+	} else if (md[ 'nest_posb-' + nesting_name ]) {
+		return md[ 'nest_posb-' + nesting_name ];
+	} else if (md[ 'nest-' + nesting_name]) {
+
+		var declr = md[ 'nest-' + nesting_name];
+		var items = declr[0];
+
+		if (Array.isArray(items)) {
+			var result = [];
+			for (var i = 0; i < items.length; i++) {
+				result.push(getDeclrConstr(app, md, items[i]));
+			}
+			return result;
+		} else {
+			return getDeclrConstr(app, md, items);
+		}
+		
+	}
+	
+	
+	
+};
+
+
+var getModelSources = function(app, md, cur) {
+	var states_sources = [];
+	var i;
+	var states_list = cur.merged_states;
+	var unfolded_states = new Array(states_list.length);
+	for (i = 0; i < states_list.length; i++) {
+		unfolded_states[i] = md.getNonComplexStatesList(states_list[i]);
+	}
+
+	unfolded_states = spv.collapseAll.apply(null, unfolded_states);
+	
+	for (i = 0; i < unfolded_states.length; i++) {
+		var state_name = unfolded_states[i];
+		var arr = md.getStateSources(state_name, app);
+		if (arr) {
+			states_sources.push(arr);
+		}
+		
+
+	}
+	states_sources = spv.collapseAll.apply(null, states_sources);
+
+	var nestings_names_list = [];
+
+	var nesting_name;
+	for (nesting_name in cur.m_children.children_by_mn) {
+		nestings_names_list.push(nesting_name);
+	}
+	for (nesting_name in cur.m_children.children) {
+		nestings_names_list.push(nesting_name);
+	}
+
+	nestings_names_list = spv.collapseAll(nestings_names_list);
+
+	var nesting_sources = [];
+	for (i = 0; i < nestings_names_list.length; i++) {
+		var source = md.getNestingSource(nestings_names_list[i], app);
+		if (source) {
+			nesting_sources.push(source);
+		}
+	}
+
+
+	var all_nest_sources =[];
+
+	for (nesting_name in cur.m_children.children) {
+		var items = getNestingConstr(app, md, nesting_name);
+		for (var space_name in cur.m_children.children[nesting_name]) {
+			
+			var constr_sources;
+			if (!items) {
+				continue;
+			}
+			if (Array.isArray(items)) {
+				constr_sources = [];
+				for (i = 0; i < items.length; i++) {
+					var cur_sources = getModelSources(app, items[i].prototype, cur.m_children.children[nesting_name][space_name]);
+					if (cur_sources.length) {
+						constr_sources = constr_sources.concat(cur_sources);
+					}
+				}
+			} else {
+				constr_sources = getModelSources(app, items.prototype, cur.m_children.children[nesting_name][space_name]);
+			}
+
+			if (constr_sources) {
+				all_nest_sources = all_nest_sources.concat(constr_sources);
+			}
+		}
+		
+	}
+
+
+
+
+
+	/*
+	a) итерируем по названиям гнезд,
+		получаем список или один конструктор для нужного гнезда
+		совмещаем данные
+
+	б) итерируем по названиям гнезд
+		получаем список или один конструктор для нужного гнезда
+		вычленяем по имени модели только используемые конструкторы
+
+
+	*/
+
+	var full_sources_list = states_sources.concat(nesting_sources);
+	if (all_nest_sources.length) {
+		full_sources_list = full_sources_list.concat(all_nest_sources);
+	}
+	return  spv.collapseAll(full_sources_list);
+};
+
+var strucs_cache = {};
 
 provoda.HModel.extendTo(BrowseMap.Model, {
 	init: function(opts, data) {
@@ -990,11 +1100,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 			this.sub_pa_params = this.data_by_hp(data);
 		}
 
-		if (this.nestings_declarations) {
-			this.nextTick(function() {
-				initDeclaredNestings(this);
-			});
-		}
+		
 		
 		if (this.allow_data_init) {
 			this.updateManyStates(data);
@@ -1007,15 +1113,47 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		}
 	},
 	preview_nesting_source: 'lists_list',
+	getSTRC: function() {
+		return strucs_cache[this.constr_id];
+	},
+	handleViewingDataStructure: function(struc) {
+		if (!strucs_cache[this.constr_id]) {
+			strucs_cache[this.constr_id] = {};
+			//console.log(struc);
+			var result = {};
+			for (var space_name in struc) {
+				result[space_name] = getModelSources(this.app, this, struc[space_name]);
+				//var cur = struc[space_name];
+			}
+			strucs_cache[this.constr_id] = result;
+			//console.log(this.model_name, this.constr_id, result);
+			
+		}
+		this.updateState('map_slice_view_sources', [this._network_source, strucs_cache[this.constr_id]]);
+		return strucs_cache[this.constr_id];
 
-	getSPI: function(name) {
+	},
+	getSPIConstr: function(sp_name) {
+		var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
+		if (target){
+			return target.constr;
+		} else if (this.subPager){
+			var result = this.getSPC(decodeURIComponent(sp_name), sp_name);
+			if (Array.isArray(result)) {
+				return result[0];
+			} else {
+				return result;
+			}
+		}
+	},
+	getSPI: function(sp_name) {
 		var instance;
-		if (this.sub_pages && this.sub_pages[name]){
-			instance = this.sub_pages[name];
+		if (this.sub_pages && this.sub_pages[sp_name]){
+			instance = this.sub_pages[sp_name];
 		}
 		var init_opts;
 		if (!instance){
-			var target = this.sub_pa && this.sub_pa[name];
+			var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
 			if (target){
 				
 
@@ -1029,38 +1167,22 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 				накладываем данные из урла
 				*/
 
-				var common_opts = getSPOpts(this, name);
-				var pre_instance_data = {};
-				var params_from_parent = this.data_by_hp === true ? this.head_props : this.sub_pa_params;
+				var Constr = target.constr;
 
-				var data_parts = [
-					params_from_parent,
-					common_opts[0]
-				];
-
-				for (var i = 0; i < data_parts.length; i++) {
-					if (!data_parts[i]) {
-						continue;
-					}
-					spv.cloneObj(pre_instance_data, data_parts[i]);
-				}
-
-				var Constr = target.constr || target.getConstr.call(this, pre_instance_data);
-				instance = new Constr();
-				var instance_data = pre_instance_data;
-
-				var data_by_urlname = instance.data_by_urlname && instance.data_by_urlname(common_opts[1]);
-
-				spv.cloneObj(instance_data, data_by_urlname);
-
-				init_opts = [this.getSiOpts(), instance_data];
-
+				var common_opts = getSPOpts(this, sp_name);
 				
 
-				this.sub_pages[name] = instance;
+				
+				var instance_data = getInitData(this, common_opts);
+				var data_by_urlname = Constr.prototype.data_by_urlname && Constr.prototype.data_by_urlname(common_opts[1]);
+				spv.cloneObj(instance_data, data_by_urlname);
+				init_opts = [this.getSiOpts(), instance_data];
+				instance = new Constr();
+
+				this.sub_pages[sp_name] = instance;
 			} else {
 				if (this.subPager){
-					var sub_page = this.subPager(decodeURIComponent(name), name);
+					var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
 					if (Array.isArray(sub_page)) {
 						instance = sub_page[0];
 						init_opts = [this.getSiOpts(), sub_page[1]];
@@ -1069,6 +1191,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 					}
 				}
 			}
+
 			if (instance && init_opts){
 				this.useMotivator(instance, function(instance) {
 					instance.init.apply(instance, init_opts);

@@ -95,7 +95,11 @@ function(provoda, $, SongUI, etc_views) {
 	var SongsListDetailedView = function() {};
 	SongsListViewBase.extendTo(SongsListDetailedView, {
 		base_tree: {
-			sample_name: 'playlist-container'
+			sample_name: 'playlist-container',
+			children_by_selector: [{
+				sample_name: 'view_sources',
+				selector: '.vs_con',
+			}]
 		},
 		children_views: {
 			plarow: PlARowView,

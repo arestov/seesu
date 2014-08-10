@@ -173,15 +173,26 @@ ImagedListPreview.extendTo(AuthListPreview, {
 });
 
 
+var SimpleListOfListsView = function() {};
+PageView.extendTo(SimpleListOfListsView, {
+	base_tree: {
+		sample_name: 'lilists'
+	},
+	children_views: {
+		lists_list: ListSimplePreview
+	},
+	'collch-lists_list': 'tpl.ancs.lilists_con'
+});
+
 var ListOfListsView = function() {};
 PageView.extendTo(ListOfListsView, {
-	createBase: function() {
-		this.c = $('<div class="usual_page lilists"></div>');
+	base_tree: {
+		sample_name: 'lilists'
 	},
 	children_views: {
 		lists_list: AuthListPreview
 	},
-	'collch-lists_list': 'c'
+	'collch-lists_list': 'tpl.ancs.lilists_con'
 });
 
 
@@ -302,6 +313,7 @@ return {
 	PageView:PageView,
 	ArtistsListPreviewLine: ArtistsListPreviewLine,
 	ItemOfLL:ItemOfLL,
+	SimpleListOfListsView: SimpleListOfListsView,
 	ListOfListsView:ListOfListsView,
 	AlbumsListPreviewItem:AlbumsListPreviewItem,
 	BigAlbumPreview:BigAlbumPreview,

@@ -4,7 +4,7 @@ var counter = 0;
 
 provoda.addPrototype("SongBase",{
 	model_name: "song",
-	init: function(opts, omo, params){
+	init: function(opts, omo){
 
 		this._super.apply(this, arguments);
 
@@ -689,8 +689,7 @@ provoda.addPrototype("SongBase",{
 			this.map_parent.markAsPlayable();
 		}
 	},
-	bindFilesSearchChanges: function() {
-		var investg = this.getMFCore().files_investg;
+	bindFilesSearchChanges: function(investg) {
 		investg
 			.on('requests', this.hndInvestgReqs, this.getContextOptsI());
 

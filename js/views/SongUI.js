@@ -60,12 +60,9 @@ SongViewBase.extendTo(SongUI, {
 		songcard: SongcardPage.SongcardController
 	},
 	activate: function(){
-		
 	},
 	parts_builder: {
-		context: function() {
-			return this.root_view.getSample('track_c');
-		},
+		context: 'track_c',
 		mf_cor_con: function() {
 			var context = this.requirePart('context');
 			var div = $('<div></div>');

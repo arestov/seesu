@@ -10,7 +10,331 @@ lul, SongcardPage, AppBaseView, WPBox) {
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 
+var getTreeSample = function() {
+	return {
+		basetree: null,
+		states: {
+			stch: [],
+			compx_deps: [],
+			deep_compx_deps: [],
+			
+		},
+		constr_children: {
+			children: {},
+			children_by_mn: {}
+		},
+		tree_children: {},
+		m_children: {},
+		merged_states: [],
+		base_from_parent: null,
+		base_root_constr_id: null
+	};
+};
 
+var bCh = function(item, nesting_name, nesting_space, children_list_index, children_list) {
+	var field_path = ['children', nesting_name, nesting_space];
+	if (!children_list_index[field_path.join('{}')]) {
+		children_list.push(field_path);
+	}
+};
+
+var bChByMN = function(item, nesting_name, model_name, nesting_space, children_list_index, children_list) {
+	var field_path = ['children_by_mn', nesting_name, model_name, nesting_space];
+	if (!children_list_index[field_path.join('{}')]) {
+		children_list.push(field_path);
+	}
+};
+
+var iterateChildren = function(children, cb, arg1, arg2) {
+	for (var nesting_name in children) {
+		for (var nesting_space in children[nesting_name]) {
+			cb(children[nesting_name][nesting_space], nesting_name, nesting_space, arg1, arg2);
+		}
+	}
+};
+var iterateChildrenByMN = function(children_by_mn, cb, arg1, arg2) {
+	for (var nesting_name in children_by_mn) {
+		for (var model_name in children_by_mn[nesting_name]) {
+			for (var nesting_space in children_by_mn[nesting_name][model_name]) {
+				cb(children_by_mn[nesting_name][model_name][nesting_space], nesting_name, model_name, nesting_space, arg1, arg2);
+			}
+		}
+	}
+};
+var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
+	var used_base = base_from_parent;
+	var children_list_index = {}, children_list = [];
+	if (used_base) {
+		if (used_base.children) {
+			iterateChildren(used_base.children, bCh, children_list_index, children_list);
+		}
+		if (used_base.children_by_mn) {
+			iterateChildrenByMN(used_base.children_by_mn, bChByMN, children_list_index, children_list);
+		}
+		
+	}
+	if (base_from_parent && base_from_parent.states) {
+		tree.merged_states = spv.collapseAll(tree.merged_states, base_from_parent.states);
+	}
+	for (var i = 0; i < children_list.length; i++) {
+		var cur = children_list[i];
+
+		var parent_basetree_chi = tree.basetree ? spv.getTargetField(tree.basetree, cur) : (base_from_parent && spv.getTargetField(base_from_parent, cur));
+
+		var struc = getTreeSample();
+
+		spv.setTargetField(tree.tree_children, cur, struc);
+		spv.setTargetField(tree.m_children, cur, struc);
+		buildFreeChildren(struc, parent_basetree_chi, base_root_constr_id);
+		struc.base_from_parent = parent_basetree_chi;
+		struc.base_root_constr_id = base_root_constr_id;
+
+
+
+		if (!base_root_constr_id) {
+			//debugger;
+		}
+	}
+};
+
+var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root_constr_id) {
+	/*
+	- collch
+	- pv-view внутри .tpl
+	- pv-view внутри .tpl нераскрытые
+
+	*/
+
+	/*
+	{
+		stch
+		состояния-источники для compx 
+		свои состояния как состояния-источники для compx внутри потомков
+		используемые в шаблоне состояния (tpl, tpls, base_tree)
+
+		шаблон, который задекларирован у потомка или шаблон, который родитель сам передаст потомку 
+	}
+	*/
+	getUsageTree = getUsageTree || this.getUsageTree;
+
+
+	/*
+	собираем состояния из контроллера
+	1) stch_hs
+	2)  full_comlxs_list
+	*/
+	var tree = getTreeSample();
+
+	var push = Array.prototype.push;
+
+
+	tree.states.stch = (function() {
+
+		return (this.stch_hs_list && this.stch_hs_list.slice()) || [];
+
+	}).call(this);
+
+	tree.states.compx_deps = (function() {
+		if (!this.full_comlxs_list) {
+			return [];
+		}
+
+		var result = [];
+
+		var compxs_itself = [];
+
+		for (var i = 0; i < this.full_comlxs_list.length; i++) {
+			push.apply(result, this.full_comlxs_list[i].depends_on);
+			compxs_itself.push(this.full_comlxs_list[i].name);
+		}
+
+		return spv.collapseAll(spv.arrayExclude(result, compxs_itself));
+		
+	}).call(this);
+
+
+	tree.merged_states = spv.collapseAll(tree.states.stch, tree.states.compx_deps);
+
+	tree.basetree = (function() {
+
+		if (this.base_tree_list) {
+			var i, cur;
+			var arr = [];
+
+			for (i = 0; i < this.base_tree_list.length; i++) {
+				cur = this.base_tree_list[i];
+
+
+				var sample_name = cur.sample_name;
+				if (!sample_name && cur.part_name && typeof this.parts_builder[cur.part_name] == 'string') {
+					sample_name = this.parts_builder[cur.part_name];
+				}
+
+				if (!sample_name) {
+					throw new Error('can\'t get sampler');
+				}
+				var sampler = root_view.getSampler(sample_name);
+
+				var structure_data = sampler.getStructure(cur.parse_as_tplpart);
+	
+				arr.push(structure_data);
+				//this.structure_data
+				
+			}
+			var merged_tree = {
+				node_id: null,
+				children: null,
+				children_by_mn: null,
+				states: null
+			};
+
+			var setUndefinedField = function(store, field_path, value) {
+				var current_value = spv.getTargetField(store, field_path);
+					if (!current_value) {
+						spv.setTargetField(store, field_path, value);
+					}
+			};
+			var nesting_name, nesting_space, field_path, model_name;
+
+			var tree_id = [];
+
+			for (i = 0; i < arr.length; i++) {
+				cur = arr[i];
+				tree_id.push(cur.node_id);
+				if (cur.states) {
+					if (!merged_tree.states) {
+						merged_tree.states = [];
+					}
+					push.apply(merged_tree.states, cur.states);
+				}
+
+				if (cur.children) {
+					if (!merged_tree.children) {
+						merged_tree.children = {};
+					}
+					for (nesting_name in cur.children) {
+						for (nesting_space in cur.children[nesting_name]) {
+							field_path = [nesting_name, nesting_space];
+							setUndefinedField(merged_tree.children, field_path, spv.getTargetField(cur.children, field_path));
+						}
+					}
+				}
+
+				if (cur.children_by_mn) {
+					if (!merged_tree.children_by_mn) {
+						merged_tree.children_by_mn = {};
+					}
+					for (nesting_name in cur.children_by_mn) {
+						if (!merged_tree.children_by_mn[nesting_name]) {
+							merged_tree.children_by_mn[nesting_name] = {};
+						}
+						for (model_name in cur.children_by_mn[nesting_name]) {
+							for (nesting_space in cur.children_by_mn[nesting_name][model_name]) {
+								field_path = [nesting_name, model_name, nesting_space];
+								setUndefinedField(merged_tree.children_by_mn, field_path, spv.getTargetField(cur.children_by_mn, field_path));
+							}
+						}
+					}
+				}
+			}
+			merged_tree.node_id = tree_id.join('&');
+			return merged_tree;
+			
+		} else {
+			return null;
+		}
+		
+	}).call(this);
+
+
+	if (tree.basetree && tree.basetree.states) {
+		tree.merged_states = spv.collapseAll(tree.merged_states, tree.basetree.states);
+	}
+
+	
+
+	//создаём список для итерации по потомкам
+	//могут быть и basetree и конструкторы для одного nest и space а может быть только basetree или только конструктор
+	//нужно использовать всё
+
+
+
+	var children_list_index = {};
+	var children_list = [];
+
+	if (this.children_views) {
+		iterateChildren(this.children_views, bCh, children_list_index, children_list);
+	}
+	if (this.children_views_by_mn) {
+		iterateChildrenByMN(this.children_views_by_mn, bChByMN, children_list_index, children_list);
+	}
+
+	var used_base = tree.basetree || base_from_parent;
+
+	if (used_base) {
+		if (used_base.children) {
+			iterateChildren(used_base.children, bCh, children_list_index, children_list);
+		}
+		if (used_base.children_by_mn) {
+			iterateChildrenByMN(used_base.children_by_mn, bChByMN, children_list_index, children_list);
+		}
+		
+	}
+
+
+	
+
+	if (base_from_parent && base_from_parent.children) {
+		//debugger;
+	}
+
+	var own_children = {
+		children: this.children_views,
+		children_by_mn: this.children_views_by_mn
+	};
+
+	for (var i = 0; i < children_list.length; i++) {
+		var cur = children_list[i];
+		var constr = spv.getTargetField(own_children, cur);
+		//var basetree = tree.basetree &&  spv.getTargetField(tree.basetree, cur);
+		var parent_basetree_chi;
+		var chi_constr_id;
+
+		var base_tree_chi = tree.basetree && spv.getTargetField(tree.basetree, cur);
+		if (tree.basetree) {
+			parent_basetree_chi = base_tree_chi;
+			chi_constr_id = this.constr_id;
+		} else {
+			parent_basetree_chi = base_from_parent && spv.getTargetField(base_from_parent, cur);
+			chi_constr_id = base_root_constr_id;
+		}
+
+
+		
+
+		if (constr) {
+			var struc = getUsageTree.call(constr.prototype, getUsageTree, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
+			spv.setTargetField(tree.constr_children, cur, struc);
+			spv.setTargetField(tree.m_children, cur, struc);
+		} else if (parent_basetree_chi) {
+			var struc = getTreeSample();
+			spv.setTargetField(tree.tree_children, cur, struc);
+			spv.setTargetField(tree.m_children, cur, struc);
+			buildFreeChildren(struc, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
+			struc.base_from_parent = parent_basetree_chi;
+			struc.base_root_constr_id = chi_constr_id;
+			//getTreeSample
+		}
+	}
+	tree.base_from_parent = base_from_parent || null;
+	tree.base_root_constr_id = base_root_constr_id || null;
+
+	if (tree.base_from_parent && tree.base_from_parent.states) {
+		tree.merged_states = spv.collapseAll(tree.merged_states, tree.base_from_parent.states);
+	}
+
+	return tree;
+};
 
 var AppExposedView = function() {};
 AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
@@ -74,16 +398,16 @@ AppBaseView.extendTo(AppView, {
 			vk_usercard: UserCardPage.VkUsercardPageView,
 			lfm_usercard: UserCardPage.LfmUsercardPageView,
 			usercard: UserCardPage,
-			allplaces: coct.ListOfListsView,
+			allplaces: coct.SimpleListOfListsView,
 			mconductor: MusicConductorPage,
 			tag_page: TagPageView,
 			tagslist: TagPageView.TagsListPage,
 			user_playlists: coct.ListOfListsView,
 			songs_lists: coct.ListOfListsView,
 			artists_lists: coct.ListOfListsView,
-			сountries_list: coct.ListOfListsView,
-			city_place: coct.ListOfListsView,
-			cities_list: coct.ListOfListsView,
+			сountries_list: coct.SimpleListOfListsView,
+			city_place: coct.SimpleListOfListsView,
+			cities_list: coct.SimpleListOfListsView,
 			country_place: coct.ListOfListsView,
 			tag_artists: coct.ListOfListsView,
 			tag_songs: coct.ListOfListsView,
@@ -94,7 +418,7 @@ AppBaseView.extendTo(AppView, {
 			lfm_listened_tracks: coct.ListOfListsView,
 			lfm_listened_albums: coct.ListOfListsView,
 			lfm_listened_tags: lul.UserTagsPageView,
-			listoflists: coct.ListOfListsView,
+			vk_users_tracks: coct.ListOfListsView,
 			lfm_user_tag: coct.ListOfListsView,
 			user_acqs_list: uacq.UserAcquaintancesListView,
 			albslist: coct.AlbumsListView,
@@ -126,47 +450,29 @@ AppBaseView.extendTo(AppView, {
 		place: 'nav.daddy',
 		by_model_name: true
 	},
-
-
 	'spec-vget-song': function(md) {
-		var playlist = md.getParentMapModel();
-		var playlist_mpx = this.getStoredMpx(playlist);
+		var parent = md.getParentMapModel();
+		var parent_mpx = this.getStoredMpx(parent);
 
-		var playlist_view = this.findMpxViewInChildren(playlist_mpx, 'all-sufficient-details');
-		return playlist_view && playlist_view.findMpxViewInChildren(this.getStoredMpx(md));
+		var parent_view = this.findMpxViewInChildren(parent_mpx, 'all-sufficient-details');
+		return parent_view && parent_view.findMpxViewInChildren(this.getStoredMpx(md));
 	},
-	'collch-$spec-song': function(nesname, md) {
-		var playlist = md.getParentMapModel();
-
-		var playlist_mpx = this.getStoredMpx(playlist);
-
-		var location_id = provoda.$v.getViewLocationId(this, nesname, 'all-sufficient-details');
-
-
-
-		var view = playlist_mpx.getView(location_id);
-		if (!view){
-			view = this.getFreeChildView({
-				by_model_name: true,
-				nesting_name: nesname,
-				nesting_space: 'all-sufficient-details'
-			}, playlist);
-			var place = AppBaseView.viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
-			place.append(view.getA());
-			this.requestAll();
+	'collch-$spec-map_slice:song': {
+		is_wrapper_parent: '^',
+		space: 'all-sufficient-details',
+		by_model_name: true,
+		place: function(md, view, original_md) {
+			return AppBaseView.viewOnLevelP.call(this, {map_level_num: original_md.map_level_num}, view);
 		}
 	},
-	'collch-$spec-playlist': {
-		by_model_name: true,
-		place: AppBaseView.viewOnLevelP
-	},
+
 	tickCheckFocus: function() {
 		if (this.isAlive()){
 			this.search_input[0].focus();
 			this.search_input[0].select();
 		}
 	},
-	'collch-$spec-start_page': function(nesname, md) {
+	'collch-$spec-map_slice:start_page': function(nesname, md) {
 		var view = this.getFreeChildView({
 			by_model_name: true,
 			nesting_name: nesname,
@@ -175,14 +481,11 @@ AppBaseView.extendTo(AppView, {
 
 		if (view){
 			var _this = this;
-
 			var checkFocus = function(state) {
 				if (state){
-					_this.nextTick(_this.tickCheckFocus);
-					
+					_this.nextLocalTick(_this.tickCheckFocus);
 				}
 			};
-
 			view.on('state_change-autofocus', function(e) {
 				checkFocus(e.value);
 			}, {immediately: true});
@@ -303,34 +606,38 @@ AppBaseView.extendTo(AppView, {
 		});
 
 
+		(function() {
+			var wd = this.getWindow();
+			var checkWindowSizes = spv.debounce(function() {
+				_this.updateManyStates({
+					window_height: wd.innerHeight,
+					window_width: wd.innerWidth
+				});
+			}, 150);
 
-		var wd = this.getWindow();
-		var checkWindowSizes = spv.debounce(function() {
-			_this.updateManyStates({
-				window_height: wd.innerHeight,
-				window_width: wd.innerWidth
+			spv.addEvent(wd, 'resize', checkWindowSizes);
+
+			//$(wd).on('resize', checkWindowSizes);
+			this.onDie(function(){
+				spv.removeEvent(wd, 'resize', checkWindowSizes);
+				//$(wd).off('resize', checkWindowSizes);
+				$(wd).off();
+				$(wd).remove();
+				wd = null;
+				_this = null;
 			});
-		}, 150);
 
-		spv.addEvent(wd, 'resize', checkWindowSizes);
 
-		//$(wd).on('resize', checkWindowSizes);
-		this.onDie(function(){
-			spv.removeEvent(wd, 'resize', checkWindowSizes);
-			//$(wd).off('resize', checkWindowSizes);
-			$(wd).off();
-			$(wd).remove();
-			wd = null;
-			_this = null;
-		});
+		}).call(this);
+		
 
 	},
-	'compx-window_demensions_key': {
+	/*'compx-window_demensions_key': {
 		depends_on: ['window_width', 'window_height'],
 		fn: function(window_width, window_height) {
 			return window_width + '-' + window_height;
 		}
-	},
+	},*/
 	resortQueue: function(queue) {
 		if (queue){
 			queue.removePrioMarks();
@@ -347,6 +654,10 @@ AppBaseView.extendTo(AppView, {
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
+		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
+
+		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
+		console.log(this.used_data_structure);
 
 		this.c.addClass('app-loaded');
 		var ext_search_query = this.els.search_input.val();
@@ -355,7 +666,9 @@ AppBaseView.extendTo(AppView, {
 			ext_search_query: ext_search_query
 		});
 
+
 		this.completeDomBuilding();
+		//JSON.stringify({ uno: 1, dos : 2 }, null, '\t')
 
 
 	},
@@ -406,7 +719,9 @@ AppBaseView.extendTo(AppView, {
 			spec_states: {
 				'$lev_num': -1
 			},
-			struc_store: this.struc_store
+			struc_store: this.struc_store,
+			calls_flow: this._getCallsFlow(),
+			getSample: this.getSampleForTemplate
 		});
 
 		this.tpls.push(tpl);
@@ -485,6 +800,36 @@ AppBaseView.extendTo(AppView, {
 
 			}
 
+			(function(_this) {
+				var app_workplace_width_stream_node = $("#pages_area_width_streamer", d);
+				var awwst_win =  app_workplace_width_stream_node[0].contentWindow;
+			// spv.getDefaultView(app_workplace_width_stream_node[0]);
+				_this.updateManyStates({
+					workarea_width: awwst_win.innerWidth
+				});
+
+
+				var checkWAWidth = spv.debounce(function() {
+					//console.log( awwst_win.innerWidth);
+					_this.updateManyStates({
+						workarea_width: awwst_win.innerWidth
+					});
+				}, 150);
+
+				spv.addEvent(awwst_win, 'resize', checkWAWidth);
+
+				//$(wd).on('resize', checkWindowSizes);
+				_this.onDie(function(){
+					spv.removeEvent(awwst_win, 'resize', checkWAWidth);
+					awwst_win = null;
+					_this = null;
+				});
+
+
+			})(_this);
+
+			
+
 
 
 			var ui_samples = $('#ui-samples',d);
@@ -554,8 +899,6 @@ AppBaseView.extendTo(AppView, {
 
 			_this.handleSearchForm(search_form);
 
-
-			_this.handleStartScreen(start_screen);
 			spv.cloneObj(_this.els, {
 				ui_samples: ui_samples,
 				screens: screens_block,
@@ -568,6 +911,8 @@ AppBaseView.extendTo(AppView, {
 				search_form: search_form,
 				pestf_preview: start_screen.children('.personal-stuff-preview')
 			});
+			_this.handleStartScreen(start_screen);
+			
 
 
 
@@ -703,7 +1048,9 @@ AppBaseView.extendTo(AppView, {
 
 			var nptpl = new _this.PvTemplate({
 				node: np_button,
-				struc_store: this.struc_store
+				struc_store: _this.struc_store,
+				calls_flow: _this._getCallsFlow(),
+				getSample: _this.getSampleForTemplate
 			});
 			_this.tpls.push(nptpl);
 

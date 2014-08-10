@@ -484,12 +484,18 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 		
 		this.updateNesting('lists_list', lists_list);
 	},
+	'nest_posb-lists_list': [CityPlace],
+	//'nest-lists_list': [],
+	getSPC: function() {
+		return CityPlace;
+	},
 	subPager: function(sub_path_string){
 		var page_name = spv.capitalize(sub_path_string);
 		if (this.sub_pages[page_name]){
 			return this.sub_pages[page_name];
 		} else {
-			var instance = new CityPlace();
+			var Constr = this.getSPC();
+			var instance = new Constr();
 			this.sub_pages[page_name] = instance;
 
 			return [instance, {
@@ -608,10 +614,15 @@ BrowseMap.Model.extendTo(CountriesList, {
 		this.initStates();
 		
 	},
+	'nest_posb-lists_list': [CountryPlace],
+	getSPC: function() {
+		return CountryPlace;
+	},
 	subPager: function(sub_path_string){
 		var page_name = spv.capitalize(sub_path_string);
 		if (!this.sub_pages[page_name]){
-			var instance = new CountryPlace();
+			var Constr = this.getSPC();
+			var instance = new Constr();
 			this.sub_pages[page_name] = instance;
 			return [instance, {
 				nav_title: page_name,

@@ -1,4 +1,5 @@
-define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers', 'hex_md5'], function(spv, angbo, $, PvTemplate, morph_helpers, hex_md5){
+define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers', 'hex_md5', 'js/libs/provoda.initDeclaredNestings'],
+function(spv, angbo, $, PvTemplate, morph_helpers, hex_md5, initDeclaredNestings){
 "use strict";
 var push = Array.prototype.push;
 var DOT = '.';
@@ -134,7 +135,7 @@ MDProxy.prototype = {
 		this.sendStatesToViews(changes_list);
 		return this;
 	},
-	updateState: function(name, value){
+	updateState: function(name, value, opts){
 		//fixme если вьюха ещё не создана у неё не будет этого состояния
 		//эклюзивные состояния для вьюх не хранятся и не передаются при создании
 
@@ -145,7 +146,7 @@ MDProxy.prototype = {
 			this.vstates = {};
 		}
 		this.vstates[name] = value;
-		this.sendStatesToViews([name, value]);
+		this.sendStatesToViews([name, value], opts);
 		return this;
 	},
 	state: function(state_name) {
@@ -204,12 +205,12 @@ MDProxy.prototype = {
 			this.views[i].stackReceivedChanges(states_list);
 		}
 	},
-	sendStatesToViews: function(states_list) {
+	sendStatesToViews: function(states_list, opts) {
 		if (!this.views) {
 			return;
 		}
 		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].receiveStatesChanges(states_list);
+			this.views[i].receiveStatesChanges(states_list, opts);
 		}
 	},
 	removeDeadViews: function(hard_deads_check, complex_id){
@@ -311,7 +312,7 @@ MDProxy.prototype = {
 		if (!only_by_ancestor){
 			for (var i = 0; i < views.length; i++) {
 				cur = views[i];
-				if ( root_view.matchCildrenView( cur ) ) {
+				if ( root_view.matchCildrenView( cur, false, 'map_slice' ) ) {
 					return cur;
 				}
 
@@ -477,9 +478,9 @@ var idToModel = function(index, ids) {
 		}
 		return result;
 	} else {
-		if (ids){
+		/*if (ids){
 			debugger;
-		}
+		}*/
 		
 		return ids;
 	}
@@ -807,6 +808,7 @@ var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, p
 	this.real_context = real_context;
 	this.complex_order = ( parent_motivator && parent_motivator.complex_order.slice() ) || [];
 	this.complex_order.push(this.num);
+	//this.custom_order = null;
 };
 FlowStep.prototype.abort = function() {
 	this.aborted = true;
@@ -851,7 +853,19 @@ var sortFlows = function(item_one, item_two) {
 		return 1;
 	}
 
-	var max_length = Math.max(item_one.complex_order.length, item_two.complex_order.length);	
+
+	var max_length;
+
+	/*if (item_one.custom_order && item_two.custom_order) {
+
+	} else if (item_one.custom_order) {
+
+	} else if (item_two.custom_order) {
+
+	}*/
+
+
+	max_length = Math.max(item_one.complex_order.length, item_two.complex_order.length);
 
 	for (var i = 0; i < max_length; i++) {
 		var item_one_step = item_one.complex_order[i];
@@ -933,6 +947,19 @@ var getBoxedRAFFunc = function(win) {
 };
 
 
+var insertItem = function(array, item, index) {
+	var array_length = array.length;
+	var next_value = item;
+	var value_to_recover;
+
+	for (var jj = index; jj < array_length + 1; jj++) {
+		value_to_recover = array[jj];
+		array[jj] = next_value;
+		next_value = value_to_recover;
+	}
+	return array;
+};
+
 	
 var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	this.flow = [];
@@ -940,7 +967,7 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	this.iteration_time = iteration_time || 250;
 	this.iteration_delayed = null;
 	this.flow_steps_counter = 1;
-	this.flow_steps_sorted = false;
+	this.flow_steps_collating_invalidated = null;
 	var _this = this;
 	this.hndIterateCallbacksFlow = function() {
 		_this.iterateCallbacksFlow();
@@ -970,11 +997,16 @@ CallbacksFlow.prototype = {
 				this.pushIteration(this.hndIterateCallbacksFlow);
 				break;
 			}
-			if (!this.flow_steps_sorted){
-				this.flow_steps_sorted = true;
-				this.flow.sort(sortFlows);
+			var cur;
+			if (typeof this.flow_steps_collating_invalidated == 'number'){
+				cur = this.flow[0];
+				if (this.flow_steps_collating_invalidated <= cur.complex_order[0]) {
+					this.flow_steps_collating_invalidated = null;
+					this.flow.sort(sortFlows);
+					
+				}
 			}
-			var cur = this.flow.shift();
+			cur = this.flow.shift();
 			if (!cur.aborted) {
 				cur.call();
 			}
@@ -995,10 +1027,36 @@ CallbacksFlow.prototype = {
 	},
 	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator) {
 		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator);
-		this.flow.push(flow_step);
 		if (motivator){
-			this.flow_steps_sorted = false;
+			var last_item = this.flow[ this.flow.length - 1 ];
+			var result = last_item && sortFlows(last_item, flow_step);
+			if (result === 1) {
+				//очевидно, что новый элемент должен в результате занять другую позицию
+
+				var last_matched = -1;
+				for (var i = 0; i < this.flow.length; i++) {
+					var cur = this.flow[i];
+
+					var match_result = sortFlows(cur, flow_step);
+					if (match_result == -1) {
+						last_matched = i;
+					} else {
+						break;
+					}
+				}
+				//this.flow.splice( last_matched + 1, 0, flow_step );
+
+				insertItem(this.flow, flow_step, last_matched + 1);
+				
+				//this.flow_steps_collating_invalidated = Math.min( flow_step.complex_order[0], this.flow_steps_collating_invalidated || Infinity );
+			} else {
+				this.flow.push(flow_step);
+			}
+		} else {
+			this.flow.push(flow_step);
 		}
+		
+		
 		this.checkCallbacksFlow();
 		return flow_step;
 
@@ -1016,17 +1074,25 @@ var stackEmergency = function(fn, eventor, args) {
 
 var requests_by_declarations = {};
 
+
+var getNetApiByDeclr = function(send_declr, sputnik, app) {
+	var network_api;
+	var api_name = send_declr[0];
+	if (typeof api_name == 'string') {
+		network_api = spv.getTargetField(app || sputnik.app, api_name);
+	} else if (typeof api_name == 'function') {
+		network_api = api_name.call(sputnik);
+	}
+	return network_api;
+};
+
 var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 
 	var api_name = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(sputnik, opts),
 		non_standart_api_opts = send_declr[3];
 
-	var network_api;
-	if (typeof api_name == 'string') {
-		network_api = spv.getTargetField(sputnik.app, api_name);
-	} else if (typeof api_name == 'function') {
-		network_api = api_name.call(sputnik);
-	}
+	var network_api = getNetApiByDeclr(send_declr, sputnik);
+	
 
 	if (!network_api.source_name) {
 		throw new Error('network_api must have source_name!');
@@ -1109,6 +1175,20 @@ var findErrorByList = function(data, errors_selectors) {
 		}
 	}
 	return has_error;
+};
+
+var getReqMapsForState= function(req_map, state_name) {
+	if (!req_map) {
+		return;
+	}
+	var maps_for_state= [];
+	for (var i = 0; i < req_map.length; i++) {
+		var states_list = req_map[i][0];
+		if (states_list.indexOf(state_name) != -1) {
+			maps_for_state.push(i, req_map[i]);
+		}
+	}
+	return maps_for_state;
 };
 
 var FastEventor = function(context) {
@@ -1312,7 +1392,7 @@ FastEventor.prototype = {
 			return;
 		}
 
-		//fixme - bug for "state_change-window_width.song_file_progress" ( "state_change-window_width" stays valid, but must be invalid)
+		//fixme - bug for "state_change-workarea_width.song_file_progress" ( "state_change-workarea_width" stays valid, but must be invalid)
 		for (var cur_namespace in this.subscribes_cache){
 			if (!this.subscribes_cache[cur_namespace]){
 				continue;
@@ -1456,10 +1536,8 @@ FastEventor.prototype = {
 		}
 
 		var target_arr = this.requests[space];
-		var _this = this;
-
 		
-		var bindRemove = function(req) {
+		var bindRemove = function(_this, req) {
 			req.always(function() {
 				if (_this.requests && _this.requests[space]){
 					_this.requests[space] = spv.arrayExclude(_this.requests[space], req);
@@ -1482,7 +1560,7 @@ FastEventor.prototype = {
 				}
 			}
 			target_arr.push(req);
-			bindRemove(req);
+			bindRemove(this, req);
 			added[i] = req;
 		}
 		if (added.length){
@@ -1518,12 +1596,15 @@ FastEventor.prototype = {
 		});
 	},
 	getAllRequests: function() {
-		var all_requests = [];
+		var all_requests;
 		if (!this.requests) {
 			return all_requests;
 		}
 		for (var space in this.requests){
 			if (this.requests[space].length){
+				if (!all_requests) {
+					all_requests = [];
+				}
 				all_requests.push.apply(all_requests, this.requests[space]);
 			}
 		}
@@ -1533,7 +1614,7 @@ FastEventor.prototype = {
 
 		var all_requests = this.getAllRequests();
 
-		while (all_requests.length) {
+		while (all_requests && all_requests.length) {
 			var rq = all_requests.pop();
 			if (rq) {
 				if (rq.softAbort){
@@ -1573,19 +1654,16 @@ FastEventor.prototype = {
 		}
 		return this.sputnik;
 	},
+	
+	
 	requestState: function(state_name) {
 		var current_value = this.sputnik.state(state_name);
 		if (current_value) {
 			return;
 		}
 
-		var i, cur, maps_for_state = [], states_list;
-		for (i = 0; i < this.sputnik.req_map.length; i++) {
-			states_list = this.sputnik.req_map[i][0];
-			if (states_list.indexOf(state_name) != -1) {
-				maps_for_state.push(i, this.sputnik.req_map[i]);
-			}
-		}
+		var i, cur, states_list, maps_for_state = getReqMapsForState(this.sputnik.req_map, state_name);
+
 		var cant_request;
 		if (this.mapped_reqs) {
 			for (i = 0; i < maps_for_state.length; i+=2) {
@@ -1804,6 +1882,9 @@ FastEventor.prototype = {
 
 						sputnik.nextTick(sputnik.insertDataAsSubitems, [nesting_name, items, serv_data, source_name], true);
 
+						if (!sputnik.loaded_nestings_items) {
+							sputnik.loaded_nestings_items = {};
+						}
 
 						if (!sputnik.loaded_nestings_items[nesting_name]) {
 							sputnik.loaded_nestings_items[nesting_name] = 0;
@@ -1916,8 +1997,11 @@ spv.Class.extendTo(provoda.Eventor, {
 		item.current_motivator = old_value;
 		return result;
 	},
-	nextTick: function(fn, args, use_current_motivator) {
+	nextLocalTick: function(fn, args, use_current_motivator) {
 		return this._getCallsFlow().pushToFlow(fn, this, args, false, hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
+	},
+	nextTick: function(fn, args, use_current_motivator) {
+		return main_calls_flow.pushToFlow(fn, this, args, false, hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
 	once: function(namespace, cb, opts, context) {
 		return this.evcompanion.once(namespace, cb, opts, context);
@@ -2019,18 +2103,24 @@ var EvConxOpts = function(context, immediately) {
 	this.immediately = immediately;
 };
 
-var StatesLabour = function() {
+var StatesLabour = function(has_complex_states, need_stch_storage) {
 	this.flow_steps_stev = null;
+	this.flow_steps_vip_stdch_ev = null;
 	this.flow_steps_collch = null;
 	this.flow_steps_stch = null;
 
+
 	this.collecting_states_changing = false;
 	this.original_states = {};
+	
 	this.states_changing_stack = [];
 	this.all_i_cg = [];
-	this.all_ch_compxs = [];
+
 	this.changed_states = [];
 	this.total_ch = [];
+
+	this.stch_states = need_stch_storage ? {} : null;
+	this.all_ch_compxs = has_complex_states ? [] : null;
 };
 StatesLabour.prototype.abortFlowSteps = function(space, index_key, is_one_item) {
 	var full_space = 'flow_steps_' + space;
@@ -2072,16 +2162,17 @@ StatesLabour.prototype.createFlowStepsArray = function(space, index_key, one_ite
 StatesLabour.prototype.removeFlowStep = function(space, index_key, item) {
 	var full_space = 'flow_steps_' + space;
 	var target = this[full_space][index_key];
-	if (!target) {
+/*	if (!target) {
 		debugger;
 		return;
-	}
+	}*/
 	if (Array.isArray(target)) {
 		var pos = target.indexOf(item);
-		var arr = target.splice(pos, 1);
-		if (!arr.length) {
+		//var arr = 
+		target.splice(pos, 1);
+		/*if (!arr.length) {
 			debugger;
-		}
+		}*/
 		
 	} else {
 		if (target == item) {
@@ -2095,11 +2186,16 @@ StatesLabour.prototype.removeFlowStep = function(space, index_key, item) {
 };
 
 
-
+var markFlowSteps = function(flow_steps, p_space, p_index_key) {
+	for (var i = 0; i < flow_steps.length; i++) {
+		flow_steps[i].p_space = p_space;
+		flow_steps[i].p_index_key = p_index_key;
+	}
+};
 
 var stackStateFlowStep = function(flow_step, state_name) {
 	if (!this.zdsv) {
-		this.zdsv = new StatesLabour();
+		this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
 		//debugger;
 	}
 	flow_step.p_space = 'stev';
@@ -2109,7 +2205,7 @@ var stackStateFlowStep = function(flow_step, state_name) {
 
 var stackNestingFlowStep = function(flow_step, nesting_name) {
 	if (!this.zdsv) {
-		this.zdsv = new StatesLabour();
+		this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
 		//debugger;
 	}
 	flow_step.p_space = 'collch';
@@ -2117,6 +2213,77 @@ var stackNestingFlowStep = function(flow_step, nesting_name) {
 	this.zdsv.createFlowStepsArray('collch', nesting_name).push(flow_step);
 };
 
+var encoded_states = {};
+var enc_states = {
+	parent_count_regexp: /^\^+/gi,
+	parent: function(string) {
+		//example: '^visible'
+
+		if (!encoded_states[string]){
+			var state_name = string.replace(this.parent_count_regexp, '');
+			var count = string.length - state_name.length;
+			encoded_states[string] = {
+				rel_type: 'parent',
+				full_name: string,
+				ancestors: count,
+				state_name: state_name
+			};
+		}
+		
+		return encoded_states[string];
+	},
+	nesting: function(string) {
+		//example:  '@some:complete:list'
+		if (!encoded_states[string]){
+			var nesting_and_state_name = string.replace('@', '');
+			var parts = nesting_and_state_name.split(':');
+
+			var nesting_name = parts.pop();
+			var state_name = parts.pop();
+			var zin_func = parts.pop();
+			if (!zin_func) {
+				zin_func = function(list) {return list;};
+			}
+
+			encoded_states[string] = {
+				rel_type: 'nesting',
+				full_name: string,
+				nesting_name: nesting_name,
+				state_name: state_name,
+				zin_func: zin_func
+			};
+		}
+		
+
+		return encoded_states[string];
+	},
+	root: function(string) {
+		//example: '#vk_id'
+		if (!encoded_states[string]){
+			encoded_states[string] = {
+				rel_type: 'root',
+				full_name: string,
+				state_name: string.replace('#', '')
+			};
+		}
+
+		return encoded_states[string];
+	}
+};
+var getEncodedState = function(state_name) {
+	if (!encoded_states.hasOwnProperty(state_name)) {
+		if (state_name.indexOf('^') === 0){
+			enc_states.parent(state_name);
+		} else if (state_name.indexOf('@') === 0 ) {
+			enc_states.nesting(state_name);
+		} else if (state_name.indexOf('#') === 0 ) {
+			enc_states.root(state_name);
+		} else {
+			encoded_states[state_name] = null;
+		}
+	}
+	return encoded_states[state_name];
+};
 
 provoda.Eventor.extendTo(provoda.StatesEmitter, function(add) {
 add({
@@ -2272,6 +2439,10 @@ add({
 			this.changeDataMorphDeclarations(props);
 		}
 
+		if (this.changeChildrenViewsDeclarations) {
+			this.changeChildrenViewsDeclarations(props);
+		}
+
 		
 		for (var i = 0; i < this.xxxx_morph_props.length; i++) {
 			var cur = this.xxxx_morph_props[i];
@@ -2343,7 +2514,7 @@ add({
 						target_node.prepend(cur.node);
 					}
 
-					if (cur_config.parse_as_tplpart) {
+					if (cur_config.needs_expand_state && cur_config.parse_as_tplpart) {
 						this.parseAppendedTPLPart(cur.node);
 					}
 				} else if (cur.parent){
@@ -2427,60 +2598,28 @@ add({
 
 
 		//debugger;
-	},
+	}
+});
+
+
+var nes_as_state_cache = {};
+
+
+var watchNestingAsState = function(md, nesting_name, state_name) {
+	if (!nes_as_state_cache[state_name]) {
+		nes_as_state_cache[state_name] = function(e) {
+			this.updateState(state_name, e && e.value);
+		};
+	}
+
+	md.on('child_change-' + nesting_name, nes_as_state_cache[state_name]);
+};
+
+
+
+
+add({
 	prsStCon: {
-		cache: {},
-		parent_count_regexp: /^\^+/gi,
-		parent: function(string) {
-			//example: '^visible'
-
-			if (!this.cache[string]){
-				var state_name = string.replace(this.parent_count_regexp, '');
-				var count = string.length - state_name.length;
-				this.cache[string] = {
-					full_name: string,
-					ancestors: count,
-					state_name: state_name
-				};
-			}
-			
-			return this.cache[string];
-		},
-		nesting: function(string) {
-			//example:  '@some:complete:list'
-			if (!this.cache[string]){
-				var nesting_and_state_name = string.replace('@', '');
-				var parts = nesting_and_state_name.split(':');
-
-				var nesting_name = parts.pop();
-				var state_name = parts.pop();
-				var zin_func = parts.pop();
-				if (!zin_func) {
-					zin_func = function(list) {return list;};
-				}
-
-				this.cache[string] = {
-					full_name: string,
-					nesting_name: nesting_name,
-					state_name: state_name,
-					zin_func: zin_func
-				};
-			}
-			
-
-			return this.cache[string];
-		},
-		root: function(string) {
-			//example: '#vk_id'
-			if (!this.cache[string]){
-				this.cache[string] = {
-					full_name: string,
-					state_name: string.replace('#', '')
-				};
-			}
-
-			return this.cache[string];
-		},
 		toList: function(obj) {
 			var result = [];
 			for (var p in obj){
@@ -2522,10 +2661,14 @@ add({
 				for (var i = 0; i < list.length; i++) {
 					var cur = list[i];
 					
+					if (cur.state_name) {
+						md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
+					} else {
+						watchNestingAsState(md, cur.nesting_name, cur.full_name);
+					}
 					
 					
 					
-					md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
 
 				}
 			},
@@ -2562,13 +2705,23 @@ add({
 
 			for (var jj = 0; jj < cur.depends_on.length; jj++) {
 				var state_name = cur.depends_on[jj];
-				if (state_name.indexOf('^') === 0 && !states_of_parent[state_name]){
-					states_of_parent[state_name] = this.prsStCon.parent(state_name);
-				} else if (state_name.indexOf('@') === 0 && !states_of_nesting[state_name]) {
-					states_of_nesting[state_name] = this.prsStCon.nesting(state_name);
-				} else if (state_name.indexOf('#') === 0 && !states_of_root[state_name]) {
-					states_of_root[state_name] = this.prsStCon.root(state_name);
+				var parsing_result = getEncodedState(state_name);
+				if (parsing_result) {
+					if (parsing_result.rel_type == 'root') {
+						if (!states_of_root[state_name]) {
+							states_of_root[state_name] = parsing_result;
+						}
+					} else  if (parsing_result.rel_type == 'nesting') {
+						if (!states_of_nesting[state_name]) {
+							states_of_nesting[state_name] = parsing_result;
+						}
+					} else if (parsing_result.rel_type == 'parent') {
+						if (!states_of_parent[state_name]) {
+							states_of_parent[state_name] = parsing_result;
+						}
+					}
 				}
+				
 			}
 		}
 
@@ -2595,7 +2748,7 @@ add({
 		for (var comlx_name in this){
 			var name = this.getCompxName(comlx_name);
 			if (name){
-				compx_check[name] = true;
+				
 				var cur = this[comlx_name];
 				if (cur instanceof Array){
 					cur = {
@@ -2606,7 +2759,7 @@ add({
 				} else {
 					this[comlx_name].name = name;
 				}
-				
+				compx_check[name] = cur;
 				this.full_comlxs_list.push(cur);
 			}
 		}
@@ -2614,7 +2767,7 @@ add({
 	collectCompxs2part: function(compx_check) {
 		for (var comlx_name in this.complex_states){
 			if (!compx_check[comlx_name]){
-				compx_check[comlx_name] = true;
+				
 				var cur = this.complex_states[comlx_name];
 
 				if (cur instanceof Array){
@@ -2626,14 +2779,15 @@ add({
 				} else {
 					this.complex_states[comlx_name].name = comlx_name;
 				}
+				compx_check[comlx_name] = cur;
 				
 				this.full_comlxs_list.push(cur);
 			}
 		}
 	},
-	full_comlxs_list: [],
+//	full_comlxs_list: [],
 	compx_check: {},
-	full_comlxs_index: {},
+//	full_comlxs_index: {},
 	collectCompxs:function(props) {
 		var need_recalc = false;
 		if (this.hasOwnProperty('complex_states')){
@@ -2732,6 +2886,8 @@ var st_event_name_default = 'state_change-';
 var st_event_name_vip = 'vip_state_change-';
 var st_event_name_light = 'lgh_sch-';
 
+var state_ch_h_prefix = 'stch-';
+
 var st_event_opt = {force_async: true};
 
 add({
@@ -2744,100 +2900,114 @@ add({
 		}
 		return changes_list;
 	},
-	state_ch_h_prefix: 'stch-',
-	_replaceState: function(original_states, state_name, value, skip_handler, stack) {
-		if (state_name){
-			var old_value = this.states[state_name],
-				method;
-			if (old_value != value){
-
-				var stateChanger = !skip_handler && (this[ this.state_ch_h_prefix + state_name] || (this.state_change && this.state_change[state_name]));
-				if (stateChanger){
-					if (typeof stateChanger == 'function'){
-						method = stateChanger;
-					} else if (this.checkDepVP){
-						if (this.checkDepVP(stateChanger)){
-							method = stateChanger.fn;
-						}
+	proxyStch: function(value, old_value_trans, state_name) {
+		var old_value = this.zdsv.stch_states[state_name];
+		if (old_value != value) {
+			this.zdsv.stch_states[state_name] = value;
+			var method = (this[ state_ch_h_prefix + state_name] || (this.state_change && this.state_change[state_name]));
+			method.call(this, value, old_value, state_name);
+		}
+	},
+	_handleStch: function(original_states, state_name, value, skip_handler, sync_tpl) {
+		var stateChanger = !skip_handler && (this[ state_ch_h_prefix + state_name] || (this.state_change && this.state_change[state_name]));
+		if (stateChanger) {
+			this.zdsv.abortFlowSteps('stch', state_name, true);
+		} else {
+			return;
+		}
+		var old_value = this.zdsv.stch_states[state_name];
+		if (old_value != value) {
+			var method;
+			
+			if (stateChanger){
+				if (typeof stateChanger == 'function'){
+					method = stateChanger;
+				} else if (this.checkDepVP){
+					if (this.checkDepVP(stateChanger)){
+						method = stateChanger.fn;
 					}
 				}
-				//
+			}
+
+			if (method){
+				if (!sync_tpl) {
+					var flow_step = this.nextLocalTick(this.proxyStch, [value, old_value, state_name], true);
+					flow_step.p_space = 'stch';
+					flow_step.p_index_key = state_name;
+					this.zdsv.createFlowStepsArray('stch', state_name, flow_step);
+				} else {
+					this.proxyStch(value, old_value, state_name);
+				}
+				
+				
+				//method.call(this, value, old_value);
+			}
+		}
+	},
+	_replaceState: function(original_states, state_name, value, stack) {
+		if (state_name){
+			var old_value = this.states[state_name];
+			if (old_value != value){
 				//value = value || false;
 				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
-				//
 
 				if (!original_states.hasOwnProperty(state_name)) {
 					original_states[state_name] = this.states[state_name];
 				}
-
 				this.states[state_name] = value;
-
-				if (method){
-					this.zdsv.abortFlowSteps('stch', state_name, true);
-					var flow_step = this.nextTick(method, [value, old_value, state_name], true);
-					flow_step.p_space = 'stch';
-					flow_step.p_index_key = state_name;
-					this.zdsv.createFlowStepsArray('stch', state_name, flow_step);
-
-
-					
-					//method.call(this, value, old_value);
-				}
 				stack.push(state_name, value);
-				//return [old_value];
 			}
 		}
 	},
+	_triggerVipChanges: function(i, state_name, value, zdsv) {
+		var vip_name = st_event_name_vip + state_name;
+		zdsv.abortFlowSteps('vip_stdch_ev', state_name);
+
+
+		var vip_cb_cs = this.evcompanion.getMatchedCallbacks(vip_name).matched;
+		if (vip_cb_cs.length) {
+			var flow_steps = zdsv.createFlowStepsArray('vip_stdch_ev', state_name);
+			var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], this);
+			
+			//вызов внутреннего для самого объекта события
+			this.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg, flow_steps);
+			markFlowSteps(flow_steps, 'vip_stdch_ev', state_name);
+		}
+		
+	},
+	triggerLegacySChEv: function(state_name, value, zdsv, default_cb_cs, default_name, flow_steps) {
+		var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], this);
+				//вызов стандартного события
+		this.evcompanion.triggerCallbacks(default_cb_cs, false, st_event_opt, default_name, event_arg, flow_steps);
+	},
 	_triggerStChanges: function(i, state_name, value, zdsv) {
 
-		var vip_name = st_event_name_vip + state_name;
+		zdsv.abortFlowSteps('stev', state_name);
+
 		var default_name = st_event_name_default + state_name;
 		var light_name = st_event_name_light + state_name;
 
-		var vip_cb_cs = this.evcompanion.getMatchedCallbacks(vip_name).matched;
 		var default_cb_cs = this.evcompanion.getMatchedCallbacks(default_name).matched;
 		var light_cb_cs = this.evcompanion.getMatchedCallbacks(light_name).matched;
-
-
-
-		var flow_steps;
-		zdsv.abortFlowSteps('stev', state_name);
-
-
-		if (vip_cb_cs.length || light_cb_cs.length || default_cb_cs.length) {
-	
-			flow_steps = zdsv.createFlowStepsArray('stev', state_name);
-			
-		}
-
 		
+		if (light_cb_cs.length || default_cb_cs.length) {
+			var flow_steps = zdsv.createFlowStepsArray('stev', state_name);
 
-		
-
-
-		var event_arg = (vip_cb_cs.length || default_cb_cs.length) && new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], this);
-
-		if (vip_cb_cs.length){
-			//вызов внутреннего для самого объекта события
-			this.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg, flow_steps);
-		}
-
-		if (light_cb_cs.length) {
-			this.evcompanion.triggerCallbacks(light_cb_cs, false, false, light_name, value, flow_steps);
-		}
-
-
-		if (default_cb_cs.length) {
-			//вызов стандартного события
-			this.evcompanion.triggerCallbacks(default_cb_cs, false, st_event_opt, default_name, event_arg, flow_steps);
-		}
-		if (flow_steps) {
-			for (var vv = 0; vv < flow_steps.length; vv++) {
-				var cur = flow_steps[vv];
-				cur.p_space = 'stev';
-				cur.p_index_key = state_name;
+			if (light_cb_cs.length) {
+				this.evcompanion.triggerCallbacks(light_cb_cs, false, false, light_name, value, flow_steps);
 			}
+
+			if (default_cb_cs.length) {
+				this.triggerLegacySChEv(state_name, value, zdsv, default_cb_cs, default_name, flow_steps);
+			}
+
+			if (flow_steps) {
+				markFlowSteps(flow_steps, 'stev', state_name);
+			}
+
 		}
+
+	
 
 	},
 	_setUndetailedState: function(i, state_name, value) {
@@ -2857,14 +3027,14 @@ add({
 			return obj && !!obj.count;
 		}
 	},
-	updateState: function(state_name, value){
+	updateState: function(state_name, value, opts){
 		/*if (state_name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop state_name: ' + state_name);
 		}*/
 		if (this.hasComplexStateFn(state_name)){
 			throw new Error("you can't change complex state in this way");
 		}
-		return this._updateProxy([state_name, value]);
+		return this._updateProxy([state_name, value], opts);
 	},
 	hndRDep: function(state, oldstate, state_name) {
 		var target_name = state_name.split(':');
@@ -2914,7 +3084,7 @@ add({
 		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
 		//для пользователя пока пользователь не перестанет изменять новые состояния
 		if (!this.zdsv){
-			this.zdsv = new StatesLabour();
+			this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
 		}
 		var zdsv = this.zdsv;
 
@@ -2954,29 +3124,34 @@ add({
 
 			cur_changes_list = cur_changes_opts = null;
 
-			//проверить комплексные состояния
-			var first_compxs_chs = this.getComplexChanges(original_states, changed_states);
-			if (first_compxs_chs.length){
-				push.apply(all_ch_compxs, first_compxs_chs);
-			}
-
-			var current_compx_chs = first_compxs_chs;
-			//довести изменения комплексных состояний до самого конца
-			while (current_compx_chs.length){
-				var cascade_part = this.getComplexChanges(original_states, current_compx_chs);
-				current_compx_chs = cascade_part;
-				if (cascade_part.length){
-					push.apply(all_ch_compxs, cascade_part);
+			if (this.full_comlxs_index) {
+				//проверить комплексные состояния
+				var first_compxs_chs = this.getComplexChanges(original_states, changed_states);
+				if (first_compxs_chs.length){
+					push.apply(all_ch_compxs, first_compxs_chs);
 				}
 
+				var current_compx_chs = first_compxs_chs;
+				//довести изменения комплексных состояний до самого конца
+				while (current_compx_chs.length){
+					var cascade_part = this.getComplexChanges(original_states, current_compx_chs);
+					current_compx_chs = cascade_part;
+					if (cascade_part.length){
+						push.apply(all_ch_compxs, cascade_part);
+					}
+					cascade_part = null;
+
+				}
+				current_compx_chs = null;
 			}
-			current_compx_chs = null;
+
+			
 
 			//собираем все группы изменений
 			if (changed_states.length){
 				push.apply(all_i_cg, changed_states);
 			}
-			if (all_ch_compxs.length){
+			if (all_ch_compxs && all_ch_compxs.length){
 				push.apply(all_i_cg, all_ch_compxs);
 			}
 			//устраняем измененное дважды и более
@@ -2984,9 +3159,9 @@ add({
 
 
 			
+			iterateChList(all_i_cg, this, this._triggerVipChanges, zdsv);
 
-
-			iterateChList(all_i_cg, this, this._triggerStChanges, zdsv);
+			
 
 			if (all_i_cg.length){
 				push.apply(total_ch, all_i_cg);
@@ -2994,13 +3169,18 @@ add({
 
 
 			wipeObj(original_states);
-			all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
+			all_i_cg.length = changed_states.length = 0;
+			if (all_ch_compxs) {
+				all_ch_compxs.length = 0;
+			}
+			
 			//объекты используются повторно, ради выиграша в производительности
 			//которые заключается в исчезновении пауз на сборку мусора 
 		}
 
 		//устраняем измененное дважды и более
 		this.compressStatesChanges(total_ch);
+		iterateChList(total_ch, this, this._triggerStChanges, zdsv);
 
 
 		//wipeObj(original_states);
@@ -3024,11 +3204,15 @@ add({
 	},
 	getChanges: function(original_states, changes_list, opts, result_arr) {
 		var changed_states = result_arr || [];
-		for (var i = 0; i < changes_list.length; i+=2) {
-			this._replaceState(original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
+		var i;
+		for (i = 0; i < changes_list.length; i+=2) {
+			this._replaceState(original_states, changes_list[i], changes_list[i+1], changed_states);
 		}
 		if (this.updateTemplatesStates){
-			this.updateTemplatesStates(changes_list);
+			this.updateTemplatesStates(changes_list, opts && opts.sync_tpl);
+		}
+		for (i = 0; i < changes_list.length; i+=2) {
+			this._handleStch(original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, opts && opts.sync_tpl);
 		}
 		return changed_states;
 	},
@@ -3134,30 +3318,120 @@ var changeSourcesByApiNames = function(md, store) {
 	}
 };
 
+var getRightNestingName =function(md, nesting_name) {
+	if (md.preview_nesting_source && nesting_name == 'preview_list') {
+		nesting_name = md.preview_nesting_source;
+	} else if (nesting_name == md.preview_mlist_name){
+		nesting_name = md.main_list_name;
+	}
+	return nesting_name;
+};
+
 var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, function(add) {
 add({
-	collectNestingsDeclarations: function(props) {
-		var need_recalc = hasPrefixedProps(props, 'nest-'), prop;
+	getNonComplexStatesList: function(state_name) {
+		if (!this.hasComplexStateFn(state_name)) {
+			return state_name;
+		} else {
+			var result = [];
+			for (var i = 0; i < this.compx_check[state_name].depends_on.length; i++) {
+				var cur = this.compx_check[state_name].depends_on[i];
+				result.push(this.getNonComplexStatesList(cur));
+				//
+				//Things[i]
+			}
+			return spv.collapseAll.apply(null, result);
+		}
+	},
+	getNestingSource: function(nesting_name, app) {
+		nesting_name = getRightNestingName(this, nesting_name);
+		var dclt = this['nest_req-' + nesting_name];
+		var network_api = dclt && getNetApiByDeclr(dclt[1], this, app);
+		return network_api && network_api.source_name;
+	},
+	getStateSources: function(state_name, app) {
+		var parsed_state = getEncodedState(state_name);
+		if (parsed_state && parsed_state.rel_type == 'nesting') {
+			return this.getNestingSource(parsed_state.nesting_name, app);
+		} else {
+			var maps_for_state = getReqMapsForState(this.req_map, state_name);
+			if (maps_for_state) {
+				var result = new Array(maps_for_state.length/2);
+				for (var i = 0; i < maps_for_state.length; i+=2) {
+					var selected_map = maps_for_state[ i + 1 ];
+					var network_api = getNetApiByDeclr(selected_map[2], this, app);
+					result[i/2] = network_api.source_name;
+				}
+				return result;
+			}
+		}
 
+
+		
+	},
+	collectStateChangeHandlers: function(props) {
+		var need_recalc = false;
+		if (this.hasOwnProperty('state_change')){
+			need_recalc = true;
+		} else {
+			need_recalc = hasPrefixedProps(props, 'stch-');
+
+		}
 		if (!need_recalc){
 			return;
 		}
-		var result = [];
+		this._has_stchs = true;
+	},
+	collectNestingsDeclarations: function(props) {
+		var
+			has_props = hasPrefixedProps(props, 'nest-'),
+			has_pack = this.hasOwnProperty('nest'),
+			prop, cur, real_name;
 
+		if (has_props || has_pack){
+			var result = [];
 
-		for (prop in this) {
-			if (prop.indexOf('nest-') === 0) {
-				var real_name = prop.replace('nest-','');
-				result.push({
-					nesting_name: real_name,
-					subpages_names_list: this[prop][0],
-					preload: this[prop][1],
-					init_state_name: this[prop][2],
-				});
+			var used_props = {};
+
+			if (has_props) {
+				for (prop in this) {
+					if (prop.indexOf('nest-') === 0) {
+
+						real_name = prop.replace('nest-','');
+						cur = this[prop];
+						used_props[real_name] = true;
+						result.push({
+							nesting_name: real_name,
+							subpages_names_list: cur[0],
+							preload: cur[1],
+							init_state_name: cur[2]
+						});
+					}
+				}
 			}
+
+			if (has_pack) {
+				for (real_name in this.nest) {
+					if (used_props[real_name]) {
+						continue;
+					}
+					cur = this.nest[real_name];
+					used_props[real_name] = true;
+					result.push({
+						nesting_name: real_name,
+						subpages_names_list: cur[0],
+						preload: cur[1],
+						init_state_name: cur[2]
+					});
+				}
+			}
+			
+			this.nestings_declarations = result;
+			
 		}
-		this.nestings_declarations = result;
+		
+		
 
 	},
 	changeDataMorphDeclarations: function(props) {
@@ -3311,6 +3585,7 @@ add({
 		this.states = {};
 		
 		this.children_models = null;
+		this._network_source = this._network_source || null;
 
 
 		this.md_replacer = null;
@@ -3322,9 +3597,18 @@ add({
 		this.prsStCon.connect.root(this);
 		this.prsStCon.connect.nesting(this);
 
-		
+
+
+		if (this.nestings_declarations) {
+			this.nextTick(function() {
+				initDeclaredNestings(this);
+			});
+		}
 
 		return this;
+	},
+	getConstrByPathTemplate: function(app, path_template) {
+		return initDeclaredNestings.getConstrByPath(app, this, path_template);
 	},
 	connectMPX: function() {
 		if (!this.mpx) {
@@ -3424,6 +3708,12 @@ add({
 		if (collection_name.indexOf(DOT) != -1){
 			throw new Error('remove "." (dot) from name');
 		}
+
+		var zdsv = this.zdsv;
+		if (zdsv) {
+			zdsv.abortFlowSteps('collch', collection_name);
+		}
+
 		if (Array.isArray(array)){
 			array = array.slice(0);
 		}
@@ -3449,28 +3739,19 @@ add({
 			}
 			//console.log(removed);
 		}
-
-
+		
 
 		var full_ev_name = 'child_change-' + collection_name;
 
 		var chch_cb_cs = this.evcompanion.getMatchedCallbacks(full_ev_name).matched;
-
-		var zdsv = this.zdsv;
-		if (zdsv) {
-			zdsv.abortFlowSteps('collch', collection_name);
-		}
-		var flow_steps;
-
-
 		
 		if (chch_cb_cs.length) {
 			if (!this.zdsv) {
-				this.zdsv = new StatesLabour();
+				this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
 				//debugger;
 			}
 			zdsv = this.zdsv;
-			flow_steps = zdsv.createFlowStepsArray('collch', collection_name);
+			var flow_steps = zdsv.createFlowStepsArray('collch', collection_name);
 			
 
 			var event_obj = {
@@ -3490,11 +3771,8 @@ add({
 
 			this.evcompanion.triggerCallbacks(chch_cb_cs, false, false, full_ev_name, event_obj, flow_steps);
 
-			for (var vv = 0; vv < flow_steps.length; vv++) {
-				var curf = flow_steps[vv];
-				curf.p_space = 'collch';
-				curf.p_index_key = collection_name;
-			}
+			markFlowSteps(flow_steps, 'collch', collection_name);
+
 		}
 
 
@@ -3917,6 +4195,19 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 
 	},
+	'stch-map_slice_view_sources': function(state) {
+		if (state) {
+			if (this.parent_view == this.root_view && this.nesting_name == 'map_slice') {
+				var arr = [];
+				if (state[0]) {
+					arr.push(state[0]);
+				}
+				push.apply(arr, state[1][this.nesting_space]);
+				this.updateState('view_sources', arr);
+			}
+			
+		}
+	},
 	_getCallsFlow: function() {
 		return this.root_view && (this.root_view._getCallsFlow != this._getCallsFlow) && this.root_view._getCallsFlow() || main_calls_flow;
 	},
@@ -3935,7 +4226,17 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	demensions_cache: {},
 	checkDemensionsKeyStart: function() {
 		if (!this._lbr.demensions_key_start){
-			this._lbr.demensions_key_start = this.location_name + '-' + (this.parent_view && this.parent_view.location_name + '-');
+			var arr = [];
+			var cur = this;
+			while (cur.parent_view) {
+				arr.push(cur.location_name);
+
+				cur = cur.parent_view;
+			}
+			arr.reverse();
+			this._lbr.demensions_key_start = arr.join(' ');
+
+			//this._lbr.demensions_key_start = this.location_name + '-' + (this.parent_view && this.parent_view.location_name + '-');
 		}
 	},
 	getBoxDemensionKey: function() {
@@ -4043,7 +4344,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	PvTemplate: PvTemplate,
 	getTemplate: function(node, callCallbacks, pvTypesChange) {
 		node = node[0] || node;
-		return new PvTemplate({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange, struc_store: this.root_view.struc_store});
+		return new PvTemplate({
+			node: node,
+			callCallbacks: callCallbacks,
+			pvTypesChange: pvTypesChange,
+			struc_store: this.root_view.struc_store,
+			calls_flow: this._getCallsFlow(),
+			getSample: this.root_view.getSampleForTemplate
+		});
 	},
 	parseAppendedTPLPart: function(node) {
 		this.tpl.parseAppended(node, this.root_view.struc_store);
@@ -4275,7 +4583,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				break;
 			} else {
 				if (cur_ancestor.parent_view == this.root_view){
-					if ( this.root_view.matchCildrenView( cur_ancestor, view_space ) ) {
+					if ( this.root_view.matchCildrenView( cur_ancestor, view_space, 'map_slice' ) ) {
 						target_ancestor = cur_ancestor;
 						break;
 					}
@@ -4313,15 +4621,20 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}
 	},
-	matchCildrenView: function(target_view, nesting_space) {
+	matchCildrenView: function(target_view, nesting_space, nesting_name) {
 		nesting_space = nesting_space || 'main';
 		for (var i = 0; i < this.children.length; i++) {
-			if (this.children[i] != target_view) {
+			var cur = this.children[i];
+			if (cur != target_view) {
 				continue;
 			}
-			if (this.children[i].nesting_space == nesting_space) {
-				return true;
+			if (nesting_space && cur.nesting_space != nesting_space) {
+				continue;
 			}
+			if (nesting_name && cur.nesting_name != nesting_name) {
+				continue;
+			}
+			return true;
 			
 		}
 		return false;
@@ -4364,6 +4677,24 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 
 			view = new Constr();
+
+			if (this.used_data_structure) {
+
+				var field_path = address_opts.by_model_name ? ['children_by_mn', child_name, md.model_name, view_space] : ['children', child_name, view_space];
+				//$default must be used too
+				var sub_tree = this.used_data_structure.constr_children && spv.getTargetField(this.used_data_structure.constr_children, field_path);
+
+				if (!sub_tree) {
+					sub_tree = this.used_data_structure.tree_children && spv.getTargetField(this.used_data_structure.tree_children, field_path);
+				}
+				if (!sub_tree) {
+					//debugger;
+				}
+
+				view.used_data_structure = sub_tree;
+			}
+
+
 			view.init({
 				mpx: mpx,
 				parent_view: this,
@@ -4570,7 +4901,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._lbr.dettree_incomplete = this.requestDetalizationLevel(this._lbr.detltree_depth);
 		this._lbr.detltree_depth++;
 		if (this._lbr.dettree_incomplete){
-			this.nextTick(this.__tickDetRequest);
+			this.nextLocalTick(this.__tickDetRequest);
 		}
 	},
 	requestDeepDetLevels: function(){
@@ -4583,7 +4914,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 
 
-		this.nextTick(this.__tickDetRequest);
+		this.nextLocalTick(this.__tickDetRequest);
 		
 		return this;
 	},
@@ -4655,16 +4986,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._lbr._states_set_processing = null;
 		return this;
 	},
-	updateTemplatesStates: function(total_ch) {
+	updateTemplatesStates: function(total_ch, sync_tpl) {
 		var i = 0;
 		//var states = this.states;
 
 		if (this.tpl){
-			this.tpl.checkChanges(total_ch, this.states);
+			this.tpl.checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
 		}
 		if (this.tpls){
 			for (i = 0; i < this.tpls.length; i++) {
-				this.tpls[i].checkChanges(total_ch, this.states);
+				this.tpls[i].checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
 			}
 		}
 	},
@@ -4688,9 +5019,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!need_recalc){
 			return;
 		}
+		this._has_stchs = true;
 
 		var has_stchh = {};
 		var result = [];
+
+		this.stch_hs_list = [];
 		
 
 		for (prop in this) {
@@ -4701,6 +5035,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					name: real_name,
 					item: this[prop]
 				});
+
+				this.stch_hs_list.push(real_name);
 			}
 		}
 
@@ -4712,6 +5048,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 						name: prop,
 						item: this.state_change[prop]
 					});
+
+					this.stch_hs_list.push(prop);
 				}
 
 			}
@@ -4729,7 +5067,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			if (!this.view_parts){
 				this.view_parts = {};
 			}
-			this.view_parts[part_name] = this.parts_builder[part_name].call(this);
+
+			var parts_builder = this.parts_builder[part_name];
+
+			var part = typeof parts_builder == 'string' ? this.root_view.getSample(parts_builder) : parts_builder.call(this);
+
+
+			this.view_parts[part_name] = part;
 			if (!this.view_parts[part_name]){
 				throw new Error('"return" me some build result please');
 			}
@@ -4768,11 +5112,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		this.nextTick(this._updateProxy, arguments);
 	},
-	receiveStatesChanges: function(changes_list) {
+	receiveStatesChanges: function(changes_list, opts) {
 		if (!this.isAlive()){
 			return;
 		}
-		this._updateProxy(changes_list);
+		this._updateProxy(changes_list, opts);
 	},
 	overrideStateSilently: function(name, value) {
 		this._updateProxy([name, value], {skip_handler: true});
@@ -4994,9 +5338,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (collch){
 			this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
 		}
-		if (this['after-collch-' + nesname]){
-			this['after-collch-' + nesname].call(this, array);
-		}
+
 		this.checkDeadChildren();
 		return this;
 	},
@@ -5014,6 +5356,32 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				//throw 'wrong';
 			}
 		}
+	},
+	changeChildrenViewsDeclarations: function(props) {
+		var nesting_name, cur;
+		if (props.children_views) {
+			for (nesting_name in this.children_views) {
+				cur = this.children_views[nesting_name];
+				if (typeof cur == 'function') {
+					this.children_views[nesting_name] = {
+						main: cur
+					};
+				}
+			}
+		}
+		if (props.children_views_by_mn) {
+			for (nesting_name in this.children_views_by_mn) {
+				for (var model_name in this.children_views_by_mn[nesting_name]) {
+					cur = this.children_views_by_mn[nesting_name][model_name];
+					if (typeof cur == 'function') {
+						this.children_views_by_mn[nesting_name][model_name] = {
+							main: cur
+						};
+					}
+				}
+			}
+		}
+
 	},
 	collectCollectionChangeDeclarations: function(props) {
 		var need_recalc = false, prop;
@@ -5109,11 +5477,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			expand_state = 'can_expand';
 		}
 
+		var is_wrapper_parent = collch.is_wrapper_parent &&  collch.is_wrapper_parent.match(/^\^+/gi);
 		return {
 			place: collch.place,
 			by_model_name: collch.by_model_name,
 			space: collch.space || 'main',
 			strict: collch.strict,
+			is_wrapper_parent: is_wrapper_parent && is_wrapper_parent[0].length,
 			opts: collch.opts,
 			needs_expand_state: expand_state || null
 		};
@@ -5121,11 +5491,21 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	simpleAppendNestingViews: function(declr, opts, nesname, array) {
 		for (var bb = 0; bb < array.length; bb++) {
 			var cur = array[bb];
+			var original_md;
+			if (declr.is_wrapper_parent) {
+				original_md = cur;
+				for (var i = 0; i < declr.is_wrapper_parent; i++) {
+					cur = cur.getParentMapModel();
+				}
+			}
+
+
 			this.appendFVAncorByVN({
 				md: cur,
+				original_md: original_md,
 				by_model_name: declr.by_model_name,
 				name: nesname,
-				opts: (typeof opts == 'function' ? opts.call(this, cur) : opts),
+				opts: (typeof opts == 'function' ? opts.call(this, cur, original_md) : opts),
 				place: declr.place,
 				space: declr.space,
 				strict: declr.strict
@@ -5209,19 +5589,25 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
 		var location_id = $v.getViewLocationId(this, nesname, space || 'main');
 
-		//исправляем порядковый номер вьюхи в нэстинге
-		for (var i = 0; i < array.length; i++) {
-			var view = this.getStoredMpx(array[i]).getView(location_id);
-			if (view) {
-				view._lbr.innesting_pos_current = i;
-			}
-		}
+		
 
 		var ordered_rend_list = this.getRendOrderedNesting(nesname, array);
 		if (ordered_rend_list){
 			this.appendOrderedCollection(space, funcs, view_opts, array, not_request, ordered_rend_list);
 		} else {
 			this.appendOrderedCollection(space, funcs, view_opts, array, not_request);
+		}
+
+
+
+		//исправляем порядковый номер вьюхи в нэстинге
+		var counter = 0;
+		for (var i = 0; i < array.length; i++) {
+			var view = this.getStoredMpx(array[i]).getView(location_id);
+			if (view) {
+				view._lbr.innesting_pos_current = counter;
+				counter++;
+			}
 		}
 	},
 	createDOMComplect: function(complects, ordered_complects, view, type) {
@@ -5373,7 +5759,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			detached[i]._lbr.detached = null;
 		}
 		if (ordered_part && ordered_part.length){
-			this.nextTick(this.appendOrderedCollection, [space, funcs, view_opts, array, not_request, ordered_rend_list]);
+			this.nextLocalTick(this.appendOrderedCollection, [space, funcs, view_opts, array, not_request, ordered_rend_list]);
 			//fixme can be bug (если nesting изменён, то измнения могут конфликтовать)
 		}
 
@@ -5409,7 +5795,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var place = opts.place;
 		if (place && typeof opts.place == 'function'){
 			if ((opts.strict || view) && place){
-				place = opts.place.call(this, opts.md, view);
+				place = opts.place.call(this, opts.md, view, opts.original_md);
 				if (!place && typeof place != 'boolean'){
 					throw new Error('give me place');
 				} else {

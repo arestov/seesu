@@ -1,10 +1,23 @@
 define(['spv', 'angbo', 'jquery'], function(spv, angbo, $) {
 "use strict";
 var push = Array.prototype.push;
+
+
+var makeSpecStatesList = function(states) {
+	var result = [];
+	for (var state_name in states) {
+		if (!states.hasOwnProperty(state_name)){
+			continue;
+		}
+		result.push(state_name, states[state_name]);
+	}
+	return result;
+};
 var PvTemplate = function(opts) {
 	this.pv_types_collecting = false;
 	this.states_inited = false;
 	this.waypoints = null;
+
 
 	this.pv_views = null;
 	this.parsed_pv_views = null;
@@ -18,13 +31,20 @@ var PvTemplate = function(opts) {
 	if (opts.pv_repeat_context){
 		this.pv_repeat_context = opts.pv_repeat_context;
 	}
+
+	this.calls_flow = opts.calls_flow || null;
+	if (!this.calls_flow) {
+		//debugger;
+	}
+	this.calls_flow_index = this.calls_flow ? {} : null;
 	this.scope = null;
 	if (opts.scope){
 		this.scope = opts.scope;
 	}
-	this.spec_states = null;
+	this.spec_states_props_list = null;
 	if (opts.spec_states){
-		this.spec_states = opts.spec_states;
+		this.spec_states_props_list = makeSpecStatesList(opts.spec_states);
+		//spec_states 
 	}
 	if (opts.callCallbacks){
 		this.sendCallback = opts.callCallbacks;
@@ -35,6 +55,7 @@ var PvTemplate = function(opts) {
 	this.pv_views = [];
 	this.parsed_pv_views = [];
 	this.pv_repeats = {};
+	this.pv_replacers_simple = null;
 	this.children_templates = {};
 
 	this.states_watchers = [];
@@ -43,6 +64,8 @@ var PvTemplate = function(opts) {
 	this.pv_repeats_data = [];
 	this.destroyers = null;
 
+	this.getSample = opts.getSample;
+
 
 	
 
@@ -50,9 +73,23 @@ var PvTemplate = function(opts) {
 	if (!angbo || !angbo.interpolateExpressions){
 		console.log('cant parse statements');
 	}
+
+	if (this.pv_replacers_simple) {
+		for (var i = 0; i < this.pv_replacers_simple.length; i++) {
+			var cur = this.pv_replacers_simple[i];
+			var sample = this.getSample(cur.sample_name);
+			$(cur.node).after(sample);
+			this.parsePvDirectives(sample, opts.struc_store);
+
+			
+		}
+	}
+
 	if (this.scope){
 		this.setStates(this.scope);
 	}
+
+	
 };
 var DOT = '.';
 
@@ -81,24 +118,40 @@ var hlpSimplifyValue = function(value) {
 	
 	//return value.replace(this.regxp_spaces,' ').replace(this.regxp_edge_spaces,'');
 };
-var hndPVRepeat = function(states) {
+var abortFlowStep = function(tpl, w_cache_key) {
+	var flow_step = tpl.calls_flow_index[w_cache_key];
+	if (flow_step) {
+		tpl.calls_flow_index[w_cache_key] = null;
+		flow_step.abort();
+	}
+};
+
+var removeFlowStep = function(tpl, w_cache_key) {
+	tpl.calls_flow_index[w_cache_key] = null;
+};
+
+var hndPVRepeat = function(new_fv, states) {
 	var wwtch = this;
-	var new_fv = spv.getTargetField(states, wwtch.field_name);
-	var context = wwtch.context;
-	var node = wwtch.node;
-	var old_nodes = wwtch.old_nodes;
-	var repeat_data = wwtch.repeat_data;
-	var field_name = wwtch.field_name;
-	var valueIdent = wwtch.valueIdent;
-	var keyIdent = wwtch.keyIdent;
-	var comment_anchor = wwtch.comment_anchor;
-	var sampler = wwtch.sampler;
-	/*var new_value = calculator(states);
-	if (simplifyValue){
-		new_value = simplifyValue.call(_this, new_value);
-	}*/
+	removeFlowStep(wwtch.context, wwtch.w_cache_key);
+	//var new_fv = spv.getTargetField(states, wwtch.field_name);
+	
 
 	if (wwtch.original_fv != new_fv){
+		var context = wwtch.context;
+		//var node = wwtch.node;
+		var old_nodes = wwtch.old_nodes;
+		var repeat_data = wwtch.repeat_data;
+		var field_name = wwtch.field_name;
+		var valueIdent = wwtch.valueIdent;
+		var keyIdent = wwtch.keyIdent;
+		var comment_anchor = wwtch.comment_anchor;
+		var sampler = wwtch.sampler;
+		/*var new_value = calculator(states);
+		if (simplifyValue){
+			new_value = simplifyValue.call(_this, new_value);
+		}*/
+
+
 		var repeats_array = [];
 		repeat_data.array = [];
 		context.pv_types_collecting = true;
@@ -135,7 +188,8 @@ var hndPVRepeat = function(states) {
 				pv_repeat_context: full_pv_context,
 				scope: scope,
 				callCallbacks: context.sendCallback,
-				struc_store: context.struc_store
+				struc_store: context.struc_store,
+				calls_flow: context.calls_flow
 			});
 
 			old_nodes.push(cur_node);
@@ -155,6 +209,25 @@ var hndPVRepeat = function(states) {
 	}
 };
 
+
+var checkPVRepeat = function(states, async_changes, current_motivator) {
+	var wwtch = this;
+	abortFlowStep(wwtch.context, wwtch.w_cache_key);
+	var new_fv = spv.getTargetField(states, wwtch.field_name);
+
+	
+
+	if (wwtch.original_fv != new_fv) {
+		if (async_changes) {
+
+			var flow_step = wwtch.context.calls_flow.pushToFlow(hndPVRepeat, this, [new_fv, states], false, false, false, current_motivator);
+			wwtch.context.calls_flow_index[wwtch.w_cache_key] = flow_step;
+		} else {
+			hndPVRepeat.call(this, new_fv, states);
+		}
+	}
+};
+
 var getFieldsTreesBases = function(all_vs) {
 	var sfy_values = new Array(all_vs.length);
 	for (var i = 0; i < all_vs.length; i++) {
@@ -166,13 +239,30 @@ var getFieldsTreesBases = function(all_vs) {
 };
 var template_struc_store = {};
 
+var getIndexList = function(obj, arr) {
+
+	var result = arr || [];
+	for (var prop in obj) {
+		result.push( prop );
+	}
+	return result;
+};
 
 var parser = {
-	directives_names_list: [],
+	
 	scope_generators: {
 		'pv-nest': true,
 		'pv-repeat': true
 	},
+	scope_g_list: [],
+	states_using_directives: {
+		'pv-text': true,
+		'pv-class': true,
+		'pv-props': true,
+		'pv-type': true,
+		'pv-repeat': true
+	},
+	sud_list: [],
 	directives: {
 		'pv-text': true,
 		'pv-class': true,
@@ -181,23 +271,30 @@ var parser = {
 		'pv-type': true,
 		'pv-events': true
 	},
-	scope_g_list: [],
+	directives_names_list: [],
+
+	comment_directives: {
+		'pv-replace': true
+	},
+	comment_directives_names_list: [],
+	
 	makeOrderedDirectives: function() {
-		var directive_name;
-		for (directive_name in this.directives){
-			//порядок директив важен, по идее
-			//должен в результате быть таким каким он задекларирован
-			this.directives_names_list.push(directive_name);
-		}
-		for (directive_name in this.scope_generators){
-			//порядок директив важен, по идее
-			//должен в результате быть таким каким он задекларирован
-			this.scope_g_list.push(directive_name);
-		}
+		getIndexList(this.directives, this.directives_names_list);
+		//порядок директив важен, по идее
+		//должен в результате быть таким каким он задекларирован
+		
+		getIndexList(this.scope_generators, this.scope_g_list);
+		//порядок директив важен, по идее
+		//должен в результате быть таким каким он задекларирован
+
+		getIndexList(this.states_using_directives, this.sud_list);
+
+		getIndexList(this.comment_directives, this.comment_directives_names_list);
 	},
 	regxp_spaces: /\s+/gi,
 	regxp_edge_spaces: /^\s+|\s+$/gi,
-	regxp_props_com: /\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi,
+	regxp_props_com: /\S[\S\s]*?\:[\s]*?\{\{[\S\s]+?\}\}/gi,
+	regxp_props_com_soft: /\S[\S\s]*?\:[\s]*?(?:\{\{[\S\s]+?\}\})|(?:\S+?(\s|$))/gi,
 	regxp_props_spaces: /^\s*|s*?$/,
 	regxp_props_coms_part: /\s*\:\s*?(?=\{\{)/,
 	regxp_props_statement: /(^\{\{)|(\}\}$)/gi,
@@ -228,24 +325,57 @@ var parser = {
 			wwtch.context._pvTypesChange();
 		}
 	},
+	comment_directives_p: {
+		'pv-replace': function(node, full_declaration, directive_name) {
+			var index = {};
+			var complex_value = full_declaration;
+			var complects = complex_value.match( this.regxp_props_com_soft );
+			for (var i = 0; i < complects.length; i++) {
+				complects[i] = complects[i].replace( this.regxp_props_spaces, '' );
+				var splitter_index = complects[i].indexOf(':');
+
+
+				//var parts = complects[i].split(this.regxp_props_coms_part);
+				//if ()
+
+				var prop = complects[i].slice( 0, splitter_index );
+				var statement = complects[i].slice( splitter_index + 1 ).replace( this.regxp_props_statement, '' );
+
+				if (!prop || !statement){
+					throw new Error('wrong declaration: ' + complex_value);
+					//return;
+				}
+				index[prop] = statement;
+				/*var item = this.createPropChange(node, prop, statement, prop + '$' + directive_name);
+				if (item){
+					result.push(item);
+				}*/
+				
+			}
+			if (index['pv-presence']) {
+
+			}
+			return index;
+		}
+	},
 	directives_p: {
-		'pv-text': function(node, full_declaration) {
+		'pv-text': function(node, full_declaration, directive_name) {
 			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getTextValue,
 				setValue: this.dom_helpres.setTextValue
-			});
+			}, directive_name);
 		},
-		'pv-class': function(node, full_declaration) {
+		'pv-class': function(node, full_declaration, directive_name) {
 			full_declaration = hlpSimplifyValue(full_declaration);
 			return new this.StandartChange(node, this, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
 				setValue: this.dom_helpres.setClassName,
 				simplifyValue: hlpSimplifyValue
-			});
+			}, directive_name);
 		},
-		'pv-props': function(node, full_declaration) {
+		'pv-props': function(node, full_declaration, directive_name) {
 			var result = [];
 			var complex_value = full_declaration;
 			var complects = complex_value.match(this.regxp_props_com);
@@ -258,7 +388,7 @@ var parser = {
 					throw new Error('wrong declaration: ' + complex_value);
 					//return;
 				}
-				var item = this.createPropChange(node, prop, statement);
+				var item = this.createPropChange(node, prop, statement, prop + '$' + directive_name);
 				if (item){
 					result.push(item);
 				}
@@ -268,7 +398,7 @@ var parser = {
 			//пример:
 			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
 		},
-		'pv-type': function(node, full_declaration) {
+		'pv-type': function(node, full_declaration, directive_name) {
 			if (!full_declaration){
 				return;
 			}
@@ -282,7 +412,7 @@ var parser = {
 				getValue: this.dom_helpres.getPVTypes,
 				setValue: this.dom_helpres.setPVTypes,
 				simplifyValue: hlpSimplifyValue
-			});
+			}, directive_name);
 		},
 		'pv-events': function(node, full_declaration) {
 			/*
@@ -353,7 +483,6 @@ var parser = {
 			return {
 				coll_name: coll_name,
 				for_model: for_model,
-				view_name: coll_name,
 				space: space,
 				filterFn: filterFn
 			};
@@ -413,7 +542,7 @@ var parser = {
 			return spv.setTargetField(node, wwtch.data, value || '');
 		}
 	},
-	createPropChange: function(node, prop, statement) {
+	createPropChange: function(node, prop, statement, directive_name) {
 		var parts = prop.split(DOT);
 		for (var i = 0; i < parts.length; i++) {
 			parts[i] = this.convertFieldname(parts[i]);
@@ -425,10 +554,10 @@ var parser = {
 			statement: statement,
 			getValue: this.prop_ch_helpers.getValue,
 			setValue: this.prop_ch_helpers.setValue
-		});
+		}, directive_name);
 	},
 	StandartChange: (function() {
-		var StandartChange = function(node, context, opts) {
+		var StandartChange = function(node, context, opts, directive_name) {
 			var calculator = opts.calculator;
 			var all_vs;
 			if (!calculator){
@@ -442,6 +571,12 @@ var parser = {
 					all_vs = calculator.propsToWatch;
 				}
 			}
+
+			if (!directive_name) {
+				throw new Error('directive_name must be provided');
+			}
+
+			this.directive_name = directive_name;
 			this.data = opts.data;
 			this.calculator = calculator;
 			this.context = context;
@@ -459,26 +594,49 @@ var parser = {
 				this.original_value = original_value;
 			}
 
+			if (!node.pvprsd) {
+				//debugger;
+			}
+			//this.w_cache_key = node.pvprsd + '_' + node.pvprsd_inst + '*' + directive_name;
+
 		};
 		StandartChange.prototype = {
-			checkFunc: function(states, wwtch) {
+			changeValue: function(new_value, wwtch) {
+				removeFlowStep(wwtch.context, wwtch.w_cache_key);
+				if (wwtch.current_value != new_value) {
+					var old_value = wwtch.current_value;
+					wwtch.current_value = new_value;
+					this.setValue.call(this.context, wwtch.node, new_value, old_value, wwtch);
+				}
+				
+			},
+			checkFunc: function(states, wwtch, async_changes, current_motivator) {
+				abortFlowStep(wwtch.context, wwtch.w_cache_key);
 				var new_value = this.calculator(states);
 				if (this.simplifyValue){
 					new_value = this.simplifyValue.call(this.context, new_value);
 				}
 				if (wwtch.current_value != new_value){
-					this.setValue.call(this.context, wwtch.node, new_value, wwtch.current_value, wwtch);
-					wwtch.current_value = new_value;
+					if (async_changes) {
+						var flow_step = wwtch.context.calls_flow.pushToFlow(this.changeValue, this, [new_value, wwtch], false, false, false, current_motivator);
+						wwtch.context.calls_flow_index[wwtch.w_cache_key] = flow_step;
+						//).pushToFlow(cb, mo_context, reg_args, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
+					} else {
+						this.changeValue(new_value, wwtch);
+					}
+					
 				}
 			},
 			helpers: {
-				checkFuncPublic: function(states) {
-					this.standch.checkFunc(states, this);
+				checkFuncPublic: function(states, async_changes, current_motivator) {
+					this.standch.checkFunc(states, this, async_changes, current_motivator);
 				}
 			},
 			createBinding: function(node, context) {
 				//var sfy_values = getFieldsTreesBases(standch.all_vs);
+				
 				var wwtch = {
+					w_cache_key: node.pvprsd + '_' + node.pvprsd_inst + '*' + this.directive_name,
 					data: this.data,
 					standch: this,
 					context: context,
@@ -510,7 +668,52 @@ var parser = {
 		return root;
 
 	},
+	comment_pvdiv_regexp: /(^.+?)\s/,
+	getCommentDirectivesData: function(cur_node, cur_node_parent, struc_store) {
+		//возвращает объект с индексом одной инструкции, основанной на тексте коммента
+		var
+			parent_dd = (cur_node_parent && cur_node_parent.pvprsd && this.getPVData(cur_node_parent, false, struc_store)) || null;
+		var directives_data = {
+			new_scope_generator: null,
+			instructions: {},
+			parent: parent_dd,
+			children: null,
+			scope_root: this.findDDRoot(parent_dd),
+			children_scopes: null
+		};
+
+		/*if ( parent_dd ) {
+			if (!parent_dd.children) {
+				parent_dd.children = [];
+			}
+			parent_dd.children.push( directives_data );
+		}*/
+
+
+		/*var matching_list = ['pv-replace'];
+		var matching_index = {
+			'pv-replace': true
+		};*/
+
+
+		var text_content = cur_node.textContent;
+		var directive_name = text_content.match(this.comment_pvdiv_regexp);
+		directive_name = directive_name && directive_name[1];
+
+
+
+		if (this.comment_directives.hasOwnProperty(directive_name)) {
+			var full_declaration = text_content.replace(this.comment_pvdiv_regexp, '');
+			directives_data.instructions[directive_name] = this.comment_directives_p[directive_name].call(this, cur_node, full_declaration, directive_name);
+			
+		}
+
+
+		return directives_data;
+	},
 	getDirectivesData: function(cur_node, cur_node_parent, struc_store) {
+
+		//возвращает объект с индексом инструкций нода, основанный на аттрибутах элемента
 		var
 			parent_dd = (cur_node_parent && cur_node_parent.pvprsd && this.getPVData(cur_node_parent, false, struc_store)) || null,
 			directives_data = {
@@ -525,12 +728,12 @@ var parser = {
 			i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
 			new_scope_generator = false;// current_data = {node: cur_node};
 
-		if ( parent_dd ) {
+		/*if ( parent_dd ) {
 			if (!parent_dd.children) {
 				parent_dd.children = [];
 			}
 			parent_dd.children.push( directives_data );
-		}
+		}*/
 
 		
 
@@ -576,7 +779,7 @@ var parser = {
 				value = attrs_by_names[directive_name][0].node.value;
 				
 				if (this.directives_p[directive_name]){
-					value = this.directives_p[directive_name].call(this, cur_node, value);
+					value = this.directives_p[directive_name].call(this, cur_node, value, directive_name);
 				}
 				directives_data.instructions[directive_name] = value;
 				
@@ -621,7 +824,7 @@ var parser = {
 			}
 		};
 	},
-	getPVData: function(cur_node, cur_node_parent, struc_store) {
+	getCachedPVData: function(cur_node, cur_node_parent, struc_store, is_comment) {
 		var directives_data = null;
 		var pvprsd = cur_node.pvprsd;
 		var _cache_index = struc_store || template_struc_store;
@@ -631,17 +834,32 @@ var parser = {
 			}
 			
 		} else {
-			directives_data = this.getDirectivesData(cur_node, cur_node_parent, struc_store);
-			
 			if (!_cache_index.struc_counter) {
 				_cache_index.struc_counter = 0;
 			}
 			pvprsd = ++_cache_index.struc_counter;
+			cur_node.pvprsd = pvprsd;
+			cur_node.pvprsd_inst = getNodeInstanceCount(pvprsd, _cache_index);
+			if (is_comment) {
+				directives_data = this.getCommentDirectivesData(cur_node, cur_node_parent, struc_store);
+			} else {
+				directives_data = this.getDirectivesData(cur_node, cur_node_parent, struc_store);
+			}
+			
+			
+			
 
 			_cache_index[pvprsd] = directives_data;
-			cur_node.pvprsd = pvprsd;
+			
 		}
 		return directives_data;
+	},
+	getCommentPVData: function(cur_node, cur_node_parent, struc_store) {
+		return this.getCachedPVData(cur_node, cur_node_parent, struc_store, true);
+	},
+	getPVData: function(cur_node, cur_node_parent, struc_store) {
+		return this.getCachedPVData(cur_node, cur_node_parent, struc_store);
+		
 	},
 	parse: function(start_node, struc_store) {
 		//полный парсинг, без байндинга
@@ -649,13 +867,17 @@ var parser = {
 		while (match_stack.length){
 			var cur_node_parent = match_stack.shift();
 			var cur_node = match_stack.shift();
-			if (cur_node.nodeType != 1){
-				continue;
+			var node_type = cur_node.nodeType;
+			if (node_type == 1){
+				this.getPVData(cur_node, cur_node_parent, struc_store);
+				for (i = 0; i < cur_node.childNodes.length; i++) {
+					match_stack.push(cur_node, cur_node.childNodes[i]);
+				}
+			} else if (node_type == 8) {
+				this.getCommentPVData(cur_node, cur_node_parent, struc_store);
+				//getCommentPVData
 			}
-			this.getPVData(cur_node, cur_node_parent, struc_store);
-			for (i = 0; i < cur_node.childNodes.length; i++) {
-				match_stack.push(cur_node, cur_node.childNodes[i]);
-			}
+			
 		}
 	},
 	parseEasy: function(start_node, vroot_node, struc_store) {
@@ -667,21 +889,29 @@ var parser = {
 			var cur_node_parent = match_stack.shift();
 			var cur_node = match_stack.shift();
 			var can_bind = match_stack.shift();
-			if (cur_node.nodeType != 1){
-				continue;
-			}
-			var i = 0, is_root_node = vroot_node === cur_node,
+			var node_type = cur_node.nodeType;
+			var directives_data;
+			if (node_type == 1){
+				var i = 0, is_root_node = vroot_node === cur_node;
 				directives_data = this.getPVData(cur_node, cur_node_parent, struc_store);
 
-			var can_bind_children = (!directives_data.new_scope_generator || is_root_node);
+				var can_bind_children = (!directives_data.new_scope_generator || is_root_node);
 
-			for (i = 0; i < cur_node.childNodes.length; i++) {
-				match_stack.push(cur_node, cur_node.childNodes[i], can_bind && can_bind_children);//если запрещен байндинг текущего нода, то и его потомков тоже запрещён
-			}
+				for (i = 0; i < cur_node.childNodes.length; i++) {
+					match_stack.push(cur_node, cur_node.childNodes[i], can_bind && can_bind_children);//если запрещен байндинг текущего нода, то и его потомков тоже запрещён
+				}
 
-			if (can_bind) {
-				list_for_binding.push(is_root_node, cur_node, directives_data);
+				if (can_bind) {
+					list_for_binding.push(is_root_node, cur_node, directives_data);
+				}
+			} else if (node_type == 8) {
+				directives_data = this.getCommentPVData(cur_node, cur_node_parent, struc_store);
+				if (can_bind) {
+					list_for_binding.push(false, cur_node, directives_data);
+				}
+				
 			}
+			
 
 		}
 		return list_for_binding;
@@ -695,16 +925,22 @@ var getAll = function(node) {
 	var i = 0;
 	while( iteration_list.length ){
 		var cur_node = iteration_list.shift();
-		if ( cur_node.nodeType != 1 ){
-			continue;
+		var node_type = cur_node.nodeType;
+		if ( node_type == 1 ){
+			for ( i = 0; i < cur_node.childNodes.length; i++ ) {
+				iteration_list.push( cur_node.childNodes[i] );
+			}
+			result.push( cur_node );
+		} else if (node_type == 8) {
+			result.push( cur_node );
 		}
-		for ( i = 0; i < cur_node.childNodes.length; i++ ) {
-			iteration_list.push( cur_node.childNodes[i] );
-		}
-		result.push( cur_node );
+		
 	}
 	return result;
 };
+
+
+var samplers_counter = 0;
 
 var SimplePVSampler = function(node, struc_store) {
 	node = $(node);
@@ -715,8 +951,134 @@ var SimplePVSampler = function(node, struc_store) {
 	this.onode = node;
 	
 	this.parsed = false;
+	this.structure_data_as_root = null;
+	this.structure_data = null;
 	this.struc_store = struc_store;
+	this._id = ++samplers_counter;
 };
+(function() {
+	var setStructureData = function(struc_store, is_root_node, cur_node, bind_data, states_list, children_list) {
+		if (!is_root_node) {
+			if (bind_data.instructions['pv-nest']) {
+				children_list.push({
+					item: parseStructureData(cur_node, struc_store),
+					data: bind_data.instructions['pv-nest']
+				});
+			}
+
+
+			var has_scope_gen = false;
+			for (var i = 0; i < parser.scope_g_list.length; i++) {
+				var directive_name = parser.scope_g_list[i];
+				if (bind_data.instructions[directive_name]) {
+					has_scope_gen = true;
+					if (parser.states_using_directives[directive_name]) {
+						//mainaly for pv-repeat
+						push.apply(states_list, bind_data.instructions[directive_name].sfy_values);
+					}
+					
+				}
+			}
+			if (has_scope_gen) {
+				//mainaly pv-repeat and pv-nest
+				return;
+			}
+		}
+		for (var i = 0; i < parser.sud_list.length; i++) {
+			var cur = parser.sud_list[i];
+			if (bind_data.instructions[cur]) {
+				push.apply(states_list, bind_data.instructions[cur].sfy_values);
+				//debugger;
+			}
+		}
+	};
+
+
+	var parseStructureData = function(node, struc_store, is_not_root) {
+		var structure_data = {
+			node_id: null,
+			states: [],
+			children: null,
+			children_by_mn: null
+		};
+		var children_list = [];
+
+
+		var bind_data_list = parser.parseEasy(node, !is_not_root && node, struc_store);
+		for (var i = 0; i < bind_data_list.length; i+=3) {
+			var
+				is_root_node = bind_data_list[ i ],
+				cur_node = bind_data_list[ i + 1 ],
+				bind_data = bind_data_list[ i + 2 ];
+
+			setStructureData(struc_store, is_root_node, cur_node, bind_data, structure_data.states, children_list);
+		}
+		structure_data.states = spv.getArrayNoDubs(structure_data.states);
+
+
+		if (children_list.length) {
+			var usual = null, by_model_name = null;
+
+			for (var i = 0; i < children_list.length; i++) {
+				var cur = children_list[i];
+				if (cur.data.for_model) {
+					if (!by_model_name) {
+						by_model_name = {};
+					}
+					spv.setTargetField(by_model_name, [cur.data.coll_name, cur.data.for_model, cur.data.space || 'main'], cur.item);
+				} else {
+					if (!usual) {
+						usual = {};
+					}
+					spv.setTargetField(usual, [cur.data.coll_name, cur.data.space || 'main'], cur.item);
+				}
+				
+			}
+			
+			structure_data.children = usual;
+			structure_data.children_by_mn = by_model_name;
+			/*
+
+			coll_name: "top_songs"
+			filterFn: undefined
+			for_model: undefined
+			space: ""
+
+			*/
+		}
+		structure_data.node_id = node.pvprsd;
+		return structure_data;
+	};
+
+	SimplePVSampler.prototype.getStructure = function(is_not_root) {
+		var str_d_prop_name = 'structure_data' + (is_not_root ? '' : '_as_root');
+
+		if (!this[str_d_prop_name]) {
+			this[str_d_prop_name] = parseStructureData(this.onode, this.struc_store, is_not_root);
+			//this[str_d_prop_name]._id = this._id;
+			this.parsed = true;
+			
+		}
+		return this[str_d_prop_name];
+		
+	};
+
+})();
+
+var getNodeInstanceCount = function(pvprsd, struc_store) {
+	if (!struc_store.instances_ci) {
+		struc_store.instances_ci = {};
+	}
+	var instances_ci = struc_store.instances_ci;
+	if (!instances_ci.hasOwnProperty(pvprsd)) {
+		instances_ci[pvprsd] = 0;
+	} else {
+		instances_ci[pvprsd]++;
+	}
+
+	return instances_ci[pvprsd];
+};
+
 SimplePVSampler.prototype.getClone = function() {
 	if (!this.onode){
 		return;
@@ -733,8 +1095,11 @@ SimplePVSampler.prototype.getClone = function() {
 	if (all_onodes.length !== all_cnodes.length){
 		throw new Error('something wrong');
 	}
+	
+	
 	for (var i = 0; i < all_onodes.length; i++) {
 		all_cnodes[i].pvprsd = all_onodes[i].pvprsd;
+		all_cnodes[i].pvprsd_inst = getNodeInstanceCount(all_onodes[i].pvprsd, this.struc_store);
 	}
 	return cloned;
 };
@@ -742,6 +1107,21 @@ SimplePVSampler.prototype.clone = SimplePVSampler.prototype.getClone;
 
 
 var directives_h = {
+		'pv-replace': function(node, index) {
+			if (index) {
+				if (index['pv-replace']) {
+
+				} else {
+					if (!this.pv_replacers_simple) {
+						this.pv_replacers_simple = [];
+					}
+					this.pv_replacers_simple.push({
+						sample_name: index.sample_name,
+						node: node
+					});
+				}
+			}
+		},
 		'pv-text': function(node, standch){
 			if (standch){
 				var wwtch = standch.createBinding(node, this);
@@ -783,14 +1163,14 @@ var directives_h = {
 			}
 			//
 		},
-		'pv-events': function(node, pvevents_data) {
-			if (pvevents_data){
+		'pv-events': function(node, pv_events_data) {
+			if (pv_events_data){
 
 				if (!this.sendCallback){
 					throw new Error('provide the events callback handler to the Template init func');
 				}
-				for (var i = 0; i < pvevents_data.length; i++) {
-					var evdata = pvevents_data[i];
+				for (var i = 0; i < pv_events_data.length; i++) {
+					var evdata = pv_events_data[i];
 					this.bindPVEvent(node, evdata);
 				}
 			}
@@ -842,9 +1222,8 @@ spv.Class.extendTo(PvTemplate, {
 					views: [],
 					node: node,
 					sampler: new SimplePVSampler(node, this.struc_store),
-
+					coll_name: data.coll_name,
 					for_model: data.for_model,
-					view_name: data.view_name,
 					space: data.space,
 					filterFn: data.filterFn
 				});
@@ -872,6 +1251,7 @@ spv.Class.extendTo(PvTemplate, {
 			this.pv_repeats_data.push(repeat_data);
 			var nothing;
 			this.states_watchers.push({
+				w_cache_key:  node.pvprsd + '_' + node.pvprsd_inst + '*' + 'pv-repeat',
 				node: node,
 				context: this,
 				original_fv: nothing,
@@ -890,7 +1270,7 @@ spv.Class.extendTo(PvTemplate, {
 
 				values: calculator.propsToWatch,
 				sfy_values: sfy_values,
-				checkFunc: hndPVRepeat
+				checkFunc: checkPVRepeat
 			});
 		}
 	},
@@ -929,7 +1309,7 @@ spv.Class.extendTo(PvTemplate, {
 			scope: this.scope
 		});
 	},
-	checkChanges: function(changes, full_states) {
+	checkChanges: function(changes, full_states, async_changes, current_motivator) {
 		//вместо того что бы собирать новый хэш на основе массива изменений используются объект всеъ состояний
 		var matched = [], i = 0;
 		for (i = 0; i < changes.length; i+= 2 ) { //ищем подходящие директивы
@@ -948,21 +1328,25 @@ spv.Class.extendTo(PvTemplate, {
 
 			var remainded_stwats = spv.arrayExclude(this.states_watchers, matched);
 			for (i = 0; i < remainded_stwats.length; i++) {
-				remainded_stwats[i].checkFunc(states_summ);
+				remainded_stwats[i].checkFunc(states_summ, async_changes, current_motivator);
 			}
 		}
 
 		for (i = 0; i < matched.length; i++) {
-			matched[i].checkFunc(states_summ);
+			matched[i].checkFunc(states_summ, async_changes, current_motivator);
 		}
 	},
 	getStatesSumm: function(states) {
 		var states_summ;
-		if (this.spec_states){
-			states_summ = {};
-			if (states){
-				spv.cloneObj(states_summ, states);
+		if (this.spec_states_props_list){
+			states_summ = Object.create(states);
+
+			for (var i = 0; i < this.spec_states_props_list.length; i+=2) {
+				var state_name = this.spec_states_props_list[ i ];
+				var state_value = this.spec_states_props_list[ i + 1];
+				states_summ[ state_name ] = state_value;
 			}
+
 			spv.cloneObj(states_summ, this.spec_states);
 
 		} else {
@@ -987,9 +1371,9 @@ spv.Class.extendTo(PvTemplate, {
 	handleDirective: function(directive_name, node, full_declaration) {
 		var method = directives_h[directive_name];
 		if (!method){
-			window.dizi = [directive_name, node, full_declaration]
-			window.dizi2 = directives_h;
-			window.dizi3 = directives_h[directive_name];
+			//window.dizi = [directive_name, node, full_declaration]
+			//window.dizi2 = directives_h;
+			//window.dizi3 = directives_h[directive_name];
 			console.log(directive_name, node, full_declaration);
 			console.log(directives_h);
 		}
@@ -999,7 +1383,7 @@ spv.Class.extendTo(PvTemplate, {
 		var result = this.children_templates;
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			var real_name = cur.view_name;
+			var real_name = cur.coll_name;
 			var space = cur.space || 'main';
 			if (cur.for_model){
 				var field = [real_name, 'by_model_name', space];
@@ -1052,6 +1436,12 @@ spv.Class.extendTo(PvTemplate, {
 					this.handleDirective(directive_name, cur_node, directives_data.instructions[directive_name]);
 				}
 				
+			}
+			for (i = 0; i < parser.comment_directives_names_list.length; i++) {
+				directive_name = parser.comment_directives_names_list[i];
+				if (directives_data.instructions[directive_name]){
+					this.handleDirective(directive_name, cur_node, directives_data.instructions[directive_name]);
+				}
 			}
 		}
 	},

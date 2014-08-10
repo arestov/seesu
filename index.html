@@ -106,7 +106,9 @@
 				{{current_lev_num != $lev_num && 'inactive-page'}}
 				{{current_lev_num == $lev_num && 'full-page'}}
 				{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}
-				{{!disallow_animation && 'can_be_animated'}}"
+				{{!disallow_animation && 'can_be_animated'}}
+				{{map_animating && 'map_animating'}}
+				"
 			pv-anchor="con">
 			<div 
 				class="complex-page-scroll_con"
@@ -116,6 +118,11 @@
 					pv-anchor="material">
 				</div>
 			</div>
+		</div>
+		<div class="usual_page lilists">
+			<div pv-anchor="lilists_con"></div>
+			<!--pv-replace sample_name:view_sources-->
+			
 		</div>
 
 
@@ -204,6 +211,7 @@
 					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
 				</li>
 			</ul>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<div class="lula_page usual_page" pv-class="lula_page usual_page {{!vmp_show && 'hidden'}}">
@@ -218,6 +226,7 @@
 				</div>
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<div class="lulas_page usual_page" pv-class="lulas_page usual_page {{!vmp_show && 'hidden'}}">
@@ -243,6 +252,7 @@
 
 				</li>
 			</ul>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="playlist_panel" pv-nest="plarow">
 			<div class="playlist-actions">
@@ -312,6 +322,10 @@
 				"
 				></ul>
 			<div class="lang localize-nothing-found" pv-class="{{!error && 'hidden'}}"></div>
+			<div class="hidden vs_con"  pv-class="{{vis_overview && 'hidden'}}">
+				
+			</div>
+			
 
 			<a 
 				class='load-more-list-data lang localize-load-more'
@@ -332,6 +346,7 @@
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="album_preview-big" 
 			pv-events="click::requestPage"
@@ -358,6 +373,7 @@
 					<span pv-text="{{big_desc}}"></span>
 				</div>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<!-- userslist -->
@@ -396,6 +412,7 @@
 				</div>
 				
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -501,6 +518,7 @@
 				</div>
 				<div class="aqc_preview preview_ffp" pv-anchor="users_acqutes"></div>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!vmp_show && 'hidden'}}">
 			<div class="lfm_user_page-header">
@@ -514,6 +532,7 @@
 					<a pv-type="way-point" class="external" pv-props="href:{{'http://last.fm/user/' + userid}}">last.fm profile</a>
 				</div>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		
 		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page {{!vmp_show && 'hidden'}}">
@@ -527,11 +546,14 @@
 					<a pv-type="way-point" class="external" pv-props="href:{{'https://vk.com/id' + userid}}">vk.com profile</a>
 				</div>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
 		<div class="usual_page albums_page">
+			<!--pv-replace sample_name:view_sources-->
 			<div class="albums_list_con" pv-anchor="albums_list_c"></div>
+
 			<div 
 				class="load-more-list-data hidden lang localize-load-more"
 				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}"
@@ -545,12 +567,15 @@
 		<div 
 			class="artists_list no_arfb" 
 			pv-class="artists_list no_arfb {{!vmp_show && 'hidden'}} {{list_loading && 'list_loading_state'}}">
+			
 			<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 			<ul pv-anchor="listc">
 				
 			</ul>
+			
 		</div>
 
 
@@ -566,6 +591,7 @@
 				</span>
 
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		
 
@@ -607,7 +633,7 @@
 					<div class="area-description desc_prevw_list  tags_list-preview" pv-anchor="listc"></div>
 				</div>
 			</div>
-			
+			<!--pv-replace sample_name:view_sources-->
 			
 		</div>
 
@@ -705,7 +731,7 @@
 				<div class="rightcol art_card-bio " pv-anchor="bio" pv-class="rightcol art_card-bio {{bio__loading && 'loading'}}"></div>
 			</div>
 
-			
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="songcard_page usual_page"
 			pv-class="songcard_page usual_page {{!vmp_show && 'hidden'}}">
@@ -725,7 +751,7 @@
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
-
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="photo-cont">
 			<div class="photo-cont-lift" pv-anchor="phocoli">
@@ -1217,7 +1243,7 @@
 					pv-nest="fans" pv-events="click::requestPage" pv-type="way-point">
 					<div class="intrack_page-h lang localize-lastfm_fans">
 					</div>
-					<div class="song_fans-l-intrack" >
+					<div class="song_fans-l-intrack" pv-class="song_fans-l-intrack {{loading_nesting_list_items && 'loading_list_items'}}">
 						<div
 							pv-nest="list_items | limitTo: 13"
 							class="song_fan-b-tck hidden" 
@@ -1236,7 +1262,7 @@
 				<div class="intrack_page" 
 					pv-nest="vk_posts" pv-events="click::requestPage" pv-type="way-point">
 					<div class="intrack_page-h"><span class="lang localize-posts-from">Posts form</span><br/>vk.com</div>
-					<div class="song_fans-l-intrack" >
+					<div class="song_fans-l-intrack" pv-class="song_fans-l-intrack {{loading_nesting_lists_list && 'loading_list_items'}}">
 						<div
 							pv-repeat="image in image_previews | limitTo: 13"
 							class="song_fan-b-tck"
@@ -1646,8 +1672,10 @@
 					</ul>
 				</div>
 			</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="vk_posts_page usual_page">
+			<!--pv-replace sample_name:view_sources-->
 			<div pv-nest="lists_list" class="vk_post" pv-events="click::requestPage">
 				<div class="vk_post_header">
 					<div class="leftcol">
@@ -1690,6 +1718,13 @@
 			</div>
 			
 		</div>
+		<div class="view_sources hidden" pv-class="view_sources {{!view_sources.length && 'hidden'}}">
+			Powered by
+			<div>
+				<a class="external data_source_link" pv-repeat="source in view_sources" pv-text="{{source}}" pv-props="href:{{'http://' + source}}"></a>
+			</div>
+			
+		</div>
 		<!-- // ui samples -->
 	</div>
 <div id="slider">
@@ -1714,7 +1749,12 @@
 	</div>
 	<div id="slider-materail" class="shadowed">
 		
-			<div class="screens" id="screens"><div class="app_map_con">
+			<div class="screens" id="screens">
+				<div id="pages_area_width_streamer-wrapper">
+					<iframe src="about:blank" id="pages_area_width_streamer"></iframe>
+				</div>
+				
+				<div class="app_map_con">
 				<div class="shared-parts">
 					<form id="search" name="search" action='/o' method="get" class="" pv-class="{{!show_search_form && 'hidden'}}">
 						<!-- google stat for custom search in browsers -->
@@ -1762,7 +1802,7 @@
 									class="hint-query js-serv"
 									pv-text="{{nice_artist_hint}}"
 									pv-anchor='hint-query'
-									pv-events="click::requestSearchHint">The Beatles</a>
+									pv-events="click::requestSearchHint mouseout::changeSearchHint">The Beatles</a>
 								
 							</p>
 							<div 
@@ -1891,7 +1931,7 @@
 							
 							
 							
-							
+							<!--pv-replace sample_name:view_sources-->
 						</div>
 					</div>
 

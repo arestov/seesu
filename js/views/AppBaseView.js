@@ -47,7 +47,7 @@ LevContainer.prototype = {
 	completeAnimation: function() {
 		while (this.callbacks.length){
 			var cb = this.callbacks.shift();
-			this.context.nextTick(cb);
+			this.context.nextLocalTick(cb);
 		}
 	}
 };
@@ -112,6 +112,13 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	createDetails: function() {
 		this._super();
 
+		(function(_this) {
+			_this.getSampleForTemplate = function(sample_name) {
+				return _this.getSample(sample_name);
+			};
+		})(this);
+		
+
 		this.tpls = [];
 		this.struc_store = {};
 		this.els = {};
@@ -146,7 +153,9 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				spec_states: {
 					'$lev_num': num
 				},
-				struc_store: this.struc_store
+				struc_store: this.struc_store,
+				calls_flow: this._getCallsFlow(),
+				getSample: this.getSampleForTemplate
 			});
 
 			this.tpls.push(tpl);
@@ -220,6 +229,9 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	},
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
+	},
+	scollNeeded: function() {
+		return document.body.scrollHeight > document.body.clientHeight;
 	},
 	scrollTo: function(jnode, view_port, opts) {
 		if (!jnode){return false;}
@@ -317,20 +329,31 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			return $(sampler).clone();
 		}
 	},
-	
+	'compx-map_animating': [
+		['map_animation_num_started', 'map_animation_num_completed'],
+		function (started_num, completed_num) {
+			return typeof started_num == 'number' && started_num != completed_num;
+		}
+	],
 	markAnimationStart: function(models, changes_number) {
+		this.updateState('map_animation_num_started', changes_number, {sync_tpl: true});
 		for (var i = 0; i < models.length; i++) {
-			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number);
+			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number, {sync_tpl: true});
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
 	markAnimationEnd: function(models, changes_number) {
+		if (this.state('map_animation_num_started') == changes_number) {
+			this.updateState('map_animation_num_completed', changes_number, {sync_tpl: true});
+		}
+
+
 		for (var i = 0; i < models.length; i++) {
 			//
 			var mpx = this.getStoredMpx(models[i].getMD());
 
 			if (mpx.state('animation_started') == changes_number){
-				mpx.updateState('animation_completed', changes_number);
+				mpx.updateState('animation_completed', changes_number, {sync_tpl: true});
 			}
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
@@ -381,18 +404,33 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					//var offset_parent_node = targt_con.offsetParent();
 					var parent_offset = this.getBoxDemension(this.getAMCOffset, 'screens_offset');
 					//или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
-					var offset = targt_con.offset(); //domread
+
+
+
+					//var offset = targt_con.offset(); //domread
+
+					var offset = target_in_parent.getBoxDemension(function() {
+						return targt_con.offset();
+					}, 'con_offset', target_in_parent._lbr.innesting_pos_current, this.state('window_height'), this.state('workarea_width'));
+
+					var width = target_in_parent.getBoxDemension(function() {
+						return targt_con.outerWidth();
+					}, 'con_width', this.state('window_height'), this.state('workarea_width'));
+
+					var height = target_in_parent.getBoxDemension(function() {
+						return targt_con.outerHeight();
+					}, 'con_height', this.state('window_height'), this.state('workarea_width'));
+
+					
+					//var width = targt_con.outerWidth();  //domread
+					//var height = targt_con.outerHeight(); //domread
 
 					var top = offset.top - parent_offset.top;
-					var width = targt_con.outerWidth();  //domread
-					var height = targt_con.outerHeight(); //domread
-
-
-					//return ;
 
 					var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
-					var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('window_width'));
+					var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('workarea_width'));
 
+					
 
 					var scale_x = width/con_width;
 					var scale_y = height/con_height;
@@ -421,7 +459,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 	},
 	setVMpshow: function(target_mpx, value) {
-		target_mpx.updateState('vmp_show', value);
+		target_mpx.updateState('vmp_show', value, {sync_tpl: true});
 	},
 	'model-mapch': {
 		'move-view': function(change) {
@@ -471,21 +509,19 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			var current_lev_num = target_md.map_level_num;
 			
 			if (animation_data){
-				this.updateState('disallow_animation', true);
+				this.updateState('disallow_animation', true, {sync_tpl: true});
 				animation_data.lc.c.css(animation_data.transform_values);
-				//lc.tpl.spec_states['disallow_animation'] = true;
-				//lc.tpl.spec_states['disallow_animation'] = false;
-				this.updateState('disallow_animation', false);
+				this.updateState('disallow_animation', false, {sync_tpl: true});
 			}
 
-			this.updateState('current_lev_num', current_lev_num);
+			this.updateState('current_lev_num', current_lev_num, {sync_tpl: true});
 			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 
 
 			if (animation_data && animation_data.lc){
 				animation_data.lc.c.height(); //заставляем всё пересчитать
 				animation_data.lc.c.css(empty_transform_props);
-				/*this.nextTick(function() {
+				/*this.nextLocalTick(function() {
 					
 				});*/
 				animation_data.lc.c.height(); //заставляем всё пересчитать
@@ -501,7 +537,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (!animation_data){
 			//
 			this.markAnimationEnd(models, transaction_data.changes_number);
-			/*this.nextTick(function() {
+			/*this.nextLocalTick(function() {
 				
 			});*/
 		} else {
@@ -512,7 +548,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 		
 	},
-	'collch-$spec_common': {
+	'collch-$spec_common-map_slice': {
 		by_model_name: true,
 		place: AppBaseView.viewOnLevelP
 	},
@@ -551,10 +587,10 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		for (i = array.length - 1; i >= 0; i--) {
 			cur = array[i];
 			var model_name = cur.model_name;
-			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], nesname, cur);
+			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + nesname + ':' + model_name)){
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + nesname + ':' + model_name], nesname, cur);
 			} else {
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], nesname, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common-' + nesname ], nesname, cur);
 			}
 		}
 
@@ -567,7 +603,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					target_md = this.findBMapTarget(array);
 
 					if (target_md){
-						this.updateState('current_lev_num', target_md.map_level_num);
+						this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
 					}
 					
 				}
@@ -585,7 +621,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			for (i = 0; i < array.length; i++) {
 				this.setVMpshow(this.getStoredMpx(array[i]), nesting_data.residents_struc.mp_show_states[i]);
 			}
-			this.updateState('current_lev_num', target_md.map_level_num);
+			this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
 			this.markAnimationEnd(models, -1);
 			this.completely_rendered_once['map_slice'] = true;
 		}
