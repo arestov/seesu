@@ -4463,6 +4463,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	updateTemplatedWaypoints: function(add, remove) {
+		if (!this.isAlive()) {
+			return;
+		}
 		var i = 0;
 		if (remove){
 			var nodes_to_remove = spv.filter(remove, 'node');

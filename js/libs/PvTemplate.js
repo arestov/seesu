@@ -1193,6 +1193,15 @@ spv.Class.extendTo(PvTemplate, {
 				cur.call(this);
 			}
 		}
+		if (this.calls_flow_index) {
+			for (var w_cache_key in this.calls_flow_index) {
+				if (this.calls_flow_index.hasOwnProperty(w_cache_key) && typeof this.calls_flow_index[w_cache_key] == 'function') {
+					this.calls_flow_index[w_cache_key].abort();
+					this.calls_flow_index[w_cache_key] = null;
+		
+				}
+			}
+		}
 	},
 	getTypedNodes: function() {
 		var result = [];
