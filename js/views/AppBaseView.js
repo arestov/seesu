@@ -760,22 +760,26 @@ AppBaseView.extendTo(WebAppView, {
 		}).call(this);
 
 		this.onDie(function(){
-			var wd = this.getWindow();
-			$(wd).off();
-			$(wd).remove();
-			wd = null;
+			
 			_this = null;
 		});
 	},
 	remove: function() {
 		this._super();
 		if (this.d){
+			var wd = this.getWindow();
+			$(wd).off();
+			$(wd).remove();
+			wd = null;
+			
 			if (this.d.body && this.d.body.firstChild && this.d.body.firstChild.parentNode){
 				$(this.d.body).off().find('*').remove();
 				
 			}
 			$(this.d).off();
 			$(this.d).remove();
+
+			
 		}
 		
 		
