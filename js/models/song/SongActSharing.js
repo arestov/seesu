@@ -31,7 +31,17 @@ invstg.BaseSuggest.extendTo(struserSuggest, {
 	}
 });
 
-
+var VKLoginFSearch = function() {};
+comd.VkLoginB.extendTo(VKLoginFSearch, {
+	init: function(opts) {
+		this._super(opts, {
+			desc: app_env.vkontakte ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
+		}, {
+			open_opts: {settings_bits: 2},
+			auth: opts.map_parent.app.vk_auth
+		});
+	}
+});
 
 
 
@@ -39,48 +49,57 @@ var StrusersRSSection = function() {};
 invstg.SearchSection.extendTo(StrusersRSSection, {
 	resItem: struserSuggest,
 	model_name: "section-vk-users",
-	init: function(opts) {
-		this.app = opts.app;
-		this.map_parent = opts.map_parent;
+	'compx-can_searchf_vkopt': [
+		['vk_opts'],
+		function(vk_opts) {
+			return (vk_opts & 2) * 1;
+		}
+	],
+	'compx-can_post_to_own_wall': [
+		['vk_env', 'has_vk_api'],
+		function(vk_env, has_vk_api) {
+			return vk_env || has_vk_api;
+		}
+	],
+	'compx-can_search_friends': [
+		['vk_env', 'has_vk_api', 'can_searchf_vkopt'],
+		function(vk_env, has_vk_api, can_searchf_vkopt) {
+			if (vk_env) {
+				return !!can_searchf_vkopt;
+			} else {
+				return !!has_vk_api;
+			}
+		}
+	],
+	'compx-needs_vk_auth': [
+		['can_search_friends'],
+		function(can_search_friends) {
+			return !can_search_friends;
+		}
+	],
+	//desc: improve ? 
+	'nest-vk_auth': [VKLoginFSearch, false, 'needs_vk_auth'],
+	init: function() {
 		this._super.apply(this, arguments);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
-		var _this = this;
-		if (app_env.vkontakte || this.app.vk_api){
-			this.updateState("can_post_to_own_wall", true);
-		} else {
-			this.app.on("vk-api", function() {
-				_this.updateState("can_post_to_own_wall", true);
-			});
-		}
-		if (!app_env.vkontakte){
-			if (this.app.vk_api){
-				this.updateState("can_search_friends", true);
-				this.removeVKAudioAuth();
-			} else {
-				this.addVKAudioAuth();
-				
-				this.app.on("vk-api", function() {
-					_this.removeVKAudioAuth();
-					_this.updateState("can_search_friends", true);
-				});
-			}
-		} else {
-			this.checkVKFriendsAccess(this.app._url.api_settings);
 
-			var binded;
-			var bindFriendsAccessChange = function() {
-				if (!binded && window.VK){
-					binded = true;
-					this.app.vk_auth.on('settings-change', function(vk_opts) {
-						_this.checkVKFriendsAccess(vk_opts);
-					});
-				}
-			};
-			bindFriendsAccessChange();
-			if (!binded){
-				this.app.once("vk-site-api", bindFriendsAccessChange);
-			}
+		this.updateManyStates({
+			vk_env: !!app_env.vkontakte,
+			has_vk_api: !!this.app.vk_api,
+			vk_opts: !!app_env.vkontakte && this.app._url.api_settings
+		});
+
+		var _this = this;
+
+		this.app.on("vk-api", function(api) {
+			_this.updateState("has_vk_api", !!api);
+		});
+
+		if (app_env.vkontakte) {
+			this.app.vk_auth.on('settings-change', function(vk_opts) {
+				_this.updateState('vk_opts', vk_opts);
+			});
 		}
 
 		var cu_info = this.app.s.getInfo('vk');
@@ -126,48 +145,9 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 
 		this.appendResults(r, true);
 	},
-	checkVKFriendsAccess: function(vk_opts) {
-		var can = (vk_opts & 2) * 1;
-		this.updateState("can_search_friends", can);
-		if (!can){
-			this.addVKAudioAuth(true);
-		} else {
-			this.removeVKAudioAuth();
-		}
-	},
-	addVKAudioAuth: function(improve) {
-
-		
-		if (!this.vk_auth_rqb){
-			
-			this.vk_auth_rqb = new comd.VkLoginB();
-			this.vk_auth_rqb.init({
-				auth: this.app.vk_auth
-			}, {
-				open_opts: {settings_bits: 2},
-				desc: improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
-			});
-			this.updateNesting('vk_auth', this.vk_auth_rqb);
-
-		}
-		//to find you friends
-
-
-		this.updateState("needs_vk_auth", true);
-
-	},
 	postToVKWall: function() {
 		this.mo.postToVKWall();
-	},
-	removeVKAudioAuth: function() {
-		if (this.vk_auth_rqb){
-			this.vk_auth_rqb.die();
-			delete this.vk_auth_rqb;
-
-		}
-		this.updateState("needs_vk_auth", false);
-
-	},
+	}
 
 });
 
@@ -210,9 +190,8 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 
 var LFMFriendsSection = function() {};
 invstg.SearchSection.extendTo(LFMFriendsSection, {
-	init: function(opts) {
-		this.app = opts.app;
-		this.map_parent = opts.map_parent;
+	//'nest-lfm_friends': ['#/users/me/lfm:friends', 'can_share'],
+	init: function() {
 		this._super.apply(this, arguments);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
@@ -311,9 +290,7 @@ invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
 
 var LFMOneUserSection = function() {};
 invstg.SearchSection.extendTo(LFMOneUserSection, {
-	init: function(opts) {
-		this.app = opts.app;
-		this.map_parent = opts.map_parent;
+	init: function() {
 		this._super.apply(this, arguments);
 		this.mo = this.map_parent.mo;
 		this.rpl = this.map_parent.map_parent;
@@ -397,40 +374,35 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 });
 
 
+var LfmSharingAuth = function() {};
+LfmAuth.LfmLogin.extendTo(LfmSharingAuth, {
+	access_desc: localize('lastfm-sharing-access')
+});
 
-var StrusersRowSearch = function(rpl, mo) {
-	this.init(rpl, mo);
-};
+var StrusersRowSearch = function() {};
 invstg.Investigation.extendTo(StrusersRowSearch, {
 	skip_map_init: true,
-	init: function(opts, mo) {
-		this._super();
+	'nest-lfm_auth': [LfmSharingAuth],
+	'nest-section': [[StrusersRSSection, LFMFriendsSection, LFMOneUserSection]],
+	init: function() {
+		this._super.apply(this, arguments);
 		//this.rpl = rpl;
-		this.app = opts.app;
-		this.map_parent = opts.map_parent;
-		this.mo = mo;
-
-		this.addSection('users', StrusersRSSection);
-		this.addSection('friends', LFMFriendsSection);
-		this.addSection('one-user', LFMOneUserSection);
-
-		var lfm_auth = new LfmAuth.LfmLogin();
-		lfm_auth.init({
-				auth: this.app.lfm_auth,
-				pmd: this
-			}, {
-				desc: localize('lastfm-sharing-access')
-			});
-
-		this.updateNesting('lfm_auth', lfm_auth);
+		this.mo = this.map_parent.mo;
+		this.nestings_opts = {
+			auth: this.app.lfm_auth,
+			pmd: this
+		};
 		
 	},
 	
 	searchf: function() {
 		var query = this.q;
 		var _this = this;
-		['users', 'friends', 'one-user'].forEach(function(el) {
+		['section-vk-users', 'section-lfm-friends', 'section-lfm-user'].forEach(function(el) {
 			var section = _this.g(el);
+			if (!section) {
+				return;
+			}
 			section.setActive();
 			section.searchByQuery(query);
 		});
@@ -438,32 +410,18 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 });
 
 
-var SongActSharing = function(actionsrow, mo){
-	this.init(actionsrow, mo);
-};
+var SongActSharing = function(){};
 comd.BaseCRow.extendTo(SongActSharing, {
-	init: function(actionsrow, mo){
+	init: function(){
 
 		
 		
-		this.actionsrow = actionsrow;
-		this.app = mo.app;
-		this.mo = mo;
-		this._super();
+		this._super.apply(this, arguments);
+		this.actionsrow = this.map_parent;
+		this.mo = this.map_parent.map_parent;
 
 		this.wch(this.mo, 'url_part', this.hndUpdateShareURL);
 
-		
-
-		
-		this.searcher = new StrusersRowSearch({
-			app: this.app,
-			map_parent: this
-		}, mo);
-
-
-		
-		this.updateNesting('searcher', this.searcher);
 
 
 		this.search('');
@@ -471,13 +429,17 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		//this.share_url = this.mo.getShareUrl();
 		
 	},
+	'nest-searcher': [StrusersRowSearch],
 	hndUpdateShareURL: function() {
 		this.updateState('share_url', this.mo.getShareUrl());
 	},
 
 	search: function(q) {
 		this.updateState('query', q);
-		this.searcher.changeQuery(q);
+		var searcher = this.getNesting('searcher');
+		if (searcher) {
+			searcher.changeQuery(q);
+		}
 	},
 	model_name: 'row-share'
 });

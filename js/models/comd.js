@@ -354,7 +354,7 @@ var PartsSwitcher = function() {};
 
 provoda.Model.extendTo(PartsSwitcher, {
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.context_parts = {};
 		this.active_part = null;
 	},
@@ -420,24 +420,22 @@ provoda.Model.extendTo(BaseCRow, {
 var VkLoginB = function() {};
 provoda.Model.extendTo(VkLoginB, {
 	model_name: 'auth_block_vk',
-	init: function(opts, params) {
-		this._super();
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
 
 		var _this = this;
-		this.auth = opts.auth;
-		this.pmd = opts.pmd;
+		this.auth = (params && params.auth) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) || opts.auth;
+		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
 
 		var settings_bits;
 
-		if (params){
+		if (params) {
 			if (params.open_opts){
 				this.open_opts = params.open_opts;
 				if (this.open_opts.settings_bits){
 					settings_bits = this.open_opts.settings_bits;
 				}
 			}
-			this.setRequestDesc(params.desc);
-
 			if (params.notf){
 				
 				this.notf = params.notf;
@@ -453,12 +451,19 @@ provoda.Model.extendTo(VkLoginB, {
 				}
 				this.updateState('has_notify_closer', true);
 			}
+		}
+
+		if (data){
+			
+			this.setRequestDesc(data.desc);
+
+			
 		} else {
 			this.setRequestDesc();
 		}
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep-sandbox', true);
+			_this.updateState('deep_sandbox', true);
 		}
 		
 

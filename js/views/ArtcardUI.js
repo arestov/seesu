@@ -90,17 +90,19 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 	},
 
 	bindBase: function() {
-
 		this.photo_data = {};
 		this.dom_related_props.push('photo_data');
-
-
-		this.wch(this.parent_view, 'vmp_show', function(e) {
-			if (!e.value){
-				this.setVisState('wamo_info', false);
-			}
-		});
-
+	},
+	'compx-parent_vmp_show': [
+		['^vmp_show'],
+		function(vmp_show) {
+			return vmp_show;
+		}
+	],
+	'stch-parent_vmp_show': function(state) {
+		if (!state) {
+			this.setVisState('wamo_info', false);
+		}
 	},
 	'compx-infb_text': {
 		depends_on: ['artist_name', 'playcount', 'listeners', 'bio'],
@@ -155,15 +157,21 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 	getPamoramaWidth: function() {
 		return this.img_panorama.checkViewportWidth();
 	},
-	'compx-panorama_width':{
-		depends_on: ['panorama', '#window_width', 'pvm_key'],
-		fn: function(panorama, window_width, pvm_key) {
-			if (panorama && pvm_key){
-				//ширина иллюминатора - от ширины экрана + состояния mp-show
-				return this.getBoxDemension(this.getPamoramaWidth, 'panorama_width', window_width, pvm_key);
-			}
+	'stch-key-panorama_width': function(state) {
+		if (state) {
+			this.updateState('panorama_width', this.getBoxDemensionByKey(this.getPamoramaWidth, state));
 		}
 	},
+	'compx-key-panorama_width': [
+		['panorama', '#workarea_width', 'pvm_key'],
+		function (panorama, workarea_width, pvm_key) {
+			if (panorama && pvm_key){
+				//ширина иллюминатора - от ширины экрана + состояния mp-show
+				return this.getBoxDemensionKey('panorama_width', workarea_width, pvm_key);
+			}
+		}
+	],
+
 	'stch-panorama_width': function(state) {
 		if (state && this.img_panorama){
 			this.img_panorama.setViewportWidth(state);
@@ -185,7 +193,6 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			
 			return this.getBoxDemensionKey('panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
 			//ширина лифта  зависит от артиста, комбинации загруженных картинок, высоты экрана + состояния mp-show
-			//return this.getBoxDemension(this.getPamoramaLiftWidth, 'panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
 
 		}
 	},
@@ -263,7 +270,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				});
 				var images_combination = spv.filter(images_collection, 'num').join('_');
 				
-				_this.nextTick(_this.updatePanoramaIMGs, [spv.filter(images_collection, 'item'), images_combination, _this.img_panorama]);
+				_this.nextLocalTick(_this.updatePanoramaIMGs, [spv.filter(images_collection, 'item'), images_combination, _this.img_panorama]);
 				
 			}, 100);
 
@@ -320,7 +327,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				}
 				main_c.removeClass('loading-images');
 			});
-			//_this.nextTick(checkPanoramaSize);
+			//_this.nextLocalTick(checkPanoramaSize);
 		}
 	},
 	tpl_events: {

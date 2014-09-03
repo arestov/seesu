@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate'], function(provoda, spv, $, filters, app_serv, PvTemplate){
+define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate', './modules/getUsageTree'], function(provoda, spv, $, filters, app_serv, PvTemplate, getUsageTree){
 "use strict";
 var transform_props = [app_serv.app_env.transform];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
@@ -47,7 +47,7 @@ LevContainer.prototype = {
 	completeAnimation: function() {
 		while (this.callbacks.length){
 			var cb = this.callbacks.shift();
-			this.context.nextTick(cb);
+			this.context.nextLocalTick(cb);
 		}
 	}
 };
@@ -112,6 +112,13 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	createDetails: function() {
 		this._super();
 
+		(function(_this) {
+			_this.getSampleForTemplate = function(sample_name) {
+				return _this.getSample(sample_name);
+			};
+		})(this);
+		
+
 		this.tpls = [];
 		this.struc_store = {};
 		this.els = {};
@@ -146,7 +153,9 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				spec_states: {
 					'$lev_num': num
 				},
-				struc_store: this.struc_store
+				struc_store: this.struc_store,
+				calls_flow: this._getCallsFlow(),
+				getSample: this.getSampleForTemplate
 			});
 
 			this.tpls.push(tpl);
@@ -220,6 +229,9 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	},
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
+	},
+	scollNeeded: function() {
+		return document.body.scrollHeight > document.body.clientHeight;
 	},
 	scrollTo: function(jnode, view_port, opts) {
 		if (!jnode){return false;}
@@ -317,20 +329,31 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			return $(sampler).clone();
 		}
 	},
-	
+	'compx-map_animating': [
+		['map_animation_num_started', 'map_animation_num_completed'],
+		function (started_num, completed_num) {
+			return typeof started_num == 'number' && started_num != completed_num;
+		}
+	],
 	markAnimationStart: function(models, changes_number) {
+		this.updateState('map_animation_num_started', changes_number, {sync_tpl: true});
 		for (var i = 0; i < models.length; i++) {
-			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number);
+			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number, {sync_tpl: true});
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
 	markAnimationEnd: function(models, changes_number) {
+		if (this.state('map_animation_num_started') == changes_number) {
+			this.updateState('map_animation_num_completed', changes_number, {sync_tpl: true});
+		}
+
+
 		for (var i = 0; i < models.length; i++) {
 			//
 			var mpx = this.getStoredMpx(models[i].getMD());
 
 			if (mpx.state('animation_started') == changes_number){
-				mpx.updateState('animation_completed', changes_number);
+				mpx.updateState('animation_completed', changes_number, {sync_tpl: true});
 			}
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
@@ -340,7 +363,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (this['spec-vget-' + model_name]){
 			return this['spec-vget-' + model_name](md);
 		} else {
-			return this.findMpxViewInChildren(this.getStoredMpx(md));
+			return this.findMpxViewInChildren(this.getStoredMpx(md), false, 'map_slice');
 		}
 	},
 	getMapSliceChildInParenView: function(md) {
@@ -351,7 +374,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (!parent_view){
 			return;
 		}
-		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
+		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md), false, 'map_slice');
 		if (!target_in_parent){
 			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
 			target_in_parent = view && view[0];
@@ -381,18 +404,33 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					//var offset_parent_node = targt_con.offsetParent();
 					var parent_offset = this.getBoxDemension(this.getAMCOffset, 'screens_offset');
 					//или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
-					var offset = targt_con.offset(); //domread
+
+
+
+					//var offset = targt_con.offset(); //domread
+
+					var offset = target_in_parent.getBoxDemension(function() {
+						return targt_con.offset();
+					}, 'con_offset', target_in_parent._lbr.innesting_pos_current, this.state('window_height'), this.state('workarea_width'));
+
+					var width = target_in_parent.getBoxDemension(function() {
+						return targt_con.outerWidth();
+					}, 'con_width', this.state('window_height'), this.state('workarea_width'));
+
+					var height = target_in_parent.getBoxDemension(function() {
+						return targt_con.outerHeight();
+					}, 'con_height', this.state('window_height'), this.state('workarea_width'));
+
+					
+					//var width = targt_con.outerWidth();  //domread
+					//var height = targt_con.outerHeight(); //domread
 
 					var top = offset.top - parent_offset.top;
-					var width = targt_con.outerWidth();  //domread
-					var height = targt_con.outerHeight(); //domread
-
-
-					//return ;
 
 					var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
-					var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('window_width'));
+					var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('workarea_width'));
 
+					
 
 					var scale_x = width/con_width;
 					var scale_y = height/con_height;
@@ -421,7 +459,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 	},
 	setVMpshow: function(target_mpx, value) {
-		target_mpx.updateState('vmp_show', value);
+		target_mpx.updateState('vmp_show', value, {sync_tpl: true});
 	},
 	'model-mapch': {
 		'move-view': function(change) {
@@ -471,21 +509,19 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			var current_lev_num = target_md.map_level_num;
 			
 			if (animation_data){
-				this.updateState('disallow_animation', true);
+				this.updateState('disallow_animation', true, {sync_tpl: true});
 				animation_data.lc.c.css(animation_data.transform_values);
-				//lc.tpl.spec_states['disallow_animation'] = true;
-				//lc.tpl.spec_states['disallow_animation'] = false;
-				this.updateState('disallow_animation', false);
+				this.updateState('disallow_animation', false, {sync_tpl: true});
 			}
 
-			this.updateState('current_lev_num', current_lev_num);
+			this.updateState('current_lev_num', current_lev_num, {sync_tpl: true});
 			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 
 
 			if (animation_data && animation_data.lc){
 				animation_data.lc.c.height(); //заставляем всё пересчитать
 				animation_data.lc.c.css(empty_transform_props);
-				/*this.nextTick(function() {
+				/*this.nextLocalTick(function() {
 					
 				});*/
 				animation_data.lc.c.height(); //заставляем всё пересчитать
@@ -501,7 +537,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (!animation_data){
 			//
 			this.markAnimationEnd(models, transaction_data.changes_number);
-			/*this.nextTick(function() {
+			/*this.nextLocalTick(function() {
 				
 			});*/
 		} else {
@@ -512,7 +548,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 		
 	},
-	'collch-$spec_common': {
+	'collch-$spec_common-map_slice': {
 		by_model_name: true,
 		place: AppBaseView.viewOnLevelP
 	},
@@ -551,10 +587,10 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		for (i = array.length - 1; i >= 0; i--) {
 			cur = array[i];
 			var model_name = cur.model_name;
-			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + model_name)){
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + model_name], nesname, cur);
+			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + nesname + ':' + model_name)){
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + nesname + ':' + model_name], nesname, cur);
 			} else {
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common'], nesname, cur);
+				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common-' + nesname ], nesname, cur);
 			}
 		}
 
@@ -567,7 +603,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					target_md = this.findBMapTarget(array);
 
 					if (target_md){
-						this.updateState('current_lev_num', target_md.map_level_num);
+						this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
 					}
 					
 				}
@@ -585,7 +621,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			for (i = 0; i < array.length; i++) {
 				this.setVMpshow(this.getStoredMpx(array[i]), nesting_data.residents_struc.mp_show_states[i]);
 			}
-			this.updateState('current_lev_num', target_md.map_level_num);
+			this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
 			this.markAnimationEnd(models, -1);
 			this.completely_rendered_once['map_slice'] = true;
 		}
@@ -681,5 +717,235 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	}
 
 });
+
+var WebAppView = function() {};
+AppBaseView.extendTo(WebAppView, {
+	createDetails: function() {
+		this._super();
+		this.root_view_uid = Date.now();
+
+		var _this = this;
+		setTimeout(function() {
+			spv.domReady(_this.d, function() {
+				_this.buildAppDOM();
+				_this.onDomBuild();
+				_this.completeDomBuilding();
+				_this.RPCLegacy('attachUI', _this.root_view_uid);
+			});
+		});
+		this.on('die', function() {
+			this.RPCLegacy('detachUI', this.root_view_uid);
+		});
+		this.on('state_change-current_mp_md', function() {
+			_this.resortQueue();
+		});
+
+		(function() {
+			var wd = this.getWindow();
+			var checkWindowSizes = spv.debounce(function() {
+				_this.updateManyStates({
+					window_height: wd.innerHeight,
+					window_width: wd.innerWidth
+				});
+			}, 150);
+
+			spv.addEvent(wd, 'resize', checkWindowSizes);
+
+			this.onDie(function(){
+				spv.removeEvent(wd, 'resize', checkWindowSizes);
+				wd = null;
+			});
+
+
+		}).call(this);
+
+		this.onDie(function(){
+			var wd = this.getWindow();
+			$(wd).off();
+			$(wd).remove();
+			wd = null;
+			_this = null;
+		});
+	},
+	remove: function() {
+		this._super();
+		if (this.d){
+			if (this.d.body && this.d.body.firstChild && this.d.body.firstChild.parentNode){
+				$(this.d.body).off().find('*').remove();
+				
+			}
+			$(this.d).off();
+			$(this.d).remove();
+		}
+		
+		
+		this.d = null;
+	},
+	resortQueue: function(queue) {
+		if (queue){
+			queue.removePrioMarks();
+		} else {
+			if (this.all_queues) {
+				for (var i = 0; i < this.all_queues.length; i++) {
+					this.all_queues[i].removePrioMarks();
+				}
+			}
+			
+		}
+		var md = this.getNesting('current_mp_md');
+		var view = md && this.getStoredMpx(md).getRooConPresentation(this, true);
+		if (view){
+			view.setPrio();
+		}
+	},
+	onDomBuild: function() {
+		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
+		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
+		console.log(this.used_data_structure);
+
+	},
+	wrapStartScreen: function(start_screen) {
+		var st_scr_scrl_con = start_screen.parent();
+		var start_page_wrap = st_scr_scrl_con.parent();
+		var tpl = new this.PvTemplate({
+			node: start_page_wrap,
+			spec_states: {
+				'$lev_num': -1
+			},
+			struc_store: this.struc_store,
+			calls_flow: this._getCallsFlow(),
+			getSample: this.getSampleForTemplate
+		});
+
+		this.tpls.push(tpl);
+
+		this.lev_containers[-1] = {
+			c: start_page_wrap,
+			material: start_screen,
+			scroll_con: st_scr_scrl_con
+		};
+	},
+	buildAppDOM: function() {
+		this.c = $(this.d.body);
+		var _this = this;
+		//var d = this.d;
+
+
+		var wd = this.getWindow();
+		_this.updateManyStates({
+			window_height: wd.innerHeight,
+			window_width: wd.innerWidth
+		});
+		if (this.ui_samples_csel) {
+			this.els.ui_samples = this.c.find(this.ui_samples_csel);
+		}
+	},
+	ui_samples_csel: '#ui-samples'
+});
+AppBaseView.WebAppView = WebAppView;
+
+var WebComplexTreesView = function() {};
+
+AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
+	'collch-current_mp_md': function(name, value) {
+		this.updateState('current_mp_md', value._provoda_id);
+	},
+	'collch-navigation': {
+		place: 'nav.daddy',
+		by_model_name: true
+	},
+	'collch-$spec-map_slice:start_page': {
+		by_model_name: true
+	},
+	'stch-full_page_need': function(state) {
+		this.els.screens.toggleClass('full_page_need', !!state);
+	},
+	'stch-root-lev-search-form': function(state) {
+		this.els.search_form.toggleClass('root-lev-search-form', !!state);
+	},
+	'stch-show_search_form': function(state) {
+		if (!state){
+			this.search_input[0].blur();
+		}
+	},
+	remove: function() {
+		this._super();
+		
+		//this.search_input = null;
+		//this.nav = null;
+	},
+	buildAppDOM: function() {
+		this._super();
+		this.selectKeyNodes();
+		this.buildNav();
+		this.buildSearchForm();
+		this.handleSearchForm(this.els.search_form);
+	},
+	onDomBuild: function() {
+		this._super();
+		this.c.addClass('app-loaded');
+		var ext_search_query = this.els.search_input.val();
+		//must be before start_page view set its value to search_input
+		this.RPCLegacy('checkUserInput', {
+			ext_search_query: ext_search_query
+		});
+
+	},
+	handleSearchForm: function(form_node) {
+		var tpl = this.createTemplate(form_node);
+		this.tpls.push(tpl);
+
+	},
+	buildNav: function() {
+		var justhead = this.els.navs;
+		var daddy = justhead.find('.daddy');
+		
+		this.nav = {
+			justhead: justhead,
+			daddy: daddy
+		};
+		this.dom_related_props.push('nav');
+
+		this.nav.daddy.empty().removeClass('not-inited');
+		
+		return this.nav;
+	},
+	buildSearchForm: function() {
+		var search_form = $('#search', this.d);
+		this.els.search_form = search_form;
+		
+		search_form.submit(function(){return false;});
+		var search_input =  $('#q', search_form);
+
+		this.search_input = this.els.search_input = search_input;
+		this.dom_related_props.push('search_input');
+
+		var _this = this;
+
+		search_input.on('keyup change input', spv.throttle(function() {
+			var input_value = this.value;
+			_this.overrideStateSilently('search_query', input_value);
+			_this.RPCLegacy('search', input_value);
+		}, 100));
+
+		search_input.on('keyup', spv.throttle(function(e) {
+			if (e.keyCode == 13) {
+				_this.RPCLegacy('refreshSearchRequest', Date.now());
+			}
+		}, 100));
+
+		search_input.on('activate_waypoint', function() {
+			search_input.focus();
+		});
+
+		this.onDie(function() {
+			search_input.off();
+			search_input = null;
+		});
+	}
+});
+
+AppBaseView.WebComplexTreesView = WebComplexTreesView;
+
 return AppBaseView;
 });

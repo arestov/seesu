@@ -138,10 +138,10 @@ var parseFastSuggests = function(r){
 
 var fast_suggestion = function(r, q, invstg){
 	if (invstg.doesNeed(q)){
-		var artists = invstg.g('artists'),
-			tracks = invstg.g('tracks'),
-			tags = invstg.g('tags'),
-			albums = invstg.g('albums');
+		var artists = invstg.g('section-artist'),
+			tracks = invstg.g('section-track'),
+			tags = invstg.g('section-tag'),
+			albums = invstg.g('section-album');
 
 		r = parseFastSuggests(r);
 

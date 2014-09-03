@@ -71,18 +71,28 @@ provoda.View.extendTo(SongcardController, {
 	bindBase: function() {
 		this.rowcs = {};
 		this.wch(this.parent_view, 'vmp_show', function(e) {
+			if (!this.isAlive()) {
+				return;
+			}
 			if (!e.value && this.rowcs && this.rowcs.users_context){
 				this.rowcs.users_context.hide();
 			}
 			if (e.value){
 				this.expand();
-				this.updateSongListeners();
 			}
 		});
 
 
 
 	},
+	'compx-can_expand_listeners': [
+		['^vmp_show', 'artist_name', 'track_name'],
+		function (vmp_show, artist_name, track_name) {
+			return vmp_show && artist_name && track_name;
+		}
+
+
+	],
 	expand: function() {
 		if (this.expanded){
 			return;
@@ -122,11 +132,17 @@ provoda.View.extendTo(SongcardController, {
 			return div;
 		}
 	},
-	updateSongListeners: function(){
+	'stch-can_expand_listeners': function(state) {
 		if (!this.expanded){
 			return;
 		}
+		if (!this.isAlive()) {
+			return;
+		}
 		if (app_serv.app_env.nodewebkit) {
+			return;
+		}
+		if (!state) {
 			return;
 		}
 		var su = window.su;
@@ -189,7 +205,9 @@ provoda.View.extendTo(SongcardController, {
 			});
 			this.t_users.last_update = (+new Date());
 		}
+
 	},
+
 	showBigListener: function(c, lig){
 		var _this = this;
 		c.empty();
@@ -202,7 +220,7 @@ provoda.View.extendTo(SongcardController, {
 					_this.root_view.verticalAlign(img, {
 						target_height: 252,
 						animate: true,
-						animate_time: 66
+						animate_time: 30
 					});
 				}
 

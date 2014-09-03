@@ -415,9 +415,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			var mo = spv.cloneObj({}, omo, false, ['track', 'artist', 'file']);
 			return this.addDataItem(mo);
 		},
-		makeDataItem: function(obj) {
-			return this.extendSong(obj);
-		},
+
 		isDataItemValid: function(data_item) {
 			return !!data_item.artist && !!data_item.artist.trim();
 		},
@@ -619,6 +617,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 		checkRequestsPriority: function() {
 			this.checkNavRequestsPriority();
 		},
+		getSPC: true,
 		subPager: function(pstr, string) {
 			var parts = this.app.getCommaParts(string);
 			var artist = parts[1] ? parts[0] : this.playlist_artist;

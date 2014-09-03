@@ -429,6 +429,12 @@ var getMatchedSongs = function(music_list, msq) {
 				function(fslist) {
 					return !!fslist.length;
 				}
+			],
+			'has_any_data': [
+				['has_files', 'search_complete'],
+				function (has_files, search_complete) {
+					return !!has_files || !!search_complete;
+				}
 			]
 		},
 		'stch-request_required': function(state) {
@@ -560,7 +566,8 @@ var getMatchedSongs = function(music_list, msq) {
 				return state;
 			}
 		],
-		'compx-has_files': [
+
+		'compx-has_files':[
 			['@some:has_files:available_sources'],
 			function (state) {
 				return state;
@@ -835,6 +842,18 @@ var getAverageDurations = function(mu_array, time_limit){
 		this.files_ids = {};
 		this.pushed_files_by_artist = {};
 		this.tuners = {};
+		this.on('list-changed', function(list) {
+			var tools_by_name = {};
+			if (list) {
+				for (var i = 0; i < list.length; i++) {
+					var cur = list[i];
+					if (!cur.disabled) {
+						tools_by_name[cur.name] = true;
+					}
+				}
+			}
+			this.updateState('tools_by_name', tools_by_name);
+		});
 	};
 	
 	Mp3Search.getSongFileModel = function(mo, player){

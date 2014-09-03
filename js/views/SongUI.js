@@ -17,18 +17,15 @@ coct.SPView.extendTo(SongViewBase, {
 			this.RPCLegacy('requestPage');
 
 		}
-	},
-	expandBase: function(){
-		this.setVisState('lite_view', this.opts && this.opts.lite);
-	},
-	canUseDeepWaypoints: function() {
-		return !(this.opts && this.opts.lite) && !!this.state('vmp_show');
 	}
 });
 
 var SongUI = function(){};
 
 SongViewBase.extendTo(SongUI, {
+	canUseDeepWaypoints: function() {
+		return !!this.state('vmp_show');
+	},
 	dom_rp: true,
 	state_change : {
 		"vmp_show": function(opts, old_opts) {
@@ -63,12 +60,9 @@ SongViewBase.extendTo(SongUI, {
 		songcard: SongcardPage.SongcardController
 	},
 	activate: function(){
-		
 	},
 	parts_builder: {
-		context: function() {
-			return this.root_view.getSample('track_c');
-		},
+		context: 'track_c',
 		mf_cor_con: function() {
 			var context = this.requirePart('context');
 			var div = $('<div></div>');
@@ -102,7 +96,12 @@ SongViewBase.extendTo(SongUI, {
 var SongViewLite = function() {};
 
 SongViewBase.extendTo(SongViewLite, {
-
+	canUseDeepWaypoints: function() {
+		return false;
+	},
+	expandBase: function(){
+		this.setVisState('lite_view', true);
+	},
 	base_tree: {
 		sample_name: 'song-view'
 	}

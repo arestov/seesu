@@ -20,8 +20,12 @@ define({
 		"ru": "Из soundcloud профиля"
 	},
 	"Sc-profile-not-found": {
-		"original": "Artist soundcloud profile was not found",
+		"original": "Artist's soundcloud profile was not found",
 		"ru": "Soundcloud профиль артиста не был найден"
+	},
+	"no-soundcloud-profile": {
+		"original": "Artist does not have soundcloud profile",
+		"ru": "У артиста нет страницы на soundcloud"
 	},
 	"Blogged-all-hypem": {
 		"original": "Blogged, all and sundry (hypem.com)",
@@ -34,6 +38,10 @@ define({
 	"Blogged-250-hypem": {
 		"original": "Blogged, 250+ Favorites (hypem.com)",
 		"ru": "Из блогов, у 250+ в избранном (hypem.com)"
+	},
+	"News": {
+		"original": "News",
+		"ru": "Новости"
 	},
 	"Acquaintances": {
 		"original": "Acquaintances",
@@ -174,6 +182,10 @@ define({
 	"use-code":{
 		"original": "use code",
 		"ru": "использовать код"
+	},
+	"input-code":{
+		"original": "input code",
+		"ru": "ввести код"
 	},
 	"refresh": {
 		"original": "refresh",

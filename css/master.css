@@ -41,6 +41,10 @@ html.not-as-application, .not-as-application  body{
 	width: 1.72rem;
 	pointer-events: none;
 }
+.loading_list_items {
+	position: relative;
+	min-height: 1.143rem;
+}
 .small_spiner:after,
 .selected-mf.buffering-progress .mf-progress:after,
 .block-for-startpage.loading:after,
@@ -51,7 +55,8 @@ html.not-as-application, .not-as-application  body{
 .desc_prevw_list.list_loading:after,
 .search-mp3 .files-load-states:after,
 a.track_name_loading .song-track-name,
-.moplas-block-shift.list_loading:after{
+.moplas-block-shift.list_loading:after,
+.loading_list_items:after {
 	position: absolute;
 	top:0;
 	left:0;
@@ -2086,3 +2091,48 @@ body .surf_nav{
 		max-height:310px;
 		max-width: 100%;
 	}
+
+
+
+.fast-code-input-access {
+	display: none;
+	margin-top: 1rem;
+	padding-bottom: 0.3rem;
+}
+	.deep-sandbox .fast-code-input-access{
+		display: block;
+	}
+	.waiting-auth .fast-code-input-access{
+		display: none;
+	}
+
+.loader_disallowing_desc {
+	margin-top: 2rem;
+}
+#pages_area_width_streamer-wrapper {
+	position: absolute;
+	left:0;
+	right: 0;
+	z-index: -10;
+	}
+	#pages_area_width_streamer {
+		width: 100%;
+		border: 0;
+		height: 1px;
+
+		}
+.view_sources {
+	margin-top:1rem;
+	margin-bottom: 1rem;
+}
+	.data_source_link {
+		font-size: 1.2em;
+		margin-right: 1em;
+	}
+.lilists .view_sources {
+	padding: 0 1rem;
+}
+
+.page-scheme .view_sources {
+	font-size: 0.8rem;
+}

@@ -29,27 +29,28 @@ invstg.SearchSection.extendTo(PlaylistRSSection, {
 });
 
 
-var PlaylistRowSearch = function(rpl, mo) {
-	this.init(rpl, mo);
-};
+var PlaylistRowSearch = function() {};
 invstg.Investigation.extendTo(PlaylistRowSearch, {
 	skip_map_init: true,
-	init: function(rpl, mo) {
-		this._super();
-		this.rpl = rpl;
-		this.mo = mo;
-		this.addSection('playlists', PlaylistRSSection);
+	'nest-section': [[PlaylistRSSection]],
+	init: function() {
+		this._super.apply(this, arguments);
+		this.rpl = this.map_parent;
+		this.mo = this.rpl.mo;
+
 	},
 	searchf: function() {
 		var
 			pl_results = [],
-			pl_sec = this.g('playlists');
-
+			pl_sec = this.g('section-playlist');
+		if (!pl_sec) {
+			return;
+		}
 		pl_sec.setActive();
 		pl_sec.changeQuery(this.q);
 
 
-		var serplr = su.getPlaylists(this.q);
+		var serplr = this.app.getPlaylists(this.q);
 		if (serplr.length){
 			for (var i = 0; i < serplr.length; i++) {
 				pl_results.push({
@@ -67,23 +68,25 @@ invstg.Investigation.extendTo(PlaylistRowSearch, {
 
 
 
-SongActPlaylisting = function(actionsrow, mo) {
-	this.init(actionsrow, mo);
-};
+SongActPlaylisting = function() {};
 comd.BaseCRow.extendTo(SongActPlaylisting, {
-	init: function(actionsrow, mo){
-		this.actionsrow = actionsrow;
-		this.app = mo.app;
-		this.mo = mo;
-		this._super();
-		this.searcher = new PlaylistRowSearch(this, mo);
-		this.updateNesting('searcher', this.searcher);
-		this.mo.app.gena.on('child_change-lists_list', this.checkFullMatch, this.getContextOpts());
+	init: function(){
+		this._super.apply(this, arguments);
+		this.actionsrow = this.map_parent;
+		this.mo = this.map_parent.map_parent;
+
+		this.app.gena.on('child_change-lists_list', this.checkFullMatch, this.getContextOpts());
 	},
+	'nest-searcher': [PlaylistRowSearch],
 	model_name: 'row-playlist-add',
 	search: function(q) {
 		this.updateState('query', q);
-		this.searcher.changeQuery(q);
+		var searcher = this.getNesting('searcher');
+		if (searcher) {
+			searcher.changeQuery(q);
+		}
+
+		
 		this.checkFullMatch();
 
 	},
@@ -104,7 +107,7 @@ comd.BaseCRow.extendTo(SongActPlaylisting, {
 		}
 		this.hide();
 		this.updateState('query', '');
-		this.searcher.changeQuery('');
+		this.getNesting('searcher').changeQuery('');
 		this.checkFullMatch();
 	}
 });

@@ -14,8 +14,7 @@
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#525252), to(#363636));
 	background-image: linear-gradient(#525252,#363636);
 	
-	font-size:1.28rem;
-	font-family:"Trebuchet MS", sans-serif;
+	font-size: 1.28rem;
 	font-family: "Trebuchet MS", sans-serif;
 
 }
@@ -237,6 +236,7 @@
 	.art_card-statinfo{
 		clear: both;
 		padding-top:1rem;
+		overflow: hidden;
 		}
 		.area_for_button .albums_previews{
 			height: 9.4rem;

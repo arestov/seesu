@@ -22,13 +22,21 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 	var PlARow = function(){};
 
 	comd.PartsSwitcher.extendTo(PlARow, {
-		init: function(pl) {
-			this._super();
-			this.pl = pl;
+		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
+		init: function() {
+			this._super.apply(this, arguments);
+			this.pl = this.map_parent;
+
 			this.updateState('active_part', false);
-			this.addPart(new MultiAtcsRow(this, pl));
-			this.addPart(new PlaylistSettingsRow(this, pl));
-		}
+			this.addPart(new MultiAtcsRow(this, this.pl));
+			this.addPart(new PlaylistSettingsRow(this, this.pl));
+		},
+		'compx-loader_disallowing_desc': [
+			['^loader_disallowing_desc'],
+			function(loader_disallowing_desc) {
+				return loader_disallowing_desc;
+			}
+		]
 	});
 
 
@@ -81,22 +89,15 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 	var SongsList = function(){};
 	SongsListBase.extendTo(SongsList, {
-		init: function() {
-			//playlist_title, playlist_type, info
-
-			
-			this._super.apply(this, arguments);
-
-			var plarow = new PlARow();
-			plarow.init(this);
-			this.updateNesting('plarow', plarow);
-
-			
-		},
+		'nest-plarow': [PlARow],
 		bindStaCons: function() {
 			this._super();
 			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
 			this.wch(this.app, 'settings-pl-shuffle', 'pl-shuffle');
+		},
+		'nest_rqc-songs-list': Song,
+		/*makeDataItem: function(obj) {
+			return this.extendSong(obj);
 		},
 		extendSong: function(omo){
 			if (!(omo instanceof Song)){
@@ -106,7 +107,7 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			} else{
 				return omo;
 			}
-		},
+		},*/
 		makeExternalPlaylist: function() {
 			var songs_list = this.getMainlist();
 			if (!songs_list.length){return false;}

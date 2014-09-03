@@ -68,6 +68,13 @@ provoda.View.extendTo(SongFileModelUI, {
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
 	},
+	'stch-key-progress-c-width': function(state) {
+		if (state) {
+			this.updateState('vis_progress-c-width', this.getBoxDemensionByKey(this.getProgressWidth, state));
+		} else {
+			this.updateState('vis_progress-c-width', 0);
+		}
+	},
 	complex_states: {
 		"can-progress": {
 			depends_on: ['^^vis_is_visible', 'vis_con_appended', 'selected'],
@@ -88,16 +95,17 @@ provoda.View.extendTo(SongFileModelUI, {
 
 			}
 		},
-		"vis_progress-c-width": {
-			depends_on: ['can-progress', '^^want_more_songs', '#window_width', '^^must_be_expandable'],
-			fn: function(can, p_wmss, window_width, must_be_expandable){
-				if (can){
-					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss, !!must_be_expandable);
+		'key-progress-c-width': [
+			['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
+			function (can, p_wmss, workarea_width, must_be_expandable) {
+				if (can) {
+					return this.getBoxDemensionKey('progress_c-width', workarea_width, !!p_wmss, !!must_be_expandable);
 				} else {
-					return 0;
+					return false;
 				}
 			}
-		},
+		],
+
 		"vis_loading_p": {
 			depends_on: ['vis_progress-c-width', 'loading_progress'],
 			fn: function(width, factor){
@@ -270,11 +278,18 @@ provoda.View.extendTo(ComplectPionerView, {
 var mfComplectUI = function() {};
 provoda.View.extendTo(mfComplectUI, {
 	children_views: {
-		'file-torrent': FileInTorrentUI,
-		'file-http': SongFileModelUI,
 		'pioneer': ComplectPionerView
 	},
-
+	children_views_by_mn: {
+		moplas_list_start: {
+			'file-torrent': FileInTorrentUI,
+			'file-http': SongFileModelUI
+		},
+		moplas_list_end: {
+			'file-torrent': FileInTorrentUI,
+			'file-http': SongFileModelUI
+		}
+	},
 	'collch-moplas_list_start': {
 		place: 'tpl.ancs.listc-start',
 		by_model_name: true
@@ -308,7 +323,7 @@ provoda.View.extendTo(YoutubePreview, {
 		this._super();
 		this.user_link = $();
 	},
-	'stch-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.c.attr('title', state || "");
 	},
 	'stch-cant_show': function(state) {

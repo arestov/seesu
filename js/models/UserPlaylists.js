@@ -18,6 +18,9 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		this.playlists = [];
 		this.updateNesting('lists_list', this.playlists);
 	},
+	getSPC: function() {
+		return ManualPlaylist;
+	},
 	subPager: function(name) {
 		return this.matchTitleStrictly(name);
 	},

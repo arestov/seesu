@@ -84,22 +84,10 @@ provoda.View.extendTo(SongActTaggingControl, {
 	children_views: {
 		lfm_tagsong: LfmTagItView
 	},
-	expand: function(){
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-		this.c.append(this.getAFreeCV('lfm_tagsong'));
-		this.requestAll();
-	},
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-		}
-	},
+	'collch-$ondemand-lfm_tagsong': {
+		place: 'c',
+		needs_expand_state: 'active_view'
+	}
 });
 return SongActTaggingControl;
 

@@ -5,10 +5,14 @@ var YoutubeVideo = function() {};
 BrowseMap.Model.extendTo(YoutubeVideo, {
 	model_name: 'youtube_video',
 	init: function(opts, params) {
+		//this.map_parent = opts.map_parent.map_parent;
+
+		//opts.map_parent = opts.map_parent
 		this._super.apply(this, arguments);
+		this.mo = this.map_parent.mo;
+		this.map_parent = this.map_parent.map_parent;//hack, fixme
 
-
-		this.mo = params.mo;
+		
 		this.updateState('yt_id', params.yt_id);
 
 		this.updateState('cant_show', params.cant_show);
@@ -21,7 +25,7 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 
 		this.on('vip_state_change-mp_has_focus', function(e) {
 			if (e.value){
-				su.trackEvent('Navigation', 'youtube video');
+				_this.app.trackEvent('Navigation', 'youtube video');
 				_this.mo.pause();
 			}
 		});

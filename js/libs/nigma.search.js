@@ -9,6 +9,7 @@ var NigmaAPI = function(queue, cache_ajax) {
 };
 NigmaAPI.prototype = {
 	constructor: NigmaAPI,
+	source_name: 'nigma',
 	cache_namespace:"nigma",
 	get: function(method, params, options) {
 		var

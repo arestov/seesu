@@ -24,6 +24,7 @@ var ProspApi = function(queue, crossdomain, cache_ajax) {
 
 ProspApi.prototype = {
 	constructor: ProspApi,
+	source_name: 'pleer.com',
 	cache_namespace: 'pleer.com',
 	thisOriginAllowed: false,
 	get: function(method, params, options) {

@@ -5,7 +5,7 @@ var spv = {};
 "use strict";
 var addEvent, removeEvent, getDefaultView, domReady,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
-	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
+	ttime, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
 	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class,
 	debounce, throttle;
 if (!Array.prototype.indexOf) {
@@ -302,7 +302,7 @@ ttime = function(f){
 	}
 };
 
-collapseAll = function(){
+spv.collapseAll = function(){
 	var r= [];
 	for (var i=0; i < arguments.length; i++) {
 		var c = arguments[i];
@@ -601,7 +601,7 @@ separateNum = function(num){
 
 
 
-
+var constr_id = 0;
 /* Simple JavaScript Inheritance
   * By John Resig http://ejohn.org/
   * http://ejohn.org/blog/simple-javascript-inheritance/
@@ -648,6 +648,7 @@ separateNum = function(num){
 		// Instantiate a base class (but only create the instance,
 		// don't run the init constructor)
 		var prototype = new this();
+		prototype.constr_id = constr_id++;
 
 		// Copy the properties over onto the new prototype
 		for (var prop_name in props) {

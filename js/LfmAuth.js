@@ -8,21 +8,21 @@ var LfmLogin = function() {};
 
 provoda.Model.extendTo(LfmLogin, {
 	model_name: 'auth_block_lfm',
-	init: function(opts, params) {
-		this._super();
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
 
 		var _this = this;
-		this.auth = opts.auth;
-		this.pmd = opts.pmd;
+		this.auth = (params && params.auth) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) || opts.auth;
+		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
 
-		if (params && params.desc){
-			this.setRequestDesc(params.desc);
+		if (data && data.desc){
+			this.setRequestDesc(data.desc);
 		} else {
-			this.setRequestDesc(localize('to-get-access'));
+			this.setRequestDesc(this.access_desc);
 		}
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep-sandbox', true);
+			_this.updateState('deep_sandbox', true);
 		}
 		if (this.auth.has_session){
 			this.triggerSession();
@@ -39,6 +39,7 @@ provoda.Model.extendTo(LfmLogin, {
 		}
 		return this;
 	},
+	access_desc: localize('to-get-access'),
 	triggerSession: function() {
 		this.updateState('has_session', true);
 		
@@ -74,11 +75,9 @@ provoda.Model.extendTo(LfmLogin, {
 
 
 
-var LfmScrobble = function(auth){
-	this.init(auth);
-};
+var LfmScrobble = function(){};
 LfmLogin.extendTo(LfmScrobble, {
-	init: function(opts){
+	init: function(){
 		this._super.apply(this, arguments);
 
 
@@ -121,6 +120,9 @@ provoda.Eventor.extendTo(LfmAuth, {
 		this._super();
 		if (this.api.sk){
 			this.has_session = true;
+		}
+		if (opts.deep_sanbdox){
+			this.deep_sanbdox = true;
 		}
 	},
 	requestAuth: function(p){

@@ -30,6 +30,7 @@ spv.Class.extendTo(vkCoreApi, {
 	get: function() {
 		return this.send.apply(this, arguments);
 	},
+	source_name: 'vk.com',
 	cache_namespace: "vk_api",
 	send: function(method, params, options){ //nocache, after_ajax, cache_key, only_cache
 		var _this = this;

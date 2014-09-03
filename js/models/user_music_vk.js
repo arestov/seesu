@@ -104,7 +104,7 @@ var vk_user_tracks_sp = ['my', 'recommended'];
 
 var VkUserTracks = function() {};
 BrowseMap.Model.extendTo(VkUserTracks, {
-	model_name: 'listoflists',
+	model_name: 'vk_users_tracks',
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.sub_pa_params = {
@@ -154,9 +154,8 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 			return [first_name, last_name].join(' ');
 		}
 	},
-	init: function(opts, params) {
+	init: function(opts, data) {
 		this._super.apply(this, arguments);
-		var data = params.data;
 		this.mapStates(this.init_stmp, data, true);
 		this.initStates();
 		this.rawdata = data;
@@ -184,13 +183,7 @@ LoadableList.extendTo(VKFriendsList, {
 		};
 		this.initStates();
 	},
-	itemConstr: VkUserPreview,
-	makeDataItem:function(data) {
-		return this.initSi(this.itemConstr, spv.cloneObj({
-			data: data
-		}, this.sub_pa_params));
 
-	},
 	main_list_name: 'list_items',
 	model_name: 'vk_users',
 	page_limit: 200,
@@ -200,6 +193,7 @@ LoadableList.extendTo(VKFriendsList, {
 			user: this.state('userid')
 		};
 	},
+	'nest_rqc-list_items': VkUserPreview,
 	'nest_req-list_items': [
 		[function(r) {
 			return spv.getTargetField(r, 'response.items');

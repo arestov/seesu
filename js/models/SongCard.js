@@ -107,7 +107,10 @@ LoadableListBase.extendTo(VKPostsList, {
 		//this.sub_pa_params = params;
 		this.initStates(data);
 
-		this.archivateChildrenStates('lists_list', 'owner_info', function(array) {
+	},
+	'compx-image_previews': [
+		['@owner_info:lists_list'],
+		function(array) {
 			var result = [];
 			for (var i = 0; i < array.length; i++) {
 				var cur= array[i];
@@ -117,38 +120,31 @@ LoadableListBase.extendTo(VKPostsList, {
 				
 				result.push(cur.photo_medium_rec || cur.photo_50);
 			}
-			
-			return result;
-		}, 'image_previews');
 
-
-
-	},
+			return spv.collapseAll(result);
+		}
+	],
 	model_name: 'vk_posts',
 	hp_bound: {
 		artist_name: null,
 		track_name: null
 	},
 	//model_name: 'cloudcasts_list',
-	splitItemData: function(data) {
+	//splitItemData: ,
+	
+	'nest_rqc-lists_list': VKPostSongs,
+
+	'nest_rq_split-lists_list': function(data, source_name) {
 		return [data.props, {
 			subitems: {
 				'songs-list': spv.getTargetField(data, 'attachments.songs')
+			},
+
+			subitems_source_name: {
+				'songs-list': source_name
 			}
 		}];
 	},
-	
-	makeDataItem: function(data, params) {
-		return this.initSi(VKPostSongs, data, params);
-	},
-	
-	/*
-	makeDataItem: function(data) {
-		var item = this.app.start_page.getSPI('cloudcasts/' + this.app.encodeURLPart(data.key), true);
-		item.addRawData(data);
-		return item;
-	},
-	*/
 	'nest_req-lists_list': [
 		[{
 			is_array: true,
@@ -233,16 +229,6 @@ BrowseMap.Model.extendTo(SongCard, {
 			track_name: params.track_name
 		};
 		this.initStates(params);
-		this.on('state_change-mp_show', function(e) {
-			if (e.value){
-				this.fullInit();
-
-				var fans = this.getNesting('fans');
-				if (fans){
-					fans.preloadStart();
-				}
-			}
-		});
 	},
 	'compx-nav_title': {
 		depends_on: ['artist_name', 'track_name'],
@@ -250,31 +236,24 @@ BrowseMap.Model.extendTo(SongCard, {
 			return artist_name + ' - ' + track_name;
 		}
 	},
-
-	initForSong: function() {
-		var fans = this.getSPI('fans', true);
-		this.updateNesting('fans', fans);
-		fans.preloadStart();
-
-
-		var cloudcasts = this.getSPI('cloudcasts', true);
-		this.updateNesting('cloudcasts', cloudcasts);
-
-
-		this.updateNesting('vk_posts', this.getSPI('vk_posts'));
-		this.getSPI('vk_posts').preloadStart();
-
-	},
-	fullInit: function() {
-		var artist_name = this.state('artist_name');
-		if (artist_name){
-			var artcard = this.app.getArtcard(this.state('artist_name'));
-			if (artcard){
-				this.updateNesting('artist', artcard);
-			}
+	'compx-nest_need': [
+		['need_for_song', 'songcard-for-active_song'],
+		function(need_for_song, for_asong) {
+			return need_for_song || this.utils.isDepend(for_asong);
 		}
-		this.updateNesting('fans', this.getSPI('fans'));
-	},
+	],
+	'compx-wide_need': [
+		['nest_need', 'mp_has_focus'],
+		function(nest_need, mp_has_focus) {
+			return mp_has_focus || nest_need;
+		}
+	],
+
+	'nest-fans': ['fans', 'wide_need','wide_need'],
+	'nest-cloudcasts': ['cloudcasts', false, 'wide_need'],
+	'nest-vk_posts': ['vk_posts', 'nest_need','nest_need'],
+	'nest-artist': ['#catalog/[:artist_name]', false, 'mp_has_focus'],
+
 	sub_pa: {
 		'fans':{
 			constr: SongFansList,
