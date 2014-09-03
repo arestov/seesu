@@ -7,6 +7,7 @@
 	<link rel="shortcut icon" id="dynamic-favicon"  href="icons/icon16.png"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/base.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="css/buttons.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/area_button.css"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/master.css"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/view_switcher.css"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/vkontakte_switcher.css"/>
@@ -551,7 +552,7 @@
 
 
 		<div class="usual_page albums_page">
-			<!--pv-replace sample_name:view_sources-->
+			
 			<div class="albums_list_con" pv-anchor="albums_list_c"></div>
 
 			<div 
@@ -559,6 +560,7 @@
 				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}"
 				pv-events="click::requestMoreData"
 				pv-type="{{more_load_available && 'way-point'}}">Load more</div>
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -571,11 +573,11 @@
 			<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
 			</div>
-			<!--pv-replace sample_name:view_sources-->
+			
 			<ul pv-anchor="listc">
 				
 			</ul>
-			
+			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -1928,7 +1930,13 @@
 
 								</div>
 							</div>
-							
+							<div class="block-for-startpage full_wide_col">
+								<div pv-nest="news">
+									<span pv-text="{{nav_title}}"></span>
+								</div>
+								
+								donate bitcoin: <a href="https://blockchain.info/address/1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN">1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN</a> <br/>twitter: <a href="https://twitter.com/seesu_app" class="external">seesu_app</a>
+							</div>
 							
 							
 							<!--pv-replace sample_name:view_sources-->

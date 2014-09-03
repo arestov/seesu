@@ -39,6 +39,10 @@ define({
 		"original": "Blogged, 250+ Favorites (hypem.com)",
 		"ru": "Из блогов, у 250+ в избранном (hypem.com)"
 	},
+	"News": {
+		"original": "News",
+		"ru": "Новости"
+	},
 	"Acquaintances": {
 		"original": "Acquaintances",
 		"ru": "Знакомства"

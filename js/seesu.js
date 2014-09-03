@@ -386,49 +386,27 @@ AppModel.extendTo(SeesuApp, {
 		}
 
 
+		
 		this.start_page = (new StartPage()).init({
 			app: this
 		});
-		this.updateNesting('navigation', [this.start_page]);
-		this.updateNesting('start_page', this.start_page);
-
-
-
-		this.map
-			.init(this.start_page)
-			.on('residents-tree', function(tree) {
+		
+		this.initMapTree(this.start_page, app_env.needs_url_history, navi)
+			/*
+			.on('residents-tree', function() {
 				
-			}, this.getContextOptsI())
-			.on('changes', function(changes, tree, residents) {
-				//console.log(changes);
-				this.animateMapChanges(changes, tree, residents);
-			}, this.getContextOptsI())
-			.on('map-tree-change', function(nav_tree) {
-				this.changeNavTree(nav_tree);
-			}, this.getContextOptsI())
-
-			.on('title-change', function(title) {
-				this.setDocTitle(title);
-
-			}, this.getContextOptsI())
-			.on('url-change', function(nu, ou, data, replace) {
-				if (app_env.needs_url_history){
-					if (replace){
-						navi.replace(ou, nu, data.resident);
-					} else {
-						navi.set(nu, data.resident);
-					}
-				}
 			}, this.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
 				}
 
-			}, {immediately: true})
-			.on('nav-change', function(nv, ov, history_restoring, title_changed){
+			}, {immediately: true})*/
+			.on('nav-change', function(nv){
 				this.trackPage(nv.map_level.resident.model_name);
 			}, this.getContextOptsI())
 			.makeMainLevel();
+
+		
 
 		if (app_env.tizen_app){
 			//https://developer.tizen.org/
@@ -703,10 +681,7 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return sp;
 	},
-	routePathByModels: function(pth_string, start_md, need_constr) {
-		return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
 	
-	},
 	getPlaylists: function(query) {
 		var r = [],i;
 		if (this.gena){

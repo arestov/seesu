@@ -11,13 +11,7 @@ AppModelBase.extendTo(AppModel, {
 		for (var func_name in this.bmap_travel){
 			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
 		}
-		this.on('child_change-current_mp_md', function(e) {
-			if (e.target){
-				this.resortQueue();
-			}
-
-		});
-		this.views_strucs = {};
+		
 		return this;
 	},
 	checkUserInput: function(opts) {
@@ -253,32 +247,6 @@ AppModelBase.extendTo(AppModel, {
 			acting[i].setPrio('acting');
 		}
 
-	},
-	pushVDS: function(md) {
-		if (!this.used_data_structure) {
-			return;
-		}
-		var default_struc = this.used_data_structure.m_children.children_by_mn.map_slice[ '$default' ];
-		var model_name = md.model_name;
-
-		var struc = this.used_data_structure.m_children.children_by_mn.map_slice[ model_name ] || default_struc;
-
-		//cur.handleViewingDataStructure(struc);
-		md.handleViewingDataStructure(struc);
-	},
-	knowViewingDataStructure: function(constr_id, used_data_structure) {
-		if (!this.used_data_structure) {
-			this.used_data_structure = used_data_structure;
-		}
-		
-		for (var i = 0; i < this.map.residents.length; i++) {
-			var cur = this.map.residents[i];
-			this.pushVDS(cur);
-			
-		}
-		
-		
-		//console.log(1313)
 	}
 
 });

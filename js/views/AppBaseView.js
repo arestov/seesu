@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate'], function(provoda, spv, $, filters, app_serv, PvTemplate){
+define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate', './modules/getUsageTree'], function(provoda, spv, $, filters, app_serv, PvTemplate, getUsageTree){
 "use strict";
 var transform_props = [app_serv.app_env.transform];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
@@ -717,5 +717,235 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	}
 
 });
+
+var WebAppView = function() {};
+AppBaseView.extendTo(WebAppView, {
+	createDetails: function() {
+		this._super();
+		this.root_view_uid = Date.now();
+
+		var _this = this;
+		setTimeout(function() {
+			spv.domReady(_this.d, function() {
+				_this.buildAppDOM();
+				_this.onDomBuild();
+				_this.completeDomBuilding();
+				_this.RPCLegacy('attachUI', _this.root_view_uid);
+			});
+		});
+		this.on('die', function() {
+			this.RPCLegacy('detachUI', this.root_view_uid);
+		});
+		this.on('state_change-current_mp_md', function() {
+			_this.resortQueue();
+		});
+
+		(function() {
+			var wd = this.getWindow();
+			var checkWindowSizes = spv.debounce(function() {
+				_this.updateManyStates({
+					window_height: wd.innerHeight,
+					window_width: wd.innerWidth
+				});
+			}, 150);
+
+			spv.addEvent(wd, 'resize', checkWindowSizes);
+
+			this.onDie(function(){
+				spv.removeEvent(wd, 'resize', checkWindowSizes);
+				wd = null;
+			});
+
+
+		}).call(this);
+
+		this.onDie(function(){
+			var wd = this.getWindow();
+			$(wd).off();
+			$(wd).remove();
+			wd = null;
+			_this = null;
+		});
+	},
+	remove: function() {
+		this._super();
+		if (this.d){
+			if (this.d.body && this.d.body.firstChild && this.d.body.firstChild.parentNode){
+				$(this.d.body).off().find('*').remove();
+				
+			}
+			$(this.d).off();
+			$(this.d).remove();
+		}
+		
+		
+		this.d = null;
+	},
+	resortQueue: function(queue) {
+		if (queue){
+			queue.removePrioMarks();
+		} else {
+			if (this.all_queues) {
+				for (var i = 0; i < this.all_queues.length; i++) {
+					this.all_queues[i].removePrioMarks();
+				}
+			}
+			
+		}
+		var md = this.getNesting('current_mp_md');
+		var view = md && this.getStoredMpx(md).getRooConPresentation(this, true);
+		if (view){
+			view.setPrio();
+		}
+	},
+	onDomBuild: function() {
+		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
+		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
+		console.log(this.used_data_structure);
+
+	},
+	wrapStartScreen: function(start_screen) {
+		var st_scr_scrl_con = start_screen.parent();
+		var start_page_wrap = st_scr_scrl_con.parent();
+		var tpl = new this.PvTemplate({
+			node: start_page_wrap,
+			spec_states: {
+				'$lev_num': -1
+			},
+			struc_store: this.struc_store,
+			calls_flow: this._getCallsFlow(),
+			getSample: this.getSampleForTemplate
+		});
+
+		this.tpls.push(tpl);
+
+		this.lev_containers[-1] = {
+			c: start_page_wrap,
+			material: start_screen,
+			scroll_con: st_scr_scrl_con
+		};
+	},
+	buildAppDOM: function() {
+		this.c = $(this.d.body);
+		var _this = this;
+		//var d = this.d;
+
+
+		var wd = this.getWindow();
+		_this.updateManyStates({
+			window_height: wd.innerHeight,
+			window_width: wd.innerWidth
+		});
+		if (this.ui_samples_csel) {
+			this.els.ui_samples = this.c.find(this.ui_samples_csel);
+		}
+	},
+	ui_samples_csel: '#ui-samples'
+});
+AppBaseView.WebAppView = WebAppView;
+
+var WebComplexTreesView = function() {};
+
+AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
+	'collch-current_mp_md': function(name, value) {
+		this.updateState('current_mp_md', value._provoda_id);
+	},
+	'collch-navigation': {
+		place: 'nav.daddy',
+		by_model_name: true
+	},
+	'collch-$spec-map_slice:start_page': {
+		by_model_name: true
+	},
+	'stch-full_page_need': function(state) {
+		this.els.screens.toggleClass('full_page_need', !!state);
+	},
+	'stch-root-lev-search-form': function(state) {
+		this.els.search_form.toggleClass('root-lev-search-form', !!state);
+	},
+	'stch-show_search_form': function(state) {
+		if (!state){
+			this.search_input[0].blur();
+		}
+	},
+	remove: function() {
+		this._super();
+		
+		//this.search_input = null;
+		//this.nav = null;
+	},
+	buildAppDOM: function() {
+		this._super();
+		this.selectKeyNodes();
+		this.buildNav();
+		this.buildSearchForm();
+		this.handleSearchForm(this.els.search_form);
+	},
+	onDomBuild: function() {
+		this._super();
+		this.c.addClass('app-loaded');
+		var ext_search_query = this.els.search_input.val();
+		//must be before start_page view set its value to search_input
+		this.RPCLegacy('checkUserInput', {
+			ext_search_query: ext_search_query
+		});
+
+	},
+	handleSearchForm: function(form_node) {
+		var tpl = this.createTemplate(form_node);
+		this.tpls.push(tpl);
+
+	},
+	buildNav: function() {
+		var justhead = this.els.navs;
+		var daddy = justhead.find('.daddy');
+		
+		this.nav = {
+			justhead: justhead,
+			daddy: daddy
+		};
+		this.dom_related_props.push('nav');
+
+		this.nav.daddy.empty().removeClass('not-inited');
+		
+		return this.nav;
+	},
+	buildSearchForm: function() {
+		var search_form = $('#search', this.d);
+		this.els.search_form = search_form;
+		
+		search_form.submit(function(){return false;});
+		var search_input =  $('#q', search_form);
+
+		this.search_input = this.els.search_input = search_input;
+		this.dom_related_props.push('search_input');
+
+		var _this = this;
+
+		search_input.on('keyup change input', spv.throttle(function() {
+			var input_value = this.value;
+			_this.overrideStateSilently('search_query', input_value);
+			_this.RPCLegacy('search', input_value);
+		}, 100));
+
+		search_input.on('keyup', spv.throttle(function(e) {
+			if (e.keyCode == 13) {
+				_this.RPCLegacy('refreshSearchRequest', Date.now());
+			}
+		}, 100));
+
+		search_input.on('activate_waypoint', function() {
+			search_input.focus();
+		});
+
+		this.onDie(function() {
+			search_input.off();
+			search_input = null;
+		});
+	}
+});
+
+AppBaseView.WebComplexTreesView = WebComplexTreesView;
+
 return AppBaseView;
 });

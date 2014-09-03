@@ -12,22 +12,28 @@ coct.SPView.extendTo(StartPageView, {
 		this.c = this.els.start_screen;
 		this.createTemplate();
 
-		/*
-		var hq_link = this.c.find('#hint-query');
-		hq_link.text(su.popular_artists[(Math.random()*10).toFixed(0)]);
-		hq_link.click(function(e) {
-			e.preventDefault();
-			var query = hq_link.text();
-			su.search(query);
-			hq_link.text(su.popular_artists[(Math.random()*10).toFixed(0)]);
-			su.trackEvent('Navigation', 'hint artist');
-
-		});
-		*/
 
 		this.addWayPoint(this.tpl.ancs['hint-query'], {
 			//simple_check: true
 		});
+
+
+		var _this = this;
+		var checkFocus = function(state) {
+			if (state){
+				_this.nextLocalTick(_this.tickCheckFocus);
+			}
+		};
+		this.on('state_change-autofocus', function(e) {
+			checkFocus(e.value);
+		}, {immediately: true});
+	},
+
+	tickCheckFocus: function() {
+		if (this.isAlive()){
+			this.root_view.search_input[0].focus();
+			this.root_view.search_input[0].select();
+		}
 	},
 	'collch-muco': true,
 	'collch-pstuff': true,

@@ -8,6 +8,44 @@ provoda.Model.extendTo(AppModelBase, {
 		this.navigation = [];
 		this.map = new BrowseMap();
 		this.current_mp_md = null;
+		this.on('child_change-current_mp_md', function(e) {
+			if (e.target){
+				this.resortQueue();
+			}
+
+		});
+		this.views_strucs = {};
+	},
+	initMapTree: function(start_page, needs_url_history, navi) {
+			
+		this.updateNesting('navigation', [start_page]);
+		this.updateNesting('start_page', start_page);
+		this.map
+			.init(this.start_page)
+			
+			.on('changes', function(changes, tree, residents) {
+				//console.log(changes);
+				this.animateMapChanges(changes, tree, residents);
+			}, this.getContextOptsI())
+			.on('map-tree-change', function(nav_tree) {
+				this.changeNavTree(nav_tree);
+			}, this.getContextOptsI())
+
+			.on('title-change', function(title) {
+				this.setDocTitle(title);
+
+			}, this.getContextOptsI())
+			.on('url-change', function(nu, ou, data, replace) {
+				if (needs_url_history){
+					if (replace){
+						navi.replace(ou, nu, data.resident);
+					} else {
+						navi.set(nu, data.resident);
+					}
+				}
+			}, this.getContextOptsI());
+		
+		return this.map;
 	},
 	setDocTitle: function(title) {
 		this.updateState('doc_title', title);
@@ -239,6 +277,36 @@ provoda.Model.extendTo(AppModelBase, {
 		}
 		
 		this.checkActingRequestsPriority();
+	},
+	routePathByModels: function(pth_string, start_md, need_constr) {
+		return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
+	
+	},
+	pushVDS: function(md) {
+		if (!this.used_data_structure) {
+			return;
+		}
+		var default_struc = this.used_data_structure.m_children.children_by_mn.map_slice[ '$default' ];
+		var model_name = md.model_name;
+
+		var struc = this.used_data_structure.m_children.children_by_mn.map_slice[ model_name ] || default_struc;
+
+		//cur.handleViewingDataStructure(struc);
+		md.handleViewingDataStructure(struc);
+	},
+	knowViewingDataStructure: function(constr_id, used_data_structure) {
+		if (!this.used_data_structure) {
+			this.used_data_structure = used_data_structure;
+		}
+		
+		for (var i = 0; i < this.map.residents.length; i++) {
+			var cur = this.map.residents[i];
+			this.pushVDS(cur);
+			
+		}
+		
+		
+		//console.log(1313)
 	}
 });
 

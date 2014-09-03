@@ -9,16 +9,18 @@ var pump = require('pump');
 var serveFileRequest = function(req, res, file) {
 	var range = req.headers.range;
 	range = range && rangeParser(file.length, range)[0];
-	res.setHeader('Cache-Control', 'public');
 	
 	res.setHeader('Accept-Ranges', 'bytes');
 	res.setHeader('Content-Type', mime.lookup(file.name));
 
 	if (!range) {
+		res.setHeader('Cache-Control', 'public, max-age=31536000');
 		res.setHeader('Content-Length', file.length);
 		if (req.method === 'HEAD') {return res.end();}
 		pump(file.createReadStream(), res);
 		return;
+	} else {
+		res.setHeader('Cache-Control', 'public');
 	}
 
 	res.statusCode = 206;
@@ -60,7 +62,7 @@ var waitFile = function(downloads_index, hash_events, infoHash, num, req, res) {
 		done = true;
 		res.writeHead(404, {'Content-Type': 'text/plain'});
 		res.end('none');
-	}, 20000);
+	}, 35000);
 
 	var core = downloads_index[ infoHash ];
 	if (core) {

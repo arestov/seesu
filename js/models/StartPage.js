@@ -1,6 +1,22 @@
 define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts'],
 function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
 "use strict";
+
+
+var AppNews = function() {};
+BrowseMap.Model.extendTo(AppNews, {
+	init: function() {
+		this._super.apply(this, arguments);
+
+
+		this.initStates();
+		
+		//var mixcloud
+		return this;
+	}
+});
+
+
 var StartPage = function() {};
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -35,6 +51,7 @@ BrowseMap.Model.extendTo(StartPage, {
 	'nest-pstuff': ['users/me'],
 	'nest-muco': ['conductor'],
 	'nest-tags': ['tags'],
+	'nest-news': ['news'],
 	rpc_legacy: {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');
@@ -101,6 +118,10 @@ BrowseMap.Model.extendTo(StartPage, {
 		'conductor': {
 			title: localize('music-cond'),
 			constr: MusicConductor
+		},
+		'news': {
+			title: localize('News'),
+			constr: AppNews
 		}
 	},
 	getSPC: function(parsed_str, path_string) {
