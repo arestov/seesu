@@ -2366,11 +2366,8 @@ add({
 		}
 		return this.conx_opts;
 	},
-	wlch: function(donor, donor_state, acceptor_state) {
-		var event_name = 'lgh_sch-' + donor_state;
-		var acceptor_state_name = acceptor_state || donor_state;
-		var cb = getLightConnector(acceptor_state_name);
-		donor.evcompanion._addEventHandler(event_name, cb, this);
+	_bindLight: function(donor, event_name, cb, immediately) {
+		donor.evcompanion._addEventHandler(event_name, cb, this, immediately);
 
 		if (this != donor && this instanceof provoda.View){
 			this.onDie(function() {
@@ -2382,6 +2379,16 @@ add({
 				cb = null;
 			});
 		}
+	},
+	lwch: function(donor, donor_state, func) {
+		this._bindLight(donor, 'lgh_sch-' + donor_state, func);
+	},
+	wlch: function(donor, donor_state, acceptor_state) {
+		var event_name = 'lgh_sch-' + donor_state;
+		var acceptor_state_name = acceptor_state || donor_state;
+		var cb = getLightConnector(acceptor_state_name);
+		this._bindLight(donor, event_name, cb);
+
 
 	},
 	wch: function(donor, donor_state, acceptor_state, immediately) {
@@ -2395,18 +2402,8 @@ add({
 			cb = getConnector(acceptor_state);
 			
 		}
-		donor.evcompanion._addEventHandler(event_name, cb, this, immediately);
-
-		if (this != donor && this instanceof provoda.View){
-			this.onDie(function() {
-				if (!donor) {
-					return;
-				}
-				donor.off(event_name, cb, false, this);
-				donor = null;
-				cb = null;
-			});
-		}
+		this._bindLight(donor, event_name, cb, immediately);
+		
 
 		return this;
 

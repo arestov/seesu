@@ -52,8 +52,7 @@ var guessArtist = function(track_title, query_artist){
 };
 
 var QueryMatchIndex = function() {};
-var letter_regexp = /[\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
-//http://stackoverflow.com/questions/150033/regular-expression-to-match-non-english-characters#comment22322603_150078
+
 spv.Class.extendTo(QueryMatchIndex, {
 	init: function(file, query) {
 
@@ -89,8 +88,8 @@ spv.Class.extendTo(QueryMatchIndex, {
 	hardTrim: function(string, min_length){
 		var trimmed;
 		if (!this.trim_index[string]) {
-			var letters = string.match(letter_regexp);
-			trimmed = letters ? letters.join('').toLowerCase() : '';
+			
+			trimmed = spv.hardTrim(string);
 			/*
 			trimmed = string.toLowerCase()
 				.replace(/^The /, '')

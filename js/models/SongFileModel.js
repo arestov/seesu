@@ -253,6 +253,9 @@ provoda.Model.extendTo(FileInTorrent, {
 		},
 		play: function(){
 			if (this.player){
+				if (this.mo.state('forbidden_by_copyrh')) {
+					return;
+				}
 				this._createSound();
 				if (this.sound){
 					this.player.play(this);

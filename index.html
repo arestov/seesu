@@ -976,7 +976,9 @@
 								{{has_none_files_to_play && 'has-none-files'}}
 								{{!has_none_files_to_play && files_search.have_best_tracks && 'has_best_files'}}
 								{{!has_none_files_to_play && files_search.have_mp3_tracks && 'has-some-files'}}
+								{{forbidden_by_copyrh && 'forbidden_by_copyrh'}}
 								"
+							pv-text="{{forbidden_by_copyrh && '©'}}"
 						>
 						</span>
 						<span class="nothing-toy"></span>

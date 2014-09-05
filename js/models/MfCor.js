@@ -774,6 +774,9 @@ LoadableList.extendTo(MfCor, {
 		
 	},
 	play: function(){
+		if (this.mo.state('forbidden_by_copyrh')) {
+			return;
+		}
 		var cm = this.state("used_mopla");
 		if (cm){
 			if (!cm.state('play')){

@@ -110,12 +110,23 @@ var album_placeholder = {
 				this.wch(images_pack, 'image-to-use', 'ext_lfm_image');
 				still_init = false;
 			}
+
 			this.initStates();
 			//this.nextTick(this.initHeavyPart);
 		},
 		twistStates: function() {
 			this.initHeavyPart();
 		},
+		'compx-forbidden_by_copyrh': [
+			['#forbidden_by_copyrh', 'artist', 'track'],
+			function ( index, artist, track ) {
+				if (artist && track) {
+
+					return index && index[artist.toLowerCase() + ' - ' + track.toLowerCase()];
+				}
+
+			}
+		],
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
 			fn: function(artist_name, track_name) {

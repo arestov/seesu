@@ -52,7 +52,7 @@ provoda.addPrototype("SongBase",{
 		this.map_parent.checkRequestsPriority();
 		
 	},
-	'stch-needs_states_connecting': function(state) {
+	'stch-needs_states_connecting': function() {
 		if (!this.states_was_twisted) {
 
 			if (this.twistStates) {
@@ -87,6 +87,14 @@ provoda.addPrototype("SongBase",{
 				return album_image || lfm_i || just_url || ext_lfm;
 			}
 		},
+		'title_as_key': [
+			['artist', 'track'],
+			function(artist, track) {
+				if (artist && track) {
+					return artist + ' - ' + track;
+				}
+			}
+		],
 		'song_title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){
@@ -120,8 +128,11 @@ provoda.addPrototype("SongBase",{
 			}
 		},
 		'can-use-as-neighbour':{
-			depends_on: ['has_none_files_to_play'],
-			fn: function(h_nftp) {
+			depends_on: ['has_none_files_to_play', 'forbidden_by_copyrh'],
+			fn: function(h_nftp, forbidden_by_copyrh) {
+				if (forbidden_by_copyrh) {
+					return false;
+				}
 				if (h_nftp){
 					return false;
 				} else {
@@ -310,6 +321,9 @@ provoda.addPrototype("SongBase",{
 		this.getMFCore().pause();
 	},
 	play: function(mopla){
+		if (this.state('forbidden_by_copyrh')) {
+			return;
+		}
 		this.getMFCore().play(mopla);
 
 	},
