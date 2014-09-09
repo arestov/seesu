@@ -223,7 +223,6 @@ a.track_name_loading .song-track-name,
 		border-bottom-left-radius: 0.5rem;
 		}
 .moplas-block{
-	overflow: hidden;
 	padding:0;
 	min-height:81px;
 	}
