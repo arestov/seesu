@@ -1,15 +1,49 @@
 define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts'],
 function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
 "use strict";
+var app_env = app_serv.app_env;
+var localize = app_serv.localize;
 
+var lang = app_env.lang;
+var news_data = [{
+	"original": [
+		null,
+		"Perfomance, more data in new seesu v4.0",
+		"New seesu version just published.\
+		Perfomance, new pages with music. More files sources\
+		",
+		"http://seesu.me/v4.0",
+		"download v4.0",
+		"07 sept 2014"
+	]
+}];
+
+
+var converNews = function(list) {
+	var result = new Array(list.length);
+	for (var i = 0; i < list.length; i++) {
+		var cur = list[i][lang] || list[i]["original"];
+		result[i] = {
+			date: cur[5],
+			header: cur[1],
+			body: cur[2],
+			link: cur[3],
+			link_text: cur[4] || "details"
+		};
+		
+	}
+	return result;
+};
 
 var AppNews = function() {};
 BrowseMap.Model.extendTo(AppNews, {
+	model_name: 'app_news',
 	init: function() {
 		this._super.apply(this, arguments);
 
 
 		this.initStates();
+		this.updateState('news_list', converNews(news_data));
 		
 		//var mixcloud
 		return this;
@@ -18,8 +52,7 @@ BrowseMap.Model.extendTo(AppNews, {
 
 
 var StartPage = function() {};
-var app_env = app_serv.app_env;
-var localize = app_serv.localize;
+
 var subPageInitWrap = function(Constr, full_name, data) {
 	//var instance = new Constr();
 	if (!data) {
@@ -33,7 +66,7 @@ BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
 	zero_map_level: true,
 	showPlaylists: function(){
-		su.search(':playlists');
+		this.app.search(':playlists');
 	},
 	init: function(opts){
 		this._super.apply(this, arguments);

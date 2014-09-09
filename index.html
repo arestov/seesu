@@ -932,6 +932,12 @@
 				</div>
 
 			</div>
+			<div class="file_source">
+				<div class="hidden file_source_cont" pv-class="file_source_cont {{!current_source && 'hidden'}}">
+					<span class="desc">file from</span> <a href="" class="external" pv-props="href:{{current_source.source_link}}" pv-text="{{current_source.source_name}}"></a>
+				</div>
+				
+			</div>
 			<div class="track-video">
 				<ul pv-anchor='video_list'></ul>
 			</div>
@@ -1234,7 +1240,7 @@
 			</div>
 			
 			<div pv-nest="songcard">
-				<div class="track-listeners" pv-anchor="track-listeners">
+				<div class="track-listeners" pv-class="track-listeners {{disallow_seesu_listeners && 'hidden'}}" pv-anchor="track-listeners" >
 					<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>
 				</div>
 				<div class="song-row-content row-listeners-context hidden" pv-anchor="row-listeners-context">
@@ -1729,6 +1735,17 @@
 			</div>
 			
 		</div>
+		<div class="app-news">
+			<span pv-repeat="entity in news_list|limitTo:1">
+				<h3>
+					<span pv-text="{{entity.date}}" class="desc"></span>
+					<span pv-text="{{entity.header}}"></span>
+				</h3>
+				<div pv-text="{{entity.body}}"></div>
+				
+				<a class="external" pv-props="href:{{entity.link}}" pv-text="{{entity.link_text}}"></a>
+			</span>
+		</div>
 		<!-- // ui samples -->
 	</div>
 <div id="slider">
@@ -1933,11 +1950,19 @@
 								</div>
 							</div>
 							<div class="block-for-startpage full_wide_col">
-								<div pv-nest="news">
-									<span pv-text="{{nav_title}}"></span>
-								</div>
+								
 								
 								donate bitcoin: <a href="https://blockchain.info/address/1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN">1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN</a> <br/>twitter: <a href="https://twitter.com/seesu_app" class="external">seesu_app</a>
+								
+							</div>
+							<div class="block-for-startpage full_wide_col">
+								<div pv-nest="news" class="hidden" pv-class="{{init && ''}}">
+									<a pv-text="{{nav_title}}:" class="js-serv" pv-events="click::requestPage"></a>
+									<span pv-repeat="entity in news_list|limitTo:1">
+										<span pv-text="{{entity.date}}" class="desc"></span>
+										<span pv-text="{{entity.header}}"></span>
+									</span>
+								</div>
 							</div>
 							
 							

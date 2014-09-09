@@ -523,6 +523,11 @@ AppModel.extendTo(SeesuApp, {
 			})();
 
 		}
+
+		if (app_serv.app_env.nodewebkit) {
+			this.updateState('disallow_seesu_listeners', true);
+		}
+		
 	},
 	watchVKCharacter: function(md, key, result_state) {
 		var store, character_id;

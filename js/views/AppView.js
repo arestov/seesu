@@ -106,6 +106,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			blogs_conductor: coct.ListOfListsView,
 			blogs_list: coct.ListOfListsView,
 			music_blog: coct.ListOfListsView,
+			app_news: coct.AppNewsView
 		},
 		navigation: {
 			$default: nav.baseNavUI,

@@ -148,6 +148,14 @@ provoda.Model.extendTo(MfComplect, {
 
 var file_id_counter = 0;
 
+
+var sources_map = {
+	'vk': 'https://vk.com',
+	'pleer.com': 'http://pleer.com',
+	'soundcloud': 'https://soundcloud.com',
+	'btdigg': 'http://btdigg.org/'
+};
+
 var MfCor = function() {};
 LoadableList.extendTo(MfCor, {
 	hndMoImportant: function(e) {
@@ -467,21 +475,31 @@ LoadableList.extendTo(MfCor, {
 		}
 
 	},
+	'compx-current_source': [
+		['current_mopla', 'default_mopla'],
+		function (current_mopla, default_mopla) {
+			var vis_mopla = current_mopla || default_mopla;
+			return vis_mopla && {
+				source_name: vis_mopla.from,
+				source_link: vis_mopla.page_link || sources_map[vis_mopla.from]
+			};
+		}
+	],
 	'compx-$relation:file_to_load-for-player_song': [
 		['search_ready', 'current_mopla', '^player_song'],
-		function(search_ready, current_mopla, player_song) {
+		function (search_ready, current_mopla, player_song) {
 			return search_ready && player_song && current_mopla;
 		}
 	],
 	'compx-$relation:file_to_load-for-preload_current_file': [
 		['search_ready', 'current_mopla', '^preload_current_file'],
-		function(search_ready, current_mopla, preload_current_file) {
+		function (search_ready, current_mopla, preload_current_file) {
 			return search_ready && preload_current_file && current_mopla;
 		}
 	],
 	'compx-$relation:investg_to_load-for-song_need': [
 		['^need_files', 'files_investg'],
-		function(need_files, files_investg) {
+		function (need_files, files_investg) {
 			return need_files && files_investg;
 		}
 	],
@@ -545,21 +563,21 @@ LoadableList.extendTo(MfCor, {
 	},
 	
 
-	hndNFSearch: function(search, name) {
+	/*hndNFSearch: function(search, name) {
 		if (name == 'vk'){
-			this.removeVKAudioAuth();
+			//this.removeVKAudioAuth();
 		}
-	},
+	},*/
 	hndNtfRead: function(message_id) {
 		this.notifier.banMessage(message_id);
 	},
 	bindMessagesRecieving: function() {
 
-		var _this = this;
+		/*var _this = this;
 		if (this.mo.mp3_search){
 			
 			this.mo.mp3_search.on('new-search', this.hndNFSearch, this.getContextOpts());
-		}
+		}*/
 		this.sf_notf.on('read', this.hndNtfRead, this.getContextOpts());
 		
 	},

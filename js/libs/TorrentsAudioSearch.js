@@ -135,6 +135,7 @@ var getTorrentFile = function(raw, torrent, torrent_api) {
 		torrent_name: torrent.name,
 		torrent_path: raw.path,
 		description: [torrent.name, torrent.infoHash, raw.path].join(', '),
+		page_link: 'http://btdigg.org/search?info_hash=' + torrent.infoHash,
 		media_type: 'mp3',
 		link: raw.link,
 		models: {},

@@ -4,7 +4,7 @@ var localize = app_serv.localize;
 var UserAcquaintance = function() {};
 provoda.Model.extendTo(UserAcquaintance, {
 	init: function(opts, params) {
-		this._super();
+		this._super.apply(this, arguments);
 		this.sender = params.sender;
 		this.user_photo = params.user_photo;
 		this.receiver = params.sender;
@@ -48,7 +48,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 			depends_on: ['accepted', 'remainded_date', 'userlink'],
 			fn: function(accepted, remainded_date, userlink) {
 				if (accepted && !userlink){
-					return su.getRemainTimeText(remainded_date, true);
+					return this.app.getRemainTimeText(remainded_date, true);
 				}
 				
 			}
@@ -69,6 +69,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 	*/
 	acceptInvite: function() {
 		var _this = this;
+		var su = this.app;
 		su.s.api('relations.acceptInvite', {from: this.sender}, function(r){
 			if (r.done){
 				_this.updateState('remainded_date', r.done.est);
@@ -87,7 +88,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 var UserAcquaintancesLists = function() {};
 BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 	model_name: 'user_acqs_list',
-	init: function(opts) {
+	init: function() {
 		this._super.apply(this, arguments);
 		var _this = this;
 
@@ -127,10 +128,10 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		}
 		this.data_st_binded = true;
 		var _this = this;
-		su.s.susd.rl.regCallback('user_acqes', function(r){
+		this.app.s.susd.rl.regCallback('user_acqes', function(r){
 			_this.replaceChildrenArray('acqs_from_me', r.done);
 		});
-		su.s.susd.ri.regCallback('user_acqes', function(r){
+		this.app.s.susd.ri.regCallback('user_acqes', function(r){
 			_this.replaceChildrenArray('acqs_from_someone', r.done);
 		});
 	},

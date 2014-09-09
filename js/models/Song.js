@@ -118,11 +118,15 @@ var album_placeholder = {
 			this.initHeavyPart();
 		},
 		'compx-forbidden_by_copyrh': [
-			['#forbidden_by_copyrh', 'artist', 'track'],
-			function ( index, artist, track ) {
+			['#forbidden_by_copyrh', '#white_of_copyrh', 'artist', 'track'],
+			function ( index, artist, track, white_index ) {
 				if (artist && track) {
-
-					return index && index[artist.toLowerCase() + ' - ' + track.toLowerCase()];
+					if (white_index) {
+						return !white_index[artist.toLowerCase()];
+					} else if (index) {
+						return index[artist.toLowerCase() + ' - ' + track.toLowerCase()];
+					}
+					
 				}
 
 			}

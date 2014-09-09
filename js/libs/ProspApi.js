@@ -74,7 +74,9 @@ var datamorph_map = new spv.MorphMap({
 	is_array: true,
 	source: 'tracks',
 	props_map: {
+
 		_id: 'id',
+		page_link: 'link',
 		artist: 'artist',
 		track: 'track',
 		link: 'file',

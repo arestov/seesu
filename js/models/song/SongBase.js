@@ -87,14 +87,6 @@ provoda.addPrototype("SongBase",{
 				return album_image || lfm_i || just_url || ext_lfm;
 			}
 		},
-		'title_as_key': [
-			['artist', 'track'],
-			function(artist, track) {
-				if (artist && track) {
-					return artist + ' - ' + track;
-				}
-			}
-		],
 		'song_title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){

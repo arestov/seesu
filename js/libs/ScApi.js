@@ -98,7 +98,7 @@ ScMusicSearch.prototype = {
 				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + this.sc_api.key,
 				from		: 'soundcloud',
 				real_title	: cursor.title,
-				page_link	: cursor.permalink_url,
+				page_link	: cursor.permalink_url.replace(/^http\:/, 'https:'),
 				description : htmlencoding.decode(cursor.description) || false,
 				downloadable: cursor.downloadable,
 				_id			: cursor.id,

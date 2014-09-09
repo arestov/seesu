@@ -305,6 +305,13 @@ PageView.extendTo(VKPostsView, {
 		sample_name: 'vk_posts_page'
 	}
 });
+
+var AppNewsView = function() {};
+PageView.extendTo(AppNewsView, {
+	base_tree: {
+		sample_name: 'app-news'
+	}
+});
 return {
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
@@ -322,7 +329,8 @@ return {
 	TagsListPreview: TagsListPreview,
 	ListSimplePreview: ListSimplePreview,
 	ImagedListPreview: ImagedListPreview,
-	VKPostsView: VKPostsView
+	VKPostsView: VKPostsView,
+	AppNewsView: AppNewsView
 };
 
 });

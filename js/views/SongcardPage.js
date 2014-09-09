@@ -85,8 +85,14 @@ provoda.View.extendTo(SongcardController, {
 
 
 	},
+	'compx-disallow_seesu_listeners': [
+		['#disallow_seesu_listeners'],
+		function(state) {
+			return state;
+		}
+	],
 	'compx-can_expand_listeners': [
-		['^vmp_show', 'artist_name', 'track_name'],
+		['^vmp_show', 'artist_name', 'track_name', 'disallow_seesu_listeners'],
 		function (vmp_show, artist_name, track_name) {
 			return vmp_show && artist_name && track_name;
 		}
@@ -139,9 +145,7 @@ provoda.View.extendTo(SongcardController, {
 		if (!this.isAlive()) {
 			return;
 		}
-		if (app_serv.app_env.nodewebkit) {
-			return;
-		}
+		
 		if (!state) {
 			return;
 		}
