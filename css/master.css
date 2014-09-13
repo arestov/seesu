@@ -602,11 +602,13 @@ a.track_name_loading .song-track-name,
 	ul.tracks-for-play.loading{
 		position: relative;
 		padding-bottom: 30px;
+		margin-bottom: -30px;
 	}
 	ul.tracks-for-play.loading:after{
-		left:0.3rem;
-		top:auto;
+		left: auto;
+		top: auto;
 		bottom: 0;
+		right: 0.3rem;
 		}
 	ul.tracks-for-play > li{
 		position:relative;
@@ -1205,12 +1207,16 @@ iframe.you-tube-video,embed.you-tube-video{
 		min-height: 320px;
 		}
 .file_source {
-	float:left;
 	padding-left:  3.1rem;
 	padding-bottom: 0.3rem;
 }
 .want_more_songs .file_source_cont{
 	display: none;
+}
+.files_appendix {
+	-webkit-transform: translateZ(0);
+	overflow: hidden;
+	min-height: 48px;
 }
 .track-video{
 	float:right;

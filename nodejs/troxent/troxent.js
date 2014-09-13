@@ -42,6 +42,44 @@ var getTorrentObj = function(torrent) {
 };
 
 
+var bindInfoUpdates = function(core) {
+	return setInterval(function() {
+		var active = function(wire) {return !wire.peerChoking;};
+		var swarm = core.swarm;
+		var BUFFERING_SIZE = 10 * 1024 * 1024;
+
+		var upload_speed = swarm.uploadSpeed(); // upload speed
+		var final_upload_speed = '0 B/s';
+		if(!isNaN(upload_speed) && upload_speed != 0){
+			var converted_speed = Math.floor( Math.log(upload_speed) / Math.log(1024) );
+			final_upload_speed = ( upload_speed / Math.pow(1024, converted_speed) ).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted_speed]+'/s';
+		}
+
+		var download_speed = swarm.downloadSpeed(); // download speed
+		var final_download_speed = '0 B/s';
+		if(!isNaN(download_speed) && download_speed != 0){
+			var converted_speed = Math.floor( Math.log(download_speed) / Math.log(1024) );
+			final_download_speed = ( download_speed / Math.pow(1024, converted_speed) ).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted_speed]+'/s';
+		}
+
+
+
+		swarm.downloaded = (swarm.downloaded) ? swarm.downloaded : 0;
+
+		var progress_info = {
+			downloaded: swarm.downloaded,
+			active_peers: swarm.wires.filter(active).length,
+			total_peers: swarm.wires.length,
+			uploadSpeed: final_upload_speed,
+			downloadSpeed: final_download_speed,
+			percent: Math.min(100, swarm.downloaded / ( BUFFERING_SIZE / 100 ) )
+		};
+		core.progress_info = progress_info;
+		core.emit('progress_info-change', progress_info);
+	}, 1000);
+};
+
+
 var getCore = function(torrent, opts) {
 	var torrent_obj = getTorrentObj(torrent);
 	if (downloads_index[ torrent_obj.infoHash ]) {
@@ -50,6 +88,9 @@ var getCore = function(torrent, opts) {
 	if (!opts) {opts = {};}
 
 	var core = engine(torrent_obj || torrent, opts);
+
+	var update_interval = bindInfoUpdates(core);
+
 	core.once('destroy', function() {
 		//core._destroyed = true;
 		if (torrent_obj) {
@@ -57,7 +98,7 @@ var getCore = function(torrent, opts) {
 				downloads_index[ torrent_obj.infoHash ] = null;
 			}
 		}
-		
+		clearInterval(update_interval);
 		
 	});
 	core.on('ready', function() {

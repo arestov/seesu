@@ -143,6 +143,7 @@ var getTorrentFile = function(raw, torrent, torrent_api) {
 		getSongFileModel: function() {
 			var md = Mp3Search.getSongFileModel.apply(this, arguments);
 			md.updateState('title', this.title);
+			md.wlch(torrent_api, 'progress_info');
 
 			md.on('state_change-load_file', function(e) {
 				torrent_api.setStateDependence('file_data-for-song_file', md, e.value);
@@ -183,6 +184,7 @@ provoda.Model.extendTo(Torrent, {
 		}
 	],
 	'stch-torrent_required': function(state) {
+		var _this = this;
 		if (state ) {
 			clearTimeout(this.remove_timeout);
 			if (!this.troxent) {
@@ -195,9 +197,12 @@ provoda.Model.extendTo(Torrent, {
 				if (!this.state('list_loaded')) {
 					this.troxent.on('served-files-list', this.hndList);
 				}
-				var _this = this, troxent = this.troxent;
+				var troxent = this.troxent;
 				
-				
+				this.troxent.on('progress_info-change', function(data) {
+					_this.updateState('progress_info', data);
+				});
+					
 
 
 				/*if (!this.troxent.reffs) {
@@ -216,7 +221,6 @@ provoda.Model.extendTo(Torrent, {
 			//troxent
 		} else {
 			if (this.troxent) {
-				var _this = this;
 				this.remove_timeout = setTimeout(function() {
 					_this.destroyPeerflix();
 				}, 7000);

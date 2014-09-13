@@ -238,6 +238,7 @@ var album_placeholder = {
 		hndMfcBeforePlay: function(mopla) {
 			this.player.changeNowPlaying(this, mopla.state('play'));
 			this.mopla = mopla;
+			this.updateNesting('current_mopla', mopla);
 			this.updateState('play', mopla.state('play'));
 		},
 		hndMfcError: function(can_play) {

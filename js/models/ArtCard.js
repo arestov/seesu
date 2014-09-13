@@ -138,7 +138,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 
 		//this.original_artist = params.original_artist;
 
-		var image_url = params.thumb && params.thumb.replace('api.discogs.com', 's.pixogs.com');
+		var image_url = params.thumb && params.thumb.replace('api.discogs.com', 's.pixogs.com').replace('s.pixogs.com/images/', 's.pixogs.com/image/');
 
 
 		this.updateManyStates({

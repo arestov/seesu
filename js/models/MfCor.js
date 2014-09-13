@@ -153,7 +153,7 @@ var sources_map = {
 	'vk': 'https://vk.com',
 	'pleer.com': 'http://pleer.com',
 	'soundcloud': 'https://soundcloud.com',
-	'btdigg': 'http://btdigg.org/'
+	'btdigg-torrents': 'http://btdigg.org/'
 };
 
 var MfCor = function() {};

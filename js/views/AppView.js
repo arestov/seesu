@@ -193,7 +193,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		});
 
 		this.dgs_imgq_alt = new FuncsQueue({
-			time: [170],
+			time: [250],
 			init: addQueue,
 			resortQueue: resortQueue
 		});
