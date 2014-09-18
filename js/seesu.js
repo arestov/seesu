@@ -1,10 +1,10 @@
 var su, seesu;
 define('su',
-['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
+['require', 'spv', 'app_serv', 'pv', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
 'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax', 'js/libs/ProspApi'],
-function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
+function(require, spv, app_serv, pv, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, ProspApi) {
@@ -50,7 +50,7 @@ lfm.checkMethodResponse = function(method, data, r) {
 
 var chrome = window.chrome;
 var ChromeExtensionButtonView = function() {};
-provoda.View.extendTo(ChromeExtensionButtonView, {
+pv.View.extendTo(ChromeExtensionButtonView, {
 	state_change: {
 		"playing": function(state) {
 			if (state){
@@ -65,7 +65,7 @@ provoda.View.extendTo(ChromeExtensionButtonView, {
 	}
 });
 var OperaExtensionButtonView = function() {};
-provoda.View.extendTo(OperaExtensionButtonView, {
+pv.View.extendTo(OperaExtensionButtonView, {
 	state_change: {
 		"playing": function(state) {
 			if (state){
@@ -375,8 +375,8 @@ AppModel.extendTo(SeesuApp, {
 		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();
 
-		this.vk_users = (new provoda.Model()).init();
-		this.vk_groups = (new provoda.Model()).init();
+		this.vk_users = (new pv.Model()).init();
+		this.vk_groups = (new pv.Model()).init();
 
 		if (app_env.check_resize){
 			this.updateState('slice-for-height', true);
@@ -932,7 +932,7 @@ AppModel.extendTo(SeesuApp, {
 
 seesu = su = new SeesuApp();
 su.init(seesu_version);
-provoda.sync_s.setRootModel(su);
+pv.sync_s.setRootModel(su);
 
 
 

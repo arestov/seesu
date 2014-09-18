@@ -1,6 +1,6 @@
-define(['provoda', 'spv', 'jquery', 'app_serv',
+define(['pv', 'spv', 'jquery', 'app_serv',
 './SongActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
-function(provoda, spv, $, app_serv,
+function(pv, spv, $, app_serv,
 SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 

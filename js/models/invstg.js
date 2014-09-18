@@ -1,5 +1,5 @@
-define(['provoda', 'js/modules/lfmhelp', 'app_serv', 'spv', 'jquery', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
-function(provoda, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data, BrowseMap, invstg_obj) {
+define(['pv', 'js/modules/lfmhelp', 'app_serv', 'spv', 'jquery', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
+function(pv, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data, BrowseMap, invstg_obj) {
 "use strict";
 var localize = app_serv.localize;
 var
@@ -18,18 +18,18 @@ var suParseTagsResults = lfmhelp.parseTagsResults;
 var suParseAlbumsResults = lfmhelp.parseAlbumsResults;
 
 var BaseSuggest = function(){};
-provoda.extendFromTo('BaseSuggest', provoda.Model, BaseSuggest);
+pv.extendFromTo('BaseSuggest', pv.Model, BaseSuggest);
 
 
 var BaseSectionButton;
 BaseSectionButton = function(){
 	this.init();
 };
-provoda.extendFromTo('BaseSectionButton', BaseSuggest, BaseSectionButton);
+pv.extendFromTo('BaseSectionButton', BaseSuggest, BaseSectionButton);
 
 
 SearchSection = function(){};
-provoda.extendFromTo("SearchSection", provoda.Model, SearchSection);
+pv.extendFromTo("SearchSection", pv.Model, SearchSection);
 
 
 var artistSuggest = function(data){
@@ -331,7 +331,7 @@ seesuSection.extendTo(AlbumsSection, {
 
 
 Investigation = function(){};
-provoda.extendFromTo('Investigation', BrowseMap.Model, Investigation);
+pv.extendFromTo('Investigation', BrowseMap.Model, Investigation);
 
 
 SearchPage = function() {};

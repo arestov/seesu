@@ -1,7 +1,7 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
+define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
 './user_music_lfm', './Cloudcasts', './LoadableListBase', './SongsList',
 'js/modules/declr_parsers'],
-function(provoda, spv, app_serv, BrowseMap, morph_helpers,
+function(pv, spv, app_serv, BrowseMap, morph_helpers,
 user_music_lfm, Cloudcasts, LoadableListBase, SongsList,
 declr_parsers) {
 'use strict';
@@ -100,17 +100,31 @@ SongsList.extendTo(VKPostSongs, {
 });
 
 
+var sortByTypeAndDate = spv.getSortFunc([{
+	field: function(obj) {
+		return obj.owner_id > 0;
+	},
+	reverse: true
+}, {
+	field: 'date'
+}]);
+
+
 var VKPostsList = function() {};
 LoadableListBase.extendTo(VKPostsList, {
 	init: function(opts, data) {
 		this._super.apply(this, arguments);
 		//this.sub_pa_params = params;
 		this.initStates(data);
+		this.on('child_change-lists_list', function(e) {
+			var sorted = e.value && e.value.slice().sort(sortByTypeAndDate);
+			this.updateNesting('sorted_list', sorted);
+		});
 
 	},
 	'compx-image_previews': [
-		['@owner_info:lists_list'],
-		function(array) {
+		['@owner_info:sorted_list'],
+		function (array) {
 			var result = [];
 			for (var i = 0; i < array.length; i++) {
 				var cur= array[i];

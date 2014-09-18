@@ -1,8 +1,8 @@
-define(['provoda', 'spv', 'jquery', 'app_serv'], function(provoda, spv, $, app_serv) {
+define(['pv', 'spv', 'jquery', 'app_serv'], function(pv, spv, $, app_serv) {
 "use strict";
 var counter = 0;
 
-provoda.addPrototype("SongBase",{
+pv.addPrototype("SongBase",{
 	model_name: "song",
 	init: function(opts, omo){
 
@@ -208,10 +208,10 @@ provoda.addPrototype("SongBase",{
 			}
 		]
 	},
-	'stch-$relation:next_preload_song-for-mp_show': provoda.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song-for-player_song': provoda.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song-for-very_wanted_play': provoda.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song-for-loaded_player_song': provoda.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-mp_show': pv.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-player_song': pv.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-very_wanted_play': pv.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-loaded_player_song': pv.Model.prototype.hndRDep,
 
 	canUseAsNeighbour: function(){
 		return this.state('can-use-as-neighbour');

@@ -1,4 +1,4 @@
-define(['spv', 'provoda', 'jquery', './etc_views'], function(spv, provoda, $, etc_views) {
+define(['spv', 'pv', 'jquery', './etc_views'], function(spv, pv, $, etc_views) {
 "use strict";
 var SoftVkLoginUI = function() {};
 etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
@@ -11,7 +11,7 @@ etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
 
 
 var ListPreview = function() {};
-provoda.View.extendTo(ListPreview, {
+pv.View.extendTo(ListPreview, {
 	useBase: function(node) {
 		this.c = node;
 		this.bindBase();
@@ -45,7 +45,7 @@ provoda.View.extendTo(ListPreview, {
 });
 
 var ListPreviewLine = function() {};
-provoda.View.extendTo(ListPreviewLine, {
+pv.View.extendTo(ListPreviewLine, {
 	base_tree: {
 		sample_name: 'preview_line'
 	},
@@ -75,7 +75,7 @@ ListPreview.extendTo(LiListsPreview, {
 
 
 var SPView = function() {};
-provoda.View.extendTo(SPView, {
+pv.View.extendTo(SPView, {
 	'compx-mp_show_end': {
 		depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
 		fn: function(animation_started, animation_completed, vmp_show) {
@@ -199,7 +199,7 @@ PageView.extendTo(ListOfListsView, {
 
 
 var AlbumsListPreviewItem = function() {};
-provoda.View.extendTo(AlbumsListPreviewItem, {
+pv.View.extendTo(AlbumsListPreviewItem, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
@@ -226,7 +226,7 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 
 
 var BigAlbumPreview = function() {};
-provoda.View.extendTo(BigAlbumPreview, {
+pv.View.extendTo(BigAlbumPreview, {
 	base_tree: {
 		sample_name: 'alb_prev_big'
 	},

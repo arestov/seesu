@@ -1,8 +1,7 @@
-define('provoda', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers', 'hex_md5', 'js/libs/provoda.initDeclaredNestings'],
+define('pv', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers', 'hex_md5', 'js/libs/provoda.initDeclaredNestings'],
 function(spv, angbo, $, PvTemplate, morph_helpers, hex_md5, initDeclaredNestings){
 "use strict";
 var push = Array.prototype.push;
-var DOT = '.';
 var provoda;
 var big_index = {};
 var sync_sender = {
@@ -1151,7 +1150,7 @@ var clean_obj = {};
 var cached_parsed_namespace = {};
 var parseNamespace = function(namespace) {
 	if (!cached_parsed_namespace[namespace]){
-		cached_parsed_namespace[namespace] = namespace.split(DOT);
+		cached_parsed_namespace[namespace] = namespace.split('.');
 	}
 	return cached_parsed_namespace[namespace];
 };
@@ -1228,7 +1227,7 @@ FastEventor.prototype = {
 		var i = 0;
 		if (this.reg_fires.by_namespace){
 			for (i = parts.length - 1; i > -1; i--) {
-				var posb_namespace = parts.slice(0, i + 1).join(DOT);
+				var posb_namespace = parts.slice(0, i + 1).join('.');
 				if (this.reg_fires.by_namespace[posb_namespace]){
 					funcs.push(this.reg_fires.by_namespace[posb_namespace]);
 				}
@@ -1398,7 +1397,7 @@ FastEventor.prototype = {
 				continue;
 			}
 			var last_char = cur_namespace.charAt(short_name.length);
-			if ((!last_char || last_char == DOT) && cur_namespace.indexOf(short_name) == 0){
+			if ((!last_char || last_char == '.') && cur_namespace.indexOf(short_name) == 0){
 				this.subscribes_cache[cur_namespace] = null;
 			}
 		}
@@ -1427,7 +1426,7 @@ FastEventor.prototype = {
 					var canbe_matched = cac_space[curn];
 					if (typeof canbe_matched =='undefined') {
 						var last_char = curn.charAt(namespace.length);
-						canbe_matched = (!last_char || last_char == DOT) && curn.indexOf(namespace) == 0;
+						canbe_matched = (!last_char || last_char == '.') && curn.indexOf(namespace) == 0;
 						cac_space[curn] = canbe_matched;
 					}
 					if (canbe_matched){
@@ -3702,7 +3701,7 @@ add({
 		return this.children_models && this.children_models[collection_name];
 	},
 	updateNesting: function(collection_name, array, opts, spec_data) {
-		if (collection_name.indexOf(DOT) != -1){
+		if (collection_name.indexOf('.') != -1){
 			throw new Error('remove "." (dot) from name');
 		}
 

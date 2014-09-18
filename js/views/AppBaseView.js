@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate', './modules/getUsageTree'], function(provoda, spv, $, filters, app_serv, PvTemplate, getUsageTree){
+define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate', './modules/getUsageTree'], function(pv, spv, $, filters, app_serv, PvTemplate, getUsageTree){
 "use strict";
 var transform_props = [app_serv.app_env.transform];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
@@ -9,7 +9,7 @@ transform_props.forEach(function(el) {
 var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
 
 
-provoda.setTplFilterGetFn(function(filter_name) {
+pv.setTplFilterGetFn(function(filter_name) {
 	if (filters[filter_name]){
 		return filters[filter_name];
 	} else {
@@ -54,14 +54,14 @@ LevContainer.prototype = {
 
 
 var BrowserAppRootView = function() {};
-provoda.View.extendTo(BrowserAppRootView, {
+pv.View.extendTo(BrowserAppRootView, {
 	dom_rp: true,
 	
 	_getCallsFlow: function() {
 		return this.calls_flow;
 	},
 	init: function(opts, vopts) {
-		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
+		this.calls_flow = new pv.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
 		return this._super.apply(this, arguments);
 	},
 	createDetails: function() {

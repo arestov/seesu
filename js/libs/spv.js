@@ -425,6 +425,12 @@ sortByRules = spv.sortByRules = function(a, b, rules){
 	}
 };
 
+spv.getSortFunc = function(rules) {
+	return function(a, b) {
+		return sortByRules(a, b, rules);
+	};
+};
+
 makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 	var r = {};
 	if (array && array.length){

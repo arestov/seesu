@@ -1,8 +1,8 @@
-define(['provoda', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(provoda, app_serv, spv, BrowseMap){
+define(['pv', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(pv, app_serv, spv, BrowseMap){
 "use strict";
 var localize = app_serv.localize;
 var UserAcquaintance = function() {};
-provoda.Model.extendTo(UserAcquaintance, {
+pv.Model.extendTo(UserAcquaintance, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.sender = params.sender;

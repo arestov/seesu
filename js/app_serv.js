@@ -208,8 +208,6 @@ app_serv.getHTMLText = function(text) {
 
 
 
-
-
 var addClass = function(old_c, cl){
 	
 	var add_c = cl.split(' ');
@@ -503,6 +501,22 @@ var app_env = (function(wd){
 	return env;
 })(window);
 app_serv.app_env = app_env;
+
+var is_nodewebkit = app_env.app_type == 'nodewebkit';
+
+app_serv.getSafeIframe = function() {
+	var iframe = document.createElement('iframe');
+	if (is_nodewebkit) {
+		iframe.setAttribute('nwdisable', true);
+		iframe.setAttribute('nwfaketop', true);
+	}
+
+	return iframe;
+};
+
+
+
+
 (function(){
 	var sensitive_keys = ['vk_token_info', 'dg_auth', 'lfm_scrobble_s', 'lfmsk', 'big_vk_cookie'];
 	var parse = function(r_value){

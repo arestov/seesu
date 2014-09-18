@@ -1,9 +1,9 @@
-define(['provoda'], function(provoda) {
+define(['pv'], function(pv) {
 "use strict";
 
 var baseNavUI = function() {};
 
-provoda.View.extendTo( baseNavUI, {
+pv.View.extendTo( baseNavUI, {
 	dom_rp: true,
 	base_tree: {
 		sample_name: 'common-nav'

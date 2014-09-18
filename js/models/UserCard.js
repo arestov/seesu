@@ -1,7 +1,7 @@
-define(['provoda', 'spv', 'app_serv', './comd', 'jquery',
+define(['pv', 'spv', 'app_serv', './comd', 'jquery',
 'js/libs/BrowseMap', './SongsList', './ArtCard' , 'js/common-libs/htmlencoding',
 './UserAcquaintancesLists', './SuUsersPlaylists', './user_music_lfm', './user_music_vk'],
-function(provoda, spv, app_serv, comd, $,
+function(pv, spv, app_serv, comd, $,
 BrowseMap, SongsList, ArtCard, htmlencoding,
 UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, user_music_vk){
 "use strict";
@@ -365,7 +365,7 @@ UserCard.LfmUserCard = LfmUserCard;
 UserCard.VkUserCard = VkUserCard;
 
 var SongListener = function() {};
-provoda.Model.extendTo(SongListener, {
+pv.Model.extendTo(SongListener, {
 	init: function(opts, params) {
 		this.app = opts.app;
 		this.userdata = params.data;

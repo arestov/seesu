@@ -1,7 +1,7 @@
 ({
     baseUrl: ".",
 	paths: {
-		provoda: 'js/libs/provoda',
+		pv: 'js/libs/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
 		jquery: 'js/common-libs/jquery-2.1.0.min',

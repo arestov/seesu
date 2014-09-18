@@ -1,4 +1,4 @@
-define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'], function(provoda, app_serv, LoadableList, comd, Song, lb){
+define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'], function(pv, app_serv, LoadableList, comd, Song, lb){
 	"use strict";
 	var localize = app_serv.localize;
 	var app_env = app_serv.app_env;
@@ -84,7 +84,7 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 
 	var SongsListBase = function() {};
-	provoda.extendFromTo("SongsListBase", LoadableList, SongsListBase);
+	pv.extendFromTo("SongsListBase", LoadableList, SongsListBase);
 	
 
 	var SongsList = function(){};

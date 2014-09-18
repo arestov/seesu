@@ -1,5 +1,5 @@
-define(['spv', 'provoda', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'js/modules/declr_parsers'],
-function(spv, provoda, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers){
+define(['spv', 'pv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'js/modules/declr_parsers'],
+function(spv, pv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers){
 "use strict";
 var localize = app_serv.localize;
 
@@ -603,7 +603,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 	'nest-hypem_reblog': ['blogged', true, 'init_heavy'],
 
 	
-	initHeavy: provoda.getOCF('heavy_oi', function() {
+	initHeavy: pv.getOCF('heavy_oi', function() {
 		this.albums_models = {};
 		this.updateState('init_heavy', true);
 	}),

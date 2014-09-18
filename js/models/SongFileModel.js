@@ -1,11 +1,11 @@
-define(['provoda', 'app_serv', 'spv'], function(provoda, app_serv, spv){
+define(['pv', 'app_serv', 'spv'], function(pv, app_serv, spv){
 "use strict";
 var app_env = app_serv.app_env;
 
 
 
 var MusicFile = function() {};
-provoda.Model.extendTo(MusicFile, {
+pv.Model.extendTo(MusicFile, {
 	init: function(opts, data) {
 		this._super();
 		this.updateManyStates(data);
@@ -25,7 +25,7 @@ var FileInTorrent = function(sr_item){
 	this.init();
 };
 
-provoda.Model.extendTo(FileInTorrent, {
+pv.Model.extendTo(FileInTorrent, {
 	model_name: 'file-torrent',
 	init: function() {
 		this._super();
@@ -56,7 +56,7 @@ provoda.Model.extendTo(FileInTorrent, {
 
 	var counter = 0;
 	var SongFileModel = function(){};
-	provoda.Model.extendTo(SongFileModel, {
+	pv.Model.extendTo(SongFileModel, {
 		model_name: 'file-http',
 		init: function(opts) {
 			this._super();

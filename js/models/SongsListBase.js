@@ -1,9 +1,9 @@
-define(['provoda', 'spv'], function(provoda, spv){
+define(['pv', 'spv'], function(pv, spv){
 	"use strict";
 
 
 
-	provoda.addPrototype("SongsListBase", spv.coe(function(add) {
+	pv.addPrototype("SongsListBase", spv.coe(function(add) {
 
 	var hndNeighboursRemarks = function(e) {
 		var direction =  e.nesting_name.replace('vis_neig_', '');

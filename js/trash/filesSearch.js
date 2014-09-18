@@ -1,7 +1,7 @@
 var muansPack = function(){
 	this.store = {}
 };
-createPrototype(muansPack, new provoda.Eventor(), {
+createPrototype(muansPack, new pv.Eventor(), {
 	addMuans: function(mu_ans, name){
 		this.store[name] = mu_ans;
 	},
@@ -30,7 +30,7 @@ var muAns = function(msearch) {
 	this.callParentMethod('init');
 	this.msearch = msearch;
 };
-createPrototype(muAns, new provoda.Eventor(), {
+createPrototype(muAns, new pv.Eventor(), {
 	setSearch: function() {
 		this.msearch = msearch;
 	},

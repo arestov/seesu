@@ -1,8 +1,8 @@
-define(['provoda', 'spv', '../libs/BrowseMap'], function(provoda, spv, BrowseMap) {
+define(['pv', 'spv', '../libs/BrowseMap'], function(pv, spv, BrowseMap) {
 "use strict";
 var binded_models = {};
 var AppModelBase = function() {};
-provoda.Model.extendTo(AppModelBase, {
+pv.Model.extendTo(AppModelBase, {
 	init: function() {
 		this._super();
 		this.navigation = [];

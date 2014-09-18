@@ -1,11 +1,11 @@
-define(['provoda', 'jquery', './coct', 'app_serv', './modules/Panoramator', 'spv'],
-function(provoda, $, coct, app_serv, Panoramator, spv) {
+define(['pv', 'jquery', './coct', 'app_serv', './modules/Panoramator', 'spv'],
+function(pv, $, coct, app_serv, Panoramator, spv) {
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
 
 var ArtcardUI = function() {};
-provoda.View.extendTo(ArtcardUI, {
+pv.View.extendTo(ArtcardUI, {
 	die: function() {
 		this._super();
 	},
@@ -56,7 +56,7 @@ provoda.View.extendTo(ArtcardUI, {
 });
 
 var TagsController = function() {};
-provoda.View.extendTo(TagsController, {
+pv.View.extendTo(TagsController, {
 	bindBase: function() {},
 	tpl_r_events: {
 		'preview_list': {
@@ -70,7 +70,7 @@ provoda.View.extendTo(TagsController, {
 
 
 var SimilarsController = function() {};
-provoda.View.extendTo(SimilarsController, {
+pv.View.extendTo(SimilarsController, {
 	tpl_r_events: {
 		'similars': {
 			showArtcardPage: function(e, node, scope) {
@@ -82,7 +82,7 @@ provoda.View.extendTo(SimilarsController, {
 });
 
 var ArtistInSongConstroller = function() {};
-provoda.View.extendTo(ArtistInSongConstroller, {
+pv.View.extendTo(ArtistInSongConstroller, {
 	dom_rp: true,
 	children_views:{
 		tags_list: TagsController,

@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
-function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
+define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
+function(pv, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 "use strict";
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
@@ -16,7 +16,7 @@ var album_placeholder = {
 	var app_env = app_serv.app_env;
 	var Song;
 	var SongBase = function() {};
-	provoda.extendFromTo("SongBase", BrowseMap.Model, SongBase);
+	pv.extendFromTo("SongBase", BrowseMap.Model, SongBase);
 
 	Song = function(){};
 
@@ -29,7 +29,7 @@ var album_placeholder = {
 				return can_load_songcard && songcard;
 			}
 		],
-		'stch-$relation:songcard-for-active_song': provoda.Model.prototype.hndRDep,
+		'stch-$relation:songcard-for-active_song': pv.Model.prototype.hndRDep,
 
 		'stch-can_load_baseinfo': function(state) {
 			if (state){
@@ -190,7 +190,7 @@ var album_placeholder = {
 			this.initHeavyPart();
 			return this.mf_cor;
 		},
-		initHeavyPart: provoda.getOCF('izheavy', function() {
+		initHeavyPart: pv.getOCF('izheavy', function() {
 			var omo = this.omo;
 
 			if (omo.side_file && !omo.side_file.link) {

@@ -1,8 +1,8 @@
-define(['provoda', 'jquery', 'app_serv', './uacq'], function(provoda, $, app_serv, uacq) {
+define(['pv', 'jquery', 'app_serv', './uacq'], function(pv, $, app_serv, uacq) {
 "use strict";
 var localize = app_serv.localize;
 var UserCardPreview = function() {};
-provoda.View.extendTo(UserCardPreview, {
+pv.View.extendTo(UserCardPreview, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;

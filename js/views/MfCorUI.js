@@ -1,8 +1,8 @@
-define(['provoda', 'jquery', 'spv', './etc_views'], function(provoda, $, spv, etc_views) {
+define(['pv', 'jquery', 'spv', './etc_views'], function(pv, $, spv, etc_views) {
 "use strict";
 
 var notifyCounterUI = function() {};
-provoda.View.extendTo(notifyCounterUI, {
+pv.View.extendTo(notifyCounterUI, {
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -15,7 +15,7 @@ provoda.View.extendTo(notifyCounterUI, {
 
 
 var FileInTorrentUI = function() {};
-provoda.View.extendTo(FileInTorrentUI,{
+pv.View.extendTo(FileInTorrentUI,{
 	state_change: {
 		"download-pressed": function(state) {
 			if (state){
@@ -63,7 +63,7 @@ provoda.View.extendTo(FileInTorrentUI,{
 	}
 });
 var SongFileModelUI = function() {};
-provoda.View.extendTo(SongFileModelUI, {
+pv.View.extendTo(SongFileModelUI, {
 	dom_rp: true,
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
@@ -249,7 +249,7 @@ provoda.View.extendTo(SongFileModelUI, {
 
 
 var FilesSourceTunerView = function(){};
-provoda.View.extendTo(FilesSourceTunerView, {
+pv.View.extendTo(FilesSourceTunerView, {
 	tpl_events: {
 		changeTune: function(e, node){
 			var tune_name = node.name;
@@ -266,7 +266,7 @@ provoda.View.extendTo(FilesSourceTunerView, {
 
 
 var ComplectPionerView = function(){};
-provoda.View.extendTo(ComplectPionerView, {
+pv.View.extendTo(ComplectPionerView, {
 	children_views: {
 		vis_tuner: FilesSourceTunerView
 	}
@@ -276,7 +276,7 @@ provoda.View.extendTo(ComplectPionerView, {
 
 
 var mfComplectUI = function() {};
-provoda.View.extendTo(mfComplectUI, {
+pv.View.extendTo(mfComplectUI, {
 	children_views: {
 		'pioneer': ComplectPionerView
 	},
@@ -301,7 +301,7 @@ provoda.View.extendTo(mfComplectUI, {
 });
 
 var YoutubePreview = function() {};
-provoda.View.extendTo(YoutubePreview, {
+pv.View.extendTo(YoutubePreview, {
 	createBase: function() {
 		var li = $('<li class="you-tube-video-link"></li>');
 		this.c = li;
@@ -358,7 +358,7 @@ provoda.View.extendTo(YoutubePreview, {
 
 
 var MfCorUI = function() {};
-provoda.View.extendTo(MfCorUI, {
+pv.View.extendTo(MfCorUI, {
 	children_views:{
 		notifier: notifyCounterUI,
 		vk_auth: etc_views.VkLoginUI,

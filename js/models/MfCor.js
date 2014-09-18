@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/libs/Mp3Search', 'jquery', './comd', './YoutubeVideo', './LoadableList'],
-function(provoda, spv, app_serv, cache_ajax, aReq, Mp3Search, $, comd, YoutubeVideo, LoadableList) {
+define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/libs/Mp3Search', 'jquery', './comd', './YoutubeVideo', './LoadableList'],
+function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, $, comd, YoutubeVideo, LoadableList) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -32,7 +32,7 @@ var NotifyCounter = function(name, banned_messages) {
 	this.name = name;
 };
 
-provoda.Model.extendTo(NotifyCounter, {
+pv.Model.extendTo(NotifyCounter, {
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
@@ -108,7 +108,7 @@ var MfComplect = function(opts, params) {
 	
 };
 
-provoda.Model.extendTo(MfComplect, {
+pv.Model.extendTo(MfComplect, {
 	flchwp_opts: {
 		exlusive: true
 	},
@@ -503,9 +503,9 @@ LoadableList.extendTo(MfCor, {
 			return need_files && files_investg;
 		}
 	],
-	'stch-$relation:investg_to_load-for-song_need': provoda.Model.prototype.hndRDep,
-	'stch-$relation:file_to_load-for-player_song': provoda.Model.prototype.hndRDep,
-	'stch-$relation:file_to_load-for-preload_current_file': provoda.Model.prototype.hndRDep,
+	'stch-$relation:investg_to_load-for-song_need': pv.Model.prototype.hndRDep,
+	'stch-$relation:file_to_load-for-player_song': pv.Model.prototype.hndRDep,
+	'stch-$relation:file_to_load-for-preload_current_file': pv.Model.prototype.hndRDep,
 	
 	isSearchAllowed: function() {
 		return !this.file;

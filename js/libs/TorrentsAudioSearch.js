@@ -1,4 +1,4 @@
-define(['jquery', 'js/libs/FuncsStack', 'spv', 'provoda', 'js/libs/Mp3Search'], function($, FuncsStack, spv, provoda, Mp3Search) {
+define(['jquery', 'js/libs/FuncsStack', 'spv', 'pv', 'js/libs/Mp3Search'], function($, FuncsStack, spv, pv, Mp3Search) {
 
 var trackers = ["udp://tracker.openbittorrent.com:80",
 					'udp://tracker.ccc.de:80',
@@ -154,7 +154,7 @@ var getTorrentFile = function(raw, torrent, torrent_api) {
 };
 
 var Torrent = function() {};
-provoda.Model.extendTo(Torrent, {
+pv.Model.extendTo(Torrent, {
 	init: function(opts, data) {
 		this._super();
 		this.remove_timeout = null;

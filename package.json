@@ -10,5 +10,6 @@
 	"height": 768,
 	"min_width": 640,
 	"min_height": 480
-  }
+  },
+  "node-remote": ["https://arestov.github.io"]
 }

@@ -1,6 +1,6 @@
-define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
+define(['pv', 'spv', 'jquery'],function(pv, spv, $){
 	"use strict";
-	provoda.addPrototype("Investigation", {
+	pv.addPrototype("Investigation", {
 		model_name: 'invstg',
 		init: function(opts) {
 			this._super.apply(this, arguments);
@@ -173,7 +173,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		},
 		query_regexp: /\ ?\%query\%\ ?/
 	});
-	provoda.addPrototype("BaseSectionButton", {
+	pv.addPrototype("BaseSectionButton", {
 		setText: function(text){
 			this.updateState('button_text', text);
 		},
@@ -188,7 +188,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 
 	
 
-	provoda.addPrototype("BaseSuggest", {
+	pv.addPrototype("BaseSuggest", {
 		setActive: function(){
 			this.updateState('active', true);
 		},
@@ -238,7 +238,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 	});
 
 	
-	provoda.addPrototype("SearchSection", {
+	pv.addPrototype("SearchSection", {
 		init: function(opts){
 			this._super.apply(this, arguments);
 			this.app = opts && opts.app;

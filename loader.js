@@ -3,7 +3,7 @@ var big_timer;
 "use strict";
 requirejs.config({
 	paths: {
-		provoda: 'js/libs/provoda',
+		pv: 'js/libs/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
 		jquery: 'js/common-libs/jquery-2.1.0.min',
@@ -78,12 +78,12 @@ big_timer = {
 	if (need_ui){
 
 		//ui thread;
-		requirejs(['su', 'js/views/AppView', 'angbo', 'provoda'], function(su, AppView, angbo, provoda) {
+		requirejs(['su', 'js/views/AppView', 'angbo', 'pv'], function(su, AppView, angbo, pv) {
 			var can_die = false;
 			var md = su;
 
 			var proxies_space = Date.now();
-			var views_proxies = provoda.views_proxies;
+			var views_proxies = pv.views_proxies;
 			views_proxies.addSpaceById(proxies_space, md);
 			var mpx = views_proxies.getMPX(proxies_space, md);
 

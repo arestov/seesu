@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv', 'hex_md5'], function(provoda, spv, app_serv, hex_md5) {
+define(['pv', 'spv', 'app_serv', 'hex_md5'], function(pv, spv, app_serv, hex_md5) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -6,7 +6,7 @@ var localize = app_serv.localize;
 
 var LfmLogin = function() {};
 
-provoda.Model.extendTo(LfmLogin, {
+pv.Model.extendTo(LfmLogin, {
 	model_name: 'auth_block_lfm',
 	init: function(opts, data, params) {
 		this._super.apply(this, arguments);
@@ -115,7 +115,7 @@ var LfmAuth = function(lfm, opts) {
 		this.init(this.opts);
 	}
 };
-provoda.Eventor.extendTo(LfmAuth, {
+pv.Eventor.extendTo(LfmAuth, {
 	init: function(opts) {
 		this._super();
 		if (this.api.sk){

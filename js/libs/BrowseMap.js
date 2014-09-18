@@ -1,4 +1,4 @@
-define(['provoda', 'spv'], function(provoda, spv) {
+define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 var MapLevel = function(num, parent_levels, resident, map){
 	this.closed = null;
@@ -101,7 +101,7 @@ spv.Class.extendTo(MapLevel, {
 
 var BrowseMap = function (){};
 
-provoda.Eventor.extendTo(BrowseMap, {
+pv.Eventor.extendTo(BrowseMap, {
 	init: function(maleres){
 		this._super();
 
@@ -1054,7 +1054,7 @@ var getModelSources = function(app, md, cur) {
 
 var strucs_cache = {};
 
-provoda.HModel.extendTo(BrowseMap.Model, {
+pv.HModel.extendTo(BrowseMap.Model, {
 	init: function(opts, data) {
 		this._super.apply(this, arguments);
 

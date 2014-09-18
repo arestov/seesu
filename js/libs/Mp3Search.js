@@ -1,4 +1,4 @@
-define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, SongFileModel){
+define(['pv', 'spv', '../models/SongFileModel'], function(pv, spv, SongFileModel){
 "use strict";
 
 
@@ -242,7 +242,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 
 
 var FilesSourceTuner = function() {};
-provoda.Model.extendTo(FilesSourceTuner, {
+pv.Model.extendTo(FilesSourceTuner, {
 	init: function(opts, data) {
 		this._super();
 		this.app = opts.app;
@@ -313,7 +313,7 @@ var getMatchedSongs = function(music_list, msq) {
 };
 
 	var FilesBySource = function() {};
-	provoda.Model.extendTo(FilesBySource, {
+	pv.Model.extendTo(FilesBySource, {
 		init: function(opts, params, search_eng_name) {
 			this.map_parent = opts.map_parent;
 			this._super();
@@ -509,7 +509,7 @@ var getMatchedSongs = function(music_list, msq) {
 	});
 
 	var FilesInvestg = function() {};
-	provoda.Model.extendTo(FilesInvestg, {
+	pv.Model.extendTo(FilesInvestg, {
 		init: function(opts, params) {
 			this._super();
 			this.sources = {};
@@ -879,7 +879,7 @@ var getAverageDurations = function(mu_array, time_limit){
 
 
 
-	provoda.Model.extendTo(Mp3Search,  {
+	pv.Model.extendTo(Mp3Search,  {
 		'regfr-listchange': {
 			event_name: 'list-changed',
 			fn: function() {

@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', '../comd', 'js/LfmAuth',
-'./SongActPlaylisting', './SongActTaging', './SongActSharing'], function(provoda, spv, app_serv, comd, LfmAuth,
+define(['pv', 'spv', 'app_serv', '../comd', 'js/LfmAuth',
+'./SongActPlaylisting', './SongActTaging', './SongActSharing'], function(pv, spv, app_serv, comd, LfmAuth,
 SongActPlaylisting, SongActTaging, SongActSharing){
 "use strict";
 var localize = app_serv.localize;

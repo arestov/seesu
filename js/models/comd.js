@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(provoda, spv, app_serv, morph_helpers){
+define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(pv, spv, app_serv, morph_helpers){
 "use strict";
 var localize = app_serv.localize;
 
@@ -9,7 +9,7 @@ var CommonMessagesStore = function(glob_store, store_name) {
 };
 
 
-provoda.Eventor.extendTo(CommonMessagesStore, {
+pv.Eventor.extendTo(CommonMessagesStore, {
 	markAsReaded: function(message) {
 		var changed = this.glob_store.set(this.store_name, message);
 		if (changed){
@@ -47,7 +47,7 @@ spv.Class.extendTo(GMessagesStore, {
 });
 
 var BigContextNotify = function() {};
-provoda.Model.extendTo(BigContextNotify, {
+pv.Model.extendTo(BigContextNotify, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		var _this = this;
@@ -76,7 +76,7 @@ provoda.Model.extendTo(BigContextNotify, {
 });
 
 var ImagesPack = function() {};
-provoda.Model.extendTo(ImagesPack, {
+pv.Model.extendTo(ImagesPack, {
 	init: function() {
 		this._super();
 		this.images_by_source = {};
@@ -153,7 +153,7 @@ ImagesPack.extendTo(ArtistImages, {
 });
 
 var LastFMArtistImagesSelector = function() {};
-provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
+pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 	init: function() {
 		this._super();
 		this.art_models = {};
@@ -352,7 +352,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 var PartsSwitcher = function() {};
 
-provoda.Model.extendTo(PartsSwitcher, {
+pv.Model.extendTo(PartsSwitcher, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.context_parts = {};
@@ -401,7 +401,7 @@ provoda.Model.extendTo(PartsSwitcher, {
 
 
 var BaseCRow = function(){};
-provoda.Model.extendTo(BaseCRow, {
+pv.Model.extendTo(BaseCRow, {
 	switchView: function(){
 		this.actionsrow.switchPart(this.model_name);
 	},
@@ -418,7 +418,7 @@ provoda.Model.extendTo(BaseCRow, {
 
 
 var VkLoginB = function() {};
-provoda.Model.extendTo(VkLoginB, {
+pv.Model.extendTo(VkLoginB, {
 	model_name: 'auth_block_vk',
 	init: function(opts, data, params) {
 		this._super.apply(this, arguments);
