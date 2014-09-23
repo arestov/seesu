@@ -371,7 +371,7 @@ pv.View.extendTo(MfCorUI, {
 	},
 	'collch-yt_videos': 'tpl.ancs.video_list',
 	bindBase: function() {
-		this.createTemplate();
+		//this.createTemplate();
 		var _this = this;
 		this.tpl.ancs.more_songs_b.click(function() {
 			_this.RPCLegacy('switchMoreSongsView');

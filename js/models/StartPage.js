@@ -35,8 +35,7 @@ var converNews = function(list) {
 	return result;
 };
 
-var AppNews = function() {};
-BrowseMap.Model.extendTo(AppNews, {
+var AppNews = BrowseMap.Model.extendTo(function AppNews() {}, {
 	model_name: 'app_news',
 	init: function() {
 		this._super.apply(this, arguments);

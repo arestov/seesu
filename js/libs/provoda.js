@@ -172,24 +172,7 @@ MDProxy.prototype = {
 		if (!this.views) {
 			return;
 		}
-		var removed;
-
-		if (Array.isArray(old_value)){
-			if (!array){
-				removed = old_value.slice(0);
-			} else {
-				removed = [];
-				for (var i = 0; i < old_value.length; i++) {
-					var cur = old_value[i];
-					if (array.indexOf(cur) == -1){
-						removed.push(cur);
-					}
-				}
-			}
-			//console.log(removed);
-		} else if (old_value && array != old_value) {
-			removed = [old_value];
-		}
+		var removed = provoda.getRemovedNestingItems(array, old_value);
 		
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].stackCollectionChange(collection_name, array, old_value, removed);
@@ -594,6 +577,24 @@ SyncReceiver.prototype = {
 
 
 provoda = {
+	initWebApp: function(root_md, RootViewConstr) {
+
+		var proxies_space = Date.now();
+		var views_proxies = provoda.views_proxies;
+		views_proxies.addSpaceById(proxies_space, root_md);
+		var mpx = views_proxies.getMPX(proxies_space, root_md);
+
+		(function() {
+			var view = new RootViewConstr();
+			mpx.addView(view, 'root');
+			view.init({
+				mpx: mpx,
+				proxies_space: proxies_space
+			}, {d: window.document});
+			view.requestAll();
+			view = null;
+		})();
+	},
 	getModelById: function(id) {
 		return big_index[id];
 	},
@@ -635,6 +636,26 @@ provoda = {
 				return this;
 			}
 		};
+	},
+	getRemovedNestingItems: function(array, old_value) {
+		var removed;
+		if (Array.isArray(old_value)){
+			if (!array){
+				removed = old_value.slice(0);
+			} else {
+				removed = [];
+				for (var i = 0; i < old_value.length; i++) {
+					var cur = old_value[i];
+					if (array.indexOf(cur) == -1){
+						removed.push(cur);
+					}
+				}
+			}
+			//console.log(removed);
+		} else if (old_value && array != old_value) {
+			removed = [old_value];
+		}
+		return removed;
 	}
 };
 provoda.Controller = provoda.View;
@@ -657,7 +678,7 @@ var setEvLiItems = function(items_list) {
 		var oldv = cur.current_motivator;
 		cur.current_motivator = this.current_motivator;
 
-		this.controls_list[i] = cur.evcompanion._addEventHandler(this.event_name, this.event_callback, this, false, false, this.skip_reg, false, false, true);
+		this.controls_list[i] = cur.evcompanion._addEventHandler(this.event_name, this.event_callback, this, false, false, true, false, false, true);
 		//_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
 
 		/*this.controls_list[i] = cur.on(this.event_name, this.event_callback, {
@@ -679,7 +700,7 @@ var ItemsEvents = function(event_name, md, callback) {
 	this.controls_list = [];
 	this.event_name = event_name;
 	this.callback = callback;
-	this.skip_reg = false;
+	//this.skip_reg = true;
 	this.current_motivator = null;
 };
 ItemsEvents.prototype = {
@@ -688,8 +709,8 @@ ItemsEvents.prototype = {
 		this.md.current_motivator = this.current_motivator;
 		this.callback.call(this.md, {
 			target: this.md,
-			item: e.target,
-			value: e.value,
+			item: e && e.target,
+			value: e && e.value,
 			items: this.items_list
 		});
 		this.md.current_motivator = old_value;
@@ -701,7 +722,11 @@ ItemsEvents.prototype = {
 			}
 		}
 	},
-	setItems: setEvLiItems
+	setItemsReal: setEvLiItems,
+	setItems: function(items_list) {
+		this.setItemsReal( items_list && spv.toRealArray( items_list ) );
+		this.event_callback();
+	}
 };
 
 
@@ -715,7 +740,7 @@ var StatesArchiver = function(state_name, result_state_name, md, calculateResult
 
 	this.state_name = state_name;
 	this.event_name = 'lgh_sch-' + this.state_name;
-	this.skip_reg = true;
+	//this.skip_reg = true;
 
 	var calcR = calculateResult;
 	if (calcR){
@@ -768,8 +793,7 @@ StatesArchiver.prototype = {
 	},
 	setItemsReal: setEvLiItems,
 	setItems: function(items_list) {
-		items_list = items_list && spv.toRealArray(items_list);
-		this.setItemsReal(items_list);
+		this.setItemsReal( items_list && spv.toRealArray( items_list ) );
 		this.event_callback();
 	}
 };
@@ -3700,6 +3724,7 @@ add({
 	getNesting: function(collection_name) {
 		return this.children_models && this.children_models[collection_name];
 	},
+
 	updateNesting: function(collection_name, array, opts, spec_data) {
 		if (collection_name.indexOf('.') != -1){
 			throw new Error('remove "." (dot) from name');
@@ -3720,21 +3745,7 @@ add({
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
 		// !?
-		var removed;
-		if (Array.isArray(old_value)){
-			if (!array){
-				removed = old_value.slice(0);
-			} else {
-				removed = [];
-				for (var i = 0; i < old_value.length; i++) {
-					var cur = old_value[i];
-					if (array.indexOf(cur) == -1){
-						removed.push(cur);
-					}
-				}
-			}
-			//console.log(removed);
-		}
+		
 		
 
 		var full_ev_name = 'child_change-' + collection_name;
@@ -3781,6 +3792,7 @@ add({
 
 
 		if (!opts || !opts.skip_report){
+			var removed = provoda.getRemovedNestingItems(array, old_value);
 			this.sendCollectionChange(collection_name, array, old_value, removed);
 		}
 
@@ -5605,6 +5617,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			var view = this.getStoredMpx(array[i]).getView(location_id);
 			if (view) {
 				view._lbr.innesting_pos_current = counter;
+
+				var $first = counter === 0;
+				var $last = counter === (array.length - 1);
+
+				view.updateState('$index', counter);
+				view.updateState('$first', $first);
+				view.updateState('$last', $last);
+				view.updateState('$middle', !($first || $last));
+
 				counter++;
 			}
 		}
@@ -5806,6 +5827,20 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	parts_builder: {}
+});
+
+provoda.BaseRootView = function BaseRootView () {};
+provoda.View.extendTo(provoda.BaseRootView, {
+	_getCallsFlow: function() {
+		return this.calls_flow;
+	},
+	init: function(opts, vopts) {
+		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
+		return this._super.apply(this, arguments);
+	},
+	remove: function() {
+		this.calls_flow = null;
+	}
 });
 
 

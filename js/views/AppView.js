@@ -167,7 +167,33 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		this._super();
 		var _this = this;
 		this.wp_box = new WPBox();
-		this.wp_box.init(this);
+		this.wp_box.init(this, function() {
+			return _this.getNesting('current_mp_md');
+		}, function(waypoint) {
+			_this.setVisState('current_wpoint', waypoint);
+		}, function(cwp) {
+			$(cwp.node).click();
+			$(cwp.node).trigger('activate_waypoint');
+
+			setTimeout(function() {
+				if (_this.state('vis_current_wpoint') != cwp) {
+					return;
+				}
+				var still_in_use = _this.wp_box.isWPAvailable(cwp);
+				if (still_in_use){
+					_this.scrollToWP(still_in_use);
+				} else {
+					_this.setVisState('current_wpoint', false);
+				}
+			},100);
+		}, function() {
+			return _this.state('vis_current_wpoint');
+		}, function(wp) {
+			var cur_wp = _this.state('vis_current_wpoint');
+			if (cur_wp == wp) {
+				_this.setVisState('current_wpoint', false);
+			}
+		});
 
 		_this.dom_related_props.push('favicon_node', 'wp_box');
 
@@ -493,7 +519,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			console.log('dom ready');
 
 			_this.checkSizeDetector();
-			_this.buildWidthStreamer();
+			_this.nextTick(_this.buildWidthStreamer);
 			_this.els.search_form.find('#app_type').val(app_env.app_type);
 			
 			_this.wrapStartScreen(this.els.start_screen);
@@ -576,7 +602,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		}
 		if (key_name){
 			//this.RPCLegacy('keyNav', key_name);
-			this.wp_box.wayPointsNav(key_name);
+			this.wp_box.wayPointsNav(key_name, e);
 		}
 	},
 	scrollToWP: function(cwp) {

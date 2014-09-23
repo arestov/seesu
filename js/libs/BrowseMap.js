@@ -932,7 +932,27 @@ var getNestingConstr = function(app, md, nesting_name) {
 
 
 	if (md[ 'nest_rqc-' + nesting_name ]) {
-		return md[ 'nest_rqc-' + nesting_name ];
+		var target = md[ 'nest_rqc-' + nesting_name ];
+		if (Array.isArray(target)) {
+			if (!target.constrs_array) {
+				var result = [];
+				var index = target[1];
+				for (var prop in index) {
+					if (!index.hasOwnProperty(prop)) {
+						continue;
+					} else {
+						result.push( index[prop] );
+					}
+					
+				}
+				target.constrs_array = result;
+			}
+			
+			return target.constrs_array;
+		} else {
+			return target;
+		}
+		
 	} else if (md[ 'nest_posb-' + nesting_name ]) {
 		return md[ 'nest_posb-' + nesting_name ];
 	} else if (md[ 'nest-' + nesting_name]) {

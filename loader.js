@@ -115,17 +115,6 @@ big_timer = {
 				exposed_view.requestAll();
 			})();
 
-			
-
-
-
-		
-
-
-			
-			
-
-
 
 		});
 	}

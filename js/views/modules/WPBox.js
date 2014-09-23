@@ -2,8 +2,16 @@ define(['spv', 'jquery'], function(spv, $){
 "use strict";
 var WPBox = function() {};
 spv.Class.extendTo(WPBox, {
-	init: function(root_view) {
+	init: function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
 		this.root_view = root_view;
+
+		this.getStartModel = getStartModel;
+		this.press = press;
+		this.select = select;
+		this.getRelativeWP = getRelativeWP;
+
+		this.removeWP = removeWP;
+
 	},
 	wp_dirs: {
 		all: {
@@ -25,30 +33,41 @@ spv.Class.extendTo(WPBox, {
 			'Right': true
 		}
 	},
-	wayPointsNav: function(nav_type) {
-		var _this = this;
+	wayPointsNav: function(nav_type, e) {
+		//var _this = this;
 
-		var cur_mp_md = this.root_view.getNesting('current_mp_md');
-		var roocon_view =  cur_mp_md && this.root_view.getStoredMpx(cur_mp_md).getRooConPresentation(this.root_view, true);
+		var cur_mp_md = this.getStartModel();
+		var roocon_view =  (cur_mp_md && this.root_view.getStoredMpx(cur_mp_md).getRooConPresentation(this.root_view, true)) || this.root_view;
 		if (roocon_view){
-			var dems_storage = {};
+			
 
-			var cwp = this.root_view.state('vis_current_wpoint');
+			var cwp = this.getRelativeWP();
 			if (nav_type == 'Enter'){
-				if (cwp){
-					$(cwp.node).click();
-					$(cwp.node).trigger('activate_waypoint');
 
-					this.cwp_check = setTimeout(function() {
-						var still_in_use = _this.checkCurrentWPoint(dems_storage);
-						if (still_in_use){
-							_this.root_view.scrollToWP(still_in_use);
-						}
-					},100);
+				if (cwp){
+					this.press(cwp);
+					
 				}
 
 			} else if (this.wp_dirs.all[nav_type]){
-				cwp = this.checkCurrentWPoint(dems_storage);
+				var dems_storage = {};
+				if (cwp) {
+					var passes = false;
+					while (cwp && !passes) {
+
+						if (!this.getWPDemsForStorage(cwp, dems_storage)) {
+							this.removeWP(cwp);
+							var ncwp = this.getRelativeWP();
+							if (ncwp != cwp) {
+								cwp = ncwp;
+							} else {
+								cwp = null;
+							}
+						} else {
+							passes = true;
+						}
+					}
+				}
 
 				if (!cwp){
 					var cur_view = roocon_view;
@@ -58,8 +77,8 @@ spv.Class.extendTo(WPBox, {
 						wayp_pack = this.getWPPack(cur_view, dems_storage);
 						cur_view = cur_view.parent_view;
 					}
+					this.select(wayp_pack[0], e);
 
-					this.root_view.setVisState('current_wpoint', wayp_pack[0]);
 
 				} else {
 					var target_dems = cwp && dems_storage[cwp.wpid];
@@ -70,7 +89,7 @@ spv.Class.extendTo(WPBox, {
 
 					var new_wpoint = corridor[0];
 					if (new_wpoint ){
-						this.root_view.setVisState('current_wpoint', new_wpoint);
+						this.select(new_wpoint, e);
 					}
 
 				}
@@ -99,22 +118,8 @@ spv.Class.extendTo(WPBox, {
 
 		return corridor;
 	},
-	checkCurrentWPoint: function(dems_storage) {
-		if (this.cwp_check){
-			clearTimeout(this.cwp_check);
-			delete this.cwp_check;
-		}
-
-
-		var cwp = this.root_view.state('vis_current_wpoint');
-		if (cwp && !this.getWPDemsForStorage(cwp, dems_storage)){
-			//this.current_wpoint.node.removeClass('surf_nav');
-			//delete this.current_wpoint;
-			this.root_view.setVisState('current_wpoint', false);
-		}
-
-		return this.root_view.state('vis_current_wpoint');
-
+	isWPAvailable: function(cwp) {
+		return this.getWPDemsForStorage(cwp) && cwp;
 	},
 	getWPEndPoint: function(cur_wayp, nav_type, dems_storage) {
 		var cur_dems = dems_storage[cur_wayp.wpid];
@@ -141,7 +146,10 @@ spv.Class.extendTo(WPBox, {
 			throw new Error('waypoint must have ID (".wpid")');
 		}
 		var dems = this.getWPDems(cur_wayp);
-		dems_storage[cur_wayp.wpid] = dems || {disabled: true};
+		if (dems_storage) {
+			dems_storage[cur_wayp.wpid] = dems || {disabled: true};
+		}
+		
 		return dems;
 	},
 	getWPDems: function(cur_wayp) {
@@ -342,7 +350,7 @@ spv.Class.extendTo(WPBox, {
 		corridor.sort(function(a, b) {
 			return spv.sortByRules(a, b, [
 				function(el) {
-					var cur_dems = dems_storage[el.wpid];
+					//var cur_dems = dems_storage[el.wpid];
 					var end_point = _this.getWPEndPoint(el, nav_type, dems_storage);
 
 					var cathetus1 = Math.abs(end_point.top - start_point.top);
@@ -366,7 +374,7 @@ spv.Class.extendTo(WPBox, {
 	},
 	matchWPForTriangles: function(dems_storage, nav_type, cur_wayp, target_wp, angle) {
 		var curwp_dems = dems_storage[cur_wayp.wpid];
-		var tagwp_dems = dems_storage[cur_wayp.wpid];
+		//var tagwp_dems = dems_storage[cur_wayp.wpid];
 
 		var point_a = {},
 			point_t = {},
@@ -489,7 +497,7 @@ spv.Class.extendTo(WPBox, {
 	},
 	getALength: function(point_a, point_c, angle_alpha) {
 		//var b_point_arg = point_j.left + a_length;
-		var sign;
+		//var sign;
 
 		var toRad = function(angle){
 			return angle * (Math.PI/180);
@@ -507,8 +515,8 @@ spv.Class.extendTo(WPBox, {
 		var target_dems = dems_storage[cwp.wpid];
 		if (this.wp_dirs.horizontal[nav_type]){
 
-			var cenp_top;
-			var cenp_left;
+			//var cenp_top;
+			//var cenp_left;
 
 			for (i = 0; i < wayp_pack.length; i++) {
 				cur = wayp_pack[i];

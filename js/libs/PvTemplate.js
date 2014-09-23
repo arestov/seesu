@@ -1475,7 +1475,7 @@ spv.Class.extendTo(PvTemplate, {
 		this.pv_views = this.pv_views.concat(this.parsed_pv_views);
 		this.parsed_pv_views = [];
 
-		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values');
+		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values', true);
 	}
 });
 PvTemplate.SimplePVSampler = SimplePVSampler;

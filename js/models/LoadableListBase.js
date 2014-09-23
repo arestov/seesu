@@ -266,6 +266,19 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	makeItemByData: function(data, item_params, nesting_name) {
 		var best_constr = this['nest_rqc-' + nesting_name];
 		if (best_constr) {
+			/*
+				['type', {
+					'number': NumberConstr,
+					'text': TextConstr
+				}]
+			*/
+			if (Array.isArray(best_constr)) {
+				var field = best_constr[0];
+				var field_value = spv.getTargetField( data, field );
+				best_constr = best_constr[1][field_value];
+
+			}
+
 			return this.initSi(best_constr, data, item_params);
 		} else if (this.subitemConstr){
 			var item = new this.subitemConstr();

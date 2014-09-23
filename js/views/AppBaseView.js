@@ -33,7 +33,7 @@ var LevContainer = function(con, scroll_con, material, tpl, context) {
 	this.callbacks = [];
 	var _this = this;
 	if (can_animate){
-		spv.addEvent(this.c[0], can_animate, function(e) {
+		spv.addEvent(this.c[0], can_animate, function() {
 			//console.log(e);
 			_this.completeAnimation();
 		});
@@ -54,16 +54,8 @@ LevContainer.prototype = {
 
 
 var BrowserAppRootView = function() {};
-pv.View.extendTo(BrowserAppRootView, {
+pv.BaseRootView.extendTo(BrowserAppRootView, {
 	dom_rp: true,
-	
-	_getCallsFlow: function() {
-		return this.calls_flow;
-	},
-	init: function(opts, vopts) {
-		this.calls_flow = new pv.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
-		return this._super.apply(this, arguments);
-	},
 	createDetails: function() {
 		this.root_view = this;
 		this.d = this.opts.d;

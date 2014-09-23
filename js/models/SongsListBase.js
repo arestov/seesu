@@ -108,11 +108,14 @@ define(['pv', 'spv'], function(pv, spv){
 		
 	};
 	var hndChangedNeigUse = function(e) {
+		if (!e.item) {
+			return;
+		}
 		checkNeighboursStatesCh(this, e.item);
 		
 	};
 	var hndChangedImportant = function(e) {
-		if (e.item.isImportant()){
+		if (e.item && e.item.isImportant()){
 
 			if (this.state('pl-shuffle')) {
 				applySongRolesChanges(e.item, {
