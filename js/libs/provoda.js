@@ -18,7 +18,7 @@ var sync_sender = {
 		}
 		this.sockets_m_index[stream.id] = null;
 		this.sockets[stream.id] = null;
-		this.streams_list = spv.arrayExclude(this.streams_list, stream);
+		this.streams_list = spv.findAndRemoveItem(this.streams_list, stream);
 	},
 	addSyncStream: function(start_md, stream) {
 		this.sockets_m_index[stream.id] = {};
@@ -1526,12 +1526,12 @@ FastEventor.prototype = {
 		return this.sputnik;
 	},
 	addRequests: function(array, opts) {
-		opts = opts || {};
+		//opts = opts || {};
 		//space, depend
-		var space = opts.space || this.default_requests_space;
+		var space = (opts && opts.space) || this.default_requests_space;
 		var i = 0, req = null;
 
-		if (opts.order){
+		if (opts && opts.order){
 			for (i = 0; i < array.length; i++) {
 				req = array[i];
 				spv.setTargetField(req, this.sputnik.getReqsOrderField(), opts.order);
@@ -1551,7 +1551,7 @@ FastEventor.prototype = {
 		var bindRemove = function(_this, req) {
 			req.always(function() {
 				if (_this.requests && _this.requests[space]){
-					_this.requests[space] = spv.arrayExclude(_this.requests[space], req);
+					_this.requests[space] = spv.findAndRemoveItem(_this.requests[space], req);
 				}
 				
 			});
@@ -1565,7 +1565,7 @@ FastEventor.prototype = {
 			if (target_arr.indexOf(req) != -1){
 				continue;
 			}
-			if (opts.depend){
+			if (opts && opts.depend){
 				if (req){
 					req.addDepend(this.sputnik);
 				}
@@ -1575,7 +1575,7 @@ FastEventor.prototype = {
 			added[i] = req;
 		}
 		if (added.length){
-			if (!opts.skip_sort){
+			if (!opts || !opts.skip_sort){
 				this.sortRequests(space);
 			}
 
@@ -2181,12 +2181,10 @@ StatesLabour.prototype.removeFlowStep = function(space, index_key, item) {
 		return;
 	}*/
 	if (Array.isArray(target)) {
-		var pos = target.indexOf(item);
-		//var arr = 
-		target.splice(pos, 1);
-		/*if (!arr.length) {
-			debugger;
-		}*/
+		spv.findAndRemoveItem(target, item);
+		//var pos = target.indexOf(item);
+		//target.splice(pos, 1);
+
 		
 	} else {
 		if (target == item) {

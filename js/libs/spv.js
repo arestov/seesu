@@ -1197,7 +1197,21 @@ spv.insertItem = function(array, item, index) {
 };
 
 spv.removeItem = function(array, index) {
-	
+	//var array_length = array.length;
+	for (var i = index + 1; i < array.length; i++) {
+		array[ i - 1 ] = array[ i ];
+	}
+	array.length = array.length - 1;
+	return array;
+};
+
+spv.findAndRemoveItem = function(array, item) {
+	var index = array.indexOf(item);
+	if (index === -1) {
+		return array;
+	} else {
+		return spv.removeItem(array, index);
+	}
 };
 
 })();
