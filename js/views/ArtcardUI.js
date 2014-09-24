@@ -55,6 +55,8 @@ pv.View.extendTo(ArtcardUI, {
 	}
 });
 
+var sortByNum = spv.getSortFunc(['num']);
+
 var TagsController = function() {};
 pv.View.extendTo(TagsController, {
 	bindBase: function() {},
@@ -265,9 +267,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			var images_collection = [];
 
 			var updatePanorama = spv.debounce(function(){
-				images_collection.sort(function(a, b){
-					return spv.sortByRules(a, b, ['num']);
-				});
+				images_collection.sort(sortByNum);
 				var images_combination = spv.filter(images_collection, 'num').join('_');
 				
 				_this.nextLocalTick(_this.updatePanoramaIMGs, [spv.filter(images_collection, 'item'), images_combination, _this.img_panorama]);

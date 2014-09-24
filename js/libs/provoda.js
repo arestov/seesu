@@ -970,18 +970,6 @@ var getBoxedRAFFunc = function(win) {
 };
 
 
-var insertItem = function(array, item, index) {
-	var array_length = array.length;
-	var next_value = item;
-	var value_to_recover;
-
-	for (var jj = index; jj < array_length + 1; jj++) {
-		value_to_recover = array[jj];
-		array[jj] = next_value;
-		next_value = value_to_recover;
-	}
-	return array;
-};
 
 	
 var CallbacksFlow = function(win, rendering_flow, iteration_time) {
@@ -1067,9 +1055,8 @@ CallbacksFlow.prototype = {
 						break;
 					}
 				}
-				//this.flow.splice( last_matched + 1, 0, flow_step );
 
-				insertItem(this.flow, flow_step, last_matched + 1);
+				spv.insertItem(this.flow, flow_step, last_matched + 1);
 				
 				//this.flow_steps_collating_invalidated = Math.min( flow_step.complex_order[0], this.flow_steps_collating_invalidated || Infinity );
 			} else {
@@ -1223,6 +1210,7 @@ var FastEventor = function(context) {
 		this.reg_fires = context.reg_fires;
 	}
 	this.requests = null;
+	this._requestsSortFunc = null;
 	this.mapped_reqs = null;//this.sputnik.req_map ? {} : null;
 	this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
 };
@@ -1596,17 +1584,10 @@ FastEventor.prototype = {
 
 
 	},
-
-	sortRequests: function(space) {
-		var requests = this.requests && this.requests[space || this.default_requests_space];
-		if (!this.requests || !this.requests.length) {
-			return;
-		}
-
-		var field_name = this.sputnik.getReqsOrderField();
-
-		return requests.sort(function(a,b){
-			return spv.sortByRules(a, b, [
+	_getRequestsSortFunc: function() {
+		if (!this._requestsSortFunc) {
+			var field_name = this.sputnik.getReqsOrderField();
+			this._requestsSortFunc = spv.getSortFunc([
 				function(el){
 					if (typeof spv.getTargetField(el, field_name) == 'number'){
 						return false;
@@ -1616,7 +1597,17 @@ FastEventor.prototype = {
 				},
 				field_name
 			]);
-		});
+
+		}
+		return this._requestsSortFunc;
+	},
+
+	sortRequests: function(space) {
+		var requests = this.requests && this.requests[space || this.default_requests_space];
+		if (!this.requests || !this.requests.length) {
+			return;
+		}
+		return requests.sort(this._getRequestsSortFunc());
 	},
 	getAllRequests: function() {
 		var all_requests;
@@ -3702,7 +3693,6 @@ add({
 			}
 			if (Array.isArray(cur)){
 				all_models.push.apply(all_models, cur);
-				//all_models = all_models.concat(cur);
 			} else {
 				all_models.push(cur);
 			}
@@ -4298,26 +4288,38 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	canUseDeepWaypoints: function() {
 		return true;
 	},
-	getWaypoints: function() {
-		return this.canUseWaypoints() ? this.way_points : [];
+	getWaypoints: function(result_array) {
+		if (!result_array) {
+			throw new Error('you must apply result array');
+		}
+		if (this.canUseWaypoints()) {
+			if (this.way_points) {
+				push.apply(result_array, this.way_points);
+			}
+			
+		}
+		//return this.canUseWaypoints() ? this.way_points : [];
 	},
-	getAllWaypoints: function(exept) {
-		var all = [];
-		all = all.concat(this.getWaypoints());
-		all = all.concat(this.getDeepWaypoints());
-		return all;
+	getAllWaypoints: function(result_array) {
+		if (!result_array) {
+			throw new Error('you must apply result array');
+		}
+		this.getWaypoints(result_array);
+		this.getDeepWaypoints(result_array);
+
 	},
-	getDeepWaypoints: function(exept) {
-		var all = [];
+	getDeepWaypoints: function(result_array) {
+		if (!result_array) {
+			throw new Error('you must apply result array');
+		}
 		if (this.canUseWaypoints() && this.canUseDeepWaypoints()){
 			//var views = this.getDeepChildren(exept);
 			for (var i = 0; i < this.children.length; i++) {
 				var cur = this.children[i];
-				all = all.concat(cur.getAllWaypoints());
+				cur.getAllWaypoints(result_array);
 			}
 		}
 
-		return all;
 	},
 	addWayPoint: function(point, opts) {
 		var obj = {
@@ -4429,7 +4431,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					continue;
 				}
 				total.push.apply(total, arr_arr[i]);
-				//total = total.concat(arr_arr[i]);
 			}
 			var matched = [];
 			for (i = 0; i < total.length; i++) {

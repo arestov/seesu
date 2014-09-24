@@ -7,6 +7,22 @@ declr_parsers) {
 'use strict';
 var localize = app_serv.localize;
 
+
+var sortByGif = spv.getSortFunc([{
+		field: function(item) {
+			var image = item.state('lfm_img');
+			image = image && (image.lfm_id || image.url);
+			if (image && image.search(/gif$/) == -1){
+				return 1;
+			} else if (!image) {
+				return 2;
+			} else {
+				return 3;
+			}
+		}
+	}
+]);
+
 var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 	init: function(opts, params) {
@@ -27,21 +43,7 @@ user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 		}]
 	],
 	beforeReportChange: function(list) {
-		list.sort(function(a,b ){return spv.sortByRules(a, b, [
-			{
-				field: function(item) {
-					var image = item.state('lfm_img');
-					image = image && (image.lfm_id || image.url);
-					if (image && image.search(/gif$/) == -1){
-						return 1;
-					} else if (!image) {
-						return 2;
-					} else {
-						return 3;
-					}
-				}
-			}
-		]);});
+		list.sort(sortByGif);
 		return list;
 	}
 });

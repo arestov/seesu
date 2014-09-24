@@ -1180,6 +1180,26 @@ var hardTrim = function(string) {
 };
 spv.hardTrim = hardTrim;
 
+
+
+
+spv.insertItem = function(array, item, index) {
+	var array_length = array.length;
+	var next_value = item;
+	var value_to_recover;
+
+	for (var jj = index; jj < array_length + 1; jj++) {
+		value_to_recover = array[jj];
+		array[jj] = next_value;
+		next_value = value_to_recover;
+	}
+	return array;
+};
+
+spv.removeItem = function(array, index) {
+	
+};
+
 })();
 
 

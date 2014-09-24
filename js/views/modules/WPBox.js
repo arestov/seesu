@@ -279,7 +279,8 @@ spv.Class.extendTo(WPBox, {
 		};
 	},
 	getWPPack: function(view, dems_storage) {
-		var all_waypoints = view.getAllWaypoints();
+		var all_waypoints = [];
+		view.getAllWaypoints(all_waypoints);
 		var wayp_pack = [];
 
 		for (var i = 0; i < all_waypoints.length; i++) {
