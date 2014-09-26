@@ -68,28 +68,67 @@ define(['pv', 'spv'], function(pv, spv){
 			
 		}
 	};
-	var hndChangedWantPlay = function(e) {
-		if (e.value){
-			this.idx_wplay_song = e.item;
-		} else if (this.idx_wplay_song == e.item) {
-			this.idx_wplay_song = null;
-		}
+	var getFindSomeFunc = function(check) {
+		return function(array) {
+			for (var i = 0; i < array.length; i++) {
+				if (check(array[i])) {
+					return array[i];
+				}
+			}
+		};
 	};
-	var hndChangedMPShow = function(e) {
-		if (e.value){
-			this.idx_show_song = e.item;
-		} else if (this.idx_show_song == e.item) {
-			this.idx_show_song = null;
+
+	var findWTPS = getFindSomeFunc(function(item) {
+		return item && item.state('want_to_play');
+	});
+	var hndChangedWantPlay = function(e) {
+		if (!e.item) {
+			var item = findWTPS(e.items);
+			this.idx_wplay_song = item;
+		} else {
+			if (e.value){
+				this.idx_wplay_song = e.item;
+			} else if (this.idx_wplay_song == e.item) {
+				this.idx_wplay_song = null;
+			}
 		}
+		
+	};
+
+	var findMPSS = getFindSomeFunc(function(item) {
+		return item && item.state('mp_show');
+	});
+	var hndChangedMPShow = function(e) {
+		if (!e.item) {
+			var item = findMPSS(e.items);
+			this.idx_show_song = item;
+		} else {
+			if (e.value){
+				this.idx_show_song = e.item;
+			} else if (this.idx_show_song == e.item) {
+				this.idx_show_song = null;
+			}
+		}
+		
 		this.checkShowedNeighboursMarks();
 		
 	};
+
+	var findPS = getFindSomeFunc(function(item) {
+		return item && item.state('player_song');
+	});
 	var hndChangedPlayerSong = function(e) {
-		if (e.value){
-			this.idx_player_song = e.item;
-		} else if (this.idx_player_song == e.item) {
-			this.idx_player_song = null;
+		if (!e.item) {
+			var item = findPS(e.items);
+			this.idx_player_song = item;
+		} else {
+			if (e.value){
+				this.idx_player_song = e.item;
+			} else if (this.idx_player_song == e.item) {
+				this.idx_player_song = null;
+			}
 		}
+		
 	};
 	var checkNeighboursStatesCh = function(md, target_song) {
 		
@@ -114,16 +153,39 @@ define(['pv', 'spv'], function(pv, spv){
 		checkNeighboursStatesCh(this, e.item);
 		
 	};
+
+	var findImportantSongs = (function() {
+		var check = function(value) {
+			return value;
+		};
+		return function(array) {
+			return array && spv.filter(array, 'is_important', check);
+		};
+
+	})();
+
+
+	var checkImportant = function(pl, md) {
+		if (pl.state('pl-shuffle')) {
+			applySongRolesChanges(md, {
+				next_preload_song: null
+			});
+		}
+
+		checkNeighboursChanges(pl, md);
+	};
+
 	var hndChangedImportant = function(e) {
-		if (e.item && e.item.isImportant()){
-
-			if (this.state('pl-shuffle')) {
-				applySongRolesChanges(e.item, {
-					next_preload_song: null
-				});
+		if (!e.item) {
+			var array = findImportantSongs(e.items);
+			if (array) {
+				for (var i = 0; i < array.length; i++) {
+					checkImportant(this, array[i]);
+					
+				}
 			}
-
-			checkNeighboursChanges(this, e.item);
+		} else if (e.item.isImportant()) {
+			checkImportant(this, e.item);
 		}
 	};
 	var setWaitingNextSong = function(mdpl, mo) {

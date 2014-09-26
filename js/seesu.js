@@ -1029,12 +1029,35 @@ pv.sync_s.setRootModel(su);
 	
 
 
-
 })();
+var createDatastreamIframe = function(url, callback) {
+	var iframe = document.createElement('iframe');
+	spv.addEvent(window, 'message', function(e) {
+		if (e.source == iframe.contentWindow) {
+			callback(e.data);
+		}
+		
+	});
+	$(iframe).css({
+		position: 'absolute',
+		width: '1px',
+		height: '1px',
+		visibility: 'hidden'
+	});
+	iframe.src = url;
+	$(window.document.body).append(iframe);
+};
 
 spv.domReady(window.document, function(){
 	initVk(su);
 	su.checkUpdates();
+	createDatastreamIframe('temp_iframes/su_news_iframe/index.html', function(data) {
+		if (!data) {
+			return;
+		}
+		su.start_page.getNesting('news').updateState('news_list', StartPage.AppNews.converNews(data));
+		//su.updateState('news')
+	});
 });
 
 

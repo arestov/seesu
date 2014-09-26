@@ -5,19 +5,6 @@ var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 
 var lang = app_env.lang;
-var news_data = [{
-	"original": [
-		null,
-		"Perfomance, more data in new seesu v4.0",
-		"New seesu version just published.\
-		Perfomance, new pages with music. More files sources\
-		",
-		"http://seesu.me/v4.0",
-		"download v4.0",
-		"07 sept 2014"
-	]
-}];
-
 
 var converNews = function(list) {
 	var result = new Array(list.length);
@@ -42,12 +29,13 @@ var AppNews = BrowseMap.Model.extendTo(function AppNews() {}, {
 
 
 		this.initStates();
-		this.updateState('news_list', converNews(news_data));
+		//this.updateState('news_list', converNews(news_data));
 		
 		//var mixcloud
 		return this;
 	}
 });
+AppNews.converNews = converNews;
 
 
 var StartPage = function() {};
@@ -225,5 +213,6 @@ BrowseMap.Model.extendTo(StartPage, {
 		}
 	}
 });
+StartPage.AppNews = AppNews;
 return StartPage;
 });
