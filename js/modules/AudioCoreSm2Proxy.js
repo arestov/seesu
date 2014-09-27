@@ -9,11 +9,14 @@ var AudioCoreSm2Proxy = function(origin, path, opts) {
 	
 
 	spv.addEvent(window, "message", function(e){
-		if (e.origin.indexOf(_this.origin) === 0){
-			_this.handleFrameMessage.apply(_this, (e.data === Object(e.data) ? e.data : JSON.parse(e.data)));
-		} else {
-			_this.fail();
+		if (_this.frame && _this.frame.contentWindow == e.source) {
+			if (e.origin.indexOf(_this.origin) === 0){
+				_this.handleFrameMessage.apply(_this, (e.data === Object(e.data) ? e.data : JSON.parse(e.data)));
+			} else {
+				_this.fail();
+			}
 		}
+		
 	});
 
 	if (opts && opts === Object(opts)){

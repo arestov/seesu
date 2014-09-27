@@ -1398,67 +1398,89 @@ FastEventor.prototype = {
 
 		return this.sputnik;
 	},
-	resetSubscribesCache: function(short_name) {
-		if (!this.subscribes_cache) {
-			return;
-		}
-
-		//fixme - bug for "state_change-workarea_width.song_file_progress" ( "state_change-workarea_width" stays valid, but must be invalid)
-		for (var cur_namespace in this.subscribes_cache){
-			if (!this.subscribes_cache[cur_namespace]){
-				continue;
-			}
+	resetSubscribesCache: (function() {
+		var isEvNSMatching = function(cur_namespace, short_name) {
 			var last_char = cur_namespace.charAt(short_name.length);
-			if ((!last_char || last_char == '.') && cur_namespace.indexOf(short_name) == 0){
-				this.subscribes_cache[cur_namespace] = null;
+			return (!last_char || last_char == '.') && cur_namespace.indexOf(short_name) === 0;
+		};
+
+		return function(short_name) {
+			if (!this.subscribes_cache) {
+				return;
 			}
-		}
-	},
+
+			//fixme - bug for "state_change-workarea_width.song_file_progress" ( "state_change-workarea_width" stays valid, but must be invalid)
+			for (var cur_namespace in this.subscribes_cache){
+				if (!this.subscribes_cache[cur_namespace]){
+					continue;
+				}
+				
+				if (isEvNSMatching( cur_namespace, short_name )){
+					this.subscribes_cache[cur_namespace] = null;
+				}
+			}
+		};
+	})(),
 	_empty_callbacks_package: {
 		matched: [],
 		not_matched: []
 	},
-	getMatchedCallbacks: function(namespace){
-		if (this.sputnik.convertEventName){
-			namespace = this.sputnik.convertEventName(namespace);
-		}
-		var
-			r, short_name = parseNamespace(namespace)[0];
 
-		var cb_cs = this.subscribes && this.subscribes[short_name];
-		if (cb_cs){
-			var cached_r = this.subscribes_cache && this.subscribes_cache[namespace];
-			if (cached_r){
-				return cached_r;
+	getMatchedCallbacks: (function() {
+		var isEvNSMatching = function(curn, namespace) {
+			var last_char = curn.charAt(namespace.length);
+			return (!last_char || last_char == '.') && curn.indexOf(namespace) === 0;
+		};
+
+		var find = function(namespace, cb_cs) {
+			var matched = [], not_matched = [];
+			if (!ev_na_cache[namespace]) {
+				ev_na_cache[namespace] = {};
+			}
+			var cac_space = ev_na_cache[namespace];
+			for (var i = 0; i < cb_cs.length; i++) {
+				var curn = cb_cs[i].namespace;
+				var canbe_matched = cac_space[curn];
+				if (typeof canbe_matched == 'undefined') {
+					
+					canbe_matched = isEvNSMatching(curn, namespace);
+					cac_space[curn] = canbe_matched;
+				}
+				if (canbe_matched){
+					matched.push(cb_cs[i]);
+				} else {
+					not_matched.push(cb_cs[i]);
+				}
+			}
+			return {matched: matched, not_matched: not_matched};
+		};
+		return function(namespace){
+			if (this.sputnik.convertEventName){
+				namespace = this.sputnik.convertEventName(namespace);
+			}
+			var
+				r, short_name = parseNamespace(namespace)[0];
+
+			var cb_cs = this.subscribes && this.subscribes[short_name];
+			if (cb_cs){
+				var cached_r = this.subscribes_cache && this.subscribes_cache[namespace];
+				if (cached_r){
+					return cached_r;
+				} else {
+					r = find(namespace, cb_cs);
+					if (!this.subscribes_cache) {
+						this.subscribes_cache = {};
+					}
+					this.subscribes_cache[namespace] = r;
+				}
+
 			} else {
-				var matched = [], not_matched = [];
-				var cac_space = ev_na_cache[namespace] = (ev_na_cache[namespace] || {});
-				for (var i = 0; i < cb_cs.length; i++) {
-					var curn = cb_cs[i].namespace;
-					var canbe_matched = cac_space[curn];
-					if (typeof canbe_matched =='undefined') {
-						var last_char = curn.charAt(namespace.length);
-						canbe_matched = (!last_char || last_char == '.') && curn.indexOf(namespace) == 0;
-						cac_space[curn] = canbe_matched;
-					}
-					if (canbe_matched){
-						matched.push(cb_cs[i]);
-					} else {
-						not_matched.push(cb_cs[i]);
-					}
-				}
-				if (!this.subscribes_cache) {
-					this.subscribes_cache = {};
-				}
-				this.subscribes_cache[namespace] = r = {matched: matched, not_matched: not_matched};
+				return this._empty_callbacks_package;
 			}
 
-		} else {
-			return this._empty_callbacks_package;
-		}
-
-		return r;
-	},
+			return r;
+		};
+	})(),
 	callEventCallback: function(cur, args, opts, arg) {
 	//	var _this = this;
 		if (cur.immediately && (!opts || !opts.force_async)){
@@ -2891,13 +2913,12 @@ var reversedIterateChList = function(changes_list, context, cb) {
 };
 
 
-var st_event_name_default = 'state_change-';
-var st_event_name_vip = 'vip_state_change-';
-var st_event_name_light = 'lgh_sch-';
 
-var state_ch_h_prefix = 'stch-';
 
-var st_event_opt = {force_async: true};
+var getSTCHfullname = function(state_name) {
+	return 'stch-' + state_name;
+};
+
 
 add({
 	compressStatesChanges: function(changes_list) {
@@ -2913,12 +2934,12 @@ add({
 		var old_value = this.zdsv.stch_states[state_name];
 		if (old_value != value) {
 			this.zdsv.stch_states[state_name] = value;
-			var method = (this[ state_ch_h_prefix + state_name] || (this.state_change && this.state_change[state_name]));
+			var method = (this[ getSTCHfullname( state_name ) ] || (this.state_change && this.state_change[state_name]));
 			method.call(this, value, old_value, state_name);
 		}
 	},
 	_handleStch: function(original_states, state_name, value, skip_handler, sync_tpl) {
-		var stateChanger = !skip_handler && (this[ state_ch_h_prefix + state_name] || (this.state_change && this.state_change[state_name]));
+		var stateChanger = !skip_handler && (this[ getSTCHfullname( state_name ) ] || (this.state_change && this.state_change[state_name]));
 		if (stateChanger) {
 			this.zdsv.abortFlowSteps('stch', state_name, true);
 		} else {
@@ -2967,9 +2988,31 @@ add({
 				stack.push(state_name, value);
 			}
 		}
-	},
+	}});
+
+//var st_event_name_default = ;
+//var st_event_name_vip = 'vip_state_change-';
+//var st_event_name_light = 'lgh_sch-';
+
+var getSTEVNameVIP = function(state_name) {
+	return 'vip_state_change-' + state_name;
+};
+
+
+var getSTEVNameDefault = function(state_name) {
+	return 'state_change-' + state_name;
+
+};
+var getSTEVNameLight = function(state_name) {
+	return 'lgh_sch-' + state_name;
+};
+
+
+var st_event_opt = {force_async: true};
+
+add({
 	_triggerVipChanges: function(i, state_name, value, zdsv) {
-		var vip_name = st_event_name_vip + state_name;
+		var vip_name = getSTEVNameVIP( state_name);
 		zdsv.abortFlowSteps('vip_stdch_ev', state_name);
 
 
@@ -2993,8 +3036,8 @@ add({
 
 		zdsv.abortFlowSteps('stev', state_name);
 
-		var default_name = st_event_name_default + state_name;
-		var light_name = st_event_name_light + state_name;
+		var default_name = getSTEVNameDefault( state_name );
+		var light_name = getSTEVNameLight( state_name );
 
 		var default_cb_cs = this.evcompanion.getMatchedCallbacks(default_name).matched;
 		var light_cb_cs = this.evcompanion.getMatchedCallbacks(light_name).matched;
@@ -3805,16 +3848,14 @@ add({
 			this.mpx.stackReceivedStates(dubl);
 		}
 		//
-	},
-	getLinedStructure: function(models_index, local_index) {
-		//используется для получения массива всех РЕАЛЬНЫХ моделей, связанных с текущей
-		local_index = local_index || {};
-		models_index = models_index || {};
-		var big_result_array = [];
-		var all_for_parse = [this];
+	}});
+	
+	
 
 
-		var checkModel = function(md) {
+	var getLinedStructure;
+	(function() {
+		var checkModel = function(md, models_index, local_index, all_for_parse) {
 			if (!md) {
 				return;
 			}
@@ -3829,51 +3870,59 @@ add({
 			return cur_id;
 		};
 
-
-		while (all_for_parse.length) {
-			var cur_md = all_for_parse.shift();
-			var can_push = !models_index[cur_md._provoda_id];
-			if (can_push) {
-				models_index[cur_md._provoda_id] = true;
-			}
-			checkModel(cur_md.map_parent);
+		getLinedStructure = function(models_index, local_index) {
+			//используется для получения массива всех РЕАЛЬНЫХ моделей, связанных с текущей
+			local_index = local_index || {};
+			models_index = models_index || {};
+			var big_result_array = [];
+			var all_for_parse = [this];
 
 
-			for (var state_name in cur_md.states){
-				checkModel(cur_md.states[state_name]);
-				
-			}
+			
 
-			for (var nesting_name in cur_md.children_models){
-				var cur = cur_md.children_models[nesting_name];
-				if (cur){
-					if (cur._provoda_id){
-						checkModel(cur);
-					} else {
-						for (var i = 0; i < cur.length; i++) {
-							checkModel(cur[i]);
+
+			while (all_for_parse.length) {
+				var cur_md = all_for_parse.shift();
+				var can_push = !models_index[cur_md._provoda_id];
+				if (can_push) {
+					models_index[cur_md._provoda_id] = true;
+				}
+				checkModel(cur_md.map_parent, models_index, local_index, all_for_parse);
+
+
+				for (var state_name in cur_md.states){
+					checkModel(cur_md.states[state_name], models_index, local_index, all_for_parse);
+					
+				}
+
+				for (var nesting_name in cur_md.children_models){
+					var cur = cur_md.children_models[nesting_name];
+					if (cur){
+						if (cur._provoda_id){
+							checkModel(cur, models_index, local_index, all_for_parse);
+						} else {
+							for (var i = 0; i < cur.length; i++) {
+								checkModel(cur[i], models_index, local_index, all_for_parse);
+							}
 						}
 					}
 				}
+
+
+				if (can_push) {
+					big_result_array.push(cur_md);
+				}
 			}
 
+			return big_result_array;
 
-			if (can_push) {
-				big_result_array.push(cur_md);
-			}
-		}
+		};
+	})();
 
-		return big_result_array;
 
-	},
-	toSimpleStructure: function(models_index, big_result) {
-		//используется для получения массива всех ПОДДЕЛЬНЫХ, пригоднях для отправки через postMessage моделей, связанных с текущей
-		models_index = models_index || {};
-		var local_index = {};
-		var all_for_parse = [this];
-		big_result = big_result || [];
-
-		var checkModel = function(md) {
+	var toSimpleStructure;
+	(function() {
+		var checkModel = function(md, models_index, local_index, all_for_parse) {
 			var cur_id = md._provoda_id;
 			if (!models_index[cur_id] && !local_index[cur_id]){
 				local_index[cur_id] = true;
@@ -3882,55 +3931,69 @@ add({
 			return cur_id;
 		};
 
-		while (all_for_parse.length) {
-			var cur_md = all_for_parse.shift();
-			var can_push = !models_index[cur_md._provoda_id];
-			if (can_push) {
-				models_index[cur_md._provoda_id] = true;
-			}
-			
-			var result = {
-				_provoda_id: cur_md._provoda_id,
-				model_name: cur_md.model_name,
-				states: spv.cloneObj({}, cur_md.states),
-				map_parent: cur_md.map_parent && checkModel(cur_md.map_parent),
-				children_models: {},
-				map_level_num: cur_md.map_level_num,
-				mpx: null
-			};
-			for (var state_name in result.states){
-				var state = result.states[state_name];
-				if (state && state._provoda_id){
-					result.states[state_name] = {
-						_provoda_id: checkModel(state)
-					};
-				}
-			}
+		toSimpleStructure = function(models_index, big_result) {
+			//используется для получения массива всех ПОДДЕЛЬНЫХ, пригодных для отправки через postMessage моделей, связанных с текущей
+			models_index = models_index || {};
+			var local_index = {};
+			var all_for_parse = [this];
+			big_result = big_result || [];
 
-			for (var nesting_name in cur_md.children_models){
-				var cur = cur_md.children_models[nesting_name];
-				if (cur){
-					if (cur._provoda_id){
-						result.children_models[nesting_name] = checkModel(cur);
-					} else {
-						
-						var array = new Array(cur.length);
-						for (var i = 0; i < cur.length; i++) {
-							array[i] = checkModel(cur[i]);
-						}
-						result.children_models[nesting_name] = array;
+			
+
+			while (all_for_parse.length) {
+				var cur_md = all_for_parse.shift();
+				var can_push = !models_index[cur_md._provoda_id];
+				if (can_push) {
+					models_index[cur_md._provoda_id] = true;
+				}
+				
+				var result = {
+					_provoda_id: cur_md._provoda_id,
+					model_name: cur_md.model_name,
+					states: spv.cloneObj({}, cur_md.states),
+					map_parent: cur_md.map_parent && checkModel(cur_md.map_parent, models_index, local_index, all_for_parse),
+					children_models: {},
+					map_level_num: cur_md.map_level_num,
+					mpx: null
+				};
+				for (var state_name in result.states){
+					var state = result.states[state_name];
+					if (state && state._provoda_id){
+						result.states[state_name] = {
+							_provoda_id: checkModel(state, models_index, local_index, all_for_parse)
+						};
 					}
 				}
+
+				for (var nesting_name in cur_md.children_models){
+					var cur = cur_md.children_models[nesting_name];
+					if (cur){
+						if (cur._provoda_id){
+							result.children_models[nesting_name] = checkModel(cur, models_index, local_index, all_for_parse);
+						} else {
+							
+							var array = new Array(cur.length);
+							for (var i = 0; i < cur.length; i++) {
+								array[i] = checkModel(cur[i], models_index, local_index, all_for_parse);
+							}
+							result.children_models[nesting_name] = array;
+						}
+					}
+				}
+				if (can_push) {
+					big_result.push(result);
+				}
+				
 			}
-			if (can_push) {
-				big_result.push(result);
-			}
-			
-		}
 
 
-		return big_result;
-	}
+			return big_result;
+		};
+	})();
+
+add({
+	getLinedStructure: getLinedStructure ,
+	toSimpleStructure: toSimpleStructure
 });
 });
 provoda.Model.extendTo(provoda.HModel, {
