@@ -1030,7 +1030,7 @@ pv.sync_s.setRootModel(su);
 
 
 })();
-var createDatastreamIframe = function(url, callback) {
+var createDatastreamIframe = function(url, callback, allow_exec) {
 	var iframe = document.createElement('iframe');
 	spv.addEvent(window, 'message', function(e) {
 		if (e.source == iframe.contentWindow) {
@@ -1038,11 +1038,17 @@ var createDatastreamIframe = function(url, callback) {
 		}
 		
 	});
+	if (app_serv.app_env.nodewebkit) {
+		iframe.nwdisable = !allow_exec;
+		iframe.nwfaketop = !allow_exec;
+
+	}
 	$(iframe).css({
 		position: 'absolute',
 		width: '1px',
 		height: '1px',
-		visibility: 'hidden'
+		visibility: 'hidden',
+		'z-index': -10
 	});
 	iframe.src = url;
 	$(window.document.body).append(iframe);
@@ -1051,13 +1057,47 @@ var createDatastreamIframe = function(url, callback) {
 spv.domReady(window.document, function(){
 	initVk(su);
 	su.checkUpdates();
-	createDatastreamIframe('temp_iframes/su_news_iframe/index.html', function(data) {
+	createDatastreamIframe('https://arestov.github.io/su_news_iframe/', function(data) {
 		if (!data) {
 			return;
 		}
 		su.start_page.getNesting('news').updateState('news_list', StartPage.AppNews.converNews(data));
-		//su.updateState('news')
 	});
+	createDatastreamIframe('https://arestov.github.io/su_blocked_music/', function(data) {
+		if (!data) {
+			return;
+		}
+
+		var index = {};
+		for (var artist in data) {
+			var lc_artist = artist.toLowerCase();
+			if (data[artist] === true) {
+				index[lc_artist] = true;
+				continue;
+			}
+
+			var lindex = index[lc_artist] = (index[lc_artist] || {});
+			for (var i = 0; i < data[artist].length; i++) {
+				var cur = data[artist][i];
+				if (!cur || typeof cur !== 'string') {
+					continue;
+				}
+
+				lindex[ lc_artist ][ data[artist][i].toLowerCase() ] = true;
+				
+			}
+
+		}
+		//forbidden_by_copyrh
+		//white_of_copyrh
+		su.updateState('forbidden_by_copyrh', index);
+	});
+	if (app_serv.app_env.nodewebkit) {
+		createDatastreamIframe('https://arestov.github.io/su_update_iframe/', function() {
+
+		}, true);
+	}
+	
 });
 
 

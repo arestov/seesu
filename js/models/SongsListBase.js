@@ -5,8 +5,17 @@ define(['pv', 'spv'], function(pv, spv){
 
 	pv.addPrototype("SongsListBase", spv.coe(function(add) {
 
+
+	var nesting_name_dir_cache = {};
+	var getNeighbDir = function(nesting_name) {
+		if (!nesting_name_dir_cache[nesting_name]) {
+			nesting_name_dir_cache[nesting_name] = nesting_name.replace('vis_neig_', '');
+		}
+		return nesting_name_dir_cache[nesting_name];
+	};
+
 	var hndNeighboursRemarks = function(e) {
-		var direction =  e.nesting_name.replace('vis_neig_', '');
+		var direction =  getNeighbDir(e.nesting_name);
 		var key_name = 'cur_' + e.nesting_name;
 		if (e.value != this[key_name]) {
 			if (this[key_name]) {

@@ -119,15 +119,25 @@ var album_placeholder = {
 		},
 		'compx-forbidden_by_copyrh': [
 			['#forbidden_by_copyrh', '#white_of_copyrh', 'artist', 'track'],
-			function ( index, artist, track, white_index ) {
-				if (artist && track) {
+			function ( index, white_index, artist, track ) {
+				if (artist) {
+					var artist_lc = (white_index || index) && artist.toLowerCase();
 					if (white_index) {
-						return !white_index[artist.toLowerCase()];
+						return !white_index[ artist_lc ];
 					} else if (index) {
-						return index[artist.toLowerCase() + ' - ' + track.toLowerCase()];
+						if (track) {
+							if (index[artist_lc] === true) {
+								return true;
+							} else {
+								return index[artist_lc] && index[artist_lc][ track.toLowerCase() ];
+							}
+						} else {
+							return index[artist_lc] === true;
+						}
 					}
 					
 				}
+
 
 			}
 		],

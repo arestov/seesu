@@ -979,8 +979,9 @@ var parent_count_regexp = /^\^+/gi;
 var getPropValueByField = function(fpv, iter, scope, spec_data) {
 	var source_data = scope;
 	var state_name = fpv;
-	if (fpv.indexOf('^') === 0){
-		state_name = fpv.replace(parent_count_regexp, '');
+	var start_char = fpv.charAt(0);
+	if (start_char == '^'){
+		state_name = fpv.slice(1);
 		var count = fpv.length - state_name.length;
 		while (count) {
 			--count;
@@ -990,11 +991,11 @@ var getPropValueByField = function(fpv, iter, scope, spec_data) {
 			}
 		}
 		//states_of_parent[fpv] = this.prsStCon.parent(fpv);
-	} else if (fpv.indexOf('@') === 0) {
+	} else if (start_char == '@') {
 		throw new Error('');
 		//states_of_nesting[fpv] = this.prsStCon.nesting(fpv);
-	} else if (fpv.indexOf('#') === 0) {
-		state_name = fpv.replace('#', '');
+	} else if (start_char == '#') {
+		state_name = fpv.slice(1);
 		source_data = spec_data;
 		if (!spec_data) {
 			throw new Error();
@@ -1213,6 +1214,52 @@ spv.findAndRemoveItem = function(array, item) {
 		return spv.removeItem(array, index);
 	}
 };
+if (String.prototype.startsWith) {
+	spv.startsWith = function(str, substr, pos) {
+		return str.startsWith(substr, pos);
+	};
+} else {
+	//http://jsperf.com/starts-with/14, without problems for GC
+	spv.startsWith = function(str, substr, pos) {
+		var len = substr.length;
+		var i = pos || 0;
+
+		for (/*i = 0*/; i < len; i ++) {
+			if (str.charAt(i) != substr.charAt(i)) {
+				return false;
+			}
+		}
+		return true;
+	};
+}
+
+spv.getDeprefixFunc = function(prefix, simple) {
+	var cache = {};
+	return function (namespace) {
+		if (!cache.hasOwnProperty(namespace)) {
+			if (spv.startsWith(namespace, prefix)) {
+				cache[namespace] = simple ? true : namespace.slice(prefix.length);
+			} else {
+				cache[namespace] = false;
+			}
+		}
+		return cache[namespace];
+	};
+
+};
+
+spv.getPrefixingFunc = function(prefix) {
+	var cache = {};
+	return function (state_name) {
+		if (!cache.hasOwnProperty(state_name)) {
+			cache[state_name] = prefix + state_name;
+		}
+		return cache[state_name];
+	};
+};
+
+
+
 
 })();
 

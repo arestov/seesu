@@ -1401,7 +1401,8 @@ FastEventor.prototype = {
 	resetSubscribesCache: (function() {
 		var isEvNSMatching = function(cur_namespace, short_name) {
 			var last_char = cur_namespace.charAt(short_name.length);
-			return (!last_char || last_char == '.') && cur_namespace.indexOf(short_name) === 0;
+
+			return (!last_char || last_char == '.') && spv.startsWith(cur_namespace, short_name);
 		};
 
 		return function(short_name) {
@@ -1429,7 +1430,7 @@ FastEventor.prototype = {
 	getMatchedCallbacks: (function() {
 		var isEvNSMatching = function(curn, namespace) {
 			var last_char = curn.charAt(namespace.length);
-			return (!last_char || last_char == '.') && curn.indexOf(namespace) === 0;
+			return (!last_char || last_char == '.') && spv.startsWith(curn, namespace);
 		};
 
 		var find = function(namespace, cb_cs) {
@@ -2092,16 +2093,23 @@ var iterateChList = function(changes_list, context, cb, zdsv) {
 	}
 };
 
+var getPropsPrefixChecker = function(check) {
+	return function(props) {
+		for (var prop_name in props) {
+			if (props.hasOwnProperty( prop_name ) && check( prop_name )){
+				return true;
+			}
+		}
+	};
+};
 
 var hasPrefixedProps = function(props, prefix) {
-	var has_prefixed;
 	for (var prop_name in props) {
-		if (props.hasOwnProperty(prop_name) && prop_name.indexOf(prefix) === 0){
-			has_prefixed = true;
-			break;
+		if (props.hasOwnProperty( prop_name ) && spv.startsWith( prop_name, prefix )){
+			return true;
 		}
 	}
-	return has_prefixed;
+	return false;
 };
 
 
@@ -2269,7 +2277,7 @@ var enc_states = {
 	nesting: function(string) {
 		//example:  '@some:complete:list'
 		if (!encoded_states[string]){
-			var nesting_and_state_name = string.replace('@', '');
+			var nesting_and_state_name = string.slice(1);
 			var parts = nesting_and_state_name.split(':');
 
 			var nesting_name = parts.pop();
@@ -2297,7 +2305,7 @@ var enc_states = {
 			encoded_states[string] = {
 				rel_type: 'root',
 				full_name: string,
-				state_name: string.replace('#', '')
+				state_name: string.slice(1)
 			};
 		}
 
@@ -2306,11 +2314,13 @@ var enc_states = {
 };
 var getEncodedState = function(state_name) {
 	if (!encoded_states.hasOwnProperty(state_name)) {
-		if (state_name.indexOf('^') === 0){
+
+		var start = state_name.charAt(0);
+		if (start == '^'){
 			enc_states.parent(state_name);
-		} else if (state_name.indexOf('@') === 0 ) {
+		} else if (start == '@') {
 			enc_states.nesting(state_name);
-		} else if (state_name.indexOf('#') === 0 ) {
+		} else if (start == '#') {
 			enc_states.root(state_name);
 		} else {
 			encoded_states[state_name] = null;
@@ -2319,7 +2329,87 @@ var getEncodedState = function(state_name) {
 	return encoded_states[state_name];
 };
 
+var getSTEVNameVIP = spv.getPrefixingFunc('vip_state_change-');
+var getSTEVNameDefault = spv.getPrefixingFunc('state_change-');
+var getSTEVNameLight = spv.getPrefixingFunc('lgh_sch-');
+var getFullChilChEvName = spv.getPrefixingFunc('child_change-');
+
 provoda.Eventor.extendTo(provoda.StatesEmitter, function(add) {
+
+
+
+
+var regfr_vipstev = (function() {
+	var getState = spv.getDeprefixFunc('vip_state_change-');
+	return {
+		test: function(namespace) {
+
+			return !!getState(namespace);
+		},
+		fn: function(namespace) {
+			var state_name = getState(namespace);
+			return {
+				value: this.state(state_name),
+				target: this
+			};
+		},
+		getWrapper: function() {
+			return hndMotivationWrappper;
+		},
+		getFSNamespace: function(namespace) {
+			return getState(namespace);
+		},
+		handleFlowStep: stackStateFlowStep
+	};
+
+})();
+
+var regfr_stev = (function() {
+	var getState = spv.getDeprefixFunc('state_change-');
+	return {
+		test: function(namespace) {
+			return !!getState(namespace);
+		},
+		fn: function(namespace) {
+			var state_name = getState(namespace);
+			return {
+				value: this.state(state_name),
+				target: this
+			};
+		},
+		getWrapper: function() {
+			return hndMotivationWrappper;
+		},
+		getFSNamespace: function(namespace) {
+			return getState(namespace);
+		},
+		handleFlowStep: stackStateFlowStep
+	};
+})();
+
+
+var regfr_lightstev = (function() {
+	var getState = spv.getDeprefixFunc('lgh_sch-');
+	return {
+		test: function(namespace) {
+			return !!getState(namespace);
+		},
+		fn: function(namespace) {
+			return this.state(getState(namespace));
+		},
+		getWrapper: function() {
+			return hndMotivationWrappper;
+		},
+		getFSNamespace: function(namespace) {
+			return getState(namespace);
+		},
+		handleFlowStep: stackStateFlowStep
+	};
+})();
+
+
+
+
 add({
 	init: function(){
 		this._super();
@@ -2335,59 +2425,10 @@ add({
 
 		return this;
 	},
-	'regfr-vipstev': {
-		test: function(namespace) {
-			return namespace.indexOf('vip_state_change-') === 0;
-		},
-		fn: function(namespace) {
-			var state_name = namespace.replace('vip_state_change-', '');
-			return {
-				value: this.state(state_name),
-				target: this
-			};
-		},
-		getWrapper: function() {
-			return hndMotivationWrappper;
-		},
-		getFSNamespace: function(namespace) {
-			return namespace.replace('vip_state_change-', '');
-		},
-		handleFlowStep: stackStateFlowStep
-	},
-	'regfr-stev': {
-		test: function(namespace) {
-			return namespace.indexOf('state_change-') === 0;
-		},
-		fn: function(namespace) {
-			var state_name = namespace.replace('state_change-', '');
-			return {
-				value: this.state(state_name),
-				target: this
-			};
-		},
-		getWrapper: function() {
-			return hndMotivationWrappper;
-		},
-		getFSNamespace: function(namespace) {
-			return namespace.replace('state_change-', '');
-		},
-		handleFlowStep: stackStateFlowStep
-	},
-	'regfr-lightstev': {
-		test: function(namespace) {
-			return namespace.indexOf('lgh_sch-') === 0;
-		},
-		fn: function(namespace) {
-			return this.state(namespace.replace('lgh_sch-', ''));
-		},
-		getWrapper: function() {
-			return hndMotivationWrappper;
-		},
-		getFSNamespace: function(namespace) {
-			return namespace.replace('lgh_sch-', '');
-		},
-		handleFlowStep: stackStateFlowStep
-	},
+	
+	'regfr-vipstev': regfr_vipstev,
+	'regfr-stev': regfr_stev,
+	'regfr-lightstev': regfr_lightstev,
 	getContextOptsI: function() {
 		if (!this.conx_optsi){
 			this.conx_optsi = new EvConxOpts(this, true);
@@ -2415,10 +2456,10 @@ add({
 		}
 	},
 	lwch: function(donor, donor_state, func) {
-		this._bindLight(donor, 'lgh_sch-' + donor_state, func);
+		this._bindLight(donor, getSTEVNameLight(donor_state), func);
 	},
 	wlch: function(donor, donor_state, acceptor_state) {
-		var event_name = 'lgh_sch-' + donor_state;
+		var event_name = getSTEVNameLight(donor_state);
 		var acceptor_state_name = acceptor_state || donor_state;
 		var cb = getLightConnector(acceptor_state_name);
 		this._bindLight(donor, event_name, cb);
@@ -2428,7 +2469,11 @@ add({
 	wch: function(donor, donor_state, acceptor_state, immediately) {
 	
 		var cb;
-		var event_name = (immediately ? 'vip_state_change-' : 'state_change-') + donor_state;
+
+		var event_name = immediately ?
+			getSTEVNameVIP(donor_state) :
+			getSTEVNameDefault(donor_state);
+
 		if (typeof acceptor_state == 'function'){
 			cb = acceptor_state;
 		} else {
@@ -2496,13 +2541,6 @@ add({
 		
 	},
 	xxxx_morph_props: [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'],
-	hndExpandViewTree: function(e) {
-		if (!e.value) {
-			return;
-		}
-		this.checkExpandableTree(e.type);
-
-	},
 	checkExpandableTree: function(state_name) {
 		var i, cur, cur_config, has_changes = true, append_list = [];
 		while (this.base_skeleton && has_changes) {
@@ -2594,42 +2632,47 @@ add({
 		*/
 
 	},
-	collectBaseExtendStates: function() {
-		var states_list = [], i, states_index = {};
-		var dclrs_expandable = {};
+	collectBaseExtendStates: (function() {
 
-		for ( var nesting_name in this.dclrs_fpckgs ) {
-			if ( nesting_name.indexOf('$ondemand-') === 0 ) {
-				var cur = this.dclrs_fpckgs[ nesting_name ];
-				var added = false;
-				for ( i = 0; i < cur.declarations.length; i++ ) {
-					if (cur.declarations[i].needs_expand_state) {
-						var state_name = cur.declarations[i].needs_expand_state;
-						if (!states_index[state_name]) {
-							states_index[state_name] = true;
-							states_list.push( state_name );
-						}
+		var getUnprefixed = spv.getDeprefixFunc('$ondemand-');
+		return function() {
+			var states_list = [], i, states_index = {};
+			var dclrs_expandable = {};
 
-						if (!added) {
-							if ( !dclrs_expandable[state_name] ) {
-								dclrs_expandable[state_name] = [];
+			for ( var nesting_name in this.dclrs_fpckgs ) {
+
+				if ( getUnprefixed(nesting_name) ) {
+					var cur = this.dclrs_fpckgs[ nesting_name ];
+					var added = false;
+					for ( i = 0; i < cur.declarations.length; i++ ) {
+						if (cur.declarations[i].needs_expand_state) {
+							var state_name = cur.declarations[i].needs_expand_state;
+							if (!states_index[state_name]) {
+								states_index[state_name] = true;
+								states_list.push( state_name );
 							}
-							dclrs_expandable[state_name].push(nesting_name.replace('$ondemand-', ''));
+
+							if (!added) {
+								if ( !dclrs_expandable[state_name] ) {
+									dclrs_expandable[state_name] = [];
+								}
+								dclrs_expandable[state_name].push( getUnprefixed(nesting_name) );
+							}
+							 
 						}
-						 
 					}
 				}
 			}
-		}
 
-		if (states_list.length) {
-			this.base_tree_expand_states = states_list;
-			this.dclrs_expandable = dclrs_expandable;
-		}
+			if (states_list.length) {
+				this.base_tree_expand_states = states_list;
+				this.dclrs_expandable = dclrs_expandable;
+			}
 
 
-		//debugger;
-	}
+			//debugger;
+		};
+	})()
 });
 
 
@@ -2643,7 +2686,7 @@ var watchNestingAsState = function(md, nesting_name, state_name) {
 		};
 	}
 
-	md.on('child_change-' + nesting_name, nes_as_state_cache[state_name]);
+	md.on( getFullChilChEvName(nesting_name), nes_as_state_cache[state_name]);
 };
 
 
@@ -2762,129 +2805,128 @@ add({
 		this.conndst_root = this.prsStCon.toList(states_of_root);
 
 	},
-	getCompxName: function(original_name) {
-		if (compx_names_cache.hasOwnProperty(original_name)){
-			return compx_names_cache[original_name];
-		}
-		var name = original_name.replace(this.compx_name_test, '');
-		if (original_name != name){
-			compx_names_cache[original_name] = name;
-			return name;
-		} else {
-			compx_names_cache[original_name] = null;
-		}
-	},
-	compx_name_test: /^compx\-/,
-	collectCompxs1part: function(compx_check) {
-		for (var comlx_name in this){
-			var name = this.getCompxName(comlx_name);
-			if (name){
-				
-				var cur = this[comlx_name];
-				if (cur instanceof Array){
-					cur = {
-						depends_on: cur[0],
-						fn: cur[1],
-						name: name
-					};
-				} else {
-					this[comlx_name].name = name;
-				}
-				compx_check[name] = cur;
-				this.full_comlxs_list.push(cur);
-			}
-		}
-	},
-	collectCompxs2part: function(compx_check) {
-		for (var comlx_name in this.complex_states){
-			if (!compx_check[comlx_name]){
-				
-				var cur = this.complex_states[comlx_name];
 
-				if (cur instanceof Array){
-					cur = {
-						depends_on: cur[0],
-						fn: cur[1],
-						name: comlx_name
-					};
-				} else {
-					this.complex_states[comlx_name].name = comlx_name;
-				}
-				compx_check[comlx_name] = cur;
-				
-				this.full_comlxs_list.push(cur);
-			}
-		}
-	},
+	
 //	full_comlxs_list: [],
 	compx_check: {},
 //	full_comlxs_index: {},
-	collectCompxs:function(props) {
-		var need_recalc = false;
-		if (this.hasOwnProperty('complex_states')){
-			need_recalc = true;
-		} else {
-			need_recalc = hasPrefixedProps(props, 'compx-');
-		}
-		if (!need_recalc){
-			return;
-		}
+	collectCompxs: (function() {
+		var getUnprefixed = spv.getDeprefixFunc( 'compx-' );
+		var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
-
-
-		var compx_check = {};
-		this.full_comlxs_list = [];
-		this.full_comlxs_index = {};
-	//	var comlx_name;
-		this.collectCompxs1part(compx_check);
-		this.collectCompxs2part(compx_check);
-		this.compx_check = compx_check;
-		var i, jj, cur, state_name;
-		for (i = 0; i < this.full_comlxs_list.length; i++) {
-			cur = this.full_comlxs_list[i];
-			for (jj = 0; jj < cur.depends_on.length; jj++) {
-				state_name = cur.depends_on[jj];
-				if (!this.full_comlxs_index[state_name]) {
-					this.full_comlxs_index[state_name] = [];
+		var collectCompxs1part = function(compx_check) {
+			for (var comlx_name in this){
+				var name = getUnprefixed(comlx_name);
+				if (name){
+					
+					var cur = this[comlx_name];
+					if (cur instanceof Array){
+						cur = {
+							depends_on: cur[0],
+							fn: cur[1],
+							name: name
+						};
+					} else {
+						this[comlx_name].name = name;
+					}
+					compx_check[name] = cur;
+					this.full_comlxs_list.push(cur);
 				}
-				this.full_comlxs_index[state_name].push(cur);
 			}
-		}
-		this.collectStatesConnectionsProps();
-	},
-	collectRegFires: function(props) {
-		var need_recalc = false, prop;
-		
-
-		need_recalc = hasPrefixedProps(props, 'regfr-');
-
-		
-		if (!need_recalc){
-			return;
-		}
-
-		this.reg_fires = {
-			by_namespace: null,
-			by_test: null,
-			cache: null
 		};
-		for (prop in this){
-			if (prop.indexOf('regfr-') === 0){
-				var cur = this[prop];
-				if (cur.event_name){
-					if (!this.reg_fires.by_namespace){
-						this.reg_fires.by_namespace = {};
+		var collectCompxs2part = function(compx_check) {
+			for (var comlx_name in this.complex_states){
+				if (!compx_check[comlx_name]){
+					
+					var cur = this.complex_states[comlx_name];
+
+					if (cur instanceof Array){
+						cur = {
+							depends_on: cur[0],
+							fn: cur[1],
+							name: comlx_name
+						};
+					} else {
+						this.complex_states[comlx_name].name = comlx_name;
 					}
-					this.reg_fires.by_namespace[cur.event_name] = cur;
-				} else if (cur.test){
-					if (!this.reg_fires.by_test){
-						this.reg_fires.by_test = [];
-					}
-					this.reg_fires.by_test.push(cur);
+					compx_check[comlx_name] = cur;
+					
+					this.full_comlxs_list.push(cur);
 				}
 			}
-		}
-	},
+		};
+		return function(props) {
+			var need_recalc = false;
+			if (this.hasOwnProperty('complex_states')){
+				need_recalc = true;
+			} else {
+				need_recalc = hasPrefixedProps(props);
+			}
+			if (!need_recalc){
+				return;
+			}
+
+			var compx_check = {};
+			this.full_comlxs_list = [];
+			this.full_comlxs_index = {};
+
+			collectCompxs1part.call(this, compx_check);
+			collectCompxs2part.call(this, compx_check);
+			this.compx_check = compx_check;
+			var i, jj, cur, state_name;
+			for (i = 0; i < this.full_comlxs_list.length; i++) {
+				cur = this.full_comlxs_list[i];
+				for (jj = 0; jj < cur.depends_on.length; jj++) {
+					state_name = cur.depends_on[jj];
+					if (!this.full_comlxs_index[state_name]) {
+						this.full_comlxs_index[state_name] = [];
+					}
+					this.full_comlxs_index[state_name].push(cur);
+				}
+			}
+			this.collectStatesConnectionsProps();
+		};
+	})(),
+	collectRegFires: (function() {
+		var getUnprefixed = spv.getDeprefixFunc( 'regfr-', true );
+		var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
+
+
+		return function(props) {
+			var need_recalc = false, prop;
+			
+
+			need_recalc = hasPrefixedProps(props);
+
+			
+			if (!need_recalc){
+				return;
+			}
+
+			this.reg_fires = {
+				by_namespace: null,
+				by_test: null,
+				cache: null
+			};
+			for (prop in this){
+
+				if (getUnprefixed(prop)){
+					var cur = this[prop];
+					if (cur.event_name){
+						if (!this.reg_fires.by_namespace){
+							this.reg_fires.by_namespace = {};
+						}
+						this.reg_fires.by_namespace[cur.event_name] = cur;
+					} else if (cur.test){
+						if (!this.reg_fires.by_test){
+							this.reg_fires.by_test = [];
+						}
+						this.reg_fires.by_test.push(cur);
+					}
+				}
+			}
+		};
+	})(),
 	state: function(name){
 		return this.states[name];
 	}
@@ -2915,10 +2957,7 @@ var reversedIterateChList = function(changes_list, context, cb) {
 
 
 
-var getSTCHfullname = function(state_name) {
-	return 'stch-' + state_name;
-};
-
+var getSTCHfullname = spv.getPrefixingFunc('stch-');
 
 add({
 	compressStatesChanges: function(changes_list) {
@@ -2994,18 +3033,10 @@ add({
 //var st_event_name_vip = 'vip_state_change-';
 //var st_event_name_light = 'lgh_sch-';
 
-var getSTEVNameVIP = function(state_name) {
-	return 'vip_state_change-' + state_name;
-};
 
 
-var getSTEVNameDefault = function(state_name) {
-	return 'state_change-' + state_name;
 
-};
-var getSTEVNameLight = function(state_name) {
-	return 'lgh_sch-' + state_name;
-};
+
 
 
 var st_event_opt = {force_async: true};
@@ -3088,16 +3119,24 @@ add({
 		}
 		return this._updateProxy([state_name, value], opts);
 	},
-	hndRDep: function(state, oldstate, state_name) {
-		var target_name = state_name.split(':');
-		target_name = target_name[ 1 ];
-		if (oldstate) {
-			oldstate.setStateDependence(target_name, this, false);
-		}
-		if (state) {
-			state.setStateDependence(target_name, this, true);
-		}
-	},
+	hndRDep: (function() {
+		var cache = {};
+		var getTargetName = function(state_name) {
+			if (!cache[state_name]) {
+				cache[state_name] = state_name.split( ':' )[ 1 ];
+			}
+			return cache[state_name];
+		};
+		return function(state, oldstate, state_name) {
+			var target_name = getTargetName(state_name);
+			if (oldstate) {
+				oldstate.setStateDependence(target_name, this, false);
+			}
+			if (state) {
+				state.setStateDependence(target_name, this, true);
+			}
+		};
+	})(),
 	setStateDependence: function(state_name, source_id, value) {
 		if (typeof source_id == 'object') {
 			source_id = source_id._provoda_id;
@@ -3422,36 +3461,61 @@ add({
 
 		
 	},
-	collectStateChangeHandlers: function(props) {
-		var need_recalc = false;
-		if (this.hasOwnProperty('state_change')){
-			need_recalc = true;
-		} else {
-			need_recalc = hasPrefixedProps(props, 'stch-');
+	collectStateChangeHandlers: (function() {
+		var getUnprefixed = spv.getDeprefixFunc( 'stch-', true );
+		var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
+		return function(props) {
+			var need_recalc = false;
+			if (this.hasOwnProperty('state_change')){
+				need_recalc = true;
+			} else {
+				need_recalc = hasPrefixedProps(props);
 
-		}
-		if (!need_recalc){
-			return;
-		}
-		this._has_stchs = true;
-	},
-	collectNestingsDeclarations: function(props) {
-		var
-			has_props = hasPrefixedProps(props, 'nest-'),
-			has_pack = this.hasOwnProperty('nest'),
-			prop, cur, real_name;
+			}
+			if (!need_recalc){
+				return;
+			}
+			this._has_stchs = true;
+		};
+	})(),
+	collectNestingsDeclarations: (function() {
+		var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
+		var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
+		return function(props) {
+			var
+				has_props = hasPrefixedProps(props),
+				has_pack = this.hasOwnProperty('nest'),
+				prop, cur, real_name;
 
-		if (has_props || has_pack){
-			var result = [];
+			if (has_props || has_pack){
+				var result = [];
 
-			var used_props = {};
+				var used_props = {};
 
-			if (has_props) {
-				for (prop in this) {
-					if (prop.indexOf('nest-') === 0) {
+				if (has_props) {
+					for (prop in this) {
 
-						real_name = prop.replace('nest-','');
-						cur = this[prop];
+						if (getUnprefixed(prop)) {
+
+							real_name = getUnprefixed(prop);
+							cur = this[prop];
+							used_props[real_name] = true;
+							result.push({
+								nesting_name: real_name,
+								subpages_names_list: cur[0],
+								preload: cur[1],
+								init_state_name: cur[2]
+							});
+						}
+					}
+				}
+
+				if (has_pack) {
+					for (real_name in this.nest) {
+						if (used_props[real_name]) {
+							continue;
+						}
+						cur = this.nest[real_name];
 						used_props[real_name] = true;
 						result.push({
 							nesting_name: real_name,
@@ -3461,95 +3525,83 @@ add({
 						});
 					}
 				}
-			}
-
-			if (has_pack) {
-				for (real_name in this.nest) {
-					if (used_props[real_name]) {
-						continue;
-					}
-					cur = this.nest[real_name];
-					used_props[real_name] = true;
-					result.push({
-						nesting_name: real_name,
-						subpages_names_list: cur[0],
-						preload: cur[1],
-						init_state_name: cur[2]
-					});
-				}
-			}
-			
-			this.nestings_declarations = result;
-			
-		}
-		
-		
-
-	},
-	changeDataMorphDeclarations: function(props) {
-		var i, cur;
-
-
-		var has_changes = false;
-
-		if (props.hasOwnProperty('req_map')) {
-			this.netsources_of_states = {
-				api_names: [],
-				api_names_converted: false,
-				sources_names: []
-			};
-			has_changes = true;
-			for (i = 0; i < props.req_map.length; i++) {
-				cur = props.req_map[i][1];
-				if (typeof cur != 'function') {
-					props.req_map[i][1] = spv.mmap( cur );
-				}
-				changeSources(this.netsources_of_states, props.req_map[i][2]);
+				
+				this.nestings_declarations = result;
 				
 			}
+			
+			
 
-		}
+		};
+	})(),
+	changeDataMorphDeclarations: (function() {
+		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-', true );
+		var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
+		return function(props) {
+			var i, cur;
 
-		var has_reqnest_decls = hasPrefixedProps(props, 'nest_req-');
 
-		if (has_reqnest_decls) {
-			this.has_reqnest_decls = true;
-			this.netsources_of_nestings = {
-				api_names: [],
-				api_names_converted: false,
-				sources_names: []
-			};
-			has_changes = true;
-			for (var prop_name in props) {
-				if (props.hasOwnProperty(prop_name) && prop_name.indexOf('nest_req-') === 0) {
-					cur = props[ prop_name ];
-					if (typeof cur[0][0] != 'function') {
-						cur[0][0] = spv.mmap(cur[0][0]);
+			var has_changes = false;
+
+			if (props.hasOwnProperty('req_map')) {
+				this.netsources_of_states = {
+					api_names: [],
+					api_names_converted: false,
+					sources_names: []
+				};
+				has_changes = true;
+				for (i = 0; i < props.req_map.length; i++) {
+					cur = props.req_map[i][1];
+					if (typeof cur != 'function') {
+						props.req_map[i][1] = spv.mmap( cur );
 					}
-					if (cur[0][1] && cur[0][1] !== true && typeof cur[0][1] != 'function') {
-						cur[0][1] = spv.mmap(cur[0][1]);
-					}
-					var array = cur[0][2];
-					if (array) {
-						for (i = 0; i < array.length; i++) {
-							var spec_cur = array[i];
-							if (typeof spec_cur[1] != 'function') {
-								spec_cur[1] = spv.mmap(spec_cur[1]);
-							}
-						}
-					}
-					changeSources(this.netsources_of_nestings, cur[1]);
+					changeSources(this.netsources_of_states, props.req_map[i][2]);
 					
 				}
+
 			}
-		}
-		if (has_changes) {
-			this.netsources_of_all = {
-				nestings: this.netsources_of_nestings,
-				states: this.netsources_of_states
-			};
-		}
-	},
+
+			var has_reqnest_decls = hasPrefixedProps(props);
+
+			if (has_reqnest_decls) {
+				this.has_reqnest_decls = true;
+				this.netsources_of_nestings = {
+					api_names: [],
+					api_names_converted: false,
+					sources_names: []
+				};
+				has_changes = true;
+				for (var prop_name in props) {
+					if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
+						cur = props[ prop_name ];
+						if (typeof cur[0][0] != 'function') {
+							cur[0][0] = spv.mmap(cur[0][0]);
+						}
+						if (cur[0][1] && cur[0][1] !== true && typeof cur[0][1] != 'function') {
+							cur[0][1] = spv.mmap(cur[0][1]);
+						}
+						var array = cur[0][2];
+						if (array) {
+							for (i = 0; i < array.length; i++) {
+								var spec_cur = array[i];
+								if (typeof spec_cur[1] != 'function') {
+									spec_cur[1] = spv.mmap(spec_cur[1]);
+								}
+							}
+						}
+						changeSources(this.netsources_of_nestings, cur[1]);
+						
+					}
+				}
+			}
+			if (has_changes) {
+				this.netsources_of_all = {
+					nestings: this.netsources_of_nestings,
+					states: this.netsources_of_states
+				};
+			}
+		};
+	})(),
 	getNetworkSources: function() {
 		if (!this.netsources_of_all) {
 			return;
@@ -3571,29 +3623,33 @@ add({
 
 		return this.netsources_of_all.full_list;
 	},
-	'regfr-childchev': {
-		test: function(namespace) {
-			return namespace.indexOf('child_change-') === 0;
-		},
-		fn: function(namespace) {
-			var nesting_name = namespace.replace('child_change-', '');
-			var child = this.getNesting(nesting_name);
-			if (child){
-				return {
-					value: child,
-					target: this,
-					nesting_name: nesting_name
-				};
-			}
-		},
-		getWrapper: function() {
-			return hndMotivationWrappper;
-		},
-		getFSNamespace: function(namespace) {
-			return namespace.replace('child_change-', '');
-		},
-		handleFlowStep: stackNestingFlowStep
-	},
+	'regfr-childchev': (function() {
+		var getNestingName = spv.getDeprefixFunc('child_change-');
+		return {
+			test: function(namespace) {
+
+				return getNestingName(namespace);
+			},
+			fn: function(namespace) {
+				var nesting_name = getNestingName(namespace);
+				var child = this.getNesting(nesting_name);
+				if (child){
+					return {
+						value: child,
+						target: this,
+						nesting_name: nesting_name
+					};
+				}
+			},
+			getWrapper: function() {
+				return hndMotivationWrappper;
+			},
+			getFSNamespace: function(namespace) {
+				return getNestingName(namespace);
+			},
+			handleFlowStep: stackNestingFlowStep
+		};
+	})(),
 	getStrucRoot: function() {
 		return this.app;
 	},
@@ -3712,15 +3768,19 @@ var passCollectionsChange = function(e) {
 	this.setItems(e.value, e.target.current_motivator);
 };
 
+
+
+
+
 add({
 	watchChildrenStates: function(collection_name, state_name, callback) {
 		//
-		var items_events = new ItemsEvents('state_change-' + state_name, this, callback);
-		this.on('child_change-' + collection_name, passCollectionsChange, null, items_events);
+		var items_events = new ItemsEvents( getSTEVNameDefault(state_name), this, callback);
+		this.on(getFullChilChEvName(collection_name), passCollectionsChange, null, items_events);
 	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
 		var archiver = new StatesArchiver(collection_state, result_state_name || collection_state, this, statesCalcFunc);
-		this.on('child_change-' + collection_name, passCollectionsChange, null, archiver);
+		this.on(getFullChilChEvName(collection_name), passCollectionsChange, null, archiver);
 	},
 	getRelativeRequestsGroups: function(space, only_models) {
 		var all_models = [];
@@ -3779,7 +3839,7 @@ add({
 		
 		
 
-		var full_ev_name = 'child_change-' + collection_name;
+		var full_ev_name = getFullChilChEvName(collection_name);
 
 		var chch_cb_cs = this.evcompanion.getMatchedCallbacks(full_ev_name).matched;
 		
@@ -3837,7 +3897,6 @@ add({
 			this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
 		}
 	},
-	complex_st_prefix: 'compx-',
 
 	sendStatesToMPX: function(states_list) {
 		//this.removeDeadViews();
@@ -4048,6 +4107,7 @@ provoda.Model.extendTo(provoda.HModel, {
 	},
 	setPmdSwitcher: function(pmd) {
 		this.pmd_switch = pmd;
+
 		pmd.on('state_change-vswitched', this._hndOnPMDSwitch, this.getContextOptsI());
 	},
 	switchPmd: function(toggle) {
@@ -4173,7 +4233,13 @@ var ViewLabour = function() {
 	this.undetailed_states = {};
 	this.undetailed_children_models = {};
 };
+var hndExpandViewTree = function(e) {
+	if (!e.value) {
+		return;
+	}
+	this.checkExpandableTree(e.type);
 
+};
 var views_counter = 1;
 var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
@@ -4242,7 +4308,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		if (this.base_tree_expand_states) {
 			for (var i = 0; i < this.base_tree_expand_states.length; i++) {
-				this.on('state_change-' + this.base_tree_expand_states[i], this.hndExpandViewTree);
+
+				this.on( getSTEVNameDefault(this.base_tree_expand_states[i]) , hndExpandViewTree);
 			}
 		}
 
@@ -4453,9 +4520,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					var target_view;
 					//var view =
 					
-					if (cb_data[1].indexOf('#') === 0) {
+					if (spv.startsWith(cb_data[1], '#')) {
 						target_view = _this.root_view;
-						cb_data[1] = cb_data[1].replace('#', '');
+						cb_data[1] = cb_data[1].replace.slice(1);
 					} else {
 						target_view = _this;
 					}
@@ -5081,55 +5148,60 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getPart: function(part_name) {
 		return this.view_parts && this.view_parts[part_name];
 	},
-	collectStateChangeHandlers: function(props) {
-		var need_recalc = false, prop;
-		if (this.hasOwnProperty('state_change')){
-			need_recalc = true;
-		} else {
-			need_recalc = hasPrefixedProps(props, 'stch-');
+	collectStateChangeHandlers: (function() {
+		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
+		var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
+		return function(props) {
+			var need_recalc = false, prop;
+			if (this.hasOwnProperty('state_change')){
+				need_recalc = true;
+			} else {
+				need_recalc = hasPrefixedProps(props);
 
-		}
-		if (!need_recalc){
-			return;
-		}
-		this._has_stchs = true;
-
-		var has_stchh = {};
-		var result = [];
-
-		this.stch_hs_list = [];
-		
-
-		for (prop in this) {
-			if (prop.indexOf('stch-') === 0){
-				var real_name = prop.replace('stch-','');
-				has_stchh[real_name] = true;
-				result.push({
-					name: real_name,
-					item: this[prop]
-				});
-
-				this.stch_hs_list.push(real_name);
 			}
-		}
+			if (!need_recalc){
+				return;
+			}
+			this._has_stchs = true;
 
-		if (this.state_change){
-			for (prop in this.state_change) {
-				if (!has_stchh[prop]){
-					has_stchh[prop] = true;
+			var has_stchh = {};
+			var result = [];
+
+			this.stch_hs_list = [];
+			
+
+			for (prop in this) {
+
+				if (getUnprefixed( prop )){
+					var real_name = getUnprefixed( prop );
+					has_stchh[real_name] = true;
 					result.push({
-						name: prop,
-						item: this.state_change[prop]
+						name: real_name,
+						item: this[prop]
 					});
 
-					this.stch_hs_list.push(prop);
+					this.stch_hs_list.push(real_name);
 				}
-
 			}
-		}
 
-		this.stch_hs = result;
-	},
+			if (this.state_change){
+				for (prop in this.state_change) {
+					if (!has_stchh[prop]){
+						has_stchh[prop] = true;
+						result.push({
+							name: prop,
+							item: this.state_change[prop]
+						});
+
+						this.stch_hs_list.push(prop);
+					}
+
+				}
+			}
+
+			this.stch_hs = result;
+		};
+	})(),
 	requirePart: function(part_name) {
 		if (!this.isAlive()){
 			return $();
@@ -5363,7 +5435,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	tpl_children_prefix: 'tpl.children_templates.',
-	collch_h_prefix: 'collch-',
 	stackCollectionChange: function() {
 		this.nextTick(this.collectionChange, arguments);
 	},
@@ -5456,55 +5527,54 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 	},
-	collectCollectionChangeDeclarations: function(props) {
-		var need_recalc = false, prop;
-	
-		for (prop in props){
-			if (props.hasOwnProperty(prop) && prop.indexOf(this.collch_h_prefix) === 0){
-				need_recalc = true;
-				break;
-			}
-		}
+	collectCollectionChangeDeclarations: (function() {
+		var getUnprefixed = spv.getDeprefixFunc(  'collch-' );
+		var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
+		return function(props) {
+			var need_recalc = hasPrefixedProps( props );
 		
-		if (!need_recalc){
-			return;
-		}
 
-		this.dclrs_fpckgs = {};
-
-		for (prop in this){
-			if (prop.indexOf(this.collch_h_prefix) === 0){
-				var collch = this[ prop ];
-				var nesting_name = prop.replace(this.collch_h_prefix, '');
-				if (typeof collch == 'function'){
-					this.dclrs_fpckgs[ nesting_name ] = collch;
-				} else {
-					var not_request = false, collchs = false;
-					var collchs_limit = false;
-					if (typeof collch == 'object'){
-						not_request = collch.not_request;
-						collchs = collch.spaces;
-						collchs_limit = collch.limit;
-					}
-
-					collchs = collchs || spv.toRealArray(collch);
-					var declarations = new Array(collchs.length);
-					for (var i = 0; i < collchs.length; i++) {
-						declarations[i] = this.parseCollectionChangeDeclaration(collchs[i]);
-					}
-
-					this.dclrs_fpckgs[ nesting_name ] = {
-						declarations: declarations,
-						not_request: not_request,
-						limit: collchs_limit
-
-					};
-				}
-
+			if (!need_recalc){
+				return;
 			}
-		}
-		return true;
-	},
+			var prop;
+
+			this.dclrs_fpckgs = {};
+
+			for (prop in this){
+				if (getUnprefixed( prop )){
+					var collch = this[ prop ];
+					var nesting_name = getUnprefixed( prop );
+					if (typeof collch == 'function'){
+						this.dclrs_fpckgs[ nesting_name ] = collch;
+					} else {
+						var not_request = false, collchs = false;
+						var collchs_limit = false;
+						if (typeof collch == 'object'){
+							not_request = collch.not_request;
+							collchs = collch.spaces;
+							collchs_limit = collch.limit;
+						}
+
+						collchs = collchs || spv.toRealArray(collch);
+						var declarations = new Array(collchs.length);
+						for (var i = 0; i < collchs.length; i++) {
+							declarations[i] = this.parseCollectionChangeDeclaration(collchs[i]);
+						}
+
+						this.dclrs_fpckgs[ nesting_name ] = {
+							declarations: declarations,
+							not_request: not_request,
+							limit: collchs_limit
+
+						};
+					}
+
+				}
+			}
+			return true;
+		};
+	})(),
 	callCollectionChangeDeclaration: function(dclr_fpckg, nesname, array, old_value, removed) {
 		if (typeof dclr_fpckg == 'function'){
 			dclr_fpckg.call(this, nesname, array, old_value, removed);

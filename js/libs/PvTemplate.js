@@ -227,6 +227,7 @@ var checkPVRepeat = function(states, async_changes, current_motivator) {
 		}
 	}
 };
+var getUnprefixedPV = spv.getDeprefixFunc( 'pv-', true );
 
 var getFieldsTreesBases = function(all_vs) {
 	var sfy_values = new Array(all_vs.length);
@@ -466,8 +467,9 @@ var parser = {
 				if (!cur_part){
 					continue;
 				}
-				if (cur_part.indexOf('for_model:') == 0){
-					for_model = cur_part.replace('for_model:', '');
+
+				if (spv.startsWith(cur_part, 'for_model:')){
+					for_model = cur_part.slice('for_model:'.length);
 				} else {
 					var space_parts = cur_part.split(':');
 					if (!coll_name){
@@ -742,7 +744,8 @@ var parser = {
 		for (i = 0; i < attributes.length; i++) {
 			//создаём кэш, список "pv-*" атрибутов
 			attr_name = attributes[i].name;
-			if ( attr_name.indexOf('pv-') == 0 ){
+
+			if ( getUnprefixedPV( attr_name ) ){
 				attributes_list.push({
 					name: attr_name,
 					node: attributes[i]
