@@ -1093,9 +1093,14 @@ spv.domReady(window.document, function(){
 		su.updateState('forbidden_by_copyrh', index);
 	});
 	if (app_serv.app_env.nodewebkit) {
-		createDatastreamIframe('https://arestov.github.io/su_update_iframe/', function() {
+		createDatastreamIframe('https://arestov.github.io/su_update_iframe/', function(data) {
+			if (!data) {
+				return;
+			}
+			if (data.last_ver && data.last_ver > seesu_version && data.package_url) {
 
-		}, true);
+			}
+		});
 	}
 	
 });
