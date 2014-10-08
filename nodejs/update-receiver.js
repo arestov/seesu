@@ -18,7 +18,7 @@
 	};
 
 	var packageKey = 'install-pack';
-	var getUpdatePackage = function(packageUrl, cursomPackageKey) {
+	var getUpdatePackage = function(packageUrl, userAppVersion, cursomPackageKey) {
 		//console.log('requesting ' + packageUrl);
 
 		var usedPackageKey = cursomPackageKey || packageKey;

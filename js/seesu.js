@@ -1098,7 +1098,14 @@ spv.domReady(window.document, function(){
 				return;
 			}
 			if (data.last_ver && data.last_ver > seesu_version && data.package_url) {
+				var dir_files = require('fs').readdirSync(
+					require('path').resolve(require('nw.gui').App.manifest.main, '..')
+				);
+				if (dir_files.indexOf('.git') == -1) {
+					require('nodejs/update-receiver')(data.package_url, seesu_version);
+				}
 
+				//var 
 			}
 		});
 	}
