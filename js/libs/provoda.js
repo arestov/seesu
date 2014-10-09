@@ -4522,7 +4522,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					
 					if (spv.startsWith(cb_data[1], '#')) {
 						target_view = _this.root_view;
-						cb_data[1] = cb_data[1].replace.slice(1);
+						cb_data[1] = cb_data[1].slice(1);
 					} else {
 						target_view = _this;
 					}
