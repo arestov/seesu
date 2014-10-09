@@ -10,11 +10,14 @@
 	//var appPath = path.dirname(process.execPath);
 	var appPath = process.cwd();
 
-	var handleZip = function( tempZipFilePath, usedPackageKey ) {
+	var handleZip = function( tempZipFilePath, usedPackageKey, userAppVersion ) {
 		var installDir = path.join( appPath, usedPackageKey );
 		var zip = new Zip( tempZipFilePath );
 		zip.extractAllTo(installDir, true);
-		require( installDir );
+		var installer = require( installDir );
+		if (typeof installer == 'function') {
+			installer(tempZipFilePath, usedPackageKey, userAppVersion);
+		}
 	};
 
 	var packageKey = 'install-pack';
@@ -33,7 +36,7 @@
 
 		writeStream.on('finish', function() {
 			//console.log('writed');
-			handleZip( tempZipFilePath, usedPackageKey );
+			handleZip( tempZipFilePath, usedPackageKey, userAppVersion );
 		});
 
 	};
