@@ -463,32 +463,24 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	},
 	buildNowPlayingButton: function() {
 		var _this = this;
-		var np_button = this.nav.justhead.find('.np-button').remove();
-		var npbClickCallback = function(){
-			_this.RPCLegacy('showNowPlaying');
-		};
-		np_button.click(npbClickCallback);
-
-		_this.onDie(function() {
-			np_button.off();
-		});
-
-		_this.addWayPoint(np_button, {
-			canUse: function() {
-				return !_this.state('viewing_playing');
-			}
-		});
-
-		var nptpl = new _this.PvTemplate({
-			node: np_button,
-			struc_store: _this.struc_store,
-			calls_flow: _this._getCallsFlow(),
-			getSample: _this.getSampleForTemplate
-		});
-		_this.tpls.push(nptpl);
-
+		var np_button = this.nav.justhead.find('.np-button').detach();
+		_this.tpls.push( pv.$v.createTemplate( this, np_button ) );
 		this.nav.daddy.append(np_button);
-		//this.nav.np_button =np_button;
+	},
+	'stch-nav_helper_is_needed': function(state) {
+		if (!state) {
+			this.updateState('nav_helper_full', false);
+		}
+	},
+	tpl_events: {
+		showFullNavHelper: function() {
+			this.updateState('nav_helper_full', true);
+		}
+	},
+	buildNavHelper: function() {
+		this.tpls.push( pv.$v.createTemplate(
+			this, this.els.nav_helper
+		) );
 	},
 	selectKeyNodes: function() {
 		var slider = this.d.getElementById('slider');
@@ -499,13 +491,13 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		var start_screen = $( '#start-screen', this.d );
 
 
-
 		spv.cloneObj(this.els, {
 			screens: screens_block,
 			app_map_con: app_map_con,
 			scrolling_viewport: scrolling_viewport,
 			slider: slider,
 			navs: $(slider).children('.navs'),
+			nav_helper: $(slider).children().children('#nav-helper'),
 			start_screen: start_screen,
 			pestf_preview: start_screen.children('.personal-stuff-preview')
 		});
@@ -537,6 +529,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			_this.buildVKSamples();
 
 			_this.buildNowPlayingButton();
+			_this.buildNavHelper();
 			
 			var d_click_callback = function(e) {
 				e.preventDefault();

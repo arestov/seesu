@@ -253,7 +253,8 @@ var parser = {
 	
 	scope_generators: {
 		'pv-nest': true,
-		'pv-repeat': true
+		'pv-repeat': true,
+		'pv-foreign': true
 	},
 	scope_g_list: [],
 	states_using_directives: {

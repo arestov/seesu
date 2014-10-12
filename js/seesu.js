@@ -527,7 +527,9 @@ AppModel.extendTo(SeesuApp, {
 		if (app_serv.app_env.nodewebkit) {
 			this.updateState('disallow_seesu_listeners', true);
 		}
-		
+		this.on('child_change-current_mp_md', function(e) {
+			this.closeNavHelper();
+		});
 	},
 	watchVKCharacter: function(md, key, result_state) {
 		var store, character_id;
@@ -926,6 +928,22 @@ AppModel.extendTo(SeesuApp, {
 			console.log(source_name, ns, data);
 		}
 		
+	},
+	suggestNavHelper: function() {
+		if (this.state('nav_helper_is_needed')) {
+			this.showNowPlaying();
+		} else {
+			if (this.state('played_playlists_length') > 1) {
+				this.updateState('nav_helper_is_needed', true);
+			} else {
+				this.showNowPlaying();
+			}
+		}
+		
+		
+	},
+	closeNavHelper: function() {
+		this.updateState('nav_helper_is_needed', false);
 	}
 
 });

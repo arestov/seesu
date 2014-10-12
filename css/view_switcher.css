@@ -166,6 +166,29 @@
 		background:url(../i/equalaizer_stoped.gif) no-repeat;
 		cursor:pointer;
 		}
+.np-button-nh_intend {
+	border-radius: 0.5rem;
+	border-top: 1px solid #666;
+	border-bottom: 1px solid #313131;
+}
+@-webkit-keyframes grayPulse {
+  from { -webkit-box-shadow: 0 0 3px #333; }
+  50% { -webkit-box-shadow: 0 0 8px #777; }
+  to { -webkit-box-shadow: 0 0 3px #333; }
+}
+@keyframes grayPulse {
+  from { box-shadow: 0 0 3px #333; }
+  50% { box-shadow: 0 0 8px #777; }
+  to { box-shadow: 0 0 3px #333; }
+}
+.np-button-can_ff {
+	-webkit-animation-name: grayPulse;
+	-webkit-animation-duration: 4s;
+	-webkit-animation-iteration-count: infinite;
+	animation-name: grayPulse;
+	animation-duration: 4s;
+	animation-iteration-count: infinite;
+}
 @media (max-width:550px) {
 
 	.daddy .stack-top{

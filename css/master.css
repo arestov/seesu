@@ -2151,3 +2151,95 @@ body .surf_nav{
 .page-scheme .view_sources {
 	font-size: 0.8rem;
 }
+
+
+.nav_helper {
+	position: relative;
+	padding: 1rem;
+	background: #313131;
+	border-bottom: 1px solid #252525;
+}
+	.nav_helper-header {
+		margin: 0 1rem 0.5rem
+	}
+	.nav_helper-fullb {
+		display: inline;
+		padding: 0.2rem 1rem;
+		background: #2E2E2E;
+		border-radius: 0.3rem;
+		cursor: pointer;
+	}
+	.nav_helper-closer {
+		font-size: 2rem;
+		position: absolute;
+		padding: 0 0.4rem; 
+		right: 1.8rem;
+		top: 0.5rem;
+		line-height: 2rem;
+		cursor: pointer;
+		border-radius: 0.4rem;
+	}
+	.nav_helper-closer:hover {
+		background-color:#3F3F3F;
+	}
+
+
+.nav_pl_hitem {
+	display: none;
+	cursor: pointer;
+	background: #2E2E2E;
+	border-top: 1px solid #353535;
+	border-bottom: 1px solid #292929;
+	border-radius: 0.5rem;
+	padding: 0.5rem 1rem;
+	margin-bottom: 0.5rem;
+	max-width: 750px;
+	position: relative;
+}
+.nav_pl_hitem-selected {
+	background: #333333;
+	border: 1px solid transparent;
+	cursor: default;
+}
+.nav_pl_hitem:hover {
+	background: #333;
+}
+.nav_pl_hitem-song {
+	font-size: 0.8rem;
+	color: #aaa;
+}
+
+.nav_pl_hitem-allow_preview {
+	display: block;
+}
+.nav_helper-full .nav_pl_hitem{
+	display: block;
+}
+
+
+
+	.nvh-s-arrow {		
+		top: -11px;
+		border-style: solid;
+		border-width: 11px;
+		border-color: transparent transparent #252525 transparent;
+		}
+		.nvh-s-arrow-bg {
+			top: -10px;
+			left: -11px;
+			border-style: solid;
+			border-width: 11px;
+			border-color: transparent transparent #313131transparent;
+			}
+.nvh-arrow{
+	position: absolute;
+	top: -11px;
+	/* display: block; */
+	right: 1rem;
+	overflow: hidden;
+	margin-right: 8px;
+	width: 22px;
+	height: 11px;
+	pointer-events: none;
+	z-index: 10;
+	}

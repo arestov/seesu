@@ -483,7 +483,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			cur = all_changhes[i];
 			var target = cur.target.getMD();
 			if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(this.getStoredMpx(target));
+				this.removeChildViewsByMd(this.getStoredMpx(target), 'map_slice');
 			}
 		}
 

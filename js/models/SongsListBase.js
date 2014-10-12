@@ -137,6 +137,8 @@ define(['pv', 'spv'], function(pv, spv){
 				this.idx_player_song = null;
 			}
 		}
+		this.updateNesting('last_played_song', this.idx_player_song || this.getNesting('last_played_song'));
+		this.updateState('last_played_song_start', Date.now());
 		
 	};
 	var checkNeighboursStatesCh = function(md, target_song) {
@@ -700,6 +702,9 @@ define(['pv', 'spv'], function(pv, spv){
 				artist: artist,
 				track: parts[1] ? parts[1] : parts[0]
 			});
+		},
+		requestLastPlayedSong: function() {
+			this.getNesting('last_played_song').requestPage();
 		}
 
 	});

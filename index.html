@@ -1779,8 +1779,14 @@
 						nav-item np-button
 						{{!now_playing_text && 'hidden'}}
 						{{!viewing_playing && 'nav-button'}}
+						{{!nav_helper_is_needed && viewing_playing && (played_playlists_length > 1) && 'np-button-nh_intend'}}
 						{{playing && 'player-played'}}
-					"><span class="np"></span></a>
+						{{nav_helper_is_needed && !viewing_playing && 'np-button-can_ff'}}
+
+					"
+					pv-events="click::suggestNavHelper"
+					pv-type="{{!viewing_playing && 'way-point'}}"
+					><span class="np"></span></a>
 			<div class="daddy not-inited">
 				<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
 				
@@ -1790,8 +1796,47 @@
 		
 	</div>
 	<div id="slider-materail" class="shadowed">
-		
+			<div id="nav-helper" 
+				class="nav_helper hidden"
+				pv-class="
+					nav_helper 
+					{{!nav_helper_is_needed && 'hidden'}}
+					{{nav_helper_full && 'nav_helper-full'}}">
+				<div class="nvh-arrow">
+					<div class="nvh-s-arrow arrow-part">
+						<div class="nvh-s-arrow-bg arrow-part"></div>
+					</div>
+				</div>
+				<h5 class="nav_helper-header">
+					Played playlists history
+				</h5>
+				
+				<div 
+					pv-nest="played_playlists" 
+					class="nav_pl_hitem"
+					pv-class="
+						nav_pl_hitem {{$index < 2 && 'nav_pl_hitem-allow_preview'}}
+						{{mp_show && 'nav_pl_hitem-selected'}}
+						
+					"
+					pv-events="click::#closeNavHelper click::requestLastPlayedSong">
+					<span pv-text="{{nav_title}}"></span>
+					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" nav_pl_hitem-song {{player_song && 'player_song'}}">
+						<span pv-text="{{nav_title}}"></span>
+						<div class="playing-song-mark" pv-class="playing-song-mark {{play == 'play' && 'playing-process'}}"></div>
+					</div>
+					
+				</div>
+				<span 
+					class="hidden nav_helper-fullb" 
+					pv-class="nav_helper-fullb {{(played_playlists_length < 3 || nav_helper_full) && 'hidden'}}" 
+					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists_length - 2}}"></span> items</span>
+
+				<span pv-events="click::closeNavHelper" class="nav_helper-closer">&times;</span>
+
+			</div>
 			<div class="screens" id="screens">
+				
 				<div id="pages_area_width_streamer-wrapper">
 					<iframe src="about:blank" id="pages_area_width_streamer"></iframe>
 				</div>
@@ -1835,7 +1880,7 @@
 						pv-anchor="scroll_con">
 
 						<div class="complex-page_material start-screen" 
-							id="start-screen" pv-nest="start_page">
+							id="start-screen" pv-foreign>
 							
 							<p class="search-desc">
 								<span class="lang localize-trysearches desc">try to search</span> 

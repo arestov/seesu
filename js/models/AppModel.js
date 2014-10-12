@@ -66,12 +66,31 @@ AppModelBase.extendTo(AppModel, {
 		this.updateState('now_playing', mo.getTitle());
 		this.current_playing = mo;
 		this.matchNav();
+		this.updatePlayedListsHistory(mo);
 	},
 	matchNav: function() {
 		if (this.current_playing){
 			this.updateState('viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
 		}
 
+	},
+	updatePlayedListsHistory: function(mo) {
+		var array = this.getNesting('played_playlists');
+		if (!array) {
+			array = [];
+		} else {
+			array = array.slice();
+		}
+		var pos = array.indexOf( mo.map_parent );
+		if (pos == -1) {
+			array.unshift( mo.map_parent );
+		} else {
+			spv.removeItem(array, pos);
+			array.unshift( mo.map_parent );
+			
+		}
+		this.updateNesting('played_playlists', array);
+		this.updateState('played_playlists_length', array.length);
 	},
 	playing: function() {
 		this.updateState('playing', true);
