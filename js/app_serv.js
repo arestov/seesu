@@ -482,6 +482,9 @@ var app_env = (function(wd){
 	} else {
 		dstates.addState('no-transform_upport');
 	}
+	var getLang = function() {
+		return (wd.navigator.language || wd.navigator.browserLanguage || 'en').slice(0,2).toLowerCase();
+	};
 	
 	if (env.vkontakte){
 		if (env.url.language === '0'){
@@ -489,10 +492,10 @@ var app_env = (function(wd){
 		} else if (env.url.language === '3'){
 			env.lang = 'en';
 		} else{
-			env.lang = (wd.navigator.language || wd.navigator.browserLanguage).slice(0,2).toLowerCase();
+			env.lang = getLang();
 		}
 	} else{
-		env.lang = (wd.navigator.language || wd.navigator.browserLanguage).slice(0,2).toLowerCase();
+		env.lang = getLang();
 	}
 	
 	
