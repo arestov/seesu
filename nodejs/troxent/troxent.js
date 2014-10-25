@@ -10,6 +10,7 @@ var util = require('util');
 
 
 var downloads_index = {};
+var peers_cache = {};
 var hash_events = new events.EventEmitter();
 var info_dictionaries_index = {};
 
@@ -82,20 +83,44 @@ var bindInfoUpdates = function(core) {
 
 var getCore = function(torrent, opts) {
 	var torrent_obj = getTorrentObj(torrent);
-	if (downloads_index[ torrent_obj.infoHash ]) {
-		return downloads_index[ torrent_obj.infoHash ];
+	var infoHash = torrent_obj.infoHash;
+	if (downloads_index[ infoHash ]) {
+		return downloads_index[ infoHash ];
+	}
+	if (!peers_cache[ infoHash ]) {
+		peers_cache[ infoHash ] = {
+			list: [],
+			index: {}
+		};
 	}
 	if (!opts) {opts = {};}
+	if (!opts.peersList) {
+		opts.peersList = peers_cache[ infoHash ].list;
+	}
 
 	var core = engine(torrent_obj || torrent, opts);
 
 	var update_interval = bindInfoUpdates(core);
 
+
+	
+
+	var peers_index = peers_cache[ infoHash ].index;
+	var peers_list = peers_cache[ infoHash ].list;
+	
+
+	core.on('peer', function(addr){
+		if (!peers_index[ addr ]) {
+			peers_index[ addr ] = true;
+			peers_list.push(addr);
+		}
+	});
+
 	core.once('destroy', function() {
 		//core._destroyed = true;
 		if (torrent_obj) {
-			if (downloads_index[ torrent_obj.infoHash ] == core) {
-				downloads_index[ torrent_obj.infoHash ] = null;
+			if (downloads_index[ infoHash ] == core) {
+				downloads_index[ infoHash ] = null;
 			}
 		}
 		clearInterval(update_interval);
@@ -121,8 +146,8 @@ var getCore = function(torrent, opts) {
 		}
 	});
 	if (torrent_obj) {
-		downloads_index[ torrent_obj.infoHash ] = core;
-		hash_events.emit( 'hash-' + torrent_obj.infoHash, core );
+		downloads_index[ infoHash ] = core;
+		hash_events.emit( 'hash-' + infoHash, core );
 	}
 	return core;
 	

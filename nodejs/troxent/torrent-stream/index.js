@@ -140,14 +140,16 @@ var torrentStream = function(link, opts, cb) {
 		}
 	};
 
-	discovery.on('peer', function(addr) {
+	var onpeer = function(addr) {
 		if (blocked.contains(addr.split(':')[0])) {
 			engine.emit('blocked-peer', addr);
 		} else {
 			engine.emit('peer', addr);
 			engine.connect(addr);
 		}
-	});
+	};
+
+	discovery.on('peer', onpeer);
 
 	var ontorrent = function(torrent) {
 		torrent = Object.create(torrent);
@@ -760,6 +762,12 @@ var torrentStream = function(link, opts, cb) {
 		swarm.listen(engine.port, cb);
 		discovery.updatePort(engine.port);
 	};
+
+	if (opts.peersList) {
+		process.nextTick(function(){
+			opts.peersList.forEach(onpeer);
+		});
+	}
 
 	return engine;
 };
