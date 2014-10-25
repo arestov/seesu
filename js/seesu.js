@@ -930,16 +930,11 @@ AppModel.extendTo(SeesuApp, {
 		
 	},
 	suggestNavHelper: function() {
-		if (this.state('nav_helper_is_needed')) {
-			this.showNowPlaying();
-		} else {
-			if (this.state('played_playlists_length') > 1) {
-				this.updateState('nav_helper_is_needed', true);
-			} else {
-				this.showNowPlaying();
-			}
+		this.showNowPlaying();
+		if (this.state('played_playlists_length') > 1) {
+			this.updateState('nav_helper_is_needed', true);
 		}
-		
+	
 		
 	},
 	closeNavHelper: function() {
@@ -1054,7 +1049,6 @@ var createDatastreamIframe = function(url, callback, allow_exec) {
 		if (e.source == iframe.contentWindow) {
 			callback(e.data);
 		}
-		
 	});
 	if (app_serv.app_env.nodewebkit) {
 		iframe.nwdisable = !allow_exec;
@@ -1075,59 +1069,67 @@ var createDatastreamIframe = function(url, callback, allow_exec) {
 spv.domReady(window.document, function(){
 	initVk(su);
 	su.checkUpdates();
-	createDatastreamIframe('https://arestov.github.io/su_news_iframe/', function(data) {
-		if (!data) {
-			return;
-		}
-		su.start_page.getNesting('news').updateState('news_list', StartPage.AppNews.converNews(data));
+	var queue = new FuncsQueue({
+		time: [700]
 	});
-	createDatastreamIframe('https://arestov.github.io/su_blocked_music/', function(data) {
-		if (!data) {
-			return;
-		}
-
-		var index = {};
-		for (var artist in data) {
-			var lc_artist = artist.toLowerCase();
-			if (data[artist] === true) {
-				index[lc_artist] = true;
-				continue;
-			}
-
-			var lindex = index[lc_artist] = (index[lc_artist] || {});
-			for (var i = 0; i < data[artist].length; i++) {
-				var cur = data[artist][i];
-				if (!cur || typeof cur !== 'string') {
-					continue;
-				}
-
-				lindex[ lc_artist ][ data[artist][i].toLowerCase() ] = true;
-				
-			}
-
-		}
-		//forbidden_by_copyrh
-		//white_of_copyrh
-		su.updateState('forbidden_by_copyrh', index);
-	});
-	if (app_serv.app_env.nodewebkit) {
-		createDatastreamIframe('https://arestov.github.io/su_update_iframe/', function(data) {
+	queue.add(function() {
+		createDatastreamIframe('https://arestov.github.io/su_news_iframe/', function(data) {
 			if (!data) {
 				return;
 			}
-			if (data.last_ver && data.last_ver > seesu_version && data.package_url) {
-				var dir_files = require('fs').readdirSync(
-					require('path').resolve(require('nw.gui').App.manifest.main, '..')
-				);
-				if (dir_files.indexOf('.git') == -1) {
-					require('nodejs/update-receiver')(data.package_url, seesu_version);
+			su.start_page.getNesting('news').updateState('news_list', StartPage.AppNews.converNews(data));
+		});
+	});
+	queue.add(function() {
+		createDatastreamIframe('https://arestov.github.io/su_blocked_music/', function(data) {
+			if (!data) {
+				return;
+			}
+
+			var index = {};
+			for (var artist in data) {
+				var lc_artist = artist.toLowerCase();
+				if (data[artist] === true) {
+					index[lc_artist] = true;
+					continue;
 				}
 
-				//var 
+				var lindex = index[lc_artist] = (index[lc_artist] || {});
+				for (var i = 0; i < data[artist].length; i++) {
+					var cur = data[artist][i];
+					if (!cur || typeof cur !== 'string') {
+						continue;
+					}
+
+					lindex[ lc_artist ][ data[artist][i].toLowerCase() ] = true;
+					
+				}
+
 			}
+			//forbidden_by_copyrh
+			//white_of_copyrh
+			su.updateState('forbidden_by_copyrh', index);
 		});
-	}
-	
+	});
+	queue.add(function(){
+		if (app_serv.app_env.nodewebkit) {
+			createDatastreamIframe('https://arestov.github.io/su_update_iframe/', function(data) {
+				if (!data) {
+					return;
+				}
+				if (data.last_ver && data.last_ver > seesu_version && data.package_url) {
+					var dir_files = require('fs').readdirSync(
+						require('path').resolve(require('nw.gui').App.manifest.main, '..')
+					);
+					if (dir_files.indexOf('.git') == -1) {
+						require('nodejs/update-receiver')(data.package_url, seesu_version);
+					}
+
+					//var 
+				}
+			});
+		}
+	});
 });
 
 
