@@ -667,6 +667,9 @@ var pv = provoda = {
 		var func = named || function() {};
 		behaviorFrom.extendTo(func, declr);
 		return func;
+	},
+	dom: {
+		template: PvTemplate
 	}
 };
 provoda.Controller = provoda.View;

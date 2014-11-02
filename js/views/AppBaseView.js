@@ -1,4 +1,4 @@
-define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate', './modules/getUsageTree'], function(pv, spv, $, filters, app_serv, PvTemplate, getUsageTree){
+define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', './modules/getUsageTree'], function(pv, spv, $, filters, app_serv, getUsageTree){
 "use strict";
 var transform_props = [app_serv.app_env.transform];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
@@ -8,7 +8,7 @@ transform_props.forEach(function(el) {
 });
 var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
 
-
+var PvTemplate = pv.dom.template;
 pv.setTplFilterGetFn(function(filter_name) {
 	if (filters[filter_name]){
 		return filters[filter_name];
