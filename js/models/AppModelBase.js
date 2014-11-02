@@ -18,8 +18,8 @@ pv.Model.extendTo(AppModelBase, {
 	},
 	initMapTree: function(start_page, needs_url_history, navi) {
 			
-		this.updateNesting('navigation', [start_page]);
-		this.updateNesting('start_page', start_page);
+		pv.updateNesting(this, 'navigation', [start_page]);
+		pv.updateNesting(this, 'start_page', start_page);
 		this.map
 			.init(this.start_page)
 			
@@ -48,7 +48,7 @@ pv.Model.extendTo(AppModelBase, {
 		return this.map;
 	},
 	setDocTitle: function(title) {
-		this.updateState('doc_title', title);
+		pv.update(this, 'doc_title', title);
 	},
 	getBMapTravelFunc: function(func, context) {
 		return function() {
@@ -99,22 +99,22 @@ pv.Model.extendTo(AppModelBase, {
 		'move-view': function(change) {
 			var parent = change.target.getMD().getParentMapModel();
 			if (parent){
-				parent.updateState('mp_has_focus', false);
+				pv.update(parent, 'mp_has_focus', false);
 			}
-			change.target.getMD().updateState('mp_show', change.value);
+			pv.update(change.target.getMD(), 'mp_show', change.value);
 		},
 		'zoom-out': function(change) {
-			change.target.getMD().updateState('mp_show', false);
+			pv.update(change.target.getMD(), 'mp_show', false);
 		},
 		'destroy': function(change) {
 			var md = change.target.getMD();
 			md.mlmDie();
-			md.updateState('mp_show', false);
+			pv.update(md, 'mp_show', false);
 		}
 	},
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].getMD().updateState('map_animating', mark);
+			pv.update(models[i].getMD(), 'map_animating', mark);
 		}
 	},
 	animateMapChanges: function(changes, tree, residents) {
@@ -152,22 +152,22 @@ pv.Model.extendTo(AppModelBase, {
 		
 
 		if (tree){
-			this.updateNesting('navigation', tree);
+			pv.updateNesting(this, 'navigation', tree);
 		}
 
 		
 		if (target_md){
 			if (this.current_mp_md) {
-				this.current_mp_md.updateState('mp_has_focus', false);
+				pv.update(this.current_mp_md, 'mp_has_focus', false);
 			}
 			this.current_mp_md = target_md;
-			target_md.updateState('mp_has_focus', true);
+			pv.update(target_md, 'mp_has_focus', true);
 
-			this.updateState('show_search_form', !!target_md.state('needs_search_from'));
-			this.updateState('full_page_need', !!target_md.full_page_need);
-		//	this.updateState('current_mp_md', target_md._provoda_id);
-			this.updateNesting('current_mp_md', target_md);
-			//target_md.updateState('mp-highlight', false);
+			pv.update(this, 'show_search_form', !!target_md.state('needs_search_from'));
+			pv.update(this, 'full_page_need', !!target_md.full_page_need);
+		//	pv.update(this, 'current_mp_md', target_md._provoda_id);
+			pv.updateNesting(this, 'current_mp_md', target_md);
+			//pv.update(target_md, 'mp-highlight', false);
 
 
 		}
@@ -189,7 +189,7 @@ pv.Model.extendTo(AppModelBase, {
 			}
 		}
 
-		this.updateNesting('map_slice', {
+		pv.updateNesting(this, 'map_slice', {
 			residents_struc: mp_show_wrap,
 			transaction: changes
 		});
@@ -202,11 +202,11 @@ pv.Model.extendTo(AppModelBase, {
 		}
 		binded_models[md._provoda_id] = true;
 		md.on('mpl-attach', function() {
-			md.updateState('mpl_attached', true);
+			pv.update(md, 'mpl_attached', true);
 
 		}, {immediately: true});
 		md.on('mpl-detach', function(){
-			md.updateState('mpl_attached', false);
+			pv.update(md, 'mpl_attached', false);
 		}, {immediately: true});
 		this.pushVDS(md);
 

@@ -54,7 +54,7 @@ pv.Model.extendTo(NotifyCounter, {
 		for (var a in this.messages){
 			++counter;
 		}
-		this.updateState('counter', counter);
+		pv.update(this, 'counter', counter);
 	}
 });
 
@@ -84,12 +84,12 @@ var MfComplect = function(opts, params) {
 			this.mf_cor.getSFM(this.start_file)
 			.on('want-to-play-sf', this.selectMf);
 		this.moplas_list.push(sf);
-		this.updateNesting('moplas_list', this.moplas_list);
-		this.updateState('has_start_file', true);
+		pv.updateNesting(this, 'moplas_list', this.moplas_list);
+		pv.update(this, 'has_start_file', true);
 	} else {
 		this.search_source = params.search_source;
 		this.wch(this.search_source, 'files-list', this.hndFilesListCh);
-		this.updateNesting('pioneer', params.search_source);
+		pv.updateNesting(this, 'pioneer', params.search_source);
 
 	}
 
@@ -99,8 +99,8 @@ var MfComplect = function(opts, params) {
 			var part_start = e.value.slice(0, 5);
 
 			var part_end = e.value.slice(5);
-			this.updateNesting('moplas_list_start', part_start);
-			this.updateNesting('moplas_list_end', part_end);
+			pv.updateNesting(this, 'moplas_list_start', part_start);
+			pv.updateNesting(this, 'moplas_list_end', part_end);
 		}
 
 		
@@ -118,24 +118,24 @@ pv.Model.extendTo(MfComplect, {
 			return;
 		}
 		var moplas_list = [];
-		this.updateState('overstock', files_list.length > this.overstock_limit);
+		pv.update(this, 'overstock', files_list.length > this.overstock_limit);
 		var sf;
 		for (var i = 0; i < files_list.length; i++) {
 		
 			sf =
 				this.mf_cor.getSFM(files_list[i])
 				.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
-			sf.updateState('overstock', i + 1 > this.overstock_limit);
+			pv.update(sf, 'overstock', i + 1 > this.overstock_limit);
 			moplas_list.push(sf);
 			
 		}
-		this.updateNesting('moplas_list', moplas_list);
-		this.updateState('list_length', moplas_list.length);
+		pv.updateNesting(this, 'moplas_list', moplas_list);
+		pv.update(this, 'list_length', moplas_list.length);
 		this.moplas_list = moplas_list;
 
 	},
 	toggleOverstocked: function() {
-		this.updateState('show_overstocked', !this.state('show_overstocked'));
+		pv.update(this, 'show_overstocked', !this.state('show_overstocked'));
 	},
 	overstock_limit: 5,
 	hasManyFiles: function() {
@@ -177,7 +177,7 @@ LoadableList.extendTo(MfCor, {
 				this.files_investg.startSearch(this.last_search_opts);
 				this.last_search_opts = null;
 			}
-			this.updateState('files_investg', this.files_investg);
+			pv.update(this, 'files_investg', this.files_investg);
 		}
 		
 	},
@@ -206,7 +206,7 @@ LoadableList.extendTo(MfCor, {
 
 		this.mfPlayStateChange = function(e) {
 			if (_this.state('used_mopla') == this){
-				_this.updateState('play', e.value);
+				pv.update(_this, 'play', e.value);
 			}
 		};
 		this.mfError = function() {
@@ -235,7 +235,7 @@ LoadableList.extendTo(MfCor, {
 				});
 			this.addMFComplect(complect, this.file.from);
 			this.updateDefaultMopla();
-			this.updateNesting('sorted_completcs', [complect]);
+			pv.updateNesting(this, 'sorted_completcs', [complect]);
 
 		} else {
 			//this.wch(this.mo, 'track', )
@@ -244,7 +244,7 @@ LoadableList.extendTo(MfCor, {
 		}
 		this.wlch(this.mo.mp3_search, 'tools_by_name');
 		this.on('child_change-sorted_completcs', function() {
-			this.updateNesting('vk_source', this.complects['vk'] && this.complects['vk'].search_source);
+			pv.updateNesting(this, 'vk_source', this.complects['vk'] && this.complects['vk'].search_source);
 		});
 
 		this.intMessages();
@@ -279,7 +279,7 @@ LoadableList.extendTo(MfCor, {
 		} else {
 			var vk_auth = this.getNesting('vk_auth');
 			if (vk_auth) {
-				this.updateNesting('vk_auth', null);
+				pv.updateNesting(this, 'vk_auth', null);
 				vk_auth.die();
 			}
 			
@@ -460,7 +460,7 @@ LoadableList.extendTo(MfCor, {
 			if (nmf){
 				nmf.activate();
 			}
-			this.updateNesting('current_mopla', nmf);
+			pv.updateNesting(this, 'current_mopla', nmf);
 		},
 		"mopla_to_preload": function(nmf, omf){
 			if (omf){
@@ -512,7 +512,7 @@ LoadableList.extendTo(MfCor, {
 	},
 	initNotifier: function() {
 		this.notifier = new NotifyCounter();
-		this.updateNesting('notifier', this.notifier);
+		pv.updateNesting(this, 'notifier', this.notifier);
 		this.sf_notf = this.app.notf.getStore('song-files');
 		var rd_msgs = this.sf_notf.getReadedMessages();
 
@@ -534,11 +534,11 @@ LoadableList.extendTo(MfCor, {
 
 	},
 	hndPCoreFail: function() {
-		this.updateState('cant_play_music', true);
+		pv.update(this, 'cant_play_music', true);
 		this.notifier.addMessage('player-fail');
 	},
 	hndPCoreReady: function() {
-		this.updateState('cant_play_music', false);
+		pv.update(this, 'cant_play_music', false);
 		this.notifier.banMessage('player-fail');
 	},
 	getCurrentMopla: function(){
@@ -546,14 +546,14 @@ LoadableList.extendTo(MfCor, {
 	},
 	showOnMap: function() {
 		this.mo.showOnMap();
-		this.updateState('want_more_songs', true);
+		pv.update(this, 'want_more_songs', true);
 	},
 	switchMoreSongsView: function() {
 		if (!this.state('want_more_songs')){
-			this.updateState('want_more_songs', true);
+			pv.update(this, 'want_more_songs', true);
 			//this.markMessagesReaded();
 		} else {
-			this.updateState('want_more_songs', false);
+			pv.update(this, 'want_more_songs', false);
 		}
 		
 	},
@@ -582,7 +582,7 @@ LoadableList.extendTo(MfCor, {
 		
 	},
 	collapseExpanders: function() {
-		this.updateState('want_more_songs', false);
+		pv.update(this, 'want_more_songs', false);
 	},
 	/*
 	setSem: function(sem) {
@@ -638,8 +638,8 @@ LoadableList.extendTo(MfCor, {
 			this.bindSource(cur);
 			sorted_completcs[i] = this.complects[cur.search_name];
 		}
-		this.updateNesting('sorted_completcs', sorted_completcs);
-		this.updateState('few_sources', e.value.length > 1);
+		pv.updateNesting(this, 'sorted_completcs', sorted_completcs);
+		pv.update(this, 'few_sources', e.value.length > 1);
 	},
 	bindInvestgChanges: function() {
 		//
@@ -683,10 +683,10 @@ LoadableList.extendTo(MfCor, {
 		}
 
 
-		this.updateState('has_files', many_files);
+		pv.update(this, 'has_files', many_files);
 		this.updateDefaultMopla();
 
-		this.updateNesting('sorted_completcs', sorted_completcs);
+		pv.updateNesting(this, 'sorted_completcs', sorted_completcs);
 
 	},*/
 	listenMopla: function(mopla) {
@@ -701,14 +701,14 @@ LoadableList.extendTo(MfCor, {
 	checkMoplas: function(unavailable_mopla) {
 		var current_mopla_unavailable;
 		if (this.state("used_mopla") == unavailable_mopla){
-			this.updateState("used_mopla", false);
+			pv.update(this, "used_mopla", false);
 			current_mopla_unavailable = true;
 		}
 		if (this.state("default_mopla") == unavailable_mopla){
 			this.updateDefaultMopla();
 		}
 		if (this.state("user_preferred") == unavailable_mopla){
-			this.updateState("selected_mopla_to_use", false);
+			pv.update(this, "selected_mopla_to_use", false);
 			var from = this.state("selected_mopla").from;
 			var available = this.getFilteredFiles(from, function(mf) {
 				if (mf.from == from && !mf.unavailable){
@@ -717,16 +717,10 @@ LoadableList.extendTo(MfCor, {
 			});
 			available = available && available[0];
 			if (available){
-				this.updateState("almost_selected_mopla", this.getSFM(available));
+				pv.update(this, "almost_selected_mopla", this.getSFM(available));
 			} else {
-				this.updateState("almost_selected_mopla", false);
+				pv.update(this, "almost_selected_mopla", false);
 			}
-			//available.getSFM(this.mo, this.mo.player)
-
-			//if ("selected_mopla")
-			//from
-			//updateState("almost_selected_mopla", )
-
 		}
 		if (current_mopla_unavailable){
 			this.trigger("error", this.canPlay());
@@ -741,9 +735,9 @@ LoadableList.extendTo(MfCor, {
 		});
 		available = available && available[0];
 		if (available){
-			this.updateState("default_mopla", this.getSFM(available));
+			pv.update(this, "default_mopla", this.getSFM(available));
 		} else {
-			this.updateState("default_mopla", false);
+			pv.update(this, "default_mopla", false);
 		}
 
 	},
@@ -785,7 +779,7 @@ LoadableList.extendTo(MfCor, {
 		var t_mopla = this.state("mopla_to_use");
 		if (t_mopla){
 			if (this.state("used_mopla") != t_mopla){
-				this.updateState("used_mopla", false);
+				pv.update(this, "used_mopla", false);
 			}
 			this.play();
 		}
@@ -804,7 +798,7 @@ LoadableList.extendTo(MfCor, {
 		} else {
 			var mopla = this.state("mopla_to_use");
 			if (mopla){
-				this.updateState("used_mopla", mopla);
+				pv.update(this, "used_mopla", mopla);
 				this.trigger('before-mf-play', mopla);
 				mopla.play();
 			}

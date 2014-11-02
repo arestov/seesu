@@ -59,13 +59,13 @@ pv.Model.extendTo(BigContextNotify, {
 			this.notf = params.notf;
 			this.notf.on('read', function(value) {
 				if (value == _this.notify_name){
-					_this.updateState('notify_readed', true);
+					pv.update(_this, 'notify_readed', true);
 				}
 				
 			});
 
 			if (params.notify_readed){
-				_this.updateState('notify_readed', true);
+				pv.update(_this, 'notify_readed', true);
 			}
 		}
 		
@@ -98,13 +98,13 @@ pv.Model.extendTo(ImagesPack, {
 		});
 		if (!this.state('best_image')){
 			if (best_data.length){
-				this.updateState('best_image', best_data[0].data);
+				pv.update(this, 'best_image', best_data[0].data);
 			}
 			
 		}
 		if (!this.state('just_image')){
 			if (best_data.not.length){
-				this.updateState('just_image', best_data.not[0].data);
+				pv.update(this, 'just_image', best_data.not[0].data);
 			}
 			
 		}
@@ -360,7 +360,7 @@ pv.Model.extendTo(PartsSwitcher, {
 	},
 	hideAll: function() {
 		if (this.active_part){
-			this.updateState('active_part', false);
+			pv.update(this, 'active_part', false);
 			this.active_part.deacivate();
 			this.active_part = null;
 		}
@@ -376,7 +376,7 @@ pv.Model.extendTo(PartsSwitcher, {
 
 			var array = this.getNesting('context_parts') || [];
 			array.push(model);
-			this.updateNesting('context_parts', array);
+			pv.updateNesting(this, 'context_parts', array);
 
 		}
 	},
@@ -389,7 +389,7 @@ pv.Model.extendTo(PartsSwitcher, {
 				this.active_part.deacivate();
 			}
 			this.active_part = this.context_parts[name];
-			this.updateState('active_part', name);
+			pv.update(this, 'active_part', name);
 			this.active_part.acivate();
 			
 	
@@ -409,10 +409,10 @@ pv.Model.extendTo(BaseCRow, {
 		this.actionsrow.hide(this.model_name);
 	},
 	deacivate: function(){
-		this.updateState("active_view", false);
+		pv.update(this, "active_view", false);
 	},
 	acivate: function(){
-		this.updateState("active_view", true);
+		pv.update(this, "active_view", true);
 	}
 });
 
@@ -441,15 +441,15 @@ pv.Model.extendTo(VkLoginB, {
 				this.notf = params.notf;
 				this.notf.on('read', function(value) {
 					if (value == 'vk_audio_auth '){
-						_this.updateState('notify_readed', true);
+						pv.update(_this, 'notify_readed', true);
 					}
 					
 				});
 
 				if (params.notify_readed){
-					_this.updateState('notify_readed', true);
+					pv.update(_this, 'notify_readed', true);
 				}
-				this.updateState('has_notify_closer', true);
+				pv.update(this, 'has_notify_closer', true);
 			}
 		}
 
@@ -463,7 +463,7 @@ pv.Model.extendTo(VkLoginB, {
 		}
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep_sandbox', true);
+			pv.update(_this, 'deep_sandbox', true);
 		}
 		
 
@@ -475,7 +475,7 @@ pv.Model.extendTo(VkLoginB, {
 				if ((sts & settings_bits) * 1){
 					_this.triggerSession();
 				} else {
-					_this.updateState('has_session', false);
+					pv.update(_this, 'has_session', false);
 				}
 			});
 			
@@ -504,16 +504,16 @@ pv.Model.extendTo(VkLoginB, {
 		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
 	},
 	triggerSession: function() {
-		this.updateState('has_session', true);
+		pv.update(this, 'has_session', true);
 	},
 	waitData: function() {
-		this.updateState('data_wait', true);
+		pv.update(this, 'data_wait', true);
 	},
 	notWaitData: function() {
-		this.updateState('data_wait', false);
+		pv.update(this, 'data_wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request_description', text ? text + " " + localize("vk-auth-invitation") : "");
+		pv.update(this, 'request_description', text ? text + " " + localize("vk-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
@@ -529,7 +529,7 @@ pv.Model.extendTo(VkLoginB, {
 		this.auth.requestAuth(opts || this.open_opts);
 	},
 	switchView: function(){
-		this.updateState('active', !this.state('active'));
+		pv.update(this, 'active', !this.state('active'));
 	}
 });
 

@@ -1,4 +1,4 @@
-define(['./AppModelBase', 'spv', 'app_serv', './SongsList'], function(AppModelBase, spv, app_serv, SongsList) {
+define(['./AppModelBase', 'spv', 'app_serv', './SongsList', 'pv'], function(AppModelBase, spv, app_serv, SongsList, pv) {
 "use strict";
 
 var localize = app_serv.localize;
@@ -33,7 +33,7 @@ AppModelBase.extendTo(AppModel, {
 		}
 
 		//big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
-		this.start_page.updateState('can_expand', true);
+		pv.update(this.start_page, 'can_expand', true);
 
 	},
 	infoGen: function(dp, c, base_string){
@@ -63,14 +63,14 @@ AppModelBase.extendTo(AppModel, {
 	},
 
 	nowPlaying: function(mo) {
-		this.updateState('now_playing', mo.getTitle());
+		pv.update(this, 'now_playing', mo.getTitle());
 		this.current_playing = mo;
 		this.matchNav();
 		this.updatePlayedListsHistory(mo);
 	},
 	matchNav: function() {
 		if (this.current_playing){
-			this.updateState('viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
+			pv.update(this, 'viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
 		}
 
 	},
@@ -89,14 +89,14 @@ AppModelBase.extendTo(AppModel, {
 			array.unshift( mo.map_parent );
 			
 		}
-		this.updateNesting('played_playlists', array);
-		this.updateState('played_playlists_length', array.length);
+		pv.updateNesting(this, 'played_playlists', array);
+		pv.update(this, 'played_playlists_length', array.length);
 	},
 	playing: function() {
-		this.updateState('playing', true);
+		pv.update(this, 'playing', true);
 	},
 	notPlaying: function() {
-		this.updateState('playing', false);
+		pv.update(this, 'playing', false);
 	},
 	createSonglist: function(map_parent, params) {
 		var pl = new SongsList();
@@ -213,7 +213,7 @@ AppModelBase.extendTo(AppModel, {
 			}
 
 		}
-		this.updateState('search_query', query);
+		pv.update(this, 'search_query', query);
 	},
 	'stch-search_request_freshness': function() {
 		var query = this.state('search_query');
@@ -223,7 +223,7 @@ AppModelBase.extendTo(AppModel, {
 
 	},
 	refreshSearchRequest: function(time) {
-		this.updateState('search_request_freshness', time);
+		pv.update(this, 'search_request_freshness', time);
 	},
 	checkActingRequestsPriority: function() {
 		var raw_array = [];

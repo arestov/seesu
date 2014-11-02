@@ -120,7 +120,7 @@ LoadableListBase.extendTo(VKPostsList, {
 		this.initStates(data);
 		this.on('child_change-lists_list', function(e) {
 			var sorted = e.value && e.value.slice().sort(sortByTypeAndDate);
-			this.updateNesting('sorted_list', sorted);
+			pv.updateNesting(this, 'sorted_list', sorted);
 		});
 
 	},

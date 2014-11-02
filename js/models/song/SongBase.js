@@ -322,13 +322,13 @@ pv.addPrototype("SongBase",{
 	markAs: function(neighbour, mo){
 		if (!this.neighbour_for){
 			this.neighbour_for = mo;
-			this.updateState('marked_as', neighbour);
+			pv.update(this, 'marked_as', neighbour);
 		}
 	},
 	unmark: function(mo){
 		if (this.neighbour_for == mo){
 			this.neighbour_for = null;
-			this.updateState('marked_as', false);
+			pv.update(this, 'marked_as', false);
 
 		}
 	},
@@ -421,7 +421,7 @@ pv.addPrototype("SongBase",{
 		]
 	],
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
-		this.updateState('track_name_loading', true);
+		pv.update(this, 'track_name_loading', true);
 		var _this = this;
 
 		/*
@@ -584,7 +584,7 @@ pv.addPrototype("SongBase",{
 							var some_track = tracks_list[Math.floor(Math.random()*tracks_list.length)];
 							_this.setSongName(some_track.track, full_allowing, from_collection, last_in_collection);
 						} else {
-							_this.updateState("no_track_title", true);
+							pv.update(_this, "no_track_title", true);
 							
 						}
 
@@ -651,7 +651,7 @@ pv.addPrototype("SongBase",{
 					
 				})
 				.always(function() {
-					_this.updateState('track_name_loading', false);
+					pv.update(_this, 'track_name_loading', false);
 					if (_this.rtn_request == big_request){
 						delete _this.rtn_request;
 					}
@@ -676,7 +676,7 @@ pv.addPrototype("SongBase",{
 		*/
 
 		//this.trigger('files_search', opts);
-		this.updateState('files_search', opts);
+		pv.update(this, 'files_search', opts);
 		this.checkChangesSinceFS(opts);
 	},
 	investg_rq_opts: {
@@ -690,7 +690,7 @@ pv.addPrototype("SongBase",{
 		this.updateFilesSearchState(e.value);
 	},
 	hndHasMp3Files: function(e) {
-		this.updateState('playable', e.value);
+		pv.update(this, 'playable', e.value);
 		if (e.value){
 			this.map_parent.markAsPlayable();
 		}

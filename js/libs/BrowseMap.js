@@ -16,7 +16,7 @@ var MapLevel = function(num, parent_levels, resident, map){
 spv.Class.extendTo(MapLevel, {
 	setResident: function(resident){
 		this.resident = resident;
-		//resident.updateState('');
+		//pv.update(resident, '');
 		resident.assignMapLev(this);
 		resident.trigger('mpl-attach');
 		this.map.addResident(this.resident);
@@ -81,7 +81,7 @@ spv.Class.extendTo(MapLevel, {
 	},
 	markAsFreezed: function() {
 		this.closed = true;
-		this.resident.updateState('mp_freezed', true);
+		pv.update(this.resident, 'mp_freezed', true);
 	},
 	freeze: function(){
 		if (this.isOpened()){
@@ -1128,7 +1128,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 
 		if (this.preview_nesting_source) {
 			this.on('child_change-' + this.preview_nesting_source, function(e) {
-				this.updateNesting('preview_list', e.value);
+				pv.updateNesting(this, 'preview_list', e.value);
 			});
 		}
 	},
@@ -1149,7 +1149,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 			//console.log(this.model_name, this.constr_id, result);
 			
 		}
-		this.updateState('map_slice_view_sources', [this._network_source, strucs_cache[this.constr_id]]);
+		pv.update(this, 'map_slice_view_sources', [this._network_source, strucs_cache[this.constr_id]]);
 		return strucs_cache[this.constr_id];
 
 	},
@@ -1254,10 +1254,10 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		return;
 	},
 	hideOnMap: function() {
-		this.updateState('mp_show', false);
+		pv.update(this, 'mp_show', false);
 	},
 	stackNav: function(stack_v){
-		this.updateState('mp_stack', stack_v);
+		pv.update(this, 'mp_stack', stack_v);
 		return this;
 	},
 	zoomOut: function() {
@@ -1266,7 +1266,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		}
 	},
 	setFullUrl: function(url) {
-		this.updateState('mp_full_url ', url);
+		pv.update(this, 'mp_full_url ', url);
 	},
 	getTitle: function() {
 		return this.state('nav_title');

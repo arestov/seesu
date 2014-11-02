@@ -10,15 +10,15 @@ pv.Model.extendTo(UserAcquaintance, {
 		this.receiver = params.sender;
 		//this.current_user = params.current_user;
 		this.remainded_date = params.remainded_date;
-		this.updateState('remainded_date', params.remainded_date);
+		pv.update(this, 'remainded_date', params.remainded_date);
 		this.accepted = params.accepted;
-		this.updateState('user_info', params.info);
-		this.updateState('user_photo', params.user_photo);
+		pv.update(this, 'user_info', params.info);
+		pv.update(this, 'user_photo', params.user_photo);
 
 		this.current_user_is_sender = params.current_user_is_sender;
 
-		this.updateState('current_user_is_sender', params.current_user_is_sender);
-		this.updateState('accepted', params.accepted);
+		pv.update(this, 'current_user_is_sender', params.current_user_is_sender);
+		pv.update(this, 'accepted', params.accepted);
 	//	this.update
 
 		//accept_button
@@ -72,8 +72,8 @@ pv.Model.extendTo(UserAcquaintance, {
 		var su = this.app;
 		su.s.api('relations.acceptInvite', {from: this.sender}, function(r){
 			if (r.done){
-				_this.updateState('remainded_date', r.done.est);
-				_this.updateState('accepted', true);
+				pv.update(_this, 'remainded_date', r.done.est);
+				pv.update(_this, 'accepted', true);
 				su.trackEvent('people likes', 'accepted', false, 5);
 				
 				if (new Date(r.done.est) < new Date()){
@@ -171,7 +171,7 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		}
 		this.removeChildren(array_name);
 
-		this.updateNesting(array_name, concated);
+		pv.updateNesting(this, array_name, concated);
 
 	},
 	removeChildren: function(array_name) {

@@ -1,4 +1,4 @@
-define(['js/libs/BrowseMap', 'app_serv'],function(BrowseMap, app_serv) {
+define(['js/libs/BrowseMap', 'app_serv', 'pv'],function(BrowseMap, app_serv, pv) {
 "use strict";
 var app_env = app_serv.app_env;
 var YoutubeVideo = function() {};
@@ -13,13 +13,13 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 		this.map_parent = this.map_parent.map_parent;//hack, fixme
 
 		
-		this.updateState('yt_id', params.yt_id);
+		pv.update(this, 'yt_id', params.yt_id);
 
-		this.updateState('cant_show', params.cant_show);
-		this.updateState('previews', params.previews);
+		pv.update(this, 'cant_show', params.cant_show);
+		pv.update(this, 'previews', params.previews);
 
-		this.updateState('nav_title', params.title);
-		this.updateState('url_part', '/youtube/' + params.yt_id);
+		pv.update(this, 'nav_title', params.title);
+		pv.update(this, 'url_part', '/youtube/' + params.yt_id);
 
 		var _this = this;
 

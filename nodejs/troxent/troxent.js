@@ -2,6 +2,7 @@
 "use strict";
 
 var engine = require('./torrent-stream');
+var DHT = require('./torrent-stream/node_modules/bittorrent-dht');
 
 var address = require('network-address');
 var events = require('events');
@@ -73,15 +74,16 @@ var bindInfoUpdates = function(core) {
 			total_peers: swarm.wires.length,
 			uploadSpeed: final_upload_speed,
 			downloadSpeed: final_download_speed,
-			percent: Math.min(100, swarm.downloaded / ( BUFFERING_SIZE / 100 ) )
+			percent: Math.min(100, swarm.downloaded / ( BUFFERING_SIZE / 100 ) ).toFixed(2)
 		};
 		core.progress_info = progress_info;
 		core.emit('progress_info-change', progress_info);
 	}, 1000);
 };
 
-
+var dht;
 var getCore = function(torrent, opts) {
+	
 	var torrent_obj = getTorrentObj(torrent);
 	var infoHash = torrent_obj.infoHash;
 	if (downloads_index[ infoHash ]) {
@@ -97,6 +99,11 @@ var getCore = function(torrent, opts) {
 	if (!opts.peersList) {
 		opts.peersList = peers_cache[ infoHash ].list;
 	}
+
+	if (!dht) {
+		dht = DHT();
+	}
+	opts.dht = dht;
 
 	var core = engine(torrent_obj || torrent, opts);
 
@@ -129,6 +136,7 @@ var getCore = function(torrent, opts) {
 	core.on('ready', function() {
 		if ( !info_dictionaries_index[ core.reusable_torrent.infoHash ] ) {
 			info_dictionaries_index[ core.reusable_torrent.infoHash ] = core.reusable_torrent;
+			console.log('Cached:', core.reusable_torrent.infoHash);
 		}
 
 	});

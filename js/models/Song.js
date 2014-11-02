@@ -83,7 +83,7 @@ var album_placeholder = {
 				spec_image_wrap = omo.lfm_img;
 			} else if (omo.lfm_image){
 				spec_image_wrap = this.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
-				//this.updateState('lfm_image', omo.lfm_image);
+				//pv.update(this, 'lfm_image', omo.lfm_image);
 			}
 			var images_pack;
 
@@ -219,8 +219,8 @@ var album_placeholder = {
 			
 
 			if (omo.file){
-				this.updateState('playable', true);
-				this.updateState('files_search', {
+				pv.update(this, 'playable', true);
+				pv.update(this, 'files_search', {
 					search_complete: true,
 					have_best_tracks: true,
 					have_mp3_tracks: true
@@ -234,8 +234,8 @@ var album_placeholder = {
 			//this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
 
 			
-			this.updateNesting('mf_cor', this.mf_cor);
-			this.updateState('mf_cor', this.mf_cor);
+			pv.updateNesting(this, 'mf_cor', this.mf_cor);
+			pv.update(this, 'mf_cor', this.mf_cor);
 
 		}),
 		'compx-mf_cor_has_available_tracks': [
@@ -248,8 +248,8 @@ var album_placeholder = {
 		hndMfcBeforePlay: function(mopla) {
 			this.player.changeNowPlaying(this, mopla.state('play'));
 			this.mopla = mopla;
-			this.updateNesting('current_mopla', mopla);
-			this.updateState('play', mopla.state('play'));
+			pv.updateNesting(this, 'current_mopla', mopla);
+			pv.update(this, 'play', mopla.state('play'));
 		},
 		hndMfcError: function(can_play) {
 			this.player.trigger("song-play-error", this, can_play);

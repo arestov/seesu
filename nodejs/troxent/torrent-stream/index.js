@@ -11,6 +11,7 @@ var path = require('path');
 var fs = require('fs');
 var os = require('os');
 var eos = require('end-of-stream');
+var util = require('util');
 
 var peerDiscovery = require('./lib/peer-discovery');
 var blocklist = require('./lib/blocklist');
@@ -20,7 +21,7 @@ var fileStream = require('./lib/file-stream');
 var piece = require('./lib/piece');
 
 var MAX_REQUESTS = 5;
-var CHOKE_TIMEOUT = 5000;
+var CHOKE_TIMEOUT = 15000;
 var REQUEST_TIMEOUT = 30000;
 var SPEED_THRESHOLD = 3 * piece.BLOCK_SIZE;
 var DEFAULT_PORT = 6881;
@@ -50,36 +51,52 @@ var falsy = function() {
 var toNumber = function(val) {
 	return val === true ? 1 : (val || 0);
 };
+var shoutDownEarly = function(init_error) {
+	var fake_engine = new events.EventEmitter();
+	process.nextTick(function() {
+		engine.emit('prevalidation-error', init_error);
+		engine.emit('destroy');
+	});
+	return fake_engine;
+};
 
 var torrentStream = function(link, opts, cb) {
 	if (typeof opts === 'function') return torrentStream(link, null, opts);
 
 	var metadata = null;
+	var shout_down;
+
+	var earlyCheckDict = function(infoDictionary) {
+		var init_error = opts.prevalidate.call(null, infoDictionary);
+		if (init_error) {
+			shout_down = shoutDownEarly(init_error);
+			return false;
+		} else {
+			return true;
+		}
+	};
 
 	if (Buffer.isBuffer(link)) {
 		(function() {
 			var decoded = bncode.decode(link);
 			metadata = bncode.encode(decoded.info);
-			if (opts.prevalidate) {
-				var init_error = opts.prevalidate.call(null, decoded.info);
-
-				if (!init_error) {
-					link = parseTorrent(decoded);
-				} else {
-					var fake_engine = new events.EventEmitter();
-					process.nextTick(function() {
-						engine.emit('prevalidation-error', init_error);
-						engine.emit('destroy');
-					});
-					return fake_engine;
-				}
+			if (opts.prevalidate && earlyCheckDict(decoded.info)) {
+				link = parseTorrent(decoded);
 			}
 		})();
-		
 	} else if (typeof link === 'string') {
 		link = magnet(link);
 	} else if (!link.infoHash) {
 		link = null;
+	} else if (link.infoBuffer) {
+		metadata = link.info;
+		if (opts.prevalidate) {
+			earlyCheckDict(link.info);
+		}
+	}
+
+	if (shout_down) {
+		return shout_down;
 	}
 
 	if (!link || !link.infoHash) throw new Error('You must pass a valid torrent or magnet link');
@@ -140,10 +157,28 @@ var torrentStream = function(link, opts, cb) {
 		}
 	};
 
+	var knowPeersCache = {
+		index: {},
+		list: []
+	};
+	var putToCache = function(item, cache) {
+		if (!cache.index[item]) {
+			cache.index[item] = true;
+			cache.list.push(item);
+		}
+	};
+
+	if (opts.peersList) {
+		opts.peersList.forEach(function(addr) {
+			putToCache(addr, knowPeersCache);
+		});
+	}
+
 	var onpeer = function(addr) {
 		if (blocked.contains(addr.split(':')[0])) {
 			engine.emit('blocked-peer', addr);
 		} else {
+			putToCache(addr, knowPeersCache);
 			engine.emit('peer', addr);
 			engine.connect(addr);
 		}
@@ -151,8 +186,13 @@ var torrentStream = function(link, opts, cb) {
 
 	discovery.on('peer', onpeer);
 
+	var riseConnections = function(){
+		knowPeersCache.list.forEach(onpeer);
+	};
+
 	var ontorrent = function(torrent) {
-		torrent = Object.create(torrent);
+
+		torrent = util._extend({}, torrent);
 
 		engine.store = (opts.storage || storage(opts.path))(torrent, opts);
 
@@ -174,7 +214,7 @@ var torrentStream = function(link, opts, cb) {
 		discovery.setTorrent(torrent);
 
 		engine.files = torrent.files.map(function(file) {
-			file = Object.create(file);
+			file = util._extend({}, file);
 			var offsetPiece = (file.offset / torrent.pieceLength) | 0;
 			var endPiece = ((file.offset+file.length-1) / torrent.pieceLength) | 0;
 
@@ -563,9 +603,11 @@ var torrentStream = function(link, opts, cb) {
 			swarm.wires.forEach(onwire);
 
 			refresh = function() {
+				
 				process.nextTick(gc);
 				oninterestchange();
 				onupdate();
+				process.nextTick(riseConnections);
 			};
 
 			rechokeIntervalId = setInterval(onrechoke, RECHOKE_INTERVAL);
@@ -643,6 +685,7 @@ var torrentStream = function(link, opts, cb) {
 			// We know only infoHash here, not full infoDictionary.
 			// But infoHash is enough to connect to trackers and get peers.
 			if (!buf) return discovery.setTorrent(link);
+			console.log('Got infoDictionary from file:', infoHash);
 
 			var decoded = bncode.decode(buf);
 
@@ -762,12 +805,6 @@ var torrentStream = function(link, opts, cb) {
 		swarm.listen(engine.port, cb);
 		discovery.updatePort(engine.port);
 	};
-
-	if (opts.peersList) {
-		process.nextTick(function(){
-			opts.peersList.forEach(onpeer);
-		});
-	}
 
 	return engine;
 };

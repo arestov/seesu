@@ -23,10 +23,10 @@ var no_access_compx = {
 
 var connectUserid = function(params) {
 	if (params.vk_userid){
-		this.updateState('userid', params.vk_userid);
+		pv.update(this, 'userid', params.vk_userid);
 	} else {
 		if (params.for_current_user){
-			this.updateState('userid', false);
+			pv.update(this, 'userid', false);
 			this.wch(this.app, 'vk_userid', 'userid');
 
 			if (this.authInit){

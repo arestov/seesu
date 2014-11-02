@@ -27,7 +27,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 			this._super.apply(this, arguments);
 			this.pl = this.map_parent;
 
-			this.updateState('active_part', false);
+			pv.update(this, 'active_part', false);
 			this.addPart(new MultiAtcsRow(this, this.pl));
 			this.addPart(new PlaylistSettingsRow(this, this.pl));
 		},
@@ -54,7 +54,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 
 		},
 		setDnRp: function(state) {
-			this.updateState('dont_rept_pl', state);
+			pv.update(this, 'dont_rept_pl', state);
 			su.setSetting('dont-rept-pl', state);
 		},
 		model_name: 'row-pl-settings'
@@ -147,8 +147,8 @@ SongsList.extendTo(HypemPlaylist, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.can_use = this.app.hypem.can_send;
-		this.updateState('browser_can_load', this.can_use);
-		this.updateState('possible_loader_disallowing', localize('Hypem-cant-load'));
+		pv.update(this, 'browser_can_load', this.can_use);
+		pv.update(this, 'possible_loader_disallowing', localize('Hypem-cant-load'));
 	},
 	page_limit: 20,
 	'compx-loader_disallowing_desc': {

@@ -1,4 +1,4 @@
-define(['./PlayerBase'], function(PlayerBase) {
+define(['./PlayerBase', 'pv'], function(PlayerBase, pv) {
 'use strict';
 var PlayerComplex = function(){};
 PlayerBase.extendTo(PlayerComplex, {
@@ -21,7 +21,7 @@ PlayerBase.extendTo(PlayerComplex, {
 	},
 	removeCurrentWantedSong: function(){
 		if (this.wanted_song){
-			this.wanted_song.updateState('want_to_play', false);
+			pv.update(this.wanted_song, 'want_to_play', false);
 			delete this.wanted_song;
 		}
 	},
@@ -34,7 +34,7 @@ PlayerBase.extendTo(PlayerComplex, {
 					mo.map_parent.lev.freeze();
 				}
 			}
-			(this.wanted_song = mo).updateState('want_to_play', true);
+			pv.update((this.wanted_song = mo), 'want_to_play', true);
 			
 			var opts = mo.state('files_search');
 			if (opts && !opts.exsrc_incomplete && ((opts.search_complete && opts.have_mp3_tracks) || opts.have_best_tracks)){
@@ -81,7 +81,7 @@ PlayerBase.extendTo(PlayerComplex, {
 			}
 			if (last_mo){
 				last_mo.stop();
-				last_mo.updateState("player_song", false);
+				pv.update(last_mo, "player_song", false);
 			}
 			if (this.nowPlaying){
 				this.nowPlaying(mo);
@@ -91,7 +91,7 @@ PlayerBase.extendTo(PlayerComplex, {
 				mo.map_parent.lev.freeze();
 			}
 			this.c_song = mo;
-			mo.updateState("player_song", true);
+			pv.update(mo, "player_song", true);
 		}
 		this.trigger('now_playing-signal', last_mo != mo, mo, last_mo);
 	}

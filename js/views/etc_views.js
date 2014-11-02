@@ -340,17 +340,17 @@ pv.View.extendTo(ActionsRowUI, {
 	],
 	'stch-key-button_owidth': function(state) {
 		if (state) {
-			this.updateState('button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
+			pv.update(this, 'button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
 		}
 	},
 	'stch-key-button_offset': function(state) {
 		if (state) {
-			this.updateState('button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
+			pv.update(this, 'button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
 		}
 	},
 	'stch-key-arrow_parent_offset': function(state) {
 		if (state) {
-			this.updateState('arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
+			pv.update(this, 'arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
 		}
 	},
 	'compx-arrow_pos':{

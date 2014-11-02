@@ -48,7 +48,7 @@ SongsList.extendTo(Cloudcast, {
 		}]
 	],
 	addRawData: function(data) {
-		this.updateState('nav_title', data.nav_title);
+		pv.update(this, 'nav_title', data.nav_title);
 	}
 
 });

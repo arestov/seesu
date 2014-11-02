@@ -19,13 +19,13 @@ define(['pv', 'spv'], function(pv, spv){
 		var key_name = 'cur_' + e.nesting_name;
 		if (e.value != this[key_name]) {
 			if (this[key_name]) {
-				this[key_name].updateState('marked_as', false);
+				pv.update(this[key_name], 'marked_as', false);
 			}
 			this[key_name] = e.value;
 			if (e.value) {
 				
 
-				e.value.updateState('marked_as', direction);
+				pv.update(e.value, 'marked_as', direction);
 			}
 		}
 		//console.log(e.value, e.nesting_name);
@@ -137,8 +137,8 @@ define(['pv', 'spv'], function(pv, spv){
 				this.idx_player_song = null;
 			}
 		}
-		this.updateNesting('last_played_song', this.idx_player_song || this.getNesting('last_played_song'));
-		this.updateState('last_played_song_start', Date.now());
+		pv.updateNesting(this, 'last_played_song', this.idx_player_song || this.getNesting('last_played_song'));
+		pv.update(this, 'last_played_song_start', Date.now());
 		
 	};
 	var checkNeighboursStatesCh = function(md, target_song) {
@@ -482,8 +482,8 @@ define(['pv', 'spv'], function(pv, spv){
 			}
 		},
 		checkShowedNeighboursMarks: function() {
-			this.updateNesting('vis_neig_prev', this.idx_show_song && this.idx_show_song.marked_prev_song || null);
-			this.updateNesting('vis_neig_next', this.idx_show_song && this.idx_show_song.marked_next_song || null);
+			pv.updateNesting(this, 'vis_neig_prev', this.idx_show_song && this.idx_show_song.marked_prev_song || null);
+			pv.updateNesting(this, 'vis_neig_next', this.idx_show_song && this.idx_show_song.marked_next_song || null);
 		},
 
 		main_list_name: 'songs-list',
@@ -531,7 +531,7 @@ define(['pv', 'spv'], function(pv, spv){
 			}, npl);
 		},
 		markAsPlayable: function() {
-			this.updateState('can_play', true);
+			pv.update(this, 'can_play', true);
 		},
 		
 		makePlayable: function(full_allowing) {
@@ -563,7 +563,7 @@ define(['pv', 'spv'], function(pv, spv){
 		},
 		wantListPlaying: function() {
 			this.player.removeCurrentWantedSong();
-			this.updateState('want_be_played', true);
+			pv.update(this, 'want_be_played', true);
 
 			if (!this.getMainlist()[0]) {
 				this.requestMoreData();
@@ -573,7 +573,7 @@ define(['pv', 'spv'], function(pv, spv){
 
 			var _this = this;
 			this.player.once('now_playing-signal', function() {
-				_this.updateState('want_be_played', false);
+				pv.update(_this, 'want_be_played', false);
 			});
 		},
 	

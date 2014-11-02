@@ -1,17 +1,17 @@
 define(['jquery', 'js/libs/FuncsStack', 'spv', 'pv', 'js/libs/Mp3Search'], function($, FuncsStack, spv, pv, Mp3Search) {
-
+"use strict";
 var trackers = ["udp://tracker.openbittorrent.com:80",
 					'udp://tracker.ccc.de:80',
 					'udp://tracker.istole.it:80',
 					//'udp://tracker.istole.it:6969',
 					"udp://tracker.publicbt.com:80"];
-var getTroxent = require('./nodejs/troxent/troxent');
+var torrents_manager = require('./nodejs/troxent2');
 var engine_opts = {
 	connections: 23,
 	trackers: trackers,
 	prevalidate: function(info) {
 		if (info.files && info.files.length > 420) {
-			return new Error('too much files in torrent');
+			return 'too much files in torrent';
 		}
 	}
 };
@@ -81,52 +81,6 @@ Mp3Search.QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 	}
 });
 
-
-/*
-var makeSongFile = function(cur){
-	var file = {
-		file: cur.file,
-		name: cur.name,
-	//	query_match_index: new FileNameSQMatchIndex(cur.name, msq) * 1,
-		torrent: obj.torrent,
-		link: cur.file.get('properties').get('streaming_url'),
-		from: 'torq-torrents',
-		media_type: 'mp3',
-		getSongFileModel: function(mo, player) {
-			return (new FileInTorque()).init({
-				mo: mo,
-				link: this.link,
-				file_in_torrent: {
-					torrent_link: obj.torrent_link,
-					file_path: this.name
-				},
-				getFileInTorrent: function() {
-					return getFileInTorrent.apply(this, arguments);
-				},
-				name: this.name,
-				torrent_link: obj.torrent_link
-			}).setPlayer(player);
-		}
-	};
-	core.mp3_search.setFileQMI(file, msq, FileNameSQMatchIndex);
-	return file;
-};
-
-var wrap = function() {
-	{
-			torrent_link: magnet_link,
-			title: node.text(),
-			
-			query: query,
-			media_type: 'torrent',
-			models: {},
-			getSongFileModel: function(mo, player) {
-				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
-			}
-		}
-};*/
-
-
 var getTorrentFile = function(raw, torrent, torrent_api) {
 	return {
 		from: 'btdigg',
@@ -142,7 +96,7 @@ var getTorrentFile = function(raw, torrent, torrent_api) {
 		api: raw,
 		getSongFileModel: function() {
 			var md = Mp3Search.getSongFileModel.apply(this, arguments);
-			md.updateState('title', this.title);
+			pv.update(md, 'title', this.title);
 			md.wlch(torrent_api, 'progress_info');
 
 			md.on('state_change-load_file', function(e) {
@@ -157,6 +111,7 @@ var Torrent = function() {};
 pv.Model.extendTo(Torrent, {
 	init: function(opts, data) {
 		this._super();
+		this.queue = opts.queue;
 		this.remove_timeout = null;
 		this.troxent = null;
 		this.updateManyStates(data);
@@ -164,22 +119,28 @@ pv.Model.extendTo(Torrent, {
 		var _this = this;
 		this.hndList = function(list) {
 			//console.log(list);
-
-			_this.updateState('list_loaded', !!list && true);
-
+			pv.update(_this, 'list_loaded', !!list && true);
 
 			var result = list && list.map(function(el) {
-				return getTorrentFile(el, _this.troxent.torrent, _this);
+				return getTorrentFile(el, _this.troxent.parsedTorrent, _this);
 			});
 
-			_this.updateState('files_list', result);
+			pv.update(_this, 'files_list', result);
 
+		};
+		this.validateError = function(){
+			var link = this.state('url');
+			disallowed_links[link] = true;
+			pv.update(this, 'invalid', true);
+		};
+		this.onProgress = function(data) {
+			pv.update(_this, 'progress_info', data);
 		};
 	},
 	'compx-torrent_required': [
-	// 
-		['file_data-for-song_file', 'list_loaded', 'files_list-for-search'],
-		function(file_data, list_loaded, files_list) {
+		['file_data-for-song_file', 'list_loaded', 'files_list-for-search', 'invalid'],
+		function(file_data, list_loaded, files_list, invalid) {
+			if (invalid) {return false;}
 			return this.utils.isDepend(file_data) || (!list_loaded && this.utils.isDepend(files_list));
 		}
 	],
@@ -187,40 +148,31 @@ pv.Model.extendTo(Torrent, {
 		var _this = this;
 		if (state ) {
 			clearTimeout(this.remove_timeout);
-			if (!this.troxent) {
-				this.troxent = getTroxent(this.state('url'), engine_opts);
-				var link = this.state('url');
-				this.troxent.on('prevalidation-error', function() {
-					disallowed_links[link] = true;
-				});
-
-				if (!this.state('list_loaded')) {
-					this.troxent.on('served-files-list', this.hndList);
-				}
-				var troxent = this.troxent;
-				
-				this.troxent.on('progress_info-change', function(data) {
-					_this.updateState('progress_info', data);
-				});
-					
+			this.remove_timeout = null;
+			if (!this.troxent && !this.queued) {
+				//var deferred = $.Deferred();
+				//this.troxent_promise = deferred;
+				this.queued = this.queue.add(function() {
+					_this.troxent = torrents_manager.get(_this.state('url'), engine_opts);
+					_this.troxent.on('prevalidation-error', _this.validateError);
+					_this.troxent.on('numPeers', function(num) {
+						pv.update(_this, 'total_peers', num);
+					});
 
 
-				/*if (!this.troxent.reffs) {
-					this.troxent.reffs = [];
-				}
-				this.troxent.reffs.push(this);*/
-
-				troxent.on('destroy', function() {
-					if (_this.troxent == troxent) {
-						_this.destroyPeerflix();
+					if (!_this.state('list_loaded')) {
+						_this.troxent.on('served-files-list', _this.hndList);
 					}
+					
+					_this.troxent.on('progress_info-change', _this.onProgress);
+					_this.queued = null;
 				});
 
+
+				
 			}
-			
-			//troxent
 		} else {
-			if (this.troxent) {
+			if (this.troxent && !this.remove_timeout) {
 				this.remove_timeout = setTimeout(function() {
 					_this.destroyPeerflix();
 				}, 7000);
@@ -228,17 +180,25 @@ pv.Model.extendTo(Torrent, {
 		}
 	},
 	destroyPeerflix: function() {
+		if (this.queued) {
+			this.queued.abort();
+			this.queued = null;
+		}
 		if (!this.troxent) {
 			return;
 		}
 		this.troxent.removeListener('served-files-list', this.hndList);
-		this.troxent.destroy();
+		this.troxent.removeListener('prevalidation-error', this.validateError);
+		this.troxent.removeListener('progress_info-change', this.onProgress);
+		torrents_manager.remove(this.state('url'), this.troxent);
+		//this.troxent.destroy();
 		this.troxent = null;
 	}
 });
 
 var TorqueSearch = function(opts) {
 	var _this = this;
+	this.queue = opts.queue;
 	this.mp3_search = opts.mp3_search;
 	this.torrent_search = opts.torrent_search;
 	this.search = function() {
@@ -288,11 +248,6 @@ TorqueSearch.prototype = {
 				//find torrents
 			},
 			function(links_list) {
-
-
-				
-
-
 				var done;
 				var setResult = function() {};
 				var getRFunc = function() {
@@ -303,10 +258,10 @@ TorqueSearch.prototype = {
 						});
 					}
 				};
+
 				var timeout = setTimeout(function() {
 					getRFunc();
 				}, 40000);
-				
 
 				var arrays = [];
 				var checkItems = function() {
@@ -344,14 +299,16 @@ TorqueSearch.prototype = {
 					arrays.push(obj);
 
 					var torrent = new Torrent();
-					torrent.init(false, {
+					torrent.init({
+						queue: core.queue
+					}, {
 						url: el.torrent_link
 					});
 
 
 					opts.bindRelation(function(e) {
 						torrent.setStateDependence('files_list-for-search', e.target, !!e.value);
-						//torrent.updateState('must_load_list', e.value);
+						//pv.update(torrent, 'must_load_list', e.value);
 					});
 
 
@@ -371,14 +328,11 @@ TorqueSearch.prototype = {
 
 						checkItems();
 					});
-					//console.log(el);
-
 				});
+
 				if (!links_list.length) {
 					getRFunc();
 				}
-				
-				//deferred.resolve();
 			}
 		]);
 
