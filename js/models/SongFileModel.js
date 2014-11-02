@@ -49,7 +49,7 @@ pv.Model.extendTo(FileInTorrent, {
 		} else {
 			btapp.add.torrent(this.sr_item.torrent_link);
 		}
-		this.updateState('download-pressed', true);
+		pv.update(this, 'download-pressed', true);
 	}
 });
 
@@ -157,28 +157,28 @@ pv.Model.extendTo(FileInTorrent, {
 			finish: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
-				this.updateState('play', false);
+				pv.update(this, 'play', false);
 			},
 			play: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', 'play');
+					pv.update(mo, 'play', 'play');
 					if (!mo.start_time){
 						//fixme
 						mo.start_time = (Date.now()/1000).toFixed(0);
 					}
 				}
-				this.updateState('play', 'play');
+				pv.update(this, 'play', 'play');
 			},
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
-				this.updateState('playing_progress', dec);
-				this.updateState('loaded_duration', opts.duration);
+				pv.update(this, 'playing_progress', dec);
+				pv.update(this, 'loaded_duration', opts.duration);
 			},
 			buffering: function(state) {
-				this.updateState('buffering_progress', !!state);
+				pv.update(this, 'buffering_progress', !!state);
 			},
 			loading: function(opts){
 				var factor;
@@ -188,27 +188,27 @@ pv.Model.extendTo(FileInTorrent, {
 					factor = opts.fetched/opts.duration;
 				}
 				if (factor){
-					this.updateState('loading_progress', factor);
+					pv.update(this, 'loading_progress', factor);
 				}
 			},
 			pause: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
-				this.updateState('play', false);
+				pv.update(this, 'play', false);
 			},
 			stop: function(){
 				//throw "Do not rely on stop event"
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
-				this.updateState('play', false);
+				pv.update(this, 'play', false);
 			},
 			error: function() {
 				var d = new Date();
-				this.updateState("error", d);
+				pv.update(this, "error", d);
 				if (this.parent){
 					this.parent.error = d;
 				}
@@ -233,7 +233,7 @@ pv.Model.extendTo(FileInTorrent, {
 			}
 		},
 		failPlaying: function() {
-			this.updateState("unavailable", true);
+			pv.update(this, "unavailable", true);
 			if (this.parent){
 				this.parent.unavailable = true;
 			}
@@ -279,12 +279,12 @@ pv.Model.extendTo(FileInTorrent, {
 
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
 
-				this.updateState('play', false);
-				this.updateState('loading_progress', 0);
-				this.updateState('playing_progress', 0);
+				pv.update(this, 'play', false);
+				pv.update(this, 'loading_progress', 0);
+				pv.update(this, 'playing_progress', 0);
 				
 				this.sound = null;
 			}
@@ -332,10 +332,10 @@ pv.Model.extendTo(FileInTorrent, {
 			}
 		},
 		activate: function() {
-			this.updateState('selected', true);
+			pv.update(this, 'selected', true);
 		},
 		deactivate: function() {
-			this.updateState('selected', false);
+			pv.update(this, 'selected', false);
 		},
 		markAsPlaying: function() {
 			

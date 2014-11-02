@@ -94,7 +94,7 @@ SearchSection.extendTo(seesuSection, {
 					_this.trigger('items-change');
 				}, {skip_reg: true});
 			this.setButtonText();
-			this.updateNesting('button', this.button);
+			pv.updateNesting(this, 'button', this.button);
 		}
 
 	}
@@ -106,7 +106,7 @@ SearchSection.extendTo(PlaylistsSection, {
 	model_name: 'section-playlist',
 	init: function() {
 		this._super.apply(this, arguments);
-		this.updateState('section_title', localize('playlists'));
+		pv.update(this, 'section_title', localize('playlists'));
 	},
 	resItem: playlistSuggest
 });
@@ -121,7 +121,7 @@ seesuSection.extendTo(ArtistsSection, {
 	model_name: 'section-artist',
 	init: function() {
 		this._super.apply(this, arguments);
-		this.updateState('section_title', localize('Artists','Artists'));
+		pv.update(this, 'section_title', localize('Artists','Artists'));
 	},
 	getButtonText: function(have_results, q){
 		if (have_results){
@@ -148,10 +148,10 @@ var trackSuggest = function(data){
 	this.artist = data.artist;
 	this.track = data.track;
 	this.image = data.image;
-	this.updateState('artist', data.artist);
-	this.updateState('track', data.track);
+	pv.update(this, 'artist', data.artist);
+	pv.update(this, 'track', data.track);
 	if (this.image){
-		this.updateState('image', data.image);
+		pv.update(this, 'image', data.image);
 	}
 	
 
@@ -160,10 +160,10 @@ var trackSuggest = function(data){
 		var track_dur = parseInt(this.duration, 10);
 		var digits = track_dur % 60;
 		track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-		this.updateState('duration_text', track_dur);
+		pv.update(this, 'duration_text', track_dur);
 	}
 	this.text_title = this.getTitle();
-	this.updateState('text_title', this.text_title);
+	pv.update(this, 'text_title', this.text_title);
 };
 BaseSuggest.extendTo(trackSuggest, {
 	valueOf: function(){
@@ -188,7 +188,7 @@ seesuSection.extendTo(TracksSection, {
 	model_name: 'section-track',
 	init: function() {
 		this._super.apply(this, arguments);
-		this.updateState('section_title', localize('Tracks','Tracks'));
+		pv.update(this, 'section_title', localize('Tracks','Tracks'));
 	},
 	getButtonText: function(have_results, q){
 		if (have_results){
@@ -245,7 +245,7 @@ seesuSection.extendTo(TagsSection, {
 	model_name: 'section-tag',
 	init: function() {
 		this._super.apply(this, arguments);
-		this.updateState('section_title',  localize('Tags'));
+		pv.update(this, 'section_title',  localize('Tags'));
 	},
 	getButtonText: function(have_results, q){
 		if (have_results){
@@ -275,12 +275,12 @@ var albumSuggest = function(data){
 	//artist, name, image, id
 	this.artist = data.artist;
 	this.name = data.album;
-	this.updateState('artist', data.artist);
-	this.updateState('name', data.album);
+	pv.update(this, 'artist', data.artist);
+	pv.update(this, 'name', data.album);
 	
 	if (data.image){
 		this.image = data.image;
-		this.updateState('image', data.image);
+		pv.update(this, 'image', data.image);
 	}
 	if (data.resid){
 		this.aid = data.resid;
@@ -310,7 +310,7 @@ seesuSection.extendTo(AlbumsSection, {
 	model_name: 'section-album',
 	init: function() {
 		this._super.apply(this, arguments);
-		this.updateState('section_title', localize('Albums', 'Albums'));
+		pv.update(this, 'section_title', localize('Albums', 'Albums'));
 	},
 	getButtonText: function(have_results, q){
 		if (have_results){
@@ -339,7 +339,7 @@ Investigation.extendTo(SearchPage, {
 	init: function(opts) {
 		this._super.apply(this, arguments);
 
-		this.updateState('mp_freezed', false);
+		pv.update(this, 'mp_freezed', false);
 		
 	},
 	'nest-section': [[PlaylistsSection, ArtistsSection, AlbumsSection, TagsSection, TracksSection]],

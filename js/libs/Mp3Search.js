@@ -248,7 +248,7 @@ pv.Model.extendTo(FilesSourceTuner, {
 		this.app = opts.app;
 		var search_name = data.search_name;
 		this.wch(this.app, 'settings-files_sources', function (e) {
-			this.updateState('settings', e.value && e.value[search_name]);
+			pv.update(this, 'settings', e.value && e.value[search_name]);
 		});
 		this.updateManyStates(data);
 
@@ -333,7 +333,7 @@ var getMatchedSongs = function(music_list, msq) {
 			this.tuner = this.mp3_search.getSourceTuner(search_eng_name);
 			this.wch(this.tuner, 'disable_search', function(e) {
 				//debugger;
-				this.updateState('disable_search', e.value);
+				pv.update(this, 'disable_search', e.value);
 			});
 			this.wch(this.tuner, 'wait_before_playing');
 
@@ -345,7 +345,7 @@ var getMatchedSongs = function(music_list, msq) {
 		},
 		switchTunerVisibility: function() {
 			var visible = this.getNesting('vis_tuner');
-			this.updateNesting('vis_tuner', ( visible ? null : this.tuner ) );
+			pv.updateNesting(this, 'vis_tuner', ( visible ? null : this.tuner ) );
 		},
 		startSearch: function(opts) {
 			opts = opts || {};
@@ -362,7 +362,7 @@ var getMatchedSongs = function(music_list, msq) {
 			var inj_arr = this.state('injected_files') || [];
 			new_array = new_array.concat(inj_arr);
 			new_array.push(file);
-			this.updateState('injected_files', new_array);
+			pv.update(this, 'injected_files', new_array);
 			
 		},
 		getFiles: function(type) {
@@ -463,17 +463,17 @@ var getMatchedSongs = function(music_list, msq) {
 				bindRelation: this.map_parent.bindRelation
 			})
 				.progress(function(){
-					_this.updateState('search_progress', true);
+					pv.update(_this, 'search_progress', true);
 				})
 				.done(function(music_list){
 					if (music_list instanceof Error) {
-						_this.updateState('search_fail', true);
+						pv.update(_this, 'search_fail', true);
 					} else if (typeof music_list == 'function') {
 						
 						music_list(function(list) {
-							_this.updateState('search_result', getMatchedSongs(list, msq));
+							pv.update(_this, 'search_result', getMatchedSongs(list, msq));
 						});
-						_this.updateState('search_fail', false);
+						pv.update(_this, 'search_fail', false);
 
 					} else {
 						_this.updateManyStates({
@@ -485,7 +485,7 @@ var getMatchedSongs = function(music_list, msq) {
 					
 				})
 				.fail(function(){
-					_this.updateState('search_fail', true);
+					pv.update(_this, 'search_fail', true);
 				})
 				.always(function() {
 					_this.updateManyStates({
@@ -502,7 +502,7 @@ var getMatchedSongs = function(music_list, msq) {
 				req = complex_response;
 				this.addRequest(complex_response);
 			}
-			this.updateState('has_request', true);
+			pv.update(this, 'has_request', true);
 			return req;
 
 		}
@@ -608,7 +608,7 @@ var getMatchedSongs = function(music_list, msq) {
 						result.push( e.items[i] );
 					}
 				}
-				this.updateNesting(target_list_name, result);
+				pv.updateNesting(this, target_list_name, result);
 			});
 		},
 		'compx-must_load': [
@@ -652,7 +652,7 @@ var getMatchedSongs = function(music_list, msq) {
 				return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
 			});
 
-			this.updateNesting('sources_list', this.sources_list);
+			pv.updateNesting(this, 'sources_list', this.sources_list);
 
 			//_this.trigger('child_change-sources_list', _this.sources_list);
 		},
@@ -668,7 +668,7 @@ var getMatchedSongs = function(music_list, msq) {
 					return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
 				});
 
-				this.updateNesting('sources_list', this.sources_list);
+				pv.updateNesting(this, 'sources_list', this.sources_list);
 			}
 			
 		},
@@ -851,7 +851,7 @@ var getAverageDurations = function(mu_array, time_limit){
 					}
 				}
 			}
-			this.updateState('tools_by_name', tools_by_name);
+			pv.update(this, 'tools_by_name', tools_by_name);
 		});
 	};
 	
@@ -1050,7 +1050,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			}
 			var original_array = this.state('big_files_list ') || [];
 			original_array = original_array.concat(allowed_files);
-			this.updateState('big_files_list ', original_array);
+			pv.update(this, 'big_files_list ', original_array);
 		},
 		haveSearch: function(search_name){
 			var o = this.getMasterSlaveSearch(search_name);

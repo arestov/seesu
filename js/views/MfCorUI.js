@@ -70,9 +70,9 @@ pv.View.extendTo(SongFileModelUI, {
 	},
 	'stch-key-progress-c-width': function(state) {
 		if (state) {
-			this.updateState('vis_progress-c-width', this.getBoxDemensionByKey(this.getProgressWidth, state));
+			pv.update(this, 'vis_progress-c-width', this.getBoxDemensionByKey(this.getProgressWidth, state));
 		} else {
-			this.updateState('vis_progress-c-width', 0);
+			pv.update(this, 'vis_progress-c-width', 0);
 		}
 	},
 	complex_states: {

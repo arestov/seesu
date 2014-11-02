@@ -5,10 +5,14 @@ var tracker = require('bittorrent-tracker');
 var DEFAULT_PORT = 6881;
 
 module.exports = function(torrent, opts) {
+
+
 	if (typeof opts !== 'object') {
 		opts = torrent;
 		torrent = null;
 	}
+
+	var destroingStack = [];
 
 	var port = opts.port || DEFAULT_PORT;
 
@@ -17,19 +21,66 @@ module.exports = function(torrent, opts) {
 	discovery.dht = null;
 	discovery.tracker = null;
 
-	var onpeer = function(addr) {
-		discovery.emit('peer', addr);
+	var onpeer = function(addr, peerInfoHash) {
+		if (torrent.infoHash == peerInfoHash) {
+			discovery.emit('peer', addr);
+		}
+		
 	};
+
+	var destroyDHT = function(){};
 
 	var createDHT = function(infoHash) {
 		if (opts.dht === false) return;
 
-		var table = dht();
+		var table;
+		if (opts.dht && typeof opts.dht == 'object') {
+			table = opts.dht;
+		} else {
+			table = dht();
+			destroingStack.push(function(){
+				if (discovery.dht) {
+					discovery.dht.destroy();
+					discovery.dht = null;
+					table = null;
+				}
+			});
+		}
+
+
 
 		table.on('peer', onpeer);
-		table.on('ready', function() {
-			table.lookup(infoHash);
+		destroingStack.push(function(){
+			table.removeListener('peer', onpeer);
 		});
+
+		var tableReady = function() {
+			table.lookup(infoHash);
+			process.nextTick(function(){
+				if (table.peersCache && table.peersCache[infoHash]) {
+					table.peersCache[infoHash].list.forEach(function(item) {
+						process.nextTick(function(){
+							onpeer(item, infoHash);
+						});
+					});
+				}
+			});
+		};
+		if (table.ready) {
+			tableReady();
+		} else {
+			table.on('ready', tableReady);
+			destroingStack.push(function(){
+				table.removeListener('ready', tableReady);
+			});
+		}
+		
+		destroyDHT = function(){
+			while (destroingStack.length) {
+				var cur = destroingStack.pop();
+				cur();
+			}
+		};
 
 		return table;
 	};
@@ -78,7 +129,7 @@ module.exports = function(torrent, opts) {
 
 	discovery.stop = function() {
 		if (discovery.tracker) discovery.tracker.stop();
-		if (discovery.dht) discovery.dht.destroy();
+		destroyDHT();
 	};
 
 	if (torrent) discovery.setTorrent(torrent);

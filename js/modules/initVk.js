@@ -141,7 +141,7 @@ var initVk = function(su) {
 				} else{
 					app_env.openURL(wurl);
 				}
-				su.updateState('wait-vk-login', true);
+				pv.update(su, 'wait-vk-login', true);
 				su.trackEvent('Auth to vk', 'start');
 			});
 

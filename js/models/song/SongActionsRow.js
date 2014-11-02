@@ -12,7 +12,7 @@ LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.song = this.map_parent.mo;
-		this.updateState('active', true);
+		pv.update(this, 'active', true);
 	},
 	access_desc: localize('lastfm-loveit-access'),
 	beforeRequest: function() {
@@ -28,14 +28,14 @@ LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
 
 		if (this.app.lfm.sk){
 			var _this = this;
-			this.updateState('wait_love_done', true);
+			pv.update(this, 'wait_love_done', true);
 			this.app.lfm.post('Track.love', {
 				sk: this.app.lfm.sk,
 				artist: this.song.artist,
 				track: this.song.track
 			})
 				.always(function(){
-					_this.updateState('wait_love_done', false);
+					pv.update(_this, 'wait_love_done', false);
 					_this.trigger('love-success');
 				});
 			this.app.trackEvent('song actions', 'love');
@@ -112,12 +112,12 @@ comd.BaseCRow.extendTo(ShuffleListRow, {
 		
 
 		this.wch(this.app, 'settings-pl-shuffle', function(e) {
-			this.updateState('pl_shuffle', e.value);
-			this.actionsrow.mo.updateState('pl-shuffle', e.value);
+			pv.update(this, 'pl_shuffle', e.value);
+			pv.update(this.actionsrow.mo, 'pl-shuffle', e.value);
 		});
 	},
 	switchSetting: function(state) {
-		this.updateState('pl_shuffle', state);
+		pv.update(this, 'pl_shuffle', state);
 		su.setSetting('pl-shuffle', state);
 	}
 
@@ -134,14 +134,14 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 		this.actionsrow = this.map_parent;
 
 		this.wch(this.app, 'settings-rept-song', function(e) {
-			this.updateState('rept_song', e.value);
-			this.actionsrow.mo.updateState('rept-song', e.value);
+			pv.update(this, 'rept_song', e.value);
+			pv.update(this.actionsrow.mo, 'rept-song', e.value);
 		});
 
 
 	},
 	switchSetting: function(state) {
-		this.updateState('rept_song', state);
+		pv.update(this, 'rept_song', state);
 		su.setSetting('rept-song', state);
 	}
 	
@@ -162,7 +162,7 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.mo = this.map_parent;
-		this.updateState('active_part', false);
+		pv.update(this, 'active_part', false);
 		//this.app = mo.app;
 		this.inited_parts = {};
 
@@ -202,7 +202,7 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		if (!fac){
 			return;
 		}
-		this.updateState('volume', fac[0]/fac[1]);
+		pv.update(this, 'volume', fac[0]/fac[1]);
 	},
 	sendVolume: function(vol) {
 		this.app.setSetting('volume', vol);
@@ -211,7 +211,7 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		if (!fac){
 			return;
 		}
-		this.updateState('volume', fac[0]/fac[1]);
+		pv.update(this, 'volume', fac[0]/fac[1]);
 		this.sendVolume(fac);
 		
 	}

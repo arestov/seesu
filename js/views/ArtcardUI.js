@@ -161,7 +161,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 	},
 	'stch-key-panorama_width': function(state) {
 		if (state) {
-			this.updateState('panorama_width', this.getBoxDemensionByKey(this.getPamoramaWidth, state));
+			pv.update(this, 'panorama_width', this.getBoxDemensionByKey(this.getPamoramaWidth, state));
 		}
 	},
 	'compx-key-panorama_width': [
@@ -208,7 +208,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 		img_panorama.setCollection(collection, true);
 		//this.img_panorama.setTotalWidth(this.img_panorama.checkTotalWidth());
 
-		this.updateState('images_combination', images_combination);
+		pv.update(this, 'images_combination', images_combination);
 	},
 	'stch-images': function(images) {
 		if (!images || !images.length){
@@ -262,7 +262,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			
 
 			//bindPanoramaResizeByWindow(img_panorama);
-			_this.updateState('panorama', true);
+			pv.update(_this, 'panorama', true);
 			
 			var images_collection = [];
 

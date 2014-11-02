@@ -266,7 +266,7 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	},
 	'stch-key_vol_hole_w': function(value) {
 		if (value) {
-			this.updateState('vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
+			pv.update(this, 'vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
 		}
 	},
 	'stch-vis_volume-hole-width': function(state) {

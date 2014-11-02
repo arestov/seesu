@@ -1,4 +1,4 @@
-define(['js/libs/BrowseMap', 'spv'], function(BrowseMap, spv) {
+define(['js/libs/BrowseMap', 'spv', 'pv'], function(BrowseMap, spv, pv) {
 "use strict";
 var LoadableListBase = function() {};
 BrowseMap.Model.extendTo(LoadableListBase, {
@@ -14,7 +14,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	},
 	hndCheckPreviews: function(e) {
 		if (!e.skip_report){
-			this.updateNesting(this.preview_mlist_name, e.value);
+			pv.updateNesting(this, this.preview_mlist_name, e.value);
 		}
 	},
 	bindStaCons: function() {
@@ -31,11 +31,11 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		this.loaded_nestings_items = null;
 		this.loadable_lists = null;
 		//this.loadable_lists[ this.main_list_name ] = [];
-		this.updateNesting( this.main_list_name, []);
+		pv.updateNesting(this,  this.main_list_name, []);
 
 		var has_loader = !!this[ 'nest_req-' + this.main_list_name];
 		if (has_loader){
-			this.updateState("has_data_loader", true);
+			pv.update(this, "has_data_loader", true);
 		}
 
 		this.bindStaCons();
@@ -174,7 +174,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			}
 			this.loadable_lists[nesting_name] = array;
 		}
-		this.updateNesting(nesting_name, array, mlc_opts);
+		pv.updateNesting(this, nesting_name, array, mlc_opts);
 	},
 	compareItemWithObj: function(item, data) {
 		if (!this.items_comparing_props) {
@@ -250,7 +250,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 				work_array = this.beforeReportChange( work_array, [item] );
 				this.loadable_lists[ nesting_name ] = work_array;
 			}
-			this.updateNesting( nesting_name, work_array, ml_ch_opts );
+			pv.updateNesting(this, nesting_name, work_array, ml_ch_opts );
 		}
 		return item;
 	},
@@ -329,7 +329,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 		this.loadable_lists[ nesting_name ] = work_array;
 
-		this.updateNesting(nesting_name, work_array, ml_ch_opts);
+		pv.updateNesting(this, nesting_name, work_array, ml_ch_opts);
 		return item;
 	},
 
@@ -352,11 +352,11 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 
 
 		auth_rqb.on('state_change-has_session', function(e) {
-			_this.updateState('has_no_auth', !e.value);
+			pv.update(_this, 'has_no_auth', !e.value);
 			_this.switchPmd(false);
 		});
 
-		this.updateNesting('auth_part', auth_rqb);
+		pv.updateNesting(this, 'auth_part', auth_rqb);
 
 		this.setPmdSwitcher(this.map_parent);
 

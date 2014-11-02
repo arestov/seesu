@@ -1,5 +1,5 @@
-define(['spv', 'js/libs/BrowseMap', './SongsList', './LoadableList'],
-function(spv, BrowseMap, SongsList, LoadableList) {
+define(['spv', 'js/libs/BrowseMap', './SongsList', './LoadableList', 'pv'],
+function(spv, BrowseMap, SongsList, LoadableList, pv) {
 "use strict";
 var MusicBlogSongs = function() {};
 SongsList.extendTo(MusicBlogSongs, {
@@ -55,7 +55,7 @@ BrowseMap.Model.extendTo(MusicBlog, {
 		}
 	},
 	addRawData: function(data) {
-		this.updateState('nav_title', data.nav_title);
+		pv.update(this, 'nav_title', data.nav_title);
 	},
 	req_map: [
 		[

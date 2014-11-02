@@ -99,7 +99,7 @@ BrowseMap.Model.extendTo(UserCard, {
 		//плейлисты
 		var gena = this.getSPI('playlists', true);
 		var hasPlaylistCheck = function(items) {
-			_this.updateState('has_playlists', !!items.length);
+			pv.update(_this, 'has_playlists', !!items.length);
 		};
 		hasPlaylistCheck(this.app.gena.playlists);
 		this.app.gena.on('playlists-change', hasPlaylistCheck);
@@ -369,7 +369,7 @@ pv.Model.extendTo(SongListener, {
 	init: function(opts, params) {
 		this.app = opts.app;
 		this.userdata = params.data;
-		//this.updateState('picture', this.userdata.big_pic.url);
+		//pv.update(this, 'picture', this.userdata.big_pic.url);
 	},
 	showFullPreview: function() {
 

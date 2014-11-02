@@ -469,12 +469,12 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	},
 	'stch-nav_helper_is_needed': function(state) {
 		if (!state) {
-			this.updateState('nav_helper_full', false);
+			pv.update(this, 'nav_helper_full', false);
 		}
 	},
 	tpl_events: {
 		showFullNavHelper: function() {
-			this.updateState('nav_helper_full', true);
+			pv.update(this, 'nav_helper_full', true);
 		}
 	},
 	buildNavHelper: function() {

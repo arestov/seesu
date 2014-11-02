@@ -1,0 +1,15 @@
+{
+  "name": "btorrent-wrap",
+  "version": "0.0.5",
+  "author": {
+    "name": "Gleb Arestov"
+  },
+  "dependencies": {
+    "mime": "^1.2.11",
+    "network-address": "0.0.4",
+    "pump": "^0.3.1",
+    "range-parser": "^1.0.0",
+    "webtorrent": "^0.11.2"
+  },
+  "main": "index.js"
+}

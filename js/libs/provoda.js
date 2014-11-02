@@ -58,9 +58,6 @@ var sync_sender = {
 				}
 
 				var struc = md.toSimpleStructure(index);
-
-
-
 				cur.changeCollection(md._provoda_id, struc, nesname, parsed_value);
 			}
 		}
@@ -91,10 +88,7 @@ var sync_sender = {
 						}
 						//needs_changes
 					}
-
-
 				}
-				
 				cur.updateStates(md._provoda_id, needs_changes ? fixed_values : states);
 			}
 		}
@@ -656,6 +650,23 @@ var pv = provoda = {
 			removed = [old_value];
 		}
 		return removed;
+	},
+	updateNesting: function(md, nesting_name, nesting_value, opts, spec_data) {
+		md.updateNesting(nesting_name, nesting_value, opts, spec_data);
+	},
+	mpx: {
+		update: function(mpx, state_name, state_value, opts) {
+			mpx.updateState(state_name, state_value, opts);
+		}
+	},
+	update: function(md, state_name, state_value, opts) {
+		md.updateState(state_name, state_value, opts);
+	},
+	behavior: function(declr, declr_extend_from, named) {
+		var behaviorFrom = declr_extend_from || pv.Model;
+		var func = named || function() {};
+		behaviorFrom.extendTo(func, declr);
+		return func;
 	}
 };
 provoda.Controller = provoda.View;
@@ -787,7 +798,7 @@ StatesArchiver.prototype = {
 	setResult: function(value) {
 		var old_value = this.md.current_motivator;
 		this.md.current_motivator = this.current_motivator;
-		this.md.updateState(this.result_state_name, value);
+		pv.update(this.md, this.result_state_name, value);
 		this.md.current_motivator = old_value;
 	},
 	getItemsValues: function() {
@@ -1840,9 +1851,9 @@ FastEventor.prototype = {
 
 		var is_main_list = nesting_name == this.sputnik.main_list_name;
 
-		this.sputnik.updateState('loading_nesting_' + nesting_name, true);
+		pv.update(this.sputnik, 'loading_nesting_' + nesting_name, true);
 		if (is_main_list) {
-			this.sputnik.updateState('main_list_loading', true);
+			pv.update(this.sputnik, 'main_list_loading', true);
 		}
 		var side_data_parsers = dclt[0][2];
 		var parse_items = dclt[0][0], parse_serv = dclt[0][1], send_declr = dclt[1];
@@ -1871,9 +1882,9 @@ FastEventor.prototype = {
 		request
 				.always(function() {
 					store.process = false;
-					_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
+					pv.update(_this.sputnik, 'loading_nesting_' + nesting_name, false);
 					if (is_main_list) {
-						_this.sputnik.updateState('main_list_loading', false);
+						pv.update(_this.sputnik, 'main_list_loading', false);
 					}
 				})
 				.fail(function(){
@@ -1894,7 +1905,7 @@ FastEventor.prototype = {
 						if (!supports_paging) {
 							store.has_all_items = true;
 
-							sputnik.updateState("all_data_loaded", true);
+							pv.update(sputnik, "all_data_loaded", true);
 						} else {
 							var has_more_data;
 							if (serv_data === true) {
@@ -1918,7 +1929,7 @@ FastEventor.prototype = {
 
 							if (!has_more_data) {
 								store.has_all_items = true;
-								sputnik.updateState("all_data_loaded", true);
+								pv.update(sputnik, "all_data_loaded", true);
 							}
 						}
 						items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
@@ -2124,7 +2135,7 @@ var connects_store = {};
 var getConnector = function(state_name) {
 	if (!connects_store[state_name]){
 		connects_store[state_name] = function(e) {
-			this.updateState(state_name, e.value);
+			pv.update(this, state_name, e.value);
 		};
 	}
 	return connects_store[state_name];
@@ -2134,7 +2145,7 @@ var light_con_store = {};
 var getLightConnector = function(state_name) {
 	if (!light_con_store[state_name]){
 		light_con_store[state_name] = function(value) {
-			this.updateState(state_name, value);
+			pv.update(this, state_name, value);
 		};
 	}
 	return light_con_store[state_name];
@@ -2688,7 +2699,7 @@ var nes_as_state_cache = {};
 var watchNestingAsState = function(md, nesting_name, state_name) {
 	if (!nes_as_state_cache[state_name]) {
 		nes_as_state_cache[state_name] = function(e) {
-			this.updateState(state_name, e && e.value);
+			pv.update(this, state_name, e && e.value);
 		};
 	}
 
@@ -3161,7 +3172,7 @@ add({
 			}
 		}
 
-		this.updateState(state_name, {
+		pv.update(this, state_name, {
 			index: old_value.index,
 			count: count
 		});
@@ -4125,16 +4136,16 @@ provoda.Model.extendTo(provoda.HModel, {
 		}
 		if (new_state){
 			if (!this.state('pmd_vswitched')){
-				this.pmd_switch.updateState('vswitched', this._provoda_id);
+				pv.update(this.pmd_switch, 'vswitched', this._provoda_id);
 			}
 		} else {
 			if (this.state('pmd_vswitched')){
-				this.pmd_switch.updateState('vswitched', false);
+				pv.update(this.pmd_switch, 'vswitched', false);
 			}
 		}
 	},
 	checkPMDSwiched: function(value) {
-		this.updateState('pmd_vswitched', value == this._provoda_id);
+		pv.update(this, 'pmd_vswitched', value == this._provoda_id);
 	}
 });
 
@@ -4409,7 +4420,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					arr.push(state[0]);
 				}
 				push.apply(arr, state[1][this.nesting_space]);
-				this.updateState('view_sources', arr);
+				pv.update(this, 'view_sources', arr);
 			}
 			
 		}
@@ -5776,10 +5787,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				var $first = counter === 0;
 				var $last = counter === (array.length - 1);
 
-				view.updateState('$index', counter);
-				view.updateState('$first', $first);
-				view.updateState('$last', $last);
-				view.updateState('$middle', !($first || $last));
+				pv.update(view, '$index', counter);
+				pv.update(view, '$first', $first);
+				pv.update(view, '$last', $last);
+				pv.update(view, '$middle', !($first || $last));
 
 				counter++;
 			}

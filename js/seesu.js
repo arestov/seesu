@@ -181,11 +181,11 @@ AppModel.extendTo(SeesuApp, {
 
 
 		this.s  = new SeesuServerAPI(this, app_serv.store('dg_auth'), this.server_url);
-		this.updateState('su_server_api', true);
+		pv.update(this, 'su_server_api', true);
 
 		this.s.on('info-change.vk', function(data) {
-			_this.updateState('vk_info', data);
-			_this.updateState('vk_userid', data && data.id);
+			pv.update(_this, 'vk_info', data);
+			pv.update(_this, 'vk_userid', data && data.id);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -211,10 +211,10 @@ AppModel.extendTo(SeesuApp, {
 			reportSearchEngs(list.join(','));
 		});
 		if (this.lfm.username){
-			this.updateState('lfm_userid', this.lfm.username);
+			pv.update(this, 'lfm_userid', this.lfm.username);
 		} else {
 			this.lfm_auth.on('session', function() {
-				_this.updateState('lfm_userid', _this.lfm.username);
+				pv.update(_this, 'lfm_userid', _this.lfm.username);
 			});
 		}
 		
@@ -379,10 +379,10 @@ AppModel.extendTo(SeesuApp, {
 		this.vk_groups = (new pv.Model()).init();
 
 		if (app_env.check_resize){
-			this.updateState('slice-for-height', true);
+			pv.update(this, 'slice-for-height', true);
 		}
 		if (app_env.deep_sanbdox){
-			this.updateState('deep_sandbox', true);
+			pv.update(this, 'deep_sandbox', true);
 		}
 
 
@@ -525,7 +525,7 @@ AppModel.extendTo(SeesuApp, {
 		}
 
 		if (app_serv.app_env.nodewebkit) {
-			this.updateState('disallow_seesu_listeners', true);
+			pv.update(this, 'disallow_seesu_listeners', true);
 		}
 		this.on('child_change-current_mp_md', function(e) {
 			this.closeNavHelper();
@@ -569,7 +569,7 @@ AppModel.extendTo(SeesuApp, {
 	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume', 'files_sources', 'pl-shuffle'],
 	letAppKnowSetting: function(name, value){
 		this.settings[name] = value;
-		this.updateState('settings-' + name, value);
+		pv.update(this, 'settings-' + name, value);
 		//this.trigger('settings-' + name, value);
 	},
 	storeSetting: function(name, value){
@@ -877,14 +877,14 @@ AppModel.extendTo(SeesuApp, {
 		vk_groups: function(list) {
 			var store = this.vk_groups;
 			for (var i = 0; i < list.length; i++) {
-				store.updateState(list[i].id, list[i]);
+				pv.update(store, list[i].id, list[i]);
 			}
 			//console.log(list);
 		},
 		vk_users: function(list) {
 			var store = this.vk_users;
 			for (var i = 0; i < list.length; i++) {
-				store.updateState(list[i].id, list[i]);
+				pv.update(store, list[i].id, list[i]);
 			}
 			//console.log(list);
 		},
@@ -932,13 +932,13 @@ AppModel.extendTo(SeesuApp, {
 	suggestNavHelper: function() {
 		this.showNowPlaying();
 		if (this.state('played_playlists_length') > 1) {
-			this.updateState('nav_helper_is_needed', true);
+			pv.update(this, 'nav_helper_is_needed', true);
 		}
 	
 		
 	},
 	closeNavHelper: function() {
-		this.updateState('nav_helper_is_needed', false);
+		pv.update(this, 'nav_helper_is_needed', false);
 	}
 
 });
@@ -995,6 +995,11 @@ pv.sync_s.setRootModel(su);
 		requirejs(['js/libs/TorrentsAudioSearch'], function(TorrentsAudioSearch) {
 			su.mp3_search.add(new TorrentsAudioSearch({
 				cache_ajax: cache_ajax,
+				queue: new FuncsQueue({
+					time: [100, 150, 4],
+					resortQueue: resortQueue,
+					init: addQueue
+				}),
 				mp3_search: su.mp3_search,
 				torrent_search: new torrent_searches.BtdiggTorrentSearch({
 					queue: new FuncsQueue({
@@ -1077,7 +1082,7 @@ spv.domReady(window.document, function(){
 			if (!data) {
 				return;
 			}
-			su.start_page.getNesting('news').updateState('news_list', StartPage.AppNews.converNews(data));
+			pv.update(su.start_page.getNesting('news'), 'news_list', StartPage.AppNews.converNews(data));
 		});
 	});
 	queue.add(function() {
@@ -1108,7 +1113,7 @@ spv.domReady(window.document, function(){
 			}
 			//forbidden_by_copyrh
 			//white_of_copyrh
-			su.updateState('forbidden_by_copyrh', index);
+			pv.update(su, 'forbidden_by_copyrh', index);
 		});
 	});
 	queue.add(function(){

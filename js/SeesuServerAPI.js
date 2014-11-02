@@ -237,7 +237,7 @@ pv.Eventor.extendTo(SeesuServerAPI, {
 			app_serv.store('dg_auth', auth_data, true);
 		}
 		this.auth.setNewData(auth_data);
-		this.app.updateState('su_userid', auth_data.userid);
+		pv.update(this.app, 'su_userid', auth_data.userid);
 	},
 
 	getAuth: function(vk_user_id, callback){

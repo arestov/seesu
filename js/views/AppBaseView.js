@@ -328,15 +328,16 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 	],
 	markAnimationStart: function(models, changes_number) {
-		this.updateState('map_animation_num_started', changes_number, {sync_tpl: true});
+		pv.update(this, 'map_animation_num_started', changes_number, {sync_tpl: true});
 		for (var i = 0; i < models.length; i++) {
-			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number, {sync_tpl: true});
+
+			pv.mpx.update(this.getStoredMpx(models[i].getMD()), 'animation_started', changes_number, {sync_tpl: true});
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
 	markAnimationEnd: function(models, changes_number) {
 		if (this.state('map_animation_num_started') == changes_number) {
-			this.updateState('map_animation_num_completed', changes_number, {sync_tpl: true});
+			pv.update(this, 'map_animation_num_completed', changes_number, {sync_tpl: true});
 		}
 
 
@@ -345,7 +346,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			var mpx = this.getStoredMpx(models[i].getMD());
 
 			if (mpx.state('animation_started') == changes_number){
-				mpx.updateState('animation_completed', changes_number, {sync_tpl: true});
+				pv.mpx.update(mpx, 'animation_completed', changes_number, {sync_tpl: true});
 			}
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
@@ -451,7 +452,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 	},
 	setVMpshow: function(target_mpx, value) {
-		target_mpx.updateState('vmp_show', value, {sync_tpl: true});
+		pv.mpx.update(target_mpx, 'vmp_show', value, {sync_tpl: true});
 	},
 	'model-mapch': {
 		'move-view': function(change) {
@@ -501,12 +502,12 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			var current_lev_num = target_md.map_level_num;
 			
 			if (animation_data){
-				this.updateState('disallow_animation', true, {sync_tpl: true});
+				pv.update(this, 'disallow_animation', true, {sync_tpl: true});
 				animation_data.lc.c.css(animation_data.transform_values);
-				this.updateState('disallow_animation', false, {sync_tpl: true});
+				pv.update(this, 'disallow_animation', false, {sync_tpl: true});
 			}
 
-			this.updateState('current_lev_num', current_lev_num, {sync_tpl: true});
+			pv.update(this, 'current_lev_num', current_lev_num, {sync_tpl: true});
 			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 
 
@@ -595,7 +596,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					target_md = this.findBMapTarget(array);
 
 					if (target_md){
-						this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
+						pv.update(this, 'current_lev_num', target_md.map_level_num, {sync_tpl: true});
 					}
 					
 				}
@@ -613,7 +614,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			for (i = 0; i < array.length; i++) {
 				this.setVMpshow(this.getStoredMpx(array[i]), nesting_data.residents_struc.mp_show_states[i]);
 			}
-			this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
+			pv.update(this, 'current_lev_num', target_md.map_level_num, {sync_tpl: true});
 			this.markAnimationEnd(models, -1);
 			this.completely_rendered_once['map_slice'] = true;
 		}
@@ -844,7 +845,7 @@ var WebComplexTreesView = function() {};
 
 AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 	'collch-current_mp_md': function(name, value) {
-		this.updateState('current_mp_md', value._provoda_id);
+		pv.update(this, 'current_mp_md', value._provoda_id);
 	},
 	'collch-navigation': {
 		place: 'nav.daddy',
