@@ -1,4 +1,4 @@
-define('pv', ['spv', 'angbo', 'jquery', 'js/libs/PvTemplate', 'js/libs/morph_helpers', 'hex_md5', 'js/libs/provoda.initDeclaredNestings'],
+define('pv', ['spv', './StatementsAngularParser.min', 'jquery', './PvTemplate', 'js/libs/morph_helpers', 'hex_md5', './provoda.initDeclaredNestings'],
 function(spv, angbo, $, PvTemplate, morph_helpers, hex_md5, initDeclaredNestings){
 "use strict";
 var push = Array.prototype.push;

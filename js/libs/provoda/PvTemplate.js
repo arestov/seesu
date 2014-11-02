@@ -1,4 +1,4 @@
-define(['spv', 'angbo', 'jquery'], function(spv, angbo, $) {
+define(['spv', './StatementsAngularParser.min', 'jquery'], function(spv, angbo, $) {
 "use strict";
 var push = Array.prototype.push;
 
