@@ -1,0 +1,15 @@
+{
+	"indent": 1,
+	"curly": true,
+	"latedef": true,
+	"undef": true,
+	"unused": true,
+	"strict": true,
+	"predef": ["define", "require", "requirejs"],
+
+	"regexdash": true,
+	"browser": true,
+	"wsh": true,
+	"trailing": true,
+	"sub": true
+}
