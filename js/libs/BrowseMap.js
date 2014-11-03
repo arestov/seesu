@@ -917,18 +917,8 @@ var getDeclrConstr = function(app, md, item) {
 	}
 };
 
-var getRightNestingName =function(md, nesting_name) {
-	if (md.preview_nesting_source && nesting_name == 'preview_list') {
-		nesting_name = md.preview_nesting_source;
-	} else if (nesting_name == md.preview_mlist_name){
-		nesting_name = md.main_list_name;
-	}
-	return nesting_name;
-};
-
-
 var getNestingConstr = function(app, md, nesting_name) {
-	nesting_name = getRightNestingName(md, nesting_name);
+	nesting_name = pv.hp.getRightNestingName(md, nesting_name);
 
 
 	if (md[ 'nest_rqc-' + nesting_name ]) {
