@@ -1,96 +1,79 @@
-(function() {
-"use strict";
-process.env.DEBUG = '*';
+process.env.DEBUG = '*,-bittorrent-dht';
+var EventEmitter = require('events').EventEmitter;
+EventEmitter.defaultMaxListeners = 0;
 
 var WebTorrent = require('webtorrent');
-//var DHT = require('./torrent-stream/node_modules/bittorrent-dht');
+var querystring = require('querystring');
+var util = require('util');
+
 
 var address = require('network-address');
 var events = require('events');
-var querystring = require('querystring');
-var util = require('util');
 var getServer = require('./lib/tr_server');
 
-
 var downloads_index = {};
-var hash_events = new events.EventEmitter();
 var info_dictionaries_index = {};
 
-
+var hash_events = new events.EventEmitter();
 var server = getServer(downloads_index, hash_events);
 server.listen(8888);
 
 var root_href = 'http://' + address() + ':' + server.address().port + '/';
+
+
 
 var getMagnetTorrent = function(url) {
 	url = decodeURI(url);
 	var params = querystring.parse(url.replace(/^magnet\:\?/,''));
 	var infoHash = params.xt && params.xt.indexOf('urn:btih:') === 0 && params.xt.replace('urn:btih:', '');
 	if (infoHash && infoHash.length == 40) {
-		return {
+		var obj = {
+			infoHash: infoHash,
 			announce: [
 				"udp://tracker.openbittorrent.com:80",
 				'udp://tracker.ccc.de:80',
 				'udp://tracker.istole.it:80',
-				//'udp://tracker.istole.it:6969',
 				"udp://tracker.publicbt.com:80"
-			],
-			infoHash: infoHash
+			]
 		};
+		//console.log('build', obj);
+		return obj;
 	}
 };
 
 var getTorrentObj = function(torrent) {
 	if (typeof torrent == 'string' && torrent.match(/^magnet\:/)) {
 		torrent = getMagnetTorrent(torrent);
-		var torrent_with_dict = info_dictionaries_index[ torrent.infoHash ];
-		if ( torrent_with_dict ) {
-			torrent = util._extend(torrent, torrent_with_dict);
-		}
 	}
 	return torrent;
 };
 
 
-var bindInfoUpdates = function(core) {
-	return setInterval(function() {
-		var active = function(wire) {return !wire.peerChoking;};
-		var swarm = core.swarm;
-		var BUFFERING_SIZE = 10 * 1024 * 1024;
-
-		var upload_speed = swarm.uploadSpeed(); // upload speed
-		var final_upload_speed = '0 B/s';
-		if(!isNaN(upload_speed) && upload_speed !== 0){
-			var converted_speed = Math.floor( Math.log(upload_speed) / Math.log(1024) );
-			final_upload_speed = ( upload_speed / Math.pow(1024, converted_speed) ).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted_speed]+'/s';
-		}
-
-		var download_speed = swarm.downloadSpeed(); // download speed
-		var final_download_speed = '0 B/s';
-		if(!isNaN(download_speed) && download_speed !== 0){
-			var converted_speed = Math.floor( Math.log(download_speed) / Math.log(1024) );
-			final_download_speed = ( download_speed / Math.pow(1024, converted_speed) ).toFixed(2) + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][converted_speed]+'/s';
-		}
+var client = new WebTorrent();
 
 
 
-		swarm.downloaded = (swarm.downloaded) ? swarm.downloaded : 0;
-
-		var progress_info = {
-			downloaded: swarm.downloaded,
-			active_peers: swarm.wires.filter(active).length,
-			total_peers: swarm.wires.length,
-			uploadSpeed: final_upload_speed,
-			downloadSpeed: final_download_speed,
-			percent: Math.min(100, swarm.downloaded / ( BUFFERING_SIZE / 100 ) ).toFixed(2)
-		};
-		core.progress_info = progress_info;
-		core.emit('progress_info-change', progress_info);
-	}, 1000);
+var logReady = function(mark, dname, infoHash) {
+	console.log(mark + ':', dname, infoHash, (Date.now() - start)/1000 );
+};
+var load = function(mark, item, dname) {
+	var torrent = client.add(item);
+	if (torrent.ready) {
+		logReady(mark, dname, torrent.parsedTorrent.infoHash);
+	}
+	torrent.once('ready', function() {
+		logReady(mark, dname, torrent.parsedTorrent.infoHash);
+		
+	});
+	return torrent;
 };
 
-var client = new WebTorrent();
-//var dht;
+var prevalidate;
+var loaded = Date.now();
+console.log('test loaded', new Date());
+var start = Date.now();
+console.log(start - loaded);
+
 var count = function(obj) {
 	var count = 0;
 	for (var prop in obj) {
@@ -102,95 +85,7 @@ var count = function(obj) {
 };
 
 
-var getCore = function(torrent_link, opts, prevalidate) {
-	
-	var torrent_obj = getTorrentObj(torrent_link);
-	var infoHash = torrent_obj.infoHash;
-	console.log("REQUEST", infoHash);
-	if (downloads_index[ infoHash ]) {
-		return downloads_index[ infoHash ];
-	}
-
-	if (!opts) {opts = {};}
-
-
-	/*
-	if (!dht) {
-		dht = DHT();
-	}
-	opts.dht = dht;
-	*/
-
-
-	var torrent = client.add(torrent_obj);
-
-	torrent.on('ready', function(){
-		var parsedTorrent = torrent.parsedTorrent;
-		if ( !info_dictionaries_index[ parsedTorrent.infoHash ] ) {
-			info_dictionaries_index[ parsedTorrent.infoHash ] = parsedTorrent;
-			console.log('Cached:', parsedTorrent.infoHash);
-		}
-		
-	});
-
-	//var core = engine(torrent_obj || torrent, opts);
-	//var update_interval = bindInfoUpdates(core);
-
-
-
-	
-
-	torrent.once('destroy', function() {
-		//core._destroyed = true;
-		if (torrent_obj) {
-			if (downloads_index[ infoHash ] == torrent) {
-				downloads_index[ infoHash ] = null;
-			}
-		}
-		//clearInterval(update_interval);
-		
-	});
-
-
-	/*
-
-	core.on('ready', function() {
-		if ( !info_dictionaries_index[ core.reusable_torrent.infoHash ] ) {
-			info_dictionaries_index[ core.reusable_torrent.infoHash ] = core.reusable_torrent;
-			console.log('Cached:', core.reusable_torrent.infoHash);
-		}
-
-	});
-
-	*/
-
-	torrent.once('ready', function() {
-		var error = prevalidate && prevalidate(torrent.parsedTorrent);
-		if (error) {
-			torrent.emit('prevalidation-error', error);
-		} else {
-			var array = torrent.parsedTorrent.files.map(function(src_file, i){
-				var file = util._extend({}, src_file);
-				file.link = root_href + 'torrents/' + torrent.infoHash + '/' + i;
-				return file;
-
-			});
-			process.nextTick(function() {
-				torrent.emit('served-files-list', array);
-			});
-		}
-
-	});
-	if (torrent_obj) {
-		downloads_index[ infoHash ] = torrent;
-		hash_events.emit( 'hash-' + infoHash, torrent );
-		console.log( 'after addition', count( downloads_index ));
-	}
-	return torrent;
-	
-};
 module.exports = {
-	get: getCore,
 	remove: function(torrent_link, torrent) {
 		var torrent_obj = getTorrentObj(torrent_link);
 		if (torrent_obj) {
@@ -206,8 +101,125 @@ module.exports = {
 			}
 			
 		}
+	},
+	parse: getTorrentObj,
+	get: function(torrent_link) {
+		//console.log(torrent_link);
+		var torrent_obj = getTorrentObj(torrent_link);
+		var infoHash = torrent_obj.infoHash;
+		//console.log("REQUEST", infoHash);
 
-		
-	}
+		if (downloads_index[ infoHash ]) {
+			return downloads_index[ infoHash ];
+		}
+
+		if (info_dictionaries_index[infoHash]) {
+			torrent_obj = info_dictionaries_index[infoHash];
+		}
+
+		var torrent = load('READY!', torrent_obj, torrent_link);
+		torrent.once('ready', function() {
+			var error = prevalidate && prevalidate(torrent.parsedTorrent);
+			if (error) {
+				torrent.emit('prevalidation-error', error);
+				console.log(error, infoHash);
+			} else {
+				console.log('files', infoHash);
+				var array = torrent.parsedTorrent.files.map(function(src_file, i){
+					var file = util._extend({}, src_file);
+					file.link = root_href + 'torrents/' + torrent.infoHash + '/' + i;
+					return file;
+
+				});
+				process.nextTick(function() {
+					torrent.emit('served-files-list', array);
+				});
+			}
+
+		});
+
+		torrent.once('ready', function(){
+			var parsedTorrent = torrent.parsedTorrent;
+			if ( !info_dictionaries_index[ parsedTorrent.infoHash ] ) {
+				info_dictionaries_index[ parsedTorrent.infoHash ] = parsedTorrent;
+				console.log('Cached:', parsedTorrent.infoHash);
+			} else {
+				console.log('wat1')
+			}
+			
+		});
+
+		torrent.once('destroy', function() {
+			//core._destroyed = true;
+			if (torrent_obj) {
+				if (downloads_index[ infoHash ] == torrent) {
+					downloads_index[ infoHash ] = null;
+				}
+			} else {
+				console.log('cant destr')
+			}
+			//clearInterval(update_interval);
+			
+		});
+		if (torrent_obj) {
+			downloads_index[ infoHash ] = torrent;
+			//hash_events.emit( 'hash-' + infoHash, torrent );
+			console.log( 'after addition', count( downloads_index ));
+		} else {
+			console.log( 'no obj', infoHash);
+		}
+		return torrent;
+	}	
 };
-})();
+
+
+['magnet:?xt=urn:btih:d74ca7163aa49ecf5c75bf31fbb02ac4d420157f&dn=Volor%20Flex',
+'magnet:?xt=urn:btih:ceae1eb9150cbfc94d45f16746c5a57a2589e37c&dn=Various%20Artists%20-%20Origami%20Sound%20-%202%20Years%20%282013%29',
+'magnet:?xt=urn:btih:eb3705592f51d053ebb05d29cb26861b5684425e&dn=CURLYROCK%20DISCOGRAPHY%20MP3',
+'magnet:?xt=urn:btih:1e2002b90ac86d532b5574585a087f97fb34954a&dn=Volor%20Flex%20-%20Tramp',
+'magnet:?xt=urn:btih:0489135be8eecc86d27f072f3e7f731b48781930&dn=Volor%20Flex%20-%20Tramp%20%282011%29',
+'magnet:?xt=urn:btih:5bc8bd1955b98e536f6fde9c8b3c293416424ed1&dn=Volor%20Flex'].forEach(function(torrent_link) {
+	return;
+	module.exports.get(torrent_link);
+});
+
+
+
+
+var magnets = [
+	['Volor Flex - You In Me', 
+		'd74ca7163aa49ecf5c75bf31fbb02ac4d420157f'], // + 42.908 
+	['Volor Flex - You In Me', 
+		'ceae1eb9150cbfc94d45f16746c5a57a2589e37c'],
+	['Volor Flex - You In Me', 
+		'eb3705592f51d053ebb05d29cb26861b5684425e'],
+	['Volor Flex - You In Me', 
+		'1e2002b90ac86d532b5574585a087f97fb34954a'],
+	['Volor Flex - You In Me', 
+		'0489135be8eecc86d27f072f3e7f731b48781930'], // + 3.007 
+	['Volor Flex - You In Me', 
+		'5bc8bd1955b98e536f6fde9c8b3c293416424ed1'] // + 44.462 
+];
+
+magnets.forEach(function(item) {
+	return;
+	load('ready', {
+		infoHash: item[1],
+		announce: [
+			"udp://tracker.openbittorrent.com:80",
+			'udp://tracker.ccc.de:80',
+			'udp://tracker.istole.it:80',
+			"udp://tracker.publicbt.com:80"
+		]
+	}, item[0]);
+	
+	
+});
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//require('./test');
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
