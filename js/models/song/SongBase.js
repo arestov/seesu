@@ -33,15 +33,15 @@ pv.addPrototype("SongBase",{
 		spv.cloneObj(this, omo, false, ['artist', 'track']);
 		this.omo = omo;
 
-		this.init_states['no_track_title'] = false;
+		this.initState('no_track_title', false);
 		if (omo.artist){
-			this.init_states['artist'] = omo.artist && omo.artist.trim();
+			this.initState('artist', omo.artist && omo.artist.trim());
 		}
 		if (omo.track){
-			this.init_states['track'] = omo.track;
+			this.initState('track', omo.track);
 		}
-		this.init_states['playlist_type'] = this.map_parent.playlist_type;
-		this.init_states['url_part'] = this.getURL();
+		this.initState('playlist_type', this.map_parent.playlist_type);
+		this.initState('url_part', this.getURL());
 		//this.updateManyStates(states);
 
 		this.on('requests', this.hndRequestsPrio, this.getContextOptsI());

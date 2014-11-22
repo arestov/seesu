@@ -156,6 +156,18 @@ var getBaseTreeCheckList = function(start) {
 
 };
 
+var getStateUpdater = function(em, state_name) {
+	if (!em._state_updaters) {
+		em._state_updaters = {};
+	}
+	if (!em._state_updaters.hasOwnProperty(state_name)) {
+		em._state_updaters[state_name] = function(value) {
+			em.updateState(state_name, value);
+		};
+	}
+	return em._state_updaters[state_name];
+};
+
 add({
 	onDie: function(cb) {
 		this.on('die', cb);
@@ -167,12 +179,56 @@ add({
 		this.zdsv = null;
 		this.current_motivator = this.current_motivator || null;
 
+		this._state_updaters = null;
+		this._used_interfaces = null;
+		this._unuse_interface_instr = null;
 
 		this.states = {};
 
 		//this.collectCompxs();
 
 		return this;
+	},
+	useInterface: function(interface_name, obj) {
+		var old_interface = this._used_interfaces && this._used_interfaces[interface_name];
+		if (obj !== old_interface) {
+			var unuse = this._unuse_interface_instr && this._unuse_interface_instr[interface_name];
+			while (unuse && unuse.length) {
+				unuse.shift()();
+			}
+			if (this._used_interfaces) {
+				this._used_interfaces[interface_name] = null;
+			}
+
+			if (obj) {
+				if (this._interfaces_to_states_index) {
+					var use_list = this._interfaces_to_states_index[interface_name];
+					if (use_list) {
+						if (!this._unuse_interface_instr) {
+							this._unuse_interface_instr = {};
+						}
+						if (!this._unuse_interface_instr[interface_name]) {
+							this._unuse_interface_instr[interface_name] = [];
+						}
+						var unuse_instrs = this._unuse_interface_instr[interface_name];
+						for (var i = 0; i < use_list.length; i++) {
+							var cur = use_list[i];
+							var unuse_cur = cur.fn.call(null, obj, getStateUpdater(this, cur.state_name));
+							if (typeof unuse_cur !== 'function') {
+								throw new Error('you must provide event unbind func');
+							}
+							unuse_instrs[i] = unuse_cur;
+							//unuse_instrs[i]
+							//interface_name[i]
+						}
+					}
+				}
+				if (!this._used_interfaces) {
+					this._used_interfaces = {};
+				}
+				this._used_interfaces[interface_name] = obj;
+			}
+		}
 	},
 	
 	'regfr-vipstev': regfr_vipstev,
@@ -244,6 +300,7 @@ add({
 		if (this.collectCollectionChangeDeclarations){
 			collches_modified = this.collectCollectionChangeDeclarations(props);
 		}
+		this.collectStatesBinders(props);
 		this.collectCompxs(props);
 		this.collectRegFires(props);
 
@@ -559,6 +616,7 @@ add({
 //	full_comlxs_list: [],
 	compx_check: {},
 //	full_comlxs_index: {},
+
 	collectCompxs: (function() {
 		var getUnprefixed = spv.getDeprefixFunc( 'compx-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
@@ -641,16 +699,11 @@ add({
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 
-		return function(props) {
-			var need_recalc = false, prop;
-			
-
-			need_recalc = hasPrefixedProps(props);
-
-			
-			if (!need_recalc){
+		return function(props) {			
+			if (!hasPrefixedProps(props)){
 				return;
 			}
+			var prop;
 
 			this.reg_fires = {
 				by_namespace: null,
@@ -674,6 +727,31 @@ add({
 					}
 				}
 			}
+		};
+	})(),
+	collectStatesBinders: (function(){
+		var getUnprefixed = spv.getDeprefixFunc( 'state-' );
+		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
+		return function(props) {
+			if (!hasPrefixedProps(props)){
+				return;
+			}
+			var prop;
+			this._interfaces_to_states_index = {};
+
+			var all_states_instrs = [];
+			for (prop in this) {
+				var state_name = getUnprefixed(prop);
+				if (!state_name) {continue;}
+				var cur = this[prop];
+				all_states_instrs.push({
+					state_name: state_name,
+					interface_name: cur[0],
+					fn: cur[1]
+				});
+			}
+			this._interfaces_to_states_index = spv.makeIndexByField(all_states_instrs, 'interface_name', true);
 		};
 	})(),
 	state: function(name){

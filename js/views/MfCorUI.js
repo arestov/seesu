@@ -12,7 +12,15 @@ pv.View.extendTo(notifyCounterUI, {
 		}
 	}
 });
-
+var FileIntorrentPromiseUI = function(){};
+pv.View.extendTo(FileIntorrentPromiseUI, {
+	'stch-infoHash': function(state) {
+		this.c.text(state);
+	},
+	createBase: function(){
+		this.c = $('<li></li>');
+	}
+});
 
 var FileInTorrentUI = function() {};
 pv.View.extendTo(FileInTorrentUI,{
@@ -282,10 +290,12 @@ pv.View.extendTo(mfComplectUI, {
 	},
 	children_views_by_mn: {
 		moplas_list_start: {
+			'file-torrent-promise': FileIntorrentPromiseUI,
 			'file-torrent': FileInTorrentUI,
 			'file-http': SongFileModelUI
 		},
 		moplas_list_end: {
+			'file-torrent-promise': FileIntorrentPromiseUI,
 			'file-torrent': FileInTorrentUI,
 			'file-http': SongFileModelUI
 		}

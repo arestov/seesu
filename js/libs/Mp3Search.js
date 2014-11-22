@@ -285,6 +285,7 @@ pv.Model.extendTo(FilesSourceTuner, {
 var getQueryString = function(msq) {
 	return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
 };
+
 var setFileQMI = function(file, msq, Constr, force_rewrite) {
 	var query_string = getQueryString(msq);
 	file.query_match_index = file.query_match_index || {};
@@ -294,6 +295,11 @@ var setFileQMI = function(file, msq, Constr, force_rewrite) {
 	file.query_match_index[ query_string.replace(/\./gi, '') ] = Constr ? ( new Constr(file, msq) * 1 ) : ( new SongQueryMatchIndex(file, msq) * 1 );
 	return file.query_match_index[ query_string ];
 };
+var getFileQMI = function(file, msq) {
+	var query_string = getQueryString(msq);
+	return spv.getTargetField(file, [ 'query_match_index', query_string.replace(/\./gi, '') ]);
+};
+
 var getMatchedSongs = function(music_list, msq) {
 
 	var result = [];
@@ -467,28 +473,48 @@ var getMatchedSongs = function(music_list, msq) {
 				})
 				.done(function(music_list){
 					if (music_list instanceof Error) {
-						pv.update(_this, 'search_fail', true);
-					} else if (typeof music_list == 'function') {
-						
-						music_list(function(list) {
-							pv.update(_this, 'search_result', getMatchedSongs(list, msq));
+						_this.updateManyStates({
+							search_result: null,
+							search_fail: true,
+
+							search_complete: true,
+							search_progress: false,
+							has_request: false
 						});
+					} else if (music_list instanceof pv.Model) {
 						pv.update(_this, 'search_fail', false);
+
+						_this.wlch(music_list, '@items', 'search_result');
+
+						_this.lwch(music_list, 'query_complete', function(state) {
+							if (state) {
+								_this.updateManyStates({
+									search_complete: true,
+									search_progress: false,
+									has_request: false
+								});
+							} else {
+
+							}
+						});
 
 					} else {
 						_this.updateManyStates({
 							search_result: getMatchedSongs(music_list, msq),
-							search_fail: false
+							search_fail: false,
+
+							search_complete: true,
+							search_progress: false,
+							has_request: false
 						});
 					}
 					
 					
 				})
 				.fail(function(){
-					pv.update(_this, 'search_fail', true);
-				})
-				.always(function() {
 					_this.updateManyStates({
+						search_fail: true,
+
 						search_complete: true,
 						search_progress: false,
 						has_request: false
@@ -873,6 +899,8 @@ var getAverageDurations = function(mu_array, time_limit){
 		}
 		
 	};
+	Mp3Search.setFileQMI = setFileQMI;
+	Mp3Search.getFileQMI = getFileQMI;
 	Mp3Search.hasMusicCopy = hasMusicCopy;
 	Mp3Search.guessArtist = guessArtist;
 	Mp3Search.QueryMatchIndex = QueryMatchIndex;
@@ -943,10 +971,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			});
 
 		},
-		getFileQMI: function(file, msq) {
-			var query_string = getQueryString(msq);
-			return spv.getTargetField(file, [ 'query_match_index', query_string.replace(/\./gi, '') ]);
-		},
+		getFileQMI: getFileQMI,
 		setFileQMI: setFileQMI,
 		getFilesInvestg: function(msq, motivator) {
 			var query_string = msq.q || getQueryString(msq);

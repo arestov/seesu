@@ -68,134 +68,137 @@ pv.Model.extendTo(AppModelBase, {
 	showStartPage: function(){
 		//mainaly for hash url games
 		this.map.startNewBrowse();
-	},
-	'mapch-handlers': {
-		"zoom-in": function(array) {
-			var target;
-			for (var i = array.length - 1; i >= 0; i--) {
-				var cur = array[i];
-				if (cur.type == 'move-view' && cur.value){
-					target = cur.target.getMD();
-					break;
-				}
-
-			}
-			return target;
-		},
-		"zoom-out": function(array) {
-			var target;
-			for (var i = array.length - 1; i >= 0; i--) {
-				var cur = array[i];
-				if (cur.type == 'zoom-out' || cur.type == 'move-view'){//&& cur.value
-					target = cur.target.getMD();
-					break;
-				}
-
-			}
-			return target;
-		}
-	},
-	'model-mapch': {
-		'move-view': function(change) {
-			var parent = change.target.getMD().getParentMapModel();
-			if (parent){
-				pv.update(parent, 'mp_has_focus', false);
-			}
-			pv.update(change.target.getMD(), 'mp_show', change.value);
-		},
-		'zoom-out': function(change) {
-			pv.update(change.target.getMD(), 'mp_show', false);
-		},
-		'destroy': function(change) {
-			var md = change.target.getMD();
-			md.mlmDie();
-			pv.update(md, 'mp_show', false);
-		}
-	},
+	},	
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
 			pv.update(models[i].getMD(), 'map_animating', mark);
 		}
 	},
-	animateMapChanges: function(changes, tree, residents) {
-		var
-			i,
-			target_md,
-			all_changhes = spv.filter(changes.array, 'changes');
+	animateMapChanges: (function() {
+		var mapch_handlers = {
+			"zoom-in": function(array) {
+				var target;
+				for (var i = array.length - 1; i >= 0; i--) {
+					var cur = array[i];
+					if (cur.type == 'move-view' && cur.value){
+						target = cur;
+						break;
+					}
 
-		all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
-		//var models = spv.filter(all_changhes, 'target');
-		//this.animationMark(models, changes.changes_number);
+				}
+				return target;
+			},
+			"zoom-out": function(array) {
+				var target;
+				for (var i = array.length - 1; i >= 0; i--) {
+					var cur = array[i];
+					if (cur.type == 'zoom-out' || cur.type == 'move-view'){//&& cur.value
+						target = cur;
+						break;
+					}
 
-		for (i = 0; i < all_changhes.length; i++) {
-			var change = all_changhes[i];
-		//	change.changes_number = changes.changes_number;
-			var handler = this['model-mapch'][change.type];
-			if (handler){
-				handler.call(this, change);
+				}
+				return target;
 			}
-		}
-
-		for (i = changes.array.length - 1; i >= 0; i--) {
-			//вычисление модели, которая станет главной на экране
-			var cur = changes.array[i];
-			if (this['mapch-handlers'][cur.name]){
-				target_md = this['mapch-handlers'][cur.name].call(this, cur.changes);
-				break;
+		};
+		var model_mapch = {
+			'move-view': function(change) {
+				var parent = change.target.getMD().getParentMapModel();
+				if (parent){
+					pv.update(parent, 'mp_has_focus', false);
+				}
+				pv.update(change.target.getMD(), 'mp_show', change.value);
+			},
+			'zoom-out': function(change) {
+				pv.update(change.target.getMD(), 'mp_show', false);
+			},
+			'destroy': function(change) {
+				var md = change.target.getMD();
+				md.mlmDie();
+				pv.update(md, 'mp_show', false);
 			}
-		}
-		/*
-			подсветить/заменить текущий источник
-			проскроллить к источнику при отдалении
-			просроллить к источнику при приближении
-		*/
-		
+		};
+		return function(changes, tree, residents) {
+			var
+				i,
+				target_md,
+				all_changhes = spv.filter(changes.array, 'changes');
 
-		if (tree){
-			pv.updateNesting(this, 'navigation', tree);
-		}
+			all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
+			//var models = spv.filter(all_changhes, 'target');
+			//this.animationMark(models, changes.changes_number);
 
-		
-		if (target_md){
-			if (this.current_mp_md) {
-				pv.update(this.current_mp_md, 'mp_has_focus', false);
+			for (i = 0; i < all_changhes.length; i++) {
+				var change = all_changhes[i];
+			//	change.changes_number = changes.changes_number;
+				var handler = model_mapch[change.type];
+				if (handler){
+					handler.call(null, change);
+				}
 			}
-			this.current_mp_md = target_md;
-			pv.update(target_md, 'mp_has_focus', true);
 
-			pv.update(this, 'show_search_form', !!target_md.state('needs_search_from'));
-			pv.update(this, 'full_page_need', !!target_md.full_page_need);
-		//	pv.update(this, 'current_mp_md', target_md._provoda_id);
-			pv.updateNesting(this, 'current_mp_md', target_md);
-			//pv.update(target_md, 'mp-highlight', false);
-
-
-		}
-
-
-		
-		if (target_md){
-			changes.target = target_md && target_md.getMDReplacer();
-		}
-
-		var mp_show_wrap;
-		if (residents){
-			mp_show_wrap = {
-				items: residents,
-				mp_show_states: []
-			};
-			for (i = 0; i < residents.length; i++) {
-				mp_show_wrap.mp_show_states.push(residents[i].state('mp_show'));
+			for (i = changes.array.length - 1; i >= 0; i--) {
+				//вычисление модели, которая станет главной на экране
+				var cur = changes.array[i];
+				if (mapch_handlers[cur.name]){
+					var item = mapch_handlers[cur.name].call(null, cur.changes);
+					target_md = item.target.getMD();
+					break;
+				}
 			}
-		}
+			/*
+				подсветить/заменить текущий источник
+				проскроллить к источнику при отдалении
+				просроллить к источнику при приближении
+			*/
+			
 
-		pv.updateNesting(this, 'map_slice', {
-			residents_struc: mp_show_wrap,
-			transaction: changes
-		});
-	
+			if (tree){
+				pv.updateNesting(this, 'navigation', tree);
+			}
+
+			
+			if (target_md){
+				if (this.current_mp_md) {
+					pv.update(this.current_mp_md, 'mp_has_focus', false);
+				}
+				this.current_mp_md = target_md;
+				pv.update(target_md, 'mp_has_focus', true);
+
+				pv.update(this, 'show_search_form', !!target_md.state('needs_search_from'));
+				pv.update(this, 'full_page_need', !!target_md.full_page_need);
+			//	pv.update(this, 'current_mp_md', target_md._provoda_id);
+				pv.updateNesting(this, 'current_mp_md', target_md);
+				//pv.update(target_md, 'mp-highlight', false);
+
+
+			}
+
+
+			
+			if (target_md){
+				changes.target = target_md && target_md.getMDReplacer();
+			}
+
+			var mp_show_wrap;
+			if (residents){
+				mp_show_wrap = {
+					items: residents,
+					mp_show_states: []
+				};
+				for (i = 0; i < residents.length; i++) {
+					mp_show_wrap.mp_show_states.push(residents[i].state('mp_show'));
+				}
+			}
+
+			pv.updateNesting(this, 'map_slice', {
+				residents_struc: mp_show_wrap,
+				transaction: changes
+			});
 		
-	},
+			
+		}
+	})(),
 	bindMMapStateChanges: function(md) {
 		if (binded_models[md._provoda_id]) {
 			return;

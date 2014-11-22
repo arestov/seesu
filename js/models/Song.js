@@ -77,7 +77,7 @@ var album_placeholder = {
 
 			var spec_image_wrap;
 			if (omo.image_url){
-				this.init_states['image_url'] = {url: omo.image_url};
+				this.initState('image_url', {url: omo.image_url});
 			}
 			if (omo.lfm_img) {
 				spec_image_wrap = omo.lfm_img;
@@ -88,21 +88,21 @@ var album_placeholder = {
 			var images_pack;
 
 			if (omo.album_image) {
-				this.init_states['album_image'] = omo.album_image;
+				this.initState('album_image', omo.album_image);
 			}
 			if (omo.album_name) {
-				this.init_states['album_name'] = omo.album_name;
+				this.initState('album_name', omo.album_name);
 			}
 
 			if (spec_image_wrap) {
-				this.init_states['lfm_image'] = spec_image_wrap;
+				this.initState('lfm_image', spec_image_wrap);
 
 			} else if (passed_artist) {
 				var still_init = true;
 				if (this.init_states['track']){
 					images_pack = this.app.art_images.getTrackImagesModel({
 						artist: this.init_states['artist'],
-						track:this.init_states['track']
+						track: this.init_states['track']
 					});
 				} else {
 					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist']);

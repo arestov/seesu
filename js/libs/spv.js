@@ -1258,7 +1258,12 @@ spv.getPrefixingFunc = function(prefix) {
 	};
 };
 
-
+spv.forEachKey = function(obj, fn, arg1, arg2) {
+	for (var key in obj) {
+		if (!obj.hasOwnProperty(key)) {continue;}
+		fn(obj[key], key, arg1, arg2);
+	}
+};
 
 
 })();

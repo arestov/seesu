@@ -77,13 +77,12 @@ BrowseMap.Model.extendTo(UserCard, {
 	})(),
 	init: function() {
 		this._super.apply(this, arguments);
-
 		
 		this.for_current_user = true;
 		this.sub_pa_params = {
 			for_current_user: this.for_current_user
 		};
-		this.init_states['nav_title'] = localize('your-pmus-f-aq');
+		this.initState('nav_title', localize('your-pmus-f-aq'));
 		this.initStates();
 
 		var _this = this;
@@ -91,11 +90,7 @@ BrowseMap.Model.extendTo(UserCard, {
 			this.wch(this.map_parent, 'can_expand');
 
 		}
-
 		
-
-		
-
 		//плейлисты
 		var gena = this.getSPI('playlists', true);
 		var hasPlaylistCheck = function(items) {
@@ -105,9 +100,6 @@ BrowseMap.Model.extendTo(UserCard, {
 		this.app.gena.on('playlists-change', hasPlaylistCheck);
 
 		//знакомства
-
-
-		
 		
 		return this;
 	},
@@ -175,14 +167,11 @@ BrowseMap.Model.extendTo(VkUserCard, {
 		this.sub_pa_params = {
 			vk_userid: this.vk_userid
 		};
-		this.init_states['userid'] = this.vk_userid;
-		this.init_states['p_nav_title'] = 'Vk.com user: ' + this.vk_userid;
+
+		this.initState('userid', this.vk_userid);
+		this.initState('p_nav_title', 'Vk.com user: ' + this.vk_userid);
 		this.initStates();
 		this.rq_b = {};
-
-		
-
-		
 	},
 	nest: (function() {
 		var result = {};
@@ -248,8 +237,8 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 		this.sub_pa_params = {
 			lfm_userid: this.lfm_userid
 		};
-		this.init_states['userid'] = this.lfm_userid;
-		this.init_states['nav_title'] = 'Last.fm user: ' + this.lfm_userid;
+		this.initState('userid', this.lfm_userid);
+		this.initState('nav_title', 'Last.fm user: ' + this.lfm_userid);
 		this.initStates();
 		this.rq_b = {};
 
