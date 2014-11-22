@@ -1,14 +1,15 @@
 define(['jquery', 'js/libs/FuncsStack', 'spv', 'pv', 'js/libs/Mp3Search'], function($, FuncsStack, spv, pv, Mp3Search) {
 "use strict";
+/*
 var trackers = ["udp://tracker.openbittorrent.com:80",
 					'udp://tracker.ccc.de:80',
 					'udp://tracker.istole.it:80',
 					//'udp://tracker.istole.it:6969',
-					"udp://tracker.publicbt.com:80"];
+					"udp://tracker.publicbt.com:80"];*/
 var torrents_manager = require('./nodejs/troxent2');
 var engine_opts = {
 	connections: 23,
-	trackers: trackers,
+//	trackers: trackers,
 	prevalidate: function(info) {
 		if (info.files && info.files.length > 420) {
 			return 'too much files in torrent';
@@ -88,7 +89,7 @@ var getTorrentFile = function(raw, torrent, torrent_api) {
 		filename: raw.name,
 		torrent_name: torrent.name,
 		torrent_path: raw.path,
-		description: [torrent.name, torrent.infoHash, raw.path].join(', '),
+		description: [torrent.name, torrent.infoHash + '\n', raw.path].join(', '),
 		page_link: 'http://btdigg.org/search?info_hash=' + torrent.infoHash,
 		media_type: 'mp3',
 		link: raw.link,
@@ -115,27 +116,6 @@ pv.Model.extendTo(Torrent, {
 		this.remove_timeout = null;
 		this.troxent = null;
 		this.updateManyStates(data);
-
-		var _this = this;
-		this.hndList = function(list) {
-			//console.log(list);
-			pv.update(_this, 'list_loaded', !!list && true);
-
-			var result = list && list.map(function(el) {
-				return getTorrentFile(el, _this.troxent.parsedTorrent, _this);
-			});
-
-			pv.update(_this, 'files_list', result);
-
-		};
-		this.validateError = function(){
-			var link = this.state('url');
-			disallowed_links[link] = true;
-			pv.update(this, 'invalid', true);
-		};
-		this.onProgress = function(data) {
-			pv.update(_this, 'progress_info', data);
-		};
 	},
 	'compx-torrent_required': [
 		['file_data-for-song_file', 'list_loaded', 'files_list-for-search', 'invalid'],
@@ -144,32 +124,108 @@ pv.Model.extendTo(Torrent, {
 			return this.utils.isDepend(file_data) || (!list_loaded && this.utils.isDepend(files_list));
 		}
 	],
+	'state-progress_info': [
+		'troxent',
+		function(troxent, update) {
+			var progresInfo = function() {
+				update({
+					total_peers:  troxent.swarm.numPeers || 0.1
+				});
+			};
+			update({
+				total_peers:  troxent.swarm.numPeers || 0.1
+			});
+			troxent.swarm.on('numPeers', progresInfo);
+			return function() {
+				troxent.swarm.removeListener('numPeers', progresInfo);
+			};
+		}
+	],
+	/*'state-progress_info': [
+		'troxent',
+		function(troxent, update) {
+
+			this.onProgress = function(data) {
+				pv.update(_this, 'progress_info', data);
+			};
+
+
+			_this.troxent.on('progress_info-change', _this.onProgress);
+		}
+	],*/
+	'state-invalid': [
+		'troxent',
+		function (troxent, update) {
+			var validateError = function(error){
+				update(error);
+			};
+			troxent.on('prevalidation-error', validateError);
+			return function() {
+				troxent.removeListener('prevalidation-error', validateError);
+			};
+		}
+	],
+	'stch-invalid': function(state) {
+		if (state) {
+			disallowed_links[this.state('url')] = true;
+		}
+	},
+	'state-files_list_raw': [
+		'troxent',
+		function (troxent, update) {
+			var hndList = function(list) {
+				
+				update(list);
+			};
+			troxent.on('served-files-list', hndList);
+			return function() {
+				troxent.removeListener('served-files-list', hndList);
+			};
+		}
+	],
+	'compx-files_list': [
+		['files_list_raw'],
+		function (list) {
+			if (!this.files_cache) {
+				this.files_cache = {};
+			}
+			var files_cache = this.files_cache;
+			var md = this;
+			var getItem = function(el, i) {
+				if (!files_cache[i]) {
+					files_cache[i] = getTorrentFile(el, md.troxent.parsedTorrent, md);
+				}
+				return files_cache[i];
+			};
+			var result = list && list.map(getItem);
+			return result;
+		}
+	],
+	'state-list_loaded': [
+		'troxent',
+		function (troxent, update) {
+			var hndList = function(list) {
+				update(!!list && true);
+			};
+			troxent.on('served-files-list', hndList);
+			return function() {
+				troxent.removeListener('served-files-list', hndList);
+			};
+		}
+	],
 	'stch-torrent_required': function(state) {
 		var _this = this;
 		if (state ) {
 			clearTimeout(this.remove_timeout);
 			this.remove_timeout = null;
 			if (!this.troxent && !this.queued) {
-				//var deferred = $.Deferred();
-				//this.troxent_promise = deferred;
 				this.queued = this.queue.add(function() {
-					_this.troxent = torrents_manager.get(_this.state('url'), engine_opts);
-					_this.troxent.on('prevalidation-error', _this.validateError);
-					_this.troxent.on('numPeers', function(num) {
-						pv.update(_this, 'total_peers', num);
-					});
-
-
-					if (!_this.state('list_loaded')) {
-						_this.troxent.on('served-files-list', _this.hndList);
-					}
-					
-					_this.troxent.on('progress_info-change', _this.onProgress);
+					//torrents_manager.get(_this.state('url'));
+					//_this.troxent = true;
+					_this.troxent = torrents_manager.get(_this.state('url'));
+					_this.useInterface('troxent', _this.troxent);
 					_this.queued = null;
-				});
-
-
-				
+				});				
 			}
 		} else {
 			if (this.troxent && !this.remove_timeout) {
@@ -180,6 +236,7 @@ pv.Model.extendTo(Torrent, {
 		}
 	},
 	destroyPeerflix: function() {
+		this.useInterface('troxent', null);
 		if (this.queued) {
 			this.queued.abort();
 			this.queued = null;
@@ -187,13 +244,81 @@ pv.Model.extendTo(Torrent, {
 		if (!this.troxent) {
 			return;
 		}
-		this.troxent.removeListener('served-files-list', this.hndList);
-		this.troxent.removeListener('prevalidation-error', this.validateError);
-		this.troxent.removeListener('progress_info-change', this.onProgress);
+
 		torrents_manager.remove(this.state('url'), this.troxent);
 		//this.troxent.destroy();
 		this.troxent = null;
 	}
+});
+
+
+
+
+var QueriedFileInTorrent = function(){};
+pv.Model.extendTo(QueriedFileInTorrent, {
+	model_name: 'file-torrent-promise',
+	getSongFileModel: function() {
+		return this;
+	},
+	'state-all_files': [
+		'torrent',
+		function(torrent, update) {
+			var listen = function(e) {
+				if (!e.value) {return;}
+				update(e.value);
+			};
+			torrent.on('state_change-files_list', listen);
+			return function() {
+				torrent.off('state_change-files_list', listen);
+			};
+		}
+	],
+	'compx-matched_files': [
+		['all_files', 'msq'],
+		function (array, msq) {
+			if (!array || !msq) {return;}
+			var filtered = [];
+			for (var i = 0; i < array.length; i++) {
+				if (!array[i].filename.match(/\.mp3$/)) {
+					continue;
+				}
+				var qmi = Mp3Search.setFileQMI(array[i], msq, FileNameSQMatchIndex);
+				if (qmi != -1) {
+					filtered.push( array[i] );
+				}
+			}
+			return filtered;
+		}
+	]
+});
+
+var push = Array.prototype.push;
+
+var TorrentQuery = function(){};
+pv.Model.extendTo(TorrentQuery, {
+	init: function(opts, data, params){
+		this._super.apply(this, arguments);
+		this.updateManyStates(data);
+	},
+	'compx-@items': [
+		['@matched_files:queries', '@queries'],
+		function (values, list) {
+			if (!list) {return;}
+			var good = [];
+			var unknown = [];
+			list.forEach(function(el, i){
+				if (values && values[i] && values[i].length) {
+					push.apply(good, values[i]);
+				} else {
+					unknown.push(list[i]);
+				}
+			});
+			push.apply(good, unknown);
+			return good;
+
+		}
+	]
+
 });
 
 var TorqueSearch = function(opts) {
@@ -248,47 +373,16 @@ TorqueSearch.prototype = {
 				//find torrents
 			},
 			function(links_list) {
-				var done;
-				var setResult = function() {};
-				var getRFunc = function() {
-					if (!done) {
-						done = true;
-						deferred.resolve(function(setArray) {
-							setResult = setArray;
-						});
-					}
-				};
+				var answer_model = pv.create(TorrentQuery);
 
 				var timeout = setTimeout(function() {
-					getRFunc();
-				}, 40000);
+					pv.update(answer_model, 'query_complete', true);
+				}, 1.2 * 60 * 1000);
 
 				var arrays = [];
-				var checkItems = function() {
-					var result = [];
-					for (var i = 0; i < arrays.length; i++) {
-						if (arrays[i].items) {
-							push.apply(result, arrays[i].items);
-						}
-					}
-					var filtered = [];
-
-					for (var i = 0; i < result.length; i++) {
-
-						var qmi = core.mp3_search.getFileQMI(result[i], msq);
-						if (qmi != -1 && result[i].filename.match(/\.mp3$/)) {
-							filtered.push( result[i] );
-						}
-					}
-					
 
 
-					if (filtered.length) {
-						setResult(filtered);
-					}
-					
-				};
-
+				var queries = [];
 				links_list.slice(0, 6).forEach(function(el) {
 					if (disallowed_links[el.torrent_link]) {
 						return;
@@ -298,41 +392,42 @@ TorqueSearch.prototype = {
 					};
 					arrays.push(obj);
 
+					var torrent_obj = torrents_manager.parse(el.torrent_link);
+
 					var torrent = new Torrent();
 					torrent.init({
 						queue: core.queue
 					}, {
-						url: el.torrent_link
+						url: el.torrent_link,
+						torrent_obj: torrent_obj,
+						infoHash: torrent_obj.infoHash
+					});
+					
+					var query = pv.create(QueriedFileInTorrent, {
+						link: el.torrent_link,
+						torrent_obj: torrent_obj,
+						infoHash: torrent_obj.infoHash,
+						msq: msq
+					}, {
+						interfaces: {
+							torrent: torrent
+						}
 					});
 
+					queries.push(query);
 
 					opts.bindRelation(function(e) {
 						torrent.setStateDependence('files_list-for-search', e.target, !!e.value);
 						//pv.update(torrent, 'must_load_list', e.value);
 					});
-
-
-					torrent.on('state_change-files_list', function(e) {
-						if (!e.value) {
-							return;
-						}
-						obj.items = e.value;
-
-						for (var i = 0; i < obj.items.length; i++) {
-							core.mp3_search.setFileQMI(obj.items[i], msq, FileNameSQMatchIndex);
-						}
-
-						getRFunc();
-						clearTimeout(timeout);
-
-
-						checkItems();
-					});
 				});
+				answer_model.updateNesting('queries', queries);
 
 				if (!links_list.length) {
-					getRFunc();
+					pv.update(answer_model, 'query_complete', true);
 				}
+
+				deferred.resolve(answer_model);
 			}
 		]);
 

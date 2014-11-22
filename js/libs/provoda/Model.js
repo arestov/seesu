@@ -458,7 +458,7 @@ add({
 
 		return instance;
 	},
-	init: function(opts){
+	init: function(opts, data, params, more, states){
 		if (opts && opts.app){
 			this.app = opts.app;
 		}
@@ -479,7 +479,7 @@ add({
 		this._provoda_id = models_counters++;
 		big_index[this._provoda_id] = this;
 
-		this.states = {};
+		//this.states = {};
 		
 		this.children_models = null;
 		this._network_source = this._network_source || null;
@@ -488,13 +488,21 @@ add({
 		this.md_replacer = null;
 		this.mpx = null;
 
-		//
+		this.init_states = null;
+
+		if (states) {
+
+			if (!this.init_states) {
+				this.init_states = {};
+			}
+
+			spv.cloneObj(this.init_states, states);
+			// pv.create must init init_states
+		}
 		
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 		this.prsStCon.connect.nesting(this);
-
-
 
 		if (this.nestings_declarations) {
 			this.nextTick(function() {
@@ -503,6 +511,40 @@ add({
 		}
 
 		return this;
+	},
+	mapStates: function(states_map, donor, acceptor) {
+		if (acceptor && typeof acceptor == 'boolean'){
+			if (this.init_states === false) {
+				throw new Error('states inited already, you can\'t init now');
+			}
+			if (!this.init_states) {
+				this.init_states = {};
+			}
+			acceptor = this.init_states;
+		}
+		return spv.mapProps(states_map, donor, acceptor);
+	},
+	initState: function(state_name, state_value) {
+		if (this.init_states === false) {
+			throw new Error('states inited already, you can\'t init now');
+		}
+		if (!this.init_states) {
+			this.init_states = {};
+		}
+		this.init_states[state_name] = state_value;
+	},
+	initStates: function(more_states) {
+		if (this.init_states === false) {
+			throw new Error('states inited already, you can\'t init now');
+		}
+		if (!this.init_states) {
+			this.init_states = {};
+		}
+		if (more_states) {
+			spv.cloneObj(this.init_states, more_states);
+		}
+		this.updateManyStates(this.init_states);
+		this.init_states = false;
 	},
 	getConstrByPathTemplate: function(app, path_template) {
 		return initDeclaredNestings.getConstrByPath(app, this, path_template);

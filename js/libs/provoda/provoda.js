@@ -109,6 +109,33 @@ pv = provoda = {
 	},
 	dom: {
 		template: PvTemplate
+	},
+	create: function(Constr, states, params, app, map_parent) {
+		var BehaviorContr = Constr || pv.Model;
+		var model = new BehaviorContr();
+		model.init((app || map_parent) && {
+			app: app,
+			map_parent: map_parent
+		}, null, null, null, states);
+
+		if (params) {
+			if (params.interfaces) {
+				spv.forEachKey(params.interfaces, function(intrface, interface_name, model) {
+					model.useInterface(interface_name, intrface);
+				}, model);
+			}
+
+			if (params.nestings) {
+				spv.forEachKey(params.nestings, function(nesting, nesting_name, model) {
+					model.updateNesting(nesting_name, nesting);
+				}, model);
+			}
+
+		}
+
+
+		model.initStates();
+		return model;
 	}
 };
 provoda.Controller = provoda.View;
@@ -120,25 +147,19 @@ provoda.Model.extendTo(provoda.HModel, {
 		if (!this.app){
 			this.app = null;
 		}
-		
 
 		this.sub_pages = null;
-		this.init_states = null;
 		if (!this.map_parent){
 			this.map_parent = null;
 		}
 		
 		this.pmd_switch = null;
-		
 
 		if (!this.skip_map_init){
 			if (this.sub_pa || this.subPager){
 				this.sub_pages = {};
 			}
 
-			if (!this.init_states){
-				this.init_states = {};
-			}
 			if (!opts || !opts.map_parent) {
 				if (!this.zero_map_level){
 					throw new Error('who is your map parent model?');
@@ -147,19 +168,7 @@ provoda.Model.extendTo(provoda.HModel, {
 		}
 		this._super.apply(this, arguments);
 	},
-	mapStates: function(states_map, donor, acceptor) {
-		if (acceptor && typeof acceptor == 'boolean'){
-			acceptor = this.init_states;
-		}
-		return spv.mapProps(states_map, donor, acceptor);
-	},
-	initStates: function(more_states) {
-		if (more_states) {
-			spv.cloneObj(this.init_states, more_states);
-		}
-		this.updateManyStates(this.init_states);
-		this.init_states = null;
-	},
+	
 	_hndOnPMDSwitch: function(e) {
 		this.checkPMDSwiched(e.value);
 	},

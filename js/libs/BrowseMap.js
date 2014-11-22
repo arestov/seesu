@@ -1,28 +1,37 @@
 define(['pv', 'spv'], function(pv, spv) {
 "use strict";
+
+function BrowseLevel() {}
+pv.Model.extendTo(BrowseLevel, {});
+
 var MapLevel = function(num, parent_levels, resident, map){
 	this.closed = null;
 	this.resident = null;
+	this.bwlev = null;
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
 	if (resident){
 		this.setResident(resident);
-		
 	}
 	return this;
 };
 
 spv.Class.extendTo(MapLevel, {
 	setResident: function(resident){
+		this.bwlev = pv.create(BrowseLevel, {
+			map_level_num: this.num
+		}, {
+			nestings: {
+				pioneer: resident
+			}
+		});
+
 		this.resident = resident;
 		//pv.update(resident, '');
 		resident.assignMapLev(this);
 		resident.trigger('mpl-attach');
 		this.map.addResident(this.resident);
-	},
-	getResident: function(){
-		return this.resident;
 	},
 	getParentLev: function(){
 		return this.parent_levels[0] || ((this.num > -1) && this.map.levels[-1].free);
@@ -34,6 +43,7 @@ spv.Class.extendTo(MapLevel, {
 	show: function(){
 		this.map.addChange({
 			type: 'move-view',
+			bwlev: this.bwlev,
 			target: this.resident.getMDReplacer(),
 			value: true
 		});
@@ -41,17 +51,20 @@ spv.Class.extendTo(MapLevel, {
 	hide: function(){
 		this.map.addChange({
 			type: 'zoom-out',
+			bwlev: this.bwlev,
 			target: this.resident.getMDReplacer()
 		});
 	},
 	die: function(){
 		this.map.addChange({
 			type: 'destroy',
+			bwlev: this.bwlev,
 			target: this.resident.getMDReplacer()
 		});
 		this.resident.trigger('mpl-detach');
 		this.map.removeResident(this.resident);
 		this.map = null;
+		this.bwlev = null;
 	},
 	_sliceTM: function(){ //private alike
 		var current_level = this.map.getCurrentLevel();
@@ -446,36 +459,7 @@ pv.Eventor.extendTo(BrowseMap, {
 		this.finishChangesGrouping('freezing');
 		return fresh_freeze;
 	},
-	checkLRCI: function(lev, Constructor) { //checkLevelResidentInstance
-		if (lev && lev.getResident() instanceof Constructor){
-			return lev.getResident();
-		}
-	},
-	findViewingResInstance: function(Constructor) {
-		var matched = [];
-		var freezed;
-		var free;
 
-		for (var i = 0; i < this.levels.length; i++) {
-			var cur = this.levels[i];
-			if (!freezed){
-				freezed = this.checkLRCI(cur.freezed, Constructor);
-
-			}
-			if (!free){
-				free = this.checkLRCI(cur.free, Constructor);
-			}
-		}
-		if (free){
-			matched.push(free);
-		}
-		if (freezed){
-			matched.push(freezed);
-		}
-		
-
-		return matched;
-	},
 	findDeepestActiveFreezed: function() {
 		var
 			target,
@@ -1098,10 +1082,10 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		if (!this.skip_map_init){
 			if (data) {
 				if (data['url_part']){
-					this.init_states['url_part'] = data['url_part'];
+					this.initState('url_part', data['url_part']);
 				}
 				if (data['nav_title']){
-					this.init_states['nav_title'] = data['nav_title'];
+					this.initState('nav_title', data['nav_title']);
 				}
 			}
 		}
