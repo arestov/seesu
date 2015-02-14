@@ -1,4 +1,4 @@
-define(['app_serv', 'js/libs/VkAuth', 'jquery'], function(app_serv, VkAuth, $) {
+define(['app_serv', 'js/libs/VkAuth', 'jquery', 'pv'], function(app_serv, VkAuth, $, pv) {
 "use strict";
 var app_env = app_serv.app_env;
 

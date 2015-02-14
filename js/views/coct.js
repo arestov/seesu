@@ -21,13 +21,10 @@ pv.View.extendTo(ListPreview, {
 		var _this = this;
 		var button_area = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		button_area.click(function() {
-			_this.clickAction.call(_this);
+			_this.requestPage();
 		});
 
 		this.addWayPoint(button_area);
-	},
-	clickAction: function() {
-		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
 		if (!this.tpl.ancs.listc) {
@@ -35,7 +32,7 @@ pv.View.extendTo(ListPreview, {
 		}
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
-	'stch-vmp_show': function(state) {
+	'stch-mp_show': function(state) {
 		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		node.toggleClass('button_selected', !!state);
 	},
@@ -76,18 +73,16 @@ ListPreview.extendTo(LiListsPreview, {
 
 var SPView = function() {};
 pv.View.extendTo(SPView, {
+	'compx-lvmp_show': [
+		['^vmp_show'],
+		function(vmp_show) {
+			return vmp_show;
+		}
+	],
 	'compx-mp_show_end': {
-		depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
-		fn: function(animation_started, animation_completed, vmp_show) {
-			if (!animation_started){
-				return vmp_show;
-			} else {
-				if (animation_started == animation_completed){
-					return vmp_show;
-				} else {
-					return false;
-				}
-			}
+		depends_on: ['^mp_show_end'],
+		fn: function(mp_show_end) {
+			return mp_show_end;
 		}
 	}
 });

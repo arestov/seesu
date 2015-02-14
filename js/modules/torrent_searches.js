@@ -1,6 +1,10 @@
 define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'jquery', 'js/common-libs/htmlencoding', 'js/models/SongFileModel'],
 function(spv, aReq, wrapRequest, hex_md5, $, htmlencoding, SongFileModel) {
 "use strict";
+var getSongFileModel = function(map_parent) {
+	map_parent.initSi(SongFileModel.FileInTorrent, null, {file:this});
+};
+
 var isohuntTorrentSearch = function(opts) {
 	//this.crossdomain = cross_domain_allowed;
 	this.mp3_search = opts.mp3_search;
@@ -83,9 +87,7 @@ isohuntTorrentSearch.prototype = {
 			media_type: 'torrent',
 			torrent_link: 'http://isohunt.com/download/' + sitem.guid,
 			query: query,
-			getSongFileModel: function(mo, player) {
-				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
-			}
+			getSongFileModel: getSongFileModel
 		});
 	}
 };
@@ -200,9 +202,7 @@ BtdiggTorrentSearch.prototype = {
 			query: query,
 			media_type: 'torrent',
 			models: {},
-			getSongFileModel: function(mo, player) {
-				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
-			}
+			getSongFileModel: getSongFileModel
 		});
 	}
 };
@@ -296,9 +296,7 @@ googleTorrentSearch.prototype = {
 			item.media_type = 'torrent';
 			item.title = item.titleNoFormatting = htmlencoding.decode(item.titleNoFormatting);
 			item.models = {};
-			item.getSongFileModel = function(mo, player) {
-				return (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
-			};
+			item.getSongFileModel = getSongFileModel;
 		}
 		
 	}

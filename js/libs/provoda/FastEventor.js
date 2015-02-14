@@ -2,22 +2,6 @@ define(['spv', 'hex_md5', './helpers', 'js/libs/morph_helpers'], function(spv, h
 'use strict';
 return function(main_calls_flow) {
 
-var BindControl = function(evcompanion, opts) {
-	this.evcompanion = evcompanion;
-	this.opts = opts;
-
-};
-BindControl.prototype = {
-	subscribe: function() {
-		this.unsubcribe();
-		this.evcompanion._pushCallbackToStack(this.opts);
-	},
-	unsubcribe: function() {
-		this.evcompanion.off(this.opts.namespace, this.opts.cb, this.opts);
-	}
-};
-
-
 var ev_na_cache = {};
 
 var clean_obj = {};
@@ -125,16 +109,16 @@ var FastEventor = function(context) {
 	this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
 };
 FastEventor.prototype = {
-	_pushCallbackToStack: function(opts) {
+	_pushCallbackToStack: function(short_name, opts) {
 		if (!this.subscribes) {
 			this.subscribes = {};
 		}
 
-		if (!this.subscribes[opts.short_name]){
-			this.subscribes[opts.short_name] = [];
+		if (!this.subscribes[short_name]){
+			this.subscribes[short_name] = [];
 		}
-		this.subscribes[opts.short_name].push(opts);
-		this.resetSubscribesCache(opts.short_name);
+		this.subscribes[short_name].push(opts);
+		this.resetSubscribesCache(short_name);
 	},
 	getPossibleRegfires: function(namespace) {
 		if (!this.reg_fires){
@@ -239,11 +223,10 @@ FastEventor.prototype = {
 		var subscr_opts = new EventSubscribingOpts(short_name, namespace, cb, once, context, immediately, callbacks_wrapper);
 
 		if (!(once && fired)){
-			this._pushCallbackToStack(subscr_opts);
+			this._pushCallbackToStack(short_name, subscr_opts);
 		}
 		if (easy_bind_control){
-			var bind_control = new BindControl(this, subscr_opts);
-			return bind_control;
+			return subscr_opts;
 		} else {
 			return this.sputnik;
 		}

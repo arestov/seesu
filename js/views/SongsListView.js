@@ -1,5 +1,5 @@
-define(['pv', 'jquery', './SongUI', './etc_views', ],
-function(pv, $, SongUI, etc_views) {
+define(['pv', 'jquery', './SongUI', './etc_views', './coct' ],
+function(pv, $, SongUI, etc_views, coct) {
 	"use strict";
 	var PlaylistSettingsRowView = function(){};
 	pv.View.extendTo(PlaylistSettingsRowView, {
@@ -30,7 +30,7 @@ function(pv, $, SongUI, etc_views) {
 	});
 
 	var SongsListViewBase = function() {};
-	pv.View.extendTo(SongsListViewBase, {
+	coct.SPView.extendTo(SongsListViewBase, {
 		'collch-songs-list': {
 			place: 'tpl.ancs.lc',
 			space: 'main'

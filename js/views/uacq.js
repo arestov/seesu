@@ -127,8 +127,7 @@ pv.View.extendTo(UserAcquaintancesListPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			//_this.RPCLegacy('requestPage');
-			_this.RPCLegacy('requestPage');
+			_this.requestPage();
 		});
 
 		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);

@@ -199,7 +199,7 @@ BrowseMap.Model.extendTo(VkUserCard, {
 					'selected_image.url': 'photo'
 				}
 			},
-			['vk_api', 'get', function() {
+			['vktapi', 'get', function() {
 				return ['users.get', {
 					user_ids: [this.state('userid')],
 					fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')

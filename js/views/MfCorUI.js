@@ -234,23 +234,27 @@ pv.View.extendTo(SongFileModelUI, {
 	tpl_events: {
 		'selectFile': function() {
 			if (!this.state('selected')){
-				this.RPCLegacy('trigger', 'want-to-play-sf');
+				this.RPCLegacy('requestPlay', pv.$v.getBwlevId(this));
+				// this.RPCLegacy('trigger', 'want-to-play-sf');
 			}
 		},
 		'switchPlay': function(e) {
-			var _this = this;
+			// var _this = this;
 			e.stopPropagation();
-			if (_this.state('selected')){
+			
+			this.RPCLegacy('switchPlay', pv.$v.getBwlevId(this));
+			// this.
+			// if (_this.state('selected')){
 
-				if (_this.state('play') == 'play'){
-					_this.RPCLegacy('pause');
-				} else {
-					_this.RPCLegacy('trigger', 'want-to-play-sf');
-					//_this.RPCLegacy('play');
-				}
-			} else {
-				_this.RPCLegacy('trigger', 'want-to-play-sf');
-			}
+			// 	if (_this.state('play') == 'play'){
+			// 		_this.RPCLegacy('pause');
+			// 	} else {
+			// 		_this.RPCLegacy('trigger', 'want-to-play-sf');
+			// 		//_this.RPCLegacy('play');
+			// 	}
+			// } else {
+			// 	_this.RPCLegacy('trigger', 'want-to-play-sf');
+			// }
 		}
 	}
 });
@@ -389,7 +393,7 @@ pv.View.extendTo(MfCorUI, {
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
 	},
 	'compx-vis_is_visible':{
-		'depends_on': ['^mp_show_end'],
+		'depends_on': ['^^^mp_show_end'],
 		fn: function(mp_show_end) {
 			return !!mp_show_end;
 		}

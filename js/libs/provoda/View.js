@@ -78,6 +78,7 @@ StatesEmitter.extendTo(View, {
 		this.dead = null;
 		this.pv_view_node = null;
 		this.dclrs_fpckgs = this.dclrs_fpckgs;
+		// this.dclrs_selectors = null;
 		this.base_skeleton = null;
 
 		this.nesting_space = view_otps.nesting_space;
@@ -86,8 +87,6 @@ StatesEmitter.extendTo(View, {
 		if (this.base_tree_list) {
 			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
 		}
-
-		
 
 		this.view_id = views_counter++;
 		this.parent_view = null;
@@ -121,6 +120,7 @@ StatesEmitter.extendTo(View, {
 		this.proxies_space = view_otps.proxies_space || null;
 		
 		this.way_points = [];
+
 		this.dom_related_props = null;
 		if (this.dom_rp){
 			this.dom_related_props = [];
@@ -130,25 +130,62 @@ StatesEmitter.extendTo(View, {
 		spv.cloneObj(this._lbr.undetailed_states, this.mpx.vstates);
 		spv.cloneObj(this._lbr.undetailed_children_models, this.mpx.nestings);
 
-
 		if (this.base_tree_expand_states) {
 			for (var i = 0; i < this.base_tree_expand_states.length; i++) {
 
 				this.on( hp.getSTEVNameDefault(this.base_tree_expand_states[i]) , hndExpandViewTree);
 			}
 		}
-
-		
 		
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 		return this;
+	},
+	handleTemplateRPC: function(method) {
+		if (arguments.length === 1) {
+			var bwlev_view = $v.getBwlevView(this);
+			var bwlev_id = bwlev_view && bwlev_view.mpx._provoda_id;
+			this.RPCLegacy(method, bwlev_id);
+		} else {
+			this.RPCLegacy.apply(this, arguments);
+		}		
+	},
+	requestPage: function() {
+		var bwlev_view = $v.getBwlevView(this);
 
+		var md_id = this.mpx._provoda_id;
+		bwlev_view.RPCLegacy('requestPage', md_id);
+	},
+	tpl_events: {
+		requestPage: function() {
+			this.requestPage();
+		},
+		followTo: function() {
+			var bwlev_view = $v.getBwlevView(this);
+
+			var md_id = this.mpx._provoda_id;
+			bwlev_view.RPCLegacy('followTo', md_id);
+		}
+	},
+	onExtend: function(props, original) {
+		this._super(props);
+		if (props.tpl_events) {
+			this.tpl_events = {};
+			spv.cloneObj(this.tpl_events, original.tpl_events);
+			spv.cloneObj(this.tpl_events, props.tpl_events);
+		}
+
+		if (props.tpl_r_events) {
+			this.tpl_r_events = {};
+			spv.cloneObj(this.tpl_r_events, original.tpl_r_events);
+			spv.cloneObj(this.tpl_r_events, props.tpl_r_events);
+		}
+		
 
 	},
 	'stch-map_slice_view_sources': function(state) {
 		if (state) {
-			if (this.parent_view == this.root_view && this.nesting_name == 'map_slice') {
+			if (this.parent_view.parent_view == this.root_view && this.parent_view.nesting_name == 'map_slice') {
 				var arr = [];
 				if (state[0]) {
 					arr.push(state[0]);
@@ -1043,126 +1080,137 @@ StatesEmitter.extendTo(View, {
 	},
 	pvserv: {
 		simple: {
-			getView: function(cur_md, space, preffered) {
-				if (this.pv_view.node){
-					if (!preffered || preffered.indexOf(cur_md) != -1){
-						return this.getFreeView(cur_md, this.pv_view.node);
-					}
-				}
-			},
-			getFreeView: function(cur_md, node_to_use) {
-				var pv_view = this.pv_view;
-				var view = this.view.getFreeChildView({
-					by_model_name: false,
-					nesting_name: this.nesname,
-					nesting_space: this.space_name,
-					sampleController: View
-				}, cur_md);
-
-				if (view){
-					if (!node_to_use){
-						//node_to_use = pv_view.original_node.cloneNode(true);
-						node_to_use = pv_view.sampler.getClone();
-					}
-					view.pv_view_node = $(node_to_use);
-					//var model_name = mmm.model_name;
-
-					pv_view.node = null;
-					pv_view.views.push(view.view_id);
-
-					pv_view.last_node = node_to_use;
-					return view;
-				}
-			},
-			appendDirectly: function(fragt) {
-				$(this.pv_view.comment_anchor).after(fragt);
-			}
+			
 		},
 		bymodel: {
-			getFreeView: function(cur_md, node_to_use) {
-				var pv_view = this.pv_v_data.index[cur_md.model_name];
-				if (!pv_view){
-					return;
-				}
-
-				var view = this.view.getFreeChildView({
-					by_model_name: true,
-					nesting_name: this.nesname,
-					nesting_space: this.space_name,
-					sampleController: View
-				}, cur_md);
-
-				if (view){
-					if (!node_to_use){
-						node_to_use = pv_view.sampler.getClone();
-						//node_to_use = pv_view.original_node.cloneNode(true);
-					}
-					view.pv_view_node = $(node_to_use);
-					//var model_name = mmm.model_name;
-
-					pv_view.node = null;
-					pv_view.views.push(view.view_id);
-
-					pv_view.last_node = node_to_use;
-					return view;
-				}
-			},
-			appendDirectly: function(fragt) {
-				$(this.pv_v_data.comment_anchor).after(fragt);
-			}
-		}
-	},
-	checkCollchItemAgainstPvViewByModelName: function(nesname, real_array, space_name, pv_v_data) {
-		var filtered = [];
-
-		for (var i = 0; i < real_array.length; i++) {
-			var cur = real_array[i];
-			if (cur.model_name && pv_v_data.index[cur.model_name]){
-				filtered.push(cur);
-			}
-		}
-
-		//var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
-
-		this.appendCollection(space_name, {
-
-			view: this,
-			nesname: nesname,
-			pv_v_data: pv_v_data,
-			space_name: space_name,
-			getFreeView: this.pvserv.bymodel.getFreeView,
-			appendDirectly: this.pvserv.bymodel.appendDirectly
-		}, false, nesname, filtered);
-	},
-
-	checkCollchItemAgainstPvView: function(nesname, real_array, space_name, pv_view) {
-	//	if (!pv_view.original_node){
-	//		pv_view.original_node = pv_view.node.cloneNode(true);
 			
-	//	}
-		if (!pv_view.comment_anchor){
-			pv_view.comment_anchor = document.createComment('collch anchor for: ' + nesname + ", " + space_name);
-			$(pv_view.node).before(pv_view.comment_anchor);
 		}
-
-		if (pv_view.node){
-			$(pv_view.node).detach();
-			pv_view.node = null;
-		}
-		
-		var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
-
-		this.appendCollection(space_name, {
-			view: this,
-			pv_view: pv_view,
-			nesname: nesname,
-			space_name: space_name,
-			getView: pv_view.node && this.pvserv.simple.getView,
-			appendDirectly: this.pvserv.simple.appendDirectly,
-			getFreeView: this.pvserv.simple.getFreeView
-		}, false, nesname, filtered);
-
 	},
+	checkCollchItemAgainstPvViewByModelName: (function(){
+		var getFreeView = function(cur_md, node_to_use) {
+			var pv_view = this.pv_v_data.index[cur_md.model_name];
+			if (!pv_view){
+				return;
+			}
+
+			var view = this.view.getFreeChildView({
+				by_model_name: true,
+				nesting_name: this.nesname,
+				nesting_space: this.space_name,
+				sampleController: View
+			}, cur_md);
+
+			if (view){
+				if (!node_to_use){
+					node_to_use = pv_view.sampler.getClone();
+					//node_to_use = pv_view.original_node.cloneNode(true);
+				}
+				view.pv_view_node = $(node_to_use);
+				//var model_name = mmm.model_name;
+
+				pv_view.node = null;
+				pv_view.views.push(view.view_id);
+
+				pv_view.last_node = node_to_use;
+				return view;
+			}
+		};
+
+		var appendDirectly = function(fragt) {
+			$(this.pv_v_data.comment_anchor).after(fragt);
+		};
+
+		return function(nesname, real_array, space_name, pv_v_data) {
+			var filtered = [];
+
+			for (var i = 0; i < real_array.length; i++) {
+				var cur = real_array[i];
+				if (cur.model_name && pv_v_data.index[cur.model_name]){
+					filtered.push(cur);
+				}
+			}
+
+			//var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
+
+			this.appendCollection(space_name, {
+
+				view: this,
+				nesname: nesname,
+				pv_v_data: pv_v_data,
+				space_name: space_name,
+				getFreeView: getFreeView,
+				appendDirectly: appendDirectly
+			}, false, nesname, filtered);
+		};
+	})(),
+
+	checkCollchItemAgainstPvView:(function() {
+		var getView = function(cur_md, space, preffered) {
+			if (this.pv_view.node){
+				if (!preffered || preffered.indexOf(cur_md) != -1){
+					return this.getFreeView(cur_md, this.pv_view.node);
+				}
+			}
+		};
+
+		var getFreeView = function(cur_md, node_to_use) {
+			var pv_view = this.pv_view;
+			var view = this.view.getFreeChildView({
+				by_model_name: false,
+				nesting_name: this.nesname,
+				nesting_space: this.space_name,
+				sampleController: View
+			}, cur_md);
+
+			if (view){
+				if (!node_to_use){
+					//node_to_use = pv_view.original_node.cloneNode(true);
+					node_to_use = pv_view.sampler.getClone();
+				}
+				view.pv_view_node = $(node_to_use);
+				//var model_name = mmm.model_name;
+
+				pv_view.node = null;
+				pv_view.views.push(view.view_id);
+
+				pv_view.last_node = node_to_use;
+				return view;
+			}
+		};
+
+		var appendDirectly = function(fragt) {
+			$(this.pv_view.comment_anchor).after(fragt);
+		};
+
+		return function(nesname, real_array, space_name, pv_view) {
+		//	if (!pv_view.original_node){
+		//		pv_view.original_node = pv_view.node.cloneNode(true);
+				
+		//	}
+			if (!pv_view.comment_anchor){
+				pv_view.comment_anchor = document.createComment('collch anchor for: ' + nesname + ", " + space_name);
+				$(pv_view.node).before(pv_view.comment_anchor);
+			}
+
+			if (pv_view.node){
+				$(pv_view.node).detach();
+				pv_view.node = null;
+			}
+			
+			var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
+
+			this.appendCollection(space_name, {
+				view: this,
+				pv_view: pv_view,
+				nesname: nesname,
+				space_name: space_name,
+				getView: pv_view.node && getView,
+				appendDirectly: appendDirectly,
+				getFreeView: getFreeView
+			}, false, nesname, filtered);
+
+		};
+	})(),
 	checkCollectionChange: function(nesname) {
 		if (!this.dclrs_fpckgs){
 			throw new Error('there is no declarations');
@@ -1243,9 +1291,38 @@ StatesEmitter.extendTo(View, {
 		}
 
 
-		var collch = this.dclrs_fpckgs && this.dclrs_fpckgs.hasOwnProperty(nesname) && this.dclrs_fpckgs[nesname];//collectionChanger
-		if (collch){
+		var collch = this.dclrs_fpckgs && this.dclrs_fpckgs.hasOwnProperty(nesname) && this.dclrs_fpckgs[nesname];
+		if (typeof collch == 'function') {
 			this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
+		} else {
+			if (this.dclrs_selectors && this.dclrs_selectors.hasOwnProperty(nesname)) {
+				if (Array.isArray(array)) {
+					for (var i = 0; i < array.length; i++) {
+						var cur = array[i];
+						var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
+							nesname, cur.model_name, this.nesting_space);
+
+						if (!dclr) {
+							dclr = collch;
+						}
+
+						throw new Error('WHAT TO DO WITH old_value?');
+						this.callCollectionChangeDeclaration(dclr, nesname, cur, old_value, removed);
+					}
+				} else {
+					var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
+							nesname, array.model_name, this.nesting_space);
+
+					if (!dclr) {
+						dclr = collch;
+					}
+					this.callCollectionChangeDeclaration(dclr, nesname, array, old_value, removed);
+				}
+			} else {
+				if (collch) {
+					this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
+				}
+			}
 		}
 
 		this.checkDeadChildren();
@@ -1292,7 +1369,116 @@ StatesEmitter.extendTo(View, {
 		}
 
 	},
+	collectSelectorsOfCollchs: (function(){
+		var parseCollchSel = spv.memorize(function(str) {
+			var parts = str.split('/');
+			var model_name = parts[1];
+			var parent_space_name = parts[2];
+			var prio = 0;
+			if (model_name) {
+				prio += 2;
+			}
+			if (parent_space_name) {
+				prio += 1;
+			}
+
+			var key = '';
+			if (model_name) {
+				key += model_name;
+			}
+			if (parent_space_name) {
+				key += '/' + parent_space_name;
+			}
+
+			return {
+				nesting_name : parts[0],
+				model_name: parts[1] || null,
+				parent_space_name: parts[2] || null,
+				prio: prio,
+				key: key
+			};
+		});
+
+		var getUnprefixed = spv.getDeprefixFunc( 'sel-coll-' );
+		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+		return function(props){
+			var need_recalc = hasPrefixedProps( props );
+			if (!need_recalc){
+				return;
+			}
+
+			var prop;
+
+			this.dclrs_selectors = {};
+
+			for (prop in this){
+				if (getUnprefixed( prop )){
+					var collch = this[ prop ];
+					var selector_string = getUnprefixed( prop );
+					//this.dclrs_selectors[selector_string] = collch;
+					var selector = parseCollchSel(selector_string);
+					if (!this.dclrs_selectors.hasOwnProperty(selector.nesting_name)) {
+						this.dclrs_selectors[selector.nesting_name] = {};
+					}
+					this.dclrs_selectors[selector.nesting_name][selector.key] = collch;
+
+					// this.dclrs_selectors[selector.nesting_name].push({
+					// 	selector: selector,
+					// 	collch: collch
+					// });
+
+
+				}
+			}
+			return true;
+		};
+	})(),
 	collectCollectionChangeDeclarations: (function() {
+		var solvingOf = function(declr) {
+			var by_model_name = declr.by_model_name;
+			var space = declr.space != 'main' && declr.space;
+			var is_wrapper_parent = declr.is_wrapper_parent;
+			var needs_expand_state = declr.needs_expand_state;
+			if (by_model_name || space || is_wrapper_parent || needs_expand_state) {
+				return {
+					by_model_name: by_model_name,
+					space: space,
+					is_wrapper_parent: is_wrapper_parent,
+					needs_expand_state: needs_expand_state
+				};
+			}
+		};
+		var parseCollectionChangeDeclaration = function(collch) {
+			if (typeof collch == 'string'){
+				collch = {
+					place: collch
+				};
+			}
+			var expand_state = collch.needs_expand_state;
+			if (expand_state && typeof expand_state != 'string') {
+				expand_state = 'can_expand';
+			}
+
+			var is_wrapper_parent = collch.is_wrapper_parent &&  collch.is_wrapper_parent.match(/^\^+/gi);
+
+			var declr = {
+				place: collch.place,
+				by_model_name: collch.by_model_name,
+				space: collch.space || 'main',
+				strict: collch.strict,
+				is_wrapper_parent: is_wrapper_parent && is_wrapper_parent[0].length,
+				opts: collch.opts,
+				needs_expand_state: expand_state || null,
+				not_request: collch.not_request,
+				limit: collch.limit,
+				solving: null
+			};
+			var solving = solvingOf(declr);
+			if (solving) {
+				declr.solving = solving;
+			}
+			return declr;
+		};
 		var getUnprefixed = spv.getDeprefixFunc(  'collch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 		return function(props) {
@@ -1313,26 +1499,10 @@ StatesEmitter.extendTo(View, {
 					if (typeof collch == 'function'){
 						this.dclrs_fpckgs[ nesting_name ] = collch;
 					} else {
-						var not_request = false, collchs = false;
-						var collchs_limit = false;
-						if (typeof collch == 'object'){
-							not_request = collch.not_request;
-							collchs = collch.spaces;
-							collchs_limit = collch.limit;
+						if (Array.isArray(collch)) {
+							throw new Error('do not support arrays anymore');
 						}
-
-						collchs = collchs || spv.toRealArray(collch);
-						var declarations = new Array(collchs.length);
-						for (var i = 0; i < collchs.length; i++) {
-							declarations[i] = this.parseCollectionChangeDeclaration(collchs[i]);
-						}
-
-						this.dclrs_fpckgs[ nesting_name ] = {
-							declarations: declarations,
-							not_request: not_request,
-							limit: collchs_limit
-
-						};
+						this.dclrs_fpckgs[ nesting_name ] = parseCollectionChangeDeclaration(collch);
 					}
 
 				}
@@ -1353,49 +1523,26 @@ StatesEmitter.extendTo(View, {
 				array_limit = real_array.length;
 			}
 			var min_array = real_array.slice(0, array_limit);
-			for (var jj = 0; jj < dclr_fpckg.declarations.length; jj++) {
-				var declr = dclr_fpckg.declarations[jj];
-				if (typeof declr.place == 'string'){
-					var place = spv.getTargetField(this, declr.place);
-					if (!place){
-						throw new Error('wrong place declaration: "' + declr.place + '"');
-					}
+			var declr = dclr_fpckg;
+			if (typeof declr.place == 'string'){
+				var place = spv.getTargetField(this, declr.place);
+				if (!place){
+					throw new Error('wrong place declaration: "' + declr.place + '"');
 				}
-				var opts = declr.opts;
-				this.removeViewsByMds(removed, nesname, declr.space);
-				if (typeof declr.place == 'function' || !declr.place){
-					this.simpleAppendNestingViews(declr, opts, nesname, min_array);
-					if (!dclr_fpckg.not_request){
-						this.requestAll();
-					}
-				} else {
-					this.appendNestingViews(declr, opts, nesname, min_array, dclr_fpckg.not_request);
+			}
+			var opts = declr.opts;
+			this.removeViewsByMds(removed, nesname, declr.space);
+			if (typeof declr.place == 'function' || !declr.place){
+				this.simpleAppendNestingViews(declr, opts, nesname, min_array);
+				if (!dclr_fpckg.not_request){
+					this.requestAll();
 				}
+			} else {
+				this.appendNestingViews(declr, opts, nesname, min_array, dclr_fpckg.not_request);
 			}
 		}
 	},
-	parseCollectionChangeDeclaration: function(collch) {
-		if (typeof collch == 'string'){
-			collch = {
-				place: collch
-			};
-		}
-		var expand_state = collch.needs_expand_state;
-		if (expand_state && typeof expand_state != 'string') {
-			expand_state = 'can_expand';
-		}
 
-		var is_wrapper_parent = collch.is_wrapper_parent &&  collch.is_wrapper_parent.match(/^\^+/gi);
-		return {
-			place: collch.place,
-			by_model_name: collch.by_model_name,
-			space: collch.space || 'main',
-			strict: collch.strict,
-			is_wrapper_parent: is_wrapper_parent && is_wrapper_parent[0].length,
-			opts: collch.opts,
-			needs_expand_state: expand_state || null
-		};
-	},
 	simpleAppendNestingViews: function(declr, opts, nesname, array) {
 		for (var bb = 0; bb < array.length; bb++) {
 			var cur = array[bb];
@@ -1477,6 +1624,14 @@ StatesEmitter.extendTo(View, {
 		} else if (typeof declr.place == 'function'){
 			//place = spv.getTargetField(this, declr.place);
 		}
+
+		array = array && array.map(function(cur) {
+			for (var i = 0; i < declr.is_wrapper_parent; i++) {
+				cur = cur.getParentMapModel();
+			}
+			return cur;
+		});
+
 		this.appendCollection(declr.space, {
 			view: this,
 			place: place,

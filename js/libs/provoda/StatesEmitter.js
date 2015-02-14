@@ -300,6 +300,9 @@ add({
 		if (this.collectCollectionChangeDeclarations){
 			collches_modified = this.collectCollectionChangeDeclarations(props);
 		}
+		if (this.collectSelectorsOfCollchs) {
+			this.collectSelectorsOfCollchs(props);
+		}
 		this.collectStatesBinders(props);
 		this.collectCompxs(props);
 		this.collectRegFires(props);
@@ -442,7 +445,7 @@ add({
 
 		var getUnprefixed = spv.getDeprefixFunc('$ondemand-');
 		return function() {
-			var states_list = [], i, states_index = {};
+			var states_list = [], states_index = {};
 			var dclrs_expandable = {};
 
 			for ( var nesting_name in this.dclrs_fpckgs ) {
@@ -450,22 +453,21 @@ add({
 				if ( getUnprefixed(nesting_name) ) {
 					var cur = this.dclrs_fpckgs[ nesting_name ];
 					var added = false;
-					for ( i = 0; i < cur.declarations.length; i++ ) {
-						if (cur.declarations[i].needs_expand_state) {
-							var state_name = cur.declarations[i].needs_expand_state;
-							if (!states_index[state_name]) {
-								states_index[state_name] = true;
-								states_list.push( state_name );
-							}
 
-							if (!added) {
-								if ( !dclrs_expandable[state_name] ) {
-									dclrs_expandable[state_name] = [];
-								}
-								dclrs_expandable[state_name].push( getUnprefixed(nesting_name) );
-							}
-							 
+					if (cur.needs_expand_state) {
+						var state_name = cur.needs_expand_state;
+						if (!states_index[state_name]) {
+							states_index[state_name] = true;
+							states_list.push( state_name );
 						}
+
+						if (!added) {
+							if ( !dclrs_expandable[state_name] ) {
+								dclrs_expandable[state_name] = [];
+							}
+							dclrs_expandable[state_name].push( getUnprefixed(nesting_name) );
+						}
+						 
 					}
 				}
 			}
@@ -621,6 +623,10 @@ add({
 		var getUnprefixed = spv.getDeprefixFunc( 'compx-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
+		var identical = function(state) {
+			return state;
+		};
+
 		var collectCompxs1part = function(compx_check) {
 			for (var comlx_name in this){
 				var name = getUnprefixed(comlx_name);
@@ -635,6 +641,9 @@ add({
 						};
 					} else {
 						this[comlx_name].name = name;
+					}
+					if (!cur.fn) {
+						cur.fn = identical;
 					}
 					compx_check[name] = cur;
 					this.full_comlxs_list.push(cur);
@@ -656,8 +665,10 @@ add({
 					} else {
 						this.complex_states[comlx_name].name = comlx_name;
 					}
+					if (!cur.fn) {
+						cur.fn = identical;
+					}
 					compx_check[comlx_name] = cur;
-					
 					this.full_comlxs_list.push(cur);
 				}
 			}

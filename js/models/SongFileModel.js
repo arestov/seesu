@@ -1,34 +1,14 @@
-define(['pv', 'app_serv', 'spv'], function(pv, app_serv, spv){
+define(['pv', 'app_serv', 'spv', './PlayRequest'], function(pv, app_serv, spv, PlayRequest){
 "use strict";
 var app_env = app_serv.app_env;
 
-
-
-var MusicFile = function() {};
-pv.Model.extendTo(MusicFile, {
-	init: function(opts, data) {
-		this._super();
-		this.updateManyStates(data);
-		models: {}
-	},
-	getSongFileModel: function(mo, player){
-		if (!this.models[mo.uid]) {
-			this.models[mo.uid] = new SongFileModel();
-			this.models[mo.uid].init({file: this, mo: mo}).setPlayer(player);
-		}
-		return this.models[mo.uid];
-	}
-});
-
-var FileInTorrent = function(sr_item){
-	this.sr_item = sr_item;
-	this.init();
-};
+var FileInTorrent = function(){};
 
 pv.Model.extendTo(FileInTorrent, {
 	model_name: 'file-torrent',
-	init: function() {
-		this._super();
+	init: function(opts, states, params) {
+		this._super.apply(this, arguments);
+		this.sr_item = params.file;
 		this.updateManyStates({
 			full_title: this.sr_item.title || app_serv.getHTMLText(this.sr_item.HTMLTitle),
 			torrent_link: this.sr_item.torrent_link
@@ -58,13 +38,13 @@ pv.Model.extendTo(FileInTorrent, {
 	var SongFileModel = function(){};
 	pv.Model.extendTo(SongFileModel, {
 		model_name: 'file-http',
-		init: function(opts) {
-			this._super();
-			if (opts.mo){
-				this.mo = opts.mo;
-			}
-			if (opts.file){
-				var file = opts.file;
+		init: function(opts, states, params) {
+			this._super.apply(this, arguments);
+
+			this.mo = this.map_parent.map_parent;
+
+			if (params.file){
+				var file = params.file;
 				for (var a in file){
 					if (typeof file[a] != 'function' && typeof file[a] != 'object'){
 						this[a] = file[a];
@@ -75,11 +55,48 @@ pv.Model.extendTo(FileInTorrent, {
 
 
 			this.uid = 'song-file-' + counter++;
+
 			this.createTextStates();
-			if (opts.player) {
-				this.setPlayer(opts.player);
-			}
+
+			this.setPlayer(this.app.p);
+
 			return this;
+		},
+		requestPlay: function(bwlev_id) {
+			var bwlev = pv.getModelById(bwlev_id);
+
+			var play_request = pv.create(PlayRequest, {
+				wanted_file: this
+			}, {
+				nestings: {
+					bwlev: bwlev
+				}
+			}, bwlev, this.app);
+
+			if (this.player) {
+			 	this.player.requestPlay(play_request);
+			}
+
+			this.map_parent.playSelectedByUser(this);
+
+			// this.makeSongPlayalbe(true);
+		},
+		switchPlay: function(bwlev_id) {
+			// 
+
+			if (this.state('selected')){
+
+				if (this.state('play') == 'play'){
+					this.pause();
+				} else {
+					this.requestPlay(bwlev_id);
+					// this.RPCLegacy('trigger', 'want-to-play-sf');
+					//_this.RPCLegacy('play');
+				}
+			} else {
+				this.requestPlay(bwlev_id);
+				// this.RPCLegacy('trigger', 'want-to-play-sf');
+			}
 		},
 		createTextStates: function() {
 			var states = {};

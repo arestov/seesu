@@ -98,6 +98,12 @@ pv = provoda = {
 			mpx.updateState(state_name, state_value, opts);
 		}
 	},
+	state: function(item, state_name) {
+		if (item._lbr && item._lbr.undetailed_states) {
+			return item._lbr.undetailed_states[state_name];
+		}
+		return item.states[state_name];
+	},
 	update: function(md, state_name, state_value, opts) {
 		md.updateState(state_name, state_value, opts);
 	},
@@ -110,11 +116,11 @@ pv = provoda = {
 	dom: {
 		template: PvTemplate
 	},
-	create: function(Constr, states, params, app, map_parent) {
+	create: function(Constr, states, params, map_parent, app) {
 		var BehaviorContr = Constr || pv.Model;
 		var model = new BehaviorContr();
 		model.init((app || map_parent) && {
-			app: app,
+			app: app || map_parent.app,
 			map_parent: map_parent
 		}, null, null, null, states);
 
@@ -166,6 +172,19 @@ provoda.Model.extendTo(provoda.HModel, {
 				}
 			}
 		}
+
+		var map_parent = this.map_parent || opts.map_parent;
+
+		this.map_level_num = null;
+
+		if (this.zero_map_level) {
+			this.map_level_num = -1;
+		} else {
+			if (map_parent) {
+				this.map_level_num = map_parent.map_level_num + 1;
+			}
+		}
+
 		this._super.apply(this, arguments);
 	},
 	

@@ -69,11 +69,11 @@ var MfComplect = function(opts, params) {
 	this.moplas_list = null;
 	this.source_name = params.source_name;
 
-	var _this = this;
-	this.selectMf = null;
-	this.selectMf = function() {
-		_this.mf_cor.playSelectedByUser(this);
-	};
+	// var _this = this;
+	// this.selectMf = null;
+	// this.selectMf = function() {
+	// 	_this.mf_cor.playSelectedByUser(this);
+	// };
 	this.search_source = null;
 
 
@@ -81,8 +81,8 @@ var MfComplect = function(opts, params) {
 	if (this.start_file){
 		this.moplas_list = [];
 		sf =
-			this.mf_cor.getSFM(this.start_file)
-			.on('want-to-play-sf', this.selectMf);
+			this.mf_cor.getSFM(this.start_file);
+			//.on('want-to-play-sf', this.selectMf);
 		this.moplas_list.push(sf);
 		pv.updateNesting(this, 'moplas_list', this.moplas_list);
 		pv.update(this, 'has_start_file', true);
@@ -102,8 +102,6 @@ var MfComplect = function(opts, params) {
 			pv.updateNesting(this, 'moplas_list_start', part_start);
 			pv.updateNesting(this, 'moplas_list_end', part_end);
 		}
-
-		
 	});
 	
 };
@@ -123,8 +121,8 @@ pv.Model.extendTo(MfComplect, {
 		for (var i = 0; i < files_list.length; i++) {
 		
 			sf =
-				this.mf_cor.getSFM(files_list[i])
-				.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
+				this.mf_cor.getSFM(files_list[i]);
+			//	.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
 			pv.update(sf, 'overstock', i + 1 > this.overstock_limit);
 			moplas_list.push(sf);
 			
@@ -293,7 +291,7 @@ LoadableList.extendTo(MfCor, {
 			file.file_id = ++file_id_counter;
 		}
 		if ( !this.sfs_models[ file.file_id ] ) {
-			this.sfs_models[ file.file_id ] = Mp3Search.getSFM(file, this.mo, this.mo.player);
+			this.sfs_models[ file.file_id ] = Mp3Search.getSFM(this, file);
 		}
 		return this.sfs_models[ file.file_id ];
 		

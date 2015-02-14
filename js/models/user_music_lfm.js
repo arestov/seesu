@@ -855,9 +855,13 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			return big_desc.join(', ');
 		}
 	],
-	showOnMap: function() {
+	getRelativeModel: function() {
 		var md = this.app.getLastfmUser(this.state('userid'));
 		md.setProfileData(this.rawdata);
+		return md;
+	},
+	showOnMap: function() {
+		var md = this.getRelativeModel();
 		md.showOnMap();
 		//this.app.showLastfmUser(this.state('userid'));
 		//this.app.

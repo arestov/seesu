@@ -1,4 +1,4 @@
-define(['./AppModelBase', 'spv', 'app_serv', './SongsList', 'pv'], function(AppModelBase, spv, app_serv, SongsList, pv) {
+define(['./AppModelBase', 'spv', 'app_serv', './SongsList', 'pv', '../libs/BrowseMap'], function(AppModelBase, spv, app_serv, SongsList, pv, BrowseMap) {
 "use strict";
 
 var localize = app_serv.localize;
@@ -107,7 +107,7 @@ AppModelBase.extendTo(AppModel, {
 		return pl;
 	},
 	keyNav: function(key_name) {
-		var md = this.map.getCurMapL().resident;
+		var md = this.map.getCurMapL().getNesting('pioneer');
 		if (md.key_name_nav){
 			var func = md.key_name_nav[key_name];
 			func.call(md);
@@ -136,15 +136,23 @@ AppModelBase.extendTo(AppModel, {
 			return pl;
 		},
 		showNowPlaying: function(no_stat) {
-			this.p.c_song.showOnMap();
+			var resolved = this.p.resolved;
+			var bwlev = resolved.getNesting('bwlev');
+			var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, this.p.c_song.map_parent);
+			pl_bwlev.followTo(this.p.c_song._provoda_id);
+			// this.p.c_song.showOnMap();
 			if (!no_stat){
 				this.trackEvent('Navigation', 'now playing');
 			}
 		},
 		showResultsPage: function(query){
-			var lev;
+			var target;
 			var cur_el = this.search_el;
-			if (!cur_el || !cur_el.state('mp_has_focus') || !cur_el.lev.isOpened()){
+			// если нет элемента или элемент не отображается
+			// если элемента нет или в элемент детализировали
+
+			var need_new = !cur_el || !cur_el.state('mp_has_focus') || cur_el.state('mp_detailed');
+			if (need_new){
 				var md = this.createSearchPage();
 				var _this = this;
 				md.on('state_change-mp_show', function(e) {
@@ -154,11 +162,11 @@ AppModelBase.extendTo(AppModel, {
 				}, {immediately: true});
 
 				md.showOnMap();
-				lev = md.lev;
+				target = md;
 			} else {
-				lev = this.search_el.lev;
+				target = this.search_el;
 			}
-			var invstg = lev.resident;
+			var invstg = target;//.getNesting('pioneer');
 			invstg.changeQuery(query);
 			return invstg;
 

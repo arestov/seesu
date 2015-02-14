@@ -18,7 +18,7 @@ pv.View.extendTo( baseNavUI, {
 	tpl_events:{
 		zoomOut: function() {
 			if (this.state('nav_clickable')){
-				this.RPCLegacy('zoomOut');
+				this.parent_view.RPCLegacy('zoomOut');
 			}
 		}
 	}

@@ -944,7 +944,7 @@ LoadableList.extendTo(ArtistsList, {
 			var pl = this.getSPI('~', true);
 			this.ran_playlist = pl;
 		}
-		return this;
+		return this.ran_playlist;
 	},
 	sub_pa: {
 		'~': {
@@ -954,9 +954,10 @@ LoadableList.extendTo(ArtistsList, {
 			}
 		}
 	},
-	requestRandomPlaylist: function() {
-		this.createRPlist();
-		this.ran_playlist.showOnMap();
+	requestRandomPlaylist: function(bwlev_id) {
+		var bwlev = pv.getModelById(bwlev_id);
+		bwlev.followTo(this.createRPlist()._provoda_id);
+		// .showOnMap();
 	},
 	'nest_rqc-artists_list': ArtistInArtl,
 	makeDataItem: function(obj) {

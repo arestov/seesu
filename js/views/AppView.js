@@ -10,7 +10,6 @@ lul, SongcardPage, AppBaseView, WPBox) {
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 
-
 var AppExposedView = function() {};
 AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
 	location_name: 'exposed_root_view',
@@ -107,39 +106,91 @@ var map_slice_by_model = {
 };
 
 
-var AppView = function(){};
-AppBaseView.WebComplexTreesView.extendTo(AppView, {
+function BrowseLevView() {}
+pv.View.extendTo(BrowseLevView, {
 	children_views_by_mn: {
-		map_slice: map_slice_by_model,
-		navigation: {
+		pioneer: map_slice_by_model
+	},
+	base_tree: {
+		sample_name: 'browse_lev_con'
+	},
+	'collch-$spec_common-pioneer': {
+		by_model_name: true,
+		place: 'c'
+	},
+	'collch-$spec_det-pioneer': {
+		space: 'all-sufficient-details',
+		by_model_name: true,
+		place: 'c'
+	},
+
+	'collch-$spec_noplace-pioneer': {
+		by_model_name: true
+	},
+	// 'collch-$spec_wrapped-pioneer': {
+	// 	is_wrapper_parent: '^',
+	// 	space: 'all-sufficient-details',
+	// 	by_model_name: true,
+	// 	place: 'c'
+	// },
+	'sel-coll-pioneer//detailed':'$spec_det-pioneer',
+	'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',
+	// 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
+	'sel-coll-pioneer': '$spec_common-pioneer',
+
+	'compx-mp_show_end': {
+		depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
+		fn: function(animation_started, animation_completed, vmp_show) {
+			if (!animation_started){
+				return vmp_show;
+			} else {
+				if (animation_started == animation_completed){
+					return vmp_show;
+				} else {
+					return false;
+				}
+			}
+		}
+	}
+});
+
+
+function BrowseLevNavView() {}
+pv.View.extendTo(BrowseLevNavView, {
+	base_tree: {
+		sample_name: 'brow_lev_nav'
+	},
+	children_views_by_mn: {
+		pioneer: {
 			$default: nav.baseNavUI,
 			start_page: nav.StartPageNavView,
 			invstg: nav.investgNavUI
 		}
 	},
-	children_views: {
-		
-		
-	},
-	
-	'spec-vget-song': function(md) {
-		var parent = md.getParentMapModel();
-		var parent_mpx = this.getStoredMpx(parent);
-
-		var parent_view = this.findMpxViewInChildren(parent_mpx, 'all-sufficient-details');
-		return parent_view && parent_view.findMpxViewInChildren(this.getStoredMpx(md));
-	},
-	'collch-$spec-map_slice:song': {
-		is_wrapper_parent: '^',
-		space: 'all-sufficient-details',
+	'collch-pioneer': {
 		by_model_name: true,
-		place: function(md, view, original_md) {
-			return AppBaseView.viewOnLevelP.call(this, {map_level_num: original_md.map_level_num}, view);
+		place: 'c'
+	}
+});
+
+var AppView = function(){};
+AppBaseView.WebComplexTreesView.extendTo(AppView, {
+	/*children_views_by_mn: {
+		navigation: {
+			$default: nav.baseNavUI,
+			start_page: nav.StartPageNavView,
+			invstg: nav.investgNavUI
 		}
+	},*/
+	'sel-coll-map_slice/song': '$spec_det-map_slice',
+	children_views: {
+		map_slice: {
+			main: BrowseLevView,
+			detailed: BrowseLevView
+		},
+		navigation: BrowseLevNavView
 	},
 
-
-	
 	state_change: {
 		"wait-vk-login": function(state) {
 			this.toggleBodyClass(state, 'wait-vk-login');

@@ -1,6 +1,40 @@
 define(['spv', './MDProxy'], function(spv, MDProxy) {
 'use strict';
 var push = Array.prototype.push;
+var all_nestings = {};
+
+
+var createMPXes = function(array, store) {
+	for (var i = 0; i < array.length; i++) {
+		var cur = array[i];
+		store[cur._provoda_id] = new MDProxy(cur._provoda_id, cur.states, cur.children_models, cur);
+	}
+};
+
+var createMPXesByRawData = function(raw_array, ids_index, mpxes_index) {
+	if (!raw_array.length) {
+		return;
+	}
+	var i, clean_array = [], local_index = {};
+	for (i = 0; i < raw_array.length; i++) {
+		var cur_id = raw_array[i]._provoda_id;
+		if (!ids_index[cur_id] && !local_index[cur_id]) {
+			local_index[cur_id] = true;
+			clean_array.push(raw_array[i]);
+		}
+		
+	}
+	if (clean_array.length) {
+		var full_array = [];
+		for (i = 0; i < clean_array.length; i++) {
+			push.apply(full_array, clean_array[i].getLinedStructure(ids_index));
+		
+		}
+		createMPXes(full_array, mpxes_index);
+	}
+	
+};
+
 return {
 	spaces: {},
 	spaces_list: [],
@@ -31,7 +65,7 @@ return {
 			this.spaces_list.push(this.spaces[id]);
 
 			var array = root_md.getLinedStructure(this.spaces[id].ids_index);
-			this.createMPXes(array, this.spaces[id].mpxes_index);
+			createMPXes(array, this.spaces[id].mpxes_index);
 		} else {
 			throw new Error();
 		}
@@ -44,35 +78,8 @@ return {
 		this.spaces[id] = null;
 		this.spaces_list = spv.arrayExclude(this.spaces_list, space);
 	},
-	createMPXesByRawData: function(raw_array, ids_index, mpxes_index) {
-		if (!raw_array.length) {
-			return;
-		}
-		var i, clean_array = [], local_index = {};
-		for (i = 0; i < raw_array.length; i++) {
-			var cur_id = raw_array[i]._provoda_id;
-			if (!ids_index[cur_id] && !local_index[cur_id]) {
-				local_index[cur_id] = true;
-				clean_array.push(raw_array[i]);
-			}
-			
-		}
-		if (clean_array.length) {
-			var full_array = [];
-			for (i = 0; i < clean_array.length; i++) {
-				push.apply(full_array, clean_array[i].getLinedStructure(ids_index));
-			
-			}
-			this.createMPXes(full_array, mpxes_index);
-		}
-		
-	},
-	createMPXes: function(array, store) {
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			store[cur._provoda_id] = new MDProxy(cur._provoda_id, cur.states, cur.children_models, cur);
-		}
-	},
+	
+	
 	pushNesting: function(md, nesname, value, oldv, removed) {
 		var collected;
 		var raw_array = [];
@@ -88,17 +95,17 @@ return {
 							raw_array = value;
 						} else {
 
-							var pos_array = spv.getTargetField(value, 'residents_struc.items');
+							var pos_array = spv.getTargetField(value, 'residents_struc.all_items');
 							if (pos_array) {
 								raw_array = pos_array;
 							} else {
-								throw new Error('you must provide parsable array in "residents_struc.items" prop');
+								throw new Error('you must provide parsable array in "residents_struc.all_items" prop');
 							}
 
 						}
 					}
 				}
-				this.createMPXesByRawData(raw_array, cur.ids_index, cur.mpxes_index);
+				createMPXesByRawData(raw_array, cur.ids_index, cur.mpxes_index);
 				cur.mpxes_index[md._provoda_id].sendCollectionChange(nesname, value, oldv, removed);
 			}
 		}

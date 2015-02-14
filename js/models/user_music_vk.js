@@ -73,7 +73,7 @@ VkSongList.extendTo(VkRecommendedTracks, {
 		[declr_parsers.vk.getTracksFn('response'), function(r) {
 			return r && r.response && !!r.response.length;
 		}],
-		['vk_api', 'get', function() {
+		['vktapi', 'get', function() {
 			return ['audio.getRecommendations', {
 				user_id: this.state('userid')
 			}];
@@ -91,7 +91,7 @@ VkSongList.extendTo(MyVkAudioList, {
 				has_data_holes: [true]
 			}
 		}],
-		['vk_api', 'get', function() {
+		['vktapi', 'get', function() {
 			return ['audio.get', {
 				oid: this.state('userid')
 			}];
@@ -160,14 +160,15 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 		this.initStates();
 		this.rawdata = data;
 	},
-	showOnMap: function() {
+	getRelativeModel: function() {
 		var md = this.app.getVkUser(this.state('userid'));
 		md.setProfileData(this.mapStates(this.init_stmp, this.rawdata, {}));
+		return md;
+	},
+	showOnMap: function() {
+		var md = this.getRelativeModel();
 		md.showOnMap();
-		//this.app.showLastfmUser(this.state('userid'));
-		//this.app.
 	}
-
 });
 
 
@@ -202,7 +203,7 @@ LoadableList.extendTo(VKFriendsList, {
 				total: ['num', 'response.count']
 			}
 		}],
-		['vk_api', 'get', function() {
+		['vktapi', 'get', function() {
 			return ['friends.get', {
 				user_id: this.state('userid'),
 				fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')

@@ -22,9 +22,6 @@ pv.View.extendTo(ArtcardUI, {
 		tags_list: coct.TagsListPreview
 	},
 	state_change: {
-		"vmp_show": function(opts) {
-			this.c.toggleClass('hidden', !opts);
-		},
 		'selected_image': function(lfm_wrap) {
 			if (!lfm_wrap){
 				return;

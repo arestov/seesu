@@ -21,10 +21,10 @@ define(['pv', 'spv'], function(pv, spv){
 			if (this[key_name]) {
 				pv.update(this[key_name], 'marked_as', false);
 			}
-			this[key_name] = e.value;
-			if (e.value) {
-				
 
+			this[key_name] = e.value;
+
+			if (e.value) {
 				pv.update(e.value, 'marked_as', direction);
 			}
 		}
@@ -52,9 +52,11 @@ define(['pv', 'spv'], function(pv, spv){
 		var w_song = getWantedSong(this);
 		var v_song = getViewingSong(this, w_song);
 		var p_song = getPlayerSong(this, v_song);
+
 		if (w_song && !w_song.hasNextSong()){
 			checkNeighboursChanges(this, w_song, false, false);
 		}
+
 		if (v_song && !v_song.hasNextSong()) {
 			checkNeighboursChanges(this, v_song, false, false);
 		}
@@ -62,6 +64,7 @@ define(['pv', 'spv'], function(pv, spv){
 		if (p_song && v_song != p_song && !p_song.hasNextSong()){
 			checkNeighboursChanges(this, p_song, false, false);
 		}
+
 		if (this.state('want_be_played')) {
 			if (this.getMainlist()) {
 				this.getMainlist()[0].wantSong();
@@ -381,28 +384,19 @@ define(['pv', 'spv'], function(pv, spv){
 			if (target_song.prev_song && !target_song.prev_song.track){
 				target_song.prev_song.getRandomTrackName();
 			}
-			
 		}
+
 		if ((viewing || playing) && target_song.next_preload_song){
 			target_song.next_preload_song.makeSongPlayalbe(true);
 		}
 
 		if (md.state('want_be_played') && wanted) {
 			if (!target_song.canPlay() && target_song.next_preload_song) {
-
 				setWaitingNextSong(md, target_song);
 				target_song.next_preload_song.makeSongPlayalbe(true);
 			}
 		}
 
-
-
-	/*	if (!target_song.cncco){
-			target_song.cncco = [];
-		} else {
-			target_song.cncco.push(log);
-		}
-*/
 		if (viewing || playing || wanted){
 			if (!target_song.hasNextSong()){
 				md.requestMoreData();
@@ -533,33 +527,26 @@ define(['pv', 'spv'], function(pv, spv){
 		markAsPlayable: function() {
 			pv.update(this, 'can_play', true);
 		},
-		
 		makePlayable: function(full_allowing) {
 			for (var i = 0; i < this.getMainlist().length; i++) {
 				var mo = this.getMainlist()[i];
 				var pi = mo.playable_info || {};
 				mo.makeSongPlayalbe(pi.full_allowing || full_allowing, pi.packsearch, pi.last_in_collection);
-				
 			}
 		},
-	
 		checkChangesSinceFS: function() {
 			if (this.player.waiting_playlist && this == this.player.waiting_playlist) {
 				if (this.waiting_next){
 					if (!this.waiting_next.next_preload_song){
 						this.waiting_next = null;
 						this.player.waiting_playlist = null;
-					} else {
-						if (this.waiting_next.next_preload_song.canPlay()){
-							this.waiting_next.next_preload_song.wantSong();
-						}
-						
+					} else if (this.waiting_next.next_preload_song.canPlay()){
+						this.waiting_next.next_preload_song.wantSong();
 					}
 				}
 			} else {
 				this.waiting_next = null;
 			}
-			
 		},
 		wantListPlaying: function() {
 			this.player.removeCurrentWantedSong();
@@ -576,7 +563,7 @@ define(['pv', 'spv'], function(pv, spv){
 				pv.update(_this, 'want_be_played', false);
 			});
 		},
-	
+		setWaitingNextSong: setWaitingNextSong,
 		switchTo: function(mo, direction) {
 	
 			var playlist = [];
@@ -592,23 +579,28 @@ define(['pv', 'spv'], function(pv, spv){
 			if (playlist.length > 1) {
 				var s = false;
 				if (direction) {
-					var next_preload_song = mo.next_preload_song;
+					var possible = mo.next_preload_song;
 					var can_repeat = !this.state('dont_rept_pl');
 					var shuffle = this.state('pl-shuffle');
-					if (next_preload_song){
+					if (possible){
 						var real_cur_pos = this.getMainlist().indexOf(mo);
-						var nps_pos = this.getMainlist().indexOf(next_preload_song);
+						var nps_pos = this.getMainlist().indexOf(possible);
 						if (shuffle || can_repeat || nps_pos > real_cur_pos){
-							if (next_preload_song.canPlay()){
-								s = next_preload_song;
+							if (!possible.canPlay()) {
+								possible.makeSongPlayalbe(true);
+							}
+
+							if (possible.canPlay()){
+								s = possible;
 							} else {
-								setWaitingNextSong(this, mo);
-								next_preload_song.makeSongPlayalbe(true);
+								return true;
+								// setWaitingNextSong(this, mo);
 							}
 						}
 						
 					} else if (this.state('can_load_more')){
-						setWaitingNextSong(this, mo);
+						return true;
+						// setWaitingNextSong(this, mo);
 
 					} else {
 						if (current_number == (total-1)) {
@@ -629,11 +621,13 @@ define(['pv', 'spv'], function(pv, spv){
 						s = playlist[current_number-1];
 					}
 				}
-				if (s){
-					s.play();
-				}
+				return s;
+				// if (s){
+				// 	s.play();
+				// }
 			} else if (playlist[0]){
-				playlist[0].play();
+				return playlist[0];
+				// playlist[0].play();
 			}
 		
 		},
