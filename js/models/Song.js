@@ -215,24 +215,10 @@ var album_placeholder = {
 			}
 
 			this.mf_cor = this.initSi(MfCor, null, omo);
-
-			
-
-			if (omo.file){
-				pv.update(this, 'playable', true);
-				pv.update(this, 'files_search', {
-					search_complete: true,
-					have_best_tracks: true,
-					have_mp3_tracks: true
-				});
-			}
 			
 			this.mf_cor
 				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())
 				.on("error", this.hndMfcError, this.getContextOpts());
-
-			//this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
-
 			
 			pv.updateNesting(this, 'mf_cor', this.mf_cor);
 			pv.update(this, 'mf_cor', this.mf_cor);

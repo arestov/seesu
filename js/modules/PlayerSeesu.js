@@ -365,16 +365,7 @@ var app_env = app_serv.app_env;
 			})
 			.on('song-play-error', function(song, can_play) {
 				if (this.c_song == song){
-					if (!can_play){
-						if (song.isSearchAllowed() && song.state('search_complete')){
-							this.playNext(this.c_song, true);
-						} else {
-							this.wantSong(song);
-						}
-						
-					} else {
-						song.play();
-					}
+					this.onPlaybackError(song, can_play);
 				}
 			})
 			.on('play', function(e){
@@ -407,15 +398,16 @@ var app_env = app_serv.app_env;
 		events: {
 			finish: function(e){
 				if (this.c_song == e.song_file.mo){
-					this.playNext(this.c_song, true);
+					this.onPlaybackFinish(e.song_file.mo);
+					
 				}
 			},
 			play: function(e){
 				if (this.c_song == e.song_file.mo){
 					this.playing();
-					if (this.c_song.next_preload_song){
-						this.c_song.next_preload_song.prefindFiles();
-					}
+					// if (this.c_song.next_preload_song){
+					// 	this.c_song.next_preload_song.prefindFiles();
+					// }
 					this.changeAppMode(true);
 				}
 			},

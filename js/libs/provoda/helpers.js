@@ -62,6 +62,25 @@ var emergency_opt = {
 	emergency: true
 };
 
+function getBwlevView(view) {
+	var bwlev_view;
+
+	var cur = view;
+	while (!bwlev_view && cur.parent_view) {
+		if (cur.parent_view != view.root_view) {
+			cur = cur.parent_view;
+		} else {
+			bwlev_view = cur;
+			break;
+		}
+	}
+
+	return bwlev_view;
+}
+
+function getBwlevId(view) {
+	return getBwlevView(view).mpx._provoda_id;
+}
 
 return {
 	triggerDestroy: function(md) {
@@ -128,6 +147,9 @@ return {
 			network_api = spv.getTargetField(app || sputnik.app, api_name);
 		} else if (typeof api_name == 'function') {
 			network_api = api_name.call(sputnik);
+		}
+		if(!network_api) {
+			debugger;
 		}
 		return network_api;
 	},
@@ -207,6 +229,8 @@ return {
 		}
 	},
 	$v: {
+		getBwlevView: getBwlevView,
+		getBwlevId: getBwlevId,
 		getViewLocationId: function(parent_view, nesting_name, nesting_space) {
 			if (!nesting_name) {
 				throw new Error('no nesting_name');
@@ -221,8 +245,6 @@ return {
 			if (!view._lbr.hndTriggerTPLevents) {
 				view._lbr.hndTriggerTPLevents = function(e) {
 					var cb_data = e.callback_data;
-
-
 
 					for (var i = 0; i < cb_data.length; i++) {
 						var cur = cb_data[i];
@@ -249,7 +271,8 @@ return {
 						}
 
 						cb_data.shift();
-						target_view.RPCLegacy.apply(target_view, cb_data);
+						target_view.handleTemplateRPC.apply(target_view, cb_data);
+						
 					} else {
 						if (!e.pv_repeat_context){
 							view.tpl_events[e.callback_name].call(view, e.event, e.node, cb_data);
@@ -289,8 +312,53 @@ return {
 				this.waypoints = matched;
 				view.updateTemplatedWaypoints(matched, to_remove);
 			});
-		}
+		},
+		matchByParent: function(views, parent_view) {
+			for (var i = 0; i < views.length; i++) {
+				var cur = views[i];
+				var item = cur;
+				while (item.parent_view && item.parent_bwlev != item.root_view) {
+					if (item.parent_view == parent_view) {
+						return cur;
+					}
+					item = item.parent_view;
+				}
+			}
+		},
+		selecPoineertDeclr: (function(){
+			var sel_match_builders = [
+				function(model_name, parent_space_name) {
+					return model_name + '/' + parent_space_name;
+				},
+				function(model_name) {
+					return model_name;
+				},
+				function(model_name, parent_space_name) {
+					return '/' + parent_space_name;
+				},
+				function() {
+					return '';
+				},
+			];
+			return function(dclrs_fpckgs, dclrs_selectors, nesting_name, model_name, parent_space_name, soft) {
+				for (var i = 0; i < sel_match_builders.length; i++) {
+					var key = sel_match_builders[i](model_name, parent_space_name);
+					if (dclrs_selectors[nesting_name] && dclrs_selectors[nesting_name][key]) {
+						var link = dclrs_selectors[nesting_name][key];
+						if (link) {
+							var dclr = dclrs_fpckgs[link];
+							if (!soft && !dclr) {
+								throw new Error('reffered dclr does not exist');
+							}
+							return dclr;
+						}
+						 
+					}
+				}
+			};
+		})()
 	}
 
 };
+
 });

@@ -6,12 +6,12 @@ var unsubcribeOld = function(evColr, items_list) {
 	var index = {};
 	if (evColr.controls_list.length){
 		for (var i = 0; i < evColr.controls_list.length; i++) {
-			var cur = evColr.controls_list[ i ];
-			var cur_md = evColr.items_list[ i ];
-			if (items_list.length && items_list.indexOf( cur_md ) != -1) {
-				index[ cur_md._provoda_id || cur_md.view_id ] = cur;
+			var opts = evColr.controls_list[ i ];
+			var cur = evColr.items_list[ i ];
+			if (items_list.length && items_list.indexOf( cur ) != -1) {
+				index[ cur._provoda_id || cur.view_id ] = opts;
 			} else {
-				cur.unsubcribe();
+				cur.evcompanion.off(opts.namespace, opts.cb, opts);
 			}
 		}
 	}
@@ -36,17 +36,8 @@ var setEvLiItems = function(items_list) {
 			this.controls_list[i] = saved_items[ cur_id ];
 		} else {
 			this.controls_list[i] = cur.evcompanion._addEventHandler(this.event_name, this.event_callback, this, false, false, true, false, false, true);
-			//_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
-
-			/*this.controls_list[i] = cur.on(this.event_name, this.event_callback, {
-				easy_bind_control: true,
-				context: this,
-				skip_reg: this.skip_reg
-			});*/
+			//_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control)
 		}
-
-		
-	
 		cur.current_motivator = oldv;
 	}
 	this.current_motivator = old_value;
@@ -81,6 +72,15 @@ ItemsEvents.prototype = {
 	}
 };
 
+var one = function(state) {
+	return state;
+};
+var every = function(values_array) {
+	return !!values_array.every(hasargfn);
+};
+var some = function(values_array) {
+	return !!values_array.some(hasargfn);
+};
 
 var hasargfn = function(cur) {return cur;};
 var StatesArchiver = function(state_name, result_state_name, md, calculateResult) {
@@ -100,14 +100,16 @@ var StatesArchiver = function(state_name, result_state_name, md, calculateResult
 			this.calculate_result = calcR;
 		} else {
 			if (calcR == 'some'){
-				this.calculate_result = this.some;
+				this.calculate_result = some;
 			} else if (calcR == 'every'){
-				this.calculate_result = this.every;
+				this.calculate_result = every;
+			} else if (calcR == 'one') {
+				this.calculate_result = one;
 			}
 		}
 
 	} else {
-		this.calculate_result = this.some;
+		this.calculate_result = some;
 	}
 
 
@@ -116,12 +118,6 @@ StatesArchiver.prototype = {
 	event_callback: function() {
 		this.getItemsValues();
 	},
-	every: function(values_array) {
-		return !!values_array.every(hasargfn);
-	},
-	some: function(values_array) {
-		return !!values_array.some(hasargfn);
-	},
 	setResult: function(value) {
 		var old_value = this.md.current_motivator;
 		this.md.current_motivator = this.current_motivator;
@@ -129,12 +125,18 @@ StatesArchiver.prototype = {
 		this.md.current_motivator = old_value;
 	},
 	getItemsValues: function() {
-		var values_list = new Array(this.items_list.length);
-		for (var i = 0; i < this.items_list.length; i++) {
-			values_list[i] = this.items_list[i].state(this.state_name);
+		if (this.calculate_result == one) {
+			var item = this.items_list[0];
+			var state = item && item.state(this.state_name);
+			this.setResult(state);
+		} else {
+			var values_list = new Array(this.items_list.length);
+			for (var i = 0; i < this.items_list.length; i++) {
+				values_list[i] = this.items_list[i].state(this.state_name);
+			}
+			this.setResult(this.calculate_result.call(this, values_list));
 		}
-		this.setResult(this.calculate_result.call(this, values_list));
-		return values_list;
+		
 	},
 	setItemsReal: setEvLiItems,
 	setItems: function(items_list) {
@@ -217,7 +219,12 @@ add({
 			var result = [];
 			for (var i = 0; i < this.compx_check[state_name].depends_on.length; i++) {
 				var cur = this.compx_check[state_name].depends_on[i];
-				result.push(this.getNonComplexStatesList(cur));
+				if (cur == state_name) {
+					continue;
+				} else {
+					result.push(this.getNonComplexStatesList(cur));
+				}
+				
 				//
 				//Things[i]
 			}
@@ -791,8 +798,17 @@ add({
 						if (cur._provoda_id){
 							checkModel(cur, models_index, local_index, all_for_parse);
 						} else {
-							for (var i = 0; i < cur.length; i++) {
-								checkModel(cur[i], models_index, local_index, all_for_parse);
+							var array;
+							if (Array.isArray(cur)){
+								array = cur;
+							} else {
+								array = spv.getTargetField(cur, 'residents_struc.all_items');
+								if (!array) {
+									throw new Error('you must provide parsable array in "residents_struc.all_items" prop');
+								}
+							}
+							for (var i = 0; i < array.length; i++) {
+								checkModel(array[i], models_index, local_index, all_for_parse);
 							}
 						}
 					}

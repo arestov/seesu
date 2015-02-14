@@ -42,6 +42,7 @@
   <body>
 	<div id="ui-samples" style="display:none">
 		<!-- -->
+		<span class="brow_lev_nav" pv-class="brow_lev_nav {{!vmp_show && 'hidden'}}"></span>
 		<span
 			class="common-nav nav-item"
 			pv-props="title:{{nav_title}}"
@@ -50,7 +51,6 @@
 
 			pv-class="
 				nav-item
-				{{!vmp_show && 'hidden'}}
 				{{!mp_has_focus && 'nnav'}}
 				{{mp_stack == 'top' && 'stack-top'}}
 				{{mp_stack == 'bottom' && 'stack-bottom'}}
@@ -70,7 +70,6 @@
 			
 			pv-class="
 				nav-item nav-search_results
-				{{!vmp_show && 'hidden'}}
 				{{!mp_has_focus && 'nnav'}}
 				{{mp_stack == 'top' && 'stack-top'}}
 				{{mp_stack == 'bottom' && 'stack-bottom'}}
@@ -87,7 +86,6 @@
 			
 			pv-class="
 				nav-item nav-start
-				{{!vmp_show && 'hidden'}}
 				{{!mp_has_focus && 'nav-button'}}
 				{{(mp_stack && mp_stack == !!mp_stack) && 'stacked'}}
 				{{nav_clickable && 'nav_clickable'}}
@@ -119,6 +117,9 @@
 					pv-anchor="material">
 				</div>
 			</div>
+		</div>
+		<div class="browse_lev_con" pv-class="browse_lev_con {{!vmp_show && 'hidden'}}">
+			
 		</div>
 		<div class="usual_page lilists">
 			<div pv-anchor="lilists_con"></div>
@@ -167,7 +168,7 @@
 
 		<div
 			class="user_tag_page usual_page"
-			pv-class="lula_page usual_page {{!vmp_show && 'hidden'}}"
+			pv-class="lula_page usual_page"
 			>
 			<div class="preview_area" pv-nest="tracks">
 				<div class="area_for_button" pv-anchor="button_area">
@@ -205,9 +206,9 @@
 		</div>
 		<div
 			class="user_tags_page usual_page"
-			pv-class="lula_page usual_page {{!vmp_show && 'hidden'}}">
+			pv-class="lula_page usual_page">
 			<ul>
-				<li pv-nest="tags" class="user_tag" pv-events="click::requestPage" pv-type="way-point">
+				<li pv-nest="tags" class="user_tag" pv-events="click:requestPage" pv-type="way-point">
 					<span class="user_tag-count" pv-text="{{count}}"></span>
 					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
 				</li>
@@ -215,7 +216,7 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 
-		<div class="lula_page usual_page" pv-class="lula_page usual_page {{!vmp_show && 'hidden'}}">
+		<div class="lula_page usual_page" pv-class="lula_page usual_page">
 			<div class="preview_area" pv-nest="all_time">
 				<div class="area_for_button" pv-anchor="button_area">
 					<div class="area-button" pv-anchor='big_button'>
@@ -230,9 +231,9 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 
-		<div class="lulas_page usual_page" pv-class="lulas_page usual_page {{!vmp_show && 'hidden'}}">
+		<div class="lulas_page usual_page" pv-class="lulas_page usual_page">
 			<ul>
-				<li pv-nest="artists" pv-events="click::requestPage" class="user_artist" pv-type="way-point">
+				<li pv-nest="artists" pv-events="click:requestPage" class="user_artist" pv-type="way-point">
 					<div class="user_artist-image_con">
 						<img
 							alt=""
@@ -309,7 +310,6 @@
 			pv-class="
 				playlist-container 
 				{{can_play && 'has-files-in-songs'}}
-				{{!vmp_show && 'hidden'}}
 				{{!vis_overview && !mp_has_focus && 'show-zoom-to-track'}}
 				">
 
@@ -350,7 +350,7 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="album_preview-big" 
-			pv-events="click::requestPage"
+			pv-events="click:requestPage"
 			pv-type="way-point"
 			pv-props="title: {{album_name}}"
 			>
@@ -366,8 +366,8 @@
 		</div>
 		
 		<!-- userslist -->
-		<div class="vk_users_page usual_page" pv-class="vk_users_page usual_page {{!vmp_show && 'hidden'}}">
-			<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
+		<div class="vk_users_page usual_page" pv-class="vk_users_page usual_page">
+			<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click:followTo" pv-type="way-point">
 				<img class="vk_friend-ava" src="" alt="" pv-props="
 					src: {{ava_image.url}}">
 				<div class="vk_friend-desc">
@@ -378,8 +378,9 @@
 		</div>
 
 		<!-- userslist -->
-		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!vmp_show && 'hidden'}}">
-			<div pv-nest="list_items" class="lfm_friend-base-preview hidden" pv-events="click::requestPage" pv-type="way-point" pv-class="lfm_friend-base-preview">
+		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page">
+			<div pv-nest="list_items" class="lfm_friend-base-preview hidden" pv-events="click:followTo"
+			pv-type="way-point" pv-class="lfm_friend-base-preview">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
 				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
@@ -521,7 +522,7 @@
 			</div>
 			<!--pv-replace sample_name:view_sources-->
 		</div>
-		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!vmp_show && 'hidden'}}">
+		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page">
 			<div class="lfm_user_page-header">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
@@ -536,7 +537,7 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 		
-		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page {{!vmp_show && 'hidden'}}">
+		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page">
 			<div class="vk_user_page-header">
 				<img class="vk_friend-ava" src="" alt="" pv-props="
 					src: {{ava_image.url}}">
@@ -568,7 +569,7 @@
 
 		<div 
 			class="artists_list no_arfb" 
-			pv-class="artists_list no_arfb {{!vmp_show && 'hidden'}} {{list_loading && 'list_loading_state'}}">
+			pv-class="artists_list no_arfb {{list_loading && 'list_loading_state'}}">
 			
 			<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
@@ -736,7 +737,7 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="songcard_page usual_page"
-			pv-class="songcard_page usual_page {{!vmp_show && 'hidden'}}">
+			pv-class="songcard_page usual_page">
 			<h4 class="songcard_page-header">
 				<span pv-text="{{track_name}}"></span> - <span pv-text="{{artist_name}}"></span>
 			</h4>
@@ -784,7 +785,7 @@
 							class="js-serv lang localize-artcard"
 							
 							pv-type="way-point"
-							pv-events="click::requestPage"
+							pv-events="click:requestPage"
 							>artcard</a>
 					</div>
 					<a 
@@ -830,7 +831,7 @@
 									<a 
 										class="similar-artists js-serv lang localize-similar-arts"
 										pv-type="hard-way-point"
-										pv-events="click::requestPage"
+										pv-events="click:requestPage"
 										>Similar artists:</a>
 								</em>
 							</span>
@@ -1271,7 +1272,7 @@
 					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 				</div>
 				<div class="song_fans-b-intrack intrack_page"
-					pv-nest="fans" pv-events="click::requestPage" pv-type="way-point">
+					pv-nest="fans" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h lang localize-lastfm_fans">
 					</div>
 					<div class="song_fans-l-intrack" pv-class="song_fans-l-intrack {{loading_nesting_list_items && 'loading_list_items'}}">
@@ -1291,7 +1292,7 @@
 					
 				</div>
 				<div class="intrack_page" 
-					pv-nest="vk_posts" pv-events="click::requestPage" pv-type="way-point">
+					pv-nest="vk_posts" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h"><span class="lang localize-posts-from">Posts form</span><br/>vk.com</div>
 					<div class="song_fans-l-intrack" pv-class="song_fans-l-intrack {{loading_nesting_lists_list && 'loading_list_items'}}">
 						<div
@@ -1308,7 +1309,7 @@
 					
 				</div>
 				<div class="song_cloudcasts-b-intrack intrack_page" 
-					pv-nest="cloudcasts" pv-events="click::requestPage" pv-type="way-point">
+					pv-nest="cloudcasts" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h">Cloudcasts</div>
 					<span pv-nest="lists_list" pv-text="{{nav_title}} "></span>
 				</div>
@@ -1511,7 +1512,7 @@
 			</ul>
 		</div>
 		
-		<div class="search_results-container" pv-class="search_results-container {{!vmp_show && 'hidden'}} {{!needs_search_from && 'does-not-need-search-from'}}">
+		<div class="search_results-container" pv-class="search_results-container {{!needs_search_from && 'does-not-need-search-from'}}">
 			<p class="search-desc">
 				<span class="desc lang localize-search-control-hint"></span>
 			</p>
@@ -1707,7 +1708,7 @@
 		</div>
 		<div class="vk_posts_page usual_page">
 			<!--pv-replace sample_name:view_sources-->
-			<div pv-nest="lists_list" class="vk_post" pv-events="click::requestPage">
+			<div pv-nest="lists_list" class="vk_post" pv-events="click:requestPage">
 				<div class="vk_post_header">
 					<div class="leftcol">
 						<div class="vk_post_owner">
@@ -1935,7 +1936,7 @@
 										</div>
 										<div 
 											pv-nest="preview_hypem" class="arb-ally preview_ffp compact_playlist" 
-											pv-events="click::requestPage"
+											pv-events="click:requestPage"
 											pv-type="way-point">
 											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
 											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
@@ -1958,7 +1959,7 @@
 										<div 
 										pv-nest="preview_lastfm_top" 
 										class="arb-ally preview_ffp compact_playlist"
-										pv-events="click::requestPage"
+										pv-events="click:requestPage"
 										pv-type="way-point">
 											<div pv-text="{{nav_title}}" class="compact_playlist-header"></div>
 											<div pv-nest="songs-list | limitTo: 8" class="compact_song">
@@ -2024,7 +2025,7 @@
 							</div>
 							<div class="block-for-startpage full_wide_col">
 								<div pv-nest="news" class="hidden" pv-class="{{init && ''}}">
-									<a pv-text="{{nav_title}}:" class="js-serv" pv-events="click::requestPage"></a>
+									<a pv-text="{{nav_title}}:" class="js-serv" pv-events="click:requestPage"></a>
 									<span pv-repeat="entity in news_list|limitTo:1">
 										<span pv-text="{{entity.date}}" class="desc"></span>
 										<span pv-text="{{entity.header}}"></span>

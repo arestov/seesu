@@ -334,6 +334,65 @@ toRealArray = spv.toRealArray = function(array, check_field){
 	}
 };
 
+spv.memorize = function(func, getter) {
+	var cache = {};
+	return getter ? function(){
+		var arg = getter.apply(this, arguments);
+		if (!cache.hasOwnProperty(arg)) {
+			var result = cache[arg] = func.apply(this, arguments);
+			return result;
+		}
+		return cache[arg];
+	} : function(arg) {
+		if (!cache.hasOwnProperty(arg)) {
+			var result = cache[arg] = func.apply(this, arguments);
+			return result;
+		}
+		return cache[arg];
+	};
+};
+
+spv.f = {
+	allOf: function(){
+		// logical `and`, return last result of stop
+		var i = 0;
+		var args = new Array(arguments.length - 1);
+		for (i = 1; i < arguments.length; i++) {
+			args[ i - 1 ]= arguments[i];
+		}
+
+		return function (){
+			var result;
+			for (var i = 0; i < args.length; i++) {
+				result = args[i].apply(this, arguments);
+				if (!result) {
+					return result;
+				}
+			}
+			return result;
+		};
+	},
+	firstOf: function(){
+		// logical `or`, return first result of stop
+		var i = 0;
+		var args = new Array(arguments.length - 1);
+		for (i = 1; i < arguments.length; i++) {
+			args[ i - 1 ]= arguments[i];
+		}
+
+		return function (){
+			var result;
+			for (var i = 0; i < args.length; i++) {
+				result = args[i].apply(this, arguments);
+				if (result) {
+					return result;
+				}
+			}
+			return result;
+		};
+	},
+};
+
 
 var fields_cache = {};
 var getFieldsTree = function(string) {
@@ -672,7 +731,7 @@ var constr_id = 0;
 		namedClass.prototype.constructor = namedClass;
 
 		if (namedClass.prototype.onExtend){
-			namedClass.prototype.onExtend.call(namedClass.prototype, props);
+			namedClass.prototype.onExtend.call(namedClass.prototype, props, _super);
 		}
 
 		// And make this class extendable
@@ -1263,6 +1322,18 @@ spv.forEachKey = function(obj, fn, arg1, arg2) {
 		if (!obj.hasOwnProperty(key)) {continue;}
 		fn(obj[key], key, arg1, arg2);
 	}
+};
+
+spv.countKeys = function(obj, truthy) {
+	var count = 0;
+	for (var prop in obj) {
+		if (!truthy) {
+			count++;
+		} else if (obj[prop]){
+			count++;
+		}
+	}
+	return count;
 };
 
 

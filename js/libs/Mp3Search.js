@@ -574,53 +574,28 @@ var getMatchedSongs = function(music_list, msq) {
 			
 		},
 		'compx-has_request': [
-			['@some:has_request:available_sources'],
-			function (state) {
-				return state;
-			}
+			['@some:has_request:available_sources']
 		],
 		'compx-search_progress': [
-			['@some:search_progress:available_sources'],
-			function (state) {
-				return state;
-			}
+			['@some:search_progress:available_sources']
 		],
 		'compx-search_complete': [
-			['@every:search_complete:available_sources'],
-			function (state) {
-				return state;
-			}
+			['@every:search_complete:available_sources']
 		],
-
 		'compx-has_files':[
-			['@some:has_files:available_sources'],
-			function (state) {
-				return state;
-			}
+			['@some:has_files:available_sources']
 		],
 		'compx-has_mp3_files': [
-			['@some:has_mp3_files:available_sources'],
-			function (state) {
-				return state;
-			}
+			['@some:has_mp3_files:available_sources']
 		],
 		'compx-has_best_files': [
-			['@some:has_best_files:available_sources'],
-			function (state) {
-				return state;
-			}
+			['@some:has_best_files:available_sources']
 		],
 		'compx-exsrc_has_request': [
-			['@some:has_request:expected_sources'],
-			function (state) {
-				return state;
-			}
+			['@some:has_request:expected_sources']
 		],
 		'compx-exsrc_search_complete': [
-			['@every:search_complete:expected_sources'],
-			function (state) {
-				return state;
-			}
+			['@every:search_complete:expected_sources']
 		],
 		bindNestingFlows: function(donor_list_name, state_name, check, target_list_name) {
 			/*
@@ -881,21 +856,23 @@ var getAverageDurations = function(mu_array, time_limit){
 		});
 	};
 	
-	Mp3Search.getSongFileModel = function(mo, player){
+	Mp3Search.getSongFileModel = function(map_parent){
+		return map_parent.initSi(SongFileModel, null, {file:this});
 
-		return (new SongFileModel()).init({file: this, mo: mo, player: player});
+		// return (new SongFileModel()).init({file: this, mo: mo, player: player});
 	};
-	Mp3Search.getSFM = function(file, mo, player) {
+	Mp3Search.getSFM = function(map_parent, file) {
 		if (file.getSongFileModel) {
-			return file.getSongFileModel(mo, player);
+			return file.getSongFileModel(map_parent);
 		} else {
-			var md = new SongFileModel();
-			md.init({
-				file: file,
-				mo: mo,
-				player: player
-			});
-			return md;
+			return map_parent.initSi(SongFileModel, null, {file: file});
+			// var md = new SongFileModel();
+			// md.init({
+			// 	file: file,
+			// 	mo: mo,
+			// 	player: player
+			// });
+			// return md;
 		}
 		
 	};

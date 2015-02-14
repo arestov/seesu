@@ -161,7 +161,10 @@ AppModel.extendTo(SeesuApp, {
 				time: [2000, 4000, 4],
 				resortQueue: resortQueue,
 				init: addQueue
-			})
+			}),
+
+			key: app_serv.getPreloadedNK('dgs_key'),
+			secret: app_serv.getPreloadedNK('dgs_secret')
 		});
 
 		this.mixcloud = new net_apis.MixcloudApi();
@@ -402,7 +405,7 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})*/
 			.on('nav-change', function(nv){
-				this.trackPage(nv.map_level.resident.model_name);
+				this.trackPage(nv.md.model_name);
 			}, this.getContextOptsI())
 			.makeMainLevel();
 
@@ -503,10 +506,8 @@ AppModel.extendTo(SeesuApp, {
 				if (state_from_history){
 					state_from_history.data.showOnMap();
 				} else{
-					var md = _this.routePathByModels(url.replace(/\ ?\$...$/, ''));
-					if (md){
-						md.showOnMap();
-					}
+					var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), _this.start_page);
+					BrowseMap.showInterest(_this.map, interest);
 				}
 				_this.map.finishChangesCollecting();
 			});
@@ -946,11 +947,6 @@ AppModel.extendTo(SeesuApp, {
 seesu = su = new SeesuApp();
 su.init(seesu_version);
 pv.sync_s.setRootModel(su);
-
-
-
-
-
 
 
 (function(){

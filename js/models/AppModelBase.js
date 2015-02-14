@@ -23,9 +23,9 @@ pv.Model.extendTo(AppModelBase, {
 		this.map
 			.init(this.start_page)
 			
-			.on('changes', function(changes, tree, residents) {
+			.on('changes', function(changes, tree, models, bwlevs) {
 				//console.log(changes);
-				this.animateMapChanges(changes, tree, residents);
+				this.animateMapChanges(changes, tree, models, bwlevs);
 			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
 				this.changeNavTree(nav_tree);
@@ -38,9 +38,9 @@ pv.Model.extendTo(AppModelBase, {
 			.on('url-change', function(nu, ou, data, replace) {
 				if (needs_url_history){
 					if (replace){
-						navi.replace(ou, nu, data.resident);
+						navi.replace(ou, nu, data);
 					} else {
-						navi.set(nu, data.resident);
+						navi.set(nu, data);
 					}
 				}
 			}, this.getContextOptsI());
@@ -56,14 +56,12 @@ pv.Model.extendTo(AppModelBase, {
 		};
 	},
 	changeNavTree: function(nav_tree) {
-		this.nav_tree = spv.filter(nav_tree, 'resident');
+		// this.nav_tree = spv.filter(nav_tree, 'resident');
+		this.nav_tree = nav_tree;
 		if (this.matchNav){
 			this.matchNav();
 		}
 		
-	},
-	restoreFreezed: function(transit){
-		this.map.restoreFreezed(transit);
 	},
 	showStartPage: function(){
 		//mainaly for hash url games
@@ -75,6 +73,16 @@ pv.Model.extendTo(AppModelBase, {
 		}
 	},
 	animateMapChanges: (function() {
+
+
+		var bindMMapStateChanges = function(app, md) {
+			if (binded_models[md._provoda_id]) {
+				return;
+			}
+			binded_models[md._provoda_id] = true;
+			app.pushVDS(md);
+		};
+
 		var mapch_handlers = {
 			"zoom-in": function(array) {
 				var target;
@@ -101,27 +109,52 @@ pv.Model.extendTo(AppModelBase, {
 				return target;
 			}
 		};
+
+		var complexBrowsing = function(bwlev, md, value) {
+			var obj = md.state('bmp_show');
+			obj = obj && spv.cloneObj({}, obj) || {};
+			var num = bwlev.state('map_level_num');
+			obj[num] = value;
+			pv.update(md, 'bmp_show', obj);
+		};
+
 		var model_mapch = {
 			'move-view': function(change) {
+				var md = change.target.getMD();
+				var bwlev = change.bwlev.getMD();
+
+				bindMMapStateChanges(md.app, md);
+
 				var parent = change.target.getMD().getParentMapModel();
+				var bwlev_parent = change.bwlev.getMD().getParentMapModel();
 				if (parent){
+					pv.update(bwlev_parent, 'mp_has_focus', false);
 					pv.update(parent, 'mp_has_focus', false);
 				}
-				pv.update(change.target.getMD(), 'mp_show', change.value);
+				pv.update(md, 'mp_show', change.value);
+				pv.update(bwlev, 'mp_show', change.value);
+				complexBrowsing(bwlev, md,  change.value);
 			},
 			'zoom-out': function(change) {
-				pv.update(change.target.getMD(), 'mp_show', false);
+				var md = change.target.getMD();
+				var bwlev = change.bwlev.getMD();
+				pv.update(bwlev, 'mp_show', false);
+				pv.update(md, 'mp_show', false);
+				complexBrowsing(bwlev, md,  false);
 			},
 			'destroy': function(change) {
 				var md = change.target.getMD();
+				var bwlev = change.bwlev.getMD();
 				md.mlmDie();
 				pv.update(md, 'mp_show', false);
+				pv.update(bwlev, 'mp_show', false);
+				complexBrowsing(bwlev, md,  false);
 			}
 		};
-		return function(changes, tree, residents) {
+		return function(changes, tree, models, bwlevs) {
 			var
 				i,
-				target_md,
+				target_item,
 				all_changhes = spv.filter(changes.array, 'changes');
 
 			all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
@@ -142,7 +175,7 @@ pv.Model.extendTo(AppModelBase, {
 				var cur = changes.array[i];
 				if (mapch_handlers[cur.name]){
 					var item = mapch_handlers[cur.name].call(null, cur.changes);
-					target_md = item.target.getMD();
+					target_item = item;
 					break;
 				}
 			}
@@ -151,43 +184,52 @@ pv.Model.extendTo(AppModelBase, {
 				проскроллить к источнику при отдалении
 				просроллить к источнику при приближении
 			*/
+
+			// var bwlevs = residents && spv.filter(residents, 'lev.bwlev');
 			
 
 			if (tree){
-				pv.updateNesting(this, 'navigation', tree);
+				pv.updateNesting(this, 'navigation', bwlevs);
 			}
 
 			
-			if (target_md){
+			if (target_item){
 				if (this.current_mp_md) {
 					pv.update(this.current_mp_md, 'mp_has_focus', false);
 				}
-				this.current_mp_md = target_md;
+				var target_md = this.current_mp_md = target_item.target.getMD();
 				pv.update(target_md, 'mp_has_focus', true);
+				pv.update(target_item.bwlev.getMD(), 'mp_has_focus', true);
 
 				pv.update(this, 'show_search_form', !!target_md.state('needs_search_from'));
 				pv.update(this, 'full_page_need', !!target_md.full_page_need);
 			//	pv.update(this, 'current_mp_md', target_md._provoda_id);
 				pv.updateNesting(this, 'current_mp_md', target_md);
+				pv.updateNesting(this, 'current_mp_bwlev', target_item.bwlev.getMD());
 				//pv.update(target_md, 'mp-highlight', false);
 
 
 			}
 
-
 			
-			if (target_md){
-				changes.target = target_md && target_md.getMDReplacer();
+			if (target_item){
+				changes.target = target_item && target_item.target;
+				changes.bwlev = target_item && target_item.bwlev;
 			}
 
 			var mp_show_wrap;
-			if (residents){
+			if (models){
+				
+				var all_items = models.concat(bwlevs);
+
 				mp_show_wrap = {
-					items: residents,
+					items: models,
+					bwlevs: bwlevs,
+					all_items: all_items,
 					mp_show_states: []
 				};
-				for (i = 0; i < residents.length; i++) {
-					mp_show_wrap.mp_show_states.push(residents[i].state('mp_show'));
+				for (i = 0; i < models.length; i++) {
+					mp_show_wrap.mp_show_states.push(models[i].state('mp_show'));
 				}
 			}
 
@@ -197,58 +239,8 @@ pv.Model.extendTo(AppModelBase, {
 			});
 		
 			
-		}
+		};
 	})(),
-	bindMMapStateChanges: function(md) {
-		if (binded_models[md._provoda_id]) {
-			return;
-		}
-		binded_models[md._provoda_id] = true;
-		md.on('mpl-attach', function() {
-			pv.update(md, 'mpl_attached', true);
-
-		}, {immediately: true});
-		md.on('mpl-detach', function(){
-			pv.update(md, 'mpl_attached', false);
-		}, {immediately: true});
-		this.pushVDS(md);
-
-	},
-	showMOnMap: function(model) {
-
-		var aycocha = this.map.isCollectingChanges();
-		if (!aycocha){
-			this.map.startChangesCollecting();
-		}
-
-		if (!model.lev || !model.lev.canUse()){
-			//если модель не прикреплена к карте прежде чем что-то делать - отображаем "родительску" модель
-			this.showMOnMap(model.map_parent);
-		}
-		if (model.lev && model.lev.canUse()){//если модель прикреплена к карте
-
-			if (model.lev.closed){
-				//если замарожены - удаляем "незамороженное" и углубляемся до нужного уровня
-				this.map.restoreFreezedLev(model.lev);
-			}
-			//отсекаем всё более глубокое
-			model.lev.sliceTillMe();
-		} else {
-			if (!model.model_name){
-				throw new Error('model must have model_name prop');
-			}
-			this.bindMMapStateChanges(model, model.model_name);
-			this.map.goDeeper(model);
-
-		}
-
-		if (!aycocha){
-			this.map.finishChangesCollecting();
-		}
-
-		return model;
-		//
-	},
 	collectChanges: function(fn, args, opts) {
 		var aycocha = this.map.isCollectingChanges();
 		if (!aycocha){
@@ -285,18 +277,73 @@ pv.Model.extendTo(AppModelBase, {
 		return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
 	
 	},
-	pushVDS: function(md) {
-		if (!this.used_data_structure) {
-			return;
-		}
-		var default_struc = this.used_data_structure.m_children.children_by_mn.map_slice[ '$default' ];
-		var model_name = md.model_name;
+	pushVDS: (function() {
+		var path = 'm_children.children.map_slice.main.m_children.children_by_mn.pioneer';
+		var children_path = 'm_children.children_by_mn.pioneer';
 
-		var struc = this.used_data_structure.m_children.children_by_mn.map_slice[ model_name ] || default_struc;
+		var getSources = spv.memorize(function(md, used_data_structure, app){
+			var struc;
 
-		//cur.handleViewingDataStructure(struc);
-		md.handleViewingDataStructure(struc);
-	},
+			var model_name = md.model_name;
+
+			var dclrs_fpckgs = used_data_structure.collch_dclrs;
+			var dclrs_selectors = used_data_structure.collch_selectors;
+
+			var bwlev_dclr = pv.$v.selecPoineertDeclr(dclrs_fpckgs, dclrs_selectors, 'map_slice', model_name, 'main', true);
+			if (bwlev_dclr) {
+				var path_mod = 'm_children.children.map_slice.' + (bwlev_dclr.space || 'main');
+
+				//+ '.m_children.children_by_mn.pioneer';
+				var bwlev_struc = spv.getTargetField(used_data_structure, path_mod);
+				var bwlev_dclrs_fpckgs = bwlev_struc.collch_dclrs;
+				var bwlev_dclrs_selectors = bwlev_struc.collch_selectors;
+
+				var pioneer_model_name = bwlev_dclr.is_wrapper_parent ? md.map_parent.model_name : model_name;
+				var md_dclr = pv.$v.selecPoineertDeclr(bwlev_dclrs_fpckgs, bwlev_dclrs_selectors, 'pioneer', pioneer_model_name, (bwlev_dclr.space || 'main'), true);
+
+				var children = spv.getTargetField(bwlev_struc, children_path);
+
+				struc = spv.getTargetField(children, [pioneer_model_name, md_dclr.space]) || spv.getTargetField(children, ['$default', md_dclr.space]);
+
+				if (bwlev_dclr.is_wrapper_parent) {
+					var nestings = struc.m_children.children;
+					var Constr = md.constructor;
+					for (var nesting_name in nestings) {
+						var items = BrowseMap.getNestingConstr(app, md.map_parent, nesting_name);
+						if (items) {
+							if (Array.isArray(items)) {
+								if (items.indexOf(Constr) != -1) {
+									struc = nestings[nesting_name];
+									break;
+								}
+							} else {
+								if (items == Constr) {
+									struc = nestings[nesting_name];
+									break;
+								}
+							}
+						}
+					}
+				}
+			} else {
+				var default_struc = spv.getTargetField(used_data_structure, path)[ '$default' ];
+				struc = spv.getTargetField(used_data_structure, path)[ model_name ] || default_struc;
+			}
+
+			return BrowseMap.getStrucSources(md, struc);
+		}, function(md){
+			return md.constr_id;
+		});
+
+		return function(md) {
+			if (!this.used_data_structure) {
+				return;
+			}
+			var sources = getSources(md, this.used_data_structure);
+			pv.update(md, 'map_slice_view_sources', [md._network_source, sources]);
+			
+		};
+	})(),
 	knowViewingDataStructure: function(constr_id, used_data_structure) {
 		if (!this.used_data_structure) {
 			this.used_data_structure = used_data_structure;

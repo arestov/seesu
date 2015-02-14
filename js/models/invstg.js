@@ -336,21 +336,39 @@ pv.extendFromTo('Investigation', BrowseMap.Model, Investigation);
 
 SearchPage = function() {};
 Investigation.extendTo(SearchPage, {
-	init: function(opts) {
-		this._super.apply(this, arguments);
+	// init: function(){
+	// 	this._super.apply(this, arguments);
+	// 	pv.update(this, 'mp_detailed', false);
+	// },
 
-		pv.update(this, 'mp_freezed', false);
+
+	// init: function(opts) {
+	// 	this._super.apply(this, arguments);
+
+	// 	pv.update(this, 'mp_freezed', false);
 		
-	},
+	// },
+	'compx-focused': [
+		['focused', 'mp_has_focus'], 
+		function (focused, mp_has_focus){
+			return focused || mp_has_focus;
+		}
+	],
+	'compx-mp_detailed': [
+		['mp_detailed', 'mp_show', 'focused', 'mp_has_focus'],
+		function (mp_detailed, mp_show, focused, mp_has_focus) {
+			return mp_detailed || (mp_show && focused && !mp_has_focus);
+		}
+	],
 	'nest-section': [[PlaylistsSection, ArtistsSection, AlbumsSection, TagsSection, TracksSection]],
 	setItemForEnter: function() {
 		
 	},
 	complex_states: {
 		"needs_search_from": {
-			depends_on: ['mp_freezed'],
-			fn: function(frzd) {
-				return !frzd;
+			depends_on: ['mp_detailed'],
+			fn: function(mp_detailed) {
+				return !mp_detailed;
 			}
 		}
 	},

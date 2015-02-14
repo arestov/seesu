@@ -10,14 +10,14 @@ pv.View.extendTo(MusicConductorPreview, {
 
 		this.button = this.c.find('.area-button').removeClass('hidden');
 		this.button.click(function() {
-			_this.RPCLegacy('requestPage');
+			_this.requestPage();
 		});
 		this.addWayPoint(this.button);
 		this.dom_related_props.push('button');
 		this.createTemplate();
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
-	'stch-vmp_show': function(state) {
+	'stch-mp_show': function(state) {
 		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){
