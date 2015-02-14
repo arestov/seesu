@@ -909,7 +909,7 @@ pv.Eventor.extendTo(BrowseMap, {
 			});
 		}
 
-		this.trigger("map-tree-change", tree, old_tree);
+		this.trigger("map-tree-change", tree[0].rtree, old_tree && old_tree[0].rtree);
 	},
 	getTreeResidents: function(n) {
 		return n && spv.filter(n, 'resident');
