@@ -31,7 +31,7 @@
 		"http://ex.fm/api/*",
 		"http://developer.echonest.com/api/*",
 		"http://hypem.com/*",
-		"http://api.discogs.com/*",
+		"https://api.discogs.com/*",
 		"https://api.mixcloud.com/*",
 		"http://pleer.com/*"
 	],
