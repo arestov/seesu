@@ -18,14 +18,14 @@ if (need_ui){
 	});
 }
 if (need_ui){
-	cbp.require(['su', 'js/views/AppView', 'angbo', 'provoda'], function(su, AppView, angbo, provoda) {
+	cbp.require(['su', 'js/views/AppView', 'pv'], function(su, AppView, pv) {
 		if (!window){
 			return;
 		}
 		var can_die = true;
 		var md = su;
 
-		var views_proxies = provoda.views_proxies;
+		var views_proxies = pv.views_proxies;
 		var proxies_space = Date.now();
 		views_proxies.addSpaceById(proxies_space, md);
 		var mpx = views_proxies.getMPX(proxies_space, md);
@@ -42,7 +42,7 @@ if (need_ui){
 			view.init({
 				mpx: mpx,
 				proxies_space: proxies_space
-			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
+			}, {d: window.document, allow_url_history: true, can_die: can_die});
 			view.onDie(function() {
 				//views_proxies.removeSpaceById(proxies_space);
 				view = null;
