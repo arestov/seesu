@@ -1,21 +1,28 @@
-define(['provoda', 'spv', 'jquery', 'app_serv',
+define(['pv', 'spv', 'jquery', 'app_serv',
 './SongActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
-function(provoda, spv, $, app_serv,
+function(pv, spv, $, app_serv,
 SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 
 var SongViewBase = function() {};
 coct.SPView.extendTo(SongViewBase, {
+	'compx-vmp_show': [
+		['^^vmp_show', 'bmp_show', '^^map_level_num'],
+		function(vmp_show, bmp_show, map_level_num) {
+			return bmp_show && bmp_show[map_level_num + 1] && vmp_show;
+			// return vmp_show;
+		}
+	],
 	tpl_events: {
 		showSong: function(e) {
 			e.preventDefault();
+
 			if (this.expand) {
 				this.expand();
 			}
-			
-			this.RPCLegacy('wantSong');
-			this.RPCLegacy('requestPage');
 
+			this.RPCLegacy('requestPlay', pv.$v.getBwlevId(this));
+			this.requestPage();
 		}
 	}
 });
@@ -38,6 +45,9 @@ SongViewBase.extendTo(SongUI, {
 			}
 		}
 	},
+	'compx-mp_show_end': [
+		['^mp_show_end']
+	],
 	'compx-must_expand': [
 		['can_expand', 'vmp_show', 'vis_can_expand'],
 		function(can_expand, vmp_show, vis_can_expand) {

@@ -1,5 +1,5 @@
 
-define(['provoda', 'jquery', './coct'], function(provoda, $, coct) {
+define(['pv', 'jquery', './coct'], function(pv, $, coct) {
 "use strict";
 var YoutubeVideoView = function() {};
 coct.PageView.extendTo(YoutubeVideoView, {

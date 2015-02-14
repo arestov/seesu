@@ -1,25 +1,45 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts'],
-function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts', 'pv'],
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts, pv) {
 "use strict";
+var app_env = app_serv.app_env;
+var localize = app_serv.localize;
 
+var lang = app_env.lang;
 
-var AppNews = function() {};
-BrowseMap.Model.extendTo(AppNews, {
+var converNews = function(list) {
+	var result = new Array(list.length);
+	for (var i = 0; i < list.length; i++) {
+		var cur = list[i][lang] || list[i]["original"];
+		result[i] = {
+			date: cur[5],
+			header: cur[1],
+			body: cur[2],
+			link: cur[3],
+			link_text: cur[4] || "details"
+		};
+		
+	}
+	return result;
+};
+
+var AppNews = BrowseMap.Model.extendTo(function AppNews() {}, {
+	model_name: 'app_news',
 	init: function() {
 		this._super.apply(this, arguments);
 
 
 		this.initStates();
+		//pv.update(this, 'news_list', converNews(news_data));
 		
 		//var mixcloud
 		return this;
 	}
 });
+AppNews.converNews = converNews;
 
 
 var StartPage = function() {};
-var app_env = app_serv.app_env;
-var localize = app_serv.localize;
+
 var subPageInitWrap = function(Constr, full_name, data) {
 	//var instance = new Constr();
 	if (!data) {
@@ -33,14 +53,14 @@ BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
 	zero_map_level: true,
 	showPlaylists: function(){
-		su.search(':playlists');
+		this.app.search(':playlists');
 	},
 	init: function(opts){
 		this._super.apply(this, arguments);
 		this.su = opts.app;
-		this.updateState('needs_search_from', true);
-		this.updateState('nav_title', 'Seesu start page');
-		this.updateState('nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
+		pv.update(this, 'needs_search_from', true);
+		pv.update(this, 'nav_title', 'Seesu start page');
+		pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
 
 
@@ -56,11 +76,11 @@ BrowseMap.Model.extendTo(StartPage, {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');
 			this.app.search(artist);
-			this.updateState('nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
+			pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 			su.trackEvent('Navigation', 'hint artist');
 		},
 		changeSearchHint: function() {
-			this.updateState('nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
+			pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 		}
 	},
 	sub_pages_routes: {
@@ -172,9 +192,9 @@ BrowseMap.Model.extendTo(StartPage, {
 		"rating-help": function(state){
 			if (this.app.app_pages[app_env.app_type]){
 				if (state){
-					this.updateState('ask-rating-help', this.app.app_pages[app_env.app_type]);
+					pv.update(this, 'ask-rating-help', this.app.app_pages[app_env.app_type]);
 				} else {
-					this.updateState('ask-rating-help', false);
+					pv.update(this, 'ask-rating-help', false);
 				}
 
 			}
@@ -193,5 +213,6 @@ BrowseMap.Model.extendTo(StartPage, {
 		}
 	}
 });
+StartPage.AppNews = AppNews;
 return StartPage;
 });

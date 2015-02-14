@@ -17,7 +17,9 @@ var getTreeSample = function() {
 		m_children: {},
 		merged_states: [],
 		base_from_parent: null,
-		base_root_constr_id: null
+		base_root_constr_id: null,
+		collch_selectors: {},
+		collch_dclrs: {}
 	};
 };
 
@@ -107,13 +109,23 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 	*/
 	getUsageTree = getUsageTree || this.getUsageTree;
 
-
 	/*
 	собираем состояния из контроллера
 	1) stch_hs
 	2)  full_comlxs_list
 	*/
 	var tree = getTreeSample();
+
+		// debugger;
+
+	for (var dclr_name in this.dclrs_fpckgs) {
+		var dclrs = this.dclrs_fpckgs[dclr_name];
+		if (dclrs.solving) {
+			tree.collch_dclrs[dclr_name] = dclrs.solving;
+		}
+	}
+	tree.collch_selectors = this.dclrs_selectors || null;
+
 
 	var push = Array.prototype.push;
 

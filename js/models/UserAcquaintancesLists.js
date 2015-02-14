@@ -1,24 +1,24 @@
-define(['provoda', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(provoda, app_serv, spv, BrowseMap){
+define(['pv', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(pv, app_serv, spv, BrowseMap){
 "use strict";
 var localize = app_serv.localize;
 var UserAcquaintance = function() {};
-provoda.Model.extendTo(UserAcquaintance, {
+pv.Model.extendTo(UserAcquaintance, {
 	init: function(opts, params) {
-		this._super();
+		this._super.apply(this, arguments);
 		this.sender = params.sender;
 		this.user_photo = params.user_photo;
 		this.receiver = params.sender;
 		//this.current_user = params.current_user;
 		this.remainded_date = params.remainded_date;
-		this.updateState('remainded_date', params.remainded_date);
+		pv.update(this, 'remainded_date', params.remainded_date);
 		this.accepted = params.accepted;
-		this.updateState('user_info', params.info);
-		this.updateState('user_photo', params.user_photo);
+		pv.update(this, 'user_info', params.info);
+		pv.update(this, 'user_photo', params.user_photo);
 
 		this.current_user_is_sender = params.current_user_is_sender;
 
-		this.updateState('current_user_is_sender', params.current_user_is_sender);
-		this.updateState('accepted', params.accepted);
+		pv.update(this, 'current_user_is_sender', params.current_user_is_sender);
+		pv.update(this, 'accepted', params.accepted);
 	//	this.update
 
 		//accept_button
@@ -48,7 +48,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 			depends_on: ['accepted', 'remainded_date', 'userlink'],
 			fn: function(accepted, remainded_date, userlink) {
 				if (accepted && !userlink){
-					return su.getRemainTimeText(remainded_date, true);
+					return this.app.getRemainTimeText(remainded_date, true);
 				}
 				
 			}
@@ -69,10 +69,11 @@ provoda.Model.extendTo(UserAcquaintance, {
 	*/
 	acceptInvite: function() {
 		var _this = this;
+		var su = this.app;
 		su.s.api('relations.acceptInvite', {from: this.sender}, function(r){
 			if (r.done){
-				_this.updateState('remainded_date', r.done.est);
-				_this.updateState('accepted', true);
+				pv.update(_this, 'remainded_date', r.done.est);
+				pv.update(_this, 'accepted', true);
 				su.trackEvent('people likes', 'accepted', false, 5);
 				
 				if (new Date(r.done.est) < new Date()){
@@ -87,7 +88,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 var UserAcquaintancesLists = function() {};
 BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 	model_name: 'user_acqs_list',
-	init: function(opts) {
+	init: function() {
 		this._super.apply(this, arguments);
 		var _this = this;
 
@@ -127,10 +128,10 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		}
 		this.data_st_binded = true;
 		var _this = this;
-		su.s.susd.rl.regCallback('user_acqes', function(r){
+		this.app.s.susd.rl.regCallback('user_acqes', function(r){
 			_this.replaceChildrenArray('acqs_from_me', r.done);
 		});
-		su.s.susd.ri.regCallback('user_acqes', function(r){
+		this.app.s.susd.ri.regCallback('user_acqes', function(r){
 			_this.replaceChildrenArray('acqs_from_someone', r.done);
 		});
 	},
@@ -170,7 +171,7 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		}
 		this.removeChildren(array_name);
 
-		this.updateNesting(array_name, concated);
+		pv.updateNesting(this, array_name, concated);
 
 	},
 	removeChildren: function(array_name) {

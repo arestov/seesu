@@ -1,8 +1,8 @@
-define(['provoda', 'jquery', 'js/lastfm_data', 'app_serv'], function(provoda, $, lastfm_data, app_serv) {
+define(['pv', 'jquery', 'js/lastfm_data', 'app_serv'], function(pv, $, lastfm_data, app_serv) {
 "use strict";
 var localize = app_serv.localize;
 var MusicConductorPreview = function() {};
-provoda.View.extendTo(MusicConductorPreview, {
+pv.View.extendTo(MusicConductorPreview, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
@@ -10,14 +10,14 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 		this.button = this.c.find('.area-button').removeClass('hidden');
 		this.button.click(function() {
-			_this.RPCLegacy('requestPage');
+			_this.requestPage();
 		});
 		this.addWayPoint(this.button);
 		this.dom_related_props.push('button');
 		this.createTemplate();
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
-	'stch-vmp_show': function(state) {
+	'stch-mp_show': function(state) {
 		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){

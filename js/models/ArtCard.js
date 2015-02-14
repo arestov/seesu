@@ -1,5 +1,5 @@
-define(['spv', 'provoda', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'js/modules/declr_parsers'],
-function(spv, provoda, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers){
+define(['spv', 'pv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'js/modules/declr_parsers'],
+function(spv, pv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers){
 "use strict";
 var localize = app_serv.localize;
 
@@ -29,10 +29,10 @@ SongsList.extendTo(ArtistAlbumSongs, {
 		this.playlist_type = 'album';
 		if (params.lfm_image){
 			
-			this.updateState('lfm_image', this.app.art_images.getImageWrap(params.lfm_image.array));
+			pv.update(this, 'lfm_image', this.app.art_images.getImageWrap(params.lfm_image.array));
 		}
 		if (params.lfm_img) {
-			this.updateState('lfm_img', params.lfm_img);
+			pv.update(this, 'lfm_img', params.lfm_img);
 		}
 
 	},
@@ -138,7 +138,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 
 		//this.original_artist = params.original_artist;
 
-		var image_url = params.thumb && params.thumb.replace('api.discogs.com', 's.pixogs.com');
+		var image_url = params.thumb && params.thumb.replace('api.discogs.com', 's.pixogs.com').replace('s.pixogs.com/images/', 's.pixogs.com/image/');
 
 
 		this.updateManyStates({
@@ -529,18 +529,18 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 		this.artist = params.artist;
 		
-		this.updateState('nav_title', this.artist);
-		this.updateState('artist_name', this.artist);
+		pv.update(this, 'nav_title', this.artist);
+		pv.update(this, 'artist_name', this.artist);
 
 
 
-		this.updateState('lfm_image',
+		pv.update(this, 'lfm_image',
 			params.lfm_img || ( params.lfm_image &&
 				this.app.art_images.getImageWrap(params.lfm_image.array) ));
 
 		this.extendedInit();
 
-		this.updateState('url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
+		pv.update(this, 'url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
 	},
 	sub_pa: {
 		'_': {
@@ -603,13 +603,13 @@ BrowseMap.Model.extendTo(ArtCard, {
 	'nest-hypem_reblog': ['blogged', true, 'init_heavy'],
 
 	
-	initHeavy: provoda.getOCF('heavy_oi', function() {
+	initHeavy: pv.getOCF('heavy_oi', function() {
 		this.albums_models = {};
-		this.updateState('init_heavy', true);
+		pv.update(this, 'init_heavy', true);
 	}),
 	extendedInit: function() {
 		this.sub_pa_params = {artist: this.artist};
-		this.updateState('init_ext', true);
+		pv.update(this, 'init_ext', true);
 
 		this.wch(this, 'mp_has_focus', function(e) {
 			if (e.value){
@@ -671,7 +671,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 			this.info_loaded = true;
 		}
 		var _this = this;
-		this.updateState('sc_profile_searching', true);
+		pv.update(this, 'sc_profile_searching', true);
 		FuncsStack.chain([
 			function() {
 				var stack_atom = this;
@@ -709,7 +709,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 						
 					})
 					.fail(function() {
-						_this.updateState('sc_profile_searching', false);
+						pv.update(_this, 'sc_profile_searching', false);
 					})
 				);
 			},
@@ -729,18 +729,18 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 
 							if (artist_scid){
-								_this.updateState('sc_profile_searching', false);
-								_this.updateState('soundcloud_profile', artist_scid);
+								pv.update(_this, 'sc_profile_searching', false);
+								pv.update(_this, 'soundcloud_profile', artist_scid);
 								_this.preloadNestings(['soundc_prof', 'soundc_likes']);
 
 								//_this.preloadChildren([_this.soundc_prof, _this.soundc_likes]);
 							} else {
-								_this.updateState('no_soundcloud_profile', true);
+								pv.update(_this, 'no_soundcloud_profile', true);
 							}
 						}
 					})
 					.always(function() {
-						_this.updateState('sc_profile_searching', false);
+						pv.update(_this, 'sc_profile_searching', false);
 						
 					})
 				);
@@ -749,7 +749,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		]);
 
 
-		this.updateState('discogs_id_searching', true);
+		pv.update(this, 'discogs_id_searching', true);
 
 		var simplifyArtistName = function(name) {
 			return name.replace(/\([\s\S]*?\)/, '').split(/\s|,/).sort().join('').toLowerCase();
@@ -775,14 +775,14 @@ BrowseMap.Model.extendTo(ArtCard, {
 				}
 				if (artist_info){
 					
-					_this.updateState('discogs_id', artist_info.id);
-					_this.updateState('discogs_id_searching', false);
+					pv.update(_this, 'discogs_id', artist_info.id);
+					pv.update(_this, 'discogs_id_searching', false);
 					_this.preloadNestings(['dgs_albums', 'soundc_likes']);
 
 				}
 			})
 			.always(function() {
-				_this.updateState('discogs_id_searching', false);
+				pv.update(_this, 'discogs_id_searching', false);
 			})
 		);
 
@@ -847,7 +847,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		}
 		var pl = this.getSPI('_', true);
 		this.top_songs = pl;
-		this.updateNesting('top_songs', pl);
+		pv.updateNesting(this, 'top_songs', pl);
 		return pl;
 	},
 	getAlbum: function(params) {
@@ -873,7 +873,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		}
 
 		var artl = 
-		this.updateNesting('similar_artists', artl);
+		pv.updateNesting(this, 'similar_artists', artl);
 		this.similar_artists = artl;*/
 		return this.getSPI('+similar', true);
 	}
@@ -944,7 +944,7 @@ LoadableList.extendTo(ArtistsList, {
 			var pl = this.getSPI('~', true);
 			this.ran_playlist = pl;
 		}
-		return this;
+		return this.ran_playlist;
 	},
 	sub_pa: {
 		'~': {
@@ -954,9 +954,10 @@ LoadableList.extendTo(ArtistsList, {
 			}
 		}
 	},
-	requestRandomPlaylist: function() {
-		this.createRPlist();
-		this.ran_playlist.showOnMap();
+	requestRandomPlaylist: function(bwlev_id) {
+		var bwlev = pv.getModelById(bwlev_id);
+		bwlev.followTo(this.createRPlist()._provoda_id);
+		// .showOnMap();
 	},
 	'nest_rqc-artists_list': ArtistInArtl,
 	makeDataItem: function(obj) {
@@ -1013,7 +1014,7 @@ ArtistsList.extendTo(SimilarArtists, {
 				preview_list.push(this.initSi(ArtistInArtl, raw_array[i]));
 				
 			}
-			this.updateNesting(this.preview_mlist_name, preview_list);
+			pv.updateNesting(this, this.preview_mlist_name, preview_list);
 		}
 	}
 });

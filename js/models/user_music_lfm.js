@@ -1,5 +1,5 @@
-define(['app_serv', 'js/libs/BrowseMap', './LoadableList', 'spv', './SongsList', './ArtCard', 'js/LfmAuth', 'js/modules/declr_parsers', 'jquery'],
-function(app_serv, BrowseMap, LoadableList, spv, SongsList, ArtCard, LfmAuth, declr_parsers, $) {
+define(['app_serv', 'js/libs/BrowseMap', './LoadableList', 'spv', './SongsList', './ArtCard', 'js/LfmAuth', 'js/modules/declr_parsers', 'jquery', 'pv'],
+function(app_serv, BrowseMap, LoadableList, spv, SongsList, ArtCard, LfmAuth, declr_parsers, $, pv) {
 "use strict";
 var localize = app_serv.localize;
 //
@@ -27,10 +27,10 @@ var no_access_compx = {
 
 var connectUserid = function(params) {
 	if (params.lfm_userid){
-		this.updateState('userid', params.lfm_userid);
+		pv.update(this, 'userid', params.lfm_userid);
 	} else {
 		if (params.for_current_user){
-			this.updateState('userid', false);
+			pv.update(this, 'userid', false);
 			this.wch(this.app, 'lfm_userid', 'userid');
 
 			if (this.authInit){
@@ -855,9 +855,13 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			return big_desc.join(', ');
 		}
 	],
-	showOnMap: function() {
+	getRelativeModel: function() {
 		var md = this.app.getLastfmUser(this.state('userid'));
 		md.setProfileData(this.rawdata);
+		return md;
+	},
+	showOnMap: function() {
+		var md = this.getRelativeModel();
 		md.showOnMap();
 		//this.app.showLastfmUser(this.state('userid'));
 		//this.app.

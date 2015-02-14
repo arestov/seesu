@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', '../invstg', '../comd', 'js/LfmAuth'],
-function(provoda, spv, app_serv,  invstg, comd, LfmAuth) {
+define(['pv', 'spv', 'app_serv', '../invstg', '../comd', 'js/LfmAuth'],
+function(pv, spv, app_serv,  invstg, comd, LfmAuth) {
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -93,24 +93,24 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 		var _this = this;
 
 		this.app.on("vk-api", function(api) {
-			_this.updateState("has_vk_api", !!api);
+			pv.update(_this, "has_vk_api", !!api);
 		});
 
 		if (app_env.vkontakte) {
 			this.app.vk_auth.on('settings-change', function(vk_opts) {
-				_this.updateState('vk_opts', vk_opts);
+				pv.update(_this, 'vk_opts', vk_opts);
 			});
 		}
 
 		var cu_info = this.app.s.getInfo('vk');
 		if (cu_info){
 			if (cu_info.photo){
-				this.updateState("own_photo", cu_info.photo);
+				pv.update(this, "own_photo", cu_info.photo);
 			}
 		} else {
 			this.app.s.once("info-change.vk", function(cu_info) {
 				if (cu_info.photo){
-					_this.updateState("own_photo", cu_info.photo);
+					pv.update(_this, "own_photo", cu_info.photo);
 				}
 			});
 		}
@@ -202,7 +202,7 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 		//preloadStart
 
 		this.lfm_friends.on('child_change-list_items', function(e) {
-			this.updateNesting('friends', e.value);
+			pv.updateNesting(this, 'friends', e.value);
 			this.changeQuery('');
 			this.searchByQuery(this.state('query'));
 			
@@ -431,11 +431,11 @@ comd.BaseCRow.extendTo(SongActSharing, {
 	},
 	'nest-searcher': [StrusersRowSearch],
 	hndUpdateShareURL: function() {
-		this.updateState('share_url', this.mo.getShareUrl());
+		pv.update(this, 'share_url', this.mo.getShareUrl());
 	},
 
 	search: function(q) {
-		this.updateState('query', q);
+		pv.update(this, 'query', q);
 		var searcher = this.getNesting('searcher');
 		if (searcher) {
 			searcher.changeQuery(q);

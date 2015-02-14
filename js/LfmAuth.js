@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv', 'hex_md5'], function(provoda, spv, app_serv, hex_md5) {
+define(['pv', 'spv', 'app_serv', 'hex_md5'], function(pv, spv, app_serv, hex_md5) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -6,7 +6,7 @@ var localize = app_serv.localize;
 
 var LfmLogin = function() {};
 
-provoda.Model.extendTo(LfmLogin, {
+pv.Model.extendTo(LfmLogin, {
 	model_name: 'auth_block_lfm',
 	init: function(opts, data, params) {
 		this._super.apply(this, arguments);
@@ -22,7 +22,7 @@ provoda.Model.extendTo(LfmLogin, {
 		}
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep_sandbox', true);
+			pv.update(_this, 'deep_sandbox', true);
 		}
 		if (this.auth.has_session){
 			this.triggerSession();
@@ -41,17 +41,17 @@ provoda.Model.extendTo(LfmLogin, {
 	},
 	access_desc: localize('to-get-access'),
 	triggerSession: function() {
-		this.updateState('has_session', true);
+		pv.update(this, 'has_session', true);
 		
 	},
 	waitData: function() {
-		this.updateState('data_wait', true);
+		pv.update(this, 'data_wait', true);
 	},
 	notWaitData: function() {
-		this.updateState('data_wait', false);
+		pv.update(this, 'data_wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request_description', text ? text + " " + localize("lfm-auth-invitation") : "");
+		pv.update(this, 'request_description', text ? text + " " + localize("lfm-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
@@ -67,7 +67,7 @@ provoda.Model.extendTo(LfmLogin, {
 		this.auth.requestAuth(opts);
 	},
 	switchView: function(){
-		this.updateState('active', !this.state('active'));
+		pv.update(this, 'active', !this.state('active'));
 	}
 });
 
@@ -86,7 +86,7 @@ LfmLogin.extendTo(LfmScrobble, {
 
 	
 		this.setRequestDesc(localize('lastfm-scrobble-access'));
-		this.updateState('active', true);
+		pv.update(this, 'active', true);
 	},
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -99,7 +99,7 @@ LfmLogin.extendTo(LfmScrobble, {
 		}, {exlusive: true});
 	},
 	setScrobbling: function(state) {
-		this.updateState('scrobbling', state);
+		pv.update(this, 'scrobbling', state);
 		su.setSetting('lfm-scrobbling', state);
 		//this.auth.setScrobbling(state);
 	}
@@ -115,7 +115,7 @@ var LfmAuth = function(lfm, opts) {
 		this.init(this.opts);
 	}
 };
-provoda.Eventor.extendTo(LfmAuth, {
+pv.Eventor.extendTo(LfmAuth, {
 	init: function(opts) {
 		this._super();
 		if (this.api.sk){

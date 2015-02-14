@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', './coct', './uacq', 'app_serv'], function(provoda, $, coct, uacq, app_serv) {
+define(['pv', 'jquery', './coct', './uacq', 'app_serv'], function(pv, $, coct, uacq, app_serv) {
 "use strict";
 var app_env = app_serv.app_env;
 
@@ -28,7 +28,7 @@ coct.PageView.extendTo(UserCardPage, {
 });
 
 var LfmUsercardPageView = function() {};
-provoda.View.extendTo(LfmUsercardPageView, {
+pv.View.extendTo(LfmUsercardPageView, {
 	base_tree: {
 		sample_name: 'lfm_user_page',
 		children_by_selector: [{
@@ -47,7 +47,7 @@ provoda.View.extendTo(LfmUsercardPageView, {
 
 
 var VkUsercardPageView = function() {};
-provoda.View.extendTo(VkUsercardPageView, {
+pv.View.extendTo(VkUsercardPageView, {
 	base_tree: {
 		sample_name: 'vk_user_page',
 		children_by_selector: [{
@@ -61,7 +61,7 @@ provoda.View.extendTo(VkUsercardPageView, {
 });
 
 var VkFriendPreview = function() {};
-provoda.View.extendTo(VkFriendPreview, {
+pv.View.extendTo(VkFriendPreview, {
 	tpl_events: {
 		open_link: function(e, node) {
 			e.preventDefault();
@@ -73,7 +73,7 @@ provoda.View.extendTo(VkFriendPreview, {
 });
 
 var VkUsersPageView = function() {};
-provoda.View.extendTo(VkUsersPageView, {
+pv.View.extendTo(VkUsersPageView, {
 	base_tree: {
 		sample_name: 'vk_users_page'
 	},

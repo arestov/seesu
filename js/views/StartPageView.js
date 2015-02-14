@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './UserCardPreview', './coct'],
-function(provoda, spv, $, app_serv, MusicConductorPreview, UserCardPreview, coct) {
+define(['pv', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './UserCardPreview', './coct'],
+function(pv, spv, $, app_serv, MusicConductorPreview, UserCardPreview, coct) {
 "use strict";
 var localize = app_serv.localize;
 

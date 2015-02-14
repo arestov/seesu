@@ -1,8 +1,8 @@
-define(['provoda', './coct', 'app_serv', 'jquery'], function(provoda, coct, app_serv, $) {
+define(['pv', './coct', 'app_serv', 'jquery'], function(pv, coct, app_serv, $) {
 "use strict";
 var app_env = app_serv.app_env;
 var LULAPageVIew = function() {};
-provoda.View.extendTo(LULAPageVIew, {
+pv.View.extendTo(LULAPageVIew, {
 	base_tree: {
 		sample_name: 'lula_page'
 	},
@@ -13,7 +13,7 @@ provoda.View.extendTo(LULAPageVIew, {
 });
 
 var LULAsPageVIew = function() {};
-provoda.View.extendTo(LULAsPageVIew, {
+pv.View.extendTo(LULAsPageVIew, {
 	base_tree: {
 		sample_name: 'lulas_page'
 	}
@@ -21,14 +21,14 @@ provoda.View.extendTo(LULAsPageVIew, {
 
 
 var UserTagsPageView = function() {};
-provoda.View.extendTo(UserTagsPageView, {
+pv.View.extendTo(UserTagsPageView, {
 	base_tree: {
 		sample_name: 'user_tags_page'
 	}
 });
 
 var LfmFriendPreview = function() {};
-provoda.View.extendTo(LfmFriendPreview, {
+pv.View.extendTo(LfmFriendPreview, {
 	tpl_events: {
 		open_link: function(e, node) {
 			e.preventDefault();
@@ -40,7 +40,7 @@ provoda.View.extendTo(LfmFriendPreview, {
 });
 
 var LfmUsersPageView = function() {};
-provoda.View.extendTo(LfmUsersPageView, {
+pv.View.extendTo(LfmUsersPageView, {
 	base_tree: {
 		sample_name: 'lfm_users_page'
 	},

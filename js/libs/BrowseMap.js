@@ -1,107 +1,453 @@
-define(['provoda', 'spv'], function(provoda, spv) {
+define(['pv', 'spv'], function(pv, spv) {
 "use strict";
-var MapLevel = function(num, parent_levels, resident, map){
-	this.closed = null;
-	this.resident = null;
-	this.num = num;
-	this.map = map;
-	this.parent_levels = parent_levels;
-	if (resident){
-		this.setResident(resident);
-		
-	}
-	return this;
-};
 
-spv.Class.extendTo(MapLevel, {
-	setResident: function(resident){
-		this.resident = resident;
-		//resident.updateState('');
-		resident.assignMapLev(this);
-		resident.trigger('mpl-attach');
-		this.map.addResident(this.resident);
-	},
-	getResident: function(){
-		return this.resident;
-	},
-	getParentLev: function(){
-		return this.parent_levels[0] || ((this.num > -1) && this.map.levels[-1].free);
-	},
-	getParentResident: function() {
-		var parent = this.getParentLev();
-		return parent && parent.resident;
-	},
-	show: function(){
-		this.map.addChange({
-			type: 'move-view',
-			target: this.resident.getMDReplacer(),
-			value: true
-		});
-	},
-	hide: function(){
-		this.map.addChange({
-			type: 'zoom-out',
-			target: this.resident.getMDReplacer()
-		});
-	},
-	die: function(){
-		this.map.addChange({
-			type: 'destroy',
-			target: this.resident.getMDReplacer()
-		});
-		this.resident.trigger('mpl-detach');
-		this.map.removeResident(this.resident);
-		this.map = null;
-	},
-	_sliceTM: function(){ //private alike
-		var current_level = this.map.getCurrentLevel();
-		if (current_level == this){
-			return;
-		}
-		var aycocha = this.map.isCollectingChanges();
-		if (!aycocha){
-			this.map.startChangesCollecting();
-		}
+// исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
+/*
 
-		var just_started = this.map.startChangesGrouping('zoom-out', true);
-		this.map.sliceDeepUntil(this.num);
-		if (just_started){
-			this.map.finishChangesGrouping('zoom-out');
-		}
-
-		if (!aycocha){
-			this.map.finishChangesCollecting();
-		}
-	},
-	zoomOut: function() {
-		this._sliceTM();
-	},
-	sliceTillMe: function(){
-		this._sliceTM();
-	},
-	markAsFreezed: function() {
-		this.closed = true;
-		this.resident.updateState('mp_freezed', true);
-	},
-	freeze: function(){
-		if (this.isOpened()){
-			this.map.freezeMapOfLevel(this.num);
-		}
-		
-	},
-	canUse: function(){
-		return !!this.map;
-	},
-	isOpened: function(){
-		return !!this.map && !this.closed;
-	}
-	
-});
+починить freeze
+улучшить запрет на изменение использованных результатов поиска showResultsPage isOpened
+canUse
 
 
+поправить навигацию
+проверить работу ссылок
+поправить остатки wantSong
+
+прямой вызов shownOnMap убивает parent bwlevs (например плейлист из артистов) и не может отобразить его!!
+
+*/
 var BrowseMap = function (){};
 
-provoda.Eventor.extendTo(BrowseMap, {
+var limits = {
+	same_model_matches: 1,
+	big_steps: 4
+};
+
+var isBigStep = function(cur, cur_child) {
+	return cur.map_parent && cur.map_parent.getNesting('pioneer') != cur_child.map_parent;
+};
+
+var getNavGroups = function(bwlev) {
+	var cur_group = [];
+	var groups = [cur_group];
+	
+	var cur = bwlev;
+	var cur_child = cur.getNesting('pioneer');
+	while (cur) {
+		cur_group.push(cur_child);
+
+		if (isBigStep(cur, cur_child)) {
+			cur_group = [];
+			groups.push(cur_group);
+		}
+
+		cur = cur.map_parent;
+		cur_child = cur && cur.getNesting('pioneer');
+	}
+	return groups;
+};
+
+
+var getEdgeSimilarModelPos = function(bwlev, model_name, limit) {
+	var edge_group_num = -1;
+	var groups_of_similar = 0;
+	var groups_count = 0;
+	var cur = bwlev;
+	var cur_child = cur.getNesting('pioneer');
+	while (cur) {
+		if (cur_child.model_name == model_name) {
+			if (edge_group_num != groups_count) {
+				edge_group_num = groups_count;
+				groups_of_similar++;
+				if (groups_of_similar == limit) {
+					break;
+				}
+			}
+		}
+
+		if (isBigStep(cur, cur_child)) {
+			groups_count++;
+		}
+
+		cur = cur.map_parent;
+		cur_child = cur && cur.getNesting('pioneer');
+	}
+	return groups_of_similar == limit ? edge_group_num : -1;
+};
+
+
+var countGroups = function(bwlev) {
+	var groups_count = 1;
+	var cur = bwlev;
+	var cur_child = cur.getNesting('pioneer');
+	while (cur) {
+
+		if (isBigStep(cur, cur_child)) {
+			groups_count++;
+		}
+
+		cur = cur.map_parent;
+		cur_child = cur && cur.getNesting('pioneer');
+	}
+	return groups_count;
+};
+
+
+function interestPart(group){
+	return {
+		md: group[0],
+		distance: group.length
+	};
+}
+
+var getLimitedParent = function(parent_bwlev, end_md){
+	var pioneer = parent_bwlev.getNesting('pioneer');
+	// var pre_mn = pioneer.model_name == end_md.model_name;
+	var pre_group = pioneer != end_md.map_parent;
+
+
+	// var cur = parent_bwlev;
+	// var cur_child = end_md;
+	// var counter = 0;
+
+	// var big_steps = 0;
+	// var same_model_matches = 0;
+
+	// var last_ok;
+
+	// var cut = false;
+
+	
+	var groups_count = countGroups(parent_bwlev);
+	var all_groups_count = groups_count + (pre_group ? 1 : 0);
+
+	
+	var similar_model_edge = getEdgeSimilarModelPos(parent_bwlev, end_md.model_name, 3);
+
+	if (all_groups_count > 3 || similar_model_edge != -1) {
+
+		var count_slice = 3 + ( pre_group ? -1 : 0 );
+		var sm_slice = similar_model_edge == -1 ? Infinity : similar_model_edge + 1;
+		var slice = Math.min(count_slice, sm_slice);
+		var groups = getNavGroups(parent_bwlev);
+		var sliced = groups.slice(0, slice);
+
+		return sliced.map(interestPart).reverse();
+	}
+
+	return false;
+};
+
+var followFromTo = function(map, parent_bwlev, end_md) {
+	var aycocha = map.isCollectingChanges();
+
+	if (!aycocha){
+		map.startChangesCollecting();
+	}
+
+	var cutted_parents = getLimitedParent(parent_bwlev, end_md);
+
+	if (cutted_parents) {
+		map.startNewBrowse();
+		var last_cutted_parentbw = BrowseMap.showInterest(map, cutted_parents);
+		map._goDeeper(end_md, last_cutted_parentbw);
+
+	} else {
+		// parent_bwlev.showOnMap();
+
+		if (parent_bwlev) {
+			 if (ba_inUse(parent_bwlev)){
+				if (!ba_isOpened(parent_bwlev)){
+					// если замарожены - удаляем "незамороженное" и углубляемся до нужного уровня
+					map.restoreFreezedLev(parent_bwlev);
+				}
+				// отсекаем всё более глубокое
+				ba_sliceTillMe(parent_bwlev);
+			} else {
+				showMOnMap(map, parent_bwlev.getNesting('pioneer'), null, parent_bwlev);
+			}
+		}
+		map._goDeeper(end_md, parent_bwlev);
+	}
+
+	if (!aycocha){
+		map.finishChangesCollecting();
+	}
+
+};
+
+var showMOnMap = function(map, model, zlev, bwlev) {
+
+	if (model.map_level_num == -1) {
+		bwlev = map.getLevel(-1);
+	}
+
+	var aycocha = map.isCollectingChanges();
+	if (!aycocha){
+		map.startChangesCollecting();
+	}
+
+	var bwlev_parent = false;
+
+	if (!bwlev || !ba_inUse(bwlev)){
+		// если модель не прикреплена к карте,
+		// то прежде чем что-то делать - отображаем "родительску" модель
+		var parent_md;
+		if (bwlev) {
+			parent_md = bwlev.map_parent.getNesting('pioneer');
+		} else {
+			parent_md = model.map_parent;
+		}
+
+		bwlev_parent = showMOnMap(map, parent_md, null, bwlev && bwlev.map_parent);
+	}
+
+	var result = null;
+
+	if (bwlev_parent || bwlev_parent === false) {
+
+		if (model.state('has_no_access')) {
+			model.switchPmd();
+		} else if (bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev))){//если модель прикреплена к карте
+			if (!ba_isOpened(bwlev)){
+				// если заморожены - удаляем "незамороженное" и углубляемся до нужного уровня
+				map.restoreFreezedLev(bwlev);
+			}
+			// отсекаем всё более глубокое
+			ba_sliceTillMe(bwlev);
+			result = bwlev;
+		} else {
+			if (!model.model_name){
+				throw new Error('model must have model_name prop');
+			}
+			// this.bindMMapStateChanges(model, model.model_name);
+			result = map._goDeeper(model, bwlev && bwlev.map_parent);
+		}
+	}
+
+	if (!aycocha){
+		map.finishChangesCollecting();
+	}
+
+	return result;
+	//
+};
+
+var getBwlevFromParentBwlev = function(parent_bwlev, md) {
+	return parent_bwlev.children_bwlevs[md._provoda_id];
+};
+
+var getBwlevInParentBwlev = function(md, map) {
+	if (!md.map_parent) {
+		if (map.mainLevelResident != md) {
+			throw new Error('root map_parent must be `map.mainLevelResident`');
+		}
+		return map.levels[-1].free;
+	}
+
+	var parent_bwlev = getBwlevInParentBwlev(md.map_parent, map);
+	return getBwlevFromParentBwlev(parent_bwlev, md);
+};
+
+var getCommonBwlevParent = function(bwlev, md) {
+	var cur_bwlev = bwlev;
+	while (cur_bwlev) {
+		var pioneer = cur_bwlev.getNesting('pioneer');
+
+		var cur_md = md;
+		while (cur_md) {
+			if (pioneer == cur_md) {
+				return cur_bwlev;
+			}
+			cur_md = md.map_parent;
+		}
+
+		cur_bwlev = cur_bwlev.map_parent;
+	}
+};
+
+var getPathToBwlevParent = function(bwlev, md) {
+	var pioneer = bwlev.getNesting('pioneer');
+	var matched;
+	var result = [];
+	var cur = md;
+	while (cur) {
+
+		if (pioneer == cur) {
+			matched = true;
+			break;
+		}
+
+		result.push(cur);
+
+		cur = cur.map_parent;
+	}
+
+	if (!matched) {
+		throw new Error('trying to get path for unconnected parts');
+	}
+	return result.reverse();
+
+};
+
+
+BrowseMap.getConnectedBwlev = function(bwlev, md) {
+	var common_bwlev = getCommonBwlevParent(bwlev, md);
+	var path = getPathToBwlevParent(common_bwlev, md);
+	var cur = common_bwlev;
+	for (var i = 0; i < path.length; i++) {
+		cur = getBwlevFromParentBwlev(common_bwlev, md);
+	}
+	return cur;
+};
+
+BrowseMap.getBwlevFromParentBwlev = getBwlevFromParentBwlev;
+
+function BrowseLevel() {}
+pv.Model.extendTo(BrowseLevel, {
+	init: function(opts, data, params, nestings, states) {
+		this._super.apply(this, arguments);
+		this.children_bwlevs = {};
+		this.model_name = states['model_name'];
+
+		if (!this.model_name) {
+			throw new Error('must have model name');
+		}
+
+		this.ptree = [this];
+		this.rtree = [states['pioneer']];
+
+		if (this.map_parent) {
+			this.ptree = this.ptree.concat(this.map_parent.ptree);
+			this.rtree = this.rtree.concat(this.map_parent.rtree);
+		}
+	},
+	getParentMapModel: function() {
+		return this.map_parent;
+	},
+	showOnMap: function() {
+		showMOnMap(this.map, this.getNesting('pioneer'), this.lev, this);
+	},
+	requestPage: function(id) {
+		var md = pv.getModelById(id);
+		var pioneer = this.getNesting('pioneer');
+
+		var target_is_deep_child;
+
+		var cur = md;
+		var bwlev_children = [];
+
+		while (cur.map_parent) {
+			bwlev_children.push(cur);
+
+			if (cur.map_parent == pioneer) {
+				target_is_deep_child = true;
+				break;
+			}
+			cur = cur.map_parent;
+		}
+
+		bwlev_children = bwlev_children.reverse();
+
+		if (!target_is_deep_child) {
+			md.requestPage();
+		} else {
+			var map = md.app.map;
+
+			var aycocha = map.isCollectingChanges();
+			if (!aycocha){
+				map.startChangesCollecting();
+			}
+
+			showMOnMap(map, pioneer, this.lev, this);
+
+			var parent_bwlev = this;
+			for (var i = 0; i < bwlev_children.length; i++) {
+				if (!parent_bwlev) {
+					continue;
+				}
+				var cur_md = bwlev_children[i];
+
+				if (cur_md.state('has_no_access')) {
+					parent_bwlev = null;
+					cur_md.switchPmd();
+				} else {
+					parent_bwlev = map._goDeeper(cur_md, parent_bwlev);
+				}
+			}
+
+			if (!aycocha){
+				map.finishChangesCollecting();
+			}
+		}
+
+	},
+	zoomOut: function() {
+		var pioneer = this.getNesting('pioneer');
+		if (pioneer.state('mp_stack') || (pioneer.state('mp_show') )) {
+			ba__sliceTM(this);
+		}
+	},
+	followTo: function(id) {
+		var md = pv.getModelById(id);
+		if (md.getRelativeModel) {
+			md = md.getRelativeModel();
+		}
+		// md.requestPage();
+		followFromTo(this.map, this, md);
+	
+	},
+	'stch-mpl_attached': function(state) {
+		var md = this.getNesting('pioneer');
+		var obj = pv.state(md, 'bmpl_attached');
+		obj = obj ? spv.cloneObj({}, obj) : {};
+		obj[this._provoda_id] = state;
+		pv.update(md, 'bmpl_attached', obj);
+		pv.update(md, 'mpl_attached', spv.countKeys(obj, true));
+
+	}
+});
+
+var getBWlev = function(md, parent_bwlev, map_level_num){
+	var cache = parent_bwlev && parent_bwlev.children_bwlevs;
+	var key = md._provoda_id;
+	var bwlev;
+
+	if (!cache || !cache[key]) {
+		bwlev = pv.create(BrowseLevel, {
+			map_level_num: map_level_num,
+			model_name: md.model_name,
+			pioneer: md
+		}, {
+			nestings: {
+				pioneer: md
+			}
+		}, parent_bwlev);
+
+		if (cache) {
+			cache[key] = bwlev;
+		}
+		
+	} else {
+		bwlev = cache[key];
+	}
+
+	return bwlev;
+};
+
+var sProp = function(obj, prop_name, nv, cb) {
+	if (obj[prop_name] != nv){
+		var ov = obj[prop_name];
+		obj[prop_name] = nv;
+		if (cb) {
+			cb(nv, ov);
+		}
+		return {nv: nv, ov: ov};
+	}
+};
+
+// BrowseMap
+pv.Eventor.extendTo(BrowseMap, {
 	init: function(maleres){
 		this._super();
 
@@ -110,7 +456,6 @@ provoda.Eventor.extendTo(BrowseMap, {
 		this.residents_tree_change = null;
 		this.collecting_changes = null;
 		this.current_level_num = null;
-		this.old_nav_tree = null;
 		this.nav_tree = null;
 		this.onNavTitleChange = null;
 		this.onNavUrlChange = null;
@@ -266,11 +611,8 @@ provoda.Eventor.extendTo(BrowseMap, {
 
 			for (var jj = 0; jj < move_view_changes.length; jj++) {
 				var cur = move_view_changes[jj];
-				if (jj == move_view_changes.length -1){
-					//cur.value = true;
-					this.updateNav(cur.target.getMD().lev, opts);
-				} else {
-					//cur.value = true;
+				if (jj == move_view_changes.length -1){					
+					this.updateNav(cur.bwlev.getMD(), opts);
 				}
 			}
 
@@ -281,10 +623,12 @@ provoda.Eventor.extendTo(BrowseMap, {
 				changed_residents = this.residents;
 			}
 
+			var bwlev = this.getCurrentLevel();
+
 			this.trigger('changes', {
 				array: this.chans_coll,
 				changes_number: this.cha_counter
-			}, changed_residents, this.residents);
+			}, changed_residents, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse());
 			this.chans_coll = [];
 			this.chans_coll.changes_number = ++this.cha_counter;
 
@@ -301,7 +645,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 		return this.getLevel(this.getActiveLevelNum());
 	},
 	getCurrentResident: function() {
-		return this.getCurrentLevel().resident;
+		return this.getCurrentLevel().getNesting('pioneer');
 	},
 	getLevel: function(num){
 		if (this.levels[num]){
@@ -314,38 +658,49 @@ provoda.Eventor.extendTo(BrowseMap, {
 		return this.current_level_num;
 	},
 	setLevelPartActive: function(lp){
-		lp.show();
-		this.current_level_num = lp.num;
+		ba_show(lp);
+		this.current_level_num = lp.state('map_level_num');
 	},
-	_goDeeper: function(resident){
-		//var cl = this.getActiveLevelNum();
-		var cur_res = this.getCurrentResident();
-		if (cur_res == resident){
-			return cur_res.lev;
+	_goDeeper: function(md, parent_bwlev){
+		// без parent_bwlev нет контекста
+		if (!parent_bwlev) {
+			// будем искать parent_bwlev на основе прямой потомственности от уровня -1
+			parent_bwlev = getBwlevInParentBwlev(md.map_parent, this);
 		}
 
 
-		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
-		var parent_md = resident.map_parent;
-		if (parent_md){
-			//this.sliceDeepUntil(cl, false, true);
-			parent_md.lev.sliceTillMe(true);
-		}  else if (resident.zero_map_level){
-			//this.sliceDeepUntil(-1, false, true);
-			this.clearCurrent();
-		} else {
-			throw new Error('resident does not have map_parent');
-		}
-		if (just_started_zoomout){
-			this.finishChangesGrouping('zoom-out');
-		}
+		// var cur_res = this.getCurrentResident();
+		// if (cur_res == md){
+		// 	// возврщаем bwlev
+		// 	return cur_res.lev.bwlev;
+		// }
+
+		var parent_md = md.map_parent;
+		
 		var target_lev;
-		if (resident.lev && resident.lev.canUse()){
-			target_lev = resident.lev;
-		} else {
-			//reusing freezed;
-			target_lev = this.getFreeLevel(parent_md ? parent_md.lev.num + 1 : 0, parent_md, resident);
-		}
+		// if (md.lev && md.lev.canUse()){
+		// 	// есть ли на карте уровень для этой модели, который можно использовать повторно
+		// 	target_lev = md.lev;
+		// } else {
+			// reusing freezed;
+			var map_level_num;
+			if (parent_bwlev) {
+				map_level_num = parent_bwlev.state('map_level_num') + 1;
+			} else {
+				if (typeof md.map_level_num != 'number') {
+					throw new Error('md must have `map_level_num`');
+				}
+				map_level_num = md.map_level_num;
+			}
+			// нужно чтобы потом использовать все уровни-предки
+			var parent_lev = parent_bwlev;
+			if (!parent_lev && parent_md) {
+				throw new Error('`md.lev` prop dissalowed');
+				parent_lev = parent_md.lev;
+			}
+
+			target_lev = this.getFreeLevel(map_level_num, parent_lev, md);
+		// }
 
 		var just_started = this.startChangesGrouping('zoom-in');
 		this.setLevelPartActive(target_lev);
@@ -355,54 +710,26 @@ provoda.Eventor.extendTo(BrowseMap, {
 		return target_lev;
 		
 	},
-	goDeeper: function(resident){
-		return this._goDeeper(resident);
+	// goDeeper: function(md, parent_bwlev, bwlev){
+	// 	return this._goDeeper(md, parent_bwlev, bwlev);
+	// },
+	createLevel: function(num, parent_bwlev, md){
+		var bwlev = getBWlev(md, parent_bwlev, num);
+		bwlev.map = this;
+		this.addResident(md);
+		pv.update(bwlev, 'mpl_attached', true);
+		return bwlev;
 	},
-	createLevel: function(num, parent_levels, resident){
-		return new MapLevel(num, parent_levels, resident, this);
-	},
-	getCurrentShallowLevelsAsParents: function(num){
-		var lvls = [];
-		//from deep levels to top levels;
-		if (this.levels.length){
-			var prev_lev_num = num - 1;
-			if (prev_lev_num > -1){
-				var prev_lev = this.getLevel(prev_lev_num);
-				if (prev_lev){
-					lvls.push(prev_lev);
-					if (prev_lev.parent_levels.length){
-						lvls = lvls.concat(prev_lev.parent_levels);
-					}
-				}
-			}
-		}
-		return lvls;
-	},
-	getFreeLevel: function(num, parent_md, resident){//goDeeper
+	getFreeLevel: function(num, parent_bwlev, resident){//goDeeper
 		if (!this.levels[num]){
 			this.levels[num] = {};
 		}
 		if (this.levels[num].free && this.levels[num].free != this.levels[num].freezed){
 			return this.levels[num].free;
 		} else{
-			var parent_levels;
-
-			if (parent_md){
-				var parents_of_parent = parent_md.lev.parent_levels;
-				parent_levels = [];
-				if (parent_md.lev != this.getLevel(-1)){
-					parent_levels.push(parent_md.lev);
-					//throw new Error('start level can\'t be parent')
-					//parent_levels = [parent_md.lev];
-				}
-				
-				if (parents_of_parent && parents_of_parent.length){
-					parent_levels = parent_levels.concat(parents_of_parent);
-				}
-			} else {
-				parent_levels = [];
-			}
-			return this.levels[num].free = this.createLevel(num, parent_levels, resident);
+			
+			this.levels[num].free = this.createLevel(num, parent_bwlev, resident);
+			return this.levels[num].free;
 		}
 	},
 	freezeMapOfLevel : function(num){
@@ -418,11 +745,12 @@ provoda.Eventor.extendTo(BrowseMap, {
 				if (this.levels[i].free){
 					if (this.levels[i].free != this.levels[i].freezed){
 						if (this.levels[i].freezed){ //removing old freezed
-							this.levels[i].freezed.die();
+							ba_die( this.levels[i].freezed );
+							this.levels[i].freezed.closed = false;
 							this.levels[i].freezed = null;
 						}
 						this.levels[i].freezed = this.levels[i].free;
-						this.levels[i].freezed.markAsFreezed();
+						ba_markAsFreezed( this.levels[i].freezed );
 						fresh_freeze = true;
 					}
 				}
@@ -437,7 +765,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 		if (l + 1 < this.levels.length -1) {
 			for (i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
-					this.levels[i].freezed.die();
+					ba_die( this.levels[i].freezed );
 					this.levels[i].freezed = null;
 				}
 				
@@ -446,42 +774,13 @@ provoda.Eventor.extendTo(BrowseMap, {
 		this.finishChangesGrouping('freezing');
 		return fresh_freeze;
 	},
-	checkLRCI: function(lev, Constructor) { //checkLevelResidentInstance
-		if (lev && lev.getResident() instanceof Constructor){
-			return lev.getResident();
-		}
-	},
-	findViewingResInstance: function(Constructor) {
-		var matched = [];
-		var freezed;
-		var free;
 
-		for (var i = 0; i < this.levels.length; i++) {
-			var cur = this.levels[i];
-			if (!freezed){
-				freezed = this.checkLRCI(cur.freezed, Constructor);
-
-			}
-			if (!free){
-				free = this.checkLRCI(cur.free, Constructor);
-			}
-		}
-		if (free){
-			matched.push(free);
-		}
-		if (freezed){
-			matched.push(freezed);
-		}
-		
-
-		return matched;
-	},
 	findDeepestActiveFreezed: function() {
 		var
 			target,
 			f_lvs = spv.filter(this.levels, 'freezed'),
 			current_lev = this.getCurrentLevel(),
-			active_tree = [current_lev].concat(current_lev.parent_levels);
+			active_tree = current_lev.ptree;
 
 		for (var i = 0; i < active_tree.length; i++) {
 			if (f_lvs.indexOf(active_tree[i]) != -1){
@@ -535,12 +834,9 @@ provoda.Eventor.extendTo(BrowseMap, {
 			this.finishChangesGrouping('zoom-in');
 		}
 	},
-	restoreFreezed: function(){
-		this.restoreFreezedLev();
-	},
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
-			lev.free.die();
+			ba_die(lev.free);
 			lev.free = null;
 		}
 	},
@@ -548,7 +844,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 		if (lev){
 			if (!only_free){
 				if (lev.freezed && lev.freezed != exept){
-					lev.freezed.hide();
+					ba_hide(lev.freezed);
 				}
 			}
 			
@@ -561,79 +857,71 @@ provoda.Eventor.extendTo(BrowseMap, {
 			this.hideLevel(this.levels[i], false, only_free);
 		}
 	},
-	sProp: function(prop_name, nv, cb) {
-		if (this[prop_name] != nv){
-			var ov = this[prop_name];
-			this[prop_name] = nv;
-			if (cb) {
-				cb(nv, ov);
+
+	updateNav: (function(){
+		var stackNav = function(bwlev, stack_v) {
+			pv.update(bwlev, 'mp_stack', stack_v);
+			pv.update(bwlev.getNesting('pioneer'), 'mp_stack', stack_v);
+			return this;
+		};
+		return function(bwlev, urlop){
+			//hev
+			var lvls = bwlev.ptree;
+			var root = lvls[ lvls.length - 1 ]; //start_page
+			var exept_root = lvls.length - 1;
+			stackNav(bwlev, false);
+
+			var prev = lvls[1];
+			// lvls[0] is bwlev, 
+			// lvls[1] is bwlev.map_parent;
+			if (prev){
+				// this is top of stack, but only if we have "stack";
+				stackNav(prev, 'top');
+				stackNav(root, true);
+			} else {
+				stackNav(root, false);
 			}
-			return {nv: nv, ov: ov};
-		}
-	},
-	updateNav: function(tl, urlop){
-		var lvls = [tl].concat(tl.parent_levels);
-		tl.resident.stackNav(false);
 
-		var prev = lvls[1];
-		if (prev){
-			//if (lvls[2]){
-				// this is top of stack, but only we have "stack";
-				prev.resident.stackNav('top');
-				this.getLevel(-1).resident.stackNav(true);
-			//}
-		} else {
-			this.getLevel(-1).resident.stackNav(false);
-		}
+			for (var i = 2; i < exept_root; i++) {
+				stackNav(lvls[i],  i + 1 === exept_root ? 'bottom' : 'middle');
+			}
 
-		for (var i = 2; i < lvls.length; i++) {
-			lvls[i].resident.stackNav( i + 1 === lvls.length ? 'bottom' : 'middle');
-		}
-		this.setNavTree(lvls, urlop);
-	},
+			this.setNavTree(bwlev.ptree, urlop);
+		};
+	})(),
 	setNavTree: function(tree, urlop) {
 		var old_tree = this.nav_tree;
-		if (old_tree){
-			this.old_nav_tree = old_tree;
-		}
+
 		this.nav_tree = tree;
+
 		var
 			url_changed = this.setCurrentURL(tree, old_tree, urlop),
-			title_changed = this.setCurrentNav(tree, old_tree, urlop);
-		if (url_changed){
-				
-			this.trigger('nav-change',
-				{
-					url: url_changed.nv || "",
-					map_level: this.getCurMapL()
-				},
-				{
-					url: url_changed.ov || "",
-					map_level: this.getPrevMampL()
-				},
-				!!urlop.skip_url_change, title_changed);
-		}
-		this.trigger("map-tree-change", this.nav_tree, this.old_nav_tree);
-		
+			title_changed = this.setCurrentNav(tree[0].rtree, old_tree && old_tree[0].rtree, urlop);
 
-	},
-	getPrevMampL: function() {
-		return this.old_nav_tree && this.old_nav_tree[0];
-	},
-	getCurMapL: function() {
-		return this.nav_tree[0];
+		// !!urlop.skip_url_change
+
+		if (url_changed){
+			var bwlev =  this.getCurrentLevel();
+			this.trigger('nav-change', {
+				url: url_changed.nv || "",
+				md:  bwlev && bwlev.getNesting('pioneer'),
+				map_level: bwlev
+			});
+		}
+
+		this.trigger("map-tree-change", tree[0].rtree, old_tree && old_tree[0].rtree);
 	},
 	getTreeResidents: function(n) {
 		return n && spv.filter(n, 'resident');
 	},
 	getTitleNav: function(n) {
-		return n && (n = this.getTreeResidents(n)) && n.slice(0, 2);
+		return n && n.slice(0, 2);
 	},
 	setCurrentNav: function(new_nav, old_nav) {
 		var _this = this;
 		if (!this.onNavTitleChange){
 			this.onNavTitleChange = function() {
-				var cur_nav = _this.getTitleNav(_this.nav_tree);
+				var cur_nav = _this.getTitleNav(_this.nav_tree[0].rtree);
 				var s_num = cur_nav.indexOf(this);
 				if (s_num != -1){
 					_this.refreshTitle(s_num);
@@ -661,7 +949,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 	},
 	setTitle: function(new_title) {
 		var _this = this;
-		return this.sProp('cur_title', new_title, function(nv, ov) {
+		return sProp(this, 'cur_title', new_title, function(nv, ov) {
 			_this.trigger('title-change', nv, ov);
 		});
 	},
@@ -675,21 +963,23 @@ provoda.Eventor.extendTo(BrowseMap, {
 		return nav_t.join(' ← ');
 	},
 	refreshTitle: function() {
-		this.setTitle(this.joinNavTitle(this.getTitleNav(this.nav_tree)));
+		this.setTitle(this.joinNavTitle(this.getTitleNav(this.nav_tree[0].rtree)));
 		return this;
 	},
-	setCurrentURL: function(new_tree, old_tree, urlop) {
+	setCurrentURL: function(ptree, ptree_old, urlop) {
+		var new_tree = ptree[0].rtree;
+		var old_tree = ptree_old && ptree_old[0].rtree;
+
 		var _this = this;
 		if (!this.onNavUrlChange){
 			this.onNavUrlChange = function() {
-				var cur_nav = _this.getTreeResidents(_this.nav_tree);
+				var cur_nav = _this.nav_tree[0].rtree;
 				var s_num = cur_nav.indexOf(this);
 				if (s_num != -1){
 					_this.replaceURL(s_num);
 				}
 			};
 		}
-		old_tree = this.getTreeResidents(old_tree);
 		var i;
 		if (old_tree){
 			for (i = 0; i < old_tree.length; i++) {
@@ -697,56 +987,96 @@ provoda.Eventor.extendTo(BrowseMap, {
 			}
 		}
 
-		new_tree = this.getTreeResidents(new_tree);
 		for (i = 0; i < new_tree.length; i++) {
 			new_tree[i].on('state_change-url_part', this.onNavUrlChange, {
 				skip_reg: true
 			});
 		}
-		return this.setURL(this.joinNavURL(new_tree), false, urlop);
+		return this.setURL(this.joinNavURL(ptree), false, urlop);
 	},
-	joinNavURL: function(nav) {
-		var url = [];
-		nav = nav.slice().reverse();
-
-		for (var i = 0; i < nav.length; i++) {
-			var url_part = nav[i].state('url_part');
-			if (url_part){
-				url.push(url_part);
+	joinNavURL: (function(){
+		var joinSubtree = function(array){
+			var url = "";
+			for (var i = array.length - 1; i >= 0; i--) {
+				var md = 	array[i];
+				var url_part = md.state('url_part');
+				// if (!url_part) {
+				// 	throw new Error('must be url');
+				// }
+				url += url_part || '';
 			}
-			//nav[i].setFullUrl(url.join(''));
-		}
-		return url.join('');
-	},
+			return url;
+		};
+
+		return function(nav) {
+			var url = '';
+			var groups = getNavGroups(nav[0]);
+
+			/*
+				/users/me/lfm:neighbours#3:/users/lfm:kolczyk0
+			*/
+
+			var last = groups.pop();
+
+			url += joinSubtree(last);
+			// for (var i = last.length - 1; i >= 0; i--) {
+			// 	var cur = last[i];
+			// 	url.push(cur.state('url_part'));
+			// }
+
+			for (var i = groups.length - 1; i >= 0; i--) {
+				var distance = groups[i].length;
+				// var md = groups[i][0];
+				// var url_part = md.state('url_part');
+				// if (!url) {
+				// 	throw new Error('must be url');
+				// }
+				url += '#';
+
+
+				// url.push('#');
+
+				if (distance > 1) {
+					url += distance + ':';
+					// url.push();
+				}
+				url += joinSubtree(groups[i]);
+
+				//url.push(url_part);
+				
+			}
+
+			return url;
+		};
+	})(),
 	setURL: function(url, replace, urlop) {
 		urlop = urlop || {};
 		var _this = this;
-		return this.sProp('cur_url', url, function(nv, ov) {
+		return sProp(this, 'cur_url', url, function(nv, ov) {
 			if (!urlop.skip_url_change){
-				_this.trigger('url-change', nv, ov || "", _this.getCurMapL(), replace || urlop.replace_url);
+				_this.trigger('url-change', nv, ov || "", _this.getCurrentLevel(), replace || urlop.replace_url);
 			}
+			var bwlev = _this.getCurrentLevel();
 			_this.trigger(
 				'every-url-change',
 				{
 					url: nv,
-					map_level: _this.getCurMapL()
+					map_level: bwlev,
+					md: bwlev && bwlev.getNesting('pioneer')
 				},
-				{
-					url: ov || "",
-					map_level: _this.getPrevMampL()
-				},
+				null,
 				replace
 			);
 
 		});
 	},
 	replaceURL: function() {
-		this.setURL(this.joinNavURL(this.getTreeResidents(this.nav_tree)), true);
+		this.setURL(this.joinNavURL(this.nav_tree), true);
 		return this;
 	},
 
 	clearShallow: function(lev, only_free){
-		for (var i = this.levels.length - 1; i > lev.num; i--) {
+		for (var i = this.levels.length - 1; i > lev.state('map_level_num'); i--) {
 			this.hideLevel(this.levels[i], false, only_free);
 			
 		}
@@ -789,7 +1119,67 @@ provoda.Eventor.extendTo(BrowseMap, {
 	
 });
 
+var getDistantModel = function(md, distance){
+	var cur = md;
+	for (var i = 1; i < distance; i++) {
+		cur = cur.map_parent;
+	}
+	return cur;
+};
 
+BrowseMap.showInterest = function(map, interest) {
+	var first = interest.shift();
+	var aycocha = map.isCollectingChanges();
+	if (!aycocha){
+		map.startChangesCollecting();
+	}
+	// first.md.lev fixme
+
+	var parent_bwlev = showMOnMap(first.md.app.map, first.md);
+
+	for (var i = 0; i < interest.length; i++) {
+		var cur = interest[i];
+
+		var distance = cur.distance;
+		if (!distance) {throw new Error('must be distance: 1 or more');}
+		while (distance) {
+			var md = getDistantModel(interest[i].md, distance);
+			parent_bwlev = map._goDeeper(md, parent_bwlev);
+			distance--;
+		}
+		
+
+	}
+
+	if (!aycocha){
+		map.finishChangesCollecting();
+	}
+	return parent_bwlev;
+};
+
+
+var interest_part = /(\#(?:\d*\:)?)/gi;
+BrowseMap.getUserInterest = function(pth_string, start_md) {
+	/*
+		/users/me/lfm:neighbours#3:/users/lfm:kolczyk0
+	*/
+	var parts = pth_string.split(interest_part);
+
+	var interest = [];
+
+	while (parts.length) {
+		var path = parts.pop();
+		var distance_part = parts.pop();
+		var distance = distance_part && distance_part.slice(1, distance_part.length - 1 );
+		interest.push({
+			md: BrowseMap.routePathByModels(start_md, path),
+			// path: path,
+			distance: distance || 1
+		});
+	}
+
+	return interest.reverse();
+};
 
 BrowseMap.routePathByModels = function(start_md, pth_string, need_constr) {
 
@@ -852,23 +1242,10 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr) {
 						break;
 					}
 				}
-				
-
 			}
-
-
 		}
 		return result;
 };
-
-
-
-
-
-
-
-
-
 
 BrowseMap.Model = function() {};
 
@@ -917,22 +1294,32 @@ var getDeclrConstr = function(app, md, item) {
 	}
 };
 
-var getRightNestingName =function(md, nesting_name) {
-	if (md.preview_nesting_source && nesting_name == 'preview_list') {
-		nesting_name = md.preview_nesting_source;
-	} else if (nesting_name == md.preview_mlist_name){
-		nesting_name = md.main_list_name;
-	}
-	return nesting_name;
-};
-
-
 var getNestingConstr = function(app, md, nesting_name) {
-	nesting_name = getRightNestingName(md, nesting_name);
+	nesting_name = pv.hp.getRightNestingName(md, nesting_name);
 
 
 	if (md[ 'nest_rqc-' + nesting_name ]) {
-		return md[ 'nest_rqc-' + nesting_name ];
+		var target = md[ 'nest_rqc-' + nesting_name ];
+		if (Array.isArray(target)) {
+			if (!target.constrs_array) {
+				var result = [];
+				var index = target[1];
+				for (var prop in index) {
+					if (!index.hasOwnProperty(prop)) {
+						continue;
+					} else {
+						result.push( index[prop] );
+					}
+					
+				}
+				target.constrs_array = result;
+			}
+			
+			return target.constrs_array;
+		} else {
+			return target;
+		}
+		
 	} else if (md[ 'nest_posb-' + nesting_name ]) {
 		return md[ 'nest_posb-' + nesting_name ];
 	} else if (md[ 'nest-' + nesting_name]) {
@@ -955,6 +1342,7 @@ var getNestingConstr = function(app, md, nesting_name) {
 	
 	
 };
+BrowseMap.getNestingConstr = getNestingConstr;
 
 
 var getModelSources = function(app, md, cur) {
@@ -1052,15 +1440,25 @@ var getModelSources = function(app, md, cur) {
 	return  spv.collapseAll(full_sources_list);
 };
 
-var strucs_cache = {};
 
-provoda.HModel.extendTo(BrowseMap.Model, {
+BrowseMap.getStrucSources = function(md, struc) {
+	//console.log(struc);
+	var result = {};
+	for (var space_name in struc) {
+		result[space_name] = getModelSources(md.app, md, struc[space_name]);
+		//var cur = struc[space_name];
+	}
+	return result;
+	//console.log(md.model_name, md.constr_id, result);
+};
+
+pv.HModel.extendTo(BrowseMap.Model, {
 	init: function(opts, data) {
 		this._super.apply(this, arguments);
 
 		this.lists_list = null;
 		this.lev = null;
-		this.map_level_num = null;
+		// this.map_level_num = null;
 		this.head_props = this.head_props || null;
 
 
@@ -1088,10 +1486,10 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		if (!this.skip_map_init){
 			if (data) {
 				if (data['url_part']){
-					this.init_states['url_part'] = data['url_part'];
+					this.initState('url_part', data['url_part']);
 				}
 				if (data['nav_title']){
-					this.init_states['nav_title'] = data['nav_title'];
+					this.initState('nav_title', data['nav_title']);
 				}
 			}
 		}
@@ -1108,31 +1506,11 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 
 		if (this.preview_nesting_source) {
 			this.on('child_change-' + this.preview_nesting_source, function(e) {
-				this.updateNesting('preview_list', e.value);
+				pv.updateNesting(this, 'preview_list', e.value);
 			});
 		}
 	},
 	preview_nesting_source: 'lists_list',
-	getSTRC: function() {
-		return strucs_cache[this.constr_id];
-	},
-	handleViewingDataStructure: function(struc) {
-		if (!strucs_cache[this.constr_id]) {
-			strucs_cache[this.constr_id] = {};
-			//console.log(struc);
-			var result = {};
-			for (var space_name in struc) {
-				result[space_name] = getModelSources(this.app, this, struc[space_name]);
-				//var cur = struc[space_name];
-			}
-			strucs_cache[this.constr_id] = result;
-			//console.log(this.model_name, this.constr_id, result);
-			
-		}
-		this.updateState('map_slice_view_sources', [this._network_source, strucs_cache[this.constr_id]]);
-		return strucs_cache[this.constr_id];
-
-	},
 	getSPIConstr: function(sp_name) {
 		var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
 		if (target){
@@ -1155,8 +1533,6 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		if (!instance){
 			var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
 			if (target){
-				
-
 				/*
 				hp_bound
 				data_by_urlname
@@ -1166,13 +1542,10 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 				накладываем стандартные данные 
 				накладываем данные из урла
 				*/
-
 				var Constr = target.constr;
 
 				var common_opts = getSPOpts(this, sp_name);
-				
 
-				
 				var instance_data = getInitData(this, common_opts);
 				var data_by_urlname = Constr.prototype.data_by_urlname && Constr.prototype.data_by_urlname(common_opts[1]);
 				spv.cloneObj(instance_data, data_by_urlname);
@@ -1215,38 +1588,26 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 
 	assignMapLev: function(lev){
 		this.lev = lev;
-		this.map_level_num = this.lev.num;
+		// this.map_level_num = this.lev.num;
 		return this;
 	},
 	requestPage: function() {
 		this.showOnMap();
 	},
 	showOnMap: function() {
-		this.app.showMOnMap(this);
+		showMOnMap(this.app.map, this);
 	},
 	getParentMapModel: function() {
 		return this.map_parent;
-	},
-	canUnfreeze: function() {
-		return this.lev && this.lev.canUse() && !this.lev.isOpened();
 	},
 	mlmDie: function(){
 		return;
 	},
 	hideOnMap: function() {
-		this.updateState('mp_show', false);
-	},
-	stackNav: function(stack_v){
-		this.updateState('mp_stack', stack_v);
-		return this;
-	},
-	zoomOut: function() {
-		if (this.lev && (this.state('mp_stack') || (this.state('mp_show')) )){
-			this.lev.zoomOut();
-		}
+		pv.update(this, 'mp_show', false);
 	},
 	setFullUrl: function(url) {
-		this.updateState('mp_full_url ', url);
+		pv.update(this, 'mp_full_url ', url);
 	},
 	getTitle: function() {
 		return this.state('nav_title');
@@ -1262,6 +1623,95 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	}
 });
 
+function ba_show(bwlev){
+	var md = bwlev.getNesting('pioneer');
+	bwlev.map.addChange({
+		type: 'move-view',
+		bwlev: bwlev.getMDReplacer(),
+		target: md.getMDReplacer(),
+		value: true
+	});
+}
+
+function ba_hide(bwlev){
+	var md = bwlev.getNesting('pioneer');
+	bwlev.map.addChange({
+		type: 'zoom-out',
+		bwlev: bwlev.getMDReplacer(),
+		target: md.getMDReplacer()
+	});
+}
+
+function ba_die(bwlev){
+	var md = bwlev.getNesting('pioneer');
+	bwlev.map.addChange({
+		type: 'destroy',
+		bwlev: bwlev.getMDReplacer(),
+		target: md.getMDReplacer()
+	});
+	bwlev.getNesting('pioneer').trigger('mpl-detach');
+	pv.update(bwlev, 'mpl_attached', false);
+	bwlev.map.removeResident(md);
+}
+
+function ba__sliceTM(bwlev){ //private alike
+	var map = bwlev.map;
+	var current_level = map.getCurrentLevel();
+	if (current_level == bwlev){
+		return;
+	}
+	var aycocha = map.isCollectingChanges();
+	if (!aycocha){
+		map.startChangesCollecting();
+	}
+
+	var just_started = map.startChangesGrouping('zoom-out', true);
+	map.sliceDeepUntil(bwlev.state('map_level_num')); ///////
+	if (just_started){
+		map.finishChangesGrouping('zoom-out');
+	}
+
+	if (!aycocha){
+		map.finishChangesCollecting();
+	}
+}
+
+
+
+function ba_sliceTillMe(bwlev){
+	return ba__sliceTM(bwlev);
+}
+
+function ba_markAsFreezed(bwlev) {
+	var md = bwlev.getNesting('pioneer');
+	bwlev.closed = true;
+	pv.update(md, 'mp_freezed', true);
+}
+
+function ba_inUse(bwlev){
+	return bwlev.state('mp_show');
+}
+
+function ba_isOpened(bwlev){
+	return !!bwlev.map && !bwlev.closed;
+}
+
+
+
+function ba_zoomOut(bwlev) {
+	return ba__sliceTM(bwlev);
+}
+
+function ba_canUse(bwlev){
+	return bwlev.state('mp_show');
+	// return !!bwlev.map;
+}	
+
+BrowseMap.freeze = function ba_freeze(bwlev){
+	if (ba_isOpened(bwlev)){
+		bwlev.map.freezeMapOfLevel(bwlev.state('map_level_num'));
+	}
+};
 
 
 

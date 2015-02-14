@@ -1,10 +1,10 @@
-define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(provoda, $, spv, app_serv, etc_views, SongActTaggingControl) {
+define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
 var localize = app_serv.localize;
 
 
 var PlaylistAddSearchCtr = function() {};
-provoda.View.extendTo(PlaylistAddSearchCtr, {
+pv.View.extendTo(PlaylistAddSearchCtr, {
 	base_tree: {
 		sample_name: 'song_acting_playlist_add'
 	}
@@ -12,7 +12,7 @@ provoda.View.extendTo(PlaylistAddSearchCtr, {
 
 
 var ShareSearchSection = function() {};
-provoda.View.extendTo(ShareSearchSection, {
+pv.View.extendTo(ShareSearchSection, {
 
 	toggleVisState: function(state, boolen) {
 		var new_value;
@@ -57,7 +57,7 @@ ShareSearchSection.extendTo(LFMShareSectionView, {
 });
 
 var ShareSearchCtr = function() {};
-provoda.View.extendTo(ShareSearchCtr, {
+pv.View.extendTo(ShareSearchCtr, {
 	children_views:{
 		'lfm_auth': etc_views.LfmLoginView
 		
@@ -76,7 +76,7 @@ provoda.View.extendTo(ShareSearchCtr, {
 
 
 var ShareRowUI = function(){};
-provoda.View.extendTo(ShareRowUI, {
+pv.View.extendTo(ShareRowUI, {
 	dom_rp: true,
 	children_views: {
 		
@@ -124,7 +124,7 @@ provoda.View.extendTo(ShareRowUI, {
 });
 
 var SongActPlaylistingUI = function() {};
-provoda.View.extendTo(SongActPlaylistingUI, {
+pv.View.extendTo(SongActPlaylistingUI, {
 	children_views: {
 		searcher: PlaylistAddSearchCtr
 	},
@@ -200,7 +200,7 @@ provoda.View.extendTo(SongActPlaylistingUI, {
 
 
 var LoveRowUI = function(){};
-provoda.View.extendTo(LoveRowUI, {
+pv.View.extendTo(LoveRowUI, {
 	children_views: {
 		lfm_loveit: etc_views.LfmLoveItView
 	},
@@ -211,7 +211,7 @@ provoda.View.extendTo(LoveRowUI, {
 });
 
 var ScrobbleRowUI = function(){};
-provoda.View.extendTo(ScrobbleRowUI, {
+pv.View.extendTo(ScrobbleRowUI, {
 	children_views: {
 		lfm_scrobble: etc_views.LfmScrobbleView
 	},
@@ -266,7 +266,7 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	},
 	'stch-key_vol_hole_w': function(value) {
 		if (value) {
-			this.updateState('vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
+			pv.update(this, 'vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
 		}
 	},
 	'stch-vis_volume-hole-width': function(state) {

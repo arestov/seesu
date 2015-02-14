@@ -1,7 +1,7 @@
-define(['provoda'], function(provoda) {
+define(['pv'], function(pv) {
 'use strict';
 var PlayerBase = function(){};
-provoda.Eventor.extendTo(PlayerBase, {
+pv.Eventor.extendTo(PlayerBase, {
 	constructor: PlayerBase,
 	global_volume: true,
 	init: function(){

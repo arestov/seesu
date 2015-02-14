@@ -1,15 +1,15 @@
 var su, seesu;
 define('su',
-['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
+['require', 'spv', 'app_serv', 'pv', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
 'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax', 'js/libs/ProspApi'],
-function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
+function(require, spv, app_serv, pv, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, ProspApi) {
 'use strict';
-var seesu_version = 4.6;
+var seesu_version = 4.8;
 var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
@@ -50,7 +50,7 @@ lfm.checkMethodResponse = function(method, data, r) {
 
 var chrome = window.chrome;
 var ChromeExtensionButtonView = function() {};
-provoda.View.extendTo(ChromeExtensionButtonView, {
+pv.View.extendTo(ChromeExtensionButtonView, {
 	state_change: {
 		"playing": function(state) {
 			if (state){
@@ -65,7 +65,7 @@ provoda.View.extendTo(ChromeExtensionButtonView, {
 	}
 });
 var OperaExtensionButtonView = function() {};
-provoda.View.extendTo(OperaExtensionButtonView, {
+pv.View.extendTo(OperaExtensionButtonView, {
 	state_change: {
 		"playing": function(state) {
 			if (state){
@@ -161,7 +161,10 @@ AppModel.extendTo(SeesuApp, {
 				time: [2000, 4000, 4],
 				resortQueue: resortQueue,
 				init: addQueue
-			})
+			}),
+
+			key: app_serv.getPreloadedNK('dgs_key'),
+			secret: app_serv.getPreloadedNK('dgs_secret')
 		});
 
 		this.mixcloud = new net_apis.MixcloudApi();
@@ -181,11 +184,11 @@ AppModel.extendTo(SeesuApp, {
 
 
 		this.s  = new SeesuServerAPI(this, app_serv.store('dg_auth'), this.server_url);
-		this.updateState('su_server_api', true);
+		pv.update(this, 'su_server_api', true);
 
 		this.s.on('info-change.vk', function(data) {
-			_this.updateState('vk_info', data);
-			_this.updateState('vk_userid', data && data.id);
+			pv.update(_this, 'vk_info', data);
+			pv.update(_this, 'vk_userid', data && data.id);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -211,10 +214,10 @@ AppModel.extendTo(SeesuApp, {
 			reportSearchEngs(list.join(','));
 		});
 		if (this.lfm.username){
-			this.updateState('lfm_userid', this.lfm.username);
+			pv.update(this, 'lfm_userid', this.lfm.username);
 		} else {
 			this.lfm_auth.on('session', function() {
-				_this.updateState('lfm_userid', _this.lfm.username);
+				pv.update(_this, 'lfm_userid', _this.lfm.username);
 			});
 		}
 		
@@ -375,14 +378,14 @@ AppModel.extendTo(SeesuApp, {
 		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();
 
-		this.vk_users = (new provoda.Model()).init();
-		this.vk_groups = (new provoda.Model()).init();
+		this.vk_users = (new pv.Model()).init();
+		this.vk_groups = (new pv.Model()).init();
 
 		if (app_env.check_resize){
-			this.updateState('slice-for-height', true);
+			pv.update(this, 'slice-for-height', true);
 		}
 		if (app_env.deep_sanbdox){
-			this.updateState('deep_sandbox', true);
+			pv.update(this, 'deep_sandbox', true);
 		}
 
 
@@ -402,7 +405,7 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})*/
 			.on('nav-change', function(nv){
-				this.trackPage(nv.map_level.resident.model_name);
+				this.trackPage(nv.md.model_name);
 			}, this.getContextOptsI())
 			.makeMainLevel();
 
@@ -503,10 +506,8 @@ AppModel.extendTo(SeesuApp, {
 				if (state_from_history){
 					state_from_history.data.showOnMap();
 				} else{
-					var md = _this.routePathByModels(url.replace(/\ ?\$...$/, ''));
-					if (md){
-						md.showOnMap();
-					}
+					var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), _this.start_page);
+					BrowseMap.showInterest(_this.map, interest);
 				}
 				_this.map.finishChangesCollecting();
 			});
@@ -523,6 +524,13 @@ AppModel.extendTo(SeesuApp, {
 			})();
 
 		}
+
+		if (app_serv.app_env.nodewebkit) {
+			pv.update(this, 'disallow_seesu_listeners', true);
+		}
+		this.on('child_change-current_mp_md', function(e) {
+			this.closeNavHelper();
+		});
 	},
 	watchVKCharacter: function(md, key, result_state) {
 		var store, character_id;
@@ -562,7 +570,7 @@ AppModel.extendTo(SeesuApp, {
 	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume', 'files_sources', 'pl-shuffle'],
 	letAppKnowSetting: function(name, value){
 		this.settings[name] = value;
-		this.updateState('settings-' + name, value);
+		pv.update(this, 'settings-' + name, value);
 		//this.trigger('settings-' + name, value);
 	},
 	storeSetting: function(name, value){
@@ -870,14 +878,14 @@ AppModel.extendTo(SeesuApp, {
 		vk_groups: function(list) {
 			var store = this.vk_groups;
 			for (var i = 0; i < list.length; i++) {
-				store.updateState(list[i].id, list[i]);
+				pv.update(store, list[i].id, list[i]);
 			}
 			//console.log(list);
 		},
 		vk_users: function(list) {
 			var store = this.vk_users;
 			for (var i = 0; i < list.length; i++) {
-				store.updateState(list[i].id, list[i]);
+				pv.update(store, list[i].id, list[i]);
 			}
 			//console.log(list);
 		},
@@ -921,18 +929,24 @@ AppModel.extendTo(SeesuApp, {
 			console.log(source_name, ns, data);
 		}
 		
+	},
+	suggestNavHelper: function() {
+		this.showNowPlaying();
+		if (this.state('played_playlists_length') > 1) {
+			pv.update(this, 'nav_helper_is_needed', true);
+		}
+	
+		
+	},
+	closeNavHelper: function() {
+		pv.update(this, 'nav_helper_is_needed', false);
 	}
 
 });
 
 seesu = su = new SeesuApp();
 su.init(seesu_version);
-provoda.sync_s.setRootModel(su);
-
-
-
-
-
+pv.sync_s.setRootModel(su);
 
 
 (function(){
@@ -977,6 +991,11 @@ provoda.sync_s.setRootModel(su);
 		requirejs(['js/libs/TorrentsAudioSearch'], function(TorrentsAudioSearch) {
 			su.mp3_search.add(new TorrentsAudioSearch({
 				cache_ajax: cache_ajax,
+				queue: new FuncsQueue({
+					time: [100, 150, 4],
+					resortQueue: resortQueue,
+					init: addQueue
+				}),
 				mp3_search: su.mp3_search,
 				torrent_search: new torrent_searches.BtdiggTorrentSearch({
 					queue: new FuncsQueue({
@@ -1024,12 +1043,94 @@ provoda.sync_s.setRootModel(su);
 	
 
 
-
 })();
+var createDatastreamIframe = function(url, callback, allow_exec) {
+	var iframe = document.createElement('iframe');
+	spv.addEvent(window, 'message', function(e) {
+		if (e.source == iframe.contentWindow) {
+			callback(e.data);
+		}
+	});
+	if (app_serv.app_env.nodewebkit) {
+		iframe.nwdisable = !allow_exec;
+		iframe.nwfaketop = !allow_exec;
+
+	}
+	$(iframe).css({
+		position: 'absolute',
+		width: '1px',
+		height: '1px',
+		visibility: 'hidden',
+		'z-index': -10
+	});
+	iframe.src = url;
+	$(window.document.body).append(iframe);
+};
 
 spv.domReady(window.document, function(){
 	initVk(su);
 	su.checkUpdates();
+	var queue = new FuncsQueue({
+		time: [700]
+	});
+	queue.add(function() {
+		createDatastreamIframe('https://arestov.github.io/su_news_iframe/', function(data) {
+			if (!data) {
+				return;
+			}
+			pv.update(su.start_page.getNesting('news'), 'news_list', StartPage.AppNews.converNews(data));
+		});
+	});
+	queue.add(function() {
+		createDatastreamIframe('https://arestov.github.io/su_blocked_music/', function(data) {
+			if (!data) {
+				return;
+			}
+
+			var index = {};
+			for (var artist in data) {
+				var lc_artist = artist.toLowerCase();
+				if (data[artist] === true) {
+					index[lc_artist] = true;
+					continue;
+				}
+
+				var lindex = index[lc_artist] = (index[lc_artist] || {});
+				for (var i = 0; i < data[artist].length; i++) {
+					var cur = data[artist][i];
+					if (!cur || typeof cur !== 'string') {
+						continue;
+					}
+
+					lindex[ lc_artist ][ data[artist][i].toLowerCase() ] = true;
+					
+				}
+
+			}
+			//forbidden_by_copyrh
+			//white_of_copyrh
+			pv.update(su, 'forbidden_by_copyrh', index);
+		});
+	});
+	queue.add(function(){
+		if (app_serv.app_env.nodewebkit) {
+			createDatastreamIframe('https://arestov.github.io/su_update_iframe/', function(data) {
+				if (!data) {
+					return;
+				}
+				if (data.last_ver && data.last_ver > seesu_version && data.package_url) {
+					var dir_files = require('fs').readdirSync(
+						require('path').resolve(require('nw.gui').App.manifest.main, '..')
+					);
+					if (dir_files.indexOf('.git') == -1) {
+						require('nodejs/update-receiver')(data.package_url, seesu_version);
+					}
+
+					//var 
+				}
+			});
+		}
+	});
 });
 
 

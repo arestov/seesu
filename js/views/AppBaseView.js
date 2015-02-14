@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate', './modules/getUsageTree'], function(provoda, spv, $, filters, app_serv, PvTemplate, getUsageTree){
+define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', './modules/getUsageTree'], function(pv, spv, $, filters, app_serv, getUsageTree){
 "use strict";
 var transform_props = [app_serv.app_env.transform];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
@@ -8,8 +8,8 @@ transform_props.forEach(function(el) {
 });
 var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
 
-
-provoda.setTplFilterGetFn(function(filter_name) {
+var PvTemplate = pv.dom.template;
+pv.setTplFilterGetFn(function(filter_name) {
 	if (filters[filter_name]){
 		return filters[filter_name];
 	} else {
@@ -18,7 +18,12 @@ provoda.setTplFilterGetFn(function(filter_name) {
 });
 
 var viewOnLevelP = function(md, view) {
-	var lev_conj = this.getLevelContainer(md.map_level_num);
+	var map_level_num = pv.state(md, 'map_level_num');
+	if (view.nesting_space == 'detailed') {
+		++map_level_num;
+	}
+
+	var lev_conj = this.getLevelContainer(map_level_num);
 	view.wayp_scan_stop = true;
 	return lev_conj.material;
 };
@@ -33,7 +38,7 @@ var LevContainer = function(con, scroll_con, material, tpl, context) {
 	this.callbacks = [];
 	var _this = this;
 	if (can_animate){
-		spv.addEvent(this.c[0], can_animate, function(e) {
+		spv.addEvent(this.c[0], can_animate, function() {
 			//console.log(e);
 			_this.completeAnimation();
 		});
@@ -54,16 +59,8 @@ LevContainer.prototype = {
 
 
 var BrowserAppRootView = function() {};
-provoda.View.extendTo(BrowserAppRootView, {
+pv.BaseRootView.extendTo(BrowserAppRootView, {
 	dom_rp: true,
-	
-	_getCallsFlow: function() {
-		return this.calls_flow;
-	},
-	init: function(opts, vopts) {
-		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
-		return this._super.apply(this, arguments);
-	},
 	createDetails: function() {
 		this.root_view = this;
 		this.d = this.opts.d;
@@ -103,6 +100,7 @@ provoda.View.extendTo(BrowserAppRootView, {
 	}
 });
 
+var sync_opt = {sync_tpl: true};
 
 var AppBaseView = function() {};
 AppBaseView.BrowserAppRootView = BrowserAppRootView;
@@ -160,9 +158,6 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 			this.tpls.push(tpl);
 			tpl.setStates(this.states);
-			
-
-
 
 			var next_lev_con;
 			for (var i = num; i <= this.max_level_num; i++) {
@@ -176,7 +171,6 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			} else {
 				node.appendTo(this.els.app_map_con);
 			}
-			
 
 			var lev_con = new LevContainer
 					(node,
@@ -336,15 +330,16 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 	],
 	markAnimationStart: function(models, changes_number) {
-		this.updateState('map_animation_num_started', changes_number, {sync_tpl: true});
+		pv.update(this, 'map_animation_num_started', changes_number, sync_opt);
 		for (var i = 0; i < models.length; i++) {
-			this.getStoredMpx(models[i].getMD()).updateState('animation_started', changes_number, {sync_tpl: true});
+
+			pv.mpx.update(this.getStoredMpx(models[i].getMD()), 'animation_started', changes_number, sync_opt);
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
 	markAnimationEnd: function(models, changes_number) {
 		if (this.state('map_animation_num_started') == changes_number) {
-			this.updateState('map_animation_num_completed', changes_number, {sync_tpl: true});
+			pv.update(this, 'map_animation_num_completed', changes_number, sync_opt);
 		}
 
 
@@ -353,20 +348,36 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			var mpx = this.getStoredMpx(models[i].getMD());
 
 			if (mpx.state('animation_started') == changes_number){
-				mpx.updateState('animation_completed', changes_number, {sync_tpl: true});
+				pv.mpx.update(mpx, 'animation_completed', changes_number, sync_opt);
 			}
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
-	getMapSliceView: function(md) {
-		var model_name = md.model_name;
-		if (this['spec-vget-' + model_name]){
-			return this['spec-vget-' + model_name](md);
-		} else {
-			return this.findMpxViewInChildren(this.getStoredMpx(md), false, 'map_slice');
-		}
+
+	getMapSliceView: function(bwlev, md) {
+		var dclr = pv.$v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
+			'map_slice', md.model_name, this.nesting_space);
+		var target_bwlev = dclr.is_wrapper_parent ? bwlev.map_parent: bwlev;
+		return this.findMpxViewInChildren( this.getStoredMpx(target_bwlev), dclr.space, 'map_slice' );
 	},
-	getMapSliceChildInParenView: function(md) {
+	getMapSliceChildInParenView: function(bwlev, md) {
+		var parent_bwlev = bwlev.map_parent;
+		var parent_md = md.map_parent;
+
+		var parent_bwlev_view = this.getMapSliceView(parent_bwlev, parent_md);
+		var parent_view = parent_bwlev_view && parent_bwlev_view.findMpxViewInChildren(this.getStoredMpx(parent_md));
+		if (!parent_view){
+			return;
+		}
+		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
+		if (!target_in_parent){
+			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
+			target_in_parent = view && view[0];
+		}
+		return target_in_parent;
+	},
+	getMapSliceChildInParenViewOLD: function(md) {
+		debugger;
 		var parent_md = md.map_parent;
 
 
@@ -374,7 +385,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (!parent_view){
 			return;
 		}
-		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md), false, 'map_slice');
+		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
 		if (!target_in_parent){
 			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
 			target_in_parent = view && view[0];
@@ -391,24 +402,21 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		return this.els.app_map_con.offset();
 	},
 	readMapSliceAnimationData: function(transaction_data) {
-		if (transaction_data && transaction_data.target){
-			var target_md = transaction_data.target.getMD();
-			var current_lev_num = target_md.map_level_num;
+		if (transaction_data && transaction_data.bwlev){
+			var target_md = transaction_data.bwlev.getMD();
+			var current_lev_num = pv.state(target_md, 'map_level_num');
 			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in" && transaction_data.array[0].changes.length < 3;
 			var lc;
 			if (can_animate && current_lev_num != -1 && one_zoom_in){
-				var target_in_parent = this.getMapSliceChildInParenView(target_md);
+				var target_in_parent = this.getMapSliceChildInParenView(target_md, transaction_data.target.getMD());
 				if (target_in_parent){
 					var targt_con = target_in_parent.getC();
 
-					//var offset_parent_node = targt_con.offsetParent();
+					// var offset_parent_node = targt_con.offsetParent();
 					var parent_offset = this.getBoxDemension(this.getAMCOffset, 'screens_offset');
-					//или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
+					// или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
 
-
-
-					//var offset = targt_con.offset(); //domread
-
+					// var offset = targt_con.offset(); //domread
 					var offset = target_in_parent.getBoxDemension(function() {
 						return targt_con.offset();
 					}, 'con_offset', target_in_parent._lbr.innesting_pos_current, this.state('window_height'), this.state('workarea_width'));
@@ -422,33 +430,30 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					}, 'con_height', this.state('window_height'), this.state('workarea_width'));
 
 					
-					//var width = targt_con.outerWidth();  //domread
-					//var height = targt_con.outerHeight(); //domread
+					// var width = targt_con.outerWidth();  //domread
+					// var height = targt_con.outerHeight(); //domread
 
 					var top = offset.top - parent_offset.top;
 
 					var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
 					var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('workarea_width'));
 
-					
-
 					var scale_x = width/con_width;
 					var scale_y = height/con_height;
 					var min_scale = Math.min(scale_x, scale_y);
 
-
 					var shift_x = width/2 - min_scale * con_width/2;
 					var shift_y = height/2 - min_scale * con_height/2;
 
-
 					lc = this.getLevelContainer(current_lev_num);
-
 
 					var transform_values = {};
 					var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
 					transform_props.forEach(function(el) {
 						transform_values[el] = value;
 					});
+
+					// from small size (size of button) to size of viewport
 
 					return {
 						lc: lc,
@@ -459,29 +464,36 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 	},
 	setVMpshow: function(target_mpx, value) {
-		target_mpx.updateState('vmp_show', value, {sync_tpl: true});
+		pv.mpx.update(target_mpx, 'vmp_show', value, sync_opt);
 	},
 	'model-mapch': {
 		'move-view': function(change) {
-			var parent = change.target.getMD().getParentMapModel();
+			var parent = change.bwlev.getMD().getParentMapModel();
 			if (parent){
 			//	parent.updateState('mp_has_focus', false);
 			}
 			//mpx.updateState(prop, changes_number);
-			this.setVMpshow(this.getStoredMpx(change.target.getMD()), change.value);
+			this.setVMpshow(this.getStoredMpx(change.bwlev.getMD()), change.value);
 		},
 		'zoom-out': function(change) {
-			this.setVMpshow(this.getStoredMpx(change.target.getMD()), false);
+			this.setVMpshow(this.getStoredMpx(change.bwlev.getMD()), false);
 		},
 		'destroy': function(change) {
-			var md = change.target.getMD();
+			var md = change.bwlev.getMD();
 		//	md.mlmDie();
 			this.setVMpshow(this.getStoredMpx(md), false);
 		}
 	},
-	animateMapSlice: function(transaction_data, animation_data) {
+	animateMapSlice: (function() {
+
+	var arrProtp = Array.prototype;
+	var concatArray = function(array_of_arrays) {
+		return arrProtp.concat.apply(arrProtp, array_of_arrays);
+	};
+
+	return function(transaction_data, animation_data) {
 		var all_changhes = spv.filter(transaction_data.array, 'changes');
-			all_changhes = [].concat.apply([], all_changhes);
+			all_changhes = concatArray(all_changhes);
 		var models = spv.filter(all_changhes, 'target');
 		var i, cur;
 
@@ -489,9 +501,9 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 		for (i = 0; i < all_changhes.length; i++) {
 			cur = all_changhes[i];
-			var target = cur.target.getMD();
+			var target = cur.bwlev.getMD();
 			if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(this.getStoredMpx(target));
+				this.removeChildViewsByMd(this.getStoredMpx(target), 'map_slice');
 			}
 		}
 
@@ -504,19 +516,18 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			}
 		}
 
-		if (transaction_data.target){
-			var target_md = transaction_data.target.getMD();
-			var current_lev_num = target_md.map_level_num;
+		if (transaction_data.bwlev){
+			var target_md = transaction_data.bwlev.getMD();
+			var current_lev_num = pv.state(target_md, 'map_level_num');
 			
 			if (animation_data){
-				this.updateState('disallow_animation', true, {sync_tpl: true});
+				pv.update(this, 'disallow_animation', true, sync_opt);
 				animation_data.lc.c.css(animation_data.transform_values);
-				this.updateState('disallow_animation', false, {sync_tpl: true});
+				pv.update(this, 'disallow_animation', false, sync_opt);
 			}
 
-			this.updateState('current_lev_num', current_lev_num, {sync_tpl: true});
+			pv.update(this, 'current_lev_num', current_lev_num, sync_opt);
 			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
-
 
 			if (animation_data && animation_data.lc){
 				animation_data.lc.c.height(); //заставляем всё пересчитать
@@ -525,7 +536,6 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					
 				});*/
 				animation_data.lc.c.height(); //заставляем всё пересчитать
-				
 			}
 
 		}
@@ -542,16 +552,18 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			});*/
 		} else {
 			animation_data.lc.onTransitionEnd(completeAnimation);
-
 		}
-
-
-		
-	},
-	'collch-$spec_common-map_slice': {
-		by_model_name: true,
+	};
+	})(),
+	'collch-$spec_det-map_slice': {
+		is_wrapper_parent: '^',
+		space: 'detailed',
 		place: AppBaseView.viewOnLevelP
 	},
+	'collch-$spec_common-map_slice': {
+		place: AppBaseView.viewOnLevelP
+	},
+	'sel-coll-map_slice': '$spec_common-map_slice',
 	'coll-prio-map_slice': function(array) {
 	
 		/*for (var i = 0; i < array.length; i++) {
@@ -569,29 +581,26 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				target_md = array[i];
 				break;
 			}
-			
 		}
 		return target_md;
 	},
 	'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
 		var target_md;
-		var array = nesting_data.residents_struc && nesting_data.residents_struc.items;
+		var array = nesting_data.residents_struc && nesting_data.residents_struc.bwlevs;
 		var transaction_data = nesting_data.transaction;
 		array = this.getRendOrderedNesting(nesname, array) || array;
 		var i, cur;
 
-
 		var animation_data = this.readMapSliceAnimationData(transaction_data);
 
-
 		for (i = array.length - 1; i >= 0; i--) {
+			var cur_md = nesting_data.residents_struc.items[i];
 			cur = array[i];
-			var model_name = cur.model_name;
-			if (this.dclrs_fpckgs.hasOwnProperty('$spec-' + nesname + ':' + model_name)){
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec-' + nesname + ':' + model_name], nesname, cur);
-			} else {
-				this.callCollectionChangeDeclaration(this.dclrs_fpckgs['$spec_common-' + nesname ], nesname, cur);
-			}
+
+			var dclr = pv.$v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
+							nesname, cur_md.model_name, this.nesting_space);
+
+			this.callCollectionChangeDeclaration(dclr, nesname, cur);
 		}
 
 		//avoid nextTick method!
@@ -599,11 +608,11 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (this.completely_rendered_once['map_slice'] && old_nesting_data && old_nesting_data.transaction.changes_number + 1 === nesting_data.transaction.changes_number){
 			if (transaction_data){
 				this.animateMapSlice(transaction_data, animation_data);
-				if (!transaction_data.target){
+				if (!transaction_data.bwlev){
 					target_md = this.findBMapTarget(array);
 
 					if (target_md){
-						this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
+						pv.update(this, 'current_lev_num', pv.state(target_md, 'map_level_num'), sync_opt);
 					}
 					
 				}
@@ -621,17 +630,14 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			for (i = 0; i < array.length; i++) {
 				this.setVMpshow(this.getStoredMpx(array[i]), nesting_data.residents_struc.mp_show_states[i]);
 			}
-			this.updateState('current_lev_num', target_md.map_level_num, {sync_tpl: true});
+			pv.update(this, 'current_lev_num', pv.state(target_md, 'map_level_num'), sync_opt);
 			this.markAnimationEnd(models, -1);
 			this.completely_rendered_once['map_slice'] = true;
 		}
-		
-
-
 	},
 
 	transform_props: transform_props,
-	'stch-current_mp_md': function() {
+	'stch-current_mp_bwlev': function() {
 
 		//map_level_num
 		//md.map_level_num
@@ -689,6 +695,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			
 		}*/
 		var md = this.getNesting('current_mp_md');
+		var bwlev = this.getNesting('current_mp_bwlev');
 
 		var _this = this;
 		setTimeout(function() {
@@ -696,9 +703,13 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				_this = null;
 				return;
 			}
+
+			// 
+
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
-				var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(_this, false, false, true);
+				// var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(_this, false, false, true);
+				var mplev_item_view = _this.getMapSliceChildInParenView(bwlev, md);
 				var con = mplev_item_view && mplev_item_view.getC();
 				if (con && con.height()){
 					_this.scrollTo(mplev_item_view.getC(), {
@@ -736,7 +747,7 @@ AppBaseView.extendTo(WebAppView, {
 		this.on('die', function() {
 			this.RPCLegacy('detachUI', this.root_view_uid);
 		});
-		this.on('state_change-current_mp_md', function() {
+		this.on('state_change-current_mp_bwlev', function() {
 			_this.resortQueue();
 		});
 
@@ -760,44 +771,59 @@ AppBaseView.extendTo(WebAppView, {
 		}).call(this);
 
 		this.onDie(function(){
-			var wd = this.getWindow();
-			$(wd).off();
-			$(wd).remove();
-			wd = null;
+			
 			_this = null;
 		});
 	},
 	remove: function() {
 		this._super();
 		if (this.d){
+			var wd = this.getWindow();
+			$(wd).off();
+			$(wd).remove();
+			wd = null;
+			
 			if (this.d.body && this.d.body.firstChild && this.d.body.firstChild.parentNode){
 				$(this.d.body).off().find('*').remove();
 				
 			}
 			$(this.d).off();
 			$(this.d).remove();
+
+			
 		}
 		
 		
 		this.d = null;
 	},
-	resortQueue: function(queue) {
-		if (queue){
-			queue.removePrioMarks();
-		} else {
-			if (this.all_queues) {
-				for (var i = 0; i < this.all_queues.length; i++) {
-					this.all_queues[i].removePrioMarks();
-				}
+	resortQueue: (function() {
+
+		var getView = function(md, bwlev) {
+			var parent_view = bwlev.map_parent && this.getMapSliceView(bwlev, md);
+			if (parent_view) {
+				var views = this.getStoredMpx(md).getViews();
+				return pv.$v.matchByParent(views, parent_view);
 			}
-			
-		}
-		var md = this.getNesting('current_mp_md');
-		var view = md && this.getStoredMpx(md).getRooConPresentation(this, true);
-		if (view){
-			view.setPrio();
-		}
-	},
+		};
+
+		return function (queue) {
+			if (queue){
+				queue.removePrioMarks();
+			} else {
+				if (this.all_queues) {
+					for (var i = 0; i < this.all_queues.length; i++) {
+						this.all_queues[i].removePrioMarks();
+					}
+				}
+				
+			}
+			var md = this.getNesting('current_mp_md');
+			var view = md && getView.call(this, md, this.getNesting('current_mp_bwlev'));
+			if (view){
+				view.setPrio();
+			}
+		};
+	})(),
 	onDomBuild: function() {
 		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
 		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
@@ -848,15 +874,15 @@ var WebComplexTreesView = function() {};
 
 AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 	'collch-current_mp_md': function(name, value) {
-		this.updateState('current_mp_md', value._provoda_id);
+		pv.update(this, 'current_mp_md', value._provoda_id);
+	},
+	'collch-current_mp_bwlev': function(name, value) {
+		pv.update(this, 'current_mp_bwlev', value._provoda_id);
 	},
 	'collch-navigation': {
-		place: 'nav.daddy',
-		by_model_name: true
+		place: 'nav.daddy'
 	},
-	'collch-$spec-map_slice:start_page': {
-		by_model_name: true
-	},
+
 	'stch-full_page_need': function(state) {
 		this.els.screens.toggleClass('full_page_need', !!state);
 	},

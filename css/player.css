@@ -316,6 +316,11 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		background-image: url(../i/nano-done.svg);
 		opacity: 0.3;
 		}
+	.song-files-search-status.forbidden_by_copyrh {
+		opacity: 0.3;
+		background: none;
+		color: #FFA2A2;
+	}
 	
 
 

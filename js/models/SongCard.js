@@ -1,11 +1,27 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
+define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
 './user_music_lfm', './Cloudcasts', './LoadableListBase', './SongsList',
 'js/modules/declr_parsers'],
-function(provoda, spv, app_serv, BrowseMap, morph_helpers,
+function(pv, spv, app_serv, BrowseMap, morph_helpers,
 user_music_lfm, Cloudcasts, LoadableListBase, SongsList,
 declr_parsers) {
 'use strict';
 var localize = app_serv.localize;
+
+
+var sortByGif = spv.getSortFunc([{
+		field: function(item) {
+			var image = item.state('lfm_img');
+			image = image && (image.lfm_id || image.url);
+			if (image && image.search(/gif$/) == -1){
+				return 1;
+			} else if (!image) {
+				return 2;
+			} else {
+				return 3;
+			}
+		}
+	}
+]);
 
 var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
@@ -27,21 +43,7 @@ user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 		}]
 	],
 	beforeReportChange: function(list) {
-		list.sort(function(a,b ){return spv.sortByRules(a, b, [
-			{
-				field: function(item) {
-					var image = item.state('lfm_img');
-					image = image && (image.lfm_id || image.url);
-					if (image && image.search(/gif$/) == -1){
-						return 1;
-					} else if (!image) {
-						return 2;
-					} else {
-						return 3;
-					}
-				}
-			}
-		]);});
+		list.sort(sortByGif);
 		return list;
 	}
 });
@@ -100,17 +102,31 @@ SongsList.extendTo(VKPostSongs, {
 });
 
 
+var sortByTypeAndDate = spv.getSortFunc([{
+	field: function(obj) {
+		return obj.owner_id > 0;
+	},
+	reverse: true
+}, {
+	field: 'date'
+}]);
+
+
 var VKPostsList = function() {};
 LoadableListBase.extendTo(VKPostsList, {
 	init: function(opts, data) {
 		this._super.apply(this, arguments);
 		//this.sub_pa_params = params;
 		this.initStates(data);
+		this.on('child_change-lists_list', function(e) {
+			var sorted = e.value && e.value.slice().sort(sortByTypeAndDate);
+			pv.updateNesting(this, 'sorted_list', sorted);
+		});
 
 	},
 	'compx-image_previews': [
-		['@owner_info:lists_list'],
-		function(array) {
+		['@owner_info:sorted_list'],
+		function (array) {
 			var result = [];
 			for (var i = 0; i < array.length; i++) {
 				var cur= array[i];

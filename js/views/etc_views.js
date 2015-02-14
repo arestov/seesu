@@ -1,4 +1,4 @@
-define(['provoda', 'app_serv', 'jquery'], function(provoda, app_serv, $) {
+define(['pv', 'app_serv', 'jquery'], function(pv, app_serv, $) {
 "use strict";
 var localize = app_serv.localize;
 var contextRow = function(container){
@@ -97,13 +97,13 @@ contextRow.prototype = {
 
 
 var AuthBlockView = function() {};
-provoda.View.extendTo(AuthBlockView, {
+pv.View.extendTo(AuthBlockView, {
 
 });
 
 var VkLoginUI = function() {};
 
-provoda.View.extendTo(VkLoginUI, {
+pv.View.extendTo(VkLoginUI, {
 	state_change: {
 		'data_wait': function(state) {
 			if (state){
@@ -175,7 +175,7 @@ provoda.View.extendTo(VkLoginUI, {
 
 var LfmLoginView = function() {};
 
-provoda.View.extendTo(LfmLoginView, {
+pv.View.extendTo(LfmLoginView, {
 	'stch-has_session': function(state){
 		if (!state){
 			this.c.removeClass("hidden");
@@ -290,7 +290,7 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 
 
 var ActionsRowUI = function(){};
-provoda.View.extendTo(ActionsRowUI, {
+pv.View.extendTo(ActionsRowUI, {
 	bindBase: function() {
 	},
 	getCurrentButton: function() {
@@ -340,17 +340,17 @@ provoda.View.extendTo(ActionsRowUI, {
 	],
 	'stch-key-button_owidth': function(state) {
 		if (state) {
-			this.updateState('button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
+			pv.update(this, 'button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
 		}
 	},
 	'stch-key-button_offset': function(state) {
 		if (state) {
-			this.updateState('button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
+			pv.update(this, 'button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
 		}
 	},
 	'stch-key-arrow_parent_offset': function(state) {
 		if (state) {
-			this.updateState('arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
+			pv.update(this, 'arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
 		}
 	},
 	'compx-arrow_pos':{

@@ -329,7 +329,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		this.tag_name = data.tag_name;
 		//this.updateManyStates(data);
 		this.initStates();
-		//this.updateState('tag_name', this.head_props.tag_name);
+		//pv.update(this, 'tag_name', this.head_props.tag_name);
 		//this.sub_pa_params = {tag_name:this.tag_name};
 
 	},

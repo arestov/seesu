@@ -1,9 +1,9 @@
-define(['provoda', 'jquery', 'app_serv', './coct'], function(provoda, $, app_serv, coct) {
+define(['pv', 'jquery', 'app_serv', './coct'], function(pv, $, app_serv, coct) {
 'use strict';
 var localize = app_serv.localize;
 
 var UserAcquaintanceView = function() {};
-provoda.View.extendTo(UserAcquaintanceView, {
+pv.View.extendTo(UserAcquaintanceView, {
 	createBase: function() {
 		this.c = $('<li class="people-list-item"></li>');
 		var li = this.c;
@@ -103,7 +103,7 @@ coct.PageView.extendTo(UserAcquaintancesListView, {
 });
 
 var UserAcqPreview = function() {};
-provoda.View.extendTo(UserAcqPreview, {
+pv.View.extendTo(UserAcqPreview, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = $("<span></span>");
@@ -118,7 +118,7 @@ provoda.View.extendTo(UserAcqPreview, {
 	}
 });
 var UserAcquaintancesListPreview = function() {};
-provoda.View.extendTo(UserAcquaintancesListPreview, {
+pv.View.extendTo(UserAcquaintancesListPreview, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = $('<div class="user_acqes-preview"></div>');
@@ -127,8 +127,7 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			//_this.RPCLegacy('requestPage');
-			_this.RPCLegacy('requestPage');
+			_this.requestPage();
 		});
 
 		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);

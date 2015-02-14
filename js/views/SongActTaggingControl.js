@@ -1,4 +1,4 @@
-define(['./etc_views', 'jquery', 'app_serv', 'spv', 'provoda'], function(etc_views, $, app_serv, spv, provoda){
+define(['./etc_views', 'jquery', 'app_serv', 'spv', 'pv'], function(etc_views, $, app_serv, spv, pv){
 "use strict";
 
 //var localize = app_serv.localize;
@@ -80,7 +80,7 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 
 
 var SongActTaggingControl = function(){};
-provoda.View.extendTo(SongActTaggingControl, {
+pv.View.extendTo(SongActTaggingControl, {
 	children_views: {
 		lfm_tagsong: LfmTagItView
 	},

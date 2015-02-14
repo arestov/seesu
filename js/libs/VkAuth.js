@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', 'spv', 'hex_md5'], function(provoda, $, spv, hex_md5){
+define(['pv', 'jquery', 'spv', 'hex_md5'], function(pv, $, spv, hex_md5){
 "use strict";
 
 var VkTokenAuth = function(app_id, vk_t) {
@@ -12,7 +12,7 @@ var VkTokenAuth = function(app_id, vk_t) {
 var VkAuth = function(opts) {
 	this.init(opts);
 };
-provoda.Eventor.extendTo(VkAuth, {
+pv.Eventor.extendTo(VkAuth, {
 	init: function(opts) {
 
 		//app_id, urls, permissions, open_api, deep_sanbdox

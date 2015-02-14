@@ -1,34 +1,14 @@
-define(['provoda', 'app_serv', 'spv'], function(provoda, app_serv, spv){
+define(['pv', 'app_serv', 'spv', './PlayRequest'], function(pv, app_serv, spv, PlayRequest){
 "use strict";
 var app_env = app_serv.app_env;
 
+var FileInTorrent = function(){};
 
-
-var MusicFile = function() {};
-provoda.Model.extendTo(MusicFile, {
-	init: function(opts, data) {
-		this._super();
-		this.updateManyStates(data);
-		models: {}
-	},
-	getSongFileModel: function(mo, player){
-		if (!this.models[mo.uid]) {
-			this.models[mo.uid] = new SongFileModel();
-			this.models[mo.uid].init({file: this, mo: mo}).setPlayer(player);
-		}
-		return this.models[mo.uid];
-	}
-});
-
-var FileInTorrent = function(sr_item){
-	this.sr_item = sr_item;
-	this.init();
-};
-
-provoda.Model.extendTo(FileInTorrent, {
+pv.Model.extendTo(FileInTorrent, {
 	model_name: 'file-torrent',
-	init: function() {
-		this._super();
+	init: function(opts, states, params) {
+		this._super.apply(this, arguments);
+		this.sr_item = params.file;
 		this.updateManyStates({
 			full_title: this.sr_item.title || app_serv.getHTMLText(this.sr_item.HTMLTitle),
 			torrent_link: this.sr_item.torrent_link
@@ -49,22 +29,22 @@ provoda.Model.extendTo(FileInTorrent, {
 		} else {
 			btapp.add.torrent(this.sr_item.torrent_link);
 		}
-		this.updateState('download-pressed', true);
+		pv.update(this, 'download-pressed', true);
 	}
 });
 
 
 	var counter = 0;
 	var SongFileModel = function(){};
-	provoda.Model.extendTo(SongFileModel, {
+	pv.Model.extendTo(SongFileModel, {
 		model_name: 'file-http',
-		init: function(opts) {
-			this._super();
-			if (opts.mo){
-				this.mo = opts.mo;
-			}
-			if (opts.file){
-				var file = opts.file;
+		init: function(opts, states, params) {
+			this._super.apply(this, arguments);
+
+			this.mo = this.map_parent.map_parent;
+
+			if (params.file){
+				var file = params.file;
 				for (var a in file){
 					if (typeof file[a] != 'function' && typeof file[a] != 'object'){
 						this[a] = file[a];
@@ -75,11 +55,48 @@ provoda.Model.extendTo(FileInTorrent, {
 
 
 			this.uid = 'song-file-' + counter++;
+
 			this.createTextStates();
-			if (opts.player) {
-				this.setPlayer(opts.player);
-			}
+
+			this.setPlayer(this.app.p);
+
 			return this;
+		},
+		requestPlay: function(bwlev_id) {
+			var bwlev = pv.getModelById(bwlev_id);
+
+			var play_request = pv.create(PlayRequest, {
+				wanted_file: this
+			}, {
+				nestings: {
+					bwlev: bwlev
+				}
+			}, bwlev, this.app);
+
+			if (this.player) {
+			 	this.player.requestPlay(play_request);
+			}
+
+			this.map_parent.playSelectedByUser(this);
+
+			// this.makeSongPlayalbe(true);
+		},
+		switchPlay: function(bwlev_id) {
+			// 
+
+			if (this.state('selected')){
+
+				if (this.state('play') == 'play'){
+					this.pause();
+				} else {
+					this.requestPlay(bwlev_id);
+					// this.RPCLegacy('trigger', 'want-to-play-sf');
+					//_this.RPCLegacy('play');
+				}
+			} else {
+				this.requestPlay(bwlev_id);
+				// this.RPCLegacy('trigger', 'want-to-play-sf');
+			}
 		},
 		createTextStates: function() {
 			var states = {};
@@ -157,28 +174,28 @@ provoda.Model.extendTo(FileInTorrent, {
 			finish: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
-				this.updateState('play', false);
+				pv.update(this, 'play', false);
 			},
 			play: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', 'play');
+					pv.update(mo, 'play', 'play');
 					if (!mo.start_time){
 						//fixme
 						mo.start_time = (Date.now()/1000).toFixed(0);
 					}
 				}
-				this.updateState('play', 'play');
+				pv.update(this, 'play', 'play');
 			},
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
-				this.updateState('playing_progress', dec);
-				this.updateState('loaded_duration', opts.duration);
+				pv.update(this, 'playing_progress', dec);
+				pv.update(this, 'loaded_duration', opts.duration);
 			},
 			buffering: function(state) {
-				this.updateState('buffering_progress', !!state);
+				pv.update(this, 'buffering_progress', !!state);
 			},
 			loading: function(opts){
 				var factor;
@@ -188,27 +205,27 @@ provoda.Model.extendTo(FileInTorrent, {
 					factor = opts.fetched/opts.duration;
 				}
 				if (factor){
-					this.updateState('loading_progress', factor);
+					pv.update(this, 'loading_progress', factor);
 				}
 			},
 			pause: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
-				this.updateState('play', false);
+				pv.update(this, 'play', false);
 			},
 			stop: function(){
 				//throw "Do not rely on stop event"
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
-				this.updateState('play', false);
+				pv.update(this, 'play', false);
 			},
 			error: function() {
 				var d = new Date();
-				this.updateState("error", d);
+				pv.update(this, "error", d);
 				if (this.parent){
 					this.parent.error = d;
 				}
@@ -233,7 +250,7 @@ provoda.Model.extendTo(FileInTorrent, {
 			}
 		},
 		failPlaying: function() {
-			this.updateState("unavailable", true);
+			pv.update(this, "unavailable", true);
 			if (this.parent){
 				this.parent.unavailable = true;
 			}
@@ -253,6 +270,9 @@ provoda.Model.extendTo(FileInTorrent, {
 		},
 		play: function(){
 			if (this.player){
+				if (this.mo.state('forbidden_by_copyrh')) {
+					return;
+				}
 				this._createSound();
 				if (this.sound){
 					this.player.play(this);
@@ -276,12 +296,12 @@ provoda.Model.extendTo(FileInTorrent, {
 
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false);
+					pv.update(mo, 'play', false);
 				}
 
-				this.updateState('play', false);
-				this.updateState('loading_progress', 0);
-				this.updateState('playing_progress', 0);
+				pv.update(this, 'play', false);
+				pv.update(this, 'loading_progress', 0);
+				pv.update(this, 'playing_progress', 0);
 				
 				this.sound = null;
 			}
@@ -329,10 +349,10 @@ provoda.Model.extendTo(FileInTorrent, {
 			}
 		},
 		activate: function() {
-			this.updateState('selected', true);
+			pv.update(this, 'selected', true);
 		},
 		deactivate: function() {
-			this.updateState('selected', false);
+			pv.update(this, 'selected', false);
 		},
 		markAsPlaying: function() {
 			

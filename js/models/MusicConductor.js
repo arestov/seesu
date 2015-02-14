@@ -1,5 +1,5 @@
-define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', 'js/modules/declr_parsers'],
-function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, declr_parsers){
+define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', 'js/modules/declr_parsers', 'pv'],
+function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, declr_parsers, pv){
 "use strict";
 var MusicConductor;
 //http://hypem.com/latest
@@ -482,7 +482,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 			lists_list.push(instance);
 		}
 		
-		this.updateNesting('lists_list', lists_list);
+		pv.updateNesting(this, 'lists_list', lists_list);
 	},
 	'nest_posb-lists_list': [CityPlace],
 	//'nest-lists_list': [],
@@ -595,7 +595,7 @@ BrowseMap.Model.extendTo(CountryPlace, {
 			return;
 		} else {
 			this.heavy_inited = true;
-			this.updateState('mp_alhf', true);
+			pv.update(this, 'mp_alhf', true);
 		}
 	}
 });
@@ -610,7 +610,7 @@ BrowseMap.Model.extendTo(CountriesList, {
 			var country_place = this.getSPI(country, true);
 			lists_list.push(country_place);
 		}
-		this.updateNesting('lists_list', lists_list);
+		pv.updateNesting(this, 'lists_list', lists_list);
 		this.initStates();
 		
 	},

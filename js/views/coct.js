@@ -1,4 +1,4 @@
-define(['spv', 'provoda', 'jquery', './etc_views'], function(spv, provoda, $, etc_views) {
+define(['spv', 'pv', 'jquery', './etc_views'], function(spv, pv, $, etc_views) {
 "use strict";
 var SoftVkLoginUI = function() {};
 etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
@@ -11,7 +11,7 @@ etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
 
 
 var ListPreview = function() {};
-provoda.View.extendTo(ListPreview, {
+pv.View.extendTo(ListPreview, {
 	useBase: function(node) {
 		this.c = node;
 		this.bindBase();
@@ -21,13 +21,10 @@ provoda.View.extendTo(ListPreview, {
 		var _this = this;
 		var button_area = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		button_area.click(function() {
-			_this.clickAction.call(_this);
+			_this.requestPage();
 		});
 
 		this.addWayPoint(button_area);
-	},
-	clickAction: function() {
-		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
 		if (!this.tpl.ancs.listc) {
@@ -35,7 +32,7 @@ provoda.View.extendTo(ListPreview, {
 		}
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
-	'stch-vmp_show': function(state) {
+	'stch-mp_show': function(state) {
 		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		node.toggleClass('button_selected', !!state);
 	},
@@ -45,7 +42,7 @@ provoda.View.extendTo(ListPreview, {
 });
 
 var ListPreviewLine = function() {};
-provoda.View.extendTo(ListPreviewLine, {
+pv.View.extendTo(ListPreviewLine, {
 	base_tree: {
 		sample_name: 'preview_line'
 	},
@@ -75,19 +72,17 @@ ListPreview.extendTo(LiListsPreview, {
 
 
 var SPView = function() {};
-provoda.View.extendTo(SPView, {
+pv.View.extendTo(SPView, {
+	'compx-lvmp_show': [
+		['^vmp_show'],
+		function(vmp_show) {
+			return vmp_show;
+		}
+	],
 	'compx-mp_show_end': {
-		depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
-		fn: function(animation_started, animation_completed, vmp_show) {
-			if (!animation_started){
-				return vmp_show;
-			} else {
-				if (animation_started == animation_completed){
-					return vmp_show;
-				} else {
-					return false;
-				}
-			}
+		depends_on: ['^mp_show_end'],
+		fn: function(mp_show_end) {
+			return mp_show_end;
 		}
 	}
 });
@@ -199,7 +194,7 @@ PageView.extendTo(ListOfListsView, {
 
 
 var AlbumsListPreviewItem = function() {};
-provoda.View.extendTo(AlbumsListPreviewItem, {
+pv.View.extendTo(AlbumsListPreviewItem, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
@@ -226,7 +221,7 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 
 
 var BigAlbumPreview = function() {};
-provoda.View.extendTo(BigAlbumPreview, {
+pv.View.extendTo(BigAlbumPreview, {
 	base_tree: {
 		sample_name: 'alb_prev_big'
 	},
@@ -305,6 +300,13 @@ PageView.extendTo(VKPostsView, {
 		sample_name: 'vk_posts_page'
 	}
 });
+
+var AppNewsView = function() {};
+PageView.extendTo(AppNewsView, {
+	base_tree: {
+		sample_name: 'app-news'
+	}
+});
 return {
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
@@ -322,7 +324,8 @@ return {
 	TagsListPreview: TagsListPreview,
 	ListSimplePreview: ListSimplePreview,
 	ImagedListPreview: ImagedListPreview,
-	VKPostsView: VKPostsView
+	VKPostsView: VKPostsView,
+	AppNewsView: AppNewsView
 };
 
 });

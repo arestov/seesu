@@ -1,8 +1,8 @@
-define(['provoda', 'jquery', './SongUI', './etc_views', ],
-function(provoda, $, SongUI, etc_views) {
+define(['pv', 'jquery', './SongUI', './etc_views', './coct' ],
+function(pv, $, SongUI, etc_views, coct) {
 	"use strict";
 	var PlaylistSettingsRowView = function(){};
-	provoda.View.extendTo(PlaylistSettingsRowView, {
+	pv.View.extendTo(PlaylistSettingsRowView, {
 		"stch-dont_rept_pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
@@ -23,14 +23,14 @@ function(provoda, $, SongUI, etc_views) {
 		},
 		children_views_by_mn: {
 			context_parts: {
-				"row-multiatcs": provoda.View,
+				"row-multiatcs": pv.View,
 				"row-pl-settings": PlaylistSettingsRowView
 			}
 		}
 	});
 
 	var SongsListViewBase = function() {};
-	provoda.View.extendTo(SongsListViewBase, {
+	coct.SPView.extendTo(SongsListViewBase, {
 		'collch-songs-list': {
 			place: 'tpl.ancs.lc',
 			space: 'main'

@@ -1,15 +1,14 @@
-define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
+define(['pv', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
 './StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
 './SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
 './lul', './SongcardPage', './AppBaseView', './modules/WPBox'],
-function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
+function(pv, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
 StartPageView, SearchPageView, ArtcardUI, ArtistListView,
 SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
 lul, SongcardPage, AppBaseView, WPBox) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
-
 
 var AppExposedView = function() {};
 AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
@@ -56,86 +55,142 @@ AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
 });
 
 
-var AppView = function(){};
-AppBaseView.WebComplexTreesView.extendTo(AppView, {
+var map_slice_by_model = {
+	$default: coct.ListOfListsView,
+	start_page : StartPageView,
+	invstg: SearchPageView,
+	artcard: ArtcardUI,
+	artslist: ArtistListView,
+	playlist: {
+		'main': SongsListView,
+		'all-sufficient-details': SongsListView.SongsListDetailedView,
+	},
+	vk_usercard: UserCardPage.VkUsercardPageView,
+	lfm_usercard: UserCardPage.LfmUsercardPageView,
+	usercard: UserCardPage,
+	allplaces: coct.SimpleListOfListsView,
+	mconductor: MusicConductorPage,
+	tag_page: TagPageView,
+	tagslist: TagPageView.TagsListPage,
+	user_playlists: coct.ListOfListsView,
+	songs_lists: coct.ListOfListsView,
+	artists_lists: coct.ListOfListsView,
+	сountries_list: coct.SimpleListOfListsView,
+	city_place: coct.SimpleListOfListsView,
+	cities_list: coct.SimpleListOfListsView,
+	country_place: coct.ListOfListsView,
+	tag_artists: coct.ListOfListsView,
+	tag_songs: coct.ListOfListsView,
+	youtube_video: YoutubeVideoView,
+	vk_users: UserCardPage.VkUsersPageView,
+	lfm_users: lul.LfmUsersPageView,
+	lfm_listened_artists: coct.ListOfListsView,
+	lfm_listened_tracks: coct.ListOfListsView,
+	lfm_listened_albums: coct.ListOfListsView,
+	lfm_listened_tags: lul.UserTagsPageView,
+	vk_users_tracks: coct.ListOfListsView,
+	lfm_user_tag: coct.ListOfListsView,
+	user_acqs_list: uacq.UserAcquaintancesListView,
+	albslist: coct.AlbumsListView,
+	lula: lul.LULAPageVIew,
+	lulas: lul.LULAsPageVIew,
+	songcard: SongcardPage,
+	justlists: coct.ListOfListsView,
+	vk_posts: coct.VKPostsView,
+	songcard_cloudcasts: coct.ListOfListsView,
+	cloudcasts_list: coct.ListOfListsView,
+	blogs_conductor: coct.ListOfListsView,
+	blogs_list: coct.ListOfListsView,
+	music_blog: coct.ListOfListsView,
+	app_news: coct.AppNewsView
+};
+
+
+function BrowseLevView() {}
+pv.View.extendTo(BrowseLevView, {
 	children_views_by_mn: {
-		map_slice: {
-			$default: coct.ListOfListsView,
-			start_page : StartPageView,
-			invstg: SearchPageView,
-			artcard: ArtcardUI,
-			artslist: ArtistListView,
-			playlist: {
-				'main': SongsListView,
-				'all-sufficient-details': SongsListView.SongsListDetailedView,
-			},
-			vk_usercard: UserCardPage.VkUsercardPageView,
-			lfm_usercard: UserCardPage.LfmUsercardPageView,
-			usercard: UserCardPage,
-			allplaces: coct.SimpleListOfListsView,
-			mconductor: MusicConductorPage,
-			tag_page: TagPageView,
-			tagslist: TagPageView.TagsListPage,
-			user_playlists: coct.ListOfListsView,
-			songs_lists: coct.ListOfListsView,
-			artists_lists: coct.ListOfListsView,
-			сountries_list: coct.SimpleListOfListsView,
-			city_place: coct.SimpleListOfListsView,
-			cities_list: coct.SimpleListOfListsView,
-			country_place: coct.ListOfListsView,
-			tag_artists: coct.ListOfListsView,
-			tag_songs: coct.ListOfListsView,
-			youtube_video: YoutubeVideoView,
-			vk_users: UserCardPage.VkUsersPageView,
-			lfm_users: lul.LfmUsersPageView,
-			lfm_listened_artists: coct.ListOfListsView,
-			lfm_listened_tracks: coct.ListOfListsView,
-			lfm_listened_albums: coct.ListOfListsView,
-			lfm_listened_tags: lul.UserTagsPageView,
-			vk_users_tracks: coct.ListOfListsView,
-			lfm_user_tag: coct.ListOfListsView,
-			user_acqs_list: uacq.UserAcquaintancesListView,
-			albslist: coct.AlbumsListView,
-			lula: lul.LULAPageVIew,
-			lulas: lul.LULAsPageVIew,
-			songcard: SongcardPage,
-			justlists: coct.ListOfListsView,
-			vk_posts: coct.VKPostsView,
-			songcard_cloudcasts: coct.ListOfListsView,
-			cloudcasts_list: coct.ListOfListsView,
-			blogs_conductor: coct.ListOfListsView,
-			blogs_list: coct.ListOfListsView,
-			music_blog: coct.ListOfListsView,
-		},
-		navigation: {
+		pioneer: map_slice_by_model
+	},
+	base_tree: {
+		sample_name: 'browse_lev_con'
+	},
+	'collch-$spec_common-pioneer': {
+		by_model_name: true,
+		place: 'c'
+	},
+	'collch-$spec_det-pioneer': {
+		space: 'all-sufficient-details',
+		by_model_name: true,
+		place: 'c'
+	},
+
+	'collch-$spec_noplace-pioneer': {
+		by_model_name: true
+	},
+	// 'collch-$spec_wrapped-pioneer': {
+	// 	is_wrapper_parent: '^',
+	// 	space: 'all-sufficient-details',
+	// 	by_model_name: true,
+	// 	place: 'c'
+	// },
+	'sel-coll-pioneer//detailed':'$spec_det-pioneer',
+	'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',
+	// 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
+	'sel-coll-pioneer': '$spec_common-pioneer',
+
+	'compx-mp_show_end': {
+		depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
+		fn: function(animation_started, animation_completed, vmp_show) {
+			if (!animation_started){
+				return vmp_show;
+			} else {
+				if (animation_started == animation_completed){
+					return vmp_show;
+				} else {
+					return false;
+				}
+			}
+		}
+	}
+});
+
+
+function BrowseLevNavView() {}
+pv.View.extendTo(BrowseLevNavView, {
+	base_tree: {
+		sample_name: 'brow_lev_nav'
+	},
+	children_views_by_mn: {
+		pioneer: {
 			$default: nav.baseNavUI,
 			start_page: nav.StartPageNavView,
 			invstg: nav.investgNavUI
 		}
 	},
-	children_views: {
-		
-		
-	},
-	
-	'spec-vget-song': function(md) {
-		var parent = md.getParentMapModel();
-		var parent_mpx = this.getStoredMpx(parent);
-
-		var parent_view = this.findMpxViewInChildren(parent_mpx, 'all-sufficient-details');
-		return parent_view && parent_view.findMpxViewInChildren(this.getStoredMpx(md));
-	},
-	'collch-$spec-map_slice:song': {
-		is_wrapper_parent: '^',
-		space: 'all-sufficient-details',
+	'collch-pioneer': {
 		by_model_name: true,
-		place: function(md, view, original_md) {
-			return AppBaseView.viewOnLevelP.call(this, {map_level_num: original_md.map_level_num}, view);
+		place: 'c'
+	}
+});
+
+var AppView = function(){};
+AppBaseView.WebComplexTreesView.extendTo(AppView, {
+	/*children_views_by_mn: {
+		navigation: {
+			$default: nav.baseNavUI,
+			start_page: nav.StartPageNavView,
+			invstg: nav.investgNavUI
 		}
+	},*/
+	'sel-coll-map_slice/song': '$spec_det-map_slice',
+	children_views: {
+		map_slice: {
+			main: BrowseLevView,
+			detailed: BrowseLevView
+		},
+		navigation: BrowseLevNavView
 	},
 
-
-	
 	state_change: {
 		"wait-vk-login": function(state) {
 			this.toggleBodyClass(state, 'wait-vk-login');
@@ -166,7 +221,33 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		this._super();
 		var _this = this;
 		this.wp_box = new WPBox();
-		this.wp_box.init(this);
+		this.wp_box.init(this, function() {
+			return _this.getNesting('current_mp_md');
+		}, function(waypoint) {
+			_this.setVisState('current_wpoint', waypoint);
+		}, function(cwp) {
+			$(cwp.node).click();
+			$(cwp.node).trigger('activate_waypoint');
+
+			setTimeout(function() {
+				if (_this.state('vis_current_wpoint') != cwp) {
+					return;
+				}
+				var still_in_use = _this.wp_box.isWPAvailable(cwp);
+				if (still_in_use){
+					_this.scrollToWP(still_in_use);
+				} else {
+					_this.setVisState('current_wpoint', false);
+				}
+			},100);
+		}, function() {
+			return _this.state('vis_current_wpoint');
+		}, function(wp) {
+			var cur_wp = _this.state('vis_current_wpoint');
+			if (cur_wp == wp) {
+				_this.setVisState('current_wpoint', false);
+			}
+		});
 
 		_this.dom_related_props.push('favicon_node', 'wp_box');
 
@@ -192,7 +273,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		});
 
 		this.dgs_imgq_alt = new FuncsQueue({
-			time: [170],
+			time: [250],
 			init: addQueue,
 			resortQueue: resortQueue
 		});
@@ -436,32 +517,24 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	},
 	buildNowPlayingButton: function() {
 		var _this = this;
-		var np_button = this.nav.justhead.find('.np-button').remove();
-		var npbClickCallback = function(){
-			_this.RPCLegacy('showNowPlaying');
-		};
-		np_button.click(npbClickCallback);
-
-		_this.onDie(function() {
-			np_button.off();
-		});
-
-		_this.addWayPoint(np_button, {
-			canUse: function() {
-				return !_this.state('viewing_playing');
-			}
-		});
-
-		var nptpl = new _this.PvTemplate({
-			node: np_button,
-			struc_store: _this.struc_store,
-			calls_flow: _this._getCallsFlow(),
-			getSample: _this.getSampleForTemplate
-		});
-		_this.tpls.push(nptpl);
-
+		var np_button = this.nav.justhead.find('.np-button').detach();
+		_this.tpls.push( pv.$v.createTemplate( this, np_button ) );
 		this.nav.daddy.append(np_button);
-		//this.nav.np_button =np_button;
+	},
+	'stch-nav_helper_is_needed': function(state) {
+		if (!state) {
+			pv.update(this, 'nav_helper_full', false);
+		}
+	},
+	tpl_events: {
+		showFullNavHelper: function() {
+			pv.update(this, 'nav_helper_full', true);
+		}
+	},
+	buildNavHelper: function() {
+		this.tpls.push( pv.$v.createTemplate(
+			this, this.els.nav_helper
+		) );
 	},
 	selectKeyNodes: function() {
 		var slider = this.d.getElementById('slider');
@@ -472,13 +545,13 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		var start_screen = $( '#start-screen', this.d );
 
 
-
 		spv.cloneObj(this.els, {
 			screens: screens_block,
 			app_map_con: app_map_con,
 			scrolling_viewport: scrolling_viewport,
 			slider: slider,
 			navs: $(slider).children('.navs'),
+			nav_helper: $(slider).children().children('#nav-helper'),
 			start_screen: start_screen,
 			pestf_preview: start_screen.children('.personal-stuff-preview')
 		});
@@ -492,7 +565,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			console.log('dom ready');
 
 			_this.checkSizeDetector();
-			_this.buildWidthStreamer();
+			_this.nextTick(_this.buildWidthStreamer);
 			_this.els.search_form.find('#app_type').val(app_env.app_type);
 			
 			_this.wrapStartScreen(this.els.start_screen);
@@ -510,6 +583,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			_this.buildVKSamples();
 
 			_this.buildNowPlayingButton();
+			_this.buildNavHelper();
 			
 			var d_click_callback = function(e) {
 				e.preventDefault();
@@ -575,7 +649,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		}
 		if (key_name){
 			//this.RPCLegacy('keyNav', key_name);
-			this.wp_box.wayPointsNav(key_name);
+			this.wp_box.wayPointsNav(key_name, e);
 		}
 	},
 	scrollToWP: function(cwp) {

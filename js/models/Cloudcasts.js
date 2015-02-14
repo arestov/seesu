@@ -1,5 +1,5 @@
-define(['spv', 'app_serv', 'js/libs/BrowseMap', './SongsList', './LoadableList'],
-function(spv, app_serv, BrowseMap, SongsList, LoadableList) {
+define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './SongsList', './LoadableList'],
+function(pv, spv, app_serv, BrowseMap, SongsList, LoadableList) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -48,7 +48,7 @@ SongsList.extendTo(Cloudcast, {
 		}]
 	],
 	addRawData: function(data) {
-		this.updateState('nav_title', data.nav_title);
+		pv.update(this, 'nav_title', data.nav_title);
 	}
 
 });

@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList', 'js/modules/declr_parsers'],
-function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList, declr_parsers){
+define(['pv', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList', 'js/modules/declr_parsers'],
+function(pv, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList, declr_parsers){
 'use strict';
 var localize = app_serv.localize;
 
@@ -23,10 +23,10 @@ var no_access_compx = {
 
 var connectUserid = function(params) {
 	if (params.vk_userid){
-		this.updateState('userid', params.vk_userid);
+		pv.update(this, 'userid', params.vk_userid);
 	} else {
 		if (params.for_current_user){
-			this.updateState('userid', false);
+			pv.update(this, 'userid', false);
 			this.wch(this.app, 'vk_userid', 'userid');
 
 			if (this.authInit){
@@ -73,7 +73,7 @@ VkSongList.extendTo(VkRecommendedTracks, {
 		[declr_parsers.vk.getTracksFn('response'), function(r) {
 			return r && r.response && !!r.response.length;
 		}],
-		['vk_api', 'get', function() {
+		['vktapi', 'get', function() {
 			return ['audio.getRecommendations', {
 				user_id: this.state('userid')
 			}];
@@ -91,7 +91,7 @@ VkSongList.extendTo(MyVkAudioList, {
 				has_data_holes: [true]
 			}
 		}],
-		['vk_api', 'get', function() {
+		['vktapi', 'get', function() {
 			return ['audio.get', {
 				oid: this.state('userid')
 			}];
@@ -160,14 +160,15 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 		this.initStates();
 		this.rawdata = data;
 	},
-	showOnMap: function() {
+	getRelativeModel: function() {
 		var md = this.app.getVkUser(this.state('userid'));
 		md.setProfileData(this.mapStates(this.init_stmp, this.rawdata, {}));
+		return md;
+	},
+	showOnMap: function() {
+		var md = this.getRelativeModel();
 		md.showOnMap();
-		//this.app.showLastfmUser(this.state('userid'));
-		//this.app.
 	}
-
 });
 
 
@@ -202,7 +203,7 @@ LoadableList.extendTo(VKFriendsList, {
 				total: ['num', 'response.count']
 			}
 		}],
-		['vk_api', 'get', function() {
+		['vktapi', 'get', function() {
 			return ['friends.get', {
 				user_id: this.state('userid'),
 				fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
