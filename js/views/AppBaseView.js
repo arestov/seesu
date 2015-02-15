@@ -486,10 +486,46 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	},
 	animateMapSlice: (function() {
 
-	var arrProtp = Array.prototype;
-	var concatArray = function(array_of_arrays) {
-		return arrProtp.concat.apply(arrProtp, array_of_arrays);
-	};
+		var arrProtp = Array.prototype;
+		var concat = arrProtp.concat;
+		var concatArray = function(array_of_arrays) {
+			return concat.apply(arrProtp, array_of_arrays);
+		};
+
+		var inCache = function(cache, key) {
+			return cache.hasOwnProperty(key) && cache[key] !== false;
+		};
+
+		var needsDestroing = function(all_changhes) {
+			var destroy_insurance = {}, i, cur, target, pvid;
+			var result = [];
+
+			for (i = 0; i < all_changhes.length; i++) {
+				cur = all_changhes[i];
+				target = cur.bwlev.getMD();
+				pvid = target._provoda_id;
+				if (cur.type == 'destroy'){
+					destroy_insurance[pvid] = target;
+				} else {
+					destroy_insurance[pvid] = false;
+				}
+			}
+
+			for (i = all_changhes.length - 1; i >= 0; i--) {
+				cur = all_changhes[i];
+				target = cur.bwlev.getMD();
+				pvid = target._provoda_id;
+				if (cur.type == 'destroy'){
+					if (inCache(destroy_insurance, pvid)) {
+						destroy_insurance[pvid] = false;
+						result.unshift(target);
+					}
+				}
+			}
+
+			return result;
+		};
+
 
 	return function(transaction_data, animation_data) {
 		var all_changhes = spv.filter(transaction_data.array, 'changes');
@@ -499,12 +535,9 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 		this.markAnimationStart(models, transaction_data.changes_number);
 
-		for (i = 0; i < all_changhes.length; i++) {
-			cur = all_changhes[i];
-			var target = cur.bwlev.getMD();
-			if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(this.getStoredMpx(target), 'map_slice');
-			}
+		var doomed = needsDestroing(all_changhes);
+		for (i = doomed.length - 1; i >= 0; i--) {
+			this.removeChildViewsByMd(this.getStoredMpx(doomed[i]), 'map_slice');
 		}
 
 		for (i = 0; i < all_changhes.length; i++) {

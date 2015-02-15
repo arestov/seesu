@@ -453,7 +453,6 @@ pv.Eventor.extendTo(BrowseMap, {
 
 		this.changes_group = null;
 		this.grouping_changes = null;
-		this.residents_tree_change = null;
 		this.collecting_changes = null;
 		this.current_level_num = null;
 		this.nav_tree = null;
@@ -476,20 +475,6 @@ pv.Eventor.extendTo(BrowseMap, {
 
 
 		return this;
-	},
-	addResident: function(resident) {
-		if (this.residents.indexOf(resident) == -1){
-			this.residents.push(resident);
-			this.residents_tree_change = true;
-		}
-	},
-	removeResident: function(resident) {
-		var clean_array = spv.arrayExclude(this.residents, resident);
-		if (clean_array.length != this.residents){
-			this.residents = clean_array;
-			this.residents_tree_change = true;
-		}
-
 	},
 	isGroupingChanges: function() {
 		return this.grouping_changes;
@@ -616,19 +601,14 @@ pv.Eventor.extendTo(BrowseMap, {
 				}
 			}
 
-			var changed_residents;
 			
-			if (this.residents_tree_change){
-				this.residents_tree_change = false;
-				changed_residents = this.residents;
-			}
 
 			var bwlev = this.getCurrentLevel();
 
 			this.trigger('changes', {
 				array: this.chans_coll,
 				changes_number: this.cha_counter
-			}, changed_residents, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse());
+			}, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse());
 			this.chans_coll = [];
 			this.chans_coll.changes_number = ++this.cha_counter;
 
@@ -716,7 +696,6 @@ pv.Eventor.extendTo(BrowseMap, {
 	createLevel: function(num, parent_bwlev, md){
 		var bwlev = getBWlev(md, parent_bwlev, num);
 		bwlev.map = this;
-		this.addResident(md);
 		pv.update(bwlev, 'mpl_attached', true);
 		return bwlev;
 	},
@@ -910,9 +889,6 @@ pv.Eventor.extendTo(BrowseMap, {
 		}
 
 		this.trigger("map-tree-change", tree[0].rtree, old_tree && old_tree[0].rtree);
-	},
-	getTreeResidents: function(n) {
-		return n && spv.filter(n, 'resident');
 	},
 	getTitleNav: function(n) {
 		return n && n.slice(0, 2);
@@ -1644,7 +1620,6 @@ function ba_die(bwlev){
 	});
 	bwlev.getNesting('pioneer').trigger('mpl-detach');
 	pv.update(bwlev, 'mpl_attached', false);
-	bwlev.map.removeResident(md);
 }
 
 function ba__sliceTM(bwlev){ //private alike
