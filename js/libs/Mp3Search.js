@@ -837,6 +837,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		this.se_list = [];
 		this.searches_pr  = searches_pr || {};
 		this.tools_by_name = {};
+		pv.update(this, 'tools_by_name', this.tools_by_name);
 		this.investgs = {};
 		this.investgs_by_artist = {};
 		this.files_ids = {};

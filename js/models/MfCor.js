@@ -401,7 +401,7 @@ LoadableList.extendTo(MfCor, {
 
 	complex_states: {
 		"must_be_expandable": {
-			depends_on: ['has_files', 'needs_vk_auth ', 'few_sources', 'cant_play_music'],
+			depends_on: ['has_files', 'needs_vk_auth', 'few_sources', 'cant_play_music'],
 			fn: function(has_files, needs_vk_auth, fsrs, cant_play){
 				return !!(has_files || needs_vk_auth || fsrs || cant_play);
 			}
