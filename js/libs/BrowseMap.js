@@ -1536,6 +1536,9 @@ function ba_show(bwlev){
 }
 
 function ba_hide(bwlev){
+	if (!ba_inUse(bwlev)) {
+		return;
+	}
 	var md = bwlev.getNesting('pioneer');
 	bwlev.map.addChange({
 		type: 'zoom-out',
