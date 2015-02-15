@@ -166,7 +166,7 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 			if (ba_canReuse(parent_bwlev)){
 				ba_reuse(map, parent_bwlev);
 			} else {
-				showMOnMap(map, parent_bwlev.getNesting('pioneer'), null, parent_bwlev);
+				showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
 			}
 
 			map._goDeeper(end_md, parent_bwlev);
@@ -181,7 +181,7 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 
 };
 
-var showMOnMap = function(map, model, zlev, bwlev) {
+var showMOnMap = function(map, model, bwlev) {
 
 	if (model.map_level_num == -1) {
 		bwlev = map.getLevel(-1);
@@ -204,7 +204,7 @@ var showMOnMap = function(map, model, zlev, bwlev) {
 			parent_md = model.map_parent;
 		}
 
-		bwlev_parent = showMOnMap(map, parent_md, null, bwlev && bwlev.map_parent);
+		bwlev_parent = showMOnMap(map, parent_md, bwlev && bwlev.map_parent);
 	}
 
 	var result = null;
@@ -326,7 +326,7 @@ pv.Model.extendTo(BrowseLevel, {
 		return this.map_parent;
 	},
 	showOnMap: function() {
-		showMOnMap(this.map, this.getNesting('pioneer'), this.lev, this);
+		showMOnMap(this.map, this.getNesting('pioneer'), this);
 	},
 	requestPage: function(id) {
 		var md = pv.getModelById(id);
@@ -359,7 +359,7 @@ pv.Model.extendTo(BrowseLevel, {
 				map.startChangesCollecting();
 			}
 
-			showMOnMap(map, pioneer, this.lev, this);
+			showMOnMap(map, pioneer, this);
 
 			var parent_bwlev = this;
 			for (var i = 0; i < bwlev_children.length; i++) {
@@ -1457,7 +1457,6 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		this._super.apply(this, arguments);
 
 		this.lists_list = null;
-		this.lev = null;
 		// this.map_level_num = null;
 		this.head_props = this.head_props || null;
 
@@ -1584,12 +1583,6 @@ pv.HModel.extendTo(BrowseMap.Model, {
 			}
 			
 		}
-	},
-
-	assignMapLev: function(lev){
-		this.lev = lev;
-		// this.map_level_num = this.lev.num;
-		return this;
 	},
 	requestPage: function() {
 		this.showOnMap();
