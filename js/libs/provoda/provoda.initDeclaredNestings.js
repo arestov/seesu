@@ -53,7 +53,7 @@ var executeStringTemplate = function(app, md, obj, need_constr) {
 			full_path += obj.clean_string_parts[i];
 			var cur_state = obj.states[i];
 			if (cur_state) {
-				full_path += (md._provoda_id && app.encodeURLPart(md.state(cur_state))) || 'null';
+				full_path += (md._provoda_id && app.encodeURLPart(md.state(cur_state) || '')) || 'null';
 			}
 			
 		}

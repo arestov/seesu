@@ -1,22 +1,13 @@
 define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 
-// исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 /*
-
-починить freeze
-улучшить запрет на изменение использованных результатов поиска showResultsPage isOpened
-canUse
-
-
+исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 поправить навигацию
-проверить работу ссылок
+проверить работу истории
 поправить остатки wantSong
 
-прямой вызов shownOnMap убивает parent bwlevs (например плейлист из артистов) и не может отобразить его!!
-
-не работает кнопка загрузкить больше
-иногда unfreeze не работает. вожно потому что в списке оказывается корневой элемент
+генерируемые плейлисты
 
 */
 var BrowseMap = function (){};
@@ -161,14 +152,9 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 		var bwlev = getBwlevFromParentBwlev(parent_bwlev, end_md);
 
 		if (ba_canReuse(bwlev)) {
-			ba_reuse(map, bwlev);
+			showMOnMap(map, end_md, bwlev);
 		} else {
-			if (ba_canReuse(parent_bwlev)){
-				ba_reuse(map, parent_bwlev);
-			} else {
-				showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
-			}
-
+			showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
 			map._goDeeper(end_md, parent_bwlev);
 		}
 
@@ -181,7 +167,7 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 
 };
 
-var showMOnMap = function(map, model, bwlev) {
+var showMOnMap = function(map, model, bwlev, skip_detach) {
 
 	if (model.map_level_num == -1) {
 		bwlev = map.getLevel(-1);
@@ -196,7 +182,7 @@ var showMOnMap = function(map, model, bwlev) {
 
 	if (!bwlev || !ba_inUse(bwlev)){
 		// если модель не прикреплена к карте,
-		// то прежде чем что-то делать - отображаем "родительску" модель
+		// то прежде чем что-то делать - находим и отображаем "родительску" модель
 		var parent_md;
 		if (bwlev) {
 			parent_md = bwlev.map_parent.getNesting('pioneer');
@@ -204,17 +190,37 @@ var showMOnMap = function(map, model, bwlev) {
 			parent_md = model.map_parent;
 		}
 
-		bwlev_parent = showMOnMap(map, parent_md, bwlev && bwlev.map_parent);
+		bwlev_parent = showMOnMap(map, parent_md, bwlev && bwlev.map_parent, true);
 	}
 
 	var result = null;
 
 	if (bwlev_parent || bwlev_parent === false) {
 
+		if (bwlev_parent) {
+			if (!bwlev) {
+				bwlev = getBwlevFromParentBwlev(bwlev_parent, model);
+			}
+			if (!bwlev || !ba_inUse(bwlev)) {
+				ba_sliceTillMe(bwlev_parent);
+			}
+		}
+
+
 		if (model.state('has_no_access')) {
 			model.switchPmd();
 		} else if (ba_canReuse(bwlev)){//если модель прикреплена к карте
-			ba_reuse(map, bwlev);
+
+			if (!skip_detach) {
+				// отсекаем всё более глубокое
+				// отсекать можно когда не будет отсетечно, что потом придётся прикреплять
+				ba_sliceTillMe(bwlev);
+			}
+
+			if (!ba_isOpened(bwlev)){
+				// если заморожены - удаляем "незамороженное" и углубляемся до нужного уровня
+				ba_unfreeze(map, bwlev);
+			}
 			result = bwlev;
 		} else {
 			if (!model.model_name){
@@ -753,66 +759,6 @@ pv.Eventor.extendTo(BrowseMap, {
 		this.finishChangesGrouping('freezing');
 		return fresh_freeze;
 	},
-
-	findDeepestActiveFreezed: function() {
-		var
-			target,
-			f_lvs = spv.filter(this.levels, 'freezed'),
-			current_lev = this.getCurrentLevel(),
-			active_tree = current_lev.ptree;
-
-		for (var i = 0; i < active_tree.length; i++) {
-			if (f_lvs.indexOf(active_tree[i]) != -1){
-				target = active_tree[i];
-				break;
-			}
-		}
-
-		return target;
-
-	},
-	restoreFreezedLev: function(lev) {
-		//this.hideMap();
-		var defzactv = this.findDeepestActiveFreezed();
-		var f_lvs = spv.filter(this.levels, 'freezed');
-
-		var target_lev_pos;
-		if (lev) {
-			target_lev_pos = f_lvs.indexOf(lev);
-			if (target_lev_pos == -1){
-				throw new Error('lev was not freezed!?');
-			}
-		} else {
-			target_lev_pos = f_lvs.length - 1;
-		}
-		var stop_pos = target_lev_pos + 1;
-
-		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
-		if (defzactv){
-			this.clearShallow(defzactv, true);
-		} else {
-			this.hideMap(true);
-		}
-		if (just_started_zoomout){
-			this.finishChangesGrouping('zoom-out');
-		}
-
-		var dfa_pos = defzactv ? f_lvs.indexOf(defzactv) : 0;
-
-		var just_started_zoomin = this.startChangesGrouping('zoom-in', true);
-		for (var i= dfa_pos; i < stop_pos; i++) {
-			/*
-			если "замороженный" уже отображается, то его родителям
-			не нужно устанавливать "активный" статус
-
-			поэтому находим верхнего родителя и начинаем устанавливать статусы с него
-			*/
-			this.setLevelPartActive(f_lvs[i]);
-		}
-		if (just_started_zoomin){
-			this.finishChangesGrouping('zoom-in');
-		}
-	},
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
 			ba_die(lev.free);
@@ -831,12 +777,6 @@ pv.Eventor.extendTo(BrowseMap, {
 			
 		}
 	},
-	hideMap: function(only_free){
-		for (var i = this.levels.length - 1; i >= 0; i--) {
-			this.hideLevel(this.levels[i], false, only_free);
-		}
-	},
-
 	updateNav: (function(){
 		var stackNav = function(bwlev, stack_v) {
 			pv.update(bwlev, 'mp_stack', stack_v);
@@ -1049,13 +989,6 @@ pv.Eventor.extendTo(BrowseMap, {
 	replaceURL: function() {
 		this.setURL(this.joinNavURL(this.nav_tree), true);
 		return this;
-	},
-
-	clearShallow: function(lev, only_free){
-		for (var i = this.levels.length - 1; i > lev.state('map_level_num'); i--) {
-			this.hideLevel(this.levels[i], false, only_free);
-			
-		}
 	},
 	sliceDeepUntil: function(num){
 		var
@@ -1624,10 +1557,10 @@ function ba_die(bwlev){
 
 function ba__sliceTM(bwlev){ //private alike
 	var map = bwlev.map;
-	var current_level = map.getCurrentLevel();
-	if (current_level == bwlev){
-		return;
-	}
+	// var current_level = map.getCurrentLevel();
+	// if (current_level == bwlev){
+	// 	return;
+	// }
 	var aycocha = map.isCollectingChanges();
 	if (!aycocha){
 		map.startChangesCollecting();
@@ -1644,7 +1577,16 @@ function ba__sliceTM(bwlev){ //private alike
 	}
 }
 
+function ba_unfreeze(map, bwlev) {
+	var just_started_zoomin = map.startChangesGrouping('zoom-in', true);
 
+	ba_show(bwlev);
+	map.current_level_num = bwlev.state('map_level_num');
+
+	if (just_started_zoomin){
+		map.finishChangesGrouping('zoom-in');
+	}
+}
 
 function ba_sliceTillMe(bwlev){
 	return ba__sliceTM(bwlev);
@@ -1669,23 +1611,6 @@ function ba_canReuse(bwlev) {
 	return bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev));
 }
 
-function ba_reuse(map, bwlev) {
-	if (!ba_isOpened(bwlev)){
-		// если заморожены - удаляем "незамороженное" и углубляемся до нужного уровня
-		map.restoreFreezedLev(bwlev);
-	}
-	// отсекаем всё более глубокое
-	ba_sliceTillMe(bwlev);
-}
-
-function ba_zoomOut(bwlev) {
-	return ba__sliceTM(bwlev);
-}
-
-function ba_canUse(bwlev){
-	return bwlev.state('mp_show');
-	// return !!bwlev.map;
-}	
 
 BrowseMap.freeze = function ba_freeze(bwlev){
 	if (ba_isOpened(bwlev)){
