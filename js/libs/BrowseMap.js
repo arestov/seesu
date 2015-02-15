@@ -15,6 +15,9 @@ canUse
 
 прямой вызов shownOnMap убивает parent bwlevs (например плейлист из артистов) и не может отобразить его!!
 
+не работает кнопка загрузкить больше
+иногда unfreeze не работает. вожно потому что в списке оказывается корневой элемент
+
 */
 var BrowseMap = function (){};
 
@@ -155,19 +158,21 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 	} else {
 		// parent_bwlev.showOnMap();
 
-		if (parent_bwlev) {
-			 if (ba_inUse(parent_bwlev)){
-				if (!ba_isOpened(parent_bwlev)){
-					// если замарожены - удаляем "незамороженное" и углубляемся до нужного уровня
-					map.restoreFreezedLev(parent_bwlev);
-				}
-				// отсекаем всё более глубокое
-				ba_sliceTillMe(parent_bwlev);
+		var bwlev = getBwlevFromParentBwlev(parent_bwlev, end_md);
+
+		if (ba_canReuse(bwlev)) {
+			ba_reuse(map, bwlev);
+		} else {
+			if (ba_canReuse(parent_bwlev)){
+				ba_reuse(map, parent_bwlev);
 			} else {
 				showMOnMap(map, parent_bwlev.getNesting('pioneer'), null, parent_bwlev);
 			}
+
+			map._goDeeper(end_md, parent_bwlev);
 		}
-		map._goDeeper(end_md, parent_bwlev);
+
+
 	}
 
 	if (!aycocha){
@@ -208,13 +213,8 @@ var showMOnMap = function(map, model, zlev, bwlev) {
 
 		if (model.state('has_no_access')) {
 			model.switchPmd();
-		} else if (bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev))){//если модель прикреплена к карте
-			if (!ba_isOpened(bwlev)){
-				// если заморожены - удаляем "незамороженное" и углубляемся до нужного уровня
-				map.restoreFreezedLev(bwlev);
-			}
-			// отсекаем всё более глубокое
-			ba_sliceTillMe(bwlev);
+		} else if (ba_canReuse(bwlev)){//если модель прикреплена к карте
+			ba_reuse(map, bwlev);
 			result = bwlev;
 		} else {
 			if (!model.model_name){
@@ -1696,7 +1696,19 @@ function ba_isOpened(bwlev){
 	return !!bwlev.map && !bwlev.closed;
 }
 
+function ba_canReuse(bwlev) {
+	//если модель прикреплена к карте
+	return bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev));
+}
 
+function ba_reuse(map, bwlev) {
+	if (!ba_isOpened(bwlev)){
+		// если заморожены - удаляем "незамороженное" и углубляемся до нужного уровня
+		map.restoreFreezedLev(bwlev);
+	}
+	// отсекаем всё более глубокое
+	ba_sliceTillMe(bwlev);
+}
 
 function ba_zoomOut(bwlev) {
 	return ba__sliceTM(bwlev);
