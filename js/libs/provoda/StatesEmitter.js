@@ -1,7 +1,6 @@
-define(['spv', './StatesLabour', './helpers', 'jquery'], function(spv, StatesLabour, hp, $) {
+define(['spv', './helpers', 'jquery', './updateProxy', './StatesLabour'], function(spv, hp, $, updateProxy, StatesLabour) {
 'use strict';
 return function(Eventor) {
-var push = Array.prototype.push;
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -29,11 +28,6 @@ var getLightConnector = function(state_name) {
 function StatesEmitter() {}
 Eventor.extendTo(StatesEmitter, function(add) {
 
-var iterateChList = function(changes_list, context, cb, zdsv) {
-	for (var i = 0; i < changes_list.length; i+=2) {
-		cb.call(context, i, changes_list[i], changes_list[i+1], zdsv);
-	}
-};
 
 var stackStateFlowStep = function(flow_step, state_name) {
 	if (!this.zdsv) {
@@ -771,42 +765,13 @@ add({
 });
 
 
-var compressChangesList = function(changes_list, i, prop_name, value, counter) {
-	if (this[prop_name] !== true){
-		var num = (changes_list.length - 1) - counter * 2;
-		changes_list[ num - 1 ] = prop_name;
-		changes_list[ num ] = value;
-
-		this[prop_name] = true;
-		return true;
-	}
-
-};
-var reversedIterateChList = function(changes_list, context, cb) {
-	var counter = 0;
-	for (var i = changes_list.length - 1; i >= 0; i-=2) {
-		if (cb.call(context, changes_list, i, changes_list[i-1], changes_list[i], counter)){
-			counter++;
-		}
-	}
-	return counter;
-};
-
 
 
 
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 
 add({
-	compressStatesChanges: function(changes_list) {
-		var result_changes = {};
-		var counter = reversedIterateChList(changes_list, result_changes, compressChangesList);
-		counter = counter * 2;
-		while (changes_list.length != counter){
-			changes_list.shift();
-		}
-		return changes_list;
-	},
+	
 	proxyStch: function(value, old_value_trans, state_name) {
 		var old_value = this.zdsv.stch_states[state_name];
 		if (old_value != value) {
@@ -850,96 +815,15 @@ add({
 				//method.call(this, value, old_value);
 			}
 		}
-	},
-	_replaceState: function(original_states, state_name, value, stack) {
-		if (state_name){
-			var old_value = this.states[state_name];
-			if (old_value != value){
-				//value = value || false;
-				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
-
-				if (!original_states.hasOwnProperty(state_name)) {
-					original_states[state_name] = this.states[state_name];
-				}
-				this.states[state_name] = value;
-				stack.push(state_name, value);
-			}
-		}
-	}});
-
-//var st_event_name_default = ;
-//var st_event_name_vip = 'vip_state_change-';
-//var st_event_name_light = 'lgh_sch-';
+	}
+});
 
 
 
-
-
-var PVStateChangeEvent = function(type, value, old_value, target) {
-	this.type = type;
-	this.value = value;
-	this.old_value = old_value;
-	this.target = target;
-};
-
-
-var st_event_opt = {force_async: true};
 
 add({
-	_triggerVipChanges: function(i, state_name, value, zdsv) {
-		var vip_name = hp.getSTEVNameVIP( state_name);
-		zdsv.abortFlowSteps('vip_stdch_ev', state_name);
-
-
-		var vip_cb_cs = this.evcompanion.getMatchedCallbacks(vip_name).matched;
-		if (vip_cb_cs.length) {
-			var flow_steps = zdsv.createFlowStepsArray('vip_stdch_ev', state_name);
-			var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], this);
-			
-			//вызов внутреннего для самого объекта события
-			this.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg, flow_steps);
-			hp.markFlowSteps(flow_steps, 'vip_stdch_ev', state_name);
-		}
-		
-	},
-	triggerLegacySChEv: function(state_name, value, zdsv, default_cb_cs, default_name, flow_steps) {
-		var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], this);
-				//вызов стандартного события
-		this.evcompanion.triggerCallbacks(default_cb_cs, false, st_event_opt, default_name, event_arg, flow_steps);
-	},
-	_triggerStChanges: function(i, state_name, value, zdsv) {
-
-		zdsv.abortFlowSteps('stev', state_name);
-
-		var default_name = hp.getSTEVNameDefault( state_name );
-		var light_name = hp.getSTEVNameLight( state_name );
-
-		var default_cb_cs = this.evcompanion.getMatchedCallbacks(default_name).matched;
-		var light_cb_cs = this.evcompanion.getMatchedCallbacks(light_name).matched;
-		
-		if (light_cb_cs.length || default_cb_cs.length) {
-			var flow_steps = zdsv.createFlowStepsArray('stev', state_name);
-
-			if (light_cb_cs.length) {
-				this.evcompanion.triggerCallbacks(light_cb_cs, false, false, light_name, value, flow_steps);
-			}
-
-			if (default_cb_cs.length) {
-				this.triggerLegacySChEv(state_name, value, zdsv, default_cb_cs, default_name, flow_steps);
-			}
-
-			if (flow_steps) {
-				hp.markFlowSteps(flow_steps, 'stev', state_name);
-			}
-
-		}
-
 	
 
-	},
-	_setUndetailedState: function(i, state_name, value) {
-		this._lbr.undetailed_states[state_name] = value;
-	},
 	updateManyStates: function(obj) {
 		var changes_list = [];
 		for (var state_name in obj) {
@@ -1013,181 +897,7 @@ add({
 	},
 
 	_updateProxy: function(changes_list, opts) {
-		if (this._lbr && this._lbr.undetailed_states){
-			iterateChList(changes_list, this, this._setUndetailedState);
-			return this;
-		}
-
-		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
-		//для пользователя пока пользователь не перестанет изменять новые состояния
-		if (!this.zdsv){
-			this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
-		}
-		var zdsv = this.zdsv;
-
-
-		zdsv.states_changing_stack.push(changes_list, opts);
-
-		if (zdsv.collecting_states_changing){
-			return this;
-		}
-
-		
-
-		zdsv.collecting_states_changing = true;
-		//this.zdsv is important for this!!!
-		//this.zdsv.collecting_states_changing - must be semi public;
-
-
-		var total_ch = zdsv.total_ch;
-		var original_states = zdsv.original_states;
-		var all_i_cg = zdsv.all_i_cg;
-		var all_ch_compxs = zdsv.all_ch_compxs;
-		var changed_states = zdsv.changed_states;
-		
-		while (zdsv.states_changing_stack.length){
-
-			
-			
-
-			//spv.cloneObj(original_states, this.states);
-
-			var cur_changes_list = zdsv.states_changing_stack.shift();
-			var cur_changes_opts = zdsv.states_changing_stack.shift();
-
-			//получить изменения для состояний, которые изменил пользователь через публичный метод
-			this.getChanges(original_states, cur_changes_list, cur_changes_opts, changed_states);
-			//var changed_states = ... ↑
-
-			cur_changes_list = cur_changes_opts = null;
-
-			if (this.full_comlxs_index) {
-				//проверить комплексные состояния
-				var first_compxs_chs = this.getComplexChanges(original_states, changed_states);
-				if (first_compxs_chs.length){
-					push.apply(all_ch_compxs, first_compxs_chs);
-				}
-
-				var current_compx_chs = first_compxs_chs;
-				//довести изменения комплексных состояний до самого конца
-				while (current_compx_chs.length){
-					var cascade_part = this.getComplexChanges(original_states, current_compx_chs);
-					current_compx_chs = cascade_part;
-					if (cascade_part.length){
-						push.apply(all_ch_compxs, cascade_part);
-					}
-					cascade_part = null;
-
-				}
-				current_compx_chs = null;
-			}
-
-			
-
-			//собираем все группы изменений
-			if (changed_states.length){
-				push.apply(all_i_cg, changed_states);
-			}
-			if (all_ch_compxs && all_ch_compxs.length){
-				push.apply(all_i_cg, all_ch_compxs);
-			}
-			//устраняем измененное дважды и более
-			this.compressStatesChanges(all_i_cg);
-
-
-			
-			iterateChList(all_i_cg, this, this._triggerVipChanges, zdsv);
-
-			
-
-			if (all_i_cg.length){
-				push.apply(total_ch, all_i_cg);
-			}
-
-
-			hp.wipeObj(original_states);
-			all_i_cg.length = changed_states.length = 0;
-			if (all_ch_compxs) {
-				all_ch_compxs.length = 0;
-			}
-			
-			//объекты используются повторно, ради выиграша в производительности
-			//которые заключается в исчезновении пауз на сборку мусора 
-		}
-
-		//устраняем измененное дважды и более
-		this.compressStatesChanges(total_ch);
-		iterateChList(total_ch, this, this._triggerStChanges, zdsv);
-
-
-		//hp.wipeObj(original_states);
-		//all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
-
-		if (this.sendStatesToMPX && total_ch.length){
-			this.sendStatesToMPX(total_ch);
-			total_ch.length = 0;
-		} else {
-			total_ch.length = 0;
-		}
-
-
-		zdsv.collecting_states_changing = false;
-		//this.zdsv = null;
-		return this;
-	},
-
-	getComplexChanges: function(original_states, changes_list) {
-		return this.getChanges(original_states, this.checkComplexStates(changes_list));
-	},
-	getChanges: function(original_states, changes_list, opts, result_arr) {
-		var changed_states = result_arr || [];
-		var i;
-		for (i = 0; i < changes_list.length; i+=2) {
-			this._replaceState(original_states, changes_list[i], changes_list[i+1], changed_states);
-		}
-		if (this.updateTemplatesStates){
-			this.updateTemplatesStates(changes_list, opts && opts.sync_tpl);
-		}
-		for (i = 0; i < changes_list.length; i+=2) {
-			this._handleStch(original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, opts && opts.sync_tpl);
-		}
-		return changed_states;
-	},
-	checkComplexStates: function(changes_list) {
-
-		return this.getTargetComplexStates(changes_list);
-	},
-	getTargetComplexStates: function(changes_list) {
-		var matched_compxs = [];
-		var result_array = [];
-
-		var i, cur;
-
-		for ( i = 0; i < changes_list.length; i+=2) {
-			cur = this.full_comlxs_index[changes_list[i]];
-			if (!cur){
-				continue;
-			}
-			for (var jj = 0; jj < cur.length; jj++) {
-				if (matched_compxs.indexOf(cur[jj]) == -1){
-					matched_compxs.push(cur[jj]);
-				}
-			}
-		}
-
-		for ( i = 0; i < matched_compxs.length; i++) {
-			cur = matched_compxs[i];
-			result_array.push(cur.name, this.compoundComplexState(cur));
-		}
-
-		return result_array;
-	},
-	compoundComplexState: function(temp_comx) {
-		var values = new Array(temp_comx.depends_on.length);
-		for (var i = 0; i < temp_comx.depends_on.length; i++) {
-			values[i] = this.state(temp_comx.depends_on[i]);
-		}
-		return temp_comx.fn.apply(this, values);
+		updateProxy(this, changes_list, opts);
 	}
 });
 });

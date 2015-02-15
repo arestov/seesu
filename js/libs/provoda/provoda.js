@@ -1,5 +1,5 @@
-define('pv', ['spv', './StatementsAngularParser.min', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View'],
-function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, getEventor, getStatesEmitter, CallbacksFlow, getModel, getView){
+define('pv', ['spv', './StatementsAngularParser.min', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy'],
+function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, getEventor, getStatesEmitter, CallbacksFlow, getModel, getView, updateProxy){
 "use strict";
 
 var provoda, pv;
@@ -105,7 +105,16 @@ pv = provoda = {
 		return item.states[state_name];
 	},
 	update: function(md, state_name, state_value, opts) {
-		md.updateState(state_name, state_value, opts);
+		/*if (state_name.indexOf('-') != -1 && console.warn){
+			console.warn('fix prop state_name: ' + state_name);
+		}*/
+		if (md.hasComplexStateFn(state_name)){
+			throw new Error("you can't change complex state in this way");
+		}
+		return updateProxy(md, [state_name, state_value], opts);
+
+
+		// md.updateState(state_name, state_value, opts);
 	},
 	behavior: function(declr, declr_extend_from, named) {
 		var behaviorFrom = declr_extend_from || pv.Model;
