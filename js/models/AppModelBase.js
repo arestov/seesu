@@ -23,9 +23,9 @@ pv.Model.extendTo(AppModelBase, {
 		this.map
 			.init(this.start_page)
 			
-			.on('changes', function(changes, tree, models, bwlevs) {
+			.on('changes', function(changes, models, bwlevs) {
 				//console.log(changes);
-				this.animateMapChanges(changes, tree, models, bwlevs);
+				this.animateMapChanges(changes, models, bwlevs);
 			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
 				this.changeNavTree(nav_tree);
@@ -151,7 +151,7 @@ pv.Model.extendTo(AppModelBase, {
 				complexBrowsing(bwlev, md,  false);
 			}
 		};
-		return function(changes, tree, models, bwlevs) {
+		return function(changes, models, bwlevs) {
 			var
 				i,
 				target_item,
@@ -188,9 +188,9 @@ pv.Model.extendTo(AppModelBase, {
 			// var bwlevs = residents && spv.filter(residents, 'lev.bwlev');
 			
 
-			if (tree){
+			//if (tree){
 				pv.updateNesting(this, 'navigation', bwlevs);
-			}
+			//}
 
 			
 			if (target_item){

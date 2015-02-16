@@ -1,19 +1,13 @@
 define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 
-// исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 /*
-
-починить freeze
-улучшить запрет на изменение использованных результатов поиска showResultsPage isOpened
-canUse
-
-
+исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 поправить навигацию
-проверить работу ссылок
+проверить работу истории
 поправить остатки wantSong
 
-прямой вызов shownOnMap убивает parent bwlevs (например плейлист из артистов) и не может отобразить его!!
+генерируемые плейлисты
 
 */
 var BrowseMap = function (){};
@@ -155,19 +149,16 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 	} else {
 		// parent_bwlev.showOnMap();
 
-		if (parent_bwlev) {
-			 if (ba_inUse(parent_bwlev)){
-				if (!ba_isOpened(parent_bwlev)){
-					// если замарожены - удаляем "незамороженное" и углубляемся до нужного уровня
-					map.restoreFreezedLev(parent_bwlev);
-				}
-				// отсекаем всё более глубокое
-				ba_sliceTillMe(parent_bwlev);
-			} else {
-				showMOnMap(map, parent_bwlev.getNesting('pioneer'), null, parent_bwlev);
-			}
+		var bwlev = getBwlevFromParentBwlev(parent_bwlev, end_md);
+
+		if (ba_canReuse(bwlev)) {
+			showMOnMap(map, end_md, bwlev);
+		} else {
+			showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
+			map._goDeeper(end_md, parent_bwlev);
 		}
-		map._goDeeper(end_md, parent_bwlev);
+
+
 	}
 
 	if (!aycocha){
@@ -176,7 +167,7 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 
 };
 
-var showMOnMap = function(map, model, zlev, bwlev) {
+var showMOnMap = function(map, model, bwlev, skip_detach) {
 
 	if (model.map_level_num == -1) {
 		bwlev = map.getLevel(-1);
@@ -191,7 +182,7 @@ var showMOnMap = function(map, model, zlev, bwlev) {
 
 	if (!bwlev || !ba_inUse(bwlev)){
 		// если модель не прикреплена к карте,
-		// то прежде чем что-то делать - отображаем "родительску" модель
+		// то прежде чем что-то делать - находим и отображаем "родительску" модель
 		var parent_md;
 		if (bwlev) {
 			parent_md = bwlev.map_parent.getNesting('pioneer');
@@ -199,22 +190,37 @@ var showMOnMap = function(map, model, zlev, bwlev) {
 			parent_md = model.map_parent;
 		}
 
-		bwlev_parent = showMOnMap(map, parent_md, null, bwlev && bwlev.map_parent);
+		bwlev_parent = showMOnMap(map, parent_md, bwlev && bwlev.map_parent, true);
 	}
 
 	var result = null;
 
 	if (bwlev_parent || bwlev_parent === false) {
 
+		if (bwlev_parent) {
+			if (!bwlev) {
+				bwlev = getBwlevFromParentBwlev(bwlev_parent, model);
+			}
+			if (!bwlev || !ba_inUse(bwlev)) {
+				ba_sliceTillMe(bwlev_parent);
+			}
+		}
+
+
 		if (model.state('has_no_access')) {
 			model.switchPmd();
-		} else if (bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev))){//если модель прикреплена к карте
+		} else if (ba_canReuse(bwlev)){//если модель прикреплена к карте
+
+			if (!skip_detach) {
+				// отсекаем всё более глубокое
+				// отсекать можно когда не будет отсетечно, что потом придётся прикреплять
+				ba_sliceTillMe(bwlev);
+			}
+
 			if (!ba_isOpened(bwlev)){
 				// если заморожены - удаляем "незамороженное" и углубляемся до нужного уровня
-				map.restoreFreezedLev(bwlev);
+				ba_unfreeze(map, bwlev);
 			}
-			// отсекаем всё более глубокое
-			ba_sliceTillMe(bwlev);
 			result = bwlev;
 		} else {
 			if (!model.model_name){
@@ -326,7 +332,7 @@ pv.Model.extendTo(BrowseLevel, {
 		return this.map_parent;
 	},
 	showOnMap: function() {
-		showMOnMap(this.map, this.getNesting('pioneer'), this.lev, this);
+		showMOnMap(this.map, this.getNesting('pioneer'), this);
 	},
 	requestPage: function(id) {
 		var md = pv.getModelById(id);
@@ -359,7 +365,7 @@ pv.Model.extendTo(BrowseLevel, {
 				map.startChangesCollecting();
 			}
 
-			showMOnMap(map, pioneer, this.lev, this);
+			showMOnMap(map, pioneer, this);
 
 			var parent_bwlev = this;
 			for (var i = 0; i < bwlev_children.length; i++) {
@@ -453,7 +459,6 @@ pv.Eventor.extendTo(BrowseMap, {
 
 		this.changes_group = null;
 		this.grouping_changes = null;
-		this.residents_tree_change = null;
 		this.collecting_changes = null;
 		this.current_level_num = null;
 		this.nav_tree = null;
@@ -476,20 +481,6 @@ pv.Eventor.extendTo(BrowseMap, {
 
 
 		return this;
-	},
-	addResident: function(resident) {
-		if (this.residents.indexOf(resident) == -1){
-			this.residents.push(resident);
-			this.residents_tree_change = true;
-		}
-	},
-	removeResident: function(resident) {
-		var clean_array = spv.arrayExclude(this.residents, resident);
-		if (clean_array.length != this.residents){
-			this.residents = clean_array;
-			this.residents_tree_change = true;
-		}
-
 	},
 	isGroupingChanges: function() {
 		return this.grouping_changes;
@@ -616,19 +607,14 @@ pv.Eventor.extendTo(BrowseMap, {
 				}
 			}
 
-			var changed_residents;
 			
-			if (this.residents_tree_change){
-				this.residents_tree_change = false;
-				changed_residents = this.residents;
-			}
 
 			var bwlev = this.getCurrentLevel();
 
 			this.trigger('changes', {
 				array: this.chans_coll,
 				changes_number: this.cha_counter
-			}, changed_residents, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse());
+			}, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse());
 			this.chans_coll = [];
 			this.chans_coll.changes_number = ++this.cha_counter;
 
@@ -716,7 +702,6 @@ pv.Eventor.extendTo(BrowseMap, {
 	createLevel: function(num, parent_bwlev, md){
 		var bwlev = getBWlev(md, parent_bwlev, num);
 		bwlev.map = this;
-		this.addResident(md);
 		pv.update(bwlev, 'mpl_attached', true);
 		return bwlev;
 	},
@@ -774,66 +759,6 @@ pv.Eventor.extendTo(BrowseMap, {
 		this.finishChangesGrouping('freezing');
 		return fresh_freeze;
 	},
-
-	findDeepestActiveFreezed: function() {
-		var
-			target,
-			f_lvs = spv.filter(this.levels, 'freezed'),
-			current_lev = this.getCurrentLevel(),
-			active_tree = current_lev.ptree;
-
-		for (var i = 0; i < active_tree.length; i++) {
-			if (f_lvs.indexOf(active_tree[i]) != -1){
-				target = active_tree[i];
-				break;
-			}
-		}
-
-		return target;
-
-	},
-	restoreFreezedLev: function(lev) {
-		//this.hideMap();
-		var defzactv = this.findDeepestActiveFreezed();
-		var f_lvs = spv.filter(this.levels, 'freezed');
-
-		var target_lev_pos;
-		if (lev) {
-			target_lev_pos = f_lvs.indexOf(lev);
-			if (target_lev_pos == -1){
-				throw new Error('lev was not freezed!?');
-			}
-		} else {
-			target_lev_pos = f_lvs.length - 1;
-		}
-		var stop_pos = target_lev_pos + 1;
-
-		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
-		if (defzactv){
-			this.clearShallow(defzactv, true);
-		} else {
-			this.hideMap(true);
-		}
-		if (just_started_zoomout){
-			this.finishChangesGrouping('zoom-out');
-		}
-
-		var dfa_pos = defzactv ? f_lvs.indexOf(defzactv) : 0;
-
-		var just_started_zoomin = this.startChangesGrouping('zoom-in', true);
-		for (var i= dfa_pos; i < stop_pos; i++) {
-			/*
-			если "замороженный" уже отображается, то его родителям
-			не нужно устанавливать "активный" статус
-
-			поэтому находим верхнего родителя и начинаем устанавливать статусы с него
-			*/
-			this.setLevelPartActive(f_lvs[i]);
-		}
-		if (just_started_zoomin){
-			this.finishChangesGrouping('zoom-in');
-		}
-	},
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
 			ba_die(lev.free);
@@ -852,12 +777,6 @@ pv.Eventor.extendTo(BrowseMap, {
 			
 		}
 	},
-	hideMap: function(only_free){
-		for (var i = this.levels.length - 1; i >= 0; i--) {
-			this.hideLevel(this.levels[i], false, only_free);
-		}
-	},
-
 	updateNav: (function(){
 		var stackNav = function(bwlev, stack_v) {
 			pv.update(bwlev, 'mp_stack', stack_v);
@@ -910,9 +829,6 @@ pv.Eventor.extendTo(BrowseMap, {
 		}
 
 		this.trigger("map-tree-change", tree[0].rtree, old_tree && old_tree[0].rtree);
-	},
-	getTreeResidents: function(n) {
-		return n && spv.filter(n, 'resident');
 	},
 	getTitleNav: function(n) {
 		return n && n.slice(0, 2);
@@ -1073,13 +989,6 @@ pv.Eventor.extendTo(BrowseMap, {
 	replaceURL: function() {
 		this.setURL(this.joinNavURL(this.nav_tree), true);
 		return this;
-	},
-
-	clearShallow: function(lev, only_free){
-		for (var i = this.levels.length - 1; i > lev.state('map_level_num'); i--) {
-			this.hideLevel(this.levels[i], false, only_free);
-			
-		}
 	},
 	sliceDeepUntil: function(num){
 		var
@@ -1457,7 +1366,6 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		this._super.apply(this, arguments);
 
 		this.lists_list = null;
-		this.lev = null;
 		// this.map_level_num = null;
 		this.head_props = this.head_props || null;
 
@@ -1585,12 +1493,6 @@ pv.HModel.extendTo(BrowseMap.Model, {
 			
 		}
 	},
-
-	assignMapLev: function(lev){
-		this.lev = lev;
-		// this.map_level_num = this.lev.num;
-		return this;
-	},
 	requestPage: function() {
 		this.showOnMap();
 	},
@@ -1634,6 +1536,9 @@ function ba_show(bwlev){
 }
 
 function ba_hide(bwlev){
+	if (!ba_inUse(bwlev)) {
+		return;
+	}
 	var md = bwlev.getNesting('pioneer');
 	bwlev.map.addChange({
 		type: 'zoom-out',
@@ -1651,15 +1556,14 @@ function ba_die(bwlev){
 	});
 	bwlev.getNesting('pioneer').trigger('mpl-detach');
 	pv.update(bwlev, 'mpl_attached', false);
-	bwlev.map.removeResident(md);
 }
 
 function ba__sliceTM(bwlev){ //private alike
 	var map = bwlev.map;
-	var current_level = map.getCurrentLevel();
-	if (current_level == bwlev){
-		return;
-	}
+	// var current_level = map.getCurrentLevel();
+	// if (current_level == bwlev){
+	// 	return;
+	// }
 	var aycocha = map.isCollectingChanges();
 	if (!aycocha){
 		map.startChangesCollecting();
@@ -1676,7 +1580,16 @@ function ba__sliceTM(bwlev){ //private alike
 	}
 }
 
+function ba_unfreeze(map, bwlev) {
+	var just_started_zoomin = map.startChangesGrouping('zoom-in', true);
 
+	ba_show(bwlev);
+	map.current_level_num = bwlev.state('map_level_num');
+
+	if (just_started_zoomin){
+		map.finishChangesGrouping('zoom-in');
+	}
+}
 
 function ba_sliceTillMe(bwlev){
 	return ba__sliceTM(bwlev);
@@ -1696,16 +1609,11 @@ function ba_isOpened(bwlev){
 	return !!bwlev.map && !bwlev.closed;
 }
 
-
-
-function ba_zoomOut(bwlev) {
-	return ba__sliceTM(bwlev);
+function ba_canReuse(bwlev) {
+	//если модель прикреплена к карте
+	return bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev));
 }
 
-function ba_canUse(bwlev){
-	return bwlev.state('mp_show');
-	// return !!bwlev.map;
-}	
 
 BrowseMap.freeze = function ba_freeze(bwlev){
 	if (ba_isOpened(bwlev)){
