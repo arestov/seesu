@@ -1,4 +1,4 @@
-define(['./etc_views', 'jquery', 'app_serv', 'spv', 'provoda'], function(etc_views, $, app_serv, spv, provoda){
+define(['./etc_views', 'jquery', 'app_serv', 'spv', 'pv'], function(etc_views, $, app_serv, spv, pv){
 "use strict";
 
 //var localize = app_serv.localize;
@@ -80,26 +80,14 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 
 
 var SongActTaggingControl = function(){};
-provoda.View.extendTo(SongActTaggingControl, {
+pv.View.extendTo(SongActTaggingControl, {
 	children_views: {
 		lfm_tagsong: LfmTagItView
 	},
-	expand: function(){
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-		this.c.append(this.getAFreeCV('lfm_tagsong'));
-		this.requestAll();
-	},
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-		}
-	},
+	'collch-$ondemand-lfm_tagsong': {
+		place: 'c',
+		needs_expand_state: 'active_view'
+	}
 });
 return SongActTaggingControl;
 

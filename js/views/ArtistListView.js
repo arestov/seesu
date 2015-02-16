@@ -1,9 +1,9 @@
-define(['provoda', 'jquery'], function(provoda, $) {
+define(['pv', 'jquery'], function(pv, $) {
 "use strict";
 
 
 var ArtcardViewInList = function() {};
-provoda.View.extendTo(ArtcardViewInList, {
+pv.View.extendTo(ArtcardViewInList, {
 	createBase: function() {
 		this.c = $('<li class="artist_in_list"></li>');
 		this.alink = $('<span class=""></span>').appendTo(this.c);
@@ -37,7 +37,7 @@ provoda.View.extendTo(ArtcardViewInList, {
 
 
 var ArtistListView = function() {};
-provoda.View.extendTo(ArtistListView, {
+pv.View.extendTo(ArtistListView, {
 	base_tree: {
 		sample_name: 'artists_list'
 	},

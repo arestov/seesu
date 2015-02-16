@@ -1,4 +1,4 @@
-define(['provoda', './coct', 'jquery'], function(provoda, coct, $) {
+define(['pv', './coct', 'jquery'], function(pv, coct, $) {
 "use strict";
 
 var TagPageView = function() {};

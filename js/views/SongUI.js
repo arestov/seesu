@@ -1,34 +1,38 @@
-define(['provoda', 'spv', 'jquery', 'app_serv',
+define(['pv', 'spv', 'jquery', 'app_serv',
 './SongActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
-function(provoda, spv, $, app_serv,
+function(pv, spv, $, app_serv,
 SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 
 var SongViewBase = function() {};
 coct.SPView.extendTo(SongViewBase, {
+	'compx-vmp_show': [
+		['^^vmp_show', 'bmp_show', '^^map_level_num'],
+		function(vmp_show, bmp_show, map_level_num) {
+			return bmp_show && bmp_show[map_level_num + 1] && vmp_show;
+			// return vmp_show;
+		}
+	],
 	tpl_events: {
 		showSong: function(e) {
 			e.preventDefault();
+
 			if (this.expand) {
 				this.expand();
 			}
-			
-			this.RPCLegacy('wantSong');
-			this.RPCLegacy('requestPage');
 
+			this.RPCLegacy('requestPlay', pv.$v.getBwlevId(this));
+			this.requestPage();
 		}
-	},
-	expandBase: function(){
-		this.setVisState('lite_view', this.opts && this.opts.lite);
-	},
-	canUseDeepWaypoints: function() {
-		return !(this.opts && this.opts.lite) && !!this.state('vmp_show');
 	}
 });
 
 var SongUI = function(){};
 
 SongViewBase.extendTo(SongUI, {
+	canUseDeepWaypoints: function() {
+		return !!this.state('vmp_show');
+	},
 	dom_rp: true,
 	state_change : {
 		"vmp_show": function(opts, old_opts) {
@@ -41,6 +45,9 @@ SongViewBase.extendTo(SongUI, {
 			}
 		}
 	},
+	'compx-mp_show_end': [
+		['^mp_show_end']
+	],
 	'compx-must_expand': [
 		['can_expand', 'vmp_show', 'vis_can_expand'],
 		function(can_expand, vmp_show, vis_can_expand) {
@@ -63,12 +70,9 @@ SongViewBase.extendTo(SongUI, {
 		songcard: SongcardPage.SongcardController
 	},
 	activate: function(){
-		
 	},
 	parts_builder: {
-		context: function() {
-			return this.root_view.getSample('track_c');
-		},
+		context: 'track_c',
 		mf_cor_con: function() {
 			var context = this.requirePart('context');
 			var div = $('<div></div>');
@@ -102,7 +106,12 @@ SongViewBase.extendTo(SongUI, {
 var SongViewLite = function() {};
 
 SongViewBase.extendTo(SongViewLite, {
-
+	canUseDeepWaypoints: function() {
+		return false;
+	},
+	expandBase: function(){
+		this.setVisState('lite_view', true);
+	},
 	base_tree: {
 		sample_name: 'song-view'
 	}

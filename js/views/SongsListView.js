@@ -1,8 +1,8 @@
-define(['provoda', 'jquery', './SongUI', './etc_views', ],
-function(provoda, $, SongUI, etc_views) {
+define(['pv', 'jquery', './SongUI', './etc_views', './coct' ],
+function(pv, $, SongUI, etc_views, coct) {
 	"use strict";
 	var PlaylistSettingsRowView = function(){};
-	provoda.View.extendTo(PlaylistSettingsRowView, {
+	pv.View.extendTo(PlaylistSettingsRowView, {
 		"stch-dont_rept_pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
@@ -21,29 +21,19 @@ function(provoda, $, SongUI, etc_views) {
 		canUseWaypoints: function() {
 			return this.parent_view.state('mp_has_focus');
 		},
-		children_views: {
-			"row-multiatcs": provoda.View,
-			"row-pl-settings": PlaylistSettingsRowView
+		children_views_by_mn: {
+			context_parts: {
+				"row-multiatcs": pv.View,
+				"row-pl-settings": PlaylistSettingsRowView
+			}
 		}
 	});
 
 	var SongsListViewBase = function() {};
-	provoda.View.extendTo(SongsListViewBase, {
-		createBase: function() {
-			this.setVisState('overview', this.opts && this.opts.overview);
-			this.c = this.root_view.getSample('playlist-container');
-			if (this.opts && this.opts.overview){
-				this.c.prepend(this.root_view.getSample('playlist_panel'));
-			}
-			this.createTemplate();
-			
-		},
+	coct.SPView.extendTo(SongsListViewBase, {
 		'collch-songs-list': {
 			place: 'tpl.ancs.lc',
-			space: 'main',
-			opts: function(){
-				return {lite: this.opts && this.opts.overview};
-			}
+			space: 'main'
 		},
 		'coll-prio-songs-list': function(array) {
 			var viewing = [], prev_next = [], play = [];//, others = [];
@@ -77,19 +67,36 @@ function(provoda, $, SongUI, etc_views) {
 			/*
 			player_song
 			marked_as
-			vmp_show*/
+			vmp_show
+			
+
+
+			*/
 			
 		}
 	});
 	var SongsListView = function(){};
 	SongsListViewBase.extendTo(SongsListView, {
+		base_tree: {
+			sample_name: 'playlist-container',
+			children_by_selector: [{
+				sample_name: 'playlist_panel',
+				prepend: true
+			}]
+		},
 		children_views: {
 			plarow: PlARowView,
 			'songs-list': SongUI.SongViewLite
+		},
+		expandBase: function() {
+			this.setVisState('overview', true);
 		}
 	});
 	var SongsListDetailedView = function() {};
 	SongsListViewBase.extendTo(SongsListDetailedView, {
+		base_tree: {
+			sample_name: 'playlist-container'
+		},
 		children_views: {
 			plarow: PlARowView,
 			'songs-list': SongUI

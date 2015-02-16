@@ -1,4 +1,4 @@
-define(['js/libs/BrowseMap', 'spv', './SongsList'], function(BrowseMap, spv, SongsList){
+define(['js/libs/BrowseMap', 'spv', './SongsList', 'pv'], function(BrowseMap, spv, SongsList, pv){
 "use strict";
 
 var ManualPlaylist = function() {};
@@ -16,7 +16,10 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 	init: function(opts) {
 		this._super.apply(this, arguments);
 		this.playlists = [];
-		this.updateNesting('lists_list', this.playlists);
+		pv.updateNesting(this, 'lists_list', this.playlists);
+	},
+	getSPC: function() {
+		return ManualPlaylist;
 	},
 	subPager: function(name) {
 		return this.matchTitleStrictly(name);
@@ -62,7 +65,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
-		this.updateNesting('lists_list', this.playlists);
+		pv.updateNesting(this, 'lists_list', this.playlists);
 		this.trigger('playlists-change', this.playlists);
 		return pl_r;
 	},
@@ -80,7 +83,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		this.playlists = spv.arrayExclude(this.playlists, pl);
 		if (this.playlists.length != length){
 			this.trigger('playlists-change', this.playlists);
-			this.updateNesting('lists_list', this.playlists);
+			pv.updateNesting(this, 'lists_list', this.playlists);
 			this.savePlaylists();
 		}
 
@@ -117,7 +120,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 
 		this.playlists = recovered;
 		this.trigger('playlists-change', this.playlists);
-		this.updateNesting('lists_list', this.playlists);
+		pv.updateNesting(this, 'lists_list', this.playlists);
 	}
 });
 return UserPlaylists;

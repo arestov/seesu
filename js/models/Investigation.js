@@ -1,21 +1,31 @@
-define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
+define(['pv', 'spv', 'jquery'],function(pv, spv, $){
 	"use strict";
-	provoda.addPrototype("Investigation", {
+	pv.addPrototype("Investigation", {
 		model_name: 'invstg',
 		init: function(opts) {
 			this._super.apply(this, arguments);
 			this.names = {};
 			this.enter_items = false;
-			this.updateNesting('section', []);
 			this.setInactiveAll();
-			this.updateState('url_part', this.getURL());
+			pv.update(this, 'url_part', this.getURL());
+
+			this.on('child_change-section', function(e) {
+				this.names = {};
+				if (e.value) {
+					for (var i = 0; i < e.value.length; i++) {
+						this.names[ e.value[i].model_name ] = e.value[i];
+					}
+				}
+				this.changeQuery(this.q, true);
+			});
+
 		},
 		addCallback: function(event_name, func){
 			this.on(event_name, func);
 		},
 		changeResultsCounter: function(){
 			var rc = 0;
-			var sections_array = this.getNesting('section');
+			var sections_array = this.getNesting('section') || [];
 			for (var i = 0; i < sections_array.length; i++) {
 				rc += sections_array[i].r.length;
 			}
@@ -29,7 +39,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		},
 		_changeActiveStatus: function(remove, except){
 			except = except && this.g(except);
-			var sections_array = this.getNesting('section');
+			var sections_array = this.getNesting('section') || [];
 
 			for (var i=0; i < sections_array.length; i++) {
 				var cur = sections_array[i];
@@ -57,7 +67,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		},
 		remarkStyles: function(){
 			var c = 0;
-			var sections_array = this.getNesting('section');
+			var sections_array = this.getNesting('section') || [];
 			for (var i=0; i < sections_array.length; i++) {
 				var cur = sections_array[i];
 				if (!cur.nos){
@@ -71,36 +81,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		setInactiveAll: function(except){
 			this._changeActiveStatus(true, except);
 		},
-		addSection: function(name, Section){
-			var s = new Section();
-			var _this = this;
-			s.init({
-				map_parent: this,
-				app: this.app
-			});
-			s
-				.on('items-change', function(results){
-					_this.refreshEnterItems();
-					if (results){
-						_this.changeResultsCounter();
-					}
-					_this.bindItemsView();
-				})
-				.on('state_change-active', function(){
-					_this.remarkStyles();
-				})
-				.on('requests', function(array){
-					_this.addRequests(array);
-				}, {immediately: true});
-			var sections_array = this.getNesting('section');
 
-			sections_array.push(s);
-			this.updateNesting('section', sections_array);
-
-			s.invstg = this;
-			this.names[name] = s;
-			return s;
-		},
 		bindItemsView: function(){
 			var r = this.getAllItems(true);
 			r = spv.filter(r, 'binvstg', true).not;
@@ -158,7 +139,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		},
 		getAllItems: function(no_button){
 			var r = [];
-			var sections_array = this.getNesting('section');
+			var sections_array = this.getNesting('section') || [];
 			for (var i=0; i < sections_array.length; i++) {
 				var cur = sections_array[i];
 				var items = cur.getItems(no_button);
@@ -172,47 +153,47 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			if (this.q != q || force){
 				this.stopRequests();
 				if (this.getTitleString){
-					this.updateState('nav_title', this.getTitleString(q));
+					pv.update(this, 'nav_title', this.getTitleString(q));
 				}
 				this.loaded();
 				this.setItemForEnter();
-				var sections_array = this.getNesting('section');
+				var sections_array = this.getNesting('section') || [];
 				for (var i=0; i < sections_array.length; i++) {
 					sections_array[i].changeQuery(q);
 				}
 				this.q = q;
 				
 				delete this.selected_inum;
-				this.updateState('query', q);
+				pv.update(this, 'query', q);
 				this.changeResultsCounter();
 				this.doEverythingForQuery();
-				this.updateState('url_part', this.getURL());
+				pv.update(this, 'url_part', this.getURL());
 			}
 			
 		},
 		query_regexp: /\ ?\%query\%\ ?/
 	});
-	provoda.addPrototype("BaseSectionButton", {
+	pv.addPrototype("BaseSectionButton", {
 		setText: function(text){
-			this.updateState('button_text', text);
+			pv.update(this, 'button_text', text);
 		},
 		show: function(){
-			this.updateState('disabled', false);
+			pv.update(this, 'disabled', false);
 		},
 		hide: function(){
-			this.updateState('disabled', true);
+			pv.update(this, 'disabled', true);
 			this.setInactive();
 		}
 	});
 
 	
 
-	provoda.addPrototype("BaseSuggest", {
+	pv.addPrototype("BaseSuggest", {
 		setActive: function(){
-			this.updateState('active', true);
+			pv.update(this, 'active', true);
 		},
 		setInactive: function(){
-			this.updateState('active', false);
+			pv.update(this, 'active', false);
 		},
 		getTitle: function(){
 			return this.valueOf();
@@ -257,13 +238,31 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 	});
 
 	
-	provoda.addPrototype("SearchSection", {
+	pv.addPrototype("SearchSection", {
 		init: function(opts){
-			this._super();
+			this._super.apply(this, arguments);
 			this.app = opts && opts.app;
 			this.map_parent = opts && opts.map_parent;
 			this.edges_list = [];
 			this.rendering_list = [];
+
+			
+			var map_parent = opts.map_parent;
+			opts = null;
+			this
+				.on('items-change', function(results){
+					map_parent.refreshEnterItems();
+					if (results){
+						map_parent.changeResultsCounter();
+					}
+					map_parent.bindItemsView();
+				})
+				.on('state_change-active', function(){
+					map_parent.remarkStyles();
+				})
+				.on('requests', function(array){
+					map_parent.addRequests(array);
+				}, {immediately: true});
 		},
 		appendResults: function(arr, render, no_more_results) {
 			var r = [];
@@ -280,20 +279,20 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			return this;
 		},
 		setActive: function(){
-			this.updateState('active', true);
+			pv.update(this, 'active', true);
 		},
 		setInactive: function(){
 			
-			this.updateState('active', false);
+			pv.update(this, 'active', false);
 		},
 		loading: function(){
-			this.updateState('loading', true);
+			pv.update(this, 'loading', true);
 		},
 		loaded: function(){
-			this.updateState('loading', false);
+			pv.update(this, 'loading', false);
 		},
 		markOdd: function(remove){
-			this.updateState('odd_section', !remove);
+			pv.update(this, 'odd_section', !remove);
 		},
 		getItems: function(no_button){
 			var r = [].concat(this.rendering_list);
@@ -328,13 +327,13 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			}
 			this.loaded();
 			this.removeOldResults();
-			this.updateState('no_results_text', false);
+			pv.update(this, 'no_results_text', false);
 			
 			
 			this.r = new searchResults(q);
 			this.rendering_list = [];
 			this.edges_list = [];
-			this.updateState('query', q);
+			pv.update(this, 'query', q);
 			this.setButtonText(false, q);
 			this.showButton();
 			this.trigger('items-change');
@@ -344,7 +343,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			for (var i = 0; i < this.rendering_list.length; i++) {
 				this.rendering_list[i].die();
 			}
-			this.updateNesting('rendering_list', []);
+			pv.updateNesting(this, 'rendering_list', []);
 			
 		},
 		renderSuggests: function(no_more_results, preview){
@@ -363,7 +362,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			} else{
 				if (no_more_results){
 					if (this.no_results_text){
-						this.updateState('no_results_text', this.no_results_text);
+						pv.update(this, 'no_results_text', this.no_results_text);
 						this.hideButton();
 					} else{
 						this.setInactive();
@@ -377,15 +376,15 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 				
 				var cur = this.rendering_list[this.edges_list[i]];
 				if (cur){
-					cur.updateState('bordered', true)
+					pv.update(cur, 'bordered', true);
 				}
 				
 			}
 
-			this.updateState('no_more_results', no_more_results);
-			this.updateState('preview', preview);
-			this.updateNesting('rendering_list', this.rendering_list);
-			this.updateState('changed', new Date());
+			pv.update(this, 'no_more_results', no_more_results);
+			pv.update(this, 'preview', preview);
+			pv.updateNesting(this, 'rendering_list', this.rendering_list);
+			pv.update(this, 'changed', new Date());
 
 			this.setButtonText(!!this.r.length, this.r.query);
 			this.trigger('items-change', this.r.length);

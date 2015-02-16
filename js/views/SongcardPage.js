@@ -1,5 +1,5 @@
-define(['provoda', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct'],
-function(provoda, etc_views, app_serv, $, spv, ArtcardUI, coct) {
+define(['pv', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct'],
+function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -24,7 +24,7 @@ coct.SPView.extendTo(SongcardPage, {
 });
 
 var FanPreview = function() {};
-provoda.View.extendTo(FanPreview, {
+pv.View.extendTo(FanPreview, {
 	'compx-can_use_image':{
 		depends_on: ['vis_image_loaded', 'selected_image'],
 		fn: function(vis_image_loaded, selected_image) {
@@ -55,14 +55,14 @@ provoda.View.extendTo(FanPreview, {
 });
 
 var FansList = function() {};
-provoda.View.extendTo(FansList, {
+pv.View.extendTo(FansList, {
 	children_views: {
 		list_items: FanPreview
 	}
 });
 
 var SongcardController = function() {};
-provoda.View.extendTo(SongcardController, {
+pv.View.extendTo(SongcardController, {
 	dom_rp: true,
 	children_views:{
 		artist: ArtcardUI.ArtistInSongConstroller,
@@ -71,18 +71,34 @@ provoda.View.extendTo(SongcardController, {
 	bindBase: function() {
 		this.rowcs = {};
 		this.wch(this.parent_view, 'vmp_show', function(e) {
+			if (!this.isAlive()) {
+				return;
+			}
 			if (!e.value && this.rowcs && this.rowcs.users_context){
 				this.rowcs.users_context.hide();
 			}
 			if (e.value){
 				this.expand();
-				this.updateSongListeners();
 			}
 		});
 
 
 
 	},
+	'compx-disallow_seesu_listeners': [
+		['#disallow_seesu_listeners'],
+		function(state) {
+			return state;
+		}
+	],
+	'compx-can_expand_listeners': [
+		['^vmp_show', 'artist_name', 'track_name', 'disallow_seesu_listeners'],
+		function (vmp_show, artist_name, track_name) {
+			return vmp_show && artist_name && track_name;
+		}
+
+
+	],
 	expand: function() {
 		if (this.expanded){
 			return;
@@ -122,11 +138,15 @@ provoda.View.extendTo(SongcardController, {
 			return div;
 		}
 	},
-	updateSongListeners: function(){
+	'stch-can_expand_listeners': function(state) {
 		if (!this.expanded){
 			return;
 		}
-		if (app_serv.app_env.nodewebkit) {
+		if (!this.isAlive()) {
+			return;
+		}
+		
+		if (!state) {
 			return;
 		}
 		var su = window.su;
@@ -189,7 +209,9 @@ provoda.View.extendTo(SongcardController, {
 			});
 			this.t_users.last_update = (+new Date());
 		}
+
 	},
+
 	showBigListener: function(c, lig){
 		var _this = this;
 		c.empty();
@@ -202,7 +224,7 @@ provoda.View.extendTo(SongcardController, {
 					_this.root_view.verticalAlign(img, {
 						target_height: 252,
 						animate: true,
-						animate_time: 66
+						animate_time: 30
 					});
 				}
 

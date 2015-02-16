@@ -1,22 +1,16 @@
-define(['provoda', 'jquery', './coct', './uacq', 'app_serv'], function(provoda, $, coct, uacq, app_serv) {
+define(['pv', 'jquery', './coct', './uacq', 'app_serv'], function(pv, $, coct, uacq, app_serv) {
 "use strict";
 var app_env = app_serv.app_env;
 
 var UserCardPage = function(){};
 coct.PageView.extendTo(UserCardPage, {
-	useBase: function(node) {
-		this.c = node;
-		
-		this.bindBase();
-	},
-	createBase: function() {
-		this.c = this.root_view.getSample('user_page');
-		this.c.append(this.root_view.getSample('vk_pthgs'));
-		this.c.append(this.root_view.getSample('lastfm_pthgs'));
-		this.bindBase();
-	},
-	bindBase: function() {
-		this.createTemplate();
+	base_tree: {
+		sample_name: 'user_page',
+		children_by_selector: [{
+			sample_name: 'vk_pthgs'
+		}, {
+			sample_name: 'lastfm_pthgs'
+		}]
 	},
 	children_views: {
 		'user-playlists': coct.ListSimplePreview,
@@ -34,14 +28,12 @@ coct.PageView.extendTo(UserCardPage, {
 });
 
 var LfmUsercardPageView = function() {};
-provoda.View.extendTo(LfmUsercardPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('lfm_user_page');
-		this.c.append(this.root_view.getSample('lastfm_pthgs'));
-		this.bindBase();
-	},
-	bindBase: function() {
-		this.createTemplate();
+pv.View.extendTo(LfmUsercardPageView, {
+	base_tree: {
+		sample_name: 'lfm_user_page',
+		children_by_selector: [{
+			sample_name: 'lastfm_pthgs'
+		}]
 	},
 	children_views: {
 		lfm__friends: coct.ImagedListPreview,
@@ -55,14 +47,12 @@ provoda.View.extendTo(LfmUsercardPageView, {
 
 
 var VkUsercardPageView = function() {};
-provoda.View.extendTo(VkUsercardPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('vk_user_page');
-		this.c.append(this.root_view.getSample('vk_pthgs'));
-		this.bindBase();
-	},
-	bindBase: function() {
-		this.createTemplate();
+pv.View.extendTo(VkUsercardPageView, {
+	base_tree: {
+		sample_name: 'vk_user_page',
+		children_by_selector: [{
+			sample_name: 'vk_pthgs'
+		}]
 	},
 	children_views: {
 		vk__tracks: coct.ListSimplePreview,
@@ -71,7 +61,7 @@ provoda.View.extendTo(VkUsercardPageView, {
 });
 
 var VkFriendPreview = function() {};
-provoda.View.extendTo(VkFriendPreview, {
+pv.View.extendTo(VkFriendPreview, {
 	tpl_events: {
 		open_link: function(e, node) {
 			e.preventDefault();
@@ -83,7 +73,7 @@ provoda.View.extendTo(VkFriendPreview, {
 });
 
 var VkUsersPageView = function() {};
-provoda.View.extendTo(VkUsersPageView, {
+pv.View.extendTo(VkUsersPageView, {
 	base_tree: {
 		sample_name: 'vk_users_page'
 	},

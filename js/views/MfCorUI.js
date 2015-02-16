@@ -1,8 +1,8 @@
-define(['provoda', 'jquery', 'spv', './etc_views'], function(provoda, $, spv, etc_views) {
+define(['pv', 'jquery', 'spv', './etc_views'], function(pv, $, spv, etc_views) {
 "use strict";
 
 var notifyCounterUI = function() {};
-provoda.View.extendTo(notifyCounterUI, {
+pv.View.extendTo(notifyCounterUI, {
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -12,10 +12,18 @@ provoda.View.extendTo(notifyCounterUI, {
 		}
 	}
 });
-
+var FileIntorrentPromiseUI = function(){};
+pv.View.extendTo(FileIntorrentPromiseUI, {
+	'stch-infoHash': function(state) {
+		this.c.text(state);
+	},
+	createBase: function(){
+		this.c = $('<li></li>');
+	}
+});
 
 var FileInTorrentUI = function() {};
-provoda.View.extendTo(FileInTorrentUI,{
+pv.View.extendTo(FileInTorrentUI,{
 	state_change: {
 		"download-pressed": function(state) {
 			if (state){
@@ -63,10 +71,17 @@ provoda.View.extendTo(FileInTorrentUI,{
 	}
 });
 var SongFileModelUI = function() {};
-provoda.View.extendTo(SongFileModelUI, {
+pv.View.extendTo(SongFileModelUI, {
 	dom_rp: true,
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
+	},
+	'stch-key-progress-c-width': function(state) {
+		if (state) {
+			pv.update(this, 'vis_progress-c-width', this.getBoxDemensionByKey(this.getProgressWidth, state));
+		} else {
+			pv.update(this, 'vis_progress-c-width', 0);
+		}
 	},
 	complex_states: {
 		"can-progress": {
@@ -88,16 +103,17 @@ provoda.View.extendTo(SongFileModelUI, {
 
 			}
 		},
-		"vis_progress-c-width": {
-			depends_on: ['can-progress', '^^want_more_songs', '#window_width', '^^must_be_expandable'],
-			fn: function(can, p_wmss, window_width, must_be_expandable){
-				if (can){
-					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss, !!must_be_expandable);
+		'key-progress-c-width': [
+			['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
+			function (can, p_wmss, workarea_width, must_be_expandable) {
+				if (can) {
+					return this.getBoxDemensionKey('progress_c-width', workarea_width, !!p_wmss, !!must_be_expandable);
 				} else {
-					return 0;
+					return false;
 				}
 			}
-		},
+		],
+
 		"vis_loading_p": {
 			depends_on: ['vis_progress-c-width', 'loading_progress'],
 			fn: function(width, factor){
@@ -218,30 +234,34 @@ provoda.View.extendTo(SongFileModelUI, {
 	tpl_events: {
 		'selectFile': function() {
 			if (!this.state('selected')){
-				this.RPCLegacy('trigger', 'want-to-play-sf');
+				this.RPCLegacy('requestPlay', pv.$v.getBwlevId(this));
+				// this.RPCLegacy('trigger', 'want-to-play-sf');
 			}
 		},
 		'switchPlay': function(e) {
-			var _this = this;
+			// var _this = this;
 			e.stopPropagation();
-			if (_this.state('selected')){
+			
+			this.RPCLegacy('switchPlay', pv.$v.getBwlevId(this));
+			// this.
+			// if (_this.state('selected')){
 
-				if (_this.state('play') == 'play'){
-					_this.RPCLegacy('pause');
-				} else {
-					_this.RPCLegacy('trigger', 'want-to-play-sf');
-					//_this.RPCLegacy('play');
-				}
-			} else {
-				_this.RPCLegacy('trigger', 'want-to-play-sf');
-			}
+			// 	if (_this.state('play') == 'play'){
+			// 		_this.RPCLegacy('pause');
+			// 	} else {
+			// 		_this.RPCLegacy('trigger', 'want-to-play-sf');
+			// 		//_this.RPCLegacy('play');
+			// 	}
+			// } else {
+			// 	_this.RPCLegacy('trigger', 'want-to-play-sf');
+			// }
 		}
 	}
 });
 
 
 var FilesSourceTunerView = function(){};
-provoda.View.extendTo(FilesSourceTunerView, {
+pv.View.extendTo(FilesSourceTunerView, {
 	tpl_events: {
 		changeTune: function(e, node){
 			var tune_name = node.name;
@@ -258,7 +278,7 @@ provoda.View.extendTo(FilesSourceTunerView, {
 
 
 var ComplectPionerView = function(){};
-provoda.View.extendTo(ComplectPionerView, {
+pv.View.extendTo(ComplectPionerView, {
 	children_views: {
 		vis_tuner: FilesSourceTunerView
 	}
@@ -268,13 +288,22 @@ provoda.View.extendTo(ComplectPionerView, {
 
 
 var mfComplectUI = function() {};
-provoda.View.extendTo(mfComplectUI, {
+pv.View.extendTo(mfComplectUI, {
 	children_views: {
-		'file-torrent': FileInTorrentUI,
-		'file-http': SongFileModelUI,
 		'pioneer': ComplectPionerView
 	},
-
+	children_views_by_mn: {
+		moplas_list_start: {
+			'file-torrent-promise': FileIntorrentPromiseUI,
+			'file-torrent': FileInTorrentUI,
+			'file-http': SongFileModelUI
+		},
+		moplas_list_end: {
+			'file-torrent-promise': FileIntorrentPromiseUI,
+			'file-torrent': FileInTorrentUI,
+			'file-http': SongFileModelUI
+		}
+	},
 	'collch-moplas_list_start': {
 		place: 'tpl.ancs.listc-start',
 		by_model_name: true
@@ -286,7 +315,7 @@ provoda.View.extendTo(mfComplectUI, {
 });
 
 var YoutubePreview = function() {};
-provoda.View.extendTo(YoutubePreview, {
+pv.View.extendTo(YoutubePreview, {
 	createBase: function() {
 		var li = $('<li class="you-tube-video-link"></li>');
 		this.c = li;
@@ -308,7 +337,7 @@ provoda.View.extendTo(YoutubePreview, {
 		this._super();
 		this.user_link = $();
 	},
-	'stch-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.c.attr('title', state || "");
 	},
 	'stch-cant_show': function(state) {
@@ -343,7 +372,7 @@ provoda.View.extendTo(YoutubePreview, {
 
 
 var MfCorUI = function() {};
-provoda.View.extendTo(MfCorUI, {
+pv.View.extendTo(MfCorUI, {
 	children_views:{
 		notifier: notifyCounterUI,
 		vk_auth: etc_views.VkLoginUI,
@@ -356,7 +385,7 @@ provoda.View.extendTo(MfCorUI, {
 	},
 	'collch-yt_videos': 'tpl.ancs.video_list',
 	bindBase: function() {
-		this.createTemplate();
+		//this.createTemplate();
 		var _this = this;
 		this.tpl.ancs.more_songs_b.click(function() {
 			_this.RPCLegacy('switchMoreSongsView');
@@ -364,7 +393,7 @@ provoda.View.extendTo(MfCorUI, {
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
 	},
 	'compx-vis_is_visible':{
-		'depends_on': ['^mp_show_end'],
+		'depends_on': ['^^^mp_show_end'],
 		fn: function(mp_show_end) {
 			return !!mp_show_end;
 		}

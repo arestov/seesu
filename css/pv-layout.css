@@ -51,9 +51,24 @@
 	.complex-page{
 		left: 240px;
 		}
-		.full_page_need .complex-page {
+		.full_page_need .full-page.complex-page {
 			left: auto;
 			}
+		.full_page_need .full-page.complex-page {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+		.full_page_need .full-page.complex-page .complex-page-scroll_con{
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+
 	.shared-parts {
 		left: 240px;
 		}
@@ -70,8 +85,8 @@
 		transform: translateX(240px);
 
 		}
-		.yes-transform_support .full_page_need .complex-page{
-			left: auto;
+		.yes-transform_support .full_page_need .full-page.complex-page{
+			
 
 			-webkit-transform: translateX(0);
 			-moz-transform: translateX(0);

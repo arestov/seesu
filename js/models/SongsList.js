@@ -1,4 +1,4 @@
-define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'], function(provoda, app_serv, LoadableList, comd, Song, lb){
+define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'], function(pv, app_serv, LoadableList, comd, Song, lb){
 	"use strict";
 	var localize = app_serv.localize;
 	var app_env = app_serv.app_env;
@@ -22,13 +22,21 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 	var PlARow = function(){};
 
 	comd.PartsSwitcher.extendTo(PlARow, {
-		init: function(pl) {
-			this._super();
-			this.pl = pl;
-			this.updateState('active_part', false);
-			this.addPart(new MultiAtcsRow(this, pl));
-			this.addPart(new PlaylistSettingsRow(this, pl));
-		}
+		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
+		init: function() {
+			this._super.apply(this, arguments);
+			this.pl = this.map_parent;
+
+			pv.update(this, 'active_part', false);
+			this.addPart(new MultiAtcsRow(this, this.pl));
+			this.addPart(new PlaylistSettingsRow(this, this.pl));
+		},
+		'compx-loader_disallowing_desc': [
+			['^loader_disallowing_desc'],
+			function(loader_disallowing_desc) {
+				return loader_disallowing_desc;
+			}
+		]
 	});
 
 
@@ -46,7 +54,7 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 		},
 		setDnRp: function(state) {
-			this.updateState('dont_rept_pl', state);
+			pv.update(this, 'dont_rept_pl', state);
 			su.setSetting('dont-rept-pl', state);
 		},
 		model_name: 'row-pl-settings'
@@ -76,27 +84,20 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 
 
 	var SongsListBase = function() {};
-	provoda.extendFromTo("SongsListBase", LoadableList, SongsListBase);
+	pv.extendFromTo("SongsListBase", LoadableList, SongsListBase);
 	
 
 	var SongsList = function(){};
 	SongsListBase.extendTo(SongsList, {
-		init: function() {
-			//playlist_title, playlist_type, info
-
-			
-			this._super.apply(this, arguments);
-
-			var plarow = new PlARow();
-			plarow.init(this);
-			this.updateNesting('plarow', plarow);
-
-			
-		},
+		'nest-plarow': [PlARow],
 		bindStaCons: function() {
 			this._super();
 			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
 			this.wch(this.app, 'settings-pl-shuffle', 'pl-shuffle');
+		},
+		'nest_rqc-songs-list': Song,
+		/*makeDataItem: function(obj) {
+			return this.extendSong(obj);
 		},
 		extendSong: function(omo){
 			if (!(omo instanceof Song)){
@@ -106,7 +107,7 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			} else{
 				return omo;
 			}
-		},
+		},*/
 		makeExternalPlaylist: function() {
 			var songs_list = this.getMainlist();
 			if (!songs_list.length){return false;}
@@ -146,8 +147,8 @@ SongsList.extendTo(HypemPlaylist, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.can_use = this.app.hypem.can_send;
-		this.updateState('browser_can_load', this.can_use);
-		this.updateState('possible_loader_disallowing', localize('Hypem-cant-load'));
+		pv.update(this, 'browser_can_load', this.can_use);
+		pv.update(this, 'possible_loader_disallowing', localize('Hypem-cant-load'));
 	},
 	page_limit: 20,
 	'compx-loader_disallowing_desc': {

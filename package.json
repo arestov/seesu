@@ -2,13 +2,14 @@
   "name": "Seesu Music",
   "main": "index.html",
   "webkit": {
-	"plugin": true
+    "plugin": true
   },
   "window": {
-	"icon": "icons/icon64.png",
-	"width": 1024,
-	"height": 768,
-	"min_width": 640,
-	"min_height": 480
-  }
+  	"icon": "icons/icon64.png",
+  	"width": 1024,
+  	"height": 768,
+  	"min_width": 640,
+  	"min_height": 480
+  },
+  "node-remote": "https://arestov.github.io"
 }

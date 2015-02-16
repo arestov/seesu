@@ -208,8 +208,6 @@ app_serv.getHTMLText = function(text) {
 
 
 
-
-
 var addClass = function(old_c, cl){
 	
 	var add_c = cl.split(' ');
@@ -484,6 +482,9 @@ var app_env = (function(wd){
 	} else {
 		dstates.addState('no-transform_upport');
 	}
+	var getLang = function() {
+		return (wd.navigator.language || wd.navigator.browserLanguage || 'en').slice(0,2).toLowerCase();
+	};
 	
 	if (env.vkontakte){
 		if (env.url.language === '0'){
@@ -491,10 +492,10 @@ var app_env = (function(wd){
 		} else if (env.url.language === '3'){
 			env.lang = 'en';
 		} else{
-			env.lang = (wd.navigator.language || wd.navigator.browserLanguage).slice(0,2).toLowerCase();
+			env.lang = getLang();
 		}
 	} else{
-		env.lang = (wd.navigator.language || wd.navigator.browserLanguage).slice(0,2).toLowerCase();
+		env.lang = getLang();
 	}
 	
 	
@@ -503,6 +504,22 @@ var app_env = (function(wd){
 	return env;
 })(window);
 app_serv.app_env = app_env;
+
+var is_nodewebkit = app_env.app_type == 'nodewebkit';
+
+app_serv.getSafeIframe = function() {
+	var iframe = document.createElement('iframe');
+	if (is_nodewebkit) {
+		iframe.setAttribute('nwdisable', true);
+		iframe.setAttribute('nwfaketop', true);
+	}
+
+	return iframe;
+};
+
+
+
+
 (function(){
 	var sensitive_keys = ['vk_token_info', 'dg_auth', 'lfm_scrobble_s', 'lfmsk', 'big_vk_cookie'];
 	var parse = function(r_value){
@@ -589,6 +606,18 @@ if (typeof widget != 'object'){
 	} else if (window.pokki && pokki.openURLInDefaultBrowser) {
 		openURL = function(){
 			return pokki.openURLInDefaultBrowser.apply(pokki, arguments);
+		};
+	} else if (app_env.tizen_app) {
+		openURL = function(url) {
+			var appControl = new window.tizen.ApplicationControl( "http://tizen.org/appcontrol/operation/view", url );
+			window.tizen.application.launchAppControl(
+				appControl,
+				null,
+				function(){console.log("launch appControl succeeded");},
+				function(e){console.log("launch appControl failed. Reason: " + e && e.name);}
+			);
+			
+
 		};
 	} else {
 		openURL = function(url){

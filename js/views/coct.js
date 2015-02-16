@@ -1,4 +1,4 @@
-define(['spv', 'provoda', 'jquery', './etc_views'], function(spv, provoda, $, etc_views) {
+define(['spv', 'pv', 'jquery', './etc_views'], function(spv, pv, $, etc_views) {
 "use strict";
 var SoftVkLoginUI = function() {};
 etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
@@ -11,7 +11,7 @@ etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
 
 
 var ListPreview = function() {};
-provoda.View.extendTo(ListPreview, {
+pv.View.extendTo(ListPreview, {
 	useBase: function(node) {
 		this.c = node;
 		this.bindBase();
@@ -21,13 +21,10 @@ provoda.View.extendTo(ListPreview, {
 		var _this = this;
 		var button_area = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		button_area.click(function() {
-			_this.clickAction.call(_this);
+			_this.requestPage();
 		});
 
 		this.addWayPoint(button_area);
-	},
-	clickAction: function() {
-		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
 		if (!this.tpl.ancs.listc) {
@@ -35,7 +32,7 @@ provoda.View.extendTo(ListPreview, {
 		}
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
-	'stch-vmp_show': function(state) {
+	'stch-mp_show': function(state) {
 		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		node.toggleClass('button_selected', !!state);
 	},
@@ -45,7 +42,7 @@ provoda.View.extendTo(ListPreview, {
 });
 
 var ListPreviewLine = function() {};
-provoda.View.extendTo(ListPreviewLine, {
+pv.View.extendTo(ListPreviewLine, {
 	base_tree: {
 		sample_name: 'preview_line'
 	},
@@ -75,19 +72,17 @@ ListPreview.extendTo(LiListsPreview, {
 
 
 var SPView = function() {};
-provoda.View.extendTo(SPView, {
+pv.View.extendTo(SPView, {
+	'compx-lvmp_show': [
+		['^vmp_show'],
+		function(vmp_show) {
+			return vmp_show;
+		}
+	],
 	'compx-mp_show_end': {
-		depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
-		fn: function(animation_started, animation_completed, vmp_show) {
-			if (!animation_started){
-				return vmp_show;
-			} else {
-				if (animation_started == animation_completed){
-					return vmp_show;
-				} else {
-					return false;
-				}
-			}
+		depends_on: ['^mp_show_end'],
+		fn: function(mp_show_end) {
+			return mp_show_end;
 		}
 	}
 });
@@ -115,10 +110,14 @@ ListPreviewLine.extendTo(ArtistsListPreviewLine, {
 var ListSimplePreview = function() {};
 ListPreview.extendTo(ListSimplePreview, {
 	children_views: {
-		preview_list: ListPreviewLine,
-//		lists_list: ListPreviewLine,
-		auth_block_lfm: etc_views.LfmLoginView,
-		auth_block_vk: SoftVkLoginUI
+		preview_list: ListPreviewLine
+		
+	},
+	children_views_by_mn: {
+		auth_part: {
+			auth_block_lfm: etc_views.LfmLoginView,
+			auth_block_vk: SoftVkLoginUI
+		}
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
@@ -140,10 +139,7 @@ ListPreview.extendTo(ListSimplePreview, {
 var ImagedListPreview = function() {};
 ListSimplePreview.extendTo(ImagedListPreview, {
 	children_views: {
-		preview_list: ArtistsListPreviewLine,
-//		lists_list: ListPreviewLine,
-		auth_block_lfm: etc_views.LfmLoginView,
-		auth_block_vk: SoftVkLoginUI
+		preview_list: ArtistsListPreviewLine
 	}
 });
 
@@ -172,22 +168,33 @@ ImagedListPreview.extendTo(AuthListPreview, {
 });
 
 
+var SimpleListOfListsView = function() {};
+PageView.extendTo(SimpleListOfListsView, {
+	base_tree: {
+		sample_name: 'lilists'
+	},
+	children_views: {
+		lists_list: ListSimplePreview
+	},
+	'collch-lists_list': 'tpl.ancs.lilists_con'
+});
+
 var ListOfListsView = function() {};
 PageView.extendTo(ListOfListsView, {
-	createBase: function() {
-		this.c = $('<div class="usual_page lilists"></div>');
+	base_tree: {
+		sample_name: 'lilists'
 	},
 	children_views: {
 		lists_list: AuthListPreview
 	},
-	'collch-lists_list': 'c'
+	'collch-lists_list': 'tpl.ancs.lilists_con'
 });
 
 
 
 
 var AlbumsListPreviewItem = function() {};
-provoda.View.extendTo(AlbumsListPreviewItem, {
+pv.View.extendTo(AlbumsListPreviewItem, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
@@ -214,7 +221,7 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 
 
 var BigAlbumPreview = function() {};
-provoda.View.extendTo(BigAlbumPreview, {
+pv.View.extendTo(BigAlbumPreview, {
 	base_tree: {
 		sample_name: 'alb_prev_big'
 	},
@@ -242,23 +249,14 @@ provoda.View.extendTo(BigAlbumPreview, {
 
 var AlbumsListView = function() {};
 PageView.extendTo(AlbumsListView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('albums_page');
-		this.createTemplate();
-		
-		var _this = this;
-		this.tpl.ancs.load_m_b.click(function() {
-			_this.RPCLegacy('requestMoreData');
-			return false;
-		});
+	base_tree: {
+		sample_name: 'albums_page'
 	},
 	children_views: {
 		preview_list: BigAlbumPreview
 	},
-	'collch-preview_list': 'tpl.ancs.albums_list_c',
-	'stch-more_load_available': function(state) {
-		this.tpl.ancs.load_m_b.toggleClass('hidden', !state);
-	}
+	'collch-preview_list': 'tpl.ancs.albums_list_c'
+
 });
 
 var AlbumsListPreview = function() {};
@@ -302,6 +300,13 @@ PageView.extendTo(VKPostsView, {
 		sample_name: 'vk_posts_page'
 	}
 });
+
+var AppNewsView = function() {};
+PageView.extendTo(AppNewsView, {
+	base_tree: {
+		sample_name: 'app-news'
+	}
+});
 return {
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
@@ -310,6 +315,7 @@ return {
 	PageView:PageView,
 	ArtistsListPreviewLine: ArtistsListPreviewLine,
 	ItemOfLL:ItemOfLL,
+	SimpleListOfListsView: SimpleListOfListsView,
 	ListOfListsView:ListOfListsView,
 	AlbumsListPreviewItem:AlbumsListPreviewItem,
 	BigAlbumPreview:BigAlbumPreview,
@@ -318,7 +324,8 @@ return {
 	TagsListPreview: TagsListPreview,
 	ListSimplePreview: ListSimplePreview,
 	ImagedListPreview: ImagedListPreview,
-	VKPostsView: VKPostsView
+	VKPostsView: VKPostsView,
+	AppNewsView: AppNewsView
 };
 
 });

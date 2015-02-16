@@ -1,10 +1,10 @@
-define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(provoda, $, spv, app_serv, etc_views, SongActTaggingControl) {
+define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
 var localize = app_serv.localize;
 
 
 var PlaylistAddSearchCtr = function() {};
-provoda.View.extendTo(PlaylistAddSearchCtr, {
+pv.View.extendTo(PlaylistAddSearchCtr, {
 	base_tree: {
 		sample_name: 'song_acting_playlist_add'
 	}
@@ -12,7 +12,7 @@ provoda.View.extendTo(PlaylistAddSearchCtr, {
 
 
 var ShareSearchSection = function() {};
-provoda.View.extendTo(ShareSearchSection, {
+pv.View.extendTo(ShareSearchSection, {
 
 	toggleVisState: function(state, boolen) {
 		var new_value;
@@ -57,11 +57,16 @@ ShareSearchSection.extendTo(LFMShareSectionView, {
 });
 
 var ShareSearchCtr = function() {};
-provoda.View.extendTo(ShareSearchCtr, {
+pv.View.extendTo(ShareSearchCtr, {
 	children_views:{
-		'lfm_auth': etc_views.LfmLoginView,
-		'section-vk-users': VkShareSectionView,
-		'section-lfm-friends': LFMShareSectionView
+		'lfm_auth': etc_views.LfmLoginView
+		
+	},
+	children_views_by_mn: {
+		section: {
+			'section-vk-users': VkShareSectionView,
+			'section-lfm-friends': LFMShareSectionView
+		}
 	},
 	'collch-lfm_auth': 'tpl.ancs.lfm_auth_con'
 });
@@ -71,7 +76,7 @@ provoda.View.extendTo(ShareSearchCtr, {
 
 
 var ShareRowUI = function(){};
-provoda.View.extendTo(ShareRowUI, {
+pv.View.extendTo(ShareRowUI, {
 	dom_rp: true,
 	children_views: {
 		
@@ -105,7 +110,7 @@ provoda.View.extendTo(ShareRowUI, {
 		}
 
 		if (state){
-			this.nextTick(this.focusToInput);
+			this.nextLocalTick(this.focusToInput);
 		}
 	},
 	expand: function(){
@@ -119,7 +124,7 @@ provoda.View.extendTo(ShareRowUI, {
 });
 
 var SongActPlaylistingUI = function() {};
-provoda.View.extendTo(SongActPlaylistingUI, {
+pv.View.extendTo(SongActPlaylistingUI, {
 	children_views: {
 		searcher: PlaylistAddSearchCtr
 	},
@@ -195,50 +200,24 @@ provoda.View.extendTo(SongActPlaylistingUI, {
 
 
 var LoveRowUI = function(){};
-provoda.View.extendTo(LoveRowUI, {
+pv.View.extendTo(LoveRowUI, {
 	children_views: {
 		lfm_loveit: etc_views.LfmLoveItView
 	},
-
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-		}
-	},
-	expand: function(){
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-		this.c.append(this.getAFreeCV('lfm_loveit'));
-		this.requestAll();
+	'collch-$ondemand-lfm_loveit': {
+		place: 'c',
+		needs_expand_state: 'active_view'
 	}
 });
 
 var ScrobbleRowUI = function(){};
-provoda.View.extendTo(ScrobbleRowUI, {
+pv.View.extendTo(ScrobbleRowUI, {
 	children_views: {
 		lfm_scrobble: etc_views.LfmScrobbleView
 	},
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-		}
-	},
-	expand: function() {
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-
-		this.c.append(this.getAFreeCV('lfm_scrobble'));
-		this.requestAll();
+	'collch-$ondemand-lfm_scrobble': {
+		place: 'c',
+		needs_expand_state: 'active_view'
 	}
 	
 });
@@ -260,22 +239,19 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 		});
 
 	},
-
-	children_views: {
-		'row-lastfm': {
-			main: ScrobbleRowUI
-		},
-		'row-love': {
-			main: LoveRowUI
-		},
-		'row-share': {
-			main: ShareRowUI
-		},
-		'row-tag': {
-			main: SongActTaggingControl
-		},
-		'row-playlist-add': {
-			main: SongActPlaylistingUI
+	'compx-p_mpshe': [
+		['^mp_show_end'],
+		function (mp_show_end) {
+			return mp_show_end;
+		}
+	],
+	children_views_by_mn: {
+		context_parts: {
+			'row-lastfm': ScrobbleRowUI,
+			'row-love': LoveRowUI,
+			'row-share': ShareRowUI,
+			'row-tag': SongActTaggingControl,
+			'row-playlist-add': SongActPlaylistingUI,
 		}
 	},
 
@@ -288,22 +264,35 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	getVBarWidth: function() {
 		return this.tpl.ancs['v-bar'].width();
 	},
+	'stch-key_vol_hole_w': function(value) {
+		if (value) {
+			pv.update(this, 'vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
+		}
+	},
+	'stch-vis_volume-hole-width': function(state) {
+		if (state) {
+			this.updateManyStates({
+				'v-bar-o-width': this.getBoxDemension(this.getVBarOuterWidth, 'v-bar-o-width'),
+				'v-bar-width': this.getBoxDemension(this.getVBarWidth, 'v-bar-width')
+			});
+		}
+	},
 
 	complex_states: {
-		"vis_volume-hole-width": {
-			depends_on: ['vis_is_visible', 'vis_con_appended'],
-			fn: function(visible, apd){
-				if (visible && apd){
-					return this.getBoxDemension(this.getVHoleWidth, 'volume-hole-width');
+
+		"key_vol_hole_w": [
+			['vis_is_visible', 'vis_con_appended'],
+			function (visible, apd) {
+				if (visible && apd) {
+					return this.getBoxDemensionKey('volume-hole-width');
 				}
-				
 			}
-		},
+		],
 		"vis_volume-bar-max-width": {
-			depends_on: ['vis_volume-hole-width'],
-			fn: function(vvh_w){
+			depends_on: ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
+			fn: function(vvh_w, v_bar_o_w, v_bar_w){
 				if (vvh_w){
-					return  vvh_w - ( this.getBoxDemension(this.getVBarOuterWidth, 'v-bar-o-width') - this.getBoxDemension(this.getVBarWidth, 'v-bar-width'));
+					return  vvh_w - ( v_bar_o_w - v_bar_w);
 				}
 				
 			}
@@ -323,8 +312,6 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	},
 	createVolumeControl: function() {
 		this.vol_cc = this.tpl.ancs['volume-control'];
-		//this.tpl = this.getTemplate(this.vol_cc);
-
 
 		var events_anchor = this.vol_cc;
 		var pos_con = this.tpl.ancs['v-hole'];

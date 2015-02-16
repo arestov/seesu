@@ -329,7 +329,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		this.tag_name = data.tag_name;
 		//this.updateManyStates(data);
 		this.initStates();
-		//this.updateState('tag_name', this.head_props.tag_name);
+		//pv.update(this, 'tag_name', this.head_props.tag_name);
 		//this.sub_pa_params = {tag_name:this.tag_name};
 
 	},
@@ -400,10 +400,14 @@ LoadableList.TagsList.extendTo(TagsList, {
 			return ['tag.getTopTags', {limit: opts.paging.page_limit}];
 		}]
 	],
+	getSPC: function() {
+		return TagPage;
+	},
 	subPager: function(sub_path_string){
 		var page_name = sub_path_string;//spv.capitalize(sub_path_string);
 		if (!this.sub_pages[page_name]){
-			var instance = new TagPage();
+			var Constr = this.getSPC();
+			var instance = new Constr();
 			this.sub_pages[page_name] = instance;
 			return [instance, {
 				nav_title: localize('Tag') + ' ' + page_name,

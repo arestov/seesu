@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
-function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
+define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
+function(pv, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 "use strict";
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
@@ -16,26 +16,21 @@ var album_placeholder = {
 	var app_env = app_serv.app_env;
 	var Song;
 	var SongBase = function() {};
-	provoda.extendFromTo("SongBase", BrowseMap.Model, SongBase);
+	pv.extendFromTo("SongBase", BrowseMap.Model, SongBase);
 
 	Song = function(){};
 
 	SongBase.extendTo(Song, {
-		hndMpshowImp: function(e) {
-			if (e.value){
-				this.initOnShow();
-			} else {
+
+		'nest-songcard': ['#tracks/[:artist],[:track]', false, 'can_load_songcard'],
+		'compx-$relation:songcard-for-active_song': [
+			['can_load_songcard', '@songcard'],
+			function(can_load_songcard, songcard) {
+				return can_load_songcard && songcard;
 			}
-		},
-		'stch-can_load_songcard': function(state) {
-			if (state){
-				var songcard = this.app.getSongcard(this.artist, this.track);
-				if (songcard){
-					songcard.initForSong();
-					this.updateNesting('songcard', songcard);
-				}
-			}
-		},
+		],
+		'stch-$relation:songcard-for-active_song': pv.Model.prototype.hndRDep,
+
 		'stch-can_load_baseinfo': function(state) {
 			if (state){
 				var artcard = this.getNesting('artist');
@@ -82,32 +77,32 @@ var album_placeholder = {
 
 			var spec_image_wrap;
 			if (omo.image_url){
-				this.init_states['image_url'] = {url: omo.image_url};
+				this.initState('image_url', {url: omo.image_url});
 			}
 			if (omo.lfm_img) {
 				spec_image_wrap = omo.lfm_img;
 			} else if (omo.lfm_image){
 				spec_image_wrap = this.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
-				//this.updateState('lfm_image', omo.lfm_image);
+				//pv.update(this, 'lfm_image', omo.lfm_image);
 			}
 			var images_pack;
 
 			if (omo.album_image) {
-				this.init_states['album_image'] = omo.album_image;
+				this.initState('album_image', omo.album_image);
 			}
 			if (omo.album_name) {
-				this.init_states['album_name'] = omo.album_name;
+				this.initState('album_name', omo.album_name);
 			}
 
 			if (spec_image_wrap) {
-				this.init_states['lfm_image'] = spec_image_wrap;
+				this.initState('lfm_image', spec_image_wrap);
 
 			} else if (passed_artist) {
 				var still_init = true;
 				if (this.init_states['track']){
 					images_pack = this.app.art_images.getTrackImagesModel({
 						artist: this.init_states['artist'],
-						track:this.init_states['track']
+						track: this.init_states['track']
 					});
 				} else {
 					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist']);
@@ -115,12 +110,37 @@ var album_placeholder = {
 				this.wch(images_pack, 'image-to-use', 'ext_lfm_image');
 				still_init = false;
 			}
+
 			this.initStates();
 			//this.nextTick(this.initHeavyPart);
 		},
 		twistStates: function() {
 			this.initHeavyPart();
 		},
+		'compx-forbidden_by_copyrh': [
+			['#forbidden_by_copyrh', '#white_of_copyrh', 'artist', 'track'],
+			function ( index, white_index, artist, track ) {
+				if (artist) {
+					var artist_lc = (white_index || index) && artist.toLowerCase();
+					if (white_index) {
+						return !white_index[ artist_lc ];
+					} else if (index) {
+						if (track) {
+							if (index[artist_lc] === true) {
+								return true;
+							} else {
+								return index[artist_lc] && index[artist_lc][ track.toLowerCase() ];
+							}
+						} else {
+							return index[artist_lc] === true;
+						}
+					}
+					
+				}
+
+
+			}
+		],
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
 			fn: function(artist_name, track_name) {
@@ -175,16 +195,12 @@ var album_placeholder = {
 				}
 			}
 		],
-
-		initOnShow: provoda.getOCF('izonshow', function() {
-			var actionsrow = new SongActionsRow(this);
-			this.updateNesting('actionsrow', actionsrow);
-		}),
+		'nest-actionsrow': [SongActionsRow, false, 'mp_show'],
 		getMFCore: function(){
 			this.initHeavyPart();
 			return this.mf_cor;
 		},
-		initHeavyPart: provoda.getOCF('izheavy', function() {
+		initHeavyPart: pv.getOCF('izheavy', function() {
 			var omo = this.omo;
 
 			if (omo.side_file && !omo.side_file.link) {
@@ -198,38 +214,14 @@ var album_placeholder = {
 				omo.file = null;
 			}
 
-			this.mf_cor = new MfCor();
-			this.useMotivator(this.mf_cor, function() {
-				this.mf_cor.init({
-					app: this.app,
-					map_parent: this,
-					mo: this,
-					omo: this.omo
-				}, omo.file);
-			});
-			
-
-			if (omo.file){
-				this.updateState('playable', true);
-				this.updateState('files_search', {
-					search_complete: true,
-					have_best_tracks: true,
-					have_mp3_tracks: true
-				});
-			}
+			this.mf_cor = this.initSi(MfCor, null, omo);
 			
 			this.mf_cor
 				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())
 				.on("error", this.hndMfcError, this.getContextOpts());
-
-			//this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
-
 			
-			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
-			this.on('state_change-is_important', this.hndImportant);
-			this.nextTick(this.initRelativeData);
-			this.updateNesting('mf_cor', this.mf_cor);
-			this.updateState('mf_cor', this.mf_cor);
+			pv.updateNesting(this, 'mf_cor', this.mf_cor);
+			pv.update(this, 'mf_cor', this.mf_cor);
 
 		}),
 		'compx-mf_cor_has_available_tracks': [
@@ -238,15 +230,12 @@ var album_placeholder = {
 				return state;
 			}
 		],
-		hndImportant: function(e) {
-			if (e.value){
-				this.initRelativeData();
-			}
-		},
+
 		hndMfcBeforePlay: function(mopla) {
 			this.player.changeNowPlaying(this, mopla.state('play'));
 			this.mopla = mopla;
-			this.updateState('play', mopla.state('play'));
+			pv.updateNesting(this, 'current_mopla', mopla);
+			pv.update(this, 'play', mopla.state('play'));
 		},
 		hndMfcError: function(can_play) {
 			this.player.trigger("song-play-error", this, can_play);
@@ -395,18 +384,25 @@ var album_placeholder = {
 				});
 			}
 		},200),
-		initRelativeData: provoda.getOCF('izrelative', function() {
-			if (this.artist){
-				var artcard = this.app.getArtcard(this.artist);
-				this.updateNesting('artist', artcard);
-				this.updateState('has_nested_artist', true);
-				if (artcard) {
-					this.wch(artcard, 'available_images', 'artist_images');
-				}
-				//this.wch()
+		'compx-artist_images': [
+			['@available_images:artist'],
+			function (available_images) {
+				return available_images && available_images[0];
 			}
-			//this.loadSongListeners();
-		})
+		],
+		'compx-has_nested_artist': [
+			['@artist'],
+			function(artist) {
+				return !!artist;
+			}
+		],
+		'compx-load_artcard': [
+			['needs_states_connecting', 'artist', 'is_important'],
+			function (artist, needs_states_connecting, is_important) {
+				return artist && (needs_states_connecting || is_important);
+			}
+		],
+		'nest-artist': ['#catalog/[:artist]', false, 'load_artcard']
 	});
 return Song;
 });

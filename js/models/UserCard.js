@@ -1,7 +1,7 @@
-define(['provoda', 'spv', 'app_serv', './comd', 'jquery',
+define(['pv', 'spv', 'app_serv', './comd', 'jquery',
 'js/libs/BrowseMap', './SongsList', './ArtCard' , 'js/common-libs/htmlencoding',
 './UserAcquaintancesLists', './SuUsersPlaylists', './user_music_lfm', './user_music_vk'],
-function(provoda, spv, app_serv, comd, $,
+function(pv, spv, app_serv, comd, $,
 BrowseMap, SongsList, ArtCard, htmlencoding,
 UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, user_music_vk){
 "use strict";
@@ -43,7 +43,7 @@ BrowseMap.Model.extendTo(UserCard, {
 			title: localize("Neighbours")
 		},
 		'lfm:artists':{
-			constr: user_music_lfm.LfmUserArtists,
+			constr: user_music_lfm.LfmUserArtists.LfmUserArtistsForCU,
 			title: localize('Artists')
 		},
 		'lfm:tracks':{
@@ -59,15 +59,30 @@ BrowseMap.Model.extendTo(UserCard, {
 			title: localize('Albums')
 		}
 	},
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
+	nest: (function() {
+		var result = {
+			'user-playlists': ['playlists'],
+			'users_acqutes': ['acquaintances'],
+			'preload_list': [['vk:friends', 'lfm:tags', 'lfm:friends', 'lfm:neighbours'], true]
+		};
 
+
+		var networks_pages = ['vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		for (var i = 0; i < networks_pages.length; i++) {
+			var cur = networks_pages[i];
+			result[cur.replace(':', '__')] = [cur];
+		}
+
+		return result;
+	})(),
+	init: function() {
+		this._super.apply(this, arguments);
 		
 		this.for_current_user = true;
 		this.sub_pa_params = {
 			for_current_user: this.for_current_user
 		};
-		this.init_states['nav_title'] = localize('your-pmus-f-aq');
+		this.initState('nav_title', localize('your-pmus-f-aq'));
 		this.initStates();
 
 		var _this = this;
@@ -75,33 +90,21 @@ BrowseMap.Model.extendTo(UserCard, {
 			this.wch(this.map_parent, 'can_expand');
 
 		}
-
 		
-
-		var networks_pages = ['vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
-		for (var i = 0; i < networks_pages.length; i++) {
-			var cur = networks_pages[i];
-			this.updateNesting(cur.replace(':', '__'), this.getSPI(cur, true));
-		}
-
 		//плейлисты
 		var gena = this.getSPI('playlists', true);
-		this.updateNesting('user-playlists', gena);
 		var hasPlaylistCheck = function(items) {
-			_this.updateState('has_playlists', !!items.length);
+			pv.update(_this, 'has_playlists', !!items.length);
 		};
 		hasPlaylistCheck(this.app.gena.playlists);
 		this.app.gena.on('playlists-change', hasPlaylistCheck);
 
 		//знакомства
-
-
-		
 		
 		return this;
 	},
-	'nest-users_acqutes': ['acquaintances'],
-	'stch-mp_has_focus': function(state) {
+	
+	/*'stch-mp_has_focus': function(state) {
 		if (state){
 			var list_to_preload = [
 				this.getNesting('vk__friends'),
@@ -117,7 +120,7 @@ BrowseMap.Model.extendTo(UserCard, {
 				}
 			}
 		}
-	}
+	}*/
 });
 var VkUserCard = function() {};
 BrowseMap.Model.extendTo(VkUserCard, {
@@ -164,19 +167,24 @@ BrowseMap.Model.extendTo(VkUserCard, {
 		this.sub_pa_params = {
 			vk_userid: this.vk_userid
 		};
-		this.init_states['userid'] = this.vk_userid;
-		this.init_states['p_nav_title'] = 'Vk.com user: ' + this.vk_userid;
+
+		this.initState('userid', this.vk_userid);
+		this.initState('p_nav_title', 'Vk.com user: ' + this.vk_userid);
 		this.initStates();
 		this.rq_b = {};
-
-		
+	},
+	nest: (function() {
+		var result = {};
 
 		var networks_pages = ['friends', 'tracks'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
-			this.updateNesting('vk__' + cur, this.getSPI(cur, true));
+			result[ 'vk__' + cur ] = [cur];
 		}
-	},
+
+		return result;
+
+	})(),
 	req_map: [
 		[
 			['first_name', 'last_name', 'photo', 'ava_image', 'selected_image'],
@@ -191,7 +199,7 @@ BrowseMap.Model.extendTo(VkUserCard, {
 					'selected_image.url': 'photo'
 				}
 			},
-			['vk_api', 'get', function() {
+			['vktapi', 'get', function() {
 				return ['users.get', {
 					user_ids: [this.state('userid')],
 					fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
@@ -229,19 +237,25 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 		this.sub_pa_params = {
 			lfm_userid: this.lfm_userid
 		};
-		this.init_states['userid'] = this.lfm_userid;
-		this.init_states['nav_title'] = 'Last.fm user: ' + this.lfm_userid;
+		this.initState('userid', this.lfm_userid);
+		this.initState('nav_title', 'Last.fm user: ' + this.lfm_userid);
 		this.initStates();
 		this.rq_b = {};
 
 		
 
+		
+	},
+	nest: (function() {
+		var result = {};
 		var networks_pages = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
-			this.updateNesting('lfm__' + cur, this.getSPI(cur, true));
+			result[ 'lfm__' + cur ] = [cur];
 		}
-	},
+
+		return result;
+	})(),
 	sub_pa: {
 		'friends': {
 			constr: user_music_lfm.LfmFriendsList,
@@ -340,11 +354,11 @@ UserCard.LfmUserCard = LfmUserCard;
 UserCard.VkUserCard = VkUserCard;
 
 var SongListener = function() {};
-provoda.Model.extendTo(SongListener, {
+pv.Model.extendTo(SongListener, {
 	init: function(opts, params) {
 		this.app = opts.app;
 		this.userdata = params.data;
-		//this.updateState('picture', this.userdata.big_pic.url);
+		//pv.update(this, 'picture', this.userdata.big_pic.url);
 	},
 	showFullPreview: function() {
 

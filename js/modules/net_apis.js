@@ -8,6 +8,7 @@ spv.Class.extendTo(GoogleSoundcloud, {
 		this.crossdomain = opts.crossdomain;
 	},
 	thisOriginAllowed: true,
+	source_name: 'google.com',
 	cache_namespace: 'goog_sc',
 	get: function(query, params, options) {
 		if (!query){
@@ -51,8 +52,11 @@ spv.Class.extendTo(DiscogsApi, {
 		this.cache_ajax = opts.cache_ajax;
 		this.queue = opts.queue;
 		this.crossdomain = opts.crossdomain;
+		this.key = opts.key;
+		this.secret = opts.secret;
 	},
 	errors_fields: ['error'],
+	source_name: 'discogs.com',
 	cache_namespace: 'discogs',
 	get: function(path, params, options) {
 
@@ -72,14 +76,22 @@ spv.Class.extendTo(DiscogsApi, {
 		}
 
 
-		options.cache_key = options.cache_key || hex_md5("http://api.discogs.com" + path + spv.stringifyParams(params));
+		options.cache_key = options.cache_key || hex_md5("https://api.discogs.com" + path + spv.stringifyParams(params));
+
+		if (this.key) {
+			params.key = this.key;
+		}
+
+		if (this.secret) {
+			params.secret = this.secret;
+		}
 
 		
 
 		//cache_ajax.get('vk_api', p.cache_key, function(r){
 
 		var wrap_def = wrapRequest({
-			url: "http://api.discogs.com" + path,
+			url: "https://api.discogs.com" + path,
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
 			data: params,
@@ -90,7 +102,7 @@ spv.Class.extendTo(DiscogsApi, {
 					opts.headers = null;
 				}
 			},
-			thisOriginAllowed: true,
+			thisOriginAllowed: false,
 			context: options.context
 		}, {
 			cache_ajax: this.cache_ajax,
@@ -123,6 +135,7 @@ spv.Class.extendTo(MixcloudApi, {
 	},
 	errors_fields: ['error'],
 	thisOriginAllowed: true,
+	source_name: 'mixcloud.com',
 	cache_namespace: 'mixcloud',
 	get: function(path, params, options) {
 
@@ -186,6 +199,7 @@ spv.Class.extendTo(HypemApi, {
 	checkResponse: function(r) {
 		return !r.version;
 	},
+	source_name: 'hypem.com',
 	cache_namespace: 'hypem',
 	get: function(path, params, options) {
 		if (!path){

@@ -1,4 +1,4 @@
-define(['app_serv', 'js/libs/VkAuth', 'jquery'], function(app_serv, VkAuth, $) {
+define(['app_serv', 'js/libs/VkAuth', 'jquery', 'pv'], function(app_serv, VkAuth, $, pv) {
 "use strict";
 var app_env = app_serv.app_env;
 
@@ -141,7 +141,7 @@ var initVk = function(su) {
 				} else{
 					app_env.openURL(wurl);
 				}
-				su.updateState('wait-vk-login', true);
+				pv.update(su, 'wait-vk-login', true);
 				su.trackEvent('Auth to vk', 'start');
 			});
 

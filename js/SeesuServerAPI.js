@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', 'spv', 'hex_md5', 'app_serv'], function(provoda, $, spv, hex_md5, app_serv){
+define(['pv', 'jquery', 'spv', 'hex_md5', 'app_serv'], function(pv, $, spv, hex_md5, app_serv){
 "use strict";
 
 
@@ -178,7 +178,7 @@ var SeesuServerAPI = function(app, auth, url){
 	
 };
 
-provoda.Eventor.extendTo(SeesuServerAPI, {
+pv.Eventor.extendTo(SeesuServerAPI, {
 	susd: {
 		rl: false,
 		ri: false,
@@ -237,7 +237,7 @@ provoda.Eventor.extendTo(SeesuServerAPI, {
 			app_serv.store('dg_auth', auth_data, true);
 		}
 		this.auth.setNewData(auth_data);
-		this.app.updateState('su_userid', auth_data.userid);
+		pv.update(this.app, 'su_userid', auth_data.userid);
 	},
 
 	getAuth: function(vk_user_id, callback){

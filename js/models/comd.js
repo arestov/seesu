@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(provoda, spv, app_serv, morph_helpers){
+define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(pv, spv, app_serv, morph_helpers){
 "use strict";
 var localize = app_serv.localize;
 
@@ -9,7 +9,7 @@ var CommonMessagesStore = function(glob_store, store_name) {
 };
 
 
-provoda.Eventor.extendTo(CommonMessagesStore, {
+pv.Eventor.extendTo(CommonMessagesStore, {
 	markAsReaded: function(message) {
 		var changed = this.glob_store.set(this.store_name, message);
 		if (changed){
@@ -47,7 +47,7 @@ spv.Class.extendTo(GMessagesStore, {
 });
 
 var BigContextNotify = function() {};
-provoda.Model.extendTo(BigContextNotify, {
+pv.Model.extendTo(BigContextNotify, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		var _this = this;
@@ -59,13 +59,13 @@ provoda.Model.extendTo(BigContextNotify, {
 			this.notf = params.notf;
 			this.notf.on('read', function(value) {
 				if (value == _this.notify_name){
-					_this.updateState('notify_readed', true);
+					pv.update(_this, 'notify_readed', true);
 				}
 				
 			});
 
 			if (params.notify_readed){
-				_this.updateState('notify_readed', true);
+				pv.update(_this, 'notify_readed', true);
 			}
 		}
 		
@@ -76,7 +76,7 @@ provoda.Model.extendTo(BigContextNotify, {
 });
 
 var ImagesPack = function() {};
-provoda.Model.extendTo(ImagesPack, {
+pv.Model.extendTo(ImagesPack, {
 	init: function() {
 		this._super();
 		this.images_by_source = {};
@@ -98,13 +98,13 @@ provoda.Model.extendTo(ImagesPack, {
 		});
 		if (!this.state('best_image')){
 			if (best_data.length){
-				this.updateState('best_image', best_data[0].data);
+				pv.update(this, 'best_image', best_data[0].data);
 			}
 			
 		}
 		if (!this.state('just_image')){
 			if (best_data.not.length){
-				this.updateState('just_image', best_data.not[0].data);
+				pv.update(this, 'just_image', best_data.not[0].data);
 			}
 			
 		}
@@ -153,7 +153,7 @@ ImagesPack.extendTo(ArtistImages, {
 });
 
 var LastFMArtistImagesSelector = function() {};
-provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
+pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 	init: function() {
 		this._super();
 		this.art_models = {};
@@ -352,15 +352,15 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 var PartsSwitcher = function() {};
 
-provoda.Model.extendTo(PartsSwitcher, {
+pv.Model.extendTo(PartsSwitcher, {
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.context_parts = {};
 		this.active_part = null;
 	},
 	hideAll: function() {
 		if (this.active_part){
-			this.updateState('active_part', false);
+			pv.update(this, 'active_part', false);
 			this.active_part.deacivate();
 			this.active_part = null;
 		}
@@ -376,7 +376,7 @@ provoda.Model.extendTo(PartsSwitcher, {
 
 			var array = this.getNesting('context_parts') || [];
 			array.push(model);
-			this.updateNesting('context_parts', array);
+			pv.updateNesting(this, 'context_parts', array);
 
 		}
 	},
@@ -389,7 +389,7 @@ provoda.Model.extendTo(PartsSwitcher, {
 				this.active_part.deacivate();
 			}
 			this.active_part = this.context_parts[name];
-			this.updateState('active_part', name);
+			pv.update(this, 'active_part', name);
 			this.active_part.acivate();
 			
 	
@@ -401,7 +401,7 @@ provoda.Model.extendTo(PartsSwitcher, {
 
 
 var BaseCRow = function(){};
-provoda.Model.extendTo(BaseCRow, {
+pv.Model.extendTo(BaseCRow, {
 	switchView: function(){
 		this.actionsrow.switchPart(this.model_name);
 	},
@@ -409,56 +409,61 @@ provoda.Model.extendTo(BaseCRow, {
 		this.actionsrow.hide(this.model_name);
 	},
 	deacivate: function(){
-		this.updateState("active_view", false);
+		pv.update(this, "active_view", false);
 	},
 	acivate: function(){
-		this.updateState("active_view", true);
+		pv.update(this, "active_view", true);
 	}
 });
 
 
 var VkLoginB = function() {};
-provoda.Model.extendTo(VkLoginB, {
+pv.Model.extendTo(VkLoginB, {
 	model_name: 'auth_block_vk',
-	init: function(opts, params) {
-		this._super();
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
 
 		var _this = this;
-		this.auth = opts.auth;
-		this.pmd = opts.pmd;
+		this.auth = (params && params.auth) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) || opts.auth;
+		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
 
 		var settings_bits;
 
-		if (params){
+		if (params) {
 			if (params.open_opts){
 				this.open_opts = params.open_opts;
 				if (this.open_opts.settings_bits){
 					settings_bits = this.open_opts.settings_bits;
 				}
 			}
-			this.setRequestDesc(params.desc);
-
 			if (params.notf){
 				
 				this.notf = params.notf;
 				this.notf.on('read', function(value) {
 					if (value == 'vk_audio_auth '){
-						_this.updateState('notify_readed', true);
+						pv.update(_this, 'notify_readed', true);
 					}
 					
 				});
 
 				if (params.notify_readed){
-					_this.updateState('notify_readed', true);
+					pv.update(_this, 'notify_readed', true);
 				}
-				this.updateState('has_notify_closer', true);
+				pv.update(this, 'has_notify_closer', true);
 			}
+		}
+
+		if (data){
+			
+			this.setRequestDesc(data.desc);
+
+			
 		} else {
 			this.setRequestDesc();
 		}
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep-sandbox', true);
+			pv.update(_this, 'deep_sandbox', true);
 		}
 		
 
@@ -470,7 +475,7 @@ provoda.Model.extendTo(VkLoginB, {
 				if ((sts & settings_bits) * 1){
 					_this.triggerSession();
 				} else {
-					_this.updateState('has_session', false);
+					pv.update(_this, 'has_session', false);
 				}
 			});
 			
@@ -499,16 +504,16 @@ provoda.Model.extendTo(VkLoginB, {
 		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
 	},
 	triggerSession: function() {
-		this.updateState('has_session', true);
+		pv.update(this, 'has_session', true);
 	},
 	waitData: function() {
-		this.updateState('data_wait', true);
+		pv.update(this, 'data_wait', true);
 	},
 	notWaitData: function() {
-		this.updateState('data_wait', false);
+		pv.update(this, 'data_wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request_description', text ? text + " " + localize("vk-auth-invitation") : "");
+		pv.update(this, 'request_description', text ? text + " " + localize("vk-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
@@ -524,7 +529,7 @@ provoda.Model.extendTo(VkLoginB, {
 		this.auth.requestAuth(opts || this.open_opts);
 	},
 	switchView: function(){
-		this.updateState('active', !this.state('active'));
+		pv.update(this, 'active', !this.state('active'));
 	}
 });
 

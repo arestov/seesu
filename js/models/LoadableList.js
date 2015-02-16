@@ -1,4 +1,4 @@
-define(['./LoadableListBase', 'spv', 'js/libs/Mp3Search'], function(LoadableListBase, spv, Mp3Search){
+define(['./LoadableListBase', 'spv', 'js/libs/Mp3Search', 'pv'], function(LoadableListBase, spv, Mp3Search, pv){
 "use strict";
 
 
@@ -16,13 +16,13 @@ LoadableList.extendTo(TagsList, {
 		main_list.push(name);
 
 		if (!silent){
-			//this.updateNesting(this.main_list_name, main_list);
-			this.updateState(this.main_list_name, [].concat(main_list));
+			//pv.updateNesting(this, this.main_list_name, main_list);
+			pv.update(this, this.main_list_name, [].concat(main_list));
 		}
 	},
 	dataListChange: function() {
 		var main_list = this.getMainlist();
-		this.updateState(this.main_list_name, [].concat(main_list));
+		pv.update(this, this.main_list_name, [].concat(main_list));
 
 	},
 	addItemToDatalist: function(obj, silent) {
@@ -35,7 +35,7 @@ LoadableList.extendTo(TagsList, {
 		}
 	},
 	setPreview: function(list) {
-		this.updateState('preview_list', list);
+		pv.update(this, 'preview_list', list);
 	},
 	showTag: function(tag_name) {
 		this.app.show_tag(tag_name);

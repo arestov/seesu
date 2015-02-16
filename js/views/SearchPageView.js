@@ -1,8 +1,8 @@
-define(['provoda'],
-function(provoda) {
+define(['pv'],
+function(pv) {
 "use strict";
 var SearchPageView = function() {};
-provoda.View.extendTo(SearchPageView, {
+pv.View.extendTo(SearchPageView, {
 	base_tree: {
 		sample_name: 'search_results-container'
 	}

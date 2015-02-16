@@ -20,8 +20,12 @@ define({
 		"ru": "Из soundcloud профиля"
 	},
 	"Sc-profile-not-found": {
-		"original": "Artist soundcloud profile was not found",
+		"original": "Artist's soundcloud profile was not found",
 		"ru": "Soundcloud профиль артиста не был найден"
+	},
+	"no-soundcloud-profile": {
+		"original": "Artist does not have soundcloud profile",
+		"ru": "У артиста нет страницы на soundcloud"
 	},
 	"Blogged-all-hypem": {
 		"original": "Blogged, all and sundry (hypem.com)",
@@ -34,6 +38,10 @@ define({
 	"Blogged-250-hypem": {
 		"original": "Blogged, 250+ Favorites (hypem.com)",
 		"ru": "Из блогов, у 250+ в избранном (hypem.com)"
+	},
+	"News": {
+		"original": "News",
+		"ru": "Новости"
 	},
 	"Acquaintances": {
 		"original": "Acquaintances",
@@ -174,6 +182,10 @@ define({
 	"use-code":{
 		"original": "use code",
 		"ru": "использовать код"
+	},
+	"input-code":{
+		"original": "input code",
+		"ru": "ввести код"
 	},
 	"refresh": {
 		"original": "refresh",
@@ -572,8 +584,8 @@ define({
 		"ru": "показать все файлы"
 	},
 	"ask-rating-help":{
-		"original": "Hi! My name is Gleb. I've created seesu and I have been developing it since september 2009. If you like it, than set rating %app_url% please. This is very important for me.",
-		"ru": "Привет, меня зовут Глеб, я создал сису и развиваю её с сентября 2009 года. Если она тебе нравится прошу поставить оценку %app_url% — это очень важно для меня. Довольные люди обычно не ставят оценок, при этом недовольных никакая лень не остановит :("
+		"original": "Hi! My name is Gleb. I've created seesu and I have been developing it since september 2009 beside to my primary job. If you like it, than set rating %app_url% please. This is very important for me.",
+		"ru": "Привет, меня зовут Глеб, я создал сису и развиваю её с сентября 2009 года в свободное от основной работы время. Если она тебе нравится прошу поставить оценку %app_url% — это очень важно для меня. Довольные люди обычно не ставят оценок, при этом недовольных никакая лень не остановит :("
 	},
 	"at-this-page": {
 		"original": "at this page",

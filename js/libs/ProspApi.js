@@ -24,6 +24,7 @@ var ProspApi = function(queue, crossdomain, cache_ajax) {
 
 ProspApi.prototype = {
 	constructor: ProspApi,
+	source_name: 'pleer.com',
 	cache_namespace: 'pleer.com',
 	thisOriginAllowed: false,
 	get: function(method, params, options) {
@@ -73,7 +74,9 @@ var datamorph_map = new spv.MorphMap({
 	is_array: true,
 	source: 'tracks',
 	props_map: {
+
 		_id: 'id',
+		page_link: 'link',
 		artist: 'artist',
 		track: 'track',
 		link: 'file',

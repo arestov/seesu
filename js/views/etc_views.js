@@ -1,4 +1,4 @@
-define(['provoda', 'app_serv', 'jquery'], function(provoda, app_serv, $) {
+define(['pv', 'app_serv', 'jquery'], function(pv, app_serv, $) {
 "use strict";
 var localize = app_serv.localize;
 var contextRow = function(container){
@@ -97,13 +97,13 @@ contextRow.prototype = {
 
 
 var AuthBlockView = function() {};
-provoda.View.extendTo(AuthBlockView, {
+pv.View.extendTo(AuthBlockView, {
 
 });
 
 var VkLoginUI = function() {};
 
-provoda.View.extendTo(VkLoginUI, {
+pv.View.extendTo(VkLoginUI, {
 	state_change: {
 		'data_wait': function(state) {
 			if (state){
@@ -115,7 +115,7 @@ provoda.View.extendTo(VkLoginUI, {
 		"request_description": function(state) {
 			this.login_desc.text(state || "");
 		},
-		'deep-sandbox': function(state) {
+		'deep_sandbox': function(state) {
 			this.c.toggleClass('deep-sandbox', !!state);
 		}
 	},
@@ -162,13 +162,20 @@ provoda.View.extendTo(VkLoginUI, {
 			_this.RPCLegacy('removeNotifyMark');
 		});
 
+		var inpco = this.c.find('.js-input-code').click(function() {
+			_this.RPCLegacy('waitData');
+		});
+		
+		if (inpco[0]) {
+			this.addWayPoint(inpco);
+		}
 	}
 });
 
 
 var LfmLoginView = function() {};
 
-provoda.View.extendTo(LfmLoginView, {
+pv.View.extendTo(LfmLoginView, {
 	'stch-has_session': function(state){
 		if (!state){
 			this.c.removeClass("hidden");
@@ -176,7 +183,7 @@ provoda.View.extendTo(LfmLoginView, {
 			this.c.addClass("hidden");
 		}
 	},
-	'stch-deep-sandbox': function(state){
+	'stch-deep_sandbox': function(state){
 		this.c.toggleClass('deep-sandbox', !!state);
 	},
 	'stch-data_wait': function(state) {
@@ -207,6 +214,9 @@ provoda.View.extendTo(LfmLoginView, {
 			return false;
 		});
 		this.addWayPoint(use_code_button);
+
+
+
 	}
 });
 
@@ -280,7 +290,7 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 
 
 var ActionsRowUI = function(){};
-provoda.View.extendTo(ActionsRowUI, {
+pv.View.extendTo(ActionsRowUI, {
 	bindBase: function() {
 	},
 	getCurrentButton: function() {
@@ -300,19 +310,53 @@ provoda.View.extendTo(ActionsRowUI, {
 		var current_button = this.getCurrentButton();
 		return current_button.offset();
 	},
-	'compx-arrow_pos':{
-		depends_on: ['#window_width', 'active_part'],
-		fn: function(window_width, active_part) {
-			if (window_width && active_part){
-				var button_width = this.getBoxDemension(this.getCurrentButtonOWidth, 'button_owidth', active_part);
+	
+	'compx-key-button_owidth': [
+		['#workarea_width', 'active_part'],
+		function(workarea_width, active_part) {
+			if (workarea_width && active_part){
 				//ширина кнопки, зависит типа вьюхи и активной части
-
-				var button_offset = this.getBoxDemension(this.getCurrentButtonOffset, 'button_offset', window_width, active_part);
+				return this.getBoxDemensionKey('button_owidth', active_part);
+			}
+		}
+	],
+	'compx-key-button_offset': [
+		['#workarea_width', 'active_part'],
+		function(workarea_width, active_part) {
+			if (workarea_width && active_part){
 				//расположение кнопки, зависит от ширины окна и названия части
-
-				var parent_offset = this.getBoxDemension(this.getArPaOffset, 'arrow_parent_offset', window_width);
+				return this.getBoxDemensionKey('button_offset', workarea_width, active_part);
+			}
+		}
+	],
+	'compx-key-arrow_parent_offset': [
+		['#workarea_width', 'active_part'],
+		function(workarea_width, active_part) {
+			if (workarea_width && active_part){
 				//расположенние позиционного родителя стрелки, зависит от ширины окна
-
+				return this.getBoxDemensionKey('arrow_parent_offset', workarea_width);
+			}
+		}
+	],
+	'stch-key-button_owidth': function(state) {
+		if (state) {
+			pv.update(this, 'button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
+		}
+	},
+	'stch-key-button_offset': function(state) {
+		if (state) {
+			pv.update(this, 'button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
+		}
+	},
+	'stch-key-arrow_parent_offset': function(state) {
+		if (state) {
+			pv.update(this, 'arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
+		}
+	},
+	'compx-arrow_pos':{
+		depends_on: ['button_owidth', 'button_offset', 'arrow_parent_offset'],
+		fn: function(button_width, button_offset, parent_offset) {
+			if (button_offset && parent_offset){
 				return ((button_offset.left + button_width/2) - parent_offset.left) + 'px';
 			}
 		}

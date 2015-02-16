@@ -1,8 +1,8 @@
-define(['provoda', 'jquery', 'app_serv', './uacq'], function(provoda, $, app_serv, uacq) {
+define(['pv', 'jquery', 'app_serv', './uacq'], function(pv, $, app_serv, uacq) {
 "use strict";
 var localize = app_serv.localize;
 var UserCardPreview = function() {};
-provoda.View.extendTo(UserCardPreview, {
+pv.View.extendTo(UserCardPreview, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;
@@ -12,15 +12,15 @@ provoda.View.extendTo(UserCardPreview, {
 		var _this = this;
 
 		var button = this.c.find('.to-open-block').click(function() {
-			_this.RPCLegacy('requestPage');
-			//_this.RPCLegacy('requestPage');
+			_this.requestPage();
 		});
 		this.addWayPoint(button);
 		this.button = button;
 		this.dom_related_props.push('button');
 
 	},
-	'stch-vmp_show': function(state) {
+
+	'stch-mp_show': function(state) {
 		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){

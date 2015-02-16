@@ -5,7 +5,7 @@ var spv = {};
 "use strict";
 var addEvent, removeEvent, getDefaultView, domReady,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
-	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
+	ttime, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
 	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class,
 	debounce, throttle;
 if (!Array.prototype.indexOf) {
@@ -302,7 +302,7 @@ ttime = function(f){
 	}
 };
 
-collapseAll = function(){
+spv.collapseAll = function(){
 	var r= [];
 	for (var i=0; i < arguments.length; i++) {
 		var c = arguments[i];
@@ -332,6 +332,65 @@ toRealArray = spv.toRealArray = function(array, check_field){
 	} else{
 		return [];
 	}
+};
+
+spv.memorize = function(func, getter) {
+	var cache = {};
+	return getter ? function(){
+		var arg = getter.apply(this, arguments);
+		if (!cache.hasOwnProperty(arg)) {
+			var result = cache[arg] = func.apply(this, arguments);
+			return result;
+		}
+		return cache[arg];
+	} : function(arg) {
+		if (!cache.hasOwnProperty(arg)) {
+			var result = cache[arg] = func.apply(this, arguments);
+			return result;
+		}
+		return cache[arg];
+	};
+};
+
+spv.f = {
+	allOf: function(){
+		// logical `and`, return last result of stop
+		var i = 0;
+		var args = new Array(arguments.length - 1);
+		for (i = 1; i < arguments.length; i++) {
+			args[ i - 1 ]= arguments[i];
+		}
+
+		return function (){
+			var result;
+			for (var i = 0; i < args.length; i++) {
+				result = args[i].apply(this, arguments);
+				if (!result) {
+					return result;
+				}
+			}
+			return result;
+		};
+	},
+	firstOf: function(){
+		// logical `or`, return first result of stop
+		var i = 0;
+		var args = new Array(arguments.length - 1);
+		for (i = 1; i < arguments.length; i++) {
+			args[ i - 1 ]= arguments[i];
+		}
+
+		return function (){
+			var result;
+			for (var i = 0; i < args.length; i++) {
+				result = args[i].apply(this, arguments);
+				if (result) {
+					return result;
+				}
+			}
+			return result;
+		};
+	},
 };
 
 
@@ -423,6 +482,12 @@ sortByRules = spv.sortByRules = function(a, b, rules){
 		return shift;
 
 	}
+};
+
+spv.getSortFunc = function(rules) {
+	return function(a, b) {
+		return sortByRules(a, b, rules);
+	};
 };
 
 makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
@@ -601,7 +666,7 @@ separateNum = function(num){
 
 
 
-
+var constr_id = 0;
 /* Simple JavaScript Inheritance
   * By John Resig http://ejohn.org/
   * http://ejohn.org/blog/simple-javascript-inheritance/
@@ -648,6 +713,7 @@ separateNum = function(num){
 		// Instantiate a base class (but only create the instance,
 		// don't run the init constructor)
 		var prototype = new this();
+		prototype.constr_id = constr_id++;
 
 		// Copy the properties over onto the new prototype
 		for (var prop_name in props) {
@@ -665,7 +731,7 @@ separateNum = function(num){
 		namedClass.prototype.constructor = namedClass;
 
 		if (namedClass.prototype.onExtend){
-			namedClass.prototype.onExtend.call(namedClass.prototype, props);
+			namedClass.prototype.onExtend.call(namedClass.prototype, props, _super);
 		}
 
 		// And make this class extendable
@@ -972,8 +1038,9 @@ var parent_count_regexp = /^\^+/gi;
 var getPropValueByField = function(fpv, iter, scope, spec_data) {
 	var source_data = scope;
 	var state_name = fpv;
-	if (fpv.indexOf('^') === 0){
-		state_name = fpv.replace(parent_count_regexp, '');
+	var start_char = fpv.charAt(0);
+	if (start_char == '^'){
+		state_name = fpv.slice(1);
 		var count = fpv.length - state_name.length;
 		while (count) {
 			--count;
@@ -983,11 +1050,11 @@ var getPropValueByField = function(fpv, iter, scope, spec_data) {
 			}
 		}
 		//states_of_parent[fpv] = this.prsStCon.parent(fpv);
-	} else if (fpv.indexOf('@') === 0) {
+	} else if (start_char == '@') {
 		throw new Error('');
 		//states_of_nesting[fpv] = this.prsStCon.nesting(fpv);
-	} else if (fpv.indexOf('#') === 0) {
-		state_name = fpv.replace('#', '');
+	} else if (start_char == '#') {
+		state_name = fpv.slice(1);
 		source_data = spec_data;
 		if (!spec_data) {
 			throw new Error();
@@ -1162,6 +1229,113 @@ spv.coe = function(cb) {
 	cb(add);
 	return result;
 };
+
+var letter_regexp = /[\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
+//http://stackoverflow.com/questions/150033/regular-expression-to-match-non-english-characters#comment22322603_150078
+
+
+var hardTrim = function(string) {
+	var letters = string.match(letter_regexp);
+	return letters ? letters.join('').toLowerCase() : '';
+};
+spv.hardTrim = hardTrim;
+
+
+
+
+spv.insertItem = function(array, item, index) {
+	var array_length = array.length;
+	var next_value = item;
+	var value_to_recover;
+
+	for (var jj = index; jj < array_length + 1; jj++) {
+		value_to_recover = array[jj];
+		array[jj] = next_value;
+		next_value = value_to_recover;
+	}
+	return array;
+};
+
+spv.removeItem = function(array, index) {
+	//var array_length = array.length;
+	for (var i = index + 1; i < array.length; i++) {
+		array[ i - 1 ] = array[ i ];
+	}
+	array.length = array.length - 1;
+	return array;
+};
+
+spv.findAndRemoveItem = function(array, item) {
+	var index = array.indexOf(item);
+	if (index === -1) {
+		return array;
+	} else {
+		return spv.removeItem(array, index);
+	}
+};
+if (String.prototype.startsWith) {
+	spv.startsWith = function(str, substr, pos) {
+		return str.startsWith(substr, pos);
+	};
+} else {
+	//http://jsperf.com/starts-with/14, without problems for GC
+	spv.startsWith = function(str, substr, pos) {
+		var len = substr.length;
+		var i = pos || 0;
+
+		for (/*i = 0*/; i < len; i ++) {
+			if (str.charAt(i) != substr.charAt(i)) {
+				return false;
+			}
+		}
+		return true;
+	};
+}
+
+spv.getDeprefixFunc = function(prefix, simple) {
+	var cache = {};
+	return function (namespace) {
+		if (!cache.hasOwnProperty(namespace)) {
+			if (spv.startsWith(namespace, prefix)) {
+				cache[namespace] = simple ? true : namespace.slice(prefix.length);
+			} else {
+				cache[namespace] = false;
+			}
+		}
+		return cache[namespace];
+	};
+
+};
+
+spv.getPrefixingFunc = function(prefix) {
+	var cache = {};
+	return function (state_name) {
+		if (!cache.hasOwnProperty(state_name)) {
+			cache[state_name] = prefix + state_name;
+		}
+		return cache[state_name];
+	};
+};
+
+spv.forEachKey = function(obj, fn, arg1, arg2) {
+	for (var key in obj) {
+		if (!obj.hasOwnProperty(key)) {continue;}
+		fn(obj[key], key, arg1, arg2);
+	}
+};
+
+spv.countKeys = function(obj, truthy) {
+	var count = 0;
+	for (var prop in obj) {
+		if (!truthy) {
+			count++;
+		} else if (obj[prop]){
+			count++;
+		}
+	}
+	return count;
+};
+
 
 })();
 

@@ -10,6 +10,7 @@ var ScApi = function(key, queue, crossdomain, cache_ajax) {
 ScApi.prototype = {
 	errors_fields: [],
 	constructor: ScApi,
+	source_name: 'soundcloud.com',
 	cache_namespace: "soundcloud_api",
 	thisOriginAllowed: true,
 	get: function(method, params, options) {
@@ -36,7 +37,7 @@ ScApi.prototype = {
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
 			var wrap_def = wrapRequest({
-				url: "http://api.soundcloud.com/" + method + ".js",
+				url: "http://api.soundcloud.com/" + method + ".json",
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
 				data: params,
@@ -97,7 +98,7 @@ ScMusicSearch.prototype = {
 				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + this.sc_api.key,
 				from		: 'soundcloud',
 				real_title	: cursor.title,
-				page_link	: cursor.permalink_url,
+				page_link	: cursor.permalink_url.replace(/^http\:/, 'https:'),
 				description : htmlencoding.decode(cursor.description) || false,
 				downloadable: cursor.downloadable,
 				_id			: cursor.id,

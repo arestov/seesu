@@ -2,8 +2,15 @@ var big_timer;
 (function(){
 "use strict";
 requirejs.config({
+	packages: [
+		{
+			name: 'pv',
+			location: 'js/libs/provoda',
+			main: 'provoda'
+		}
+	],
 	paths: {
-		provoda: 'js/libs/provoda',
+		//pv: 'js/libs/provoda/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
 		jquery: 'js/common-libs/jquery-2.1.0.min',
@@ -11,13 +18,13 @@ requirejs.config({
 		cache_ajax: 'js/libs/cache_ajax',
 		app_serv: "js/app_serv",
 		hex_md5: 'js/common-libs/md5.min',
-		angbo: 'js/libs/StatementsAngularParser.min'
 	},
 	shim: {
 		hex_md5: {
 			exports: 'hex_md5'
 		}
-	}
+	},
+	waitSeconds: window.tizen && 0
 });
 
 window._gaq = window._gaq || [];
@@ -77,12 +84,12 @@ big_timer = {
 	if (need_ui){
 
 		//ui thread;
-		requirejs(['su', 'js/views/AppView', 'angbo', 'provoda'], function(su, AppView, angbo, provoda) {
+		requirejs(['su', 'js/views/AppView', 'pv'], function(su, AppView, pv) {
 			var can_die = false;
 			var md = su;
 
 			var proxies_space = Date.now();
-			var views_proxies = provoda.views_proxies;
+			var views_proxies = pv.views_proxies;
 			views_proxies.addSpaceById(proxies_space, md);
 			var mpx = views_proxies.getMPX(proxies_space, md);
 
@@ -95,7 +102,7 @@ big_timer = {
 				view.init({
 					mpx: mpx,
 					proxies_space: proxies_space
-				}, {d: window.document, can_die: can_die, angbo: angbo});
+				}, {d: window.document, can_die: can_die});
 				view.onDie(function() {
 					//views_proxies.removeSpaceById(proxies_space);
 					view = null;
@@ -110,20 +117,9 @@ big_timer = {
 				exposed_view.init({
 					mpx: mpx,
 					proxies_space: proxies_space
-				}, {d: window.document, can_die: can_die, angbo: angbo, usual_flow: true});
+				}, {d: window.document, can_die: can_die, usual_flow: true});
 				exposed_view.requestAll();
 			})();
-
-			
-
-
-
-		
-
-
-			
-			
-
 
 
 		});
