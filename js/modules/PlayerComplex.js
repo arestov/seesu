@@ -21,17 +21,24 @@ PlayerBase.extendTo(PlayerComplex, {
 	onPlaybackFinish: function() {
 		this.resolved.playNext();
 	},
-	onPlaybackError: function(song, can_play) {
-		if (!can_play){
-			if (song.isSearchAllowed() && song.state('search_complete')){
-				this.playNext(this.c_song, true);
-			} else {
-				this.wantSong(song);
-			}
-			
-		} else {
-			song.play();
+	onPlaybackError: function(mo, can_play) {
+		if (this.c_song == mo) {
+			pv.update(mo, "player_song", false);
 		}
+
+		var resolved = this.resolved;
+		var cur_song = resolved && resolved.state('current_song');
+		var exp_song = resolved && resolved.state('expected_song');
+		var is_resolved = cur_song == mo || exp_song == mo;
+		if (!is_resolved) {return;}
+
+		this.nextTick(function() {
+			if (!can_play) {
+				if (mo.isSearchAllowed() && mo.state('search_complete')){
+					resolved.playNext();
+				}
+			}
+		});
 	},
 	setWaitingPlaylist: function(playlist) {
 		this.waiting_playlist = playlist;
