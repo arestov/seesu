@@ -51,15 +51,34 @@ pv.Model.extendTo(PlayRequest, {
 			return (wanted_file && wanted_file.mo) || possible_song;
 		}
 	],
-	'stch-song_files_ready': function(opts) {
-		if (!opts) {return;}
-		var mo = this.getNesting('possible_song');
-		if (mo.canPlay()){
-			if (!opts.exsrc_incomplete && (opts.search_complete || opts.have_best_tracks)){
-				mo.play();
+	'compx-playable_mopla': [
+		['song_files_ready', '@one:mf_cor_current_mopla:possible_song'],
+		function (opts, mopla) {
+			if (!opts) {return;}
+			var mo = this.getNesting('possible_song');
+			if (mo.canPlay()){
+				if (!opts.exsrc_incomplete && (opts.search_complete || opts.have_best_tracks)){
+					return mopla;
+				}
 			}
 		}
+	],
+	'stch-playable_mopla': function(mopla) {
+		if (mopla) {
+			var mo = this.getNesting('possible_song');
+			mo.play();
+			// mopla.play();
+		}
 	},
+	// 'stch-song_files_ready': function(opts) {
+	// 	if (!opts) {return;}
+	// 	var mo = this.getNesting('possible_song');
+	// 	if (mo.canPlay()){
+	// 		if (!opts.exsrc_incomplete && (opts.search_complete || opts.have_best_tracks)){
+	// 			// mo.play();
+	// 		}
+	// 	}
+	// },
 	'compx-timer': [
 		['need_timer_for'],
 		function(song) {
@@ -90,6 +109,9 @@ pv.Model.extendTo(PlayRequest, {
 			}
 		}
 	],
+	switchSong: function(song) {
+		pv.update(this, 'next_song', song);
+	},
 	playNext: function() {
 		var current_song = this.state('current_song');
 
@@ -97,8 +119,9 @@ pv.Model.extendTo(PlayRequest, {
 			current_song.play();
 			pv.update(this, 'next_song', current_song);
 		} else {
+			
 			var next_song = playRelative(current_song, current_song.map_parent.switchTo(current_song, true, true));
-			pv.update(this, 'next_song', next_song);
+			this.switchSong(next_song);
 			
 		}
 
