@@ -69,6 +69,9 @@ pv.addPrototype("SongBase",{
 		'needs_states_connecting': [
 			['^active_use']
 		],
+		'mf_cor_current_mopla': [
+			['@one:current_mopla:mf_cor']
+		],
 		'file_almost_loaded': [
 			['@every:almost_loaded:mf_cor']
 		],
