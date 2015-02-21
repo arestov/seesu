@@ -248,7 +248,7 @@ var getIndexList = function(obj, arr) {
 	}
 	return result;
 };
-
+var regxp_spaces = /\s+/gi;
 var parser = {
 	
 	scope_generators: {
@@ -293,7 +293,7 @@ var parser = {
 
 		getIndexList(this.comment_directives, this.comment_directives_names_list);
 	},
-	regxp_spaces: /\s+/gi,
+
 	regxp_edge_spaces: /^\s+|\s+$/gi,
 	regxp_props_com: /\S[\S\s]*?\:[\s]*?\{\{[\S\s]+?\}\}/gi,
 	regxp_props_com_soft: /\S[\S\s]*?\:[\s]*?(?:\{\{[\S\s]+?\}\})|(?:\S+?(\s|$))/gi,
@@ -317,7 +317,7 @@ var parser = {
 			return '';
 		},
 		setPVTypes: function(node, new_value, ov, wwtch){
-			var types = new_value.split(this.regxp_spaces);
+			var types = new_value.split(regxp_spaces);
 			wwtch.pv_type_data.marks = {};
 			for (var i = 0; i < types.length; i++) {
 				if (types[i]){
@@ -354,7 +354,7 @@ var parser = {
 				}*/
 				
 			}
-			if (index['pv-presence']) {
+			if (index['pv-when']) {
 
 			}
 			return index;
@@ -362,7 +362,7 @@ var parser = {
 	},
 	directives_p: {
 		'pv-text': function(node, full_declaration, directive_name) {
-			return new this.StandartChange(node, this, {
+			return new this.StandartChange(node, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getTextValue,
 				setValue: this.dom_helpres.setTextValue
@@ -370,7 +370,7 @@ var parser = {
 		},
 		'pv-class': function(node, full_declaration, directive_name) {
 			full_declaration = hlpSimplifyValue(full_declaration);
-			return new this.StandartChange(node, this, {
+			return new this.StandartChange(node, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
 				setValue: this.dom_helpres.setClassName,
@@ -409,7 +409,7 @@ var parser = {
 			//если pv-types не требует постоянных вычислений (не зависит ни от одного из состояний)
 			//то использующие шаблон ноды могут выдавать общий результирующий объект - это нужно реализовать fixme
 
-			return new this.StandartChange(node, this, {
+			return new this.StandartChange(node, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getPVTypes,
 				setValue: this.dom_helpres.setPVTypes,
@@ -422,7 +422,7 @@ var parser = {
 			mousemove|(sp,pd):MovePoints
 			*/
 			var result = [];
-			var declarations = full_declaration.split(this.regxp_spaces);
+			var declarations = full_declaration.split(regxp_spaces);
 			for (var i = 0; i < declarations.length; i++) {
 				var decr_parts =  declarations[i].split('|');
 				var cur = decr_parts[0].split(':');
@@ -552,7 +552,7 @@ var parser = {
 		}
 		prop = parts.join(DOT);
 
-		return new this.StandartChange(node, this, {
+		return new this.StandartChange(node, {
 			data: prop,
 			statement: statement,
 			getValue: this.prop_ch_helpers.getValue,
@@ -560,7 +560,7 @@ var parser = {
 		}, directive_name);
 	},
 	StandartChange: (function() {
-		var StandartChange = function(node, context, opts, directive_name) {
+		var StandartChange = function(node, opts, directive_name) {
 			var calculator = opts.calculator;
 			var all_vs;
 			if (!calculator){
@@ -582,7 +582,6 @@ var parser = {
 			this.directive_name = directive_name;
 			this.data = opts.data;
 			this.calculator = calculator;
-			this.context = context;
 			this.all_vs = all_vs;
 			this.simplifyValue = opts.simplifyValue;
 			this.setValue = opts.setValue;
@@ -590,7 +589,7 @@ var parser = {
 			this.sfy_values = calculator ? getFieldsTreesBases(this.all_vs) : null;
 
 			if (calculator){
-				var original_value = this.getValue.call(this.context, node, this.data);
+				var original_value = this.getValue(node, this.data);
 				if (this.simplifyValue){
 					original_value = this.simplifyValue.call(this, original_value);
 				}
@@ -609,7 +608,7 @@ var parser = {
 				if (wwtch.current_value != new_value) {
 					var old_value = wwtch.current_value;
 					wwtch.current_value = new_value;
-					this.setValue.call(this.context, wwtch.node, new_value, old_value, wwtch);
+					this.setValue(wwtch.node, new_value, old_value, wwtch);
 				}
 				
 			},
@@ -617,7 +616,7 @@ var parser = {
 				abortFlowStep(wwtch.context, wwtch.w_cache_key);
 				var new_value = this.calculator(states);
 				if (this.simplifyValue){
-					new_value = this.simplifyValue.call(this.context, new_value);
+					new_value = this.simplifyValue(new_value);
 				}
 				if (wwtch.current_value != new_value){
 					if (async_changes) {
@@ -656,54 +655,17 @@ var parser = {
 		};
 		return StandartChange;
 	})(),
-	findDDRoot: function(directives_data) {
-		var root = null, cur = directives_data;
-		while ( !root && cur ) {
-			if (cur.instructions['pv-nest']){
-				root = cur;
-			}
-
-			if (!root && !cur.parent){
-				root = cur;
-			}
-			cur = cur.parent;
-		}
-		return root;
-
-	},
 	comment_pvdiv_regexp: /(^.+?)\s/,
-	getCommentDirectivesData: function(cur_node, cur_node_parent, struc_store) {
+	getCommentDirectivesData: function(cur_node) {
 		//возвращает объект с индексом одной инструкции, основанной на тексте коммента
-		var
-			parent_dd = (cur_node_parent && cur_node_parent.pvprsd && this.getPVData(cur_node_parent, false, struc_store)) || null;
 		var directives_data = {
 			new_scope_generator: null,
-			instructions: {},
-			parent: parent_dd,
-			children: null,
-			scope_root: this.findDDRoot(parent_dd),
-			children_scopes: null
+			instructions: {}
 		};
-
-		/*if ( parent_dd ) {
-			if (!parent_dd.children) {
-				parent_dd.children = [];
-			}
-			parent_dd.children.push( directives_data );
-		}*/
-
-
-		/*var matching_list = ['pv-replace'];
-		var matching_index = {
-			'pv-replace': true
-		};*/
-
 
 		var text_content = cur_node.textContent;
 		var directive_name = text_content.match(this.comment_pvdiv_regexp);
 		directive_name = directive_name && directive_name[1];
-
-
 
 		if (this.comment_directives.hasOwnProperty(directive_name)) {
 			var full_declaration = text_content.replace(this.comment_pvdiv_regexp, '');
@@ -711,32 +673,19 @@ var parser = {
 			
 		}
 
-
 		return directives_data;
 	},
-	getDirectivesData: function(cur_node, cur_node_parent, struc_store) {
+	getDirectivesData: function(cur_node) {
 
 		//возвращает объект с индексом инструкций нода, основанный на аттрибутах элемента
 		var
-			parent_dd = (cur_node_parent && cur_node_parent.pvprsd && this.getPVData(cur_node_parent, false, struc_store)) || null,
 			directives_data = {
 				new_scope_generator: null,
-				instructions: {},
-
-				parent: parent_dd,
-				children: null,
-				scope_root: this.findDDRoot(parent_dd),
-				children_scopes: null
+				instructions: {}
 			},
 			i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
 			new_scope_generator = false;// current_data = {node: cur_node};
 
-		/*if ( parent_dd ) {
-			if (!parent_dd.children) {
-				parent_dd.children = [];
-			}
-			parent_dd.children.push( directives_data );
-		}*/
 
 		
 
@@ -794,12 +743,6 @@ var parser = {
 			cur_node.removeAttributeNode(attributes_list[i].node);
 		}
 
-		if ( directives_data.scope_root && directives_data.instructions['pv-nest'] ) {
-			if (!directives_data.scope_root.children_scopes) {
-				directives_data.scope_root.children_scopes = [];
-			}
-			directives_data.scope_root.children_scopes.push( directives_data );
-		}
 
 		
 		return directives_data;
@@ -828,7 +771,7 @@ var parser = {
 			}
 		};
 	},
-	getCachedPVData: function(cur_node, cur_node_parent, struc_store, is_comment) {
+	getCachedPVData: function(cur_node, struc_store, is_comment) {
 		var directives_data = null;
 		var pvprsd = cur_node.pvprsd;
 		var _cache_index = struc_store || template_struc_store;
@@ -845,41 +788,36 @@ var parser = {
 			cur_node.pvprsd = pvprsd;
 			cur_node.pvprsd_inst = getNodeInstanceCount(pvprsd, _cache_index);
 			if (is_comment) {
-				directives_data = this.getCommentDirectivesData(cur_node, cur_node_parent, struc_store);
+				directives_data = this.getCommentDirectivesData(cur_node);
 			} else {
-				directives_data = this.getDirectivesData(cur_node, cur_node_parent, struc_store);
+				directives_data = this.getDirectivesData(cur_node);
 			}
-			
-			
-			
 
 			_cache_index[pvprsd] = directives_data;
 			
 		}
 		return directives_data;
 	},
-	getCommentPVData: function(cur_node, cur_node_parent, struc_store) {
-		return this.getCachedPVData(cur_node, cur_node_parent, struc_store, true);
+	getCommentPVData: function(cur_node, struc_store) {
+		return this.getCachedPVData(cur_node, struc_store, true);
 	},
-	getPVData: function(cur_node, cur_node_parent, struc_store) {
-		return this.getCachedPVData(cur_node, cur_node_parent, struc_store);
+	getPVData: function(cur_node, struc_store) {
+		return this.getCachedPVData(cur_node, struc_store);
 		
 	},
 	parse: function(start_node, struc_store) {
 		//полный парсинг, без байндинга
-		var match_stack = [ start_node.parentNode, start_node ], i = 0;
+		var match_stack = [ start_node ], i = 0;
 		while (match_stack.length){
-			var cur_node_parent = match_stack.shift();
 			var cur_node = match_stack.shift();
 			var node_type = cur_node.nodeType;
 			if (node_type == 1){
-				this.getPVData(cur_node, cur_node_parent, struc_store);
+				this.getPVData(cur_node, struc_store);
 				for (i = 0; i < cur_node.childNodes.length; i++) {
-					match_stack.push(cur_node, cur_node.childNodes[i]);
+					match_stack.push(cur_node.childNodes[i]);
 				}
 			} else if (node_type == 8) {
-				this.getCommentPVData(cur_node, cur_node_parent, struc_store);
-				//getCommentPVData
+				this.getCommentPVData(cur_node, struc_store);
 			}
 			
 		}
@@ -887,29 +825,28 @@ var parser = {
 	parseEasy: function(start_node, vroot_node, struc_store) {
 		//полный парсинг, байндинг одного scope (раньше и парсинг был только в пределах одного scope)
 		var list_for_binding = [];
-		var match_stack = [ start_node.parentNode, start_node, true ];
+		var match_stack = [ start_node, true ];
 
 		while (match_stack.length){
-			var cur_node_parent = match_stack.shift();
 			var cur_node = match_stack.shift();
 			var can_bind = match_stack.shift();
 			var node_type = cur_node.nodeType;
 			var directives_data;
 			if (node_type == 1){
 				var i = 0, is_root_node = vroot_node === cur_node;
-				directives_data = this.getPVData(cur_node, cur_node_parent, struc_store);
+				directives_data = this.getPVData(cur_node, struc_store);
 
 				var can_bind_children = (!directives_data.new_scope_generator || is_root_node);
 
 				for (i = 0; i < cur_node.childNodes.length; i++) {
-					match_stack.push(cur_node, cur_node.childNodes[i], can_bind && can_bind_children);//если запрещен байндинг текущего нода, то и его потомков тоже запрещён
+					match_stack.push(cur_node.childNodes[i], can_bind && can_bind_children);//если запрещен байндинг текущего нода, то и его потомков тоже запрещён
 				}
 
 				if (can_bind) {
 					list_for_binding.push(is_root_node, cur_node, directives_data);
 				}
 			} else if (node_type == 8) {
-				directives_data = this.getCommentPVData(cur_node, cur_node_parent, struc_store);
+				directives_data = this.getCommentPVData(cur_node, struc_store);
 				if (can_bind) {
 					list_for_binding.push(false, cur_node, directives_data);
 				}
@@ -1104,6 +1041,7 @@ SimplePVSampler.prototype.getClone = function() {
 	for (var i = 0; i < all_onodes.length; i++) {
 		all_cnodes[i].pvprsd = all_onodes[i].pvprsd;
 		all_cnodes[i].pvprsd_inst = getNodeInstanceCount(all_onodes[i].pvprsd, this.struc_store);
+		all_cnodes[i].pv_sample_id = this._id;
 	}
 	return cloned;
 };
@@ -1113,7 +1051,7 @@ SimplePVSampler.prototype.clone = SimplePVSampler.prototype.getClone;
 var directives_h = {
 		'pv-replace': function(node, index) {
 			if (index) {
-				if (index['pv-replace']) {
+				if (index['pv-when']) {
 
 				} else {
 					if (!this.pv_replacers_simple) {
@@ -1448,8 +1386,8 @@ spv.Class.extendTo(PvTemplate, {
 				if (directives_data.instructions[directive_name]){
 					this.handleDirective(directive_name, cur_node, directives_data.instructions[directive_name]);
 				}
-				
 			}
+
 			for (i = 0; i < parser.comment_directives_names_list.length; i++) {
 				directive_name = parser.comment_directives_names_list[i];
 				if (directives_data.instructions[directive_name]){
@@ -1463,7 +1401,6 @@ spv.Class.extendTo(PvTemplate, {
 
 		var vroot_node = this.root_node_raw;
 
-
 		var list_for_binding = parser.parseEasy(start_node, vroot_node, struc_store);
 
 		for (var i = 0; i < list_for_binding.length; i+=3) {
@@ -1471,7 +1408,6 @@ spv.Class.extendTo(PvTemplate, {
 				list_for_binding[ i ],
 				list_for_binding[ i + 1 ],
 				list_for_binding[ i + 2 ]);
-			
 		}
 
 		this.indexPvViews(this.parsed_pv_views);
