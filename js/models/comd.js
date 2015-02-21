@@ -233,6 +233,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'artist.similar.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method + '.similar');
 			}
 			
@@ -242,6 +243,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'similarartists.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		},
@@ -297,6 +299,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 
@@ -318,6 +321,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'results.artistmatches.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		},
@@ -336,6 +340,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			artists = artists || spv.toRealArray(spv.getTargetField(r, 'topartists.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 
@@ -344,6 +349,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			artists = artists || spv.toRealArray(spv.getTargetField(r, 'weeklyartistchart.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		}
