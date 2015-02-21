@@ -1,4 +1,4 @@
-define(['spv', './helpers', './PvTemplate',  'jquery'], function(spv, hp, PvTemplate, $) {
+define(['spv', './helpers',  'jquery'], function(spv, hp, $) {
 'use strict';
 var $v = hp.$v;
 return function(StatesEmitter, main_calls_flow, views_proxies) {
@@ -341,17 +341,8 @@ StatesEmitter.extendTo(View, {
 		}
 		this.way_points = stay;
 	},
-	PvTemplate: PvTemplate,
 	getTemplate: function(node, callCallbacks, pvTypesChange) {
-		node = node[0] || node;
-		return new PvTemplate({
-			node: node,
-			callCallbacks: callCallbacks,
-			pvTypesChange: pvTypesChange,
-			struc_store: this.root_view.struc_store,
-			calls_flow: this._getCallsFlow(),
-			getSample: this.root_view.getSampleForTemplate
-		});
+		return this.root_view.pvtemplate(node, callCallbacks, pvTypesChange);
 	},
 	parseAppendedTPLPart: function(node) {
 		this.tpl.parseAppended(node, this.root_view.struc_store);

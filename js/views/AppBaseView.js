@@ -8,7 +8,6 @@ transform_props.forEach(function(el) {
 });
 var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
 
-var PvTemplate = pv.dom.template;
 pv.setTplFilterGetFn(function(filter_name) {
 	if (filters[filter_name]){
 		return filters[filter_name];
@@ -110,15 +109,18 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	createDetails: function() {
 		this._super();
 
-		(function(_this) {
-			_this.getSampleForTemplate = function(sample_name) {
+		var getSampleForTemplate = (function(_this) {
+			return function(sample_name) {
 				return _this.getSample(sample_name);
 			};
 		})(this);
-		
+
+		var templator = pv.dom.template.templator(this._getCallsFlow(), getSampleForTemplate);
+		this.pvtemplate = templator.template;
+		this.pvsampler = templator.sampler;
 
 		this.tpls = [];
-		this.struc_store = {};
+		// this.struc_store = {};
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
@@ -146,14 +148,8 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 			var node = this.getSample('complex-page');
 
-			var tpl = new this.PvTemplate({
-				node: node,
-				spec_states: {
-					'$lev_num': num
-				},
-				struc_store: this.struc_store,
-				calls_flow: this._getCallsFlow(),
-				getSample: this.getSampleForTemplate
+			var tpl = this.pvtemplate(node, false, false, {
+				'$lev_num': num
 			});
 
 			this.tpls.push(tpl);
@@ -297,7 +293,8 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			sample_node = this.els.ui_samples.children('.' + sample_name);
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
+
+				sampler = this.samples[sample_name] = this.pvsampler(sample_node);
 			}
 			
 		}
@@ -305,7 +302,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			sample_node = $(this.requirePart(sample_name));
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
+				sampler = this.samples[sample_name] = this.pvsampler(sample_node);
 			}
 			
 		}
@@ -866,15 +863,11 @@ AppBaseView.extendTo(WebAppView, {
 	wrapStartScreen: function(start_screen) {
 		var st_scr_scrl_con = start_screen.parent();
 		var start_page_wrap = st_scr_scrl_con.parent();
-		var tpl = new this.PvTemplate({
-			node: start_page_wrap,
-			spec_states: {
-				'$lev_num': -1
-			},
-			struc_store: this.struc_store,
-			calls_flow: this._getCallsFlow(),
-			getSample: this.getSampleForTemplate
+
+		var tpl = this.pvtemplate(start_page_wrap, false, false, {
+			'$lev_num': -1
 		});
+
 
 		this.tpls.push(tpl);
 

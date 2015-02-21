@@ -1420,6 +1420,29 @@ spv.Class.extendTo(PvTemplate, {
 });
 PvTemplate.SimplePVSampler = SimplePVSampler;
 
+PvTemplate.templator = function(calls_flow, getSample, struc_store) {
+	struc_store = struc_store || {};
+	function template(node, callCallbacks, pvTypesChange, spec_states) {
+		return new PvTemplate({
+			node: node[0] || node,
+			spec_states: spec_states,
+			callCallbacks: callCallbacks,
+			pvTypesChange: pvTypesChange,
+			struc_store: struc_store,
+			calls_flow: calls_flow,
+			getSample: getSample
+		});
+	}
+
+	function sampler(sample_node) {
+		return new PvTemplate.SimplePVSampler(sample_node, struc_store);
+	}
+
+	return {
+		template: template,
+		sampler: sampler
+	};
+};
 
 return PvTemplate;
 });
