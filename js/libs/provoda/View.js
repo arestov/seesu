@@ -345,7 +345,7 @@ StatesEmitter.extendTo(View, {
 		return this.root_view.pvtemplate(node, callCallbacks, pvTypesChange);
 	},
 	parseAppendedTPLPart: function(node) {
-		this.tpl.parseAppended(node, this.root_view.struc_store);
+		this.tpl.parseAppended(node);
 		this.tpl.setStates(this.states);
 	},
 	createTemplate: function(ext_node) {

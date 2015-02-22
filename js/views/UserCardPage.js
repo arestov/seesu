@@ -5,12 +5,8 @@ var app_env = app_serv.app_env;
 var UserCardPage = function(){};
 coct.PageView.extendTo(UserCardPage, {
 	base_tree: {
-		sample_name: 'user_page',
-		children_by_selector: [{
-			sample_name: 'vk_pthgs'
-		}, {
-			sample_name: 'lastfm_pthgs'
-		}]
+		sample_name: 'user_page'
+
 	},
 	children_views: {
 		'user-playlists': coct.ListSimplePreview,
@@ -30,10 +26,7 @@ coct.PageView.extendTo(UserCardPage, {
 var LfmUsercardPageView = function() {};
 pv.View.extendTo(LfmUsercardPageView, {
 	base_tree: {
-		sample_name: 'lfm_user_page',
-		children_by_selector: [{
-			sample_name: 'lastfm_pthgs'
-		}]
+		sample_name: 'lfm_user_page'
 	},
 	children_views: {
 		lfm__friends: coct.ImagedListPreview,
@@ -49,10 +42,7 @@ pv.View.extendTo(LfmUsercardPageView, {
 var VkUsercardPageView = function() {};
 pv.View.extendTo(VkUsercardPageView, {
 	base_tree: {
-		sample_name: 'vk_user_page',
-		children_by_selector: [{
-			sample_name: 'vk_pthgs'
-		}]
+		sample_name: 'vk_user_page'
 	},
 	children_views: {
 		vk__tracks: coct.ListSimplePreview,

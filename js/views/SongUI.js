@@ -72,7 +72,7 @@ SongViewBase.extendTo(SongUI, {
 	activate: function(){
 	},
 	parts_builder: {
-		context: 'track_c',
+		context: 'track-context',
 		mf_cor_con: function() {
 			var context = this.requirePart('context');
 			var div = $('<div></div>');
@@ -95,11 +95,7 @@ SongViewBase.extendTo(SongUI, {
 		children_by_selector: [{
 			parse_as_tplpart: true,
 			part_name: 'context',
-			needs_expand_state: 'must_expand',
-			children_by_selector: [{
-				sample_name: 'artist_preview-base',
-				selector: '.nested_artist'
-			}]
+			needs_expand_state: 'must_expand'
 		}]
 	}
 });
