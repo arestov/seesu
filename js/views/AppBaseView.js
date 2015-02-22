@@ -110,8 +110,8 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		this._super();
 
 		var getSampleForTemplate = (function(_this) {
-			return function(sample_name) {
-				return _this.getSample(sample_name);
+			return function(sample_name, simple) {
+				return _this.getSample(sample_name, simple);
 			};
 		})(this);
 
@@ -311,11 +311,15 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 		return sampler;
 	},
-	getSample: function(sample_name) {
+	getSample: function(sample_name, simple) {
 		var sampler = this.getSampler(sample_name);
 		
 		if (sampler.getClone){
-			return $(sampler.getClone());
+			if (simple) {
+				return sampler.getClone();
+			} else {
+				return $(sampler.getClone());
+			}
 		} else {
 			return $(sampler).clone();
 		}

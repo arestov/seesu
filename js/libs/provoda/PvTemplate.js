@@ -328,7 +328,7 @@ var parser = {
 		}
 	},
 	comment_directives_p: {
-		'pv-replace': function(node, full_declaration, directive_name) {
+		'pv-replace': function(node, full_declaration, directive_name, getSample) {
 			var index = {};
 			var complex_value = full_declaration;
 			var complects = complex_value.match( this.regxp_props_com_soft );
@@ -354,10 +354,24 @@ var parser = {
 				}*/
 				
 			}
-			if (index['pv-when']) {
+
+			if (!index['pv-when']) {
+				var tnode = getSample(index.sample_name, true);
+				var parent_node = node.parentNode;
+				parent_node.replaceChild(tnode, node);
+				return ['replaced', tnode];
+			} else {
 
 			}
-			return index;
+
+			
+
+			
+			// //'samplexx'
+			// if (index['pv-when']) {
+
+			// }
+			// return index;
 		}
 	},
 	directives_p: {
@@ -656,7 +670,7 @@ var parser = {
 		return StandartChange;
 	})(),
 	comment_pvdiv_regexp: /(^.+?)\s/,
-	getCommentDirectivesData: function(cur_node) {
+	getCommentDirectivesData: function(cur_node, getSample) {
 		//возвращает объект с индексом одной инструкции, основанной на тексте коммента
 		var directives_data = {
 			new_scope_generator: null,
@@ -669,13 +683,22 @@ var parser = {
 
 		if (this.comment_directives.hasOwnProperty(directive_name)) {
 			var full_declaration = text_content.replace(this.comment_pvdiv_regexp, '');
-			directives_data.instructions[directive_name] = this.comment_directives_p[directive_name].call(this, cur_node, full_declaration, directive_name);
+			var chunk = this.comment_directives_p[directive_name].call(this, cur_node, full_declaration, directive_name, getSample);
+			if (Array.isArray(chunk) && chunk[0] === 'replaced') {
+				return {
+					replacer: true,
+					node: chunk[1],
+					data: chunk[2]
+				};
+			} else {
+				directives_data.instructions[directive_name] = chunk;
+			}
 			
 		}
 
 		return directives_data;
 	},
-	getDirectivesData: function(cur_node) {
+	getDirectivesData: function(cur_node, getSample) {
 
 		//возвращает объект с индексом инструкций нода, основанный на аттрибутах элемента
 		var
@@ -685,10 +708,6 @@ var parser = {
 			},
 			i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
 			new_scope_generator = false;// current_data = {node: cur_node};
-
-
-		
-
 
 		var attributes_list = [];
 		for (i = 0; i < attributes.length; i++) {
@@ -732,7 +751,7 @@ var parser = {
 				value = attrs_by_names[directive_name][0].node.value;
 				
 				if (this.directives_p[directive_name]){
-					value = this.directives_p[directive_name].call(this, cur_node, value, directive_name);
+					value = this.directives_p[directive_name].call(this, cur_node, value, directive_name, getSample);
 				}
 				directives_data.instructions[directive_name] = value;
 				
@@ -771,7 +790,7 @@ var parser = {
 			}
 		};
 	},
-	getCachedPVData: function(cur_node, struc_store, is_comment) {
+	getCachedPVData: function(cur_node, struc_store, is_comment, getSample) {
 		var directives_data = null;
 		var pvprsd = cur_node.pvprsd;
 		var _cache_index = struc_store || template_struc_store;
@@ -788,9 +807,13 @@ var parser = {
 			cur_node.pvprsd = pvprsd;
 			cur_node.pvprsd_inst = getNodeInstanceCount(pvprsd, _cache_index);
 			if (is_comment) {
-				directives_data = this.getCommentDirectivesData(cur_node);
+				directives_data = this.getCommentDirectivesData(cur_node, getSample);
 			} else {
-				directives_data = this.getDirectivesData(cur_node);
+				directives_data = this.getDirectivesData(cur_node, getSample);
+			}
+
+			if (directives_data.replacer) {
+				return directives_data;
 			}
 
 			_cache_index[pvprsd] = directives_data;
@@ -798,31 +821,39 @@ var parser = {
 		}
 		return directives_data;
 	},
-	getCommentPVData: function(cur_node, struc_store) {
-		return this.getCachedPVData(cur_node, struc_store, true);
+	getCommentPVData: function(cur_node, struc_store, getSample) {
+		return this.getCachedPVData(cur_node, struc_store, true, getSample);
 	},
-	getPVData: function(cur_node, struc_store) {
-		return this.getCachedPVData(cur_node, struc_store);
+	getPVData: function(cur_node, struc_store, getSample) {
+		return this.getCachedPVData(cur_node, struc_store, false, getSample);
 		
 	},
-	parse: function(start_node, struc_store) {
+	parse: function(start_node, struc_store, getSample) {
 		//полный парсинг, без байндинга
 		var match_stack = [ start_node ], i = 0;
 		while (match_stack.length){
 			var cur_node = match_stack.shift();
 			var node_type = cur_node.nodeType;
+			var directives_data;
 			if (node_type == 1){
-				this.getPVData(cur_node, struc_store);
+				directives_data = this.getPVData(cur_node, struc_store, getSample);
+			} else if (node_type == 8) {
+				directives_data = this.getCommentPVData(cur_node, struc_store, getSample);
+			}
+
+			if (directives_data.replacer) {
+				match_stack.unshift(directives_data.node);
+			}
+
+			if (node_type == 1){
 				for (i = 0; i < cur_node.childNodes.length; i++) {
 					match_stack.push(cur_node.childNodes[i]);
 				}
-			} else if (node_type == 8) {
-				this.getCommentPVData(cur_node, struc_store);
 			}
 			
 		}
 	},
-	parseEasy: function(start_node, vroot_node, struc_store) {
+	parseEasy: function(start_node, vroot_node, struc_store, getSample) {
 		//полный парсинг, байндинг одного scope (раньше и парсинг был только в пределах одного scope)
 		var list_for_binding = [];
 		var match_stack = [ start_node, true ];
@@ -834,20 +865,26 @@ var parser = {
 			var directives_data;
 			if (node_type == 1){
 				var i = 0, is_root_node = vroot_node === cur_node;
-				directives_data = this.getPVData(cur_node, struc_store);
+				directives_data = this.getPVData(cur_node, struc_store, getSample);
 
 				var can_bind_children = (!directives_data.new_scope_generator || is_root_node);
 
 				for (i = 0; i < cur_node.childNodes.length; i++) {
-					match_stack.push(cur_node.childNodes[i], can_bind && can_bind_children);//если запрещен байндинг текущего нода, то и его потомков тоже запрещён
+					// если запрещен байндинг текущего нода, то и его потомков тоже запрещён
+					match_stack.push(cur_node.childNodes[i], can_bind && can_bind_children);
 				}
-
-				if (can_bind) {
+				if (directives_data.replacer) {
+					match_stack.unshift(directives_data.node);
+				} else if (can_bind) {
 					list_for_binding.push(is_root_node, cur_node, directives_data);
 				}
+
+				
 			} else if (node_type == 8) {
-				directives_data = this.getCommentPVData(cur_node, struc_store);
-				if (can_bind) {
+				directives_data = this.getCommentPVData(cur_node, struc_store, getSample);
+				if (directives_data.replacer) {
+					match_stack.unshift(directives_data.node, can_bind);
+				} else if (can_bind) {
 					list_for_binding.push(false, cur_node, directives_data);
 				}
 				
@@ -883,7 +920,7 @@ var getAll = function(node) {
 
 var samplers_counter = 0;
 
-var SimplePVSampler = function(node, struc_store) {
+var SimplePVSampler = function(node, struc_store, getSample) {
 	node = $(node);
 	node = node[0];
 	if (!node){
@@ -896,13 +933,15 @@ var SimplePVSampler = function(node, struc_store) {
 	this.structure_data = null;
 	this.struc_store = struc_store;
 	this._id = ++samplers_counter;
+
+	this.getSample = getSample;
 };
 (function() {
-	var setStructureData = function(struc_store, is_root_node, cur_node, bind_data, states_list, children_list) {
+	var setStructureData = function(struc_store, is_root_node, cur_node, bind_data, states_list, children_list, getSample) {
 		if (!is_root_node) {
 			if (bind_data.instructions['pv-nest']) {
 				children_list.push({
-					item: parseStructureData(cur_node, struc_store),
+					item: parseStructureData(cur_node, struc_store, false, getSample),
 					data: bind_data.instructions['pv-nest']
 				});
 			}
@@ -935,7 +974,7 @@ var SimplePVSampler = function(node, struc_store) {
 	};
 
 
-	var parseStructureData = function(node, struc_store, is_not_root) {
+	var parseStructureData = function(node, struc_store, is_not_root, getSample) {
 		var structure_data = {
 			node_id: null,
 			states: [],
@@ -945,7 +984,7 @@ var SimplePVSampler = function(node, struc_store) {
 		var children_list = [];
 
 
-		var bind_data_list = parser.parseEasy(node, !is_not_root && node, struc_store);
+		var bind_data_list = parser.parseEasy(node, !is_not_root && node, struc_store, getSample);
 		for (var i = 0; i < bind_data_list.length; i+=3) {
 			var
 				is_root_node = bind_data_list[ i ],
@@ -995,7 +1034,7 @@ var SimplePVSampler = function(node, struc_store) {
 		var str_d_prop_name = 'structure_data' + (is_not_root ? '' : '_as_root');
 
 		if (!this[str_d_prop_name]) {
-			this[str_d_prop_name] = parseStructureData(this.onode, this.struc_store, is_not_root);
+			this[str_d_prop_name] = parseStructureData(this.onode, this.struc_store, is_not_root, this.getSample);
 			//this[str_d_prop_name]._id = this._id;
 			this.parsed = true;
 			
@@ -1026,7 +1065,7 @@ SimplePVSampler.prototype.getClone = function() {
 	}
 	if (!this.parsed){
 		this.parsed = true;
-		parser.parse(this.onode, this.struc_store);
+		parser.parse(this.onode, this.struc_store, this.getSample);
 	}
 	var cloned = this.onode.cloneNode(true);
 
@@ -1172,7 +1211,7 @@ spv.Class.extendTo(PvTemplate, {
 				this.parsed_pv_views.push({
 					views: [],
 					node: node,
-					sampler: new SimplePVSampler(node, this.struc_store),
+					sampler: new SimplePVSampler(node, this.struc_store, this.getSample),
 					coll_name: data.coll_name,
 					for_model: data.for_model,
 					space: data.space,
@@ -1213,7 +1252,7 @@ spv.Class.extendTo(PvTemplate, {
 				comment_anchor: comment_anchor,
 
 				
-				sampler: new SimplePVSampler(node, this.struc_store),
+				sampler: new SimplePVSampler(node, this.struc_store, this.getSample),
 				valueIdent: valueIdent,
 				keyIdent: keyIdent,
 				calculator: calculator,
@@ -1363,8 +1402,8 @@ spv.Class.extendTo(PvTemplate, {
 		}
 		return result;
 	},
-	parseAppended: function(node, struc_store) {
-		this.parsePvDirectives(node, struc_store);
+	parseAppended: function(node) {
+		this.parsePvDirectives(node);
 	},
 	iterateBindingList: function(is_root_node, cur_node, directives_data) {
 		var i = 0;
@@ -1396,12 +1435,13 @@ spv.Class.extendTo(PvTemplate, {
 			}
 		}
 	},
-	parsePvDirectives: function(start_node, struc_store) {
+	parsePvDirectives: function(start_node) {
+		var struc_store = this.struc_store;
 		start_node = 'nodeType' in start_node ? start_node : start_node[0];
 
 		var vroot_node = this.root_node_raw;
 
-		var list_for_binding = parser.parseEasy(start_node, vroot_node, struc_store);
+		var list_for_binding = parser.parseEasy(start_node, vroot_node, struc_store, this.getSample);
 
 		for (var i = 0; i < list_for_binding.length; i+=3) {
 			this.iterateBindingList(
@@ -1435,7 +1475,7 @@ PvTemplate.templator = function(calls_flow, getSample, struc_store) {
 	}
 
 	function sampler(sample_node) {
-		return new PvTemplate.SimplePVSampler(sample_node, struc_store);
+		return new PvTemplate.SimplePVSampler(sample_node, struc_store, getSample);
 	}
 
 	return {

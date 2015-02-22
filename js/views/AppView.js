@@ -317,9 +317,6 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		artcard: function() {
 			return this.els.ui_samples.children('.art_card');
 		},
-		track_c: function() {
-			return this.els.ui_samples.children('.track-context');
-		},
 		lfm_authsampl: function() {
 			return this.els.ui_samples.children('.lfm-auth-module');
 		},

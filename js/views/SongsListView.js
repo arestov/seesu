@@ -78,11 +78,7 @@ function(pv, $, SongUI, etc_views, coct) {
 	var SongsListView = function(){};
 	SongsListViewBase.extendTo(SongsListView, {
 		base_tree: {
-			sample_name: 'playlist-container',
-			children_by_selector: [{
-				sample_name: 'playlist_panel',
-				prepend: true
-			}]
+			sample_name: 'playlist-container'
 		},
 		children_views: {
 			plarow: PlARowView,
