@@ -355,13 +355,22 @@ var parser = {
 				
 			}
 
+			var parent_node = node.parentNode;
 			if (!index['pv-when']) {
 				var tnode = getSample(index.sample_name, true);
-				var parent_node = node.parentNode;
+				
 				parent_node.replaceChild(tnode, node);
 				return ['replaced', tnode];
 			} else {
-
+				var comment_anchor = document.createComment('anchor for pv-when');
+				parent_node.replaceChild(comment_anchor, node);
+				var directives_data = {
+					instructions: {
+						new_scope_generator: null,
+						'pv-when': null
+					}
+				};
+				return ['replaced', comment_anchor, directives_data];
 			}
 
 			
@@ -790,37 +799,49 @@ var parser = {
 			}
 		};
 	},
-	getCachedPVData: function(cur_node, struc_store, is_comment, getSample) {
-		var directives_data = null;
-		var pvprsd = cur_node.pvprsd;
-		var _cache_index = struc_store || template_struc_store;
-		if (typeof pvprsd != 'undefined'){
-			if (pvprsd){
-				directives_data = _cache_index[pvprsd];
-			}
-			
-		} else {
-			if (!_cache_index.struc_counter) {
-				_cache_index.struc_counter = 0;
-			}
-			pvprsd = ++_cache_index.struc_counter;
+	getCachedPVData: (function() {
+		var asignId = function(cur_node, _cache_index) {
+			var pvprsd = ++_cache_index.struc_counter;
 			cur_node.pvprsd = pvprsd;
 			cur_node.pvprsd_inst = getNodeInstanceCount(pvprsd, _cache_index);
-			if (is_comment) {
-				directives_data = this.getCommentDirectivesData(cur_node, getSample);
+			return pvprsd;
+		};
+		return function(cur_node, struc_store, is_comment, getSample) {
+			var directives_data = null;
+			var pvprsd = cur_node.pvprsd;
+			var _cache_index = struc_store || template_struc_store;
+			if (typeof pvprsd != 'undefined'){
+				if (pvprsd){
+					directives_data = _cache_index[pvprsd];
+				}
+				
 			} else {
-				directives_data = this.getDirectivesData(cur_node, getSample);
-			}
+				if (!_cache_index.struc_counter) {
+					_cache_index.struc_counter = 0;
+				}
 
-			if (directives_data.replacer) {
-				return directives_data;
-			}
+				pvprsd = asignId(cur_node, _cache_index);
+				
+				if (is_comment) {
+					directives_data = this.getCommentDirectivesData(cur_node, getSample);
+				} else {
+					directives_data = this.getDirectivesData(cur_node, getSample);
+				}
 
-			_cache_index[pvprsd] = directives_data;
-			
-		}
-		return directives_data;
-	},
+				if (directives_data.replacer) {
+					if (directives_data.data) {
+						var r_pvprsd = asignId(directives_data.node);
+						_cache_index[r_pvprsd] = directives_data.data;
+					}
+					return directives_data;
+				}
+
+				_cache_index[pvprsd] = directives_data;
+				
+			}
+			return directives_data;
+		};
+	})(),
 	getCommentPVData: function(cur_node, struc_store, getSample) {
 		return this.getCachedPVData(cur_node, struc_store, true, getSample);
 	},
@@ -896,6 +917,10 @@ var parser = {
 	}
 };
 parser.makeOrderedDirectives();
+
+// function makePvWhen(anchor, expression, sample) {
+	
+// }
 
 var getAll = function(node) {
 	var result = [];
@@ -1086,63 +1111,126 @@ SimplePVSampler.prototype.getClone = function() {
 };
 SimplePVSampler.prototype.clone = SimplePVSampler.prototype.getClone;
 
+var BnddChunk = function(type, data) {
+	this.type = type;
+	this.data = data;
+	this.dead = false;
+	this.handled = false;
+	this.destroyer = null;
+};
 
+
+var handleChunks = (function() {
+	var chunk_handlers = {
+		'pv_replacer_simple': function(chunk, tpl) {
+			if (!tpl.pv_replacers_simple) {
+				tpl.pv_replacers_simple = [];
+			}
+			tpl.pv_replacers_simple.push(chunk.data);
+		},
+		'states_watcher': function(chunk, tpl) {
+			tpl.states_watchers.push(chunk.data);
+		},
+		'ancs': function(chunk, tpl) {
+			var anchor_name = chunk.data.anchor_name;
+			if (tpl.ancs[anchor_name]){
+				throw new Error('anchors exists');
+			} else {
+				tpl.ancs[anchor_name] = $(chunk.data.node);
+			}
+		},
+		'pv_type': function(chunk, tpl) {
+			tpl.pv_types.push(chunk.data);
+		},
+		'pv_event': function(chunk, tpl) {
+			var destroyer = tpl.bindPVEvent(chunk.data.node, chunk.data.evdata);
+			chunk.destroyer = destroyer;
+		},
+		'pv_view': function(chunk, tpl) {
+			tpl.parsed_pv_views.push(chunk.data);
+		},
+		'pv_repeat': function(chunk, tpl) {
+			tpl.pv_repeats_data.push(chunk.data);
+		}
+	};
+
+	return function handleChunks(result, tpl) {
+		if (!result) {return;}
+		if (Array.isArray(result)) {
+			for (var i = 0; i < result.length; i++) {
+				var chunk = result[i];
+				chunk_handlers[chunk.type](chunk, tpl);
+			}
+		} else {
+			chunk_handlers[result.type](result, tpl);
+		}
+	};
+})();
 var directives_h = {
 		'pv-replace': function(node, index) {
 			if (index) {
 				if (index['pv-when']) {
 
 				} else {
-					if (!this.pv_replacers_simple) {
-						this.pv_replacers_simple = [];
-					}
-					this.pv_replacers_simple.push({
+					var data = {
 						sample_name: index.sample_name,
 						node: node
-					});
+					};
+					return new BnddChunk('pv_replacer_simple', data);
 				}
 			}
 		},
 		'pv-text': function(node, standch){
 			if (standch){
 				var wwtch = standch.createBinding(node, this);
-				this.states_watchers.push(wwtch);
+				
+				return new BnddChunk('states_watcher', wwtch);
 			}
 		},
 		'pv-class': function(node, standch) {
 			if (standch){
 				var wwtch = standch.createBinding(node, this);
-				this.states_watchers.push(wwtch);
+				return new BnddChunk('states_watcher', wwtch);
 			}
 		},
 		'pv-props': function(node, standches) {
 			if (standches){
+				var result = [];
 				for (var i = 0; i < standches.length; i++) {
 					var wwtch = standches[i].createBinding(node, this);
-					this.states_watchers.push(wwtch);
+					result.push(new BnddChunk('states_watcher', wwtch));
 				}
+				return result;
 			}
+		},
+		'pv-when': function(node, standch) {
+			if (standch) {
+				var wwtch = standch.createBinding(node, this);
+				return new BnddChunk('states_watcher', wwtch);
+			}
+
 		},
 		'pv-anchor': function(node, full_declaration) {
 			var anchor_name = full_declaration;
-			if (this.ancs[anchor_name]){
-				throw new Error('anchors exists');
-			} else {
-				this.ancs[anchor_name] = $(node);
-			}
+			return new BnddChunk('ancs', {
+				anchor_name: anchor_name,
+				node: node
+			});
 		},
 		'pv-type': function(node, standch) {
 			if (standch){
 				var pv_type_data = {node: node, marks: null};
-				this.pv_types.push(pv_type_data);
 
 				var wwtch = standch.createBinding(node, this);
 				wwtch.pv_type_data = pv_type_data;
-				this.states_watchers.push(wwtch);
 				wwtch.checkFunc(this.empty_state_obj);
 
+				return [
+					new BnddChunk('states_watcher', wwtch),
+					new BnddChunk('pv_type', pv_type_data)
+				];
+
 			}
-			//
 		},
 		'pv-events': function(node, pv_events_data) {
 			if (pv_events_data){
@@ -1150,10 +1238,13 @@ var directives_h = {
 				if (!this.sendCallback){
 					throw new Error('provide the events callback handler to the Template init func');
 				}
+				var result = [];
+
 				for (var i = 0; i < pv_events_data.length; i++) {
 					var evdata = pv_events_data[i];
-					this.bindPVEvent(node, evdata);
+					result.push(new BnddChunk('pv_event', {node: node, evdata: evdata}));
 				}
+				return result;
 			}
 		}
 	};
@@ -1208,7 +1299,7 @@ spv.Class.extendTo(PvTemplate, {
 		'pv-nest': function(node, data) {
 			//coll_name for_model filter
 			if (typeof data.coll_name == 'string'){
-				this.parsed_pv_views.push({
+				return new BnddChunk('pv_view', {
 					views: [],
 					node: node,
 					sampler: new SimplePVSampler(node, this.struc_store, this.getSample),
@@ -1230,38 +1321,39 @@ spv.Class.extendTo(PvTemplate, {
 				keyIdent = data.keyIdent,
 				calculator = data.calculator,
 				sfy_values = data.sfy_values;
-			
-
 
 			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
 			$(node).after(comment_anchor).detach();
 			var repeat_data = {
 				array: null
 			};
-			this.pv_repeats_data.push(repeat_data);
 			var nothing;
-			this.states_watchers.push({
-				w_cache_key:  node.pvprsd + '_' + node.pvprsd_inst + '*' + 'pv-repeat',
-				node: node,
-				context: this,
-				original_fv: nothing,
-				old_nodes: [],
 
-				
-				repeat_data: repeat_data,
-				comment_anchor: comment_anchor,
+			return [
+				new BnddChunk('pv_repeat', repeat_data),
+				new BnddChunk('states_watcher', {
+					w_cache_key:  node.pvprsd + '_' + node.pvprsd_inst + '*' + 'pv-repeat',
+					node: node,
+					context: this,
+					original_fv: nothing,
+					old_nodes: [],
 
-				
-				sampler: new SimplePVSampler(node, this.struc_store, this.getSample),
-				valueIdent: valueIdent,
-				keyIdent: keyIdent,
-				calculator: calculator,
-				field_name: sfy_values[0],
+					
+					repeat_data: repeat_data,
+					comment_anchor: comment_anchor,
 
-				values: calculator.propsToWatch,
-				sfy_values: sfy_values,
-				checkFunc: checkPVRepeat
-			});
+					
+					sampler: new SimplePVSampler(node, this.struc_store, this.getSample),
+					valueIdent: valueIdent,
+					keyIdent: keyIdent,
+					calculator: calculator,
+					field_name: sfy_values[0],
+
+					values: calculator.propsToWatch,
+					sfy_values: sfy_values,
+					checkFunc: checkPVRepeat
+				})
+			];
 		}
 	},
 	
@@ -1269,23 +1361,28 @@ spv.Class.extendTo(PvTemplate, {
 	
 	bindPVEvent: function(node, evdata) {
 		var _this = this;
-
 		var callback = function(e) {
 			evdata.fn.call(this, e, _this);
 		};
+		var destroyer = function() {
+			$(node).off(evdata.event_name, callback);
+
+			node = null;
+			evdata = null;
+
+			_this = null;
+			callback = null;
+			destroyer = null;
+		};
+
 		$(node).on(evdata.event_name, callback);
+
 		if (!this.destroyers) {
 			this.destroyers = [];
 		}
 
-		this.destroyers.push(function() {
-			
-			$(node).off(evdata.event_name, callback);
-			node = null;
-			_this = null;
-			evdata = null;
-			callback = null;
-		});
+		this.destroyers.push(destroyer);
+		return destroyer;
 	},
 	
 
@@ -1367,7 +1464,10 @@ spv.Class.extendTo(PvTemplate, {
 			console.log(directive_name, node, full_declaration);
 			console.log(directives_h);
 		}
-		method.call(this, node, full_declaration);
+		var result = method.call(this, node, full_declaration);
+		return result;
+		
+
 	},
 	indexPvViews: function(array) {
 		var result = this.children_templates;
@@ -1405,7 +1505,7 @@ spv.Class.extendTo(PvTemplate, {
 	parseAppended: function(node) {
 		this.parsePvDirectives(node);
 	},
-	iterateBindingList: function(is_root_node, cur_node, directives_data) {
+	iterateBindingList: function(is_root_node, cur_node, directives_data, all_chunks) {
 		var i = 0;
 		var directive_name;
 		if (!is_root_node){
@@ -1413,7 +1513,16 @@ spv.Class.extendTo(PvTemplate, {
 			for (i = 0; i < parser.scope_g_list.length; i++) {
 				directive_name = parser.scope_g_list[i];
 				if (directives_data.instructions[directive_name]){
-					this.scope_generators[directive_name].call(this, cur_node, directives_data.instructions[directive_name]);
+					var chunks_s = this.scope_generators[directive_name]
+						.call(this, cur_node, directives_data.instructions[directive_name]);
+					
+					if (chunks_s) {
+						if (Array.isArray(chunks_s)) {
+							push.apply(all_chunks, chunks_s);
+						} else {
+							all_chunks.push(chunks_s);
+						}
+					}
 				}
 				
 			}
@@ -1423,17 +1532,33 @@ spv.Class.extendTo(PvTemplate, {
 			for (i = 0; i < parser.directives_names_list.length; i++) {
 				directive_name = parser.directives_names_list[i];
 				if (directives_data.instructions[directive_name]){
-					this.handleDirective(directive_name, cur_node, directives_data.instructions[directive_name]);
+					var chunks_d = this.handleDirective(directive_name, cur_node, directives_data.instructions[directive_name]);
+					if (chunks_d) {
+						if (Array.isArray(chunks_d)) {
+							push.apply(all_chunks, chunks_d);
+						} else {
+							all_chunks.push(chunks_d);
+						}
+					}
 				}
 			}
 
 			for (i = 0; i < parser.comment_directives_names_list.length; i++) {
 				directive_name = parser.comment_directives_names_list[i];
 				if (directives_data.instructions[directive_name]){
-					this.handleDirective(directive_name, cur_node, directives_data.instructions[directive_name]);
+					var chunks_c = this.handleDirective(directive_name, cur_node, directives_data.instructions[directive_name]);
+					if (chunks_c) {
+						if (Array.isArray(chunks_c)) {
+							push.apply(all_chunks, chunks_c);
+						} else {
+							all_chunks.push(chunks_c);
+						}
+					}
+
 				}
 			}
 		}
+		return all_chunks;
 	},
 	parsePvDirectives: function(start_node) {
 		var struc_store = this.struc_store;
@@ -1443,12 +1568,16 @@ spv.Class.extendTo(PvTemplate, {
 
 		var list_for_binding = parser.parseEasy(start_node, vroot_node, struc_store, this.getSample);
 
+		var all_chunks = [];
 		for (var i = 0; i < list_for_binding.length; i+=3) {
 			this.iterateBindingList(
 				list_for_binding[ i ],
 				list_for_binding[ i + 1 ],
-				list_for_binding[ i + 2 ]);
+				list_for_binding[ i + 2 ],
+				all_chunks);
 		}
+
+		handleChunks(all_chunks, this);
 
 		this.indexPvViews(this.parsed_pv_views);
 
