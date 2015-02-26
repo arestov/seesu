@@ -284,34 +284,44 @@ return {
 				};
 			}
 
+			if (!view._lbr.hndPvTypeChange) {
+				view._lbr.hndPvTypeChange = function(arr_arr) {
+					//pvTypesChange
+					//this == template
+					//this != provoda.View
+					var old_waypoints = this.waypoints;
+					var total = [];
+					var i = 0;
+					for (i = 0; i < arr_arr.length; i++) {
+						if (!arr_arr[i]) {
+							continue;
+						}
+						total.push.apply(total, arr_arr[i]);
+					}
+					var matched = [];
+					for (i = 0; i < total.length; i++) {
+						var cur = total[i];
+						if (!cur.marks){
+							continue;
+						}
+						if (cur.marks['hard-way-point'] || cur.marks['way-point']){
+							matched.push(cur);
+						}
+					}
+					var to_remove = old_waypoints && spv.arrayExclude(old_waypoints, matched);
+					this.waypoints = matched;
+					view.updateTemplatedWaypoints(matched, to_remove);
+				};
+			}
 
-			return view.getTemplate(con, view._lbr.hndTriggerTPLevents, function(arr_arr) {
-				//pvTypesChange
-				//this == template
-				//this != provoda.View
-				var old_waypoints = this.waypoints;
-				var total = [];
-				var i = 0;
-				for (i = 0; i < arr_arr.length; i++) {
-					if (!arr_arr[i]) {
-						continue;
-					}
-					total.push.apply(total, arr_arr[i]);
-				}
-				var matched = [];
-				for (i = 0; i < total.length; i++) {
-					var cur = total[i];
-					if (!cur.marks){
-						continue;
-					}
-					if (cur.marks['hard-way-point'] || cur.marks['way-point']){
-						matched.push(cur);
-					}
-				}
-				var to_remove = old_waypoints && spv.arrayExclude(old_waypoints, matched);
-				this.waypoints = matched;
-				view.updateTemplatedWaypoints(matched, to_remove);
-			});
+			if (!view._lbr.hndPvTreeChange) {
+				view._lbr.hndPvTreeChange = function() {
+					view.checkTplTreeChange();
+				};
+			}
+
+
+			return view.getTemplate(con, view._lbr.hndTriggerTPLevents, view._lbr.hndPvTypeChange, view._lbr.hndPvTreeChange);
 		},
 		matchByParent: function(views, parent_view) {
 			for (var i = 0; i < views.length; i++) {
