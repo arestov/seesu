@@ -44,6 +44,8 @@ var ViewLabour = function() {
 	this.detached = null;
 
 	this.hndTriggerTPLevents = null;
+	this.hndPvTypeChange = null;
+	this.hndPvTreeChange = null;
 
 	this.marked_as_dead = null;
 
@@ -341,8 +343,8 @@ StatesEmitter.extendTo(View, {
 		}
 		this.way_points = stay;
 	},
-	getTemplate: function(node, callCallbacks, pvTypesChange) {
-		return this.root_view.pvtemplate(node, callCallbacks, pvTypesChange);
+	getTemplate: function(node, callCallbacks, pvTypesChange, pvTreeChange) {
+		return this.root_view.pvtemplate(node, callCallbacks, pvTypesChange, false, pvTreeChange);
 	},
 	parseAppendedTPLPart: function(node) {
 		this.tpl.parseAppended(node);
@@ -355,9 +357,6 @@ StatesEmitter.extendTo(View, {
 		}
 
 		var tpl = $v.createTemplate(this, con);
-		
-
-
 		
 		if (!ext_node) {
 			this.tpl = tpl;
@@ -1165,6 +1164,9 @@ StatesEmitter.extendTo(View, {
 				pv_view.views.push(view.view_id);
 
 				pv_view.last_node = node_to_use;
+				pv_view.onDie(function() {
+					view.die();
+				});
 				return view;
 			}
 		};
@@ -1231,18 +1233,21 @@ StatesEmitter.extendTo(View, {
 	stackCollectionChange: function() {
 		this.nextTick(this.collectionChange, arguments);
 	},
-	collectionChange: function(nesname, array, rold_value, removed) {
-		if (!this.isAlive()){
-			return;
-		}
-		if (this._lbr.undetailed_children_models){
-			this._lbr.undetailed_children_models[nesname] = array;
-			return this;
+	checkTplTreeChange: function() {
+		var total_ch = [];
+
+		for (var state_name in this.states) {
+			total_ch.push(state_name, this.states[total_ch]);
 		}
 
-		var old_value = this.children_models[nesname];
-		this.children_models[nesname] = array;
+		this.updateTemplatesStates(total_ch);
 
+		for (var nesname in this.children_models) {
+
+			this.pvCollectionChange(nesname, this.children_models[nesname]);
+		}
+	},
+	pvCollectionChange: function(nesname, items, removed) {
 		var pv_views_complex_index = spv.getTargetField(this, this.tpl_children_prefix + nesname);
 		if (!pv_views_complex_index && this.tpls) {
 			for (var i = 0; i < this.tpls.length; i++) {
@@ -1252,9 +1257,10 @@ StatesEmitter.extendTo(View, {
 				}
 			}
 		}
+		var cur;
 		if (pv_views_complex_index){
 			var space_name;
-			array = spv.toRealArray(array);
+			var array = spv.toRealArray(items);
 			if (removed && removed.length) {
 				for (space_name in pv_views_complex_index.usual){
 					this.removeViewsByMds(removed, nesname, space_name);
@@ -1266,10 +1272,14 @@ StatesEmitter.extendTo(View, {
 			
 
 			for (space_name in pv_views_complex_index.usual){
+				cur = pv_views_complex_index.usual[space_name];
+				if (!cur) {continue;}
 				this.checkCollchItemAgainstPvView(nesname, array, space_name, pv_views_complex_index.usual[space_name]);
 			}
 			for (space_name in pv_views_complex_index.by_model_name){
-				this.checkCollchItemAgainstPvViewByModelName(nesname, array, space_name, pv_views_complex_index.by_model_name[space_name]);
+				cur = pv_views_complex_index.by_model_name[space_name];
+				if (!cur) {continue;}
+				this.checkCollchItemAgainstPvViewByModelName(nesname, array, space_name, cur);
 			}
 			/*
 			for (var 
@@ -1280,16 +1290,30 @@ StatesEmitter.extendTo(View, {
 
 			this.requestAll();
 		}
+	},
+	collectionChange: function(nesname, items, rold_value, removed) {
+		if (!this.isAlive()){
+			return;
+		}
+		if (this._lbr.undetailed_children_models){
+			this._lbr.undetailed_children_models[nesname] = items;
+			return this;
+		}
+
+		var old_value = this.children_models[nesname];
+		this.children_models[nesname] = items;
+
+		this.pvCollectionChange(nesname, items, removed);
 
 
 		var collch = this.dclrs_fpckgs && this.dclrs_fpckgs.hasOwnProperty(nesname) && this.dclrs_fpckgs[nesname];
 		if (typeof collch == 'function') {
-			this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
+			this.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
 		} else {
 			if (this.dclrs_selectors && this.dclrs_selectors.hasOwnProperty(nesname)) {
-				if (Array.isArray(array)) {
-					for (var i = 0; i < array.length; i++) {
-						var cur = array[i];
+				if (Array.isArray(items)) {
+					for (var i = 0; i < items.length; i++) {
+						var cur = items[i];
 						var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
 							nesname, cur.model_name, this.nesting_space);
 
@@ -1302,16 +1326,16 @@ StatesEmitter.extendTo(View, {
 					}
 				} else {
 					var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
-							nesname, array.model_name, this.nesting_space);
+							nesname, items.model_name, this.nesting_space);
 
 					if (!dclr) {
 						dclr = collch;
 					}
-					this.callCollectionChangeDeclaration(dclr, nesname, array, old_value, removed);
+					this.callCollectionChangeDeclaration(dclr, nesname, items, old_value, removed);
 				}
 			} else {
 				if (collch) {
-					this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
+					this.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
 				}
 			}
 		}

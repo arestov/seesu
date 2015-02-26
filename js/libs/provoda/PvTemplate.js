@@ -19,10 +19,11 @@ var PvTemplate = function(opts) {
 	this.waypoints = null;
 
 
-	this.pv_views = null;
-	this.parsed_pv_views = null;
+	//this.pv_views = null;
+	//this.parsed_pv_views = null;
 
 	this.stwat_index = null;
+	this.all_chunks = [];
 
 	this.root_node = opts.node;
 
@@ -50,12 +51,12 @@ var PvTemplate = function(opts) {
 		this.sendCallback = opts.callCallbacks;
 	}
 	this.pvTypesChange = opts.pvTypesChange;
+	this.pvTreeChange = opts.pvTreeChange;
 	this.struc_store = opts.struc_store;
 	this.ancs = {};
-	this.pv_views = [];
-	this.parsed_pv_views = [];
+	//this.pv_views = [];
+	//this.parsed_pv_views = [];
 	this.pv_repeats = {};
-	this.pv_replacers_simple = null;
 	this.children_templates = {};
 
 	this.states_watchers = [];
@@ -74,16 +75,16 @@ var PvTemplate = function(opts) {
 		console.log('cant parse statements');
 	}
 
-	if (this.pv_replacers_simple) {
-		for (var i = 0; i < this.pv_replacers_simple.length; i++) {
-			var cur = this.pv_replacers_simple[i];
-			var sample = this.getSample(cur.sample_name);
-			$(cur.node).after(sample);
-			this.parsePvDirectives(sample, opts.struc_store);
+	// if (this.pv_replacers_simple) {
+	// 	for (var i = 0; i < this.pv_replacers_simple.length; i++) {
+	// 		var cur = this.pv_replacers_simple[i];
+	// 		var sample = this.getSample(cur.sample_name);
+	// 		$(cur.node).after(sample);
+	// 		this.parsePvDirectives(sample, opts.struc_store);
 
 			
-		}
-	}
+	// 	}
+	// }
 
 	if (this.scope){
 		this.setStates(this.scope);
@@ -276,6 +277,7 @@ var parser = {
 	directives_names_list: [],
 
 	comment_directives: {
+		'pv-when': true,
 		'pv-replace': true
 	},
 	comment_directives_names_list: [],
@@ -365,9 +367,11 @@ var parser = {
 				var comment_anchor = document.createComment('anchor for pv-when');
 				parent_node.replaceChild(comment_anchor, node);
 				var directives_data = {
+					new_scope_generator: null,
 					instructions: {
-						new_scope_generator: null,
-						'pv-when': null
+						'pv-when': makePvWhen(comment_anchor, index['pv-when'], function() {
+							return getSample(index.sample_name, true);
+						})
 					}
 				};
 				return ['replaced', comment_anchor, directives_data];
@@ -830,7 +834,7 @@ var parser = {
 
 				if (directives_data.replacer) {
 					if (directives_data.data) {
-						var r_pvprsd = asignId(directives_data.node);
+						var r_pvprsd = asignId(directives_data.node, _cache_index);
 						_cache_index[r_pvprsd] = directives_data.data;
 					}
 					return directives_data;
@@ -918,9 +922,50 @@ var parser = {
 };
 parser.makeOrderedDirectives();
 
-// function makePvWhen(anchor, expression, sample) {
-	
-// }
+function makePvWhen(anchor, expression, getSample) {
+	// debugger;
+	return new parser.StandartChange(anchor, {
+		data: {
+			getSample: getSample
+		},
+		simplifyValue: function(value) {
+			return !!value;
+		},
+		statement: expression,
+		getValue: function(node, data) {
+			return node.pvwhen_content;
+			// debugger
+		},
+		setValue: function(node, new_value, old_value, wwtch) {
+			if (new_value && !node.pvwhen_content) {
+				node.pvwhen_content = true;
+				var root_node = getSample();
+				
+				wwtch.root_node = root_node;
+
+				$(node).after(root_node);
+				var all_chunks = wwtch.context.parseAppended(root_node);
+
+				wwtch.destroyer = function() {
+					node.pvwhen_content = false;
+					$(wwtch.root_node).remove();
+					for (var i = 0; i < all_chunks.length; i++) {
+						all_chunks[i].dead = true;
+					}
+					wwtch.context.checkChunks();
+				};
+
+				wwtch.context.pvTreeChange();
+
+				// debugger
+			} else if (!new_value && node.pvwhen_content) {
+				wwtch.destroyer();
+			}
+			//	this.setValue(wwtch.node, new_value, old_value, wwtch);
+			
+		}
+	}, 'pv-when');
+}
 
 var getAll = function(node) {
 	var result = [];
@@ -1111,6 +1156,51 @@ SimplePVSampler.prototype.getClone = function() {
 };
 SimplePVSampler.prototype.clone = SimplePVSampler.prototype.getClone;
 
+var removePvView = function(item, index) {
+	var real_name = item.coll_name;
+	var space = item.space || 'main';
+	if (item.for_model){
+		var field = [real_name, 'by_model_name', space];
+		var storage = spv.getTargetField(index, field);
+		if (storage) {
+			storage.index[item.for_model] = null;
+		}
+	} else {
+		spv.setTargetField(index, [real_name, 'usual', space], null);
+
+		//result[real_name][space] = cur;
+	}
+};
+
+
+var indexPvView = function(item, index) {
+	var real_name = item.coll_name;
+	var space = item.space || 'main';
+	if (item.for_model){
+		var field = [real_name, 'by_model_name', space];
+		var storage = spv.getTargetField(index, field);
+		if (!storage){
+			storage = {index: {}};
+			spv.setTargetField(index, field, storage);
+		}
+		if (!storage.first){
+			storage.first = item;
+			storage.comment_anchor = document.createComment('collch anchor for: ' + real_name + ", " + space + ' (by_model_name)');
+			$(item.node).before(storage.comment_anchor);
+		}
+		//cur.sampler 
+		item.original_node = item.node;
+		//cur.sampler = 
+		$(item.node).detach();
+
+		storage.index[item.for_model] = item;
+	} else {
+		spv.setTargetField(index, [real_name, 'usual', space], item);
+
+		//result[real_name][space] = cur;
+	}
+};
+
 var BnddChunk = function(type, data) {
 	this.type = type;
 	this.data = data;
@@ -1122,14 +1212,12 @@ var BnddChunk = function(type, data) {
 
 var handleChunks = (function() {
 	var chunk_handlers = {
-		'pv_replacer_simple': function(chunk, tpl) {
-			if (!tpl.pv_replacers_simple) {
-				tpl.pv_replacers_simple = [];
-			}
-			tpl.pv_replacers_simple.push(chunk.data);
-		},
+
 		'states_watcher': function(chunk, tpl) {
 			tpl.states_watchers.push(chunk.data);
+			chunk.destroyer = function() {
+				tpl.states_watchers = spv.findAndRemoveItem(tpl.states_watchers, chunk.data);
+			};
 		},
 		'ancs': function(chunk, tpl) {
 			var anchor_name = chunk.data.anchor_name;
@@ -1138,48 +1226,76 @@ var handleChunks = (function() {
 			} else {
 				tpl.ancs[anchor_name] = $(chunk.data.node);
 			}
+			chunk.destroyer = function() {
+				tpl.ancs[anchor_name] = null;
+			};
 		},
 		'pv_type': function(chunk, tpl) {
 			tpl.pv_types.push(chunk.data);
+			chunk.destroyer = function() {
+				tpl.pv_types = spv.findAndRemoveItem(tpl.pv_types, chunk.data);
+			};
 		},
 		'pv_event': function(chunk, tpl) {
 			var destroyer = tpl.bindPVEvent(chunk.data.node, chunk.data.evdata);
 			chunk.destroyer = destroyer;
 		},
 		'pv_view': function(chunk, tpl) {
-			tpl.parsed_pv_views.push(chunk.data);
+			indexPvView(chunk.data, tpl.children_templates);
+			chunk.destroyer = function() {
+				removePvView(chunk.data, tpl.children_templates);
+				if (chunk.data.destroyers) {
+					while (chunk.data.destroyers.length) {
+						var cur = chunk.data.destroyers.pop();
+						cur();
+					}
+				}
+			};
+			// tpl.parsed_pv_views.push();
 		},
 		'pv_repeat': function(chunk, tpl) {
 			tpl.pv_repeats_data.push(chunk.data);
+			chunk.destroyer = function() {
+				tpl.pv_repeats_data = spv.findAndRemoveItem(tpl.pv_repeats_data, chunk.data);
+			};
 		}
 	};
 
-	return function handleChunks(result, tpl) {
-		if (!result) {return;}
-		if (Array.isArray(result)) {
-			for (var i = 0; i < result.length; i++) {
-				var chunk = result[i];
+	return function handleChunks(items, tpl) {
+		if (!items) {return [];}
+		var result = [];
+		for (var i = 0; i < items.length; i++) {
+			var chunk = items[i];
+			if (!chunk.dead) {
+				result.push(chunk);
+			} else if (chunk.destroyer) {
+				chunk.destroyer();
+			}
+			if (!chunk.handled) {
+				chunk.handled = true;
 				chunk_handlers[chunk.type](chunk, tpl);
 			}
-		} else {
-			chunk_handlers[result.type](result, tpl);
+			
+			
+
 		}
+		return result;
 	};
 })();
 var directives_h = {
-		'pv-replace': function(node, index) {
-			if (index) {
-				if (index['pv-when']) {
+		// 'pv-replace': function(node, index) {
+		// 	if (index) {
+		// 		if (index['pv-when']) {
 
-				} else {
-					var data = {
-						sample_name: index.sample_name,
-						node: node
-					};
-					return new BnddChunk('pv_replacer_simple', data);
-				}
-			}
-		},
+		// 		} else {
+		// 			var data = {
+		// 				sample_name: index.sample_name,
+		// 				node: node
+		// 			};
+		// 			return new BnddChunk('pv_replacer_simple', data);
+		// 		}
+		// 	}
+		// },
 		'pv-text': function(node, standch){
 			if (standch){
 				var wwtch = standch.createBinding(node, this);
@@ -1206,7 +1322,14 @@ var directives_h = {
 		'pv-when': function(node, standch) {
 			if (standch) {
 				var wwtch = standch.createBinding(node, this);
-				return new BnddChunk('states_watcher', wwtch);
+				var destroyer = function() {
+					if (wwtch.destroyer) {
+						wwtch.destroyer();
+					}
+				};
+				var chunk = new BnddChunk('states_watcher', wwtch);
+				chunk.destroyer = destroyer;
+				return chunk;
 			}
 
 		},
@@ -1299,15 +1422,23 @@ spv.Class.extendTo(PvTemplate, {
 		'pv-nest': function(node, data) {
 			//coll_name for_model filter
 			if (typeof data.coll_name == 'string'){
-				return new BnddChunk('pv_view', {
+				var pv_view = {
 					views: [],
 					node: node,
 					sampler: new SimplePVSampler(node, this.struc_store, this.getSample),
 					coll_name: data.coll_name,
 					for_model: data.for_model,
 					space: data.space,
-					filterFn: data.filterFn
-				});
+					filterFn: data.filterFn,
+					destroyers: null,
+					onDie: function(cb) {
+						if (!pv_view.destroyers) {
+							pv_view.destroyers = [];
+						}
+						pv_view.destroyers.push(cb);
+					}
+				};
+				return new BnddChunk('pv_view', pv_view);
 			}
 		},
 		'pv-repeat': function(node, data) {
@@ -1469,41 +1600,17 @@ spv.Class.extendTo(PvTemplate, {
 		
 
 	},
-	indexPvViews: function(array) {
-		var result = this.children_templates;
+	indexPvViews: function(array, result) {
+		
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			var real_name = cur.coll_name;
-			var space = cur.space || 'main';
-			if (cur.for_model){
-				var field = [real_name, 'by_model_name', space];
-				var storage = spv.getTargetField(result, field);
-				if (!storage){
-					storage = {index: {}};
-					spv.setTargetField(result, field, storage);
-				}
-				if (!storage.first){
-					storage.first = cur;
-					storage.comment_anchor = document.createComment('collch anchor for: ' + real_name + ", " + space + ' (by_model_name)');
-					$(cur.node).before(storage.comment_anchor);
-				}
-				//cur.sampler 
-				cur.original_node = cur.node;
-				//cur.sampler = 
-				$(cur.node).detach();
-
-				storage.index[cur.for_model] = cur;
-			} else {
-				spv.setTargetField(result, [real_name, 'usual', space], cur);
-
-				//result[real_name][space] = cur;
-			}
+			indexPvView(cur, result);
 			
 		}
 		return result;
 	},
 	parseAppended: function(node) {
-		this.parsePvDirectives(node);
+		return this.parsePvDirectives(node);
 	},
 	iterateBindingList: function(is_root_node, cur_node, directives_data, all_chunks) {
 		var i = 0;
@@ -1560,6 +1667,10 @@ spv.Class.extendTo(PvTemplate, {
 		}
 		return all_chunks;
 	},
+	checkChunks: function() {
+		handleChunks(this.all_chunks, this);
+		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values', true);
+	},
 	parsePvDirectives: function(start_node) {
 		var struc_store = this.struc_store;
 		start_node = 'nodeType' in start_node ? start_node : start_node[0];
@@ -1576,22 +1687,24 @@ spv.Class.extendTo(PvTemplate, {
 				list_for_binding[ i + 2 ],
 				all_chunks);
 		}
+		this.all_chunks = this.all_chunks.concat(all_chunks);
 
-		handleChunks(all_chunks, this);
+		
+		this.checkChunks();
+		//this.children_templates = this.indexPvViews(this.parsed_pv_views, this.children_templates);
 
-		this.indexPvViews(this.parsed_pv_views);
+		// this.pv_views = this.pv_views.concat(this.parsed_pv_views);
+		// this.parsed_pv_views = [];
 
-		this.pv_views = this.pv_views.concat(this.parsed_pv_views);
-		this.parsed_pv_views = [];
-
-		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values', true);
+		
+		return all_chunks;
 	}
 });
 PvTemplate.SimplePVSampler = SimplePVSampler;
 
 PvTemplate.templator = function(calls_flow, getSample, struc_store) {
 	struc_store = struc_store || {};
-	function template(node, callCallbacks, pvTypesChange, spec_states) {
+	function template(node, callCallbacks, pvTypesChange, spec_states, pvTreeChange) {
 		return new PvTemplate({
 			node: node[0] || node,
 			spec_states: spec_states,
@@ -1599,7 +1712,8 @@ PvTemplate.templator = function(calls_flow, getSample, struc_store) {
 			pvTypesChange: pvTypesChange,
 			struc_store: struc_store,
 			calls_flow: calls_flow,
-			getSample: getSample
+			getSample: getSample,
+			pvTreeChange: pvTreeChange
 		});
 	}
 
