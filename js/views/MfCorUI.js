@@ -384,23 +384,23 @@ pv.View.extendTo(MfCorUI, {
 		strict: true
 	},
 	'collch-yt_videos': 'tpl.ancs.video_list',
-	bindBase: function() {
-		//this.createTemplate();
-		var _this = this;
-		this.tpl.ancs.more_songs_b.click(function() {
-			_this.RPCLegacy('switchMoreSongsView');
-		});
-		this.addWayPoint(this.tpl.ancs.more_songs_b);
-	},
+	// bindBase: function() {
+	// 	//this.createTemplate();
+	// 	var _this = this;
+	// 	this.tpl.ancs.more_songs_b.click(function() {
+	// 		_this.RPCLegacy('switchMoreSongsView');
+	// 	});
+	// 	this.addWayPoint(this.tpl.ancs.more_songs_b);
+	// },
 	'compx-vis_is_visible':{
 		'depends_on': ['^^^mp_show_end'],
 		fn: function(mp_show_end) {
 			return !!mp_show_end;
 		}
 	},
-	base_tree: {
-		sample_name: 'moplas-block'
-	}
+	// base_tree: {
+	// 	sample_name: 'moplas-block'
+	// }
 });
 
 return MfCorUI;

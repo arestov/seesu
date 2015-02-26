@@ -125,71 +125,17 @@ pv.View.extendTo(ShareRowUI, {
 
 var SongActPlaylistingUI = function() {};
 pv.View.extendTo(SongActPlaylistingUI, {
-	children_views: {
-		searcher: PlaylistAddSearchCtr
-	},
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
+	'compx-need_creation_button':{
+		depends_on: ['query', 'has_full_match'],
+		fn: function(query, has_full_match) {
+			return query && !has_full_match;
 		}
-	},
-	'collch-$ondemand-searcher': 'lpl',
-	expand: function() {
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-		
-
-		var _this = this;
-		var inputSearch = spv.debounce(function() {
-			_this.RPCLegacy('search', this.value);
-		}, 100);
-		this.input = this.c.find('.playlist-query').bind('keyup change search mousemove', inputSearch);
-
-		this.lpl = $('<div class="list-of-playlists"></div>').appendTo(this.c);
-
-
-		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
-			_this.RPCLegacy('findAddPlaylist');
-		});
-		this.addWayPoint(this.pl_creation_b);
-		this.pl_creation_b_text = $('<span></span>');
-		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
-		this.lpl.append(this.pl_creation_b);
-
-		//this['collch-searcher'] = 'lpl';
-		this.checkCollectionChange('searcher');
-
-		
-		this.RPCLegacy('search', "");
-
-		
-		
-		
 	},
 	tpl_events: {
 		input_search: spv.debounce(function(e, node) {
 			this.RPCLegacy('search', node.value);
 		}, 100)
-	},
-
-	state_change: {
-		need_creation_button: function(state) {
-			if (this.pl_creation_b){
-				this.pl_creation_b.toggleClass('hidden', !state);
-			}
-		},
-		query: function(state) {
-			if (this.pl_creation_b_text){
-				this.pl_creation_b_text.text(state);
-			}
-		}
 	}
-	
 });
 
 
