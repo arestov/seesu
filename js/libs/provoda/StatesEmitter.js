@@ -571,10 +571,20 @@ add({
 	
 		}]
 		*/
+		/*
+
+
+				nest_match: [
+			['songs-list', 'mf_cor', 'sorted_completcs']
+		]
+
+		*/
+
+		this.nest_match = [];
+
 		var states_of_parent = {};
 		var states_of_nesting = {};
 		var states_of_root = {};
-
 
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
 			var cur = this.full_comlxs_list[i];
@@ -590,6 +600,9 @@ add({
 					} else  if (parsing_result.rel_type == 'nesting') {
 						if (!states_of_nesting[state_name]) {
 							states_of_nesting[state_name] = parsing_result;
+							this.nest_match.push( parsing_result.nwatch );
+							
+							// debugger;
 						}
 					} else if (parsing_result.rel_type == 'parent') {
 						if (!states_of_parent[state_name]) {
@@ -600,7 +613,6 @@ add({
 				
 			}
 		}
-
 
 		this.conndst_parent = this.prsStCon.toList(states_of_parent);
 		this.conndst_nesting = this.prsStCon.toList(states_of_nesting);

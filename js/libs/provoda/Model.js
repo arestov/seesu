@@ -465,59 +465,159 @@ add({
 
 		return instance;
 	},
-	init: function(opts, data, params, more, states){
-		if (opts && opts.app){
-			this.app = opts.app;
-		}
-		if (!this.app) {
-			this.app = null;
-		}
-		if (opts && opts.map_parent){
-			this.map_parent = opts.map_parent;
-		}
-		if (!this.map_parent) {
-			this.map_parent = null;
-		}
+	init: (function() {
+		var lw_count = 0;
+		var buildItems = function(lnwatch) {
+			lnwatch.items_changed = false;
+			if (!lnwatch.items) {
+				lnwatch.items = [];
+			}
+			lnwatch.items.length = 0;
 
-		this._super();
+			for (var provoda_id in lnwatch.items_index) {
+				if (!lnwatch.items_index[provoda_id]) {
+					continue;
+				}
+				lnwatch.items.push(lnwatch.items_index[provoda_id]);
+			}
+			return lnwatch;
+		};
+		var wrapper = function(motivator, fn, context, args, lnwatch) {
+			buildItems(lnwatch);
+			console.log(lnwatch.selector, lnwatch, lnwatch.items);
+		};
 
-		this.req_order_field = null;
+		var LocalWatchRoot = function(md, nwatch) {
+			this.num = ++lw_count;
+			this.selector = nwatch.selector;
+			this.md = md;
+			this.state_name = nwatch.state_name;
+			// this.itemChange = handler;
+			this.items_changed = false;
+			this.items_index = null;
+			this.items = null;
+			this.handler = wrapper;
 
-		this._provoda_id = models_counters++;
-		big_index[this._provoda_id] = this;
-
-		//this.states = {};
-		
-		this.children_models = null;
-		this._network_source = this._network_source || null;
-
-
-		this.md_replacer = null;
-		this.mpx = null;
-
-		this.init_states = null;
-
-		if (states) {
-
-			if (!this.init_states) {
-				this.init_states = {};
+			this.nwatch = nwatch;
+		};
+		return  function(opts, data, params, more, states){
+			if (opts && opts.app){
+				this.app = opts.app;
+			}
+			if (!this.app) {
+				this.app = null;
+			}
+			if (opts && opts.map_parent){
+				this.map_parent = opts.map_parent;
+			}
+			if (!this.map_parent) {
+				this.map_parent = null;
 			}
 
-			spv.cloneObj(this.init_states, states);
-			// pv.create must init init_states
+			this._super();
+
+			this.req_order_field = null;
+
+			this._provoda_id = models_counters++;
+			big_index[this._provoda_id] = this;
+
+			//this.states = {};
+			
+			this.children_models = null;
+			this._network_source = this._network_source || null;
+
+
+			this.md_replacer = null;
+			this.mpx = null;
+
+			this.init_states = null;
+
+			if (states) {
+
+				if (!this.init_states) {
+					this.init_states = {};
+				}
+
+				spv.cloneObj(this.init_states, states);
+				// pv.create must init init_states
+			}
+			
+			this.prsStCon.connect.parent(this);
+			this.prsStCon.connect.root(this);
+			this.prsStCon.connect.nesting(this);
+
+
+
+			if (this.nestings_declarations) {
+				this.nextTick(function() {
+					initDeclaredNestings(this);
+				});
+			}
+
+
+			this.nes_match_index = null;
+
+			if (this.nest_match) {
+				for (var i = 0; i < this.nest_match.length; i++) {
+
+					this.addNestWatch(new LocalWatchRoot(this, this.nest_match[i]), 0);
+				}
+			}
+
+			return this;
+		};
+	})(),
+	removeNestWatch: function(nwatch, skip) {
+		if (nwatch.selector.length == skip) {
+			// console.log('full match!', this, nwa);
+		} else {
+			var nesting_name = nwatch.selector[skip];
+			if (this.nes_match_index && this.nes_match_index[nesting_name]) {
+				this.nes_match_index[nesting_name].remoVe();
+			}
 		}
 		
-		this.prsStCon.connect.parent(this);
-		this.prsStCon.connect.root(this);
-		this.prsStCon.connect.nesting(this);
-
-		if (this.nestings_declarations) {
-			this.nextTick(function() {
-				initDeclaredNestings(this);
-			});
+	},
+	addNestWatch: function(nwatch, skip) {
+		if (!this.nes_match_handeled) {
+			this.nes_match_handeled = {};
+		}
+		if (!this.nes_match_handeled[nwatch.num]) {
+			this.nes_match_handeled[nwatch.num] = true;
+		} else {
+			return;
 		}
 
-		return this;
+		if (nwatch.selector.length == skip) {
+			// console.log('full match!', this, nwatch);
+			if (!nwatch.items_index) {
+				nwatch.items_index = {};
+			}
+			nwatch.items_index[this._provoda_id] = this;
+			nwatch.items_changed = true;
+			
+		} else {
+			if (!this.nes_match_index) {
+				this.nes_match_index = {};
+			}
+
+			var nesting_name = nwatch.selector[skip];
+			if (!this.nes_match_index[nesting_name]) {
+				this.nes_match_index[nesting_name] = [];
+			}
+			this.nes_match_index[nesting_name].push({
+				nwatch: nwatch,
+				skip: skip
+			});
+			
+
+			if (this.children_models) {
+				for (var nesting_name in this.children_models) {
+					checkNestWatchs(this, this.children_models[nesting_name], nesting_name);
+				}
+			}
+		}
+		
 	},
 	mapStates: function(states_map, donor, acceptor) {
 		if (acceptor && typeof acceptor == 'boolean'){
@@ -607,7 +707,50 @@ var passCollectionsChange = function(e) {
 };
 
 
+var addNestWatchs = function(item, array) {
+	for (var i = 0; i < array.length; i++) {
+		var cur = array[i];
+		item.addNestWatch(cur.nwatch, cur.skip + 1);
+		// item: nwa,
+		// 	skip: skip
+		// array[i];
+	}
+};
 
+function checkNestWatchs(md, array, collection_name) {
+	if (md.nes_match_index && md.nes_match_index[collection_name]) {
+		// console.log('match!', collection_name);
+		var nwats = md.nes_match_index[collection_name];
+		if (Array.isArray(array)) {
+			for (var i = 0; i < array.length; i++) {
+				if (!array[i]) continue;
+				addNestWatchs(array[i], nwats);
+			}
+		} else {
+			if (!array) return;
+			addNestWatchs(array, nwats);
+		}
+	}
+}
+
+function checkChangedNestWatchs(md, collection_name) {
+	if (md.nes_match_index && md.nes_match_index[collection_name]) {
+		// console.log('match!', collection_name);
+		var nwats = md.nes_match_index[collection_name];
+
+		var result = [];
+		for (var i = 0; i < nwats.length; i++) {
+			var cur = nwats[i].nwatch;
+			if (cur.items_changed) {
+				result.push(cur);
+				// console.log(cur.selector, cur);
+			}
+			
+		}
+
+		return result.length && result;
+	}
+}
 
 
 add({
@@ -673,6 +816,22 @@ add({
 
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
+
+		checkNestWatchs(this, array, collection_name);
+		var changed_nawchs = checkChangedNestWatchs(this, collection_name);
+		//var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
+		var calls_flow = this._getCallsFlow();
+		if (changed_nawchs) {
+			for (var i = 0; i < changed_nawchs.length; i++) {
+				var cur = changed_nawchs[i];
+				
+				calls_flow.pushToFlow(null, null, null, cur, cur.handler, null, this.current_motivator);
+				
+			}
+			
+		}
+
+		
 		// !?
 		
 		
