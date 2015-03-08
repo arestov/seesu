@@ -1,6 +1,43 @@
 define(['spv'], function(spv) {
 'use strict';
 
+
+// function itself(item) {return item;}
+
+
+var NestWatch = function(selector, state_name, zin_func, full_name) {
+	this.selector = selector;
+	this.state_name = state_name;
+	this.full_name = full_name;
+	this.zin_func = zin_func;
+
+	if (full_name) {
+		this.final = function(new_state, old, source, target) {
+			debugger;
+		};
+	} else {
+		this.final = function() {
+			debugger;
+		};
+	}
+
+	this.state_nadler = state_name ? function(new_state, old, source, target) {
+		
+	} : null;
+	// если есть full_name значит нам надо записать новое состояние
+	// если нет, значит просто передать массив в пользовательскую функцию
+
+	// если есть state_name значит массив будет состоять не из моделей
+	// а из состояния этих моделей с соостветствующим названим
+
+
+	// if (cur.state_name) {
+	// 			md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
+	// 		} else {
+	// 			watchNestingAsState(md, cur.nesting_name, cur.full_name);
+	// 		}
+};
+
 var encoded_states = {};
 var enc_states = {
 	parent_count_regexp: /^\^+/gi,
@@ -29,19 +66,16 @@ var enc_states = {
 			var nesting_name = parts.pop();
 			var state_name = parts.pop();
 			var zin_func = parts.pop();
-			if (!zin_func) {
-				zin_func = function(list) {return list;};
-			}
 
 			encoded_states[string] = {
 				rel_type: 'nesting',
 				full_name: string,
 				nesting_name: nesting_name,
 				state_name: state_name,
-				zin_func: zin_func
+				zin_func: zin_func,
+				nwatch: new NestWatch(nesting_name.split('.'), state_name, zin_func, string)
 			};
 		}
-		
 
 		return encoded_states[string];
 	},
