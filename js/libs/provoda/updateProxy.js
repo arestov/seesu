@@ -256,7 +256,7 @@ function _triggerVipChanges(etr, i, state_name, value, zdsv) {
 	zdsv.abortFlowSteps('vip_stdch_ev', state_name);
 
 
-	var vip_cb_cs = etr.evcompanion.getMatchedCallbacks(vip_name).matched;
+	var vip_cb_cs = etr.evcompanion.getMatchedCallbacks(vip_name);
 	if (vip_cb_cs.length) {
 		var flow_steps = zdsv.createFlowStepsArray('vip_stdch_ev', state_name);
 		var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], etr);
@@ -280,8 +280,8 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 	var default_name = hp.getSTEVNameDefault( state_name );
 	var light_name = hp.getSTEVNameLight( state_name );
 
-	var default_cb_cs = etr.evcompanion.getMatchedCallbacks(default_name).matched;
-	var light_cb_cs = etr.evcompanion.getMatchedCallbacks(light_name).matched;
+	var default_cb_cs = etr.evcompanion.getMatchedCallbacks(default_name);
+	var light_cb_cs = etr.evcompanion.getMatchedCallbacks(light_name);
 	
 	if (light_cb_cs.length || default_cb_cs.length) {
 		var flow_steps = zdsv.createFlowStepsArray('stev', state_name);

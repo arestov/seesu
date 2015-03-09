@@ -2,7 +2,28 @@ define(['spv', 'hex_md5', './helpers', 'js/libs/morph_helpers'], function(spv, h
 'use strict';
 return function(main_calls_flow) {
 
-var ev_na_cache = {};
+
+
+var isEvNSMatching = (function() {
+	var check = function(listener_name, trigger_name) {
+		var last_char = listener_name.charAt(trigger_name.length);
+		return (!last_char || last_char == '.') && spv.startsWith(listener_name, trigger_name);
+	};
+
+	var ev_na_cache = {};
+
+	return function isEvNSMatching(listener_name, trigger_name) {
+			if (!ev_na_cache.hasOwnProperty(trigger_name)) {
+				ev_na_cache[trigger_name] = {};
+			}
+			var cac_space = ev_na_cache[trigger_name];
+			if (!cac_space.hasOwnProperty(listener_name)) {
+				cac_space[listener_name] = check(listener_name, trigger_name);
+			}
+			return cac_space[listener_name];
+
+		};
+})();
 
 var clean_obj = {};
 
@@ -95,6 +116,43 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 	return request;
 };
 
+
+var iterateSubsCache = function(func) {
+	return function(bhv, listener_name, obj) {
+		if (!bhv.subscribes_cache) {
+			return;
+		}
+		for (var trigger_name in bhv.subscribes_cache){
+			if (!bhv.subscribes_cache[trigger_name]){
+				continue;
+			}
+			if (isEvNSMatching( listener_name, trigger_name )){
+				bhv.subscribes_cache[trigger_name] = func(bhv.subscribes_cache[trigger_name], obj, listener_name);
+			}
+		}
+		return bhv.subscribes_cache;
+	};
+};
+
+
+var addToSubscribesCache = iterateSubsCache(function(matched, obj) {
+	var result = matched;
+	result.push(obj);
+	return result;
+});
+
+var removeFromSubscribesCache = iterateSubsCache(function(matched, obj) {
+	var pos = matched.indexOf(obj);
+	if (pos != -1) {
+		return spv.removeItem(matched, pos);
+	}
+});
+
+var resetSubscribesCache = iterateSubsCache(function() {
+	//fixme - bug for "state_change-workarea_width.song_file_progress" ( "state_change-workarea_width" stays valid, but must be invalid)
+	return null;
+});
+
 var FastEventor = function(context) {
 	this.sputnik = context;
 	this.subscribes = null;
@@ -118,7 +176,8 @@ FastEventor.prototype = {
 			this.subscribes[short_name] = [];
 		}
 		this.subscribes[short_name].push(opts);
-		this.resetSubscribesCache(short_name);
+		// resetSubscribesCache(this, opts.namespace);
+		addToSubscribesCache(this, opts.namespace, opts);
 	},
 	getPossibleRegfires: function(namespace) {
 		if (!this.reg_fires){
@@ -259,95 +318,62 @@ FastEventor.prototype = {
 		if (this.sputnik.convertEventName){
 			namespace = this.sputnik.convertEventName(namespace);
 		}
-		var
-			short_name = parseNamespace(namespace)[0],
-			queried = this.getMatchedCallbacks(namespace);
+		var short_name = parseNamespace(namespace)[0];
 
-		if (this.subscribes && this.subscribes[short_name]){
-			var clean = [];
-			if (cb || obj){
-				for (var i = 0; i < queried.matched.length; i++) {
-					var cur = queried.matched[i];
-					if (obj && obj == cur){
-						continue;
-					}
-					if (cb){
+		var items = this.subscribes && this.subscribes[short_name];
+
+		if (items){
+			if (obj) {
+				var pos = items.indexOf(obj);
+				if (pos != -1) {
+					this.subscribes[short_name] = spv.removeItem(items, pos);
+					removeFromSubscribesCache(this, obj.namespace, obj);
+					// resetSubscribesCache(this, obj.namespace);
+				}
+			} else {
+				var clean = [];
+				if (cb){
+					for (var i = 0; i < items.length; i++) {
+						var cur = items[i];
 						if (cur.cb == cb){
 							if (!context || cur.context == context){
 								continue;
 							}
-							
 						}
+						clean.push(items[i]);
 					}
-					clean.push(queried.matched[i]);
+				}
+
+				// losing `order by subscriging time` here 
+				// clean.push.apply(clean, queried.not_matched);
+
+				if (clean.length != this.subscribes[short_name].length){
+					this.subscribes[short_name] = clean;
+					resetSubscribesCache(this, short_name);
 				}
 			}
-			clean.push.apply(clean, queried.not_matched);
-			if (clean.length != this.subscribes[short_name].length){
-				this.subscribes[short_name] = clean;
-				this.resetSubscribesCache(short_name);
-			}
+			
 		}
 
 		return this.sputnik;
 	},
-	resetSubscribesCache: (function() {
-		var isEvNSMatching = function(cur_namespace, short_name) {
-			var last_char = cur_namespace.charAt(short_name.length);
-
-			return (!last_char || last_char == '.') && spv.startsWith(cur_namespace, short_name);
-		};
-
-		return function(short_name) {
-			if (!this.subscribes_cache) {
-				return;
-			}
-
-			//fixme - bug for "state_change-workarea_width.song_file_progress" ( "state_change-workarea_width" stays valid, but must be invalid)
-			for (var cur_namespace in this.subscribes_cache){
-				if (!this.subscribes_cache[cur_namespace]){
-					continue;
-				}
-				
-				if (isEvNSMatching( cur_namespace, short_name )){
-					this.subscribes_cache[cur_namespace] = null;
-				}
-			}
-		};
-	})(),
-	_empty_callbacks_package: {
-		matched: [],
-		not_matched: []
-	},
-
 	getMatchedCallbacks: (function() {
-		var isEvNSMatching = function(curn, namespace) {
-			var last_char = curn.charAt(namespace.length);
-			return (!last_char || last_char == '.') && spv.startsWith(curn, namespace);
-		};
+
+		var _empty_callbacks_package = [];
 
 		var find = function(namespace, cb_cs) {
-			var matched = [], not_matched = [];
-			if (!ev_na_cache[namespace]) {
-				ev_na_cache[namespace] = {};
-			}
-			var cac_space = ev_na_cache[namespace];
+			var matched = [];
 			for (var i = 0; i < cb_cs.length; i++) {
 				var curn = cb_cs[i].namespace;
-				var canbe_matched = cac_space[curn];
-				if (typeof canbe_matched == 'undefined') {
-					
-					canbe_matched = isEvNSMatching(curn, namespace);
-					cac_space[curn] = canbe_matched;
-				}
+				var canbe_matched = isEvNSMatching(curn, namespace);
+
 				if (canbe_matched){
 					matched.push(cb_cs[i]);
-				} else {
-					not_matched.push(cb_cs[i]);
 				}
 			}
-			return {matched: matched, not_matched: not_matched};
+			return matched;
 		};
+
 		return function(namespace){
 			if (this.sputnik.convertEventName){
 				namespace = this.sputnik.convertEventName(namespace);
@@ -369,7 +395,7 @@ FastEventor.prototype = {
 				}
 
 			} else {
-				return this._empty_callbacks_package;
+				return _empty_callbacks_package;
 			}
 
 			return r;
@@ -409,7 +435,7 @@ FastEventor.prototype = {
 		}
 	},
 	trigger: function(ev_name){
-		var cb_cs = this.getMatchedCallbacks(ev_name).matched;
+		var cb_cs = this.getMatchedCallbacks(ev_name);
 		if (cb_cs){
 			var i = 0;
 			var args = new Array(arguments.length - 1);

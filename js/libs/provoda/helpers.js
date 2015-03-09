@@ -84,7 +84,7 @@ function getBwlevId(view) {
 
 return {
 	triggerDestroy: function(md) {
-		var array = md.evcompanion.getMatchedCallbacks('die').matched;
+		var array = md.evcompanion.getMatchedCallbacks('die');
 		if (array.length) {
 			md.evcompanion.triggerCallbacks(array, false, emergency_opt, 'die');
 		}

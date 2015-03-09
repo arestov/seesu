@@ -679,7 +679,7 @@ add({
 
 		var full_ev_name = hp.getFullChilChEvName(collection_name);
 
-		var chch_cb_cs = this.evcompanion.getMatchedCallbacks(full_ev_name).matched;
+		var chch_cb_cs = this.evcompanion.getMatchedCallbacks(full_ev_name);
 		
 		if (chch_cb_cs.length) {
 			if (!this.zdsv) {
