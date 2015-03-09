@@ -2,7 +2,7 @@ define(['spv'], function(spv) {
 'use strict';
 
 
-// function itself(item) {return item;}
+function itself(item) {return item;}
 
 
 var NestWatch = function(selector, state_name, zin_func, full_name) {
@@ -72,7 +72,7 @@ var enc_states = {
 				full_name: string,
 				nesting_name: nesting_name,
 				state_name: state_name,
-				zin_func: zin_func,
+				zin_func: zin_func || itself,
 				nwatch: new NestWatch(nesting_name.split('.'), state_name, zin_func, string)
 			};
 		}
