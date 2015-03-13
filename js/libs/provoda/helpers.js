@@ -5,37 +5,12 @@ define(['spv'], function(spv) {
 function itself(item) {return item;}
 
 
-var NestWatch = function(selector, state_name, zin_func, full_name) {
+var NestWatch = function(selector, state_name, zin_func, full_name, handler) {
 	this.selector = selector;
 	this.state_name = state_name;
 	this.full_name = full_name;
 	this.zin_func = zin_func;
-
-	if (full_name) {
-		this.final = function(new_state, old, source, target) {
-			debugger;
-		};
-	} else {
-		this.final = function() {
-			debugger;
-		};
-	}
-
-	this.state_nadler = state_name ? function(new_state, old, source, target) {
-		
-	} : null;
-	// если есть full_name значит нам надо записать новое состояние
-	// если нет, значит просто передать массив в пользовательскую функцию
-
-	// если есть state_name значит массив будет состоять не из моделей
-	// а из состояния этих моделей с соостветствующим названим
-
-
-	// if (cur.state_name) {
-	// 			md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
-	// 		} else {
-	// 			watchNestingAsState(md, cur.nesting_name, cur.full_name);
-	// 		}
+	this.handler = handler;
 };
 
 var encoded_states = {};
@@ -117,6 +92,13 @@ function getBwlevId(view) {
 }
 
 return {
+	NestWatch: NestWatch,
+	state: function(item, state_name) {
+		if (item._lbr && item._lbr.undetailed_states) {
+			return item._lbr.undetailed_states[state_name];
+		}
+		return item.states[state_name];
+	},
 	triggerDestroy: function(md) {
 		var array = md.evcompanion.getMatchedCallbacks('die');
 		if (array.length) {

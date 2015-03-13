@@ -13,6 +13,10 @@ var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, p
 	this.real_context = real_context;
 	this.complex_order = ( parent_motivator && parent_motivator.complex_order.slice() ) || [];
 	this.complex_order.push(this.num);
+
+	if (!this.fn && !this.cb_wrapper) {
+		throw new Error('how to handle this step!?');
+	}
 	//this.custom_order = null;
 };
 FlowStep.prototype.abort = function() {

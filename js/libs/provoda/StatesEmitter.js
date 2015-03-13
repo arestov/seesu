@@ -301,6 +301,10 @@ add({
 		this.collectCompxs(props);
 		this.collectRegFires(props);
 
+		if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
+			this.nest_match = (this.st_nest_matches || []).concat(this.compx_nest_matches || []);
+		}
+
 		var base_tree_mofified;
 		if (props.hasOwnProperty('base_tree')) {
 			base_tree_mofified = true;
@@ -538,9 +542,9 @@ add({
 					var cur = list[i];
 					
 					if (cur.state_name) {
-						md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
+						// md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
 					} else {
-						watchNestingAsState(md, cur.nesting_name, cur.full_name);
+						// watchNestingAsState(md, cur.nesting_name, cur.full_name);
 					}
 					
 					
@@ -580,7 +584,7 @@ add({
 
 		*/
 
-		this.nest_match = [];
+		this.compx_nest_matches = []
 
 		var states_of_parent = {};
 		var states_of_nesting = {};
@@ -600,7 +604,7 @@ add({
 					} else  if (parsing_result.rel_type == 'nesting') {
 						if (!states_of_nesting[state_name]) {
 							states_of_nesting[state_name] = parsing_result;
-							this.nest_match.push( parsing_result.nwatch );
+							this.compx_nest_matches.push( parsing_result.nwatch );
 							
 							// debugger;
 						}

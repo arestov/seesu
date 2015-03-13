@@ -98,24 +98,8 @@ pv = provoda = {
 			mpx.updateState(state_name, state_value, opts);
 		}
 	},
-	state: function(item, state_name) {
-		if (item._lbr && item._lbr.undetailed_states) {
-			return item._lbr.undetailed_states[state_name];
-		}
-		return item.states[state_name];
-	},
-	update: function(md, state_name, state_value, opts) {
-		/*if (state_name.indexOf('-') != -1 && console.warn){
-			console.warn('fix prop state_name: ' + state_name);
-		}*/
-		if (md.hasComplexStateFn(state_name)){
-			throw new Error("you can't change complex state in this way");
-		}
-		return updateProxy(md, [state_name, state_value], opts);
-
-
-		// md.updateState(state_name, state_value, opts);
-	},
+	update: updateProxy.update,
+	state: hp.state,
 	behavior: function(declr, declr_extend_from, named) {
 		var behaviorFrom = declr_extend_from || pv.Model;
 		var func = named || function() {};
