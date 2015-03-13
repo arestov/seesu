@@ -267,8 +267,8 @@ function _triggerVipChanges(etr, i, state_name, value, zdsv) {
 	}
 }
 
-function triggerLegacySChEv(etr, state_name, value, zdsv, default_cb_cs, default_name, flow_steps) {
-	var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], etr);
+function triggerLegacySChEv(etr, state_name, value, old_value, default_cb_cs, default_name, flow_steps) {
+	var event_arg = new PVStateChangeEvent(state_name, value, old_value, etr);
 			//вызов стандартного события
 	etr.evcompanion.triggerCallbacks(default_cb_cs, false, st_event_opt, default_name, event_arg, flow_steps);
 }
@@ -276,6 +276,18 @@ function triggerLegacySChEv(etr, state_name, value, zdsv, default_cb_cs, default
 function _triggerStChanges(etr, i, state_name, value, zdsv) {
 
 	zdsv.abortFlowSteps('stev', state_name);
+
+
+	var links = etr.states_links && etr.states_links[state_name];
+	if (links) {
+		for (var k = 0; k < links.length; k++) {
+			var cur = links[k];
+			// var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
+			var calls_flow = etr._getCallsFlow();
+			calls_flow.pushToFlow(null, null, [value, zdsv.original_states[state_name], etr, cur], cur, cur.state_handler, null, etr.current_motivator);
+			
+		}
+	}
 
 	var default_name = hp.getSTEVNameDefault( state_name );
 	var light_name = hp.getSTEVNameLight( state_name );
@@ -291,7 +303,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 		}
 
 		if (default_cb_cs.length) {
-			triggerLegacySChEv(etr, state_name, value, zdsv, default_cb_cs, default_name, flow_steps);
+			triggerLegacySChEv(etr, state_name, value, zdsv.original_states[state_name], default_cb_cs, default_name, flow_steps);
 		}
 
 		if (flow_steps) {
@@ -300,10 +312,22 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 
 	}
 
-
+	// states_links
 
 }
 
+updateProxy.update = function(md, state_name, state_value, opts) {
+	/*if (state_name.indexOf('-') != -1 && console.warn){
+		console.warn('fix prop state_name: ' + state_name);
+	}*/
+	if (md.hasComplexStateFn(state_name)){
+		throw new Error("you can't change complex state in this way");
+	}
+	return updateProxy(md, [state_name, state_value], opts);
+
+
+	// md.updateState(state_name, state_value, opts);
+};
 
 return updateProxy;
 });

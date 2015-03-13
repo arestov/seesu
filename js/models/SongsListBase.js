@@ -93,6 +93,7 @@ define(['pv', 'spv'], function(pv, spv){
 	var findWTPS = getFindSomeFunc(function(item) {
 		return item && item.state('want_to_play');
 	});
+
 	var hndChangedWantPlay = function(e) {
 		if (!e.item) {
 			var item = findWTPS(e.items);
@@ -104,12 +105,12 @@ define(['pv', 'spv'], function(pv, spv){
 				this.idx_wplay_song = null;
 			}
 		}
-		
 	};
 
 	var findMPSS = getFindSomeFunc(function(item) {
 		return item && item.state('mp_show');
 	});
+
 	var hndChangedMPShow = function(e) {
 		if (!e.item) {
 			var item = findMPSS(e.items);
@@ -444,6 +445,12 @@ define(['pv', 'spv'], function(pv, spv){
 		],
 		'stch-pl-shuffle': function() {
 			checkNeighboursStatesCh(this);
+		},
+		'stch-player_song@songs-list': function(new_state, old, source, target) {
+			if (new_state) {
+				debugger;
+			}
+			
 		},
 		bindStaCons: function() {
 			this._super();

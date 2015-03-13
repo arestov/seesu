@@ -1,4 +1,4 @@
-define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclaredNestings'], function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings) {
+define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclaredNestings', './updateProxy'], function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, updateProxy) {
 'use strict';
 return function(StatesEmitter, big_index, views_proxies, sync_sender) {
 var push = Array.prototype.push;
@@ -207,6 +207,17 @@ var changeSourcesByApiNames = function(md, store) {
 };
 
 
+var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
+	if (string.indexOf('@') == -1) {
+		return false;
+	}
+	var parts = string.split('@');
+	return {
+		state: parts[0],
+		selector: parts[1].split('.')
+	};
+});
+
 
 var models_counters = 1;
 function Model(){}
@@ -258,19 +269,47 @@ add({
 		
 	},
 	collectStateChangeHandlers: (function() {
-		var getUnprefixed = spv.getDeprefixFunc( 'stch-', true );
+		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+		var NestWatch = hp.NestWatch;
 		return function(props) {
 			var need_recalc = false;
-			if (this.hasOwnProperty('state_change')){
-				need_recalc = true;
-			} else {
-				need_recalc = hasPrefixedProps(props);
 
+			if (props.state_change || hasPrefixedProps(props)) {
+				need_recalc = true;
 			}
+
 			if (!need_recalc){
 				return;
 			}
+
+			var index = {};
+
+			for (var lprop in this.state_change) {
+				index[lprop] = this.state_change[lprop];
+			}
+
+			for (var prop_name in this) {
+				if (getUnprefixed(prop_name)) {
+					var string = getUnprefixed(prop_name);
+					index[string] = this[prop_name];
+				}
+			}
+
+			this.st_nest_matches = [];
+
+			for (var stname in index) {
+				if (!index[stname]) {continue;}
+
+				var nw_draft2 = getParsedStateChange(stname);
+				if (!nw_draft2) { continue; }
+
+				this.st_nest_matches.push(
+					new NestWatch(nw_draft2.selector, nw_draft2.state, null, null, index[stname])
+				);
+
+			}
+
 			this._has_stchs = true;
 		};
 	})(),
@@ -468,11 +507,23 @@ add({
 	init: (function() {
 		var lw_count = 0;
 		var buildItems = function(lnwatch) {
+			if (!lnwatch.items_changed) {return;}
 			lnwatch.items_changed = false;
+
+			if (lnwatch.items) {
+				lnwatch.items.length = 0;
+			}
+
+			if (lnwatch.one_item_mode) {
+				return lnwatch;
+			}
+
 			if (!lnwatch.items) {
 				lnwatch.items = [];
 			}
-			lnwatch.items.length = 0;
+			
+
+			
 
 			for (var provoda_id in lnwatch.items_index) {
 				if (!lnwatch.items_index[provoda_id]) {
@@ -482,21 +533,177 @@ add({
 			}
 			return lnwatch;
 		};
-		var wrapper = function(motivator, fn, context, args, lnwatch) {
-			buildItems(lnwatch);
-			console.log(lnwatch.selector, lnwatch, lnwatch.items);
+
+		var pvState = hp.state;
+		var pvUpdate = updateProxy.update;
+
+		var stateOf = spv.memorize(function(state_name) {
+			return function(md) {
+				return pvState(md, state_name);
+			};
+		});
+
+		var stateG = function(callback) {
+			return function(state_name) {
+				return callback(stateOf(state_name));
+			};
 		};
+
+		var toZipFunc = function(toValue) {
+			return spv.memorize(stateG(toValue));
+		};
+
+		var map = toZipFunc(function(state) {
+			return function(array) {
+				return array && array.map(state);
+			};
+		});
+
+		var some = toZipFunc(function(state) {
+			return function(array) {
+				return array.some(state);
+			};
+		});
+
+		var every = toZipFunc(function(state) {
+			return function(array) {
+				return array.every(state);
+			};
+		});
+
+		var one = toZipFunc(function(state) {
+			return function(array) {
+				return array[0] && state(array[0]);
+			};
+		});
+
+		var arrayClone = function(array) {
+			if (Array.isArray(array)) {
+				return array.slice(0);
+			} else {
+				return array;
+			}
+		};
+
+
+		var getZipFunc = spv.memorize(function(state_name, zip_name) {
+			if (!state_name) {
+				return arrayClone;
+			}
+
+			if (!zip_name) {
+				return map(state_name);
+			} else {
+				switch (zip_name) {
+					case 'one': {
+						return one(state_name);
+					}
+					case 'some': {
+						return some(state_name);
+					}
+					case 'every': {
+						return every(state_name);
+					}
+					default: {
+						throw new Error('unknow zip func ' + zip_name);
+					}
+				} 
+			}
+		}, function(state_name, zip_name) {
+			return (state_name || "") + '-' + (zip_name || "");
+		});
+
+		function hdkey(full_name, state_name, zip_func) {
+			return (full_name || '') + '-' + (state_name || '') + '-' + (zip_func || '');
+		}
+
+		function standart(callback) {
+			return function standart(motivator, fn, context, args, lnwatch) {
+				buildItems(lnwatch);
+				var md = lnwatch.md;
+				var old_value = md.current_motivator;
+				md.current_motivator = motivator;
+
+				var items = lnwatch.one_item_mode ? ( lnwatch.state_name ? [lnwatch.one_item] : lnwatch.one_item ) : lnwatch.items;
+
+				callback(md, items, lnwatch, args, motivator, fn, context);
+
+				md.current_motivator = old_value;
+			};
+		}
+
+		var wrapper = standart(function wrapper(md, items, lnwatch) {
+			var callback = lnwatch.callback;
+			callback(null, null, {
+				items: items,
+				item: null
+			}, md);
+		});
+
+		var getStateWriter = spv.memorize(function(full_name, state_name, zip_name) {
+			var zip_func = getZipFunc(state_name, zip_name);
+			return standart(function stateHandler(md, items) {
+				pvUpdate(md, full_name, items && zip_func(items));
+			});
+		}, hdkey);
+
+
+		var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) {
+			if (!args.length) {return;}
+			var callback = lnwatch.callback;
+			callback(args[0], args[1], {
+				items: items,
+				item: args[2]
+			}, md);
+		});
+
+		
 
 		var LocalWatchRoot = function(md, nwatch) {
 			this.num = ++lw_count;
 			this.selector = nwatch.selector;
+
+			var full_name = nwatch.full_name;
 			this.md = md;
 			this.state_name = nwatch.state_name;
 			// this.itemChange = handler;
 			this.items_changed = false;
 			this.items_index = null;
 			this.items = null;
-			this.handler = wrapper;
+			this.one_item = null;
+			this.one_item_mode = false;
+
+			this.state_handler = nwatch.state_handler;
+			this.zip_name = nwatch.zin_func;
+			this.distance = 0;
+			this.callback = nwatch.handler;
+
+			// если есть full_name значит нам надо записать новое состояние
+			// если нет, значит просто передать массив в пользовательскую функцию
+			var full_name_handler = full_name && getStateWriter(full_name, this.state_name, this.zip_name);
+
+			this.state_handler = this.state_name ? ( full_name ? full_name_handler : stateHandler) : null;
+
+			this.handler = full_name ? full_name_handler : wrapper;
+
+			if (!full_name) {
+				// debugger;
+			}
+
+			if (!this.handler) {
+				// debugger;
+			}
+			
+
+			// если есть state_name значит массив будет состоять не из моделей
+			// а из состояния этих моделей с соостветствующим названим
+
+
+			// if (cur.state_name) {
+			// 			md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
+			// 		} else {
+			// 			watchNestingAsState(md, cur.nesting_name, cur.full_name);
+			// 		}
 
 			this.nwatch = nwatch;
 		};
@@ -517,6 +724,7 @@ add({
 			this._super();
 
 			this.req_order_field = null;
+			this.states_links = null;
 
 			this._provoda_id = models_counters++;
 			big_index[this._provoda_id] = this;
@@ -569,6 +777,19 @@ add({
 	})(),
 	removeNestWatch: function(nwatch, skip) {
 		if (nwatch.selector.length == skip) {
+			if (!nwatch.items_index) {
+				return;
+			}
+
+			nwatch.items_index[this._provoda_id] = null;
+			nwatch.items_changed = true;
+			if (nwatch.one_item_mode && nwatch.one_item == this) {
+				nwatch.one_item = null;
+			}
+
+			if (this.states_links && this.states_links[nwatch.state_name]) {
+				this.states_links[nwatch.state_name] = spv.findAndRemoveItem(this.states_links[nwatch.state_name], nwatch);
+			}
 			// console.log('full match!', this, nwa);
 		} else {
 			var nesting_name = nwatch.selector[skip];
@@ -595,6 +816,16 @@ add({
 			}
 			nwatch.items_index[this._provoda_id] = this;
 			nwatch.items_changed = true;
+			if (nwatch.one_item_mode) {
+				nwatch.one_item = this;
+			}
+			if (!this.states_links) {
+				this.states_links = {};
+			}
+			if (!this.states_links[nwatch.state_name]) {
+				this.states_links[nwatch.state_name] = [];
+			}
+			this.states_links[nwatch.state_name].push(nwatch);
 			
 		} else {
 			if (!this.nes_match_index) {
@@ -607,13 +838,14 @@ add({
 			}
 			this.nes_match_index[nesting_name].push({
 				nwatch: nwatch,
+
 				skip: skip
 			});
 			
 
 			if (this.children_models) {
 				for (var nesting_name in this.children_models) {
-					checkNestWatchs(this, this.children_models[nesting_name], nesting_name);
+					checkNestWatchs(this, nesting_name, this.children_models[nesting_name]);
 				}
 			}
 		}
@@ -707,28 +939,44 @@ var passCollectionsChange = function(e) {
 };
 
 
-var addNestWatchs = function(item, array) {
+var removeNestWatchs = function(item, array, one) {
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			cur.nwatch.one_item_mode = !!one;
+			item.removeNestWatch(cur.nwatch, cur.skip + 1);
+		}
+};
+
+var addNestWatchs = function(item, array, one) {
 	for (var i = 0; i < array.length; i++) {
 		var cur = array[i];
+		cur.nwatch.one_item_mode = !!one;
 		item.addNestWatch(cur.nwatch, cur.skip + 1);
-		// item: nwa,
-		// 	skip: skip
-		// array[i];
 	}
 };
 
-function checkNestWatchs(md, array, collection_name) {
+function checkNestWatchs(md, collection_name, array, removed) {
 	if (md.nes_match_index && md.nes_match_index[collection_name]) {
 		// console.log('match!', collection_name);
 		var nwats = md.nes_match_index[collection_name];
+
+		if (Array.isArray(removed)) {
+			for (var i = 0; i < removed.length; i++) {
+				if (!removed[i]) {continue;}
+				removeNestWatchs(removed[i], nwats);
+			}
+		} else if (removed){
+			removeNestWatchs(array, nwats, true);
+		}
+
+
 		if (Array.isArray(array)) {
 			for (var i = 0; i < array.length; i++) {
-				if (!array[i]) continue;
+				if (!array[i]) {continue;}
 				addNestWatchs(array[i], nwats);
 			}
-		} else {
-			if (!array) return;
-			addNestWatchs(array, nwats);
+		} else if(array) {
+			addNestWatchs(array, nwats, true);
 		}
 	}
 }
@@ -817,7 +1065,18 @@ add({
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
 
-		checkNestWatchs(this, array, collection_name);
+		if (old_value && array) {
+			var arr1 = Array.isArray(old_value);
+			var arr2 = Array.isArray(array);
+			if (arr1 != arr2) {
+				throw new Error('nest type must be stable');
+			}
+		}
+
+		var removed = hp.getRemovedNestingItems(array, old_value);
+
+		checkNestWatchs(this, collection_name, array, removed);
+
 		var changed_nawchs = checkChangedNestWatchs(this, collection_name);
 		//var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
 		var calls_flow = this._getCallsFlow();
@@ -880,7 +1139,6 @@ add({
 
 
 		if (!opts || !opts.skip_report){
-			var removed = hp.getRemovedNestingItems(array, old_value);
 			this.sendCollectionChange(collection_name, array, old_value, removed);
 		}
 
