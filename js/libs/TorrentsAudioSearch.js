@@ -107,6 +107,7 @@ var getTorrentFile = function(raw, torrent, torrent_api) {
 		}
 	};
 };
+var isDepend = pv.utils.isDepend;
 
 var Torrent = function() {};
 pv.Model.extendTo(Torrent, {
@@ -121,7 +122,7 @@ pv.Model.extendTo(Torrent, {
 		['file_data-for-song_file', 'list_loaded', 'files_list-for-search', 'invalid'],
 		function(file_data, list_loaded, files_list, invalid) {
 			if (invalid) {return false;}
-			return this.utils.isDepend(file_data) || (!list_loaded && this.utils.isDepend(files_list));
+			return isDepend(file_data) || (!list_loaded && isDepend(files_list));
 		}
 	],
 	'state-progress_info': [

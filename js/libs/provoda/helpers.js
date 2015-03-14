@@ -93,6 +93,24 @@ function getBwlevId(view) {
 
 return {
 	NestWatch: NestWatch,
+	getRDep: (function() {
+		var getTargetName = spv.memorize(function getTargetName(state_name) {
+			return state_name.split( ':' )[ 1 ];
+		});
+
+		return function(state_name) {
+			var target_name = getTargetName(state_name);
+			return function(state, oldstate) {
+				if (oldstate) {
+					oldstate.setStateDependence(target_name, this, false);
+				}
+				if (state) {
+					state.setStateDependence(target_name, this, true);
+				}
+			};
+		};
+
+	})(),
 	state: function(item, state_name) {
 		if (item._lbr && item._lbr.undetailed_states) {
 			return item._lbr.undetailed_states[state_name];

@@ -849,11 +849,7 @@ add({
 		}
 		this._updateProxy(changes_list);
 	},
-	utils: {
-		isDepend: function(obj) {
-			return obj && !!obj.count;
-		}
-	},
+
 	updateState: function(state_name, value, opts){
 		/*if (state_name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop state_name: ' + state_name);
@@ -863,24 +859,6 @@ add({
 		}
 		return this._updateProxy([state_name, value], opts);
 	},
-	hndRDep: (function() {
-		var cache = {};
-		var getTargetName = function(state_name) {
-			if (!cache[state_name]) {
-				cache[state_name] = state_name.split( ':' )[ 1 ];
-			}
-			return cache[state_name];
-		};
-		return function(state, oldstate, state_name) {
-			var target_name = getTargetName(state_name);
-			if (oldstate) {
-				oldstate.setStateDependence(target_name, this, false);
-			}
-			if (state) {
-				state.setStateDependence(target_name, this, true);
-			}
-		};
-	})(),
 	setStateDependence: function(state_name, source_id, value) {
 		if (typeof source_id == 'object') {
 			source_id = source_id._provoda_id;

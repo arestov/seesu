@@ -1,7 +1,7 @@
 define(['pv', 'spv', 'jquery', './../PlayRequest'], function(pv, spv, $, PlayRequest) {
 "use strict";
 var counter = 0;
-
+var isDepend = pv.utils.isDepend;
 
 var playRelative = function(mo, result) {
 	if (result === true) {
@@ -177,7 +177,7 @@ pv.addPrototype("SongBase",{
 		'need_files': [
 			[ 'mp_show', 'want_to_play', 'next_preload_song-for-mp_show', 'next_preload_song-for-player_song', 'next_preload_song-for-very_wanted_play'],
 			function(mp_show, want_to_play, n_show, n_player_song, n_vvsong) {
-				return mp_show || want_to_play || this.utils.isDepend(n_show) || this.utils.isDepend(n_player_song) || this.utils.isDepend(n_vvsong);
+				return mp_show || want_to_play || isDepend(n_show) || isDepend(n_player_song) || isDepend(n_vvsong);
 			}
 			/*
 
@@ -196,7 +196,7 @@ pv.addPrototype("SongBase",{
 		'preload_current_file': [
 			['next_preload_song-for-loaded_player_song'],
 			function(n_loaded_psong) {
-				return this.utils.isDepend(n_loaded_psong);
+				return isDepend(n_loaded_psong);
 			}
 		],
 		'load_current_file': [
@@ -206,10 +206,10 @@ pv.addPrototype("SongBase",{
 			}
 		]
 	},
-	'stch-$relation:next_preload_song-for-mp_show': pv.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song-for-player_song': pv.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song-for-very_wanted_play': pv.Model.prototype.hndRDep,
-	'stch-$relation:next_preload_song-for-loaded_player_song': pv.Model.prototype.hndRDep,
+	'stch-$relation:next_preload_song-for-mp_show': pv.getRDep('$relation:next_preload_song-for-mp_show'),
+	'stch-$relation:next_preload_song-for-player_song': pv.getRDep('$relation:next_preload_song-for-player_song'),
+	'stch-$relation:next_preload_song-for-very_wanted_play': pv.getRDep('$relation:next_preload_song-for-very_wanted_play'),
+	'stch-$relation:next_preload_song-for-loaded_player_song': pv.getRDep('$relation:next_preload_song-for-loaded_player_song'),
 
 	canUseAsNeighbour: function(){
 		return this.state('can-use-as-neighbour');

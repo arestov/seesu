@@ -29,7 +29,7 @@ var album_placeholder = {
 				return can_load_songcard && songcard;
 			}
 		],
-		'stch-$relation:songcard-for-active_song': pv.Model.prototype.hndRDep,
+		'stch-$relation:songcard-for-active_song': pv.getRDep('$relation:songcard-for-active_song'),
 
 		'stch-can_load_baseinfo': function(state) {
 			if (state){

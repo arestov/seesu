@@ -501,9 +501,9 @@ LoadableList.extendTo(MfCor, {
 			return need_files && files_investg;
 		}
 	],
-	'stch-$relation:investg_to_load-for-song_need': pv.Model.prototype.hndRDep,
-	'stch-$relation:file_to_load-for-player_song': pv.Model.prototype.hndRDep,
-	'stch-$relation:file_to_load-for-preload_current_file': pv.Model.prototype.hndRDep,
+	'stch-$relation:investg_to_load-for-song_need': pv.getRDep('$relation:investg_to_load-for-song_need'),
+	'stch-$relation:file_to_load-for-player_song': pv.getRDep('$relation:file_to_load-for-player_song'),
+	'stch-$relation:file_to_load-for-preload_current_file': pv.getRDep('$relation:file_to_load-for-preload_current_file'),
 	
 	isSearchAllowed: function() {
 		return !this.file;
