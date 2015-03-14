@@ -166,7 +166,7 @@ pv.Model.extendTo(Torrent, {
 			};
 		}
 	],
-	'stch-invalid': function(state) {
+	'stch-invalid': function(target, state) {
 		if (state) {
 			disallowed_links[this.state('url')] = true;
 		}
@@ -214,7 +214,7 @@ pv.Model.extendTo(Torrent, {
 			};
 		}
 	],
-	'stch-torrent_required': function(state) {
+	'stch-torrent_required': function(target, state) {
 		var _this = this;
 		if (state ) {
 			clearTimeout(this.remove_timeout);

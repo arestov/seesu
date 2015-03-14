@@ -104,7 +104,7 @@ BrowseMap.Model.extendTo(UserCard, {
 		return this;
 	},
 	
-	/*'stch-mp_has_focus': function(state) {
+	/*'stch-mp_has_focus': function(target, state) {
 		if (state){
 			var list_to_preload = [
 				this.getNesting('vk__friends'),
@@ -207,7 +207,7 @@ BrowseMap.Model.extendTo(VkUserCard, {
 			}]
 		]
 	],
-	'stch-mp_has_focus': function(state) {
+	'stch-mp_has_focus': function(target, state) {
 		if (state){
 
 			this.requestState('first_name', 'last_name', 'photo', 'ava_image');
@@ -332,7 +332,7 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 			}]
 		]
 	],
-	'stch-mp_has_focus': function(state) {
+	'stch-mp_has_focus': function(target, state) {
 		if (state){
 			this.requestState('realname', 'country', 'age', 'gender');
 			var list_to_preload = [

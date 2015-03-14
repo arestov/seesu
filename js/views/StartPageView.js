@@ -55,32 +55,31 @@ coct.SPView.extendTo(StartPageView, {
 	},
 	state_change: {
 
-		"can_expand": function(state) {
+		"can_expand": function(target, state) {
 			if (state){
-				this.requirePart('start-page-blocks');
+				target.requirePart('start-page-blocks');
 			}
 		},
-		"ask-rating-help": function(link){
-			var _this = this;
+		"ask-rating-help": function(target, link){
 
 			if (link){
-				var spm_c = this.tpl.ancs['start-page-messages'];
-				this.message_arh_c = $('<div class="attention-message"></div>');
+				var spm_c = target.tpl.ancs['start-page-messages'];
+				target.message_arh_c = $('<div class="attention-message"></div>');
 
-				$("<a class='close-message'>×</a>").appendTo(this.message_arh_c).click(function() {
-					_this.RPCLegacy('closeMessage', 'rating-help');
+				$("<a class='close-message'>×</a>").appendTo(target.message_arh_c).click(function() {
+					target.RPCLegacy('closeMessage', 'rating-help');
 				});
 				$('<img class="message-image"/>').attr({
 					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
 					width: 100,
 					height: 126,
 					alt: "Gleb Arestov"
-				}).appendTo(this.message_arh_c);
+				}).appendTo(target.message_arh_c);
 
 
 				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
-				this.message_arh_c.append(spv.createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
-				spm_c.append(this.message_arh_c);
+				target.message_arh_c.append(spv.createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
+				spm_c.append(target.message_arh_c);
 
 				/*
 				
@@ -89,8 +88,8 @@ coct.SPView.extendTo(StartPageView, {
 				
 				*/
 			} else {
-				if (this.message_arh_c){
-					this.message_arh_c.remove();
+				if (target.message_arh_c){
+					target.message_arh_c.remove();
 				}
 			}
 		}

@@ -43,7 +43,7 @@ ShareSearchSection.extendTo(VkShareSectionView, {
 	children_views:{
 		vk_auth: etc_views.VkLoginUI
 	},
-	'stch-needs_vk_auth': function(state) {
+	'stch-needs_vk_auth': function(target, state) {
 		if (state){
 			this.tpl.ancs['vk_auth'].append(this.getAFreeCV('vk_auth'));
 			this.requestAll();
@@ -102,15 +102,15 @@ pv.View.extendTo(ShareRowUI, {
 	focusToInput: function() {
 		this.tpl.ancs['share_input'][0].focus();
 	},
-	"stch-active_view": function(state){
+	"stch-active_view": function(target, state){
 		if (state){
-			if (this.expand){
-				this.expand();
+			if (target.expand){
+				target.expand();
 			}
 		}
 
 		if (state){
-			this.nextLocalTick(this.focusToInput);
+			target.nextLocalTick(target.focusToInput);
 		}
 	},
 	expand: function(){
@@ -210,12 +210,12 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	getVBarWidth: function() {
 		return this.tpl.ancs['v-bar'].width();
 	},
-	'stch-key_vol_hole_w': function(value) {
+	'stch-key_vol_hole_w': function(target, value) {
 		if (value) {
 			pv.update(this, 'vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
 		}
 	},
-	'stch-vis_volume-hole-width': function(state) {
+	'stch-vis_volume-hole-width': function(target, state) {
 		if (state) {
 			this.updateManyStates({
 				'v-bar-o-width': this.getBoxDemension(this.getVBarOuterWidth, 'v-bar-o-width'),

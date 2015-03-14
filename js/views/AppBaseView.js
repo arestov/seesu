@@ -671,7 +671,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	},
 
 	transform_props: transform_props,
-	'stch-current_mp_bwlev': function() {
+	'stch-current_mp_bwlev': function(target) {
 
 		//map_level_num
 		//md.map_level_num
@@ -728,13 +728,12 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 			
 		}*/
-		var md = this.getNesting('current_mp_md');
-		var bwlev = this.getNesting('current_mp_bwlev');
+		var md = target.getNesting('current_mp_md');
+		var bwlev = target.getNesting('current_mp_bwlev');
 
-		var _this = this;
 		setTimeout(function() {
-			if (!_this.isAlive()){
-				_this = null;
+			if (!target.isAlive()){
+				target = null;
 				return;
 			}
 
@@ -742,15 +741,15 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
-				// var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(_this, false, false, true);
-				var mplev_item_view = _this.getMapSliceChildInParenView(bwlev, md);
+				// var mplev_item_view = target.getStoredMpx(md).getRooConPresentation(target, false, false, true);
+				var mplev_item_view = target.getMapSliceChildInParenView(bwlev, md);
 				var con = mplev_item_view && mplev_item_view.getC();
 				if (con && con.height()){
-					_this.scrollTo(mplev_item_view.getC(), {
-						node: _this.getLevByNum(md.map_level_num - 1).scroll_con
+					target.scrollTo(mplev_item_view.getC(), {
+						node: target.getLevByNum(md.map_level_num - 1).scroll_con
 					}, {vp_limit: 0.4, animate: 117});
 				} else {
-					_this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
+					target.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
 				}
 			}
 		}, 150);
@@ -913,13 +912,13 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 		place: 'nav.daddy'
 	},
 
-	'stch-full_page_need': function(state) {
+	'stch-full_page_need': function(target, state) {
 		this.els.screens.toggleClass('full_page_need', !!state);
 	},
-	'stch-root-lev-search-form': function(state) {
+	'stch-root-lev-search-form': function(target, state) {
 		this.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
-	'stch-show_search_form': function(state) {
+	'stch-show_search_form': function(target, state) {
 		if (!state){
 			this.search_input[0].blur();
 		}

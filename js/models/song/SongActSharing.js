@@ -115,7 +115,7 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 			});
 		}
 	},
-	'stch-can_search_friends': function(state) {
+	'stch-can_search_friends': function(target, state) {
 		if (state){
 			this.searchByQuery(this.state('query'));
 		}

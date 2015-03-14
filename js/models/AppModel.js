@@ -223,10 +223,10 @@ AppModelBase.extendTo(AppModel, {
 		}
 		pv.update(this, 'search_query', query);
 	},
-	'stch-search_request_freshness': function() {
-		var query = this.state('search_query');
+	'stch-search_request_freshness': function(target) {
+		var query = target.state('search_query');
 		if (query) {
-			this.showResultsPage(query);
+			target.showResultsPage(query);
 		}
 
 	},

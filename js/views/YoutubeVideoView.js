@@ -7,7 +7,7 @@ coct.PageView.extendTo(YoutubeVideoView, {
 	createBase: function() {
 		this.c = $('<div class="youtube-video-page"></div>');
 	},
-	'stch-yt_id': function(state) {
+	'stch-yt_id': function(target, state) {
 		$(this.root_view.create_youtube_video(state)).appendTo(this.c);
 	}
 });

@@ -105,28 +105,28 @@ var VkLoginUI = function() {};
 
 pv.View.extendTo(VkLoginUI, {
 	state_change: {
-		'data_wait': function(state) {
+		'data_wait': function(target, state) {
 			if (state){
 				this.c.addClass("waiting-auth");
 			} else {
 				this.c.removeClass("waiting-auth");
 			}
 		},
-		"request_description": function(state) {
+		"request_description": function(target, state) {
 			this.login_desc.text(state || "");
 		},
-		'deep_sandbox': function(state) {
+		'deep_sandbox': function(target, state) {
 			this.c.toggleClass('deep-sandbox', !!state);
 		}
 	},
 
-	'stch-has_notify_closer': function(state) {
+	'stch-has_notify_closer': function(target, state) {
 		this.c.toggleClass('has_notify_closer', !!state);
 	},
-	'stch-notify_readed': function(state) {
+	'stch-notify_readed': function(target, state) {
 		this.c.toggleClass('notf-readed', !!state);
 	},
-	'stch-has_session': function(state){
+	'stch-has_session': function(target, state){
 		if (!state){
 			this.c.removeClass("hidden");
 		} else {
@@ -176,24 +176,24 @@ pv.View.extendTo(VkLoginUI, {
 var LfmLoginView = function() {};
 
 pv.View.extendTo(LfmLoginView, {
-	'stch-has_session': function(state){
+	'stch-has_session': function(target, state){
 		if (!state){
 			this.c.removeClass("hidden");
 		} else {
 			this.c.addClass("hidden");
 		}
 	},
-	'stch-deep_sandbox': function(state){
+	'stch-deep_sandbox': function(target, state){
 		this.c.toggleClass('deep-sandbox', !!state);
 	},
-	'stch-data_wait': function(state) {
+	'stch-data_wait': function(target, state) {
 		if (state){
 			this.c.addClass("waiting-auth");
 		} else {
 			this.c.removeClass("waiting-auth");
 		}
 	},
-	'stch-request_description': function(state) {
+	'stch-request_description': function(target, state) {
 		this.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function() {
@@ -240,13 +240,13 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		
 	
 	},
-	"stch-has_session": function(state) {
+	"stch-has_session": function(target, state) {
 		state = !!state;
 		this.c.toggleClass('has_session', state);
 		this.auth_block.toggleClass('hidden', state);
 		this.nloveb.toggle(state);
 	},
-	"stch-wait_love_done": function(state){
+	"stch-wait_love_done": function(target, state){
 		this.c.toggleClass('wait_love_done', !!state);
 	}
 });
@@ -275,13 +275,13 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 			
 		});
 	},
-	"stch-has_session": function(state) {
+	"stch-has_session": function(target, state) {
 		state = !!state;
 		this.c.toggleClass('has_session', state);
 		this.auth_block.toggleClass('hidden', state);
 		this.chbx_enabl.add(this.chbx_disabl).prop('disabled', !state);
 	},
-	"stch-scrobbling": function(state) {
+	"stch-scrobbling": function(target, state) {
 		this.chbx_enabl.prop('checked', !!state);
 		this.chbx_disabl.prop('checked', !state);
 	}
@@ -338,17 +338,17 @@ pv.View.extendTo(ActionsRowUI, {
 			}
 		}
 	],
-	'stch-key-button_owidth': function(state) {
+	'stch-key-button_owidth': function(target, state) {
 		if (state) {
 			pv.update(this, 'button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
 		}
 	},
-	'stch-key-button_offset': function(state) {
+	'stch-key-button_offset': function(target, state) {
 		if (state) {
 			pv.update(this, 'button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
 		}
 	},
-	'stch-key-arrow_parent_offset': function(state) {
+	'stch-key-arrow_parent_offset': function(target, state) {
 		if (state) {
 			pv.update(this, 'arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
 		}

@@ -381,8 +381,8 @@ define(['pv', 'spv'], function(pv, spv){
 				return mp_show || want_be_played;
 			}
 		],
-		'stch-pl-shuffle': function() {
-			checkNeighboursStatesCh(this);
+		'stch-pl-shuffle': function(target) {
+			checkNeighboursStatesCh(target);
 		},
 		'stch-want_to_play@songs-list': function(target, new_state, old, source) {
 			if (!source.item) {
