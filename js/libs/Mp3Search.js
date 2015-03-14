@@ -539,7 +539,7 @@ var getMatchedSongs = function(music_list, msq) {
 	var updateNesting = pv.updateNesting;
 
 	var filterList = function(target_list_name, check) {
-		return function(newst, old, source, target) {
+		return function(target, newst, old, source) {
 			var result = [];
 			for (var i = 0; i < source.items.length; i++) {
 				if ( check( source.items[i] ) ) {

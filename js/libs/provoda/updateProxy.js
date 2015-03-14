@@ -284,7 +284,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 			var cur = links[k];
 			// var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
 			var calls_flow = etr._getCallsFlow();
-			calls_flow.pushToFlow(null, null, [value, zdsv.original_states[state_name], etr, cur], cur, cur.state_handler, null, etr.current_motivator);
+			calls_flow.pushToFlow(null, null, [cur, value, zdsv.original_states[state_name], etr], cur, cur.state_handler, null, etr.current_motivator);
 			
 		}
 	}

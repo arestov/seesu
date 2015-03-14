@@ -384,7 +384,7 @@ define(['pv', 'spv'], function(pv, spv){
 		'stch-pl-shuffle': function() {
 			checkNeighboursStatesCh(this);
 		},
-		'stch-want_to_play@songs-list': function(new_state, old, source, target) {
+		'stch-want_to_play@songs-list': function(target, new_state, old, source) {
 			if (!source.item) {
 				var item = findWTPS(source.items);
 				target.idx_wplay_song = item;
@@ -396,7 +396,7 @@ define(['pv', 'spv'], function(pv, spv){
 				}
 			}
 		},
-		'stch-player_song@songs-list': function(new_state, old, source, target) {
+		'stch-player_song@songs-list': function(target, new_state, old, source) {
 			if (!source.item) {
 				var item = findPS(source.items);
 				target.idx_player_song = item;
@@ -410,13 +410,13 @@ define(['pv', 'spv'], function(pv, spv){
 			pv.updateNesting(target, 'last_played_song', target.idx_player_song || target.getNesting('last_played_song'));
 			pv.update(target, 'last_played_song_start', Date.now());
 		},
-		'stch-can-use-as-neighbour@songs-list': function(new_state, old, source, target) {
+		'stch-can-use-as-neighbour@songs-list': function(target, new_state, old, source) {
 			if (!source.item) {
 				return;
 			}
 			checkNeighboursStatesCh(target, source.item);
 		},
-		'stch-is_important@songs-list': function(new_state, old, source, target) {
+		'stch-is_important@songs-list': function(target, new_state, old, source) {
 			if (!source.item) {
 				var array = findImportantSongs(source.items);
 				if (array) {
@@ -429,7 +429,7 @@ define(['pv', 'spv'], function(pv, spv){
 				checkImportant(target, source.item);
 			}
 		},
-		'stch-mp_show@songs-list': function(new_state, old, source, target) {
+		'stch-mp_show@songs-list': function(target, new_state, old, source) {
 			if (!source.item) {
 				var item = findMPSS(source.items);
 				target.idx_show_song = item;

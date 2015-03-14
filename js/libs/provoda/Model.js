@@ -272,6 +272,9 @@ add({
 		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 		var NestWatch = hp.NestWatch;
+
+		var thisT = /this\./gi;
+		
 		return function(props) {
 			var need_recalc = false;
 
@@ -301,6 +304,15 @@ add({
 			for (var stname in index) {
 				if (!index[stname]) {continue;}
 
+				//var b = thisT.test(index[stname]);
+
+				var aag =  index[stname].length > 2;
+
+				if (aag){
+
+					var fn = index[stname];
+					console.log(fn);
+				}
 
 				var nw_draft2 = getParsedStateChange(stname);
 				if (!nw_draft2) { continue; }
@@ -635,10 +647,10 @@ add({
 
 		var wrapper = standart(function wrapper(md, items, lnwatch) {
 			var callback = lnwatch.callback;
-			callback(null, null, {
+			callback(md, null, null, {
 				items: items,
 				item: null
-			}, md);
+			});
 		});
 
 		var getStateWriter = spv.memorize(function(full_name, state_name, zip_name) {
@@ -652,10 +664,10 @@ add({
 		var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) {
 			if (!args.length) {return;}
 			var callback = lnwatch.callback;
-			callback(args[0], args[1], {
+			callback(md, args[1], args[2], {
 				items: items,
-				item: args[2]
-			}, md);
+				item: args[3]
+			});
 		});
 
 		
