@@ -26,13 +26,13 @@ pv.View.extendTo(ListPreview, {
 
 		this.addWayPoint(button_area);
 	},
-	'stch-list_loading': function(state) {
+	'stch-list_loading': function(target, state) {
 		if (!this.tpl.ancs.listc) {
 			return;
 		}
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
-	'stch-mp_show': function(state) {
+	'stch-mp_show': function(target, state) {
 		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
 		node.toggleClass('button_selected', !!state);
 	},
@@ -89,7 +89,7 @@ pv.View.extendTo(SPView, {
 
 var PageView = function() {};
 SPView.extendTo(PageView, {
-	'stch-vmp_show': function(state) {
+	'stch-vmp_show': function(target, state) {
 		this.c.toggleClass('hidden', !state);
 	},
 	createBase: function() {
@@ -119,7 +119,7 @@ ListPreview.extendTo(ListSimplePreview, {
 			auth_block_vk: SoftVkLoginUI
 		}
 	},
-	'stch-pmd_vswitched': function(state) {
+	'stch-pmd_vswitched': function(target, state) {
 		this.c.toggleClass('access-request', state);
 	},
 	'collch-preview_list': {
@@ -198,7 +198,7 @@ pv.View.extendTo(AlbumsListPreviewItem, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
-	'stch-selected_image': function(lfm_wrap) {
+	'stch-selected_image': function(target, lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			var node = this.c[0];
@@ -226,7 +226,7 @@ pv.View.extendTo(BigAlbumPreview, {
 		sample_name: 'alb_prev_big'
 	},
 
-	'stch-selected_image': function(lfm_wrap) {
+	'stch-selected_image': function(target, lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			var node = this.tpl.ancs.imgc[0];

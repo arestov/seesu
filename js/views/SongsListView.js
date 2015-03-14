@@ -3,7 +3,7 @@ function(pv, $, SongUI, etc_views, coct) {
 	"use strict";
 	var PlaylistSettingsRowView = function(){};
 	pv.View.extendTo(PlaylistSettingsRowView, {
-		"stch-dont_rept_pl": function(state) {
+		"stch-dont_rept_pl": function(target, state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
 		bindBase: function() {

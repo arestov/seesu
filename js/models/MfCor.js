@@ -265,7 +265,7 @@ LoadableList.extendTo(MfCor, {
 			return !has_vk_tool && !has_any_vk_results;
 		}
 	],
-	'stch-needs_vk_auth': function(state) {
+	'stch-needs_vk_auth': function(target, state) {
 		if (state) {
 			this.notifier.addMessage('vk_audio_auth ');
 		} else {
@@ -442,15 +442,15 @@ LoadableList.extendTo(MfCor, {
 		}
 	},
 	state_change: {
-		"mopla_to_use": function(nmf, omf) {
+		"mopla_to_use": function(target, nmf, omf) {
 			if (nmf){
-				this.listenMopla(nmf);
+				target.listenMopla(nmf);
 			}
 		},
 		"selected_mopla": function() {
 
 		},
-		"current_mopla": function(nmf, omf) {
+		"current_mopla": function(target, nmf, omf) {
 			if (omf){
 				omf.stop();
 				omf.deactivate();
@@ -458,9 +458,9 @@ LoadableList.extendTo(MfCor, {
 			if (nmf){
 				nmf.activate();
 			}
-			pv.updateNesting(this, 'current_mopla', nmf);
+			pv.updateNesting(target, 'current_mopla', nmf);
 		},
-		"mopla_to_preload": function(nmf, omf){
+		"mopla_to_preload": function(target, nmf, omf){
 			if (omf){
 				//omf.removeCache();
 			}
@@ -468,7 +468,7 @@ LoadableList.extendTo(MfCor, {
 				//nmf.load();
 			}
 		},
-		"default_mopla": function(nmf, omf) {
+		"default_mopla": function(target, nmf, omf) {
 			
 		}
 

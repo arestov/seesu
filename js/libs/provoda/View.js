@@ -185,7 +185,7 @@ StatesEmitter.extendTo(View, {
 		
 
 	},
-	'stch-map_slice_view_sources': function(state) {
+	'stch-map_slice_view_sources': function(target, state) {
 		if (state) {
 			if (this.parent_view.parent_view == this.root_view && this.parent_view.nesting_name == 'map_slice') {
 				var arr = [];

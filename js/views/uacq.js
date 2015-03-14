@@ -13,12 +13,12 @@ pv.View.extendTo(UserAcquaintanceView, {
 		this.button_place = $('<div class="button-place-people-el"></div>').appendTo(li);
 		this.link_place = $('<div class="p-link-place"></div>').appendTo(li);
 	},
-	'stch-user_photo': function(state) {
+	'stch-user_photo': function(target, state) {
 		if (state){
 			this.userphoto_img.attr('src', state);
 		}
 	},
-	'stch-needs_accept_b': function(state) {
+	'stch-needs_accept_b': function(target, state) {
 		if (state){
 			if (!this.button_c){
 				var nb = this.root_view.createNiceButton();
@@ -40,7 +40,7 @@ pv.View.extendTo(UserAcquaintanceView, {
 		}
 	},
 
-	'stch-userlink': function(state) {
+	'stch-userlink': function(target, state) {
 		if (state){
 			if (!this.ulink){
 				this.ulink = $('<a class=""></a>').appendTo(this.link_place);
@@ -54,7 +54,7 @@ pv.View.extendTo(UserAcquaintanceView, {
 			}
 		}
 	},
-	'stch-after_accept_desc': function(state) {
+	'stch-after_accept_desc': function(target, state) {
 		if (state){
 			if (!this.af_ac_desc){
 				this.af_ac_desc = $('<span class="desc"></span>').appendTo(this.link_place);
@@ -111,7 +111,7 @@ pv.View.extendTo(UserAcqPreview, {
 		this.dom_related_props.push('userimg');
 
 	},
-	'stch-user_photo': function(state) {
+	'stch-user_photo': function(target, state) {
 		if (state){
 			this.userimg.attr('src', state);
 		}

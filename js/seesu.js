@@ -52,14 +52,14 @@ var chrome = window.chrome;
 var ChromeExtensionButtonView = function() {};
 pv.View.extendTo(ChromeExtensionButtonView, {
 	state_change: {
-		"playing": function(state) {
+		"playing": function(target, state) {
 			if (state){
 				chrome.browserAction.setIcon({path:"/icons/icon19p.png"});
 			} else {
 				chrome.browserAction.setIcon({path:"/icons/icon19.png"});
 			}
 		},
-		'now_playing': function(text) {
+		'now_playing': function(target, text) {
 			chrome.browserAction.setTitle({title: localize('now_playing','Now Playing') + ': ' + text});
 		}
 	}
@@ -67,15 +67,15 @@ pv.View.extendTo(ChromeExtensionButtonView, {
 var OperaExtensionButtonView = function() {};
 pv.View.extendTo(OperaExtensionButtonView, {
 	state_change: {
-		"playing": function(state) {
+		"playing": function(target, state) {
 			if (state){
-				this.opts.opera_ext_b.icon = "/icons/icon18p.png";
+				target.opts.opera_ext_b.icon = "/icons/icon18p.png";
 			} else {
-				this.opts.opera_ext_b.icon = "/icons/icon18.png";
+				target.opts.opera_ext_b.icon = "/icons/icon18.png";
 			}
 		},
-		'now_playing': function(text) {
-			this.opts.opera_ext_b.title = localize('now_playing','Now Playing') + ': ' + text;
+		'now_playing': function(target, text) {
+			target.opts.opera_ext_b.title = localize('now_playing','Now Playing') + ': ' + text;
 		}
 	}
 });

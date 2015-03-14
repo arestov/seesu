@@ -442,7 +442,7 @@ var getMatchedSongs = function(music_list, msq) {
 				}
 			]
 		},
-		'stch-request_required': function(state) {
+		'stch-request_required': function(target, state) {
 			if (state) {
 				this.startSearch();
 			}
@@ -613,9 +613,9 @@ var getMatchedSongs = function(music_list, msq) {
 				return isDepend(state);
 			}
 		],
-		'stch-must_load': function(state) {
+		'stch-must_load': function(target, state) {
 			if (state) {
-				this.startSearch();
+				target.startSearch();
 			}
 		},
 		createRelationsBinder: function() {

@@ -31,7 +31,7 @@ pv.View.extendTo(FanPreview, {
 			return !!(vis_image_loaded && selected_image);
 		}
 	},
-	'stch-selected_image': function(state) {
+	'stch-selected_image': function(target, state) {
 		var image_node = this.tpl.ancs['user-image'];
 		image_node.src = '';
 		var _this = this;
@@ -138,7 +138,7 @@ pv.View.extendTo(SongcardController, {
 			return div;
 		}
 	},
-	'stch-can_expand_listeners': function(state) {
+	'stch-can_expand_listeners': function(target, state) {
 		if (!this.expanded){
 			return;
 		}

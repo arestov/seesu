@@ -7,14 +7,14 @@ pv.View.extendTo(notifyCounterUI, {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
 	state_change: {
-		counter: function(state) {
+		counter: function(target, state) {
 			this.c.toggleClass('hidden', !state);
 		}
 	}
 });
 var FileIntorrentPromiseUI = function(){};
 pv.View.extendTo(FileIntorrentPromiseUI, {
-	'stch-infoHash': function(state) {
+	'stch-infoHash': function(target, state) {
 		this.c.text(state);
 	},
 	createBase: function(){
@@ -25,23 +25,23 @@ pv.View.extendTo(FileIntorrentPromiseUI, {
 var FileInTorrentUI = function() {};
 pv.View.extendTo(FileInTorrentUI,{
 	state_change: {
-		"download-pressed": function(state) {
+		"download-pressed": function(target, state) {
 			if (state){
 				this.downloadlink.addClass('download-pressed');
 			}
 		},
-		overstock: function(state) {
+		overstock: function(target, state) {
 			if (state){
 				this.c.addClass('overstocked');
 			} else {
 				this.c.removeClass('overstocked');
 			}
 		},
-		'full_title': function(state) {
+		'full_title': function(target, state) {
 			this.f_text.text(state);
 
 		},
-		'torrent_link': function(state) {
+		'torrent_link': function(target, state) {
 			this.downloadlink.attr('href', state);
 		}
 	},
@@ -76,7 +76,7 @@ pv.View.extendTo(SongFileModelUI, {
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
 	},
-	'stch-key-progress-c-width': function(state) {
+	'stch-key-progress-c-width': function(target, state) {
 		if (state) {
 			pv.update(this, 'vis_progress-c-width', this.getBoxDemensionByKey(this.getProgressWidth, state));
 		} else {
@@ -337,17 +337,17 @@ pv.View.extendTo(YoutubePreview, {
 		this._super();
 		this.user_link = $();
 	},
-	'stch-nav_title': function(state) {
+	'stch-nav_title': function(target, state) {
 		this.c.attr('title', state || "");
 	},
-	'stch-cant_show': function(state) {
+	'stch-cant_show': function(target, state) {
 		this.c.toggleClass('cant-show', !!state);
 	},
-	'stch-yt_id': function(state) {
+	'stch-yt_id': function(target, state) {
 		var link = 'http://www.youtube.com/watch?v=' + state;
 		this.user_link.attr('href', link);
 	},
-	'stch-previews': function(thmn) {
+	'stch-previews': function(target, thmn) {
 		var imgs = $();
 
 		if (thmn.start && thmn.middle &&  thmn.end){

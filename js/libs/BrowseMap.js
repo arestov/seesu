@@ -1,6 +1,7 @@
 define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 
+var pvState = pv.state;
 /*
 исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 поправить навигацию
@@ -403,11 +404,11 @@ pv.Model.extendTo(BrowseLevel, {
 		followFromTo(this.map, this, md);
 	
 	},
-	'stch-mpl_attached': function(state) {
-		var md = this.getNesting('pioneer');
-		var obj = pv.state(md, 'bmpl_attached');
+	'stch-mpl_attached': function(target, state) {
+		var md = target.getNesting('pioneer');
+		var obj = pvState(md, 'bmpl_attached');
 		obj = obj ? spv.cloneObj({}, obj) : {};
-		obj[this._provoda_id] = state;
+		obj[target._provoda_id] = state;
 		pv.update(md, 'bmpl_attached', obj);
 		pv.update(md, 'mpl_attached', spv.countKeys(obj, true));
 

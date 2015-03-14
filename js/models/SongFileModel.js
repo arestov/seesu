@@ -152,7 +152,7 @@ pv.Model.extendTo(FileInTorrent, {
 				return isDepend(player_song) || isDepend(preload_current_file);
 			}
 		],
-		'stch-load_file': function(state) {
+		'stch-load_file': function(target, state) {
 			if (state) {
 				
 				this.load();

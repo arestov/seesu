@@ -55,12 +55,12 @@ pv.addPrototype("SongBase",{
 		this.map_parent.checkRequestsPriority();
 		
 	},
-	'stch-needs_states_connecting': function() {
-		if (!this.states_was_twisted) {
+	'stch-needs_states_connecting': function(target) {
+		if (!target.states_was_twisted) {
 
-			if (this.twistStates) {
-				this.twistStates();
-				this.states_was_twisted = true;
+			if (target.twistStates) {
+				target.twistStates();
+				target.states_was_twisted = true;
 
 			}
 		}
@@ -215,22 +215,22 @@ pv.addPrototype("SongBase",{
 		return this.state('can-use-as-neighbour');
 	},
 	state_change: {
-		"mp_show": function(state) {
+		"mp_show": function(target, state) {
 			if (state){
-				this.prepareForPlaying();
-				this.requestState('album_name');
+				target.prepareForPlaying();
+				target.requestState('album_name');
 				
 			} else {
-				this.removeMarksFromNeighbours();
+				target.removeMarksFromNeighbours();
 			}
 		},
-		"player_song": function(state){
+		"player_song": function(target, state){
 
 			// if (state){
 			// 	this.mp3_search.on("new-search.player_song", this.findFiles, {exlusive: true, context: this});
 			// }
 		},
-		"is_important": function(state){
+		"is_important": function(target, state){
 			if (!state){
 				/*spv.cloneObj(this, {
 					next_song: false,
@@ -676,9 +676,9 @@ pv.addPrototype("SongBase",{
 	// 		this.map_parent.markAsPlayable();
 	// 	}
 	// },
-	'stch-playable': function(state) {
+	'stch-playable': function(target, state) {
 		if (state) {
-			this.map_parent.markAsPlayable();
+			target.map_parent.markAsPlayable();
 		}
 	},
 	'compx-search_complete': [
@@ -704,8 +704,8 @@ pv.addPrototype("SongBase",{
 	'compx-searching_files': [
 		['@one:has_request:investg']
 	],
-	'stch-files_search': function(state) {
-		this.checkChangesSinceFS(state);
+	'stch-files_search': function(target, state) {
+		target.checkChangesSinceFS(state);
 	},
 	bindFilesSearchChanges: function(investg) {
 		this.updateNesting('investg', investg);

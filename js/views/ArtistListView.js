@@ -16,10 +16,10 @@ pv.View.extendTo(ArtcardViewInList, {
 		this.image_place = $('<span class="song-image-con"></span>').appendTo(this.c);
 		this.addWayPoint(this.c);
 	},
-	'stch-artist_name': function(state) {
+	'stch-artist_name': function(target, state) {
 		this.alink.text(state);
 	},
-	'stch-selected_image': function(lfm_wrap) {
+	'stch-selected_image': function(target, lfm_wrap) {
 		if (!lfm_wrap){
 			return;
 		}

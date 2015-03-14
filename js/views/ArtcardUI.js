@@ -22,7 +22,7 @@ pv.View.extendTo(ArtcardUI, {
 		tags_list: coct.TagsListPreview
 	},
 	state_change: {
-		'selected_image': function(lfm_wrap) {
+		'selected_image': function(target, lfm_wrap) {
 			if (!lfm_wrap){
 				return;
 			}
@@ -35,7 +35,7 @@ pv.View.extendTo(ArtcardUI, {
 			}
 		},
 
-		bio: function(text) {
+		bio: function(target, text) {
 			if (text){
 				var safe_node = document.createElement('div');
 				safe_node.innerHTML = text.replace(/([^\n])\n+/gi, '$1<br/><br/>');
@@ -98,7 +98,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			return vmp_show;
 		}
 	],
-	'stch-parent_vmp_show': function(state) {
+	'stch-parent_vmp_show': function(target, state) {
 		if (!state) {
 			this.setVisState('wamo_info', false);
 		}
@@ -128,7 +128,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			}
 		}
 	},
-	'stch-bio': function(text) {
+	'stch-bio': function(target, text) {
 		var bioc = this.tpl.ancs['artbio'];
 		if (!bioc){
 			return;
@@ -156,7 +156,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 	getPamoramaWidth: function() {
 		return this.img_panorama.checkViewportWidth();
 	},
-	'stch-key-panorama_width': function(state) {
+	'stch-key-panorama_width': function(target, state) {
 		if (state) {
 			pv.update(this, 'panorama_width', this.getBoxDemensionByKey(this.getPamoramaWidth, state));
 		}
@@ -171,7 +171,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 		}
 	],
 
-	'stch-panorama_width': function(state) {
+	'stch-panorama_width': function(target, state) {
 		if (state && this.img_panorama){
 			this.img_panorama.setViewportWidth(state);
 		}
@@ -195,7 +195,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 
 		}
 	},
-	'stch-panorama_lift_width': function(state) {
+	'stch-panorama_lift_width': function(target, state) {
 		if (state && this.img_panorama){
 			//this.img_panorama.setTotalWidth(state);
 		}
@@ -207,7 +207,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 
 		pv.update(this, 'images_combination', images_combination);
 	},
-	'stch-images': function(images) {
+	'stch-images': function(target, images) {
 		if (!images || !images.length){
 			return;
 		}

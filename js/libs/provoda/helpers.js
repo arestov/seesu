@@ -100,12 +100,12 @@ return {
 
 		return function(state_name) {
 			var target_name = getTargetName(state_name);
-			return function(state, oldstate) {
+			return function(target, state, oldstate) {
 				if (oldstate) {
-					oldstate.setStateDependence(target_name, this, false);
+					oldstate.setStateDependence(target_name, target, false);
 				}
 				if (state) {
-					state.setStateDependence(target_name, this, true);
+					state.setStateDependence(target_name, target, true);
 				}
 			};
 		};

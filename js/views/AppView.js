@@ -13,10 +13,10 @@ var localize = app_serv.localize;
 var AppExposedView = function() {};
 AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
 	location_name: 'exposed_root_view',
-	"stch-doc_title": function(title) {
-		this.d.title = title || "";
+	'stch-doc_title': function(target, title) {
+		target.d.title = title || "";
 	},
-	'stch-playing': function(state) {
+	'stch-playing': function(target, state) {
 		if (app_env.need_favicon){
 			if (state){
 				this.changeFavicon('playing');
@@ -192,20 +192,20 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	},
 
 	state_change: {
-		"wait-vk-login": function(state) {
+		"wait-vk-login": function(target, state) {
 			this.toggleBodyClass(state, 'wait-vk-login');
 		},
-		"vk-waiting-for-finish": function(state){
+		"vk-waiting-for-finish": function(target, state){
 			this.toggleBodyClass(state, 'vk-waiting-for-finish');
 		},
-		"slice-for-height": function(state){
+		"slice-for-height": function(target, state){
 			this.toggleBodyClass(state, 'slice-for-height');
 		},
-		"deep_sandbox": function(state){
+		"deep_sandbox": function(target, state){
 			this.toggleBodyClass(state, 'deep-sandbox');
 		},
 
-		"search_query": function(state) {
+		"search_query": function(target, state) {
 			this.search_input.val(state || '');
 		}
 		
@@ -518,7 +518,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		_this.tpls.push( pv.$v.createTemplate( this, np_button ) );
 		this.nav.daddy.append(np_button);
 	},
-	'stch-nav_helper_is_needed': function(state) {
+	'stch-nav_helper_is_needed': function(target, state) {
 		if (!state) {
 			pv.update(this, 'nav_helper_full', false);
 		}
@@ -661,7 +661,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			this.scrollTo($(cwp.node), false, {vp_limit: 0.6, animate: 117});
 		}
 	},
-	'stch-vis_current_wpoint': function(nst, ost) {
+	'stch-vis_current_wpoint': function(target, nst, ost) {
 		if (ost){
 			$(ost.node).removeClass('surf_nav');
 		}
