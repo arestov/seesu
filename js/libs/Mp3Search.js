@@ -534,6 +534,22 @@ var getMatchedSongs = function(music_list, msq) {
 		}
 	});
 
+	var isDepend = pv.utils.isDepend;
+	var pvState = pv.state;
+	var updateNesting = pv.updateNesting;
+
+	var filterList = function(target_list_name, check) {
+		return function(newst, old, source, target) {
+			var result = [];
+			for (var i = 0; i < source.items.length; i++) {
+				if ( check( source.items[i] ) ) {
+					result.push( source.items[i] );
+				}
+			}
+			updateNesting(target, target_list_name, result);
+		};
+	};
+
 	var FilesInvestg = function() {};
 	pv.Model.extendTo(FilesInvestg, {
 		init: function(opts, params) {
@@ -545,19 +561,6 @@ var getMatchedSongs = function(music_list, msq) {
 			this.msq = params.msq;
 			this.query_string = params.query_string;
 
-
-
-			
-
-			this.bindNestingFlows('sources_list', 'disable_search', function(item) {
-				return !item.state('disable_search');
-			}, 'available_sources');
-			this.bindNestingFlows('sources_list', 'wait_before_playing', function(item) {
-				return item.state('wait_before_playing');
-			}, 'expected_sources');
-
-
-
 			this.createRelationsBinder();
 
 			//this.on('vip_state_change-search_progress', function(e) {
@@ -567,12 +570,19 @@ var getMatchedSongs = function(music_list, msq) {
 			this.mp3_search.on('list-changed', this.hndListChange, {soft_reg: false, context: this});
 
 			this.wch(this.mp3_search, 'big_files_list', this.hndBigFilesList);
+
 			this.nextTick(function() {
 				this.startSearch( {only_cache: true} );
 			});
 			
 			
 		},
+		'stch-disable_search@sources_list': filterList('available_sources', function(item) {
+			return !pvState(item, 'disable_search');
+		}),
+		'stch-wait_before_playing@sources_list': filterList('expected_sources', function(item) {
+			return pvState(item, 'wait_before_playing');
+		}),
 		'compx-has_request': [
 			['@some:has_request:available_sources']
 		],
@@ -597,25 +607,10 @@ var getMatchedSongs = function(music_list, msq) {
 		'compx-exsrc_search_complete': [
 			['@every:search_complete:expected_sources']
 		],
-		bindNestingFlows: function(donor_list_name, state_name, check, target_list_name) {
-			/*
-			watchChildrenStates: function(collection_name, state_name, callback) {
-			archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
-			*/
-			this.watchChildrenStates(donor_list_name, state_name, function(e) {
-				var result = [];
-				for (var i = 0; i < e.items.length; i++) {
-					if ( check( e.items[i] ) ) {
-						result.push( e.items[i] );
-					}
-				}
-				pv.updateNesting(this, target_list_name, result);
-			});
-		},
 		'compx-must_load': [
 			['investg_to_load-for-song_need'],
 			function(state) {
-				return this.utils.isDepend(state);
+				return isDepend(state);
 			}
 		],
 		'stch-must_load': function(state) {

@@ -29,6 +29,12 @@ pv = provoda = {
 	CallbacksFlow: CallbacksFlow,
 	hp: hp,
 	$v: hp.$v,
+	getRDep: hp.getRDep,
+	utils: {
+		isDepend: function(obj) {
+			return obj && !!obj.count;
+		}
+	},
 	initWebApp: function(root_md, RootViewConstr) {
 
 		var proxies_space = Date.now();

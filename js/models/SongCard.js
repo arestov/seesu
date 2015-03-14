@@ -234,6 +234,7 @@ LoadableListBase.extendTo(VKPostsList, {
 		}]
 	]
 });
+var isDepend = pv.utils.isDepend;
 
 var SongCard = function() {};
 BrowseMap.Model.extendTo(SongCard, {
@@ -255,7 +256,7 @@ BrowseMap.Model.extendTo(SongCard, {
 	'compx-nest_need': [
 		['need_for_song', 'songcard-for-active_song'],
 		function(need_for_song, for_asong) {
-			return need_for_song || this.utils.isDepend(for_asong);
+			return need_for_song || isDepend(for_asong);
 		}
 	],
 	'compx-wide_need': [
