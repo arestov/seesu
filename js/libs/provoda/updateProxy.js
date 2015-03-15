@@ -1,6 +1,7 @@
-define(['./StatesLabour', './helpers'], function(StatesLabour, hp) {
+define(['./StatesLabour', './helpers', 'spv'], function(StatesLabour, hp, spv) {
 'use strict';
 var push = Array.prototype.push;
+var getSTCHfullname = spv.getPrefixingFunc('stch-');
 
 function updateProxy(etr, changes_list, opts) {
 	if (etr._lbr && etr._lbr.undetailed_states){
@@ -131,6 +132,56 @@ function _setUndetailedState(etr, i, state_name, value) {
 	etr._lbr.undetailed_states[state_name] = value;
 }
 
+
+function proxyStch(target, value, state_name) {
+	var old_value = target.zdsv.stch_states[state_name];
+	if (old_value != value) {
+		target.zdsv.stch_states[state_name] = value;
+		var method = (target[ getSTCHfullname( state_name ) ] || (target.state_change && target.state_change[state_name]));
+
+		method(target, value, old_value);
+	}
+}
+
+function _handleStch(etr, original_states, state_name, value, skip_handler, sync_tpl) {
+	var stateChanger = !skip_handler && (etr[ getSTCHfullname( state_name ) ] || (etr.state_change && etr.state_change[state_name]));
+	if (stateChanger) {
+		etr.zdsv.abortFlowSteps('stch', state_name, true);
+	} else {
+		return;
+	}
+	var old_value = etr.zdsv.stch_states[state_name];
+	if (old_value != value) {
+		var method;
+		
+		if (stateChanger){
+			if (typeof stateChanger == 'function'){
+				method = stateChanger;
+			} else if (etr.checkDepVP){
+				if (etr.checkDepVP(stateChanger)){
+					method = stateChanger.fn;
+				}
+			}
+		}
+
+		if (method){
+			if (!sync_tpl) {
+				var flow_step = etr.nextLocalTick(proxyStch, [etr, value, state_name], true);
+				flow_step.p_space = 'stch';
+				flow_step.p_index_key = state_name;
+				etr.zdsv.createFlowStepsArray('stch', state_name, flow_step);
+			} else {
+				proxyStch(etr, value, state_name);
+			}
+			
+			
+			//method.call(this, value, old_value);
+		}
+	}
+}
+
+
+
 function getChanges(etr, original_states, changes_list, opts, result_arr) {
 	var changed_states = result_arr || [];
 	var i;
@@ -141,7 +192,7 @@ function getChanges(etr, original_states, changes_list, opts, result_arr) {
 		etr.updateTemplatesStates(changes_list, opts && opts.sync_tpl);
 	}
 	for (i = 0; i < changes_list.length; i+=2) {
-		etr._handleStch(original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, opts && opts.sync_tpl);
+		_handleStch(etr, original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, opts && opts.sync_tpl);
 	}
 	return changed_states;
 }

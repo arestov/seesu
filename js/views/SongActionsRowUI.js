@@ -1,7 +1,7 @@
 define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
 var localize = app_serv.localize;
-
+var pvUpdate = pv.update;
 
 var PlaylistAddSearchCtr = function() {};
 pv.View.extendTo(PlaylistAddSearchCtr, {
@@ -45,8 +45,8 @@ ShareSearchSection.extendTo(VkShareSectionView, {
 	},
 	'stch-needs_vk_auth': function(target, state) {
 		if (state){
-			this.tpl.ancs['vk_auth'].append(this.getAFreeCV('vk_auth'));
-			this.requestAll();
+			target.tpl.ancs['vk_auth'].append(target.getAFreeCV('vk_auth'));
+			target.requestAll();
 		}
 	},
 });
@@ -212,14 +212,14 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	},
 	'stch-key_vol_hole_w': function(target, value) {
 		if (value) {
-			pv.update(this, 'vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
+			pvUpdate(target, 'vis_volume-hole-width', target.getBoxDemensionByKey(target.getVHoleWidth, value));
 		}
 	},
 	'stch-vis_volume-hole-width': function(target, state) {
 		if (state) {
-			this.updateManyStates({
-				'v-bar-o-width': this.getBoxDemension(this.getVBarOuterWidth, 'v-bar-o-width'),
-				'v-bar-width': this.getBoxDemension(this.getVBarWidth, 'v-bar-width')
+			target.updateManyStates({
+				'v-bar-o-width': target.getBoxDemension(target.getVBarOuterWidth, 'v-bar-o-width'),
+				'v-bar-width': target.getBoxDemension(target.getVBarWidth, 'v-bar-width')
 			});
 		}
 	},

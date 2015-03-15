@@ -1,6 +1,8 @@
 define(['pv'], function(pv) {
 "use strict";
 
+var pvUpdate = pv.update;
+
 var playRelative = function(mo, result) {
 	if (result === true) {
 		mo.map_parent.setWaitingNextSong(mo.map_parent, mo);
@@ -28,14 +30,14 @@ pv.Model.extendTo(PlayRequest, {
 		}
 	],
 	'stch-possible_song': function(target, song, oldsong) {
-		this.updateNesting('possible_song', song);
+		target.updateNesting('possible_song', song);
 
 		if (oldsong) {
-			pv.update(oldsong, 'want_to_play', false);
+			pvUpdate(oldsong, 'want_to_play', false);
 		}
 
 		if (song) {
-			pv.update(song, 'want_to_play', true);
+			pvUpdate(song, 'want_to_play', true);
 			song.makeSongPlayalbe(true);
 		}
 	},
@@ -65,7 +67,7 @@ pv.Model.extendTo(PlayRequest, {
 	],
 	'stch-playable_mopla': function(target, mopla) {
 		if (mopla) {
-			var mo = this.getNesting('possible_song');
+			var mo = target.getNesting('possible_song');
 			mo.play();
 			// mopla.play();
 		}

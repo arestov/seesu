@@ -1,5 +1,6 @@
-define(['spv', './helpers',  'jquery'], function(spv, hp, $) {
+define(['spv', './helpers',  'jquery', './updateProxy'], function(spv, hp, $, updateProxy) {
 'use strict';
+var pvUpdate = updateProxy.update;
 var $v = hp.$v;
 return function(StatesEmitter, main_calls_flow, views_proxies) {
 var push = Array.prototype.push;
@@ -187,13 +188,13 @@ StatesEmitter.extendTo(View, {
 	},
 	'stch-map_slice_view_sources': function(target, state) {
 		if (state) {
-			if (this.parent_view.parent_view == this.root_view && this.parent_view.nesting_name == 'map_slice') {
+			if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {
 				var arr = [];
 				if (state[0]) {
 					arr.push(state[0]);
 				}
-				push.apply(arr, state[1][this.nesting_space]);
-				this.updateState('view_sources', arr);
+				push.apply(arr, state[1][target.nesting_space]);
+				pvUpdate(target, 'view_sources', arr);
 			}
 			
 		}
@@ -930,6 +931,8 @@ StatesEmitter.extendTo(View, {
 		return this.view_parts && this.view_parts[part_name];
 	},
 	collectStateChangeHandlers: (function() {
+		// var thisT = /this/gi;
+
 		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 		return function(props) {
@@ -981,6 +984,17 @@ StatesEmitter.extendTo(View, {
 			}
 
 			this.stch_hs = result;
+
+			// for (var i = 0; i < this.stch_hs.length; i++) {
+
+			// 	var cur = this.stch_hs[i];
+			// 	var digi = thisT.test(cur.item);
+			// 	if (digi){
+
+			// 		console.log(cur.item);
+			// 	}
+				
+			// }
 		};
 	})(),
 	requirePart: function(part_name) {
@@ -1688,10 +1702,10 @@ StatesEmitter.extendTo(View, {
 				var $first = counter === 0;
 				var $last = counter === (array.length - 1);
 
-				view.updateState('$index', counter);
-				view.updateState('$first', $first);
-				view.updateState('$last', $last);
-				view.updateState('$middle', !($first || $last));
+				pvUpdate(view, '$index', counter);
+				pvUpdate(view, '$first', $first);
+				pvUpdate(view, '$last', $last);
+				pvUpdate(view, '$middle', !($first || $last));
 
 				counter++;
 			}

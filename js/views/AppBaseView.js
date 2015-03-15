@@ -681,19 +681,19 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		/*
 		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
 		if (old_md){
-			this.hideLevNum(old_md.map_level_num);
+			target.hideLevNum(old_md.map_level_num);
 			if (!oved_now_active){
-				this.removePageOverviewMark(old_md.map_level_num-1);
+				target.removePageOverviewMark(old_md.map_level_num-1);
 			}
 		}
 		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
-			this.hideLevNum(-1);
+			target.hideLevNum(-1);
 		}
 
-		this.addPageOverviewMark(md.map_level_num - 1);
-		this.showLevNum(md.map_level_num);
+		target.addPageOverviewMark(md.map_level_num - 1);
+		target.showLevNum(md.map_level_num);
 		if (oved_now_active){
-			this.removePageOverviewMark(old_md.map_level_num-1);
+			target.removePageOverviewMark(old_md.map_level_num-1);
 		}
 
 */
@@ -705,11 +705,11 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
 
-			var md_view = this.findMpxViewInChildren(md.mpx);
+			var md_view = target.findMpxViewInChildren(md.mpx);
 			if (md_view){
 				var hl_view = md_view.findMpxViewInChildren(source_md.mpx);
 				if (hl_view){
-					//this.scrollTo(hl_view.getC());
+					//target.scrollTo(hl_view.getC());
 				}
 			}
 		}*/
@@ -719,10 +719,10 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
 		if (ov_highlight && ov_highlight.source_md){
 			var source_md = ov_highlight.source_md;
-			var mplev_item_view = source_md.getRooConPresentation(this);
+			var mplev_item_view = source_md.getRooConPresentation(target);
 			if (mplev_item_view){
-				this.scrollTo(mplev_item_view.getC(), {
-					node: this.getLevByNum(md.map_level_num - 1).scroll_con
+				target.scrollTo(mplev_item_view.getC(), {
+					node: target.getLevByNum(md.map_level_num - 1).scroll_con
 				}, {vp_limit: 0.4, animate: 117});
 			}
 
@@ -913,14 +913,14 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 	},
 
 	'stch-full_page_need': function(target, state) {
-		this.els.screens.toggleClass('full_page_need', !!state);
+		target.els.screens.toggleClass('full_page_need', !!state);
 	},
 	'stch-root-lev-search-form': function(target, state) {
-		this.els.search_form.toggleClass('root-lev-search-form', !!state);
+		target.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
 	'stch-show_search_form': function(target, state) {
 		if (!state){
-			this.search_input[0].blur();
+			target.search_input[0].blur();
 		}
 	},
 	remove: function() {

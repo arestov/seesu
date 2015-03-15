@@ -223,21 +223,6 @@ pv.addPrototype("SongBase",{
 			} else {
 				target.removeMarksFromNeighbours();
 			}
-		},
-		"player_song": function(target, state){
-
-			// if (state){
-			// 	this.mp3_search.on("new-search.player_song", this.findFiles, {exlusive: true, context: this});
-			// }
-		},
-		"is_important": function(target, state){
-			if (!state){
-				/*spv.cloneObj(this, {
-					next_song: false,
-					prev_song: false,
-					next_preload_song: false
-				});*/
-			}
 		}
 	},
 	requestPlay: function(bwlev_id) {

@@ -15,54 +15,52 @@ pv.View.extendTo(UserAcquaintanceView, {
 	},
 	'stch-user_photo': function(target, state) {
 		if (state){
-			this.userphoto_img.attr('src', state);
+			target.userphoto_img.attr('src', state);
 		}
 	},
 	'stch-needs_accept_b': function(target, state) {
 		if (state){
-			if (!this.button_c){
-				var nb = this.root_view.createNiceButton();
+			if (!target.button_c){
+				var nb = target.root_view.createNiceButton();
 					nb.b.text( localize('accept-inv', 'Accept invite'));
 					nb.enable();
-				var _this = this;
 				nb.b.click(function() {
-					_this.RPCLegacy('acceptInvite');
-					//_this.RPCLegacy('acceptInvite');
+					target.RPCLegacy('acceptInvite');
 				});
-				this.button_c = nb.c;
-				nb.c.appendTo(this.button_place);
+				target.button_c = nb.c;
+				nb.c.appendTo(target.button_place);
 			}
 
 		} else {
-			if (this.button_c){
-				this.button_c.remove();
+			if (target.button_c){
+				target.button_c.remove();
 			}
 		}
 	},
 
 	'stch-userlink': function(target, state) {
 		if (state){
-			if (!this.ulink){
-				this.ulink = $('<a class=""></a>').appendTo(this.link_place);
+			if (!target.ulink){
+				target.ulink = $('<a class=""></a>').appendTo(target.link_place);
 			}
-			this.ulink
+			target.ulink
 				.attr('href', state.href)
 				.text(state.text);
 		} else {
-			if (this.ulink){
-				this.ulink.remove();
+			if (target.ulink){
+				target.ulink.remove();
 			}
 		}
 	},
 	'stch-after_accept_desc': function(target, state) {
 		if (state){
-			if (!this.af_ac_desc){
-				this.af_ac_desc = $('<span class="desc"></span>').appendTo(this.link_place);
+			if (!target.af_ac_desc){
+				target.af_ac_desc = $('<span class="desc"></span>').appendTo(target.link_place);
 			}
-			this.af_ac_desc.text(state);
+			target.af_ac_desc.text(state);
 		} else {
-			if (this.af_ac_desc){
-				this.af_ac_desc.remove();
+			if (target.af_ac_desc){
+				target.af_ac_desc.remove();
 			}
 		}
 		
@@ -113,7 +111,7 @@ pv.View.extendTo(UserAcqPreview, {
 	},
 	'stch-user_photo': function(target, state) {
 		if (state){
-			this.userimg.attr('src', state);
+			target.userimg.attr('src', state);
 		}
 	}
 });

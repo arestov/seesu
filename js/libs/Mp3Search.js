@@ -444,7 +444,7 @@ var getMatchedSongs = function(music_list, msq) {
 		},
 		'stch-request_required': function(target, state) {
 			if (state) {
-				this.startSearch();
+				target.startSearch();
 			}
 		},
 		makeRequest: function(msq, opts) {

@@ -19,9 +19,9 @@ AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
 	'stch-playing': function(target, state) {
 		if (app_env.need_favicon){
 			if (state){
-				this.changeFavicon('playing');
+				target.changeFavicon('playing');
 			} else {
-				this.changeFavicon('usual');
+				target.changeFavicon('usual');
 			}
 		}
 	},
@@ -193,20 +193,20 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 
 	state_change: {
 		"wait-vk-login": function(target, state) {
-			this.toggleBodyClass(state, 'wait-vk-login');
+			target.toggleBodyClass(state, 'wait-vk-login');
 		},
 		"vk-waiting-for-finish": function(target, state){
-			this.toggleBodyClass(state, 'vk-waiting-for-finish');
+			target.toggleBodyClass(state, 'vk-waiting-for-finish');
 		},
 		"slice-for-height": function(target, state){
-			this.toggleBodyClass(state, 'slice-for-height');
+			target.toggleBodyClass(state, 'slice-for-height');
 		},
 		"deep_sandbox": function(target, state){
-			this.toggleBodyClass(state, 'deep-sandbox');
+			target.toggleBodyClass(state, 'deep-sandbox');
 		},
 
 		"search_query": function(target, state) {
-			this.search_input.val(state || '');
+			target.search_input.val(state || '');
 		}
 		
 	},
@@ -520,7 +520,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	},
 	'stch-nav_helper_is_needed': function(target, state) {
 		if (!state) {
-			pv.update(this, 'nav_helper_full', false);
+			pv.update(target, 'nav_helper_full', false);
 		}
 	},
 	tpl_events: {
@@ -667,11 +667,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		}
 		if (nst) {
 			$(nst.node).addClass('surf_nav');
-			//if (nst.view.getRooConPresentation(this) ==)
-
-			this.scrollToWP(nst);
-
-			//
+			target.scrollToWP(nst);
 		}
 	},
 	

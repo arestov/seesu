@@ -267,17 +267,17 @@ LoadableList.extendTo(MfCor, {
 	],
 	'stch-needs_vk_auth': function(target, state) {
 		if (state) {
-			this.notifier.addMessage('vk_audio_auth ');
+			target.notifier.addMessage('vk_audio_auth ');
 		} else {
-			this.notifier.removeMessage('vk_audio_auth ');
+			target.notifier.removeMessage('vk_audio_auth ');
 		}
 
 		if (state) {
 
 		} else {
-			var vk_auth = this.getNesting('vk_auth');
+			var vk_auth = target.getNesting('vk_auth');
 			if (vk_auth) {
-				pv.updateNesting(this, 'vk_auth', null);
+				pv.updateNesting(target, 'vk_auth', null);
 				vk_auth.die();
 			}
 			

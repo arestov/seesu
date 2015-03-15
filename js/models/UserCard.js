@@ -210,11 +210,11 @@ BrowseMap.Model.extendTo(VkUserCard, {
 	'stch-mp_has_focus': function(target, state) {
 		if (state){
 
-			this.requestState('first_name', 'last_name', 'photo', 'ava_image');
+			target.requestState('first_name', 'last_name', 'photo', 'ava_image');
 
 
 			var list_to_preload = [
-				this.getNesting('vk__friends')
+				target.getNesting('vk__friends')
 
 			];
 			for (var i = 0; i < list_to_preload.length; i++) {
@@ -334,11 +334,11 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 	],
 	'stch-mp_has_focus': function(target, state) {
 		if (state){
-			this.requestState('realname', 'country', 'age', 'gender');
+			target.requestState('realname', 'country', 'age', 'gender');
 			var list_to_preload = [
-				this.getNesting('lfm__tags'),
-				this.getNesting('lfm__friends'),
-				this.getNesting('lfm__neighbours')
+				target.getNesting('lfm__tags'),
+				target.getNesting('lfm__friends'),
+				target.getNesting('lfm__neighbours')
 
 			];
 			for (var i = 0; i < list_to_preload.length; i++) {

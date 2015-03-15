@@ -1,6 +1,6 @@
 define(['pv', 'jquery', 'spv', './etc_views'], function(pv, $, spv, etc_views) {
 "use strict";
-
+var pvUpdate = pv.update;
 var notifyCounterUI = function() {};
 pv.View.extendTo(notifyCounterUI, {
 	createBase: function() {
@@ -8,14 +8,14 @@ pv.View.extendTo(notifyCounterUI, {
 	},
 	state_change: {
 		counter: function(target, state) {
-			this.c.toggleClass('hidden', !state);
+			target.c.toggleClass('hidden', !state);
 		}
 	}
 });
 var FileIntorrentPromiseUI = function(){};
 pv.View.extendTo(FileIntorrentPromiseUI, {
 	'stch-infoHash': function(target, state) {
-		this.c.text(state);
+		target.c.text(state);
 	},
 	createBase: function(){
 		this.c = $('<li></li>');
@@ -27,22 +27,22 @@ pv.View.extendTo(FileInTorrentUI,{
 	state_change: {
 		"download-pressed": function(target, state) {
 			if (state){
-				this.downloadlink.addClass('download-pressed');
+				target.downloadlink.addClass('download-pressed');
 			}
 		},
 		overstock: function(target, state) {
 			if (state){
-				this.c.addClass('overstocked');
+				target.c.addClass('overstocked');
 			} else {
-				this.c.removeClass('overstocked');
+				target.c.removeClass('overstocked');
 			}
 		},
 		'full_title': function(target, state) {
-			this.f_text.text(state);
+			target.f_text.text(state);
 
 		},
 		'torrent_link': function(target, state) {
-			this.downloadlink.attr('href', state);
+			target.downloadlink.attr('href', state);
 		}
 	},
 	createBase: function() {
@@ -78,9 +78,9 @@ pv.View.extendTo(SongFileModelUI, {
 	},
 	'stch-key-progress-c-width': function(target, state) {
 		if (state) {
-			pv.update(this, 'vis_progress-c-width', this.getBoxDemensionByKey(this.getProgressWidth, state));
+			pvUpdate(target, 'vis_progress-c-width', target.getBoxDemensionByKey(target.getProgressWidth, state));
 		} else {
-			pv.update(this, 'vis_progress-c-width', 0);
+			pvUpdate(target, 'vis_progress-c-width', 0);
 		}
 	},
 	complex_states: {
@@ -338,14 +338,14 @@ pv.View.extendTo(YoutubePreview, {
 		this.user_link = $();
 	},
 	'stch-nav_title': function(target, state) {
-		this.c.attr('title', state || "");
+		target.c.attr('title', state || "");
 	},
 	'stch-cant_show': function(target, state) {
-		this.c.toggleClass('cant-show', !!state);
+		target.c.toggleClass('cant-show', !!state);
 	},
 	'stch-yt_id': function(target, state) {
 		var link = 'http://www.youtube.com/watch?v=' + state;
-		this.user_link.attr('href', link);
+		target.user_link.attr('href', link);
 	},
 	'stch-previews': function(target, thmn) {
 		var imgs = $();
@@ -364,7 +364,7 @@ pv.View.extendTo(YoutubePreview, {
 		} else {
 			imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn['default']));
 		}
-		this.user_link.empty().append(imgs);
+		target.user_link.empty().append(imgs);
 		imgs = null;
 						
 	}

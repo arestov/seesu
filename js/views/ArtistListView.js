@@ -17,7 +17,7 @@ pv.View.extendTo(ArtcardViewInList, {
 		this.addWayPoint(this.c);
 	},
 	'stch-artist_name': function(target, state) {
-		this.alink.text(state);
+		target.alink.text(state);
 	},
 	'stch-selected_image': function(target, lfm_wrap) {
 		if (!lfm_wrap){
@@ -27,8 +27,8 @@ pv.View.extendTo(ArtcardViewInList, {
 
 
 		if (url){
-			this.image_place.empty();
-			this.image_place.append(
+			target.image_place.empty();
+			target.image_place.append(
 				$('<img/>').attr('src', url)
 			);
 		}

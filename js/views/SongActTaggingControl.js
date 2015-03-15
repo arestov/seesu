@@ -59,21 +59,21 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 		})
 	},
 	"stch-user_tags_string": function(target, state) {
-		this.tpl.ancs['tags-input'].val(state);
+		target.tpl.ancs['tags-input'].val(state);
 	},
 	"stch-has_session": function(target, state) {
 		state = !!state;
-		this.c.toggleClass('has_session', state);
-		this.auth_block.toggleClass('hidden', state);
+		target.c.toggleClass('has_session', state);
+		target.auth_block.toggleClass('hidden', state);
 		/*
 		
 		
 		
-		this.nloveb.toggle(state);
+		target.nloveb.toggle(state);
 		*/
 	},
 	// "stch-wait_love_done": function(target){
-	// 	//this.c.toggleClass('wait_love_done', !!state);
+	// 	//target.c.toggleClass('wait_love_done', !!state);
 	// }
 });
 

@@ -4,7 +4,7 @@ function(pv, $, SongUI, etc_views, coct) {
 	var PlaylistSettingsRowView = function(){};
 	pv.View.extendTo(PlaylistSettingsRowView, {
 		"stch-dont_rept_pl": function(target, state) {
-			this.dont_rept_pl_chbx.prop('checked', !!state);
+			target.dont_rept_pl_chbx.prop('checked', !!state);
 		},
 		bindBase: function() {
 			var _this = this;
