@@ -1,5 +1,6 @@
 define(['pv', 'app_serv', 'jquery'], function(pv, app_serv, $) {
 "use strict";
+var pvUpdate = pv.update;
 var localize = app_serv.localize;
 var contextRow = function(container){
 	this.m = {
@@ -107,30 +108,30 @@ pv.View.extendTo(VkLoginUI, {
 	state_change: {
 		'data_wait': function(target, state) {
 			if (state){
-				this.c.addClass("waiting-auth");
+				target.c.addClass("waiting-auth");
 			} else {
-				this.c.removeClass("waiting-auth");
+				target.c.removeClass("waiting-auth");
 			}
 		},
 		"request_description": function(target, state) {
-			this.login_desc.text(state || "");
+			target.login_desc.text(state || "");
 		},
 		'deep_sandbox': function(target, state) {
-			this.c.toggleClass('deep-sandbox', !!state);
+			target.c.toggleClass('deep-sandbox', !!state);
 		}
 	},
 
 	'stch-has_notify_closer': function(target, state) {
-		this.c.toggleClass('has_notify_closer', !!state);
+		target.c.toggleClass('has_notify_closer', !!state);
 	},
 	'stch-notify_readed': function(target, state) {
-		this.c.toggleClass('notf-readed', !!state);
+		target.c.toggleClass('notf-readed', !!state);
 	},
 	'stch-has_session': function(target, state){
 		if (!state){
-			this.c.removeClass("hidden");
+			target.c.removeClass("hidden");
 		} else {
-			this.c.addClass("hidden");
+			target.c.addClass("hidden");
 		}
 	},
 	createBase: function() {
@@ -178,23 +179,23 @@ var LfmLoginView = function() {};
 pv.View.extendTo(LfmLoginView, {
 	'stch-has_session': function(target, state){
 		if (!state){
-			this.c.removeClass("hidden");
+			target.c.removeClass("hidden");
 		} else {
-			this.c.addClass("hidden");
+			target.c.addClass("hidden");
 		}
 	},
 	'stch-deep_sandbox': function(target, state){
-		this.c.toggleClass('deep-sandbox', !!state);
+		target.c.toggleClass('deep-sandbox', !!state);
 	},
 	'stch-data_wait': function(target, state) {
 		if (state){
-			this.c.addClass("waiting-auth");
+			target.c.addClass("waiting-auth");
 		} else {
-			this.c.removeClass("waiting-auth");
+			target.c.removeClass("waiting-auth");
 		}
 	},
 	'stch-request_description': function(target, state) {
-		this.c.find('.lfm-auth-request-desc').text(state || "");
+		target.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('lfm_authsampl');
@@ -242,12 +243,12 @@ LfmLoginView.extendTo(LfmLoveItView, {
 	},
 	"stch-has_session": function(target, state) {
 		state = !!state;
-		this.c.toggleClass('has_session', state);
-		this.auth_block.toggleClass('hidden', state);
-		this.nloveb.toggle(state);
+		target.c.toggleClass('has_session', state);
+		target.auth_block.toggleClass('hidden', state);
+		target.nloveb.toggle(state);
 	},
 	"stch-wait_love_done": function(target, state){
-		this.c.toggleClass('wait_love_done', !!state);
+		target.c.toggleClass('wait_love_done', !!state);
 	}
 });
 
@@ -277,13 +278,13 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 	},
 	"stch-has_session": function(target, state) {
 		state = !!state;
-		this.c.toggleClass('has_session', state);
-		this.auth_block.toggleClass('hidden', state);
-		this.chbx_enabl.add(this.chbx_disabl).prop('disabled', !state);
+		target.c.toggleClass('has_session', state);
+		target.auth_block.toggleClass('hidden', state);
+		target.chbx_enabl.add(target.chbx_disabl).prop('disabled', !state);
 	},
 	"stch-scrobbling": function(target, state) {
-		this.chbx_enabl.prop('checked', !!state);
-		this.chbx_disabl.prop('checked', !state);
+		target.chbx_enabl.prop('checked', !!state);
+		target.chbx_disabl.prop('checked', !state);
 	}
 });
 
@@ -340,17 +341,17 @@ pv.View.extendTo(ActionsRowUI, {
 	],
 	'stch-key-button_owidth': function(target, state) {
 		if (state) {
-			pv.update(this, 'button_owidth', this.getBoxDemensionByKey(this.getCurrentButtonOWidth, state));
+			pvUpdate(target, 'button_owidth', target.getBoxDemensionByKey(target.getCurrentButtonOWidth, state));
 		}
 	},
 	'stch-key-button_offset': function(target, state) {
 		if (state) {
-			pv.update(this, 'button_offset', this.getBoxDemensionByKey(this.getCurrentButtonOffset, state));
+			pvUpdate(target, 'button_offset', target.getBoxDemensionByKey(target.getCurrentButtonOffset, state));
 		}
 	},
 	'stch-key-arrow_parent_offset': function(target, state) {
 		if (state) {
-			pv.update(this, 'arrow_parent_offset', this.getBoxDemensionByKey(this.getArPaOffset, state));
+			pvUpdate(target, 'arrow_parent_offset', target.getBoxDemensionByKey(target.getArPaOffset, state));
 		}
 	},
 	'compx-arrow_pos':{

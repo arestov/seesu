@@ -35,13 +35,11 @@ SongViewBase.extendTo(SongUI, {
 	},
 	dom_rp: true,
 	state_change : {
-		"vmp_show": function(opts, old_opts) {
+		"vmp_show": function(target, opts, old_opts) {
 			if (opts){
-			//	this.parent_view.c.addClass("show-zoom-to-track");
-				this.activate();
+				target.activate();
 			} else if (old_opts) {
-			//	this.parent_view.c.removeClass("show-zoom-to-track");
-				this.deactivate();
+				target.deactivate();
 			}
 		}
 	},

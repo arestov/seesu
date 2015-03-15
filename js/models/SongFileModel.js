@@ -155,9 +155,9 @@ pv.Model.extendTo(FileInTorrent, {
 		'stch-load_file': function(target, state) {
 			if (state) {
 				
-				this.load();
+				target.load();
 			} else {
-				this.removeCache();
+				target.removeCache();
 			}
 		},
 		getTitle: function() {

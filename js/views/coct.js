@@ -27,13 +27,13 @@ pv.View.extendTo(ListPreview, {
 		this.addWayPoint(button_area);
 	},
 	'stch-list_loading': function(target, state) {
-		if (!this.tpl.ancs.listc) {
+		if (!target.tpl.ancs.listc) {
 			return;
 		}
-		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
+		target.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	'stch-mp_show': function(target, state) {
-		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
+		var node = spv.getTargetField(target, 'tpl.ancs.button_area') || target.c;
 		node.toggleClass('button_selected', !!state);
 	},
 	base_tree: {
@@ -90,7 +90,7 @@ pv.View.extendTo(SPView, {
 var PageView = function() {};
 SPView.extendTo(PageView, {
 	'stch-vmp_show': function(target, state) {
-		this.c.toggleClass('hidden', !state);
+		target.c.toggleClass('hidden', !state);
 	},
 	createBase: function() {
 		this.c = $('<div class="usual_page"></div>');
@@ -120,7 +120,7 @@ ListPreview.extendTo(ListSimplePreview, {
 		}
 	},
 	'stch-pmd_vswitched': function(target, state) {
-		this.c.toggleClass('access-request', state);
+		target.c.toggleClass('access-request', state);
 	},
 	'collch-preview_list': {
 		place: 'tpl.ancs.listc',
@@ -201,20 +201,20 @@ pv.View.extendTo(AlbumsListPreviewItem, {
 	'stch-selected_image': function(target, lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
-			var node = this.c[0];
-			var req = this.root_view.loadImage({
+			var node = target.c[0];
+			var req = target.root_view.loadImage({
 					url: url,
 					cache_allowed: true
 				}).done(function(){
 					node.src = url;
 				}).fail(function(){
 				});
-			this.addRequest(req);
-			this.on('die', function() {
+			target.addRequest(req);
+			target.on('die', function() {
 				req.abort();
 			});
 		} else {
-			this.c.attr('src', '');
+			target.c.attr('src', '');
 		}
 	}
 });
@@ -229,20 +229,20 @@ pv.View.extendTo(BigAlbumPreview, {
 	'stch-selected_image': function(target, lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
-			var node = this.tpl.ancs.imgc[0];
-			var req = this.root_view.loadImage({
+			var node = target.tpl.ancs.imgc[0];
+			var req = target.root_view.loadImage({
 					url: url,
 					cache_allowed: true
 				}).done(function(){
 					node.src = url;
 				}).fail(function(){
 				});
-			this.addRequest(req);
-			this.on('die', function() {
+			target.addRequest(req);
+			target.on('die', function() {
 				req.abort();
 			});
 		} else {
-			this.tpl.ancs.imgc.attr('src', '');
+			target.tpl.ancs.imgc.attr('src', '');
 		}
 	}
 });
@@ -275,14 +275,14 @@ ItemOfLL.extendTo(AlbumsListPreview, {
 });
 
 
-var tagListChange = function(array) {
-	this.tpl.ancs.listc.empty();
+var tagListChange = function(target, array) {
+	target.tpl.ancs.listc.empty();
 	var df = document.createDocumentFragment();
 	for (var i = 0; i < array.length; i++) {
-		$(df).append(this.createTagLink(array[i].name));
+		$(df).append(target.createTagLink(array[i].name));
 		$(df).append(document.createTextNode(" "));
 	}
-	this.tpl.ancs.listc.append(df);
+	target.tpl.ancs.listc.append(df);
 };
 var TagsListPreview = function() {};
 ListPreview.extendTo(TagsListPreview, {

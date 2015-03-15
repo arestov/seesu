@@ -18,11 +18,11 @@ pv.View.extendTo(MusicConductorPreview, {
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
 	'stch-mp_show': function(target, state) {
-		this.button.toggleClass('button_selected', !!state);
+		target.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(target, state){
 		if (state){
-			this.requirePart('current-seesu-users');
+			target.requirePart('current-seesu-users');
 		}
 	},
 

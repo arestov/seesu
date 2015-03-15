@@ -28,8 +28,8 @@ pv.View.extendTo(ArtcardUI, {
 			}
 			var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/500/' + lfm_wrap.lfm_id : lfm_wrap.url;
 			if (url){
-				this.tpl.ancs.bigimagec.empty();
-				this.tpl.ancs.bigimagec.append(
+				target.tpl.ancs.bigimagec.empty();
+				target.tpl.ancs.bigimagec.append(
 					$('<img/>').attr('src', url)
 				);
 			}
@@ -42,8 +42,8 @@ pv.View.extendTo(ArtcardUI, {
 
 				$(safe_node).find('script').remove();
 
-				this.tpl.ancs.bio.empty().append(safe_node);
-				this.root_view.bindLfmTextClicks(this.tpl.ancs.bio);
+				target.tpl.ancs.bio.empty().append(safe_node);
+				target.root_view.bindLfmTextClicks(target.tpl.ancs.bio);
 			}
 		}
 	},
@@ -100,7 +100,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 	],
 	'stch-parent_vmp_show': function(target, state) {
 		if (!state) {
-			this.setVisState('wamo_info', false);
+			target.setVisState('wamo_info', false);
 		}
 	},
 	'compx-infb_text': {
@@ -129,7 +129,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 		}
 	},
 	'stch-bio': function(target, text) {
-		var bioc = this.tpl.ancs['artbio'];
+		var bioc = target.tpl.ancs['artbio'];
 		if (!bioc){
 			return;
 		}
@@ -140,7 +140,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			$(safe_node).find('script').remove();
 
 			bioc.empty().append(safe_node);
-			this.root_view.bindLfmTextClicks(bioc);
+			target.root_view.bindLfmTextClicks(bioc);
 		} else {
 
 		}
@@ -158,7 +158,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 	},
 	'stch-key-panorama_width': function(target, state) {
 		if (state) {
-			pv.update(this, 'panorama_width', this.getBoxDemensionByKey(this.getPamoramaWidth, state));
+			pv.update(target, 'panorama_width', target.getBoxDemensionByKey(target.getPamoramaWidth, state));
 		}
 	},
 	'compx-key-panorama_width': [
@@ -172,8 +172,8 @@ pv.View.extendTo(ArtistInSongConstroller, {
 	],
 
 	'stch-panorama_width': function(target, state) {
-		if (state && this.img_panorama){
-			this.img_panorama.setViewportWidth(state);
+		if (state && target.img_panorama){
+			target.img_panorama.setViewportWidth(state);
 		}
 	},
 	getPamoramaLiftWidth: function() {
@@ -195,11 +195,11 @@ pv.View.extendTo(ArtistInSongConstroller, {
 
 		}
 	},
-	'stch-panorama_lift_width': function(target, state) {
-		if (state && this.img_panorama){
-			//this.img_panorama.setTotalWidth(state);
-		}
-	},
+	// 'stch-panorama_lift_width': function(target, state) {
+	// 	if (state && target.img_panorama){
+	// 		//this.img_panorama.setTotalWidth(state);
+	// 	}
+	// },
 	img_sample: $('<img class="artist_image hidden" alt=""/>'),
 	updatePanoramaIMGs: function(collection, images_combination, img_panorama) {
 		img_panorama.setCollection(collection, true);
@@ -211,46 +211,45 @@ pv.View.extendTo(ArtistInSongConstroller, {
 		if (!images || !images.length){
 			return;
 		}
-		var photo_c = this.tpl.ancs['phocoli'];
+		var photo_c = target.tpl.ancs['phocoli'];
 		if (!photo_c){
 			return;
 		}
-		var _this = this;
 
 		var prepareImageAppend = function(index) {
 			if (index === 0){
-				_this.tpl.ancs['first-image'].remove();
-				_this.tpl.ancs['first-image'] = null;
+				target.tpl.ancs['first-image'].remove();
+				target.tpl.ancs['first-image'] = null;
 			}
 		};
 		var canUse = function() {
-			return _this.isAlive();
+			return target.isAlive();
 		};
 
 
-		var queue = this.root_view.lfm_imgq;
+		var queue = target.root_view.lfm_imgq;
 
 		images = spv.toRealArray(images);
-		_this.setVisState('cool_photos', true);//cool_photos
-		_this.photo_data.cool_photos = images;
-		this.dom_related_props.push('img_panorama');
+		target.setVisState('cool_photos', true);//cool_photos
+		target.photo_data.cool_photos = images;
+		target.dom_related_props.push('img_panorama');
 		if (images.length){
 			var fragment = document.createDocumentFragment();
 
 			//var shuffled_images = [images.shift()];
 
 			//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
-			_this.img_requests = [];
-			var img_requests = _this.img_requests;
+			target.img_requests = [];
+			var img_requests = target.img_requests;
 
 			var main_c = photo_c.parent();
 
-			_this.img_panorama = new Panoramator({
+			target.img_panorama = new Panoramator({
 				viewport: main_c,
 				lift: photo_c,
 				improved_con: true,
 				getFastLiftWidth: function() {
-					return _this.getFastPamoramaLiftWidth();
+					return target.getFastPamoramaLiftWidth();
 				},
 				onUseEnd: function(){
 					seesu.trackEvent('Panoramator', 'artist photos');
@@ -259,7 +258,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			
 
 			//bindPanoramaResizeByWindow(img_panorama);
-			pv.update(_this, 'panorama', true);
+			pv.update(target, 'panorama', true);
 			
 			var images_collection = [];
 
@@ -267,14 +266,14 @@ pv.View.extendTo(ArtistInSongConstroller, {
 				images_collection.sort(sortByNum);
 				var images_combination = spv.filter(images_collection, 'num').join('_');
 				
-				_this.nextLocalTick(_this.updatePanoramaIMGs, [spv.filter(images_collection, 'item'), images_combination, _this.img_panorama]);
+				target.nextLocalTick(target.updatePanoramaIMGs, [spv.filter(images_collection, 'item'), images_combination, target.img_panorama]);
 				
 			}, 100);
 
 			var appendImage = function(el, index) {
 				var sizes = spv.toRealArray(el.sizes.size);
 
-				var image_jnode = _this.img_sample.clone();
+				var image_jnode = target.img_sample.clone();
 				var url = (sizes[5] || sizes[0])["#text"];
 				var req = app_serv.loadImage({
 					url: url,
@@ -315,7 +314,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			main_c.addClass('loading-images');
 
 			for (var i = 0; i < img_requests.length; i++) {
-				_this.addRequest( img_requests[i], { order: (img_requests.length - i) +1 } );
+				target.addRequest( img_requests[i], { order: (img_requests.length - i) +1 } );
 			}
 
 			$.when.apply($, img_requests).always(function(){
@@ -324,7 +323,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 				}
 				main_c.removeClass('loading-images');
 			});
-			//_this.nextLocalTick(checkPanoramaSize);
+			//target.nextLocalTick(checkPanoramaSize);
 		}
 	},
 	tpl_events: {

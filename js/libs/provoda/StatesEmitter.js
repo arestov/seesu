@@ -781,62 +781,6 @@ add({
 });
 
 
-
-
-
-var getSTCHfullname = spv.getPrefixingFunc('stch-');
-
-add({
-	
-	proxyStch: function(value, state_name) {
-		var old_value = this.zdsv.stch_states[state_name];
-		if (old_value != value) {
-			this.zdsv.stch_states[state_name] = value;
-			var method = (this[ getSTCHfullname( state_name ) ] || (this.state_change && this.state_change[state_name]));
-			method.call(this, this, value, old_value);
-		}
-	},
-	_handleStch: function(original_states, state_name, value, skip_handler, sync_tpl) {
-		var stateChanger = !skip_handler && (this[ getSTCHfullname( state_name ) ] || (this.state_change && this.state_change[state_name]));
-		if (stateChanger) {
-			this.zdsv.abortFlowSteps('stch', state_name, true);
-		} else {
-			return;
-		}
-		var old_value = this.zdsv.stch_states[state_name];
-		if (old_value != value) {
-			var method;
-			
-			if (stateChanger){
-				if (typeof stateChanger == 'function'){
-					method = stateChanger;
-				} else if (this.checkDepVP){
-					if (this.checkDepVP(stateChanger)){
-						method = stateChanger.fn;
-					}
-				}
-			}
-
-			if (method){
-				if (!sync_tpl) {
-					var flow_step = this.nextLocalTick(this.proxyStch, [value, state_name], true);
-					flow_step.p_space = 'stch';
-					flow_step.p_index_key = state_name;
-					this.zdsv.createFlowStepsArray('stch', state_name, flow_step);
-				} else {
-					this.proxyStch(value, state_name);
-				}
-				
-				
-				//method.call(this, value, old_value);
-			}
-		}
-	}
-});
-
-
-
-
 add({
 	
 

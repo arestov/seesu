@@ -32,9 +32,8 @@ pv.View.extendTo(FanPreview, {
 		}
 	},
 	'stch-selected_image': function(target, state) {
-		var image_node = this.tpl.ancs['user-image'];
+		var image_node = target.tpl.ancs['user-image'];
 		image_node.src = '';
-		var _this = this;
 		if (state){
 			var url = state.lfm_id ?
 				'http://userserve-ak.last.fm/serve/64s/' + state.lfm_id : state.url;
@@ -42,14 +41,14 @@ pv.View.extendTo(FanPreview, {
 			if (url.lastIndexOf('.gif') == url.length - 4){
 				return;
 			}
-			var req = this.root_view.loadImage({
+			var req = target.root_view.loadImage({
 				url: url,
 				cache_allowed: true
 			}).done(function() {
 				image_node[0].src = url;
-				_this.setVisState('image_loaded', true);
+				target.setVisState('image_loaded', true);
 			});
-			this.addRequest(req);
+			target.addRequest(req);
 		}
 	}
 });
@@ -139,10 +138,10 @@ pv.View.extendTo(SongcardController, {
 		}
 	},
 	'stch-can_expand_listeners': function(target, state) {
-		if (!this.expanded){
+		if (!target.expanded){
 			return;
 		}
-		if (!this.isAlive()) {
+		if (!target.isAlive()) {
 			return;
 		}
 		
@@ -150,11 +149,10 @@ pv.View.extendTo(SongcardController, {
 			return;
 		}
 		var su = window.su;
-		var _this = this;
-		var last_update = this.t_users.last_update;
+		var last_update = target.t_users.last_update;
 		//var current_user = su.s.getId();
-		var artist_name = this.state('artist_name');
-		var track_name = this.state('track_name');
+		var artist_name = target.state('artist_name');
+		var track_name = target.state('track_name');
 
 		if (artist_name && track_name && (!last_update || (Date.now() - last_update) > 1000 * 60 * 1)){
 			var d = {
@@ -166,13 +164,13 @@ pv.View.extendTo(SongcardController, {
 			if (current_user){
 				user_info = su.s.getInfo('vk');
 				if (user_info){
-					_this.createCurrentUserUI(user_info);
+					target.createCurrentUserUI(user_info);
 				}
-				_this.createListenersHeader();
+				target.createListenersHeader();
 
 			}
 			su.s.api('track.getListeners', d, function(r){
-				if (!_this.isAlive()){
+				if (!target.isAlive()){
 					return;
 				}
 				var raw_users = r && r.done && [].concat.apply([], r.done);
@@ -188,26 +186,26 @@ pv.View.extendTo(SongcardController, {
 						var uul = $("<ul></ul>");
 						for (var i=0; i < r.done.length; i++) {
 							if (r.done[i] && r.done[i].length){
-								above_limit_value = _this.createSongListeners(
-									r.done[i], uul, above_limit_value, current_user, _this.rowcs.users_context);
+								above_limit_value = target.createSongListeners(
+									r.done[i], uul, above_limit_value, current_user, target.rowcs.users_context);
 							}
 
 						}
-						if (_this.t_users.other_users){
-							_this.t_users.other_users.remove();
+						if (target.t_users.other_users){
+							target.t_users.other_users.remove();
 						}
 
-						_this.createListenersHeader();
+						target.createListenersHeader();
 
-						_this.t_users.c.addClass('many-users');
-						uul.appendTo(_this.t_users.list);
-						_this.t_users.other_users = uul;
+						target.t_users.c.addClass('many-users');
+						uul.appendTo(target.t_users.list);
+						target.t_users.other_users = uul;
 					}
 				}
 				//console.log(r)
 
 			});
-			this.t_users.last_update = (+new Date());
+			target.t_users.last_update = (+new Date());
 		}
 
 	},
