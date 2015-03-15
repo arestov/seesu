@@ -112,7 +112,6 @@ var album_placeholder = {
 			}
 
 			this.initStates();
-			//this.nextTick(this.initHeavyPart);
 		},
 		twistStates: function() {
 			this.initHeavyPart();

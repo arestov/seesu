@@ -277,7 +277,7 @@ AppModel.extendTo(SeesuApp, {
 		});
 
 	},
-	tickStat: function(data_array) {
+	tickStat: function(target, data_array) {
 		window._gaq.push(data_array);
 	},
 	init: function(version){

@@ -104,8 +104,6 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 			}
 		});
 
-		//p.insertDataAsSubitems(this.main_list_name, saved_pl);
-
 		this.watchOwnPlaylist(pl_r);
 		return pl_r;
 	},

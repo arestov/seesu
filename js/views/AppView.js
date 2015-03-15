@@ -325,7 +325,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		}
 	},
 
-	buildWidthStreamer: function() {
+	buildWidthStreamer: function(target) {
 		(function(_this) {
 			var app_workplace_width_stream_node = $("#pages_area_width_streamer", _this.d);
 			var awwst_win =  app_workplace_width_stream_node[0].contentWindow;
@@ -352,7 +352,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			});
 
 
-		})(this);
+		})(target);
 	},
 	buildVKSamples: function() {
 		var vklc = this.els.ui_samples.children('.vk-login-context');

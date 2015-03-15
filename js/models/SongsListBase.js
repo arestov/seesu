@@ -45,29 +45,29 @@ define(['pv', 'spv'], function(pv, spv){
 	};
 
 
-	var hndTickListChanges = function(last_usable_song) {
+	var hndTickListChanges = function(target, last_usable_song) {
 		if (last_usable_song && last_usable_song.isImportant()){
-			//this.checkNeighboursChanges(last_usable_song);
+			//target.checkNeighboursChanges(last_usable_song);
 		}
-		var w_song = getWantedSong(this);
-		var v_song = getViewingSong(this, w_song);
-		var p_song = getPlayerSong(this, v_song);
+		var w_song = getWantedSong(target);
+		var v_song = getViewingSong(target, w_song);
+		var p_song = getPlayerSong(target, v_song);
 
 		if (w_song && !w_song.hasNextSong()){
-			checkNeighboursChanges(this, w_song, false, false);
+			checkNeighboursChanges(target, w_song, false, false);
 		}
 
 		if (v_song && !v_song.hasNextSong()) {
-			checkNeighboursChanges(this, v_song, false, false);
+			checkNeighboursChanges(target, v_song, false, false);
 		}
 		
 		if (p_song && v_song != p_song && !p_song.hasNextSong()){
-			checkNeighboursChanges(this, p_song, false, false);
+			checkNeighboursChanges(target, p_song, false, false);
 		}
 
-		if (this.state('want_be_played')) {
-			if (this.getMainlist()) {
-				this.getMainlist()[0].wantSong();
+		if (target.state('want_be_played')) {
+			if (target.getMainlist()) {
+				target.getMainlist()[0].wantSong();
 			}
 		}
 	};
@@ -76,7 +76,7 @@ define(['pv', 'spv'], function(pv, spv){
 		if (!e.skip_report){
 			markTracksForFilesPrefinding(this);
 			this.makePlayable();
-			this.nextTick(hndTickListChanges, [e.last_usable_song]);
+			this.nextTick(hndTickListChanges, [this, e.last_usable_song]);
 			
 		}
 	};

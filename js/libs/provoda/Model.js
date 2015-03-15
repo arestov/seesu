@@ -758,8 +758,8 @@ add({
 
 
 			if (this.nestings_declarations) {
-				this.nextTick(function() {
-					initDeclaredNestings(this);
+				this.nextTick(function(target) {
+					initDeclaredNestings(target);
 				});
 			}
 
