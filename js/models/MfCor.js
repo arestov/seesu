@@ -163,7 +163,6 @@ LoadableList.extendTo(MfCor, {
 			if (!this.getLength('yt_videos')){
 				this.requestMoreData('yt_videos');
 			}
-			//this.nextTick(this.loadVideos);
 		}
 	},
 	hndTrackNameCh: function(e) {

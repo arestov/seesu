@@ -23,7 +23,7 @@ spv.Class.extendTo(Eventor, {
 		return this._getCallsFlow().pushToFlow(fn, this, args, false, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
 	nextTick: function(fn, args, use_current_motivator) {
-		return main_calls_flow.pushToFlow(fn, this, args, false, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
+		return main_calls_flow.pushToFlow(fn, this, args, !args && this, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
 	once: function(namespace, cb, opts, context) {
 		return this.evcompanion.once(namespace, cb, opts, context);

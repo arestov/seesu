@@ -571,8 +571,8 @@ var getMatchedSongs = function(music_list, msq) {
 
 			this.wch(this.mp3_search, 'big_files_list', this.hndBigFilesList);
 
-			this.nextTick(function() {
-				this.startSearch( {only_cache: true} );
+			this.nextTick(function(target) {
+				target.startSearch( {only_cache: true} );
 			});
 			
 			
@@ -751,8 +751,8 @@ var getMatchedSongs = function(music_list, msq) {
 		},
 		delayFileCheck: function(file) {
 			if (file.artist == this.msq.artist){
-				this.nextTick(function() {
-					this.checkFile(file);
+				this.nextTick(function(target) {
+					target.checkFile(file);
 				});
 			}
 		},

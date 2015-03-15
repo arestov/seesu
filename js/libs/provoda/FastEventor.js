@@ -836,7 +836,7 @@ FastEventor.prototype = {
 						}
 						items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
 
-						sputnik.nextTick(sputnik.insertDataAsSubitems, [nesting_name, items, serv_data, source_name], true);
+						sputnik.nextTick(sputnik.insertDataAsSubitems, [sputnik, nesting_name, items, serv_data, source_name], true);
 
 						if (!sputnik.loaded_nestings_items) {
 							sputnik.loaded_nestings_items = {};
@@ -854,7 +854,8 @@ FastEventor.prototype = {
 						if (side_data_parsers) {
 							for (var i = 0; i < side_data_parsers.length; i++) {
 								sputnik.nextTick(
-									_this.sputnik.handleNetworkSideData, [
+									sputnik.handleNetworkSideData, [
+										sputnik,
 										source_name,
 										side_data_parsers[i][0],
 										side_data_parsers[i][1].call(sputnik, r, paging_opts, morph_helpers)

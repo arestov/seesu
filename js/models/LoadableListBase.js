@@ -43,6 +43,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		if (params && params.subitems) {
 			if (params.subitems[this.main_list_name]) {
 				this.nextTick(this.insertDataAsSubitems, [
+					this,
 					this.main_list_name,
 					params.subitems[this.main_list_name],
 					null,
@@ -74,8 +75,8 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			return can_load_more && !list_loading;
 		}
 	},
-	handleNetworkSideData: function(source_name, ns, data) {
-		this.app.handleNetworkSideData(source_name, ns, data, this);
+	handleNetworkSideData: function(target, source_name, ns, data) {
+		target.app.handleNetworkSideData(source_name, ns, data, target);
 	},
 	main_list_name: 'lists_list',
 	preview_mlist_name: 'preview_list',
@@ -115,31 +116,31 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 	},
 
-	insertDataAsSubitems: function(nesting_name, data_list, opts, source_name) {
+	insertDataAsSubitems: function(target, nesting_name, data_list, opts, source_name) {
 		var items_list = [];
 		if (data_list && data_list.length){
-			var mlc_opts = this.getMainListChangeOpts();
+			var mlc_opts = target.getMainListChangeOpts();
 
 
-			var splitItemData = this['nest_rq_split-' + nesting_name];
+			var splitItemData = target['nest_rq_split-' + nesting_name];
 			for (var i = 0; i < data_list.length; i++) {
 				
 
 
-				var splited_data = splitItemData && splitItemData(data_list[i], this.getNestingSource(nesting_name, this.app));
+				var splited_data = splitItemData && splitItemData(data_list[i], target.getNestingSource(nesting_name, target.app));
 				var cur_data = splited_data ? splited_data[0] : data_list[i],
 					cur_params = splited_data && splited_data[1];
 
-				if (this.isDataItemValid && !this.isDataItemValid(cur_data)) {
+				if (target.isDataItemValid && !target.isDataItemValid(cur_data)) {
 					continue;
 				}
-				var item = this.addItemToDatalist(cur_data, true, cur_params, nesting_name);
+				var item = target.addItemToDatalist(cur_data, true, cur_params, nesting_name);
 				if (source_name && item && item._network_source === null) {
 					item._network_source = source_name;
 				}
 				items_list.push(item);
 			}
-			this.dataListChange(mlc_opts, items_list, nesting_name);
+			target.dataListChange(mlc_opts, items_list, nesting_name);
 		}
 	},
 	getRelativeRequestsGroups: function(space) {

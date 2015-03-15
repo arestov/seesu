@@ -1046,26 +1046,35 @@ StatesEmitter.extendTo(View, {
 		}
 		return has_all_dependings;
 	},
-	stackReceivedChanges: function() {
-		if (!this.isAlive()){
-			return;
-		}
-		this.nextTick(this._updateProxy, arguments);
-	},
+	stackReceivedChanges: (function() {
+		return function() {
+			if (!this.isAlive()){
+				return;
+			}
+
+			var args = new Array(arguments.length);
+			for (var i = 0; i < arguments.length; i++) {
+				args[i] = arguments[i];
+			}
+			args.unshift(this);
+
+			this.nextTick(updateProxy, args);
+		};
+	})(),
 	receiveStatesChanges: function(changes_list, opts) {
 		if (!this.isAlive()){
 			return;
 		}
-		this._updateProxy(changes_list, opts);
+		updateProxy(this, changes_list, opts);
 	},
 	overrideStateSilently: function(name, value) {
-		this._updateProxy([name, value], {skip_handler: true});
+		updateProxy(this, [name, value], {skip_handler: true});
 	},
 	promiseStateUpdate: function(name, value) {
-		this._updateProxy([name, value]);
+		updateProxy(this, [name, value]);
 	},
 	setVisState: function(name, value) {
-		this._updateProxy(['vis_' + name, value]);
+		updateProxy(this, ['vis_' + name, value]);
 	},
 	checkChildrenModelsRendering: function() {
 		var obj = spv.cloneObj(false, this.children_models);
@@ -1075,7 +1084,7 @@ StatesEmitter.extendTo(View, {
 		this._lbr._collections_set_processing = true;
 		//вью только что создана, присоединяем подчинённые views без деталей (детали создаются позже)
 		for (var i in collections) {
-			this.collectionChange(i, collections[i]);
+			this.collectionChange(this, i, collections[i]);
 		}
 		this._lbr._collections_set_processing = null;
 	},
@@ -1240,12 +1249,18 @@ StatesEmitter.extendTo(View, {
 		this.dclrs_fpckgs[nesname] = this.dclrs_fpckgs[ '$ondemand-' + nesname ];
 		if (this.children_models[nesname]){
 
-			this.collectionChange(nesname, this.children_models[nesname]);
+			this.collectionChange(this, nesname, this.children_models[nesname]);
 		}
 	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	stackCollectionChange: function() {
-		this.nextTick(this.collectionChange, arguments);
+		var args = new Array(arguments.length);
+		for (var i = 0; i < arguments.length; i++) {
+			args[i] = arguments[i];
+		}
+		args.unshift(this);
+
+		this.nextTick(this.collectionChange, args);
 	},
 	checkTplTreeChange: function() {
 		var total_ch = [];
@@ -1305,57 +1320,57 @@ StatesEmitter.extendTo(View, {
 			this.requestAll();
 		}
 	},
-	collectionChange: function(nesname, items, rold_value, removed) {
-		if (!this.isAlive()){
+	collectionChange: function(target, nesname, items, rold_value, removed) {
+		if (!target.isAlive()){
 			return;
 		}
-		if (this._lbr.undetailed_children_models){
-			this._lbr.undetailed_children_models[nesname] = items;
-			return this;
+		if (target._lbr.undetailed_children_models){
+			target._lbr.undetailed_children_models[nesname] = items;
+			return target;
 		}
 
-		var old_value = this.children_models[nesname];
-		this.children_models[nesname] = items;
+		var old_value = target.children_models[nesname];
+		target.children_models[nesname] = items;
 
-		this.pvCollectionChange(nesname, items, removed);
+		target.pvCollectionChange(nesname, items, removed);
 
 
-		var collch = this.dclrs_fpckgs && this.dclrs_fpckgs.hasOwnProperty(nesname) && this.dclrs_fpckgs[nesname];
+		var collch = target.dclrs_fpckgs && target.dclrs_fpckgs.hasOwnProperty(nesname) && target.dclrs_fpckgs[nesname];
 		if (typeof collch == 'function') {
-			this.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
+			target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
 		} else {
-			if (this.dclrs_selectors && this.dclrs_selectors.hasOwnProperty(nesname)) {
+			if (target.dclrs_selectors && target.dclrs_selectors.hasOwnProperty(nesname)) {
 				if (Array.isArray(items)) {
 					for (var i = 0; i < items.length; i++) {
 						var cur = items[i];
-						var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
-							nesname, cur.model_name, this.nesting_space);
+						var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
+							nesname, cur.model_name, target.nesting_space);
 
 						if (!dclr) {
 							dclr = collch;
 						}
 
 						throw new Error('WHAT TO DO WITH old_value?');
-						this.callCollectionChangeDeclaration(dclr, nesname, cur, old_value, removed);
+						// target.callCollectionChangeDeclaration(dclr, nesname, cur, old_value, removed);
 					}
 				} else {
-					var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
-							nesname, items.model_name, this.nesting_space);
+					var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
+							nesname, items.model_name, target.nesting_space);
 
 					if (!dclr) {
 						dclr = collch;
 					}
-					this.callCollectionChangeDeclaration(dclr, nesname, items, old_value, removed);
+					target.callCollectionChangeDeclaration(dclr, nesname, items, old_value, removed);
 				}
 			} else {
 				if (collch) {
-					this.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
+					target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
 				}
 			}
 		}
 
-		this.checkDeadChildren();
-		return this;
+		target.checkDeadChildren();
+		return target;
 	},
 	removeViewsByMds: function(array, nesname, space) {
 		if (!array){
