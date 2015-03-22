@@ -33,11 +33,13 @@ var aReq = function(options){
 			deferred			= $.Deferred(),
 			cancelLoad = function() {
 				if (img){
-					img.src = null;
+					delete img.src;
+					// img.src = null;
 					unbindImage();
 				}
 				if (script){
-					script.src = null;
+					delete script.src;
+					// script.src = null;
 				}
 				if (callback_func_name && window[callback_func_name]){
 					window[callback_func_name] = $.noop();

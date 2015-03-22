@@ -91,8 +91,8 @@ define(['spv'],function(spv){
 				try {
 					this.a.pause();
 				} catch (e){}
-				this.a.src = null;
-				//delete this.a;
+				// this.a.src = null;
+				delete this.a.src;
 			}
 		},
 		play: function() {
