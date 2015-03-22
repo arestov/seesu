@@ -110,88 +110,89 @@ Server.prototype._onSocketMessage = function (socket, data) {
     return error('invalid socket message')
   }
 
+  var infoHash = typeof data.info_hash === 'string' && data.info_hash
+  if (!infoHash || infoHash.length !== 20) return error('invalid info_hash')
+  var infoHashHex = binaryToHex(infoHash)
+
   var peerId = typeof data.peer_id === 'string' && data.peer_id
   if (!peerId || peerId.length !== 20) return error('invalid peer_id')
   var peerIdHex = binaryToHex(peerId)
 
-  var infoHash = typeof data.info_hash === 'string' && data.info_hash
-  if (!infoHash || infoHash.length !== 20) return error('invalid info_hash')
-  var infoHashHex = binaryToHex(infoHash)
+  var left = Number(data.left)
 
   debug('received %s from %s', JSON.stringify(data), peerIdHex)
   if (!socket.id) socket.id = peerId
   if (socket.infoHashes.indexOf(infoHash) === -1) socket.infoHashes.push(infoHash)
 
-  var warning
   var swarm = self._getSwarm(infoHash)
   var peer = swarm.peers[peerId]
 
+  var start = function () {
+    if (peer) {
+      debug('unexpected `started` event from peer that is already in swarm')
+      return update() // treat as an update
+    }
+    if (left === 0) swarm.complete += 1
+    else swarm.incomplete += 1
+    peer = swarm.peers[peerId] = {
+      socket: socket,
+      id: peerId
+    }
+    self.emit('start', peerId)
+  }
+
+  var stop = function () {
+    if (!peer) {
+      debug('unexpected `stopped` event from peer that is not in swarm')
+      return // do nothing
+    }
+    if (peer.complete) swarm.complete -= 1
+    else swarm.incomplete -= 1
+    swarm.peers[peerId] = null
+    self.emit('stop', peerId)
+  }
+
+  var complete = function () {
+    if (!peer) {
+      debug('unexpected `completed` event from peer that is not in swarm')
+      return start() // treat as a start
+    }
+    if (peer.complete) {
+      debug('unexpected `completed` event from peer that is already marked as completed')
+      return // do nothing
+    }
+    swarm.complete += 1
+    swarm.incomplete -= 1
+    peer.complete = true
+    self.emit('complete', peerId)
+  }
+
+  var update = function () {
+    if (!peer) {
+      debug('unexpected `update` event from peer that is not in swarm')
+      return start() // treat as a start
+    }
+    self.emit('update', peerId)
+  }
+
   switch (data.event) {
     case 'started':
-      if (peer) {
-        warning = 'unexpected `started` event from peer that is already in swarm'
-        break
-      }
-
-      if (Number(data.left) === 0) {
-        swarm.complete += 1
-      } else {
-        swarm.incomplete += 1
-      }
-
-      swarm.peers[peerId] = {
-        socket: socket,
-        id: peerId
-      }
-      self.emit('start')
+      start()
       break
-
     case 'stopped':
-      if (!peer) {
-        warning = 'unexpected `stopped` event from peer that is not in swarm'
-        break
-      }
-
-      if (peer.complete) {
-        swarm.complete -= 1
-      } else {
-        swarm.incomplete -= 1
-      }
-
-      swarm.peers[peerId] = null
-      self.emit('stop')
+      stop()
       break
-
     case 'completed':
-      if (!peer) {
-        warning = 'unexpected `completed` event from peer that is not in swarm'
-        break
-      }
-      if (peer.complete) {
-        warning = 'unexpected `completed` event from peer that is already marked as completed'
-        break
-      }
-
-      swarm.complete += 1
-      swarm.incomplete -= 1
-
-      peer.complete = true
-      self.emit('complete')
+      complete()
       break
-
-    case '': // update
-    case undefined:
-      if (!peer) {
-        warning = 'unexpected `update` event from peer that is not in swarm'
-        break
-      }
-
-      self.emit('update')
+    case '': case undefined: // update
+      update()
       break
-
     default:
       return error('invalid event') // early return
   }
+
+  if (left === 0 && peer) peer.complete = true
 
   var response = JSON.stringify({
     complete: swarm.complete,
@@ -199,7 +200,6 @@ Server.prototype._onSocketMessage = function (socket, data) {
     interval: self._intervalMs,
     info_hash: infoHash
   })
-  if (warning) response['warning message'] = warning
 
   socket.send(response, socket.onSend)
   debug('sent response %s to %s', response, peerIdHex)

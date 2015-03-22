@@ -7,7 +7,7 @@ nodebmc is a client library for xbmc.
 
 From npm:
 
-	npm intall nodebmc
+	npm install nodebmc
 
 From source:
 

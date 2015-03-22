@@ -22,6 +22,7 @@ Browser.prototype.init = function( options ) {
     });
 
     mdnsBrowser.on('update', function (device) {
+        console.log(device);
         var dev_config = {addresses: device.addresses, port: device.port, name: device.type[0].name};
         self.device = new Device(dev_config);
         self.emit('deviceOn', self.device);

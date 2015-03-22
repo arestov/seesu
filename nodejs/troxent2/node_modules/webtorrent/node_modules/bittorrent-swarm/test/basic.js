@@ -5,14 +5,14 @@ var test = require('tape')
 
 var infoHash = 'd2474e86c95b19b8bcfdb92bc12c9d44667cfa36'
 var infoHash2 = 'd2474e86c95b19b8bcfdb92bc12c9d44667cfa37'
-var peerId = '-WW0001-' + hat(48)
-var peerId2 = '-WW0001-' + hat(48)
+var peerId = new Buffer('-WW0001-' + hat(48), 'utf8').toString('hex')
+var peerId2 = new Buffer('-WW0001-' + hat(48), 'utf8').toString('hex')
 
 test('create swarm, check invariants', function (t) {
   var swarm = new Swarm(infoHash, peerId)
 
   t.equal(swarm.infoHash.toString('hex'), infoHash)
-  t.equal(swarm.peerId.toString('utf8'), peerId)
+  t.equal(swarm.peerId.toString('hex'), peerId)
   t.equal(swarm.downloaded, 0)
   t.equal(swarm.uploaded, 0)
   t.ok(Array.isArray(swarm.wires))
@@ -112,7 +112,7 @@ test('swarm join', function (t) {
 
         t.equal(swarm1.wires.length, 1)
         t.ok(/127\.0\.0\.1:\d{1,5}/.test(wire.remoteAddress))
-        t.equal(wire.peerId.toString('utf8'), peerId2)
+        t.equal(wire.peerId.toString('hex'), peerId2)
 
         swarm1.destroy()
       })
@@ -122,7 +122,7 @@ test('swarm join', function (t) {
 
         t.equal(swarm2.wires.length, 1)
         t.ok(/127\.0\.0\.1:\d{1,5}/.test(wire.remoteAddress))
-        t.equal(wire.peerId.toString('utf8'), peerId)
+        t.equal(wire.peerId.toString('hex'), peerId)
 
         swarm2.destroy()
       })
