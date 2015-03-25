@@ -498,7 +498,7 @@ FastEventor.prototype = {
 				
 			});
 		};
-		var added = new Array(array.length);
+		var added = [];
 		for (i = 0; i < array.length; i++) {
 			req = array[i];
 			/*if (req.queued){
@@ -514,7 +514,7 @@ FastEventor.prototype = {
 			}
 			target_arr.push(req);
 			bindRemove(this, req);
-			added[i] = req;
+			added.push(req);
 		}
 		if (added.length){
 			if (!opts || !opts.skip_sort){
