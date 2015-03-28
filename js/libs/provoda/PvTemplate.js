@@ -1,7 +1,8 @@
 define(['spv', './StatementsAngularParser.min', 'jquery'], function(spv, angbo, $) {
 "use strict";
 var push = Array.prototype.push;
-
+var addEvent = spv.addEvent;
+var removeEvent = spv.removeEvent;
 
 var makeSpecStatesList = function(states) {
 	var result = [];
@@ -1341,9 +1342,9 @@ var handleChunks = (function() {
 		}
 	};
 
-	return function handleChunks(items, tpl) {
-		if (!items) {return [];}
-		var result = [];
+	return function handleChunks(items, tpl, need_clean) {
+		if (!items) {return need_clean && [];}
+		var result = need_clean && [];
 		for (var i = 0; i < items.length; i++) {
 			var chunk = items[i];
 			if (!chunk.dead) {
@@ -1354,13 +1355,10 @@ var handleChunks = (function() {
 					destroyer(chunk, tpl);
 				}
 			}
-			if (!chunk.handled) {
+			if (!chunk.dead && !chunk.handled) {
 				chunk.handled = true;
 				chunk_handlers[chunk.type](chunk, tpl);
 			}
-			
-			
-
 		}
 		return result;
 	};
@@ -1466,7 +1464,15 @@ spv.Class.extendTo(PvTemplate, {
 		}
 	},
 	destroy: function() {
+		for (var i = 0; i < this.all_chunks.length; i++) {
+			this.all_chunks[i].dead = true;
+		}
+		handleChunks(this.all_chunks, this, false);
+		this.all_chunks = null;
+
 		if (this.destroyers) {
+			
+
 			while (this.destroyers.length) {
 				var cur = this.destroyers.shift();
 				cur.call(this);
@@ -1575,31 +1581,37 @@ spv.Class.extendTo(PvTemplate, {
 	
 	empty_state_obj: {},
 	
-	bindPVEvent: function(node, evdata) {
-		var _this = this;
-		var callback = function(e) {
-			evdata.fn.call(this, e, _this);
+	bindPVEvent: (function() {
+		var getDestroer = function(node, event_name, callback) {
+			return function destroyer() {
+				removeEvent(node, event_name, callback);
+			};
 		};
-		var destroyer = function() {
-			$(node).off(evdata.event_name, callback);
 
-			node = null;
+		return function(node, evdata) {
+			var _this = this;
+
+			var userCallback = evdata.fn;
+			var event_name = evdata.event_name;
+
 			evdata = null;
 
-			_this = null;
-			callback = null;
-			destroyer = null;
+			var callback = function(e) {
+				userCallback.call(this, e, _this);
+			};
+
+			var destroyer = getDestroer(node, event_name, callback);
+
+			addEvent(node, event_name, callback);
+
+			// if (!this.destroyers) {
+			// 	this.destroyers = [];
+			// }
+
+			// this.destroyers.push(destroyer);
+			return destroyer;
 		};
-
-		$(node).on(evdata.event_name, callback);
-
-		if (!this.destroyers) {
-			this.destroyers = [];
-		}
-
-		this.destroyers.push(destroyer);
-		return destroyer;
-	},
+	})(),
 	
 
 	callEventCallback: function(node, e, data) {
@@ -1768,7 +1780,7 @@ spv.Class.extendTo(PvTemplate, {
 		return all_chunks;
 	},
 	checkChunks: function() {
-		handleChunks(this.all_chunks, this);
+		this.all_chunks = handleChunks(this.all_chunks, this, true);
 		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values', true);
 	},
 	parsePvDirectives: function(start_node) {
