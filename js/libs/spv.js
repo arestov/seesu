@@ -786,7 +786,7 @@ var stPartWrapping = function(original, part) {
 	};
 };
 
-var stNamimg = function(constructor) {
+var stNaming = function(constructor) {
 	return function Model(arg1) {
 		constructor(this, arg1);
 	};
@@ -810,8 +810,8 @@ var empty = function() {};
 var extendTo = Class.extendTo;
 
 function extend(Class, params) {
-	var parentNaming = Class.namimg || stNamimg;
-	var naming = params.namimg || parentNaming;
+	var parentNaming = Class.naming || stNaming;
+	var naming = params.naming || parentNaming;
 	var building = params.building || Class.building || stBuilding;
 	var partWrapping = params.partWrapping || Class.partWrapping || stPartWrapping;
 

@@ -106,136 +106,143 @@ LfmLogin.extendTo(LfmScrobble, {
 });
 
 
-
-
-var LfmAuth = function(lfm, opts) {
-	this.api = lfm;
-	this.opts = opts || {};
-	if (this.opts){
-		this.init(this.opts);
-	}
-};
-pv.Eventor.extendTo(LfmAuth, {
-	init: function(opts) {
-		this._super();
-		if (this.api.sk){
-			this.has_session = true;
-		}
-		if (opts.deep_sanbdox){
-			this.deep_sanbdox = true;
-		}
+var LfmAuth = spv.inh(pv.Eventor, {
+	naming: function(constructor) {
+		return function LfmAuth(lfm, opts) {
+			constructor(this, lfm, opts);
+		};
 	},
-	requestAuth: function(p){
-		
-		this.authInit(p || {});
-		return;
+	building: function(parentConstructor) {
+		return function buildLfmAuth(obj, lfm, opts){
+			parentConstructor(obj);
+			obj.api = lfm;
+			obj.opts = opts || {};
+			obj.has_session = !!obj.api.sk;
+			obj.deep_sanbdox = !!opts.deep_sanbdox;
+		};
 	},
-	login: function(r, callback){
-		this.api.sk = r.session.key;
-		this.api.username = r.session.name;
-		this.api.stSet('lfm_user_name', r.session.name, true);
-		this.api.stSet('lfmsk', this.api.sk, true);
-		if (callback){callback();}
-	},
-	getInitAuthData: function(){
-		var o = {};
-		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.api.apikey ;
-		var link_tag = this.opts.callback_url;
-		if (!this.opts.deep_sanbdox){
-			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
-			link_tag += '?key=' + o.bridgekey;
-		}
-		
-		o.link += '&cb=' + encodeURIComponent(link_tag);
-		return o;
-	},
-	waitData: function() {
-		this.trigger('data_wait');
-		this.data_wait = true;
-	},
-	createAuthFrame: function(first_key){
-		if (this.lfm_auth_inited){
-			return false;
-		}
-		var _this = this;
-		var i = this.auth_frame = document.createElement('iframe');
-		spv.addEvent(window, 'message', function(e){
-			var iframe_win = _this.auth_frame && _this.auth_frame.contentWindow;
-			if (e.source != iframe_win) {
-				return;
-			}
-			if (e.data == 'lastfm_bridge_ready:'){
-				e.source.postMessage("add_keys:" + first_key, '*');
-			} else if(e.data.indexOf('lastfm_token:') === 0){
-				_this.setToken(e.data.replace('lastfm_token:',''));
-				console.log('got token!!!!');
-				console.log(e.data.replace('lastfm_token:',''));
-			}
-		});
-		i.className = 'serv-container';
-		i.src = this.opts.bridge_url;
-		document.body.appendChild(i);
-		this.lfm_auth_inited = true;
-	},
-	setAuthBridgeKey: function(key){
-		if (!this.lfm_auth_inited){
-			this.createAuthFrame(key);
-		} else{
-			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
-		}
-	},
-	authInit: function(p){
-		
-		
-		//init_auth_data.bridgekey
-		
-		var init_auth_data = this.getInitAuthData();
-		if (init_auth_data.bridgekey){
-			this.setAuthBridgeKey(init_auth_data.bridgekey);
-		}
-		if (!p.not_open){
-			this.trigger('want-open-url', init_auth_data.link, init_auth_data);
-			this.waitData();
-		}
+	props: {
+		requestAuth: function(p){
 			
-		
-		return;
-		
-	},
-	setToken: function(token){
-		this.newtoken = token;
-		this.try_to_login();
-	},
-	get_lfm_token: function(){
-		var _this = this;
-		this.api.get('auth.getToken', false, {nocache: true})
-			.done(function(r){
-				_this.newtoken = r.token;
+			this.authInit(p || {});
+			return;
+		},
+		login: function(r, callback){
+			this.api.sk = r.session.key;
+			this.api.username = r.session.name;
+			this.api.stSet('lfm_user_name', r.session.name, true);
+			this.api.stSet('lfmsk', this.api.sk, true);
+			if (callback){callback();}
+		},
+		getInitAuthData: function(){
+			var o = {};
+			o.link = 'http://www.last.fm/api/auth/?api_key=' + this.api.apikey ;
+			var link_tag = this.opts.callback_url;
+			if (!this.opts.deep_sanbdox){
+				o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+				link_tag += '?key=' + o.bridgekey;
+			}
+			
+			o.link += '&cb=' + encodeURIComponent(link_tag);
+			return o;
+		},
+		waitData: function() {
+			this.trigger('data_wait');
+			this.data_wait = true;
+		},
+		createAuthFrame: function(first_key){
+			if (this.lfm_auth_inited){
+				return false;
+			}
+			var _this = this;
+			var i = this.auth_frame = document.createElement('iframe');
+			spv.addEvent(window, 'message', function(e){
+				var iframe_win = _this.auth_frame && _this.auth_frame.contentWindow;
+				if (e.source != iframe_win) {
+					return;
+				}
+				if (e.data == 'lastfm_bridge_ready:'){
+					e.source.postMessage("add_keys:" + first_key, '*');
+				} else if(e.data.indexOf('lastfm_token:') === 0){
+					_this.setToken(e.data.replace('lastfm_token:',''));
+					console.log('got token!!!!');
+					console.log(e.data.replace('lastfm_token:',''));
+				}
 			});
-	},
-	try_to_login: function(callback){
-		var _this = this;
-		if (_this.newtoken ){
-			_this.api.get('auth.getSession', {'token':_this.newtoken })
+			i.className = 'serv-container';
+			i.src = this.opts.bridge_url;
+			document.body.appendChild(i);
+			this.lfm_auth_inited = true;
+		},
+		setAuthBridgeKey: function(key){
+			if (!this.lfm_auth_inited){
+				this.createAuthFrame(key);
+			} else{
+				this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
+			}
+		},
+		authInit: function(p){
+			
+			
+			//init_auth_data.bridgekey
+			
+			var init_auth_data = this.getInitAuthData();
+			if (init_auth_data.bridgekey){
+				this.setAuthBridgeKey(init_auth_data.bridgekey);
+			}
+			if (!p.not_open){
+				this.trigger('want-open-url', init_auth_data.link, init_auth_data);
+				this.waitData();
+			}
+				
+			
+			return;
+			
+		},
+		setToken: function(token){
+			this.newtoken = token;
+			this.try_to_login();
+		},
+		get_lfm_token: function(){
+			var _this = this;
+			this.api.get('auth.getToken', false, {nocache: true})
 				.done(function(r){
-					if (!r.error) {
-						_this.login(r,callback);
-						_this.trigger("session");
-						_this.has_session = true;
-						_this.trigger('api-full-ready');
-
-
-						
-						
-						console.log('lfm scrobble access granted');
-					} else{
-						console.log('error while granting lfm scrobble access');
-					}
-					
+					_this.newtoken = r.token;
 				});
+		},
+		try_to_login: function(callback){
+			var _this = this;
+			if (_this.newtoken ){
+				_this.api.get('auth.getSession', {'token':_this.newtoken })
+					.done(function(r){
+						if (!r.error) {
+							_this.login(r,callback);
+							_this.trigger("session");
+							_this.has_session = true;
+							_this.trigger('api-full-ready');
+
+
+							
+							
+							console.log('lfm scrobble access granted');
+						} else{
+							console.log('error while granting lfm scrobble access');
+						}
+						
+					});
+			}
 		}
 	}
 });
+
+// var LfmAuth = function(lfm, opts) {
+// 	this.api = lfm;
+// 	this.opts = opts || {};
+// 	if (this.opts){
+// 		this.init(this.opts);
+// 	}
+// };
+// pv.Eventor.extendTo(LfmAuth, );
 
 LfmAuth.LfmLogin =LfmLogin;
 LfmAuth.LfmScrobble =LfmScrobble;
