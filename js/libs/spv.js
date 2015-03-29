@@ -787,13 +787,13 @@ var stPartWrapping = function(original, part) {
 };
 
 var stNaming = function(constructor) {
-	return function Model(arg1) {
+	return function Class(arg1) {
 		constructor(this, arg1);
 	};
 };
 
 var stBuilding = function(parentBuilder) {
-	return function modelBuilder(obj) {
+	return function classBuilder(obj) {
 		parentBuilder(obj);
 	};
 };
