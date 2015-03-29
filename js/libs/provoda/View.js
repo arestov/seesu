@@ -170,8 +170,7 @@ StatesEmitter.extendTo(View, {
 			bwlev_view.RPCLegacy('followTo', md_id);
 		}
 	},
-	onExtend: function(props, original) {
-		this._super(props);
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
 		if (props.tpl_events) {
 			this.tpl_events = {};
 			spv.cloneObj(this.tpl_events, original.tpl_events);
@@ -185,7 +184,7 @@ StatesEmitter.extendTo(View, {
 		}
 		
 
-	},
+	}),
 	'stch-map_slice_view_sources': function(target, state) {
 		if (state) {
 			if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {

@@ -718,10 +718,19 @@ var constr_id = 0;
 		// Copy the properties over onto the new prototype
 		for (var prop_name in props) {
 			// Check if we're overwriting an existing function
-			prototype[prop_name] = typeof props[prop_name] == "function" &&
-				typeof _super[prop_name] == "function" && fnTest.test(props[prop_name]) ?
+			var needSuper = typeof props[prop_name] == "function" &&
+				typeof _super[prop_name] == "function" && fnTest.test(props[prop_name]);
+			prototype[prop_name] = needSuper ?
 				allowParentCall(prop_name, props[prop_name], _super) :
 				props[prop_name];
+			// if (needSuper && prop_name != 'init') {
+			// 	// prop_name
+			// 	// props[prop_name]
+			// 	var value = props[prop_name];
+			// 	console.log(prop_name, value);
+			// 	// debugger;
+
+			// }
 		}
 
 		// Populate our constructed prototype object
@@ -746,6 +755,122 @@ var constr_id = 0;
 })();
 
 spv.Class = Class;
+
+spv.passingContext = function passingContext (func) {
+	// for legacy
+	return function(obj) {
+		var arr = new Array(arguments.length);
+		for (var i = 0; i < arguments.length; i++) {
+			arr[i] = arguments[i];	
+		}
+		arr.shift();
+
+		func.apply(obj, arr);
+	};
+};
+
+spv.precall = function precall(func1, func2) {
+	// for legacy
+	return function() {
+		func1.apply(this, arguments);
+		return func2.apply(this, arguments);
+	};
+};
+
+(function () {
+
+var stPartWrapping = function(original, part) {
+	return function builderWrap(obj, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
+		original(obj, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+		part(obj, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+	};
+};
+
+var stNamimg = function(constructor) {
+	return function Model(arg1) {
+		constructor(this, arg1);
+	};
+};
+
+var stBuilding = function(parentBuilder) {
+	return function modelBuilder(obj) {
+		parentBuilder(obj);
+	};
+};
+
+var wrapExtend = function(original, fresh) {
+	return function(resultPrototype, props, originalPrototype) {
+		original(resultPrototype, props, originalPrototype);
+		fresh(resultPrototype, props, originalPrototype);
+	};
+};
+
+var empty = function() {};
+
+var extendTo = Class.extendTo;
+
+function extend(Class, params) {
+	var parentNaming = Class.namimg || stNamimg;
+	var naming = params.namimg || parentNaming;
+	var building = params.building || Class.building || stBuilding;
+	var partWrapping = params.partWrapping || Class.partWrapping || stPartWrapping;
+
+	var parentBuilder = Class.builder;
+	var partBuilder = params.partBuilder;
+	var props = typeof params.props == 'function' ?
+		spv.coe(params.props) :
+		params.props;
+
+	var parentExtend = Class.onExtend;
+	var onExtend = params.onExtend ?
+			wrapExtend((parentExtend || empty), params.onExtend) :
+			parentExtend;
+
+	var currentBuilder = building(parentBuilder || empty);
+	var finalBuilder = partBuilder ? partWrapping(currentBuilder, partBuilder) : currentBuilder;
+
+	var result = naming(finalBuilder);
+	result.naming = naming;
+	result.building = building;
+	result.partWrapping = partWrapping;
+	result.builder = finalBuilder;
+	result.onExtend = onExtend;
+
+	var PrototypeConstr = parentNaming(empty);
+	PrototypeConstr.prototype = Class.prototype;
+	result.prototype = new PrototypeConstr();
+
+	if (props) {
+		spv.cloneObj(result.prototype, props);
+		if (onExtend) {
+			onExtend(result.prototype, props, Class.prototype);
+		}
+	}
+
+	result.prototype.constructor = Class;
+
+	result.extendTo = function(Class, props) {
+		console.log('don\'t use extendTo');
+		// debugger;
+		var naming = this.naming;
+		var PrototypeConstr = naming(empty);
+		PrototypeConstr.prototype = this.prototype;
+		return extendTo.call(PrototypeConstr, Class, props);
+	};
+
+	return result;
+
+}
+
+extend.legInit = function(Class) {
+	var builder = Class.builder;
+	Class.prototype.init = function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+		builder(this, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+	};
+};
+
+spv.inh = extend;
+})();
 
 
 /**

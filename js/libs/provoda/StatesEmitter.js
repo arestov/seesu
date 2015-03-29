@@ -21,12 +21,104 @@ var getLightConnector = function(state_name) {
 	}
 	return light_con_store[state_name];
 };
+var getBaseTreeCheckList = function(start) {
+	var i, result = [];
+	var chunks_counter = 0;
+	var all_items = [null, start];
+
+	while (all_items.length) {
+		
+
+		var cur_parent = all_items.shift();
+		var cur = all_items.shift();
+
+		cur.parent = cur_parent;
+		cur.chunk_num = chunks_counter;
+
+		if (cur.children_by_selector) {
+			for (i = cur.children_by_selector.length - 1; i >= 0; i--) {
+				all_items.push( cur, cur.children_by_selector[i] );
+			}
+		}
+		
+		if (cur.children_by_anchor) {
+			for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
+				all_items.push( cur, cur.children_by_anchor[i] );
+			}
+
+		}
+
+		result.push( cur );
+		chunks_counter++;
 
 
+	}
+	return result;
 
+};
 
-function StatesEmitter() {}
-Eventor.extendTo(StatesEmitter, function(add) {
+var onPropsExtend = function (props) {
+	if (this.collectStateChangeHandlers){
+		this.collectStateChangeHandlers(props);
+	}
+	var collches_modified;
+	if (this.collectCollectionChangeDeclarations){
+		collches_modified = this.collectCollectionChangeDeclarations(props);
+	}
+	if (this.collectSelectorsOfCollchs) {
+		this.collectSelectorsOfCollchs(props);
+	}
+	this.collectStatesBinders(props);
+	this.collectCompxs(props);
+	this.collectRegFires(props);
+
+	if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
+		this.nest_match = (this.st_nest_matches || []).concat(this.compx_nest_matches || []);
+	}
+
+	var base_tree_mofified;
+	if (props.hasOwnProperty('base_tree')) {
+		base_tree_mofified = true;
+		this.base_tree_list = getBaseTreeCheckList(props.base_tree);
+	}
+	if (collches_modified || base_tree_mofified) {
+		this.collectBaseExtendStates();
+	}
+
+	if (this.collectNestingsDeclarations) {
+		this.collectNestingsDeclarations(props);
+	}
+
+	if (this.changeDataMorphDeclarations) {
+		this.changeDataMorphDeclarations(props);
+	}
+
+	if (this.changeChildrenViewsDeclarations) {
+		this.changeChildrenViewsDeclarations(props);
+	}
+
+	
+	for (var i = 0; i < this.xxxx_morph_props.length; i++) {
+		var cur = this.xxxx_morph_props[i];
+		var cur_name = Array.isArray(cur) ? cur[0] : cur;
+		var subfield = Array.isArray(cur) && cur[1];
+		if (props.hasOwnProperty(cur_name)) {
+			if (typeof this[cur_name] != 'function' && this[cur_name] !== true) {
+				var obj = {
+					props_map: this[cur_name]
+				};
+				if (subfield) {
+					obj.source = subfield;
+				}
+				this[cur_name] = spv.mmap(obj);
+			}
+			
+		}
+	}	
+};
+
+// Eventor.extendTo(StatesEmitter, 
+function props(add) {
 
 
 var stackStateFlowStep = function(flow_step, state_name) {
@@ -87,7 +179,6 @@ var regfr_stev = (function() {
 	};
 })();
 
-
 var regfr_lightstev = (function() {
 	var getState = spv.getDeprefixFunc('lgh_sch-');
 	return {
@@ -107,47 +198,9 @@ var regfr_lightstev = (function() {
 	};
 })();
 
-
-
 var EvConxOpts = function(context, immediately) {
 	this.context = context;
 	this.immediately = immediately;
-};
-
-var getBaseTreeCheckList = function(start) {
-	var i, result = [];
-	var chunks_counter = 0;
-	var all_items = [null, start];
-
-	while (all_items.length) {
-		
-
-		var cur_parent = all_items.shift();
-		var cur = all_items.shift();
-
-		cur.parent = cur_parent;
-		cur.chunk_num = chunks_counter;
-
-		if (cur.children_by_selector) {
-			for (i = cur.children_by_selector.length - 1; i >= 0; i--) {
-				all_items.push( cur, cur.children_by_selector[i] );
-			}
-		}
-		
-		if (cur.children_by_anchor) {
-			for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
-				all_items.push( cur, cur.children_by_anchor[i] );
-			}
-
-		}
-
-		result.push( cur );
-		chunks_counter++;
-
-
-	}
-	return result;
-
 };
 
 var getStateUpdater = function(em, state_name) {
@@ -166,23 +219,12 @@ add({
 	onDie: function(cb) {
 		this.on('die', cb);
 	},
-	init: function(){
-		this._super();
-		this.conx_optsi = null;
-		this.conx_opts = null;
-		this.zdsv = null;
-		this.current_motivator = this.current_motivator || null;
+	// init: function(){
+	// 	this._super();
+		
 
-		this._state_updaters = null;
-		this._used_interfaces = null;
-		this._unuse_interface_instr = null;
-
-		this.states = {};
-
-		//this.collectCompxs();
-
-		return this;
-	},
+	// 	return this;
+	// },
 	useInterface: function(interface_name, obj) {
 		var old_interface = this._used_interfaces && this._used_interfaces[interface_name];
 		if (obj !== old_interface) {
@@ -286,67 +328,7 @@ add({
 		return this;
 
 	},
-	onExtend: function(props) {
-		if (this.collectStateChangeHandlers){
-			this.collectStateChangeHandlers(props);
-		}
-		var collches_modified;
-		if (this.collectCollectionChangeDeclarations){
-			collches_modified = this.collectCollectionChangeDeclarations(props);
-		}
-		if (this.collectSelectorsOfCollchs) {
-			this.collectSelectorsOfCollchs(props);
-		}
-		this.collectStatesBinders(props);
-		this.collectCompxs(props);
-		this.collectRegFires(props);
-
-		if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
-			this.nest_match = (this.st_nest_matches || []).concat(this.compx_nest_matches || []);
-		}
-
-		var base_tree_mofified;
-		if (props.hasOwnProperty('base_tree')) {
-			base_tree_mofified = true;
-			this.base_tree_list = getBaseTreeCheckList(props.base_tree);
-		}
-		if (collches_modified || base_tree_mofified) {
-			this.collectBaseExtendStates();
-		}
-
-		if (this.collectNestingsDeclarations) {
-			this.collectNestingsDeclarations(props);
-		}
-
-		if (this.changeDataMorphDeclarations) {
-			this.changeDataMorphDeclarations(props);
-		}
-
-		if (this.changeChildrenViewsDeclarations) {
-			this.changeChildrenViewsDeclarations(props);
-		}
-
-		
-		for (var i = 0; i < this.xxxx_morph_props.length; i++) {
-			var cur = this.xxxx_morph_props[i];
-			var cur_name = Array.isArray(cur) ? cur[0] : cur;
-			var subfield = Array.isArray(cur) && cur[1];
-			if (props.hasOwnProperty(cur_name)) {
-				if (typeof this[cur_name] != 'function' && this[cur_name] !== true) {
-					var obj = {
-						props_map: this[cur_name]
-					};
-					if (subfield) {
-						obj.source = subfield;
-					}
-					this[cur_name] = spv.mmap(obj);
-				}
-				
-			}
-		}
-
-		
-	},
+	onExtend: onPropsExtend,
 	xxxx_morph_props: [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'],
 	checkExpandableTree: function(state_name) {
 		var i, cur, cur_config, has_changes = true, append_list = [];
@@ -481,10 +463,7 @@ add({
 	})()
 });
 
-
 var nes_as_state_cache = {};
-
-
 var watchNestingAsState = function(md, nesting_name, state_name) {
 	if (!nes_as_state_cache[state_name]) {
 		nes_as_state_cache[state_name] = function(e) {
@@ -494,9 +473,6 @@ var watchNestingAsState = function(md, nesting_name, state_name) {
 
 	md.on( hp.getFullChilChEvName(nesting_name), nes_as_state_cache[state_name]);
 };
-
-
-
 
 add({
 	prsStCon: {
@@ -780,7 +756,6 @@ add({
 	}
 });
 
-
 add({
 	
 
@@ -838,7 +813,37 @@ add({
 		updateProxy(this, changes_list, opts);
 	}
 });
+}
+
+var StatesEmitter = spv.inh(Eventor, {
+	naming: function(construct) {
+		return function StatesEmitter() {
+			construct(this);
+		};
+	},
+	building: function(parentBuilder) {
+		return function StatesEmitterBuilder(obj) {
+			parentBuilder(obj);
+
+			obj.conx_optsi = null;
+			obj.conx_opts = null;
+			obj.zdsv = null;
+			obj.current_motivator = obj.current_motivator || null;
+
+			obj._state_updaters = null;
+			obj._used_interfaces = null;
+			obj._unuse_interface_instr = null;
+
+			obj.states = {};
+		};
+	},
+	onExtend: function(md, props, original) {
+		onPropsExtend.call(md, props, original);
+	},
+	props: props
 });
+spv.inh.legInit(StatesEmitter);
+
 return StatesEmitter;
 };
 });
