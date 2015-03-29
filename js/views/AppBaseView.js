@@ -929,13 +929,12 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 		//this.search_input = null;
 		//this.nav = null;
 	},
-	buildAppDOM: function() {
-		this._super();
+	buildAppDOM: spv.precall(AppBaseView.WebAppView.prototype.buildAppDOM, function() {
 		this.selectKeyNodes();
 		this.buildNav();
 		this.buildSearchForm();
 		this.handleSearchForm(this.els.search_form);
-	},
+	}),
 	onDomBuild: function() {
 		this._super();
 		this.c.addClass('app-loaded');

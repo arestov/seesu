@@ -554,8 +554,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		});
 
 	},
-	buildAppDOM: function() {
-		this._super();
+	buildAppDOM: spv.precall(AppBaseView.WebComplexTreesView.prototype.buildAppDOM, function() {
 		var _this = this;
 		var d = this.d;
 		
@@ -619,7 +618,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 				_this = null;
 				d = null;
 			});
-	},
+	}),
 	inputs_names: ['input'],
 	key_codes_map:{
 		'13': 'Enter',
