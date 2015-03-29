@@ -343,7 +343,8 @@ FastEventor.prototype = {
 						clean.push(items[i]);
 					}
 				} else {
-					// we should remove only `session.click`, not all `seesion`
+					// we should remove only `session.click` events, not all `seesion` events
+					// fix me - we should remove session.click and session.click.more-click, but no session
 					for (var i = 0; i < items.length; i++) {
 						var cur = items[i];
 						if (cur.namespace == namespace){
@@ -433,19 +434,60 @@ FastEventor.prototype = {
 			},1);*/
 		}
 	},
+	cleanOnceEvents: function(ev_name) {
+		// this.off(ev_name, false, cur);
+		//
+		var namespace;
+		if (this.sputnik.convertEventName){
+			namespace = this.sputnik.convertEventName(ev_name);
+		} else {
+			namespace = ev_name;
+		}
+
+		var short_name = parseNamespace(namespace)[0];
+
+		var items = this.subscribes && this.subscribes[short_name];
+		if (items) {
+			var clean = [];
+
+			for (var i = 0; i < items.length; i++) {
+				var cur = items[i];
+				if (!cur.cb){
+					continue;
+				}
+				clean.push(items[i]);
+			}
+
+			if (clean.length != this.subscribes[short_name].length){
+				this.subscribes[short_name] = clean;
+				resetSubscribesCache(this, short_name);
+			}
+		}
+		
+	},
 	triggerCallbacks: function(cb_cs, args, opts, ev_name, arg, flow_steps_array){
+		var need_cleanup = false;
 		for (var i = 0; i < cb_cs.length; i++) {
 			var cur = cb_cs[i];
+			if (!cur.cb) {
+				continue;
+			}
 			var flow_step = this.callEventCallback(cur, args, opts, arg);
 			if (flow_step && flow_steps_array) {
 				flow_steps_array.push(flow_step);
 			}
 			if (cur.once){
-				this.off(ev_name, false, cur);
+				need_cleanup = true;
+				cur.cb = null;
 			}
+		}
+
+		if (need_cleanup) {
+			this.cleanOnceEvents(ev_name);
 		}
 	},
 	trigger: function(ev_name){
+		var need_cleanup = false;
 		var cb_cs = this.getMatchedCallbacks(ev_name);
 		if (cb_cs){
 			var i = 0;
@@ -456,11 +498,18 @@ FastEventor.prototype = {
 
 			for (i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
+				if (!cur.cb) {
+					continue;
+				}
 				this.callEventCallback(cur, args, (args && args[ args.length -1 ]));
 				if (cur.once){
-					this.off(ev_name, false, cur);
+					need_cleanup = true;
+					cur.cb = null;
 				}
 			}
+		}
+		if (need_cleanup) {
+			this.cleanOnceEvents(ev_name);
 		}
 		return this;
 	},
