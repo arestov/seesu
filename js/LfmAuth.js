@@ -235,15 +235,6 @@ var LfmAuth = spv.inh(pv.Eventor, {
 	}
 });
 
-// var LfmAuth = function(lfm, opts) {
-// 	this.api = lfm;
-// 	this.opts = opts || {};
-// 	if (this.opts){
-// 		this.init(this.opts);
-// 	}
-// };
-// pv.Eventor.extendTo(LfmAuth, );
-
 LfmAuth.LfmLogin =LfmLogin;
 LfmAuth.LfmScrobble =LfmScrobble;
 
