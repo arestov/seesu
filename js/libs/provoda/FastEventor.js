@@ -335,7 +335,18 @@ FastEventor.prototype = {
 				if (cb){
 					for (var i = 0; i < items.length; i++) {
 						var cur = items[i];
-						if (cur.cb == cb){
+						if (cur.cb == cb && cur.namespace == namespace){
+							if (!context || cur.context == context){
+								continue;
+							}
+						}
+						clean.push(items[i]);
+					}
+				} else {
+					// we should remove only `session.click`, not all `seesion`
+					for (var i = 0; i < items.length; i++) {
+						var cur = items[i];
+						if (cur.namespace == namespace){
 							if (!context || cur.context == context){
 								continue;
 							}

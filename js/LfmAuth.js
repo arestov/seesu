@@ -24,6 +24,7 @@ pv.Model.extendTo(LfmLogin, {
 		if (this.auth.deep_sanbdox){
 			pv.update(_this, 'deep_sandbox', true);
 		}
+		debugger;
 		if (this.auth.has_session){
 			this.triggerSession();
 		}
