@@ -235,26 +235,12 @@ pv.View.extendTo(SongFileModelUI, {
 		'selectFile': function() {
 			if (!this.state('selected')){
 				this.RPCLegacy('requestPlay', pv.$v.getBwlevId(this));
-				// this.RPCLegacy('trigger', 'want-to-play-sf');
 			}
 		},
 		'switchPlay': function(e) {
-			// var _this = this;
 			e.stopPropagation();
 			
 			this.RPCLegacy('switchPlay', pv.$v.getBwlevId(this));
-			// this.
-			// if (_this.state('selected')){
-
-			// 	if (_this.state('play') == 'play'){
-			// 		_this.RPCLegacy('pause');
-			// 	} else {
-			// 		_this.RPCLegacy('trigger', 'want-to-play-sf');
-			// 		//_this.RPCLegacy('play');
-			// 	}
-			// } else {
-			// 	_this.RPCLegacy('trigger', 'want-to-play-sf');
-			// }
 		}
 	}
 });
