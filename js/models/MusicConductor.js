@@ -211,6 +211,7 @@ BrowseMap.Model.extendTo(AllPlaces, {
 	model_name:'allplaces',
 	init: function(opts) {
 		this._super.apply(this, arguments);
+		// debugger;
 		this.initStates();
 	},
 	'nest-songs_lists': ['songs'],

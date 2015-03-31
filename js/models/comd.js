@@ -2,25 +2,31 @@ define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(pv, spv, app
 "use strict";
 var localize = app_serv.localize;
 
-var CommonMessagesStore = function(glob_store, store_name) {
-	this.init();
-	this.glob_store = glob_store;
-	this.store_name = store_name;
-};
-
-
-pv.Eventor.extendTo(CommonMessagesStore, {
-	markAsReaded: function(message) {
-		var changed = this.glob_store.set(this.store_name, message);
-		if (changed){
-			this.trigger('read', message);
-		}
+var CommonMessagesStore = spv.inh(pv.Eventor, {
+	naming: function(constr) {
+		return function CommonMessagesStore(glob_store, store_name){
+			constr(this, glob_store, store_name);
+		};
 	},
-	getReadedMessages: function() {
-		return this.glob_store.get(this.store_name);
+	building: function(pconstr) {
+		return function buildComMS(obj, glob_store, store_name){
+			pconstr(obj);
+			obj.glob_store = glob_store;
+			obj.store_name = store_name;
+		};
+	},
+	props: {
+		markAsReaded: function(message) {
+			var changed = this.glob_store.set(this.store_name, message);
+			if (changed){
+				this.trigger('read', message);
+			}
+		},
+		getReadedMessages: function() {
+			return this.glob_store.get(this.store_name);
+		}
 	}
 });
-
 
 var GMessagesStore = function(set, get) {
 	this.sset = set;
