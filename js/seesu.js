@@ -31,7 +31,7 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
-
+var pvUpdate = pv.update;
 var lfm = new LastfmAPIExtended();
 
 lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
@@ -85,7 +85,8 @@ var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
 	initAPIs: function() {
 		var _this = this;
-		this.lfm_auth = new LfmAuth(lfm, {
+
+		this.lfm_auth = this.initSi(LfmAuth, {lfm: lfm}, {
 			deep_sanbdox: app_env.deep_sanbdox,
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
@@ -213,12 +214,15 @@ AppModel.extendTo(SeesuApp, {
 			}
 			reportSearchEngs(list.join(','));
 		});
+
+		this.updateNesting('lfm_auth', this.lfm_auth);
+
 		if (this.lfm.username){
 			pv.update(this, 'lfm_userid', this.lfm.username);
 		} else {
-			this.lfm_auth.on('session', function() {
-				pv.update(_this, 'lfm_userid', _this.lfm.username);
-			});
+			// this.lfm_auth.on('session', function() {
+			// 	pv.update(_this, 'lfm_userid', _this.lfm.username);
+			// });
 		}
 		
 
@@ -276,6 +280,11 @@ AppModel.extendTo(SeesuApp, {
 			}
 		});
 
+	},
+	'stch-session@lfm_auth': function(target, state) {
+		if (state) {
+			pvUpdate(target, 'lfm_userid', target.lfm.username);
+		}
 	},
 	tickStat: function(target, data_array) {
 		window._gaq.push(data_array);

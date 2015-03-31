@@ -723,14 +723,14 @@ var constr_id = 0;
 			prototype[prop_name] = needSuper ?
 				allowParentCall(prop_name, props[prop_name], _super) :
 				props[prop_name];
-			// if (needSuper && prop_name != 'init') {
-			// 	// prop_name
-			// 	// props[prop_name]
-			// 	var value = props[prop_name];
-			// 	console.log(prop_name, value);
-			// 	// debugger;
+			if (needSuper && prop_name == 'init' && props[prop_name].length > 3) {
+				// prop_name
+				// props[prop_name]
+				var value = props[prop_name];
+				console.log(value.length, value);
+				// debugger;
 
-			// }
+			}
 		}
 
 		// Populate our constructed prototype object
