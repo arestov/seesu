@@ -118,15 +118,6 @@ AppModelBase.extendTo(AppModel, {
 		showArtcardPage: function(artist){
 			var md = this.getArtcard(artist);
 			md.showOnMap();
-			/*
-			var md = new ArtCard();
-			md.init({
-				app: this,
-				map_parent: page_md || this.start_page
-			}, {
-				artist: artist
-			});
-			md.showOnMap();*/
 			return md;
 		},
 		showArtistAlbum: function(params, page_md){

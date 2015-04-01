@@ -854,21 +854,12 @@ var getAverageDurations = function(mu_array, time_limit){
 	
 	Mp3Search.getSongFileModel = function(map_parent){
 		return map_parent.initSi(SongFileModel, null, {file:this});
-
-		// return (new SongFileModel()).init({file: this, mo: mo, player: player});
 	};
 	Mp3Search.getSFM = function(map_parent, file) {
 		if (file.getSongFileModel) {
 			return file.getSongFileModel(map_parent);
 		} else {
 			return map_parent.initSi(SongFileModel, null, {file: file});
-			// var md = new SongFileModel();
-			// md.init({
-			// 	file: file,
-			// 	mo: mo,
-			// 	player: player
-			// });
-			// return md;
 		}
 		
 	};
