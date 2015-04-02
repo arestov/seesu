@@ -1374,6 +1374,20 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		// this.map_level_num = null;
 		this.head_props = this.head_props || null;
 
+		/*
+			результат работы этого кода - это 
+			1) установленное значение head_props
+			2) состояния url_part и nav_title
+			3) установленное значение sub_pa_params
+
+
+			использование data_by_hp подразумевает, что у родителя есть head_props
+			head_props могут быть собраны вручную, но в основном собирается с помощью hp_bound
+			hp_bound использует data и если будет ссылатся на родителя,
+				то sub_pa_params родителя, sub_pa_params может передаваться и непосредственно как data
+
+		*/
+
 
 		if (this.hp_bound && !data) {
 			throw new Error('pass data arg!');
@@ -1385,6 +1399,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 				var complex_obj = {
 					'--data--': null
 				};
+
 				if (this.map_parent.sub_pa_params) {
 					spv.cloneObj(complex_obj, this.map_parent.sub_pa_params);
 				}
