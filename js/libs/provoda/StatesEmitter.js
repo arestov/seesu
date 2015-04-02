@@ -57,6 +57,8 @@ var getBaseTreeCheckList = function(start) {
 
 };
 
+var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'];
+
 var onPropsExtend = function (props) {
 	if (this.collectStateChangeHandlers){
 		this.collectStateChangeHandlers(props);
@@ -98,8 +100,10 @@ var onPropsExtend = function (props) {
 	}
 
 	
-	for (var i = 0; i < this.xxxx_morph_props.length; i++) {
-		var cur = this.xxxx_morph_props[i];
+	for (var i = 0; i < xxxx_morph_props.length; i++) {
+		// если есть декларации - парсим, делаем функции
+		// на вход функции - одна структура, на выход - другая
+		var cur = xxxx_morph_props[i];
 		var cur_name = Array.isArray(cur) ? cur[0] : cur;
 		var subfield = Array.isArray(cur) && cur[1];
 		if (props.hasOwnProperty(cur_name)) {
@@ -329,7 +333,7 @@ add({
 
 	},
 	onExtend: onPropsExtend,
-	xxxx_morph_props: [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'],
+	
 	checkExpandableTree: function(state_name) {
 		var i, cur, cur_config, has_changes = true, append_list = [];
 		while (this.base_skeleton && has_changes) {
