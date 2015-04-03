@@ -188,48 +188,38 @@ BrowseMap.Model.extendTo(AllPlaces, {
 	}
 });
 
+var metroP = function(md) {
+	return {
+		metro: md.head.city_name,
+		country: md.head.country_name
+	};
+};
+
 var CityAritstsTop = function() {};
 ArtistsList.extendTo(CityAritstsTop, {
-	getRqData: function() {
-		return {
-			metro: this.head.city_name,
-			country: this.head.country_name
-		};
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroArtistChart', this.getRqData()];
+			return ['geo.getMetroArtistChart', metroP(this)];
 		}]
 	]
 });
 var CityArtistsHype = function() {};
 ArtistsList.extendTo(CityArtistsHype, {
-	getRqData: function() {
-		return {
-			metro: this.head.city_name,
-			country: this.head.country_name
-		};
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroHypeArtistChart', this.getRqData()];
+			return ['geo.getMetroHypeArtistChart', metroP(this)];
 		}]
 	]
 });
 var CityArtistsUnique = function() {};
 ArtistsList.extendTo(CityArtistsUnique, {
-	getRqData: function() {
-		return {
-			metro: this.head.city_name,
-			country: this.head.country_name
-		};
-	},
+
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroUniqueArtistChart', this.getRqData()];
+			return ['geo.getMetroUniqueArtistChart', metroP(this)];
 		}]
 	]
 });
@@ -260,10 +250,7 @@ SongsList.extendTo(CitySongsTop,{
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroTrackChart', {
-				metro: this.head.city_name,
-				country: this.head.country_name
-			}];
+			return ['geo.getMetroTrackChart', metroP(this)];
 		}]
 	]
 });
@@ -272,10 +259,7 @@ SongsList.extendTo(CitySongsHype,{
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroHypeTrackChart', {
-				metro: this.head.city_name,
-				country: this.head.country_name
-			}];
+			return ['geo.getMetroHypeTrackChart', metroP(this)];
 		}]
 	]
 });
@@ -284,10 +268,7 @@ SongsList.extendTo(CitySongsUnique,{
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroUniqueTrackChart', {
-				metro: this.head.city_name,
-				country: this.head.country_name
-			}];
+			return ['geo.getMetroUniqueTrackChart', metroP(this)];
 		}]
 	]
 });
@@ -393,15 +374,12 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 
 var CountryTopArtists = function() {};
 ArtistsList.extendTo(CountryTopArtists, {
-	getRqData: function() {
-		return {
-			country: this.head.country_name
-		};
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getTopArtists', this.getRqData()];
+			return ['geo.getTopArtists', {
+				country: this.head.country_name
+			}];
 		}]
 	]
 });
@@ -412,7 +390,6 @@ SongsList.extendTo(CountryTopSongs, {
 		['lfm', 'get', function() {
 			return ['geo.getTopTracks', {
 				country: this.head.country_name
-
 			}];
 		}]
 	]
