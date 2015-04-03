@@ -454,16 +454,40 @@ var modelInit = (function() {
 
 		this.init_states = this.init_states || null;
 
-		if (states) {
+		if (states || (data && data.states)) {
 
 			if (!this.init_states) {
 				this.init_states = {};
 			}
 
 			spv.cloneObj(this.init_states, states);
+
+			if (data && data.states) {
+				spv.cloneObj(this.init_states, data.states);
+			}
 			// pv.create must init init_states
 		}
-		
+
+		this.head = null;
+
+		if (this.map_parent && this.map_parent.head) {
+			if (!this.head) {this.head = {};}
+			spv.cloneObj(this.head, this.map_parent.head);
+		}
+
+		if (data && data.head) {
+			if (!this.head) {this.head = {};}
+			spv.cloneObj(this.head, data.head);
+		}
+
+		if (this.head) {
+			if (!this.init_states) {
+				this.init_states = {};
+			}
+
+			spv.cloneObj(this.init_states, this.head);
+		}
+
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
 		this.prsStCon.connect.nesting(this);

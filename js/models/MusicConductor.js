@@ -1,6 +1,13 @@
 define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', 'js/modules/declr_parsers', 'pv'],
 function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, declr_parsers, pv){
 "use strict";
+var parent_focus = [['^mp_has_focus']];
+var heavyInitReactn = function(target, state) {
+	if (state) {
+		target.heavyInit();
+	}
+};
+
 var MusicConductor;
 //http://hypem.com/latest
 var HypemPlaylist = SongsList.HypemPlaylist;
@@ -118,8 +125,6 @@ BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 	model_name: 'songs_lists'
 });
 
-var AllPHypemWeekArtists = function() {};
-//ArtistsList.extendTo()
 
 var AllPArtistsHyped = function() {};
 ArtistsList.extendTo(AllPArtistsHyped, {
@@ -185,15 +190,10 @@ BrowseMap.Model.extendTo(AllPlaces, {
 
 var CityAritstsTop = function() {};
 ArtistsList.extendTo(CityAritstsTop, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-	},
 	getRqData: function() {
 		return {
-			metro: this.city_name,
-			country: this.country_name
+			metro: this.head.city_name,
+			country: this.head.country_name
 		};
 	},
 	'nest_req-artists_list': [
@@ -205,15 +205,10 @@ ArtistsList.extendTo(CityAritstsTop, {
 });
 var CityArtistsHype = function() {};
 ArtistsList.extendTo(CityArtistsHype, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-	},
 	getRqData: function() {
 		return {
-			metro: this.city_name,
-			country: this.country_name
+			metro: this.head.city_name,
+			country: this.head.country_name
 		};
 	},
 	'nest_req-artists_list': [
@@ -225,15 +220,10 @@ ArtistsList.extendTo(CityArtistsHype, {
 });
 var CityArtistsUnique = function() {};
 ArtistsList.extendTo(CityArtistsUnique, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-	},
 	getRqData: function() {
 		return {
-			metro: this.city_name,
-			country: this.country_name
+			metro: this.head.city_name,
+			country: this.head.country_name
 		};
 	},
 	'nest_req-artists_list': [
@@ -247,18 +237,6 @@ ArtistsList.extendTo(CityArtistsUnique, {
 var CityArtistsLists = function() {};
 BrowseMap.Model.extendTo(CityArtistsLists, {
 	model_name: 'artists_lists',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-
-		this.sub_pa_params = {
-			city_name: this.city_name,
-			country_name: this.country_name
-		};
-
-
-	},
 	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
 	sub_pa: {
 		'_': {
@@ -279,51 +257,36 @@ BrowseMap.Model.extendTo(CityArtistsLists, {
 
 var CitySongsTop = function() {};
 SongsList.extendTo(CitySongsTop,{
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
 			return ['geo.getMetroTrackChart', {
-				metro: this.city_name,
-				country: this.country_name
+				metro: this.head.city_name,
+				country: this.head.country_name
 			}];
 		}]
 	]
 });
 var CitySongsHype = function() {};
 SongsList.extendTo(CitySongsHype,{
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
 			return ['geo.getMetroHypeTrackChart', {
-				metro: this.city_name,
-				country: this.country_name
+				metro: this.head.city_name,
+				country: this.head.country_name
 			}];
 		}]
 	]
 });
 var CitySongsUnique = function() {};
 SongsList.extendTo(CitySongsUnique,{
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
 			return ['geo.getMetroUniqueTrackChart', {
-				metro: this.city_name,
-				country: this.country_name
+				metro: this.head.city_name,
+				country: this.head.country_name
 			}];
 		}]
 	]
@@ -332,16 +295,6 @@ SongsList.extendTo(CitySongsUnique,{
 var CitySongsLists = function() {};
 BrowseMap.Model.extendTo(CitySongsLists, {
 	model_name: 'songs_lists',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.sub_pa_params = {
-			country_name: this.country_name,
-			city_name: this.city_name
-		};
-
-	},
 	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
 	sub_pa: {
 		'_': {
@@ -380,23 +333,17 @@ BrowseMap.Model.extendTo(CityPlace, {
 	}
 });
 
+
+
 var CountryCitiesList = function() {};
 BrowseMap.Model.extendTo(CountryCitiesList, {
 	model_name: 'cities_list',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.country_name = params.country_name;		
 
-		var _this = this;
-		this.map_parent.on('state_change-mp_has_focus', function(e) {
-			if (e.value){
-				_this.heavyInit();
-			}
-		});
-	},
-	hp_bound: {
-		country_name: null
-	},
+	'compx-parent_focus': parent_focus,
+	'stch-parent_focus': heavyInitReactn,
+
+	'stch-mp_has_focus': heavyInitReactn,
+
 	data_by_hp: true,
 	heavyInit: function() {
 		if (this.heavy_inited){
@@ -406,7 +353,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 
 		var lists_list = [];
 
-		var citiesl = lastfm_data.сountries[this.head_props.country_name];
+		var citiesl = lastfm_data.сountries[this.head.country_name];
 
 		for (var i = 0; i < citiesl.length; i++) {
 			var name = citiesl[i];
@@ -431,10 +378,13 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 			this.sub_pages[page_name] = instance;
 
 			return [instance, {
-				nav_title: page_name + ', ' + this.head_props.country_name,
-				url_part: '/' + sub_path_string,
-				country_name: this.head_props.country_name,
-				city_name: page_name
+				states: {
+					nav_title: page_name + ', ' + this.head.country_name,
+					url_part: '/' + sub_path_string,
+				},
+				head: {
+					city_name: page_name
+				}
 			}];
 		}
 
@@ -443,13 +393,9 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 
 var CountryTopArtists = function() {};
 ArtistsList.extendTo(CountryTopArtists, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.country_name = params.country_name;
-	},
 	getRqData: function() {
 		return {
-			country: this.country_name
+			country: this.head.country_name
 		};
 	},
 	'nest_req-artists_list': [
@@ -461,46 +407,26 @@ ArtistsList.extendTo(CountryTopArtists, {
 });
 var CountryTopSongs = function() {};
 SongsList.extendTo(CountryTopSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.country_name = params.country_name;
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
 			return ['geo.getTopTracks', {
-				country: this.country_name
+				country: this.head.country_name
 
 			}];
 		}]
 	]
 });
+
 var CountryPlace = function() {};
 BrowseMap.Model.extendTo(CountryPlace, {
 	model_name: 'country_place',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		//this.country_name = params.country_name;
 
-		this.on('state_change-mp_has_focus', function(e) {
-			if (e.value){
-				this.heavyInit();
-			}
-		});
-		var _this = this;
-		this.map_parent.on('state_change-mp_has_focus', function(e) {
-			if (e.value){
-				_this.heavyInit();
-			}
-		});
+	'compx-parent_focus': parent_focus,
+	'stch-parent_focus': heavyInitReactn,
 
-			
-	},
-	hp_bound: {
-		country_name: null
-	},
-	data_by_hp: true,
-	allow_data_init: true,
+	'stch-mp_has_focus': heavyInitReactn,
+
 	'nest-lists_list':[ ['artists_top', 'songs_top', 'cities'], false, 'mp_alhf' ],
 	'nest-pwis':[ ['artists_top', 'songs_top'], true, 'mp_alhf' ],
 	sub_pa: {
@@ -515,7 +441,7 @@ BrowseMap.Model.extendTo(CountryPlace, {
 		'cities': {
 			constr: CountryCitiesList,
 			getTitle: function() {
-				return localize('Cities of %country%').replace('%country%', this.head_props.country_name);
+				return localize('Cities of %country%').replace('%country%', this.head.country_name);
 			}
 		}
 	},
@@ -553,9 +479,13 @@ BrowseMap.Model.extendTo(CountriesList, {
 			var instance = new Constr();
 			this.sub_pages[page_name] = instance;
 			return [instance, {
-				nav_title: page_name,
-				url_part: '/' + sub_path_string,
-				country_name: page_name
+				states: {
+					nav_title: page_name,
+					url_part: '/' + sub_path_string
+				},
+				head: {
+					country_name: page_name
+				}
 			}];
 		}
 		return this.sub_pages[page_name];
