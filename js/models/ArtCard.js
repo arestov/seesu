@@ -85,7 +85,6 @@ LoadableList.TagsList.extendTo(ArtistTagsList, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.artist_name = params.artist;
-		this.initStates();
 	},
 	'compx-preview_loading': [
 		['^tags_list__loading'],
@@ -276,7 +275,6 @@ AlbumsList.extendTo(ArtistAlbums, {
 		this.head_props = {
 			artist: params.artist
 		};
-		this.initStates();
 	},
 	page_limit: 50,
 	'nest_req-albums_list': [
@@ -308,7 +306,6 @@ SongsList.HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.artist = params.artist;
-		this.initStates();
 	},
 	send_params: {},
 	'nest_req-songs-list': [
@@ -324,7 +321,6 @@ SongsList.HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.artist = params.artist;
-		this.initStates();
 	},
 	send_params: {
 		sortby:'fav'
@@ -342,7 +338,6 @@ SongsList.HypemPlaylist.extendTo(HypemArtistSeBlogged, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.artist = params.artist;
-		this.initStates();
 	},
 	send_params: {
 		sortby:'blogged'
@@ -446,10 +441,7 @@ SongsList.extendTo(TopArtistSongs, {
 		this.artist = params.artist;
 
 		this.playlist_type = 'artist';
-		this.playlist_artist = params.artist;
-
-		this.initStates();
-		
+		this.playlist_artist = params.artist;		
 	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
@@ -900,7 +892,7 @@ SongsList.extendTo(ArtistsListPlaylist, {
 		if (params.page_limit){
 			this.page_limit = params.page_limit;
 		}
-		this.initStates();
+
 		if (!this.evcompanion.nesting_requests) {
 			this.evcompanion.nesting_requests = {};
 		}
@@ -971,9 +963,6 @@ ArtistsList.extendTo(SimilarArtists, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.original_artist = params.artist;
-
-
-		this.initStates();
 
 		this.wch(this, 'preview_list', function(e) {
 			if (e.value) {

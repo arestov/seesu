@@ -75,10 +75,7 @@ BrowseMap.Model.extendTo(MusicBlog, {
 var BlogsList = function() {};
 LoadableList.extendTo(BlogsList, {
 	model_name: 'blogs_list',
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
+
 	makeDataItem: function(data) {
 		var item = this.app.start_page.getSPI('blogs/' + this.app.encodeURLPart(data.url.replace('http://', '')), true);
 		item.addRawData(data);
@@ -119,10 +116,6 @@ var blogs_cond_sps = ['blogs-of-the-day'/*, 'featured'*/];
 var BlogsConductor = function() {};
 BrowseMap.Model.extendTo(BlogsConductor, {
 	model_name: 'blogs_conductor',
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest-lists_list':
 		[blogs_cond_sps],
 	'nest-preview_list':

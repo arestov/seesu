@@ -3,11 +3,6 @@ define(['js/libs/BrowseMap', 'spv', './SongsList', 'pv'], function(BrowseMap, sp
 
 var ManualPlaylist = function() {};
 SongsList.extendTo(ManualPlaylist, {
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-		this.initStates();
-		
-	}
 });
 
 var UserPlaylists = function() {};

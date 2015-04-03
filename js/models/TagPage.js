@@ -11,7 +11,6 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 	},
 	'nest_req-tags_list': [
 		[{
@@ -36,7 +35,6 @@ ArtCard.AlbumsList.extendTo(TagAlbums, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 	},
 	page_limit: 50,
 	'nest_req-albums_list': [
@@ -76,7 +74,6 @@ HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 	},
 	send_params: {
 		fav_from: 25,
@@ -88,7 +85,6 @@ HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 	},
 	send_params: {
 		fav_from: 250,
@@ -101,7 +97,6 @@ HypemTagPlaylist.extendTo(AllHypemTagSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 	}
 });
 
@@ -110,7 +105,6 @@ SongsList.extendTo(ExplorableTagSongs, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 	},
 	page_limit: 100,
 	'nest_req-songs-list': [
@@ -130,7 +124,6 @@ SongsList.extendTo(TrendingTagSongs, {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
 
-		this.initStates();
 	},
 	page_limit: 100,
 	'nest_req-songs-list': [
@@ -150,7 +143,6 @@ SongsList.extendTo(FreeTagSongs, {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
 
-		this.initStates();
 	},
 	'nest_req-songs-list': [
 		[
@@ -192,7 +184,6 @@ SongsList.extendTo(TopTagSongs, {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
 
-		this.initStates();
 	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
@@ -211,7 +202,6 @@ BrowseMap.Model.extendTo(SongsLists, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 
 		this.sub_pa_params = {tag_name:this.tag_name};
 	},
@@ -257,7 +247,6 @@ ArtCard.ArtistsList.extendTo(WeekTagArtists, {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
 
-		this.initStates();
 	},
 	page_limit: 130,
 	getRqData: function(paging_opts) {
@@ -280,7 +269,6 @@ ArtCard.ArtistsList.extendTo(TagTopArtists, {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
 
-		this.initStates();
 	},
 	page_limit: 130,
 	getRqData: function(paging_opts) {
@@ -302,7 +290,6 @@ BrowseMap.Model.extendTo(ArtistsLists, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.tag_name = params.tag_name;
-		this.initStates();
 
 		this.sub_pa_params = {tag_name:this.tag_name};
 	},
@@ -328,7 +315,6 @@ BrowseMap.Model.extendTo(TagPage, {
 
 		this.tag_name = data.tag_name;
 		//this.updateManyStates(data);
-		this.initStates();
 		//pv.update(this, 'tag_name', this.head_props.tag_name);
 		//this.sub_pa_params = {tag_name:this.tag_name};
 
@@ -375,7 +361,6 @@ var TagsList = function() {};
 LoadableList.TagsList.extendTo(TagsList, {
 	init: function() {
 		this._super.apply(this, arguments);
-		this.initStates();
 
 		if (lastfm_data.toptags) {
 			this.setPreview(lastfm_data.toptags.map(function(el) {

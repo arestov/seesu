@@ -1368,6 +1368,18 @@ BrowseMap.getStrucSources = function(md, struc) {
 
 pv.HModel.extendTo(BrowseMap.Model, {
 	init: function(opts, data) {
+
+		if (!this.skip_map_init){
+			if (data) {
+				if (data['url_part']){
+					this.initState('url_part', data['url_part']);
+				}
+				if (data['nav_title']){
+					this.initState('nav_title', data['nav_title']);
+				}
+			}
+		}
+		
 		this._super.apply(this, arguments);
 
 		this.lists_list = null;
@@ -1411,16 +1423,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		}
 
 		opts = opts || {};
-		if (!this.skip_map_init){
-			if (data) {
-				if (data['url_part']){
-					this.initState('url_part', data['url_part']);
-				}
-				if (data['nav_title']){
-					this.initState('nav_title', data['nav_title']);
-				}
-			}
-		}
+
 
 		if (this.data_by_hp && typeof this.data_by_hp == 'function') {
 			this.sub_pa_params = this.data_by_hp(data);
