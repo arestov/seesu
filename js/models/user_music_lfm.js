@@ -523,18 +523,10 @@ ArtCard.AlbumsList.extendTo(UserNewReleases, {
 
 var UserLibNewReleases= function() {};
 UserNewReleases.extendTo(UserLibNewReleases, {
-	init: function(opts, params) {
-		this._super(opts, params);
-		this.initStates();
-	}
 });
 
 var RecommNewReleases = function() {};
 UserNewReleases.extendTo(RecommNewReleases, {
-	init: function(opts, params) {
-		this._super(opts, params);
-		this.initStates();
-	},
 	recomms: true
 });
 

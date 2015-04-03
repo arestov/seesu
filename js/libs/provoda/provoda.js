@@ -138,8 +138,10 @@ pv = provoda = {
 
 		}
 
-
-		model.initStates();
+		if (model.init_states) {
+			model.initStates();
+		}
+		
 		return model;
 	}
 };
