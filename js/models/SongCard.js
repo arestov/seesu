@@ -127,6 +127,7 @@ LoadableListBase.extendTo(VKPostsList, {
 	'compx-image_previews': [
 		['@owner_info:sorted_list'],
 		function (array) {
+			if (!array) {return;}
 			var result = [];
 			for (var i = 0; i < array.length; i++) {
 				var cur= array[i];

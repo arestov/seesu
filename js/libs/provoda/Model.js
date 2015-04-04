@@ -2,6 +2,7 @@ define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclar
 'use strict';
 return function(StatesEmitter, big_index, views_proxies, sync_sender) {
 var push = Array.prototype.push;
+var getComplexInitList = updateProxy.getComplexInitList;
 var unsubcribeOld = function(evColr, items_list) {
 	var index = {};
 	if (evColr.controls_list.length){
@@ -899,6 +900,10 @@ add({
 		if (this.init_states === false) {
 			throw new Error('states inited already, you can\'t init now');
 		}
+		if (this.hasComplexStateFn(state_name)) {
+			throw new Error("you can't change complex state " + state_name);
+		}
+
 		if (!this.init_states) {
 			this.init_states = {};
 		}
@@ -908,13 +913,35 @@ add({
 		if (this.init_states === false) {
 			throw new Error('states inited already, you can\'t init now');
 		}
-		if (!this.init_states) {
-			this.init_states = {};
-		}
+		
 		if (more_states) {
+			if (!this.init_states) {
+				this.init_states = {};
+			}
 			spv.cloneObj(this.init_states, more_states);
 		}
-		this.updateManyStates(this.init_states);
+
+		var changes_list = getComplexInitList(this);
+
+		if (changes_list.length || this.init_states) {
+			if (this.init_states) {
+				for (var state_name in this.init_states) {
+					if (!this.init_states.hasOwnProperty(state_name)) {
+						continue;
+					}
+
+					if (this.hasComplexStateFn(state_name)) {
+						throw new Error("you can't change complex state " + state_name);
+					}
+
+					changes_list.push(state_name, this.init_states[state_name]);
+				}
+			}
+
+			updateProxy(this, changes_list);
+		}
+
+		// this.updateManyStates(this.init_states);
 		this.init_states = false;
 	},
 	onExtend: (function() {

@@ -218,6 +218,19 @@ function _replaceState(etr, original_states, state_name, value, stack) {
 	}
 }
 
+function getComplexInitList(etr) {
+	var result_array = [];
+
+	if (!etr.full_comlxs_list) {return result_array;}
+
+	for (var i = 0; i < etr.full_comlxs_list.length; i++) {
+		var cur = etr.full_comlxs_list[i];
+		result_array.push(cur.name, compoundComplexState(etr, cur));
+	}
+
+	return result_array;
+}
+
 
 function checkComplexStates(etr, changes_list) {
 	return getTargetComplexStates(etr, changes_list);
@@ -372,13 +385,14 @@ updateProxy.update = function(md, state_name, state_value, opts) {
 		console.warn('fix prop state_name: ' + state_name);
 	}*/
 	if (md.hasComplexStateFn(state_name)){
-		throw new Error("you can't change complex state in this way");
+		throw new Error("you can't change complex state " + state_name);
 	}
 	return updateProxy(md, [state_name, state_value], opts);
 
 
 	// md.updateState(state_name, state_value, opts);
 };
+updateProxy.getComplexInitList = getComplexInitList;
 
 return updateProxy;
 });

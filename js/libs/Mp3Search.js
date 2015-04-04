@@ -402,7 +402,11 @@ var getMatchedSongs = function(music_list, msq) {
 					if (inj_f && inj_f.length){
 						all = all.concat(inj_f);
 					}
-					this.mp3_search.sortMusicFilesArray(all, this.msq);
+
+					if (all.length) {
+						this.mp3_search.sortMusicFilesArray(all, this.msq);
+					}
+					
 
 					return !!all.length && all;
 				}
@@ -410,6 +414,7 @@ var getMatchedSongs = function(music_list, msq) {
 			'has_mp3_files': [
 				['files-list'],
 				function(sarr) {
+					if (!sarr) {return;}
 					for (var i = 0; i < sarr.length; i++) {
 						if (sarr[i].media_type =='mp3'){
 							return true;
@@ -420,6 +425,7 @@ var getMatchedSongs = function(music_list, msq) {
 			'has_best_files': [
 				['files-list'],
 				function(fslist) {
+					if (!fslist) {return;}
 					var field_name = 'query_match_index.' + getQueryString(this.msq).replace(/\./gi, '');
 					var best_songs = spv.filter(fslist, field_name, function(value){
 						if (value !== -1 && value < 20){
@@ -432,7 +438,7 @@ var getMatchedSongs = function(music_list, msq) {
 			'has_files': [
 				['files-list'],
 				function(fslist) {
-					return !!fslist.length;
+					return fslist && !!fslist.length;
 				}
 			],
 			'has_any_data': [
