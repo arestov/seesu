@@ -767,6 +767,9 @@ add({
 		var changes_list = [];
 		for (var state_name in obj) {
 			if (obj.hasOwnProperty(state_name)){
+				if (this.hasComplexStateFn(state_name)) {
+					throw new Error("you can't change complex state " + state_name);
+				}
 				changes_list.push(state_name, obj[state_name]);
 			}
 		}

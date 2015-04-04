@@ -3,6 +3,7 @@ function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncRe
 "use strict";
 
 var provoda, pv;
+var pvUpdate = updateProxy.update;
 var DeathMarker = function() {
 	//helper to find memory leaks; if there is memory leaking DeathMarker will be available in memory heap snapshot;
 };
@@ -197,6 +198,16 @@ provoda.Model.extendTo(provoda.HModel, {
 
 		pmd.on('state_change-vswitched', this._hndOnPMDSwitch, this.getContextOptsI());
 	},
+	'stch-vswitched': function(target, state, old_state) {
+		if (state) {
+			var md = pv.getModelById(state);
+			pvUpdate(md, 'pmd_vswitched', true);
+		}
+		if (old_state) {
+			var old_md = pv.getModelById(old_state);
+			pvUpdate(old_md, 'pmd_vswitched', false);
+		}
+	},
 	switchPmd: function(toggle) {
 		var new_state;
 		if (typeof toggle == 'boolean')	{
@@ -204,18 +215,20 @@ provoda.Model.extendTo(provoda.HModel, {
 		} else {
 			new_state = !this.state('pmd_vswitched');
 		}
+		var pmd_switch = this.pmd_switch || this.pmd_switch_is_parent && this.map_parent;
+
 		if (new_state){
 			if (!this.state('pmd_vswitched')){
-				pv.update(this.pmd_switch, 'vswitched', this._provoda_id);
+				pvUpdate(pmd_switch, 'vswitched', this._provoda_id);
 			}
 		} else {
 			if (this.state('pmd_vswitched')){
-				pv.update(this.pmd_switch, 'vswitched', false);
+				pvUpdate(pmd_switch, 'vswitched', false);
 			}
 		}
 	},
 	checkPMDSwiched: function(value) {
-		pv.update(this, 'pmd_vswitched', value == this._provoda_id);
+		pvUpdate(this, 'pmd_vswitched', value == this._provoda_id);
 	}
 });
 
