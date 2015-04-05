@@ -85,10 +85,14 @@ BrowseMap.Model.extendTo(StartPage, {
 	},
 	sub_pages_routes: {
 		'catalog': function(name) {
-			var full_name = 'catalog/' + name;
-			return subPageInitWrap(ArtCard, full_name, {
-				artist: name
-			});
+			return [ArtCard, {
+				head: {
+					artist_name: name
+				}
+			}];
+			// return subPageInitWrap(ArtCard, full_name, {
+			// 	artist: name
+			// });
 		},
 		'tracks': function(complex_string, raw_str) {
 			var full_name = 'tracks/' + raw_str;
@@ -106,14 +110,39 @@ BrowseMap.Model.extendTo(StartPage, {
 		'users': function(name) {
 			var full_name = 'users/' + name;
 			if (name == 'me'){
-				return subPageInitWrap(UserCard, full_name);
+				return [UserCard, {
+					states: {
+						nav_title: localize('your-pmus-f-aq'),
+						url_part: '/' + full_name
+					},
+					head: {
+						for_current_user: true
+					}
+				}];
+				// return subPageInitWrap(UserCard, full_name);
 			} else {
 				var name_spaced = name.split(':');
 				var namespace = name_spaced[0];
 				if (namespace == 'lfm') {
-					return subPageInitWrap(UserCard.LfmUserCard, full_name, {userid: name_spaced[1]});
+					return [UserCard.LfmUserCard, {
+						states: {
+							url_part: '/' + full_name
+						},
+						head: {
+							lfm_userid: name_spaced[1]
+						}
+					}];
+					// return subPageInitWrap(UserCard.LfmUserCard, full_name, {userid: name_spaced[1]});
 				} else if (namespace == 'vk') {
-					return subPageInitWrap(UserCard.VkUserCard, full_name, {userid: name_spaced[1]});
+					return [UserCard.VkUserCard, {
+						states: {
+							url_part: '/' + full_name
+						},
+						head: {
+							vk_userid: name_spaced[1]
+						}
+					}];
+					// return subPageInitWrap(UserCard.VkUserCard, full_name, {userid: name_spaced[1]});
 				}
 			}
 		},

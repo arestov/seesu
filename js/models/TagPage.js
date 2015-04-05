@@ -3,7 +3,8 @@ function(spv, app_serv, BrowseMap, ArtCard, LoadableList, SongsList, declr_parse
 "use strict";
 var localize = app_serv.localize;
 
-
+var AlbumsList = ArtCard.AlbumsList;
+var ArtistsList = ArtCard.ArtistsList;
 
 var SimilarTags = function() {};
 
@@ -27,7 +28,7 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 
 var TagAlbums = function() {};
 
-ArtCard.AlbumsList.extendTo(TagAlbums, {
+AlbumsList.extendTo(TagAlbums, {
 
 	page_limit: 50,
 	'nest_req-albums_list': [
@@ -171,7 +172,7 @@ BrowseMap.Model.extendTo(SongsLists, {
 
 
 var WeekTagArtists = function() {};
-ArtCard.ArtistsList.extendTo(WeekTagArtists, {
+ArtistsList.extendTo(WeekTagArtists, {
 
 	page_limit: 130,
 	getRqData: function(paging_opts) {
@@ -189,7 +190,7 @@ ArtCard.ArtistsList.extendTo(WeekTagArtists, {
 });
 
 var TagTopArtists = function() {};
-ArtCard.ArtistsList.extendTo(TagTopArtists, {
+ArtistsList.extendTo(TagTopArtists, {
 	page_limit: 130,
 	getRqData: function(paging_opts) {
 		return {

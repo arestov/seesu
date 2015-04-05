@@ -2,6 +2,8 @@ define(['app_serv', 'js/libs/VkAuth', 'jquery', 'pv'], function(app_serv, VkAuth
 "use strict";
 var app_env = app_serv.app_env;
 
+var pvUpdate = pv.update;
+
 var checkDeadSavedToken = function(vk_token) {
 	var saved = app_serv.store('vk_token_info');
 	if (saved && saved.access_token == vk_token) {
@@ -90,6 +92,9 @@ var initVk = function(su) {
 			if (app_env.web_app){
 				appendVKSiteApi(su.vkappid, su);
 			}
+
+			pvUpdate(su.vk_auth, 'has_token', true);
+			
 			su.vk_auth.trigger('full-ready', true);
 			
 		}
@@ -101,6 +106,8 @@ var initVk = function(su) {
 				if (app_env.web_app){
 					appendVKSiteApi(su.vkappid, su);
 				}
+
+				pvUpdate(this, 'has_token', true);
 				
 				this.trigger('full-ready', true);
 			})
