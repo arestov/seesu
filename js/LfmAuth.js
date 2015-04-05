@@ -12,16 +12,18 @@ pv.Model.extendTo(LfmLogin, {
 		this._super.apply(this, arguments);
 
 		var _this = this;
-		this.auth = (params && params.auth) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) || opts.auth;
+		this.auth = 
+			(params && params.auth) ||
+			(this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) ||
+			opts.auth ||
+			this.app.lfm_auth;
+
 		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
 
 		this.updateNesting('auth', this.auth);
 
-		if (data && data.desc){
-			this.setRequestDesc(data.desc);
-		} else {
-			this.setRequestDesc(this.access_desc);
-		}
+		var access_desc = (data && data.desc) || (this.map_parent && this.map_parent.access_desc) || this.access_desc;
+		this.setRequestDesc(access_desc);
 
 		if (this.auth.deep_sanbdox){
 			pvUpdate(_this, 'deep_sandbox', true);

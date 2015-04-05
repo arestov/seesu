@@ -2,16 +2,22 @@ define(['pv', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlenc
 function(pv, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList, declr_parsers){
 'use strict';
 var localize = app_serv.localize;
+var pvUpdate = pv.update;
+var cloneObj = spv.cloneObj;
 
 var VkAudioLogin = function() {};
 comd.VkLoginB.extendTo(VkAudioLogin, {
+	access_desc: localize('to-play-vk-audio'),
 	beforeRequest: function() {
-		var _this = this;
-		this.bindAuthReady('input_click', function() {
-			_this.pmd.loadStart();
-			_this.pmd.showOnMap();
-		});
-	}
+		var auth = this.getNesting('auth');
+		pvUpdate(auth, 'requested_by', this._provoda_id);
+	},
+	'compx-active': [
+		['has_session', '@one:requested_by:auth'],
+		function(has_session, requested_by) {
+			return has_session && requested_by == this._provoda_id;
+		}
+	]
 });
 
 var no_access_compx = {
@@ -21,51 +27,62 @@ var no_access_compx = {
 	}
 };
 
-var connectUserid = function(params) {
-	if (params.vk_userid){
-		pv.update(this, 'userid', params.vk_userid);
-	} else {
-		if (params.for_current_user){
-			pv.update(this, 'userid', false);
-			this.wch(this.app, 'vk_userid', 'userid');
+var auth_bh = {
+	'compx-has_no_access': no_access_compx,
+	pmd_switch_is_parent: true,
 
-			if (this.authInit){
-				this.authInit();
-			}
-			if (this.authSwitching){
-				this.authSwitching(this.app.vk_auth, VkAudioLogin, {desc: localize('to-play-vk-audio')});
-				//this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: this.access_desc});
-			}
-			
-		} else {
-			throw new Error('only for current user or defined user');
+	'nest-auth_part': [VkAudioLogin, true, 'for_current_user'],
+
+	'compx-userid': [
+		['vk_userid', '#vk_userid', 'for_current_user'],
+		function(vk_userid, cur_vk_userid, for_current_user) {
+			return (for_current_user ? cur_vk_userid : vk_userid) || null;
+		}
+	],
+	'compx-has_vk_auth': [
+		['for_current_user', '@one:has_session:auth_part'],
+		function(for_current_user, sess) {
+			return for_current_user && sess;
+		}
+	],
+
+	'compx-parent_focus': [['^mp_has_focus']],
+	'stch-has_vk_auth': function(target, state) {
+		if (state) {
+			// если появилась авторизация,
+			// то нужно выключить предложение авторизоваться
+			target.switchPmd(false);
+		}
+	},
+	'stch-parent_focus': function(target, state) {
+		if (!state) {
+			// если обзорная страница потеряла фокус,
+			// то нужно выключить предложение авторизоваться
+			target.switchPmd(false);
+		}
+	},
+	'stch-vk_userid': function(target, state) {
+		if (state) {
+			target.updateNesting('auth_part', null);
+		}
+	},
+
+	'compx-acess_ready': [
+		['has_no_access', '@one:active:auth_part'],
+		function(no_access, active_auth) {
+			return !no_access && active_auth;
+		}
+	],
+	'stch-acess_ready': function(target, state) {
+		if (state) {
+			target.loadStart();
+			target.showOnMap();
 		}
 	}
-
-	/*
-	*/
 };
 
 var VkSongList = function() {};
-SongsList.extendTo(VkSongList, {
-	'compx-has_no_access': no_access_compx,
-	init: function(opts, params) {
-		this.sub_pa_params = {
-			vk_userid: params.vk_userid,
-			for_current_user: params.for_current_user
-		};
-		this._super.apply(this, arguments);
-
-		//var user_id = params.vk_userid;
-		
-		connectUserid.call(this, params);
-		//this.user_id = user_id;
-
-		this.initStates();
-		//this.authInit();
-		//this.authSwitching(this.app.vk_auth, VkAudioLogin);
-	}
-});
+SongsList.extendTo(VkSongList, cloneObj({}, auth_bh));
 
 var VkRecommendedTracks = function() {};
 VkSongList.extendTo(VkRecommendedTracks, {
@@ -105,14 +122,6 @@ var vk_user_tracks_sp = ['my', 'recommended'];
 var VkUserTracks = function() {};
 BrowseMap.Model.extendTo(VkUserTracks, {
 	model_name: 'vk_users_tracks',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.sub_pa_params = {
-			vk_userid: params.vk_userid,
-			for_current_user: params.for_current_user
-		};
-		this.initStates();
-	},
 	'nest-lists_list':
 		[vk_user_tracks_sp],
 	'nest-preview_list':
@@ -173,27 +182,10 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 
 
 var VKFriendsList = function(){};
-LoadableList.extendTo(VKFriendsList, {
-	'compx-has_no_access': no_access_compx,
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		connectUserid.call(this, params);
-		this.sub_pa_params = {
-			vk_userid: params.vk_userid,
-			for_current_user: params.for_current_user
-		};
-		this.initStates();
-	},
-
+LoadableList.extendTo(VKFriendsList, cloneObj({
 	main_list_name: 'list_items',
 	model_name: 'vk_users',
 	page_limit: 200,
-	getRqData: function() {
-		return {
-			recenttracks: true,
-			user: this.state('userid')
-		};
-	},
 	'nest_rqc-list_items': VkUserPreview,
 	'nest_req-list_items': [
 		[function(r) {
@@ -210,7 +202,7 @@ LoadableList.extendTo(VKFriendsList, {
 			}];
 		}]
 	]
-});
+}, auth_bh));
 
 
 return {

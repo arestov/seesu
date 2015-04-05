@@ -57,7 +57,7 @@ var getBaseTreeCheckList = function(start) {
 
 };
 
-var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'];
+var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
 var onPropsExtend = function (props) {
 	if (this.collectStateChangeHandlers){
@@ -623,6 +623,7 @@ add({
 				if (name){
 					
 					var cur = this[comlx_name];
+					if (!cur) {continue;}
 					if (cur instanceof Array){
 						cur = {
 							depends_on: cur[0],
@@ -645,7 +646,7 @@ add({
 				if (!compx_check[comlx_name]){
 					
 					var cur = this.complex_states[comlx_name];
-
+					if (!cur) {continue;}
 					if (cur instanceof Array){
 						cur = {
 							depends_on: cur[0],

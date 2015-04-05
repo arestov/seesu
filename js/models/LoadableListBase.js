@@ -92,7 +92,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		return {
 			current_length: length,
 			has_pages: has_pages,
-			page_limit: this.page_limit,
+			page_limit: this.page_limit || this.map_parent.page_limit,
 			remainder: remainder,
 			next_page: next_page
 		};
@@ -273,14 +273,33 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 					'text': TextConstr
 				}]
 			*/
+
 			if (Array.isArray(best_constr)) {
 				var field = best_constr[0];
 				var field_value = spv.getTargetField( data, field );
 				best_constr = best_constr[1][field_value];
+			}
+			var netdata_as_states = best_constr.prototype.netdata_as_states;
+			var network_data_as_states = best_constr.prototype.network_data_as_states;
 
+			var data_po_pass;
+			if (network_data_as_states) {
+				if (netdata_as_states) {
+					data_po_pass = {
+						network_states: netdata_as_states(data)
+					};
+				} else {
+					data_po_pass = {
+						network_states: data
+					};
+				}
+				
+			} else {
+				data_po_pass = data;
 			}
 
-			return this.initSi(best_constr, data, item_params);
+			return this.initSi(best_constr, data_po_pass, item_params);
+
 		} else if (this.subitemConstr){
 			var item = new this.subitemConstr();
 			item.init({

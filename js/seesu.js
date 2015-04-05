@@ -97,7 +97,8 @@ AppModel.extendTo(SeesuApp, {
 			//_this.auth.setScrobbling(true);
 		});
 
-		this.vk_auth = new VkAuth({
+		this.vk_auth = (new VkAuth());
+		this.vk_auth.init({
 			app_id: this.vkappid,
 			urls: {
 				bridge: 'http://seesu.me/vk/bridge.html',
@@ -798,6 +799,7 @@ AppModel.extendTo(SeesuApp, {
 		if (vk_t_raw){
 			var vk_token = new VkAuth.VkTokenAuth(su.vkappid, vk_t_raw);
 			su.vk_auth.api = su.connectVKApi(vk_token, true);
+			pvUpdate(su.vk_auth, 'has_token', true);
 			su.vk_auth.trigger('full-ready', true);
 				
 		}

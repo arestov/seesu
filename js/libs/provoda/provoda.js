@@ -149,6 +149,7 @@ pv = provoda = {
 provoda.Controller = provoda.View;
 
 provoda.Model.extendTo(provoda.HModel, {
+	network_data_as_states: true,
 	init: function(opts) {
 		
 		//opts = opts || {};

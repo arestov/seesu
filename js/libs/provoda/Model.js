@@ -457,9 +457,7 @@ var modelInit = (function() {
 
 		if (states || (data && data.states)) {
 
-			if (!this.init_states) {
-				this.init_states = {};
-			}
+			if (!this.init_states) {this.init_states = {};}
 
 			spv.cloneObj(this.init_states, states);
 
@@ -481,13 +479,26 @@ var modelInit = (function() {
 			spv.cloneObj(this.head, data.head);
 		}
 
-		if (this.head) {
-			if (!this.init_states) {
-				this.init_states = {};
+		if (this.network_data_as_states && data && data.network_states) {
+			if (!this.init_states) {this.init_states = {};}
+			spv.cloneObj(this.init_states, data.network_states);
+
+			if (this.net_head) {
+				if (!this.head) {this.head = {};}
+				for (var i = 0; i < this.net_head.length; i++) {
+					var pk = this.net_head[i];
+					this.head[pk] = data.network_states[pk];
+				}
 			}
+		}
+
+		if (this.head) {
+			if (!this.init_states) {this.init_states = {};}
 
 			spv.cloneObj(this.init_states, this.head);
 		}
+
+
 
 		this.prsStCon.connect.parent(this);
 		this.prsStCon.connect.root(this);
@@ -944,11 +955,16 @@ add({
 		// this.updateManyStates(this.init_states);
 		this.init_states = false;
 	},
+	network_data_as_states: true,
 	onExtend: (function() {
 		var check = /initStates/gi;
 		var baseInit = modelInit;
 		return spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
 			if (props.init && props.init !== baseInit) {
+				if (!this.hasOwnProperty('network_data_as_states')) {
+					this.network_data_as_states = false;
+				}
+
 				if (props.init.toString().search(check) != -1) {
 					this.manual_states_init = true;
 				}

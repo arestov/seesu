@@ -1367,6 +1367,7 @@ BrowseMap.getStrucSources = function(md, struc) {
 };
 
 pv.HModel.extendTo(BrowseMap.Model, {
+	network_data_as_states: true,
 	init: function(opts, data) {
 
 		if (!this.skip_map_init){
@@ -1478,7 +1479,13 @@ pv.HModel.extendTo(BrowseMap.Model, {
 				var common_opts = getSPOpts(this, sp_name);
 
 				var instance_data = getInitData(this, common_opts);
-				var data_by_urlname = Constr.prototype.data_by_urlname && Constr.prototype.data_by_urlname(common_opts[1]);
+				var dbu_declr = Constr.prototype.data_by_urlname;
+				var hbu_declr = Constr.prototype.head_by_urlname;
+				var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
+				var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
+				if (head_by_urlname) {
+					instance_data.head = head_by_urlname;
+				}
 				spv.cloneObj(instance_data, data_by_urlname);
 				init_opts = [this.getSiOpts(), instance_data];
 				instance = new Constr();
