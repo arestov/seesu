@@ -25,11 +25,6 @@ var sortByGif = spv.getSortFunc([{
 
 var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.initStates(params);
-		
-	},
 	getRqData: function() {
 		return {
 			artist: this.state('artist_name'),
@@ -240,14 +235,6 @@ var isDepend = pv.utils.isDepend;
 var SongCard = function() {};
 BrowseMap.Model.extendTo(SongCard, {
 	model_name: 'songcard',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.sub_pa_params = {
-			artist_name: params.artist_name,
-			track_name: params.track_name
-		};
-		this.initStates(params);
-	},
 	'compx-nav_title': {
 		depends_on: ['artist_name', 'track_name'],
 		fn: function(artist_name, track_name) {

@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './MusicBlog', './Cloudcasts', 'pv'],
-function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, MusicBlog, Cloudcasts, pv) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', 'pv'],
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, pv) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -100,10 +100,18 @@ BrowseMap.Model.extendTo(StartPage, {
 			if (!parts[1] || !parts[0]){
 				return;
 			} else {
-				return subPageInitWrap(SongCard, full_name, {
-					artist_name: parts[0],
-					track_name: parts[1]
-				});
+				return [SongCard, {
+					states: {
+						url_part: '/' + full_name
+					},
+					head: {
+						artist_name: parts[0],
+						track_name: parts[1]
+					}
+				}];
+				// return subPageInitWrap(SongCard, full_name, {
+					
+				// });
 			}
 		
 		},
@@ -146,12 +154,12 @@ BrowseMap.Model.extendTo(StartPage, {
 				}
 			}
 		},
-		'blogs': function(blog_url) {
-			var full_name = 'blogs/' +  this.app.encodeURLPart(blog_url);
-			return subPageInitWrap(MusicBlog, full_name, {
-				blog_url: blog_url
-			});
-		},
+		// 'blogs': function(blog_url) {
+		// 	var full_name = 'blogs/' +  this.app.encodeURLPart(blog_url);
+		// 	return subPageInitWrap(MusicBlog, full_name, {
+		// 		blog_url: blog_url
+		// 	});
+		// },
 		'cloudcasts': function(mixcloud_urlpiece) {
 			var full_name = 'cloudcasts/' +  this.app.encodeURLPart(mixcloud_urlpiece);
 			return subPageInitWrap(Cloudcasts, full_name, {
