@@ -3,6 +3,7 @@ function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncRe
 "use strict";
 
 var provoda, pv;
+var pvUpdate = updateProxy.update;
 var DeathMarker = function() {
 	//helper to find memory leaks; if there is memory leaking DeathMarker will be available in memory heap snapshot;
 };
@@ -29,6 +30,12 @@ pv = provoda = {
 	CallbacksFlow: CallbacksFlow,
 	hp: hp,
 	$v: hp.$v,
+	getRDep: hp.getRDep,
+	utils: {
+		isDepend: function(obj) {
+			return obj && !!obj.count;
+		}
+	},
 	initWebApp: function(root_md, RootViewConstr) {
 
 		var proxies_space = Date.now();
@@ -98,24 +105,8 @@ pv = provoda = {
 			mpx.updateState(state_name, state_value, opts);
 		}
 	},
-	state: function(item, state_name) {
-		if (item._lbr && item._lbr.undetailed_states) {
-			return item._lbr.undetailed_states[state_name];
-		}
-		return item.states[state_name];
-	},
-	update: function(md, state_name, state_value, opts) {
-		/*if (state_name.indexOf('-') != -1 && console.warn){
-			console.warn('fix prop state_name: ' + state_name);
-		}*/
-		if (md.hasComplexStateFn(state_name)){
-			throw new Error("you can't change complex state in this way");
-		}
-		return updateProxy(md, [state_name, state_value], opts);
-
-
-		// md.updateState(state_name, state_value, opts);
-	},
+	update: updateProxy.update,
+	state: hp.state,
 	behavior: function(declr, declr_extend_from, named) {
 		var behaviorFrom = declr_extend_from || pv.Model;
 		var func = named || function() {};
@@ -148,14 +139,17 @@ pv = provoda = {
 
 		}
 
-
-		model.initStates();
+		if (model.init_states) {
+			model.initStates();
+		}
+		
 		return model;
 	}
 };
 provoda.Controller = provoda.View;
 
 provoda.Model.extendTo(provoda.HModel, {
+	network_data_as_states: true,
 	init: function(opts) {
 		
 		//opts = opts || {};
@@ -205,6 +199,16 @@ provoda.Model.extendTo(provoda.HModel, {
 
 		pmd.on('state_change-vswitched', this._hndOnPMDSwitch, this.getContextOptsI());
 	},
+	'stch-vswitched': function(target, state, old_state) {
+		if (state) {
+			var md = pv.getModelById(state);
+			pvUpdate(md, 'pmd_vswitched', true);
+		}
+		if (old_state) {
+			var old_md = pv.getModelById(old_state);
+			pvUpdate(old_md, 'pmd_vswitched', false);
+		}
+	},
 	switchPmd: function(toggle) {
 		var new_state;
 		if (typeof toggle == 'boolean')	{
@@ -212,18 +216,20 @@ provoda.Model.extendTo(provoda.HModel, {
 		} else {
 			new_state = !this.state('pmd_vswitched');
 		}
+		var pmd_switch = this.pmd_switch || this.pmd_switch_is_parent && this.map_parent;
+
 		if (new_state){
 			if (!this.state('pmd_vswitched')){
-				pv.update(this.pmd_switch, 'vswitched', this._provoda_id);
+				pvUpdate(pmd_switch, 'vswitched', this._provoda_id);
 			}
 		} else {
 			if (this.state('pmd_vswitched')){
-				pv.update(this.pmd_switch, 'vswitched', false);
+				pvUpdate(pmd_switch, 'vswitched', false);
 			}
 		}
 	},
 	checkPMDSwiched: function(value) {
-		pv.update(this, 'pmd_vswitched', value == this._provoda_id);
+		pvUpdate(this, 'pmd_vswitched', value == this._provoda_id);
 	}
 });
 

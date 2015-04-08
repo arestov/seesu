@@ -1,5 +1,6 @@
-define(['spv', './helpers', './PvTemplate',  'jquery'], function(spv, hp, PvTemplate, $) {
+define(['spv', './helpers',  'jquery', './updateProxy'], function(spv, hp, $, updateProxy) {
 'use strict';
+var pvUpdate = updateProxy.update;
 var $v = hp.$v;
 return function(StatesEmitter, main_calls_flow, views_proxies) {
 var push = Array.prototype.push;
@@ -44,6 +45,8 @@ var ViewLabour = function() {
 	this.detached = null;
 
 	this.hndTriggerTPLevents = null;
+	this.hndPvTypeChange = null;
+	this.hndPvTreeChange = null;
 
 	this.marked_as_dead = null;
 
@@ -167,8 +170,7 @@ StatesEmitter.extendTo(View, {
 			bwlev_view.RPCLegacy('followTo', md_id);
 		}
 	},
-	onExtend: function(props, original) {
-		this._super(props);
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
 		if (props.tpl_events) {
 			this.tpl_events = {};
 			spv.cloneObj(this.tpl_events, original.tpl_events);
@@ -182,16 +184,16 @@ StatesEmitter.extendTo(View, {
 		}
 		
 
-	},
-	'stch-map_slice_view_sources': function(state) {
+	}),
+	'stch-map_slice_view_sources': function(target, state) {
 		if (state) {
-			if (this.parent_view.parent_view == this.root_view && this.parent_view.nesting_name == 'map_slice') {
+			if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {
 				var arr = [];
 				if (state[0]) {
 					arr.push(state[0]);
 				}
-				push.apply(arr, state[1][this.nesting_space]);
-				this.updateState('view_sources', arr);
+				push.apply(arr, state[1][target.nesting_space]);
+				pvUpdate(target, 'view_sources', arr);
 			}
 			
 		}
@@ -341,20 +343,11 @@ StatesEmitter.extendTo(View, {
 		}
 		this.way_points = stay;
 	},
-	PvTemplate: PvTemplate,
-	getTemplate: function(node, callCallbacks, pvTypesChange) {
-		node = node[0] || node;
-		return new PvTemplate({
-			node: node,
-			callCallbacks: callCallbacks,
-			pvTypesChange: pvTypesChange,
-			struc_store: this.root_view.struc_store,
-			calls_flow: this._getCallsFlow(),
-			getSample: this.root_view.getSampleForTemplate
-		});
+	getTemplate: function(node, callCallbacks, pvTypesChange, pvTreeChange) {
+		return this.root_view.pvtemplate(node, callCallbacks, pvTypesChange, false, pvTreeChange);
 	},
 	parseAppendedTPLPart: function(node) {
-		this.tpl.parseAppended(node, this.root_view.struc_store);
+		this.tpl.parseAppended(node);
 		this.tpl.setStates(this.states);
 	},
 	createTemplate: function(ext_node) {
@@ -364,9 +357,6 @@ StatesEmitter.extendTo(View, {
 		}
 
 		var tpl = $v.createTemplate(this, con);
-		
-
-
 		
 		if (!ext_node) {
 			this.tpl = tpl;
@@ -940,6 +930,8 @@ StatesEmitter.extendTo(View, {
 		return this.view_parts && this.view_parts[part_name];
 	},
 	collectStateChangeHandlers: (function() {
+		// var thisT = /this/gi;
+
 		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 		return function(props) {
@@ -991,6 +983,17 @@ StatesEmitter.extendTo(View, {
 			}
 
 			this.stch_hs = result;
+
+			// for (var i = 0; i < this.stch_hs.length; i++) {
+
+			// 	var cur = this.stch_hs[i];
+			// 	var digi = thisT.test(cur.item);
+			// 	if (digi){
+
+			// 		console.log(cur.item);
+			// 	}
+				
+			// }
 		};
 	})(),
 	requirePart: function(part_name) {
@@ -1042,26 +1045,35 @@ StatesEmitter.extendTo(View, {
 		}
 		return has_all_dependings;
 	},
-	stackReceivedChanges: function() {
-		if (!this.isAlive()){
-			return;
-		}
-		this.nextTick(this._updateProxy, arguments);
-	},
+	stackReceivedChanges: (function() {
+		return function() {
+			if (!this.isAlive()){
+				return;
+			}
+
+			var args = new Array(arguments.length);
+			for (var i = 0; i < arguments.length; i++) {
+				args[i] = arguments[i];
+			}
+			args.unshift(this);
+
+			this.nextTick(updateProxy, args);
+		};
+	})(),
 	receiveStatesChanges: function(changes_list, opts) {
 		if (!this.isAlive()){
 			return;
 		}
-		this._updateProxy(changes_list, opts);
+		updateProxy(this, changes_list, opts);
 	},
 	overrideStateSilently: function(name, value) {
-		this._updateProxy([name, value], {skip_handler: true});
+		updateProxy(this, [name, value], {skip_handler: true});
 	},
 	promiseStateUpdate: function(name, value) {
-		this._updateProxy([name, value]);
+		updateProxy(this, [name, value]);
 	},
 	setVisState: function(name, value) {
-		this._updateProxy(['vis_' + name, value]);
+		updateProxy(this, ['vis_' + name, value]);
 	},
 	checkChildrenModelsRendering: function() {
 		var obj = spv.cloneObj(false, this.children_models);
@@ -1071,7 +1083,7 @@ StatesEmitter.extendTo(View, {
 		this._lbr._collections_set_processing = true;
 		//вью только что создана, присоединяем подчинённые views без деталей (детали создаются позже)
 		for (var i in collections) {
-			this.collectionChange(i, collections[i]);
+			this.collectionChange(this, i, collections[i]);
 		}
 		this._lbr._collections_set_processing = null;
 	},
@@ -1174,6 +1186,9 @@ StatesEmitter.extendTo(View, {
 				pv_view.views.push(view.view_id);
 
 				pv_view.last_node = node_to_use;
+				pv_view.onDie(function() {
+					view.die();
+				});
 				return view;
 			}
 		};
@@ -1233,25 +1248,34 @@ StatesEmitter.extendTo(View, {
 		this.dclrs_fpckgs[nesname] = this.dclrs_fpckgs[ '$ondemand-' + nesname ];
 		if (this.children_models[nesname]){
 
-			this.collectionChange(nesname, this.children_models[nesname]);
+			this.collectionChange(this, nesname, this.children_models[nesname]);
 		}
 	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	stackCollectionChange: function() {
-		this.nextTick(this.collectionChange, arguments);
+		var args = new Array(arguments.length);
+		for (var i = 0; i < arguments.length; i++) {
+			args[i] = arguments[i];
+		}
+		args.unshift(this);
+
+		this.nextTick(this.collectionChange, args);
 	},
-	collectionChange: function(nesname, array, rold_value, removed) {
-		if (!this.isAlive()){
-			return;
-		}
-		if (this._lbr.undetailed_children_models){
-			this._lbr.undetailed_children_models[nesname] = array;
-			return this;
+	checkTplTreeChange: function() {
+		var total_ch = [];
+
+		for (var state_name in this.states) {
+			total_ch.push(state_name, this.states[total_ch]);
 		}
 
-		var old_value = this.children_models[nesname];
-		this.children_models[nesname] = array;
+		this.updateTemplatesStates(total_ch);
 
+		for (var nesname in this.children_models) {
+
+			this.pvCollectionChange(nesname, this.children_models[nesname]);
+		}
+	},
+	pvCollectionChange: function(nesname, items, removed) {
 		var pv_views_complex_index = spv.getTargetField(this, this.tpl_children_prefix + nesname);
 		if (!pv_views_complex_index && this.tpls) {
 			for (var i = 0; i < this.tpls.length; i++) {
@@ -1261,9 +1285,10 @@ StatesEmitter.extendTo(View, {
 				}
 			}
 		}
+		var cur;
 		if (pv_views_complex_index){
 			var space_name;
-			array = spv.toRealArray(array);
+			var array = spv.toRealArray(items);
 			if (removed && removed.length) {
 				for (space_name in pv_views_complex_index.usual){
 					this.removeViewsByMds(removed, nesname, space_name);
@@ -1275,10 +1300,14 @@ StatesEmitter.extendTo(View, {
 			
 
 			for (space_name in pv_views_complex_index.usual){
+				cur = pv_views_complex_index.usual[space_name];
+				if (!cur) {continue;}
 				this.checkCollchItemAgainstPvView(nesname, array, space_name, pv_views_complex_index.usual[space_name]);
 			}
 			for (space_name in pv_views_complex_index.by_model_name){
-				this.checkCollchItemAgainstPvViewByModelName(nesname, array, space_name, pv_views_complex_index.by_model_name[space_name]);
+				cur = pv_views_complex_index.by_model_name[space_name];
+				if (!cur) {continue;}
+				this.checkCollchItemAgainstPvViewByModelName(nesname, array, space_name, cur);
 			}
 			/*
 			for (var 
@@ -1289,44 +1318,58 @@ StatesEmitter.extendTo(View, {
 
 			this.requestAll();
 		}
+	},
+	collectionChange: function(target, nesname, items, rold_value, removed) {
+		if (!target.isAlive()){
+			return;
+		}
+		if (target._lbr.undetailed_children_models){
+			target._lbr.undetailed_children_models[nesname] = items;
+			return target;
+		}
+
+		var old_value = target.children_models[nesname];
+		target.children_models[nesname] = items;
+
+		target.pvCollectionChange(nesname, items, removed);
 
 
-		var collch = this.dclrs_fpckgs && this.dclrs_fpckgs.hasOwnProperty(nesname) && this.dclrs_fpckgs[nesname];
+		var collch = target.dclrs_fpckgs && target.dclrs_fpckgs.hasOwnProperty(nesname) && target.dclrs_fpckgs[nesname];
 		if (typeof collch == 'function') {
-			this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
+			target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
 		} else {
-			if (this.dclrs_selectors && this.dclrs_selectors.hasOwnProperty(nesname)) {
-				if (Array.isArray(array)) {
-					for (var i = 0; i < array.length; i++) {
-						var cur = array[i];
-						var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
-							nesname, cur.model_name, this.nesting_space);
+			if (target.dclrs_selectors && target.dclrs_selectors.hasOwnProperty(nesname)) {
+				if (Array.isArray(items)) {
+					for (var i = 0; i < items.length; i++) {
+						var cur = items[i];
+						var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
+							nesname, cur.model_name, target.nesting_space);
 
 						if (!dclr) {
 							dclr = collch;
 						}
 
 						throw new Error('WHAT TO DO WITH old_value?');
-						this.callCollectionChangeDeclaration(dclr, nesname, cur, old_value, removed);
+						// target.callCollectionChangeDeclaration(dclr, nesname, cur, old_value, removed);
 					}
 				} else {
-					var dclr = $v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
-							nesname, array.model_name, this.nesting_space);
+					var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
+							nesname, items.model_name, target.nesting_space);
 
 					if (!dclr) {
 						dclr = collch;
 					}
-					this.callCollectionChangeDeclaration(dclr, nesname, array, old_value, removed);
+					target.callCollectionChangeDeclaration(dclr, nesname, items, old_value, removed);
 				}
 			} else {
 				if (collch) {
-					this.callCollectionChangeDeclaration(collch, nesname, array, old_value, removed);
+					target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
 				}
 			}
 		}
 
-		this.checkDeadChildren();
-		return this;
+		target.checkDeadChildren();
+		return target;
 	},
 	removeViewsByMds: function(array, nesname, space) {
 		if (!array){
@@ -1673,10 +1716,10 @@ StatesEmitter.extendTo(View, {
 				var $first = counter === 0;
 				var $last = counter === (array.length - 1);
 
-				view.updateState('$index', counter);
-				view.updateState('$first', $first);
-				view.updateState('$last', $last);
-				view.updateState('$middle', !($first || $last));
+				pvUpdate(view, '$index', counter);
+				pvUpdate(view, '$first', $first);
+				pvUpdate(view, '$last', $last);
+				pvUpdate(view, '$middle', !($first || $last));
 
 				counter++;
 			}

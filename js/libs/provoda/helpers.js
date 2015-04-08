@@ -1,6 +1,18 @@
 define(['spv'], function(spv) {
 'use strict';
 
+
+function itself(item) {return item;}
+
+
+var NestWatch = function(selector, state_name, zin_func, full_name, handler) {
+	this.selector = selector;
+	this.state_name = state_name;
+	this.full_name = full_name;
+	this.zin_func = zin_func;
+	this.handler = handler;
+};
+
 var encoded_states = {};
 var enc_states = {
 	parent_count_regexp: /^\^+/gi,
@@ -29,19 +41,16 @@ var enc_states = {
 			var nesting_name = parts.pop();
 			var state_name = parts.pop();
 			var zin_func = parts.pop();
-			if (!zin_func) {
-				zin_func = function(list) {return list;};
-			}
 
 			encoded_states[string] = {
 				rel_type: 'nesting',
 				full_name: string,
 				nesting_name: nesting_name,
 				state_name: state_name,
-				zin_func: zin_func
+				zin_func: zin_func || itself,
+				nwatch: new NestWatch(nesting_name.split('.'), state_name, zin_func, string)
 			};
 		}
-		
 
 		return encoded_states[string];
 	},
@@ -83,8 +92,33 @@ function getBwlevId(view) {
 }
 
 return {
+	NestWatch: NestWatch,
+	getRDep: (function() {
+		var getTargetName = spv.memorize(function getTargetName(state_name) {
+			return state_name.split( ':' )[ 1 ];
+		});
+
+		return function(state_name) {
+			var target_name = getTargetName(state_name);
+			return function(target, state, oldstate) {
+				if (oldstate) {
+					oldstate.setStateDependence(target_name, target, false);
+				}
+				if (state) {
+					state.setStateDependence(target_name, target, true);
+				}
+			};
+		};
+
+	})(),
+	state: function(item, state_name) {
+		if (item._lbr && item._lbr.undetailed_states) {
+			return item._lbr.undetailed_states[state_name];
+		}
+		return item.states[state_name];
+	},
 	triggerDestroy: function(md) {
-		var array = md.evcompanion.getMatchedCallbacks('die').matched;
+		var array = md.evcompanion.getMatchedCallbacks('die');
 		if (array.length) {
 			md.evcompanion.triggerCallbacks(array, false, emergency_opt, 'die');
 		}
@@ -284,34 +318,44 @@ return {
 				};
 			}
 
+			if (!view._lbr.hndPvTypeChange) {
+				view._lbr.hndPvTypeChange = function(arr_arr) {
+					//pvTypesChange
+					//this == template
+					//this != provoda.View
+					var old_waypoints = this.waypoints;
+					var total = [];
+					var i = 0;
+					for (i = 0; i < arr_arr.length; i++) {
+						if (!arr_arr[i]) {
+							continue;
+						}
+						total.push.apply(total, arr_arr[i]);
+					}
+					var matched = [];
+					for (i = 0; i < total.length; i++) {
+						var cur = total[i];
+						if (!cur.marks){
+							continue;
+						}
+						if (cur.marks['hard-way-point'] || cur.marks['way-point']){
+							matched.push(cur);
+						}
+					}
+					var to_remove = old_waypoints && spv.arrayExclude(old_waypoints, matched);
+					this.waypoints = matched;
+					view.updateTemplatedWaypoints(matched, to_remove);
+				};
+			}
 
-			return view.getTemplate(con, view._lbr.hndTriggerTPLevents, function(arr_arr) {
-				//pvTypesChange
-				//this == template
-				//this != provoda.View
-				var old_waypoints = this.waypoints;
-				var total = [];
-				var i = 0;
-				for (i = 0; i < arr_arr.length; i++) {
-					if (!arr_arr[i]) {
-						continue;
-					}
-					total.push.apply(total, arr_arr[i]);
-				}
-				var matched = [];
-				for (i = 0; i < total.length; i++) {
-					var cur = total[i];
-					if (!cur.marks){
-						continue;
-					}
-					if (cur.marks['hard-way-point'] || cur.marks['way-point']){
-						matched.push(cur);
-					}
-				}
-				var to_remove = old_waypoints && spv.arrayExclude(old_waypoints, matched);
-				this.waypoints = matched;
-				view.updateTemplatedWaypoints(matched, to_remove);
-			});
+			if (!view._lbr.hndPvTreeChange) {
+				view._lbr.hndPvTreeChange = function() {
+					view.checkTplTreeChange();
+				};
+			}
+
+
+			return view.getTemplate(con, view._lbr.hndTriggerTPLevents, view._lbr.hndPvTypeChange, view._lbr.hndPvTreeChange);
 		},
 		matchByParent: function(views, parent_view) {
 			for (var i = 0; i < views.length; i++) {

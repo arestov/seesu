@@ -3,6 +3,7 @@ function(pv, spv, app_serv,  invstg, comd, LfmAuth) {
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
+var pvState = pv.state;
 
 
 var struserSuggest = function(wrap) {
@@ -115,9 +116,9 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 			});
 		}
 	},
-	'stch-can_search_friends': function(state) {
+	'stch-can_search_friends': function(target, state) {
 		if (state){
-			this.searchByQuery(this.state('query'));
+			target.searchByQuery(pvState(target, 'query'));
 		}
 	},
 	searchByQuery: function(query) {

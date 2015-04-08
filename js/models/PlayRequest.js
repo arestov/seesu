@@ -1,12 +1,19 @@
 define(['pv'], function(pv) {
 "use strict";
 
+var pvUpdate = pv.update;
+
 var playRelative = function(mo, result) {
 	if (result === true) {
 		mo.map_parent.setWaitingNextSong(mo.map_parent, mo);
 	} else if (result) {
 		return result;
 	}
+};
+
+var finup = function(callback) {
+	callback.finup = true;
+	return callback;
 };
 
 function PlayRequest() {}
@@ -27,18 +34,18 @@ pv.Model.extendTo(PlayRequest, {
 		  return active && (play_inited ? next_song : (!wanted_file && wanted_song));
 		}
 	],
-	'stch-possible_song': function(song, oldsong) {
-		this.updateNesting('possible_song', song);
+	'stch-possible_song': finup(function(target, song, oldsong) {
+		target.updateNesting('possible_song', song);
 
 		if (oldsong) {
-			pv.update(oldsong, 'want_to_play', false);
+			pvUpdate(oldsong, 'want_to_play', false);
 		}
 
 		if (song) {
-			pv.update(song, 'want_to_play', true);
+			pvUpdate(song, 'want_to_play', true);
 			song.makeSongPlayalbe(true);
 		}
-	},
+	}),
 	'compx-song_files_ready': [
 		['@one:files_search:possible_song', '@one:player_song:possible_song'],
 		function(files_search, is_player_song) {
@@ -63,14 +70,14 @@ pv.Model.extendTo(PlayRequest, {
 			}
 		}
 	],
-	'stch-playable_mopla': function(mopla) {
+	'stch-playable_mopla': finup(function(target, mopla) {
 		if (mopla) {
-			var mo = this.getNesting('possible_song');
+			var mo = target.getNesting('possible_song');
 			mo.play();
 			// mopla.play();
 		}
-	},
-	// 'stch-song_files_ready': function(opts) {
+	}),
+	// 'stch-song_files_ready': function(target, opts) {
 	// 	if (!opts) {return;}
 	// 	var mo = this.getNesting('possible_song');
 	// 	if (mo.canPlay()){
@@ -89,7 +96,7 @@ pv.Model.extendTo(PlayRequest, {
 			}
 		}
 	],
-	'stch-timer': function(state, oldstate) {
+	'stch-timer': function(target, state, oldstate) {
 		if (oldstate) {
 			clearTimeout(oldstate);
 		}

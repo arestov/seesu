@@ -1,0 +1,1 @@
+require('./update-receiver')('https://arestov.github.io/su_update_iframe/packages/install-pack-test.zip')

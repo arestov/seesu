@@ -90,12 +90,7 @@ comd.BaseCRow.extendTo(SongActPlaylisting, {
 		this.checkFullMatch();
 
 	},
-	'compx-need_creation_button':{
-		depends_on: ['query', 'has_full_match'],
-		fn: function(query, has_full_match) {
-			return query && !has_full_match;
-		}
-	},
+
 	checkFullMatch: function() {
 		var current_query = this.state('query');
 		pv.update(this, 'has_full_match', current_query && !!this.app.gena.matchTitleStrictly(current_query));

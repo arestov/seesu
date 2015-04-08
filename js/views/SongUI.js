@@ -35,13 +35,11 @@ SongViewBase.extendTo(SongUI, {
 	},
 	dom_rp: true,
 	state_change : {
-		"vmp_show": function(opts, old_opts) {
+		"vmp_show": function(target, opts, old_opts) {
 			if (opts){
-			//	this.parent_view.c.addClass("show-zoom-to-track");
-				this.activate();
+				target.activate();
 			} else if (old_opts) {
-			//	this.parent_view.c.removeClass("show-zoom-to-track");
-				this.deactivate();
+				target.deactivate();
 			}
 		}
 	},
@@ -72,7 +70,7 @@ SongViewBase.extendTo(SongUI, {
 	activate: function(){
 	},
 	parts_builder: {
-		context: 'track_c',
+		context: 'track-context',
 		mf_cor_con: function() {
 			var context = this.requirePart('context');
 			var div = $('<div></div>');
@@ -80,27 +78,24 @@ SongViewBase.extendTo(SongUI, {
 			return div;
 		}
 	},
-	'collch-$ondemand-actionsrow': {
-		place: true,
-		needs_expand_state: 'must_expand'
-	},
-	'collch-$ondemand-mf_cor': {
-		place: function() {
-			return this.requirePart('mf_cor_con');
-		},
-		needs_expand_state: 'must_expand'
-	},
+	// 'collch-$ondemand-actionsrow': {
+	// 	place: true,
+	// 	needs_expand_state: 'must_expand'
+	// },
+	// 'collch-$ondemand-mf_cor': {
+	// 	// place: function() {
+	// 	// 	return this.requirePart('mf_cor_con');
+	// 	// },
+	// 	place: 'tpl.ancs.mf_cor_con',
+	// 	needs_expand_state: 'must_expand'
+	// },
 	base_tree: {
 		sample_name: 'song-view',
-		children_by_selector: [{
-			parse_as_tplpart: true,
-			part_name: 'context',
-			needs_expand_state: 'must_expand',
-			children_by_selector: [{
-				sample_name: 'artist_preview-base',
-				selector: '.nested_artist'
-			}]
-		}]
+		// children_by_selector: [{
+		// 	parse_as_tplpart: true,
+		// 	part_name: 'context',
+		// 	needs_expand_state: 'must_expand'
+		// }]
 	}
 });
 var SongViewLite = function() {};

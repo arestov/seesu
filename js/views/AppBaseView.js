@@ -8,7 +8,6 @@ transform_props.forEach(function(el) {
 });
 var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
 
-var PvTemplate = pv.dom.template;
 pv.setTplFilterGetFn(function(filter_name) {
 	if (filters[filter_name]){
 		return filters[filter_name];
@@ -110,15 +109,18 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	createDetails: function() {
 		this._super();
 
-		(function(_this) {
-			_this.getSampleForTemplate = function(sample_name) {
-				return _this.getSample(sample_name);
+		var getSampleForTemplate = (function(_this) {
+			return function(sample_name, simple) {
+				return _this.getSample(sample_name, simple);
 			};
 		})(this);
-		
+
+		var templator = pv.dom.template.templator(this._getCallsFlow(), getSampleForTemplate);
+		this.pvtemplate = templator.template;
+		this.pvsampler = templator.sampler;
 
 		this.tpls = [];
-		this.struc_store = {};
+		// this.struc_store = {};
 		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
@@ -146,14 +148,8 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 			var node = this.getSample('complex-page');
 
-			var tpl = new this.PvTemplate({
-				node: node,
-				spec_states: {
-					'$lev_num': num
-				},
-				struc_store: this.struc_store,
-				calls_flow: this._getCallsFlow(),
-				getSample: this.getSampleForTemplate
+			var tpl = this.pvtemplate(node, false, false, {
+				'$lev_num': num
 			});
 
 			this.tpls.push(tpl);
@@ -297,7 +293,8 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			sample_node = this.els.ui_samples.children('.' + sample_name);
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
+
+				sampler = this.samples[sample_name] = this.pvsampler(sample_node);
 			}
 			
 		}
@@ -305,7 +302,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			sample_node = $(this.requirePart(sample_name));
 			sample_node = sample_node[0];
 			if (sample_node){
-				sampler = this.samples[sample_name] = new PvTemplate.SimplePVSampler(sample_node, this.struc_store);
+				sampler = this.samples[sample_name] = this.pvsampler(sample_node);
 			}
 			
 		}
@@ -314,11 +311,15 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 		return sampler;
 	},
-	getSample: function(sample_name) {
+	getSample: function(sample_name, simple) {
 		var sampler = this.getSampler(sample_name);
 		
 		if (sampler.getClone){
-			return $(sampler.getClone());
+			if (simple) {
+				return sampler.getClone();
+			} else {
+				return $(sampler.getClone());
+			}
 		} else {
 			return $(sampler).clone();
 		}
@@ -670,7 +671,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	},
 
 	transform_props: transform_props,
-	'stch-current_mp_bwlev': function() {
+	'stch-current_mp_bwlev': function(target) {
 
 		//map_level_num
 		//md.map_level_num
@@ -680,19 +681,19 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		/*
 		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
 		if (old_md){
-			this.hideLevNum(old_md.map_level_num);
+			target.hideLevNum(old_md.map_level_num);
 			if (!oved_now_active){
-				this.removePageOverviewMark(old_md.map_level_num-1);
+				target.removePageOverviewMark(old_md.map_level_num-1);
 			}
 		}
 		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
-			this.hideLevNum(-1);
+			target.hideLevNum(-1);
 		}
 
-		this.addPageOverviewMark(md.map_level_num - 1);
-		this.showLevNum(md.map_level_num);
+		target.addPageOverviewMark(md.map_level_num - 1);
+		target.showLevNum(md.map_level_num);
 		if (oved_now_active){
-			this.removePageOverviewMark(old_md.map_level_num-1);
+			target.removePageOverviewMark(old_md.map_level_num-1);
 		}
 
 */
@@ -704,11 +705,11 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
 
-			var md_view = this.findMpxViewInChildren(md.mpx);
+			var md_view = target.findMpxViewInChildren(md.mpx);
 			if (md_view){
 				var hl_view = md_view.findMpxViewInChildren(source_md.mpx);
 				if (hl_view){
-					//this.scrollTo(hl_view.getC());
+					//target.scrollTo(hl_view.getC());
 				}
 			}
 		}*/
@@ -718,22 +719,21 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
 		if (ov_highlight && ov_highlight.source_md){
 			var source_md = ov_highlight.source_md;
-			var mplev_item_view = source_md.getRooConPresentation(this);
+			var mplev_item_view = source_md.getRooConPresentation(target);
 			if (mplev_item_view){
-				this.scrollTo(mplev_item_view.getC(), {
-					node: this.getLevByNum(md.map_level_num - 1).scroll_con
+				target.scrollTo(mplev_item_view.getC(), {
+					node: target.getLevByNum(md.map_level_num - 1).scroll_con
 				}, {vp_limit: 0.4, animate: 117});
 			}
 
 			
 		}*/
-		var md = this.getNesting('current_mp_md');
-		var bwlev = this.getNesting('current_mp_bwlev');
+		var md = target.getNesting('current_mp_md');
+		var bwlev = target.getNesting('current_mp_bwlev');
 
-		var _this = this;
 		setTimeout(function() {
-			if (!_this.isAlive()){
-				_this = null;
+			if (!target.isAlive()){
+				target = null;
 				return;
 			}
 
@@ -741,15 +741,15 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
-				// var mplev_item_view = _this.getStoredMpx(md).getRooConPresentation(_this, false, false, true);
-				var mplev_item_view = _this.getMapSliceChildInParenView(bwlev, md);
+				// var mplev_item_view = target.getStoredMpx(md).getRooConPresentation(target, false, false, true);
+				var mplev_item_view = target.getMapSliceChildInParenView(bwlev, md);
 				var con = mplev_item_view && mplev_item_view.getC();
 				if (con && con.height()){
-					_this.scrollTo(mplev_item_view.getC(), {
-						node: _this.getLevByNum(md.map_level_num - 1).scroll_con
+					target.scrollTo(mplev_item_view.getC(), {
+						node: target.getLevByNum(md.map_level_num - 1).scroll_con
 					}, {vp_limit: 0.4, animate: 117});
 				} else {
-					_this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
+					target.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
 				}
 			}
 		}, 150);
@@ -866,15 +866,11 @@ AppBaseView.extendTo(WebAppView, {
 	wrapStartScreen: function(start_screen) {
 		var st_scr_scrl_con = start_screen.parent();
 		var start_page_wrap = st_scr_scrl_con.parent();
-		var tpl = new this.PvTemplate({
-			node: start_page_wrap,
-			spec_states: {
-				'$lev_num': -1
-			},
-			struc_store: this.struc_store,
-			calls_flow: this._getCallsFlow(),
-			getSample: this.getSampleForTemplate
+
+		var tpl = this.pvtemplate(start_page_wrap, false, false, {
+			'$lev_num': -1
 		});
+
 
 		this.tpls.push(tpl);
 
@@ -916,15 +912,15 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 		place: 'nav.daddy'
 	},
 
-	'stch-full_page_need': function(state) {
-		this.els.screens.toggleClass('full_page_need', !!state);
+	'stch-full_page_need': function(target, state) {
+		target.els.screens.toggleClass('full_page_need', !!state);
 	},
-	'stch-root-lev-search-form': function(state) {
-		this.els.search_form.toggleClass('root-lev-search-form', !!state);
+	'stch-root-lev-search-form': function(target, state) {
+		target.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
-	'stch-show_search_form': function(state) {
+	'stch-show_search_form': function(target, state) {
 		if (!state){
-			this.search_input[0].blur();
+			target.search_input[0].blur();
 		}
 	},
 	remove: function() {
@@ -933,13 +929,12 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 		//this.search_input = null;
 		//this.nav = null;
 	},
-	buildAppDOM: function() {
-		this._super();
+	buildAppDOM: spv.precall(AppBaseView.WebAppView.prototype.buildAppDOM, function() {
 		this.selectKeyNodes();
 		this.buildNav();
 		this.buildSearchForm();
 		this.handleSearchForm(this.els.search_form);
-	},
+	}),
 	onDomBuild: function() {
 		this._super();
 		this.c.addClass('app-loaded');

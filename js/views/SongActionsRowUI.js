@@ -1,7 +1,7 @@
 define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
 var localize = app_serv.localize;
-
+var pvUpdate = pv.update;
 
 var PlaylistAddSearchCtr = function() {};
 pv.View.extendTo(PlaylistAddSearchCtr, {
@@ -43,10 +43,10 @@ ShareSearchSection.extendTo(VkShareSectionView, {
 	children_views:{
 		vk_auth: etc_views.VkLoginUI
 	},
-	'stch-needs_vk_auth': function(state) {
+	'stch-needs_vk_auth': function(target, state) {
 		if (state){
-			this.tpl.ancs['vk_auth'].append(this.getAFreeCV('vk_auth'));
-			this.requestAll();
+			target.tpl.ancs['vk_auth'].append(target.getAFreeCV('vk_auth'));
+			target.requestAll();
 		}
 	},
 });
@@ -102,15 +102,15 @@ pv.View.extendTo(ShareRowUI, {
 	focusToInput: function() {
 		this.tpl.ancs['share_input'][0].focus();
 	},
-	"stch-active_view": function(state){
+	"stch-active_view": function(target, state){
 		if (state){
-			if (this.expand){
-				this.expand();
+			if (target.expand){
+				target.expand();
 			}
 		}
 
 		if (state){
-			this.nextLocalTick(this.focusToInput);
+			target.nextLocalTick(target.focusToInput);
 		}
 	},
 	expand: function(){
@@ -125,71 +125,17 @@ pv.View.extendTo(ShareRowUI, {
 
 var SongActPlaylistingUI = function() {};
 pv.View.extendTo(SongActPlaylistingUI, {
-	children_views: {
-		searcher: PlaylistAddSearchCtr
-	},
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
+	'compx-need_creation_button':{
+		depends_on: ['query', 'has_full_match'],
+		fn: function(query, has_full_match) {
+			return query && !has_full_match;
 		}
-	},
-	'collch-$ondemand-searcher': 'lpl',
-	expand: function() {
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-		
-
-		var _this = this;
-		var inputSearch = spv.debounce(function() {
-			_this.RPCLegacy('search', this.value);
-		}, 100);
-		this.input = this.c.find('.playlist-query').bind('keyup change search mousemove', inputSearch);
-
-		this.lpl = $('<div class="list-of-playlists"></div>').appendTo(this.c);
-
-
-		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
-			_this.RPCLegacy('findAddPlaylist');
-		});
-		this.addWayPoint(this.pl_creation_b);
-		this.pl_creation_b_text = $('<span></span>');
-		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
-		this.lpl.append(this.pl_creation_b);
-
-		//this['collch-searcher'] = 'lpl';
-		this.checkCollectionChange('searcher');
-
-		
-		this.RPCLegacy('search', "");
-
-		
-		
-		
 	},
 	tpl_events: {
 		input_search: spv.debounce(function(e, node) {
 			this.RPCLegacy('search', node.value);
 		}, 100)
-	},
-
-	state_change: {
-		need_creation_button: function(state) {
-			if (this.pl_creation_b){
-				this.pl_creation_b.toggleClass('hidden', !state);
-			}
-		},
-		query: function(state) {
-			if (this.pl_creation_b_text){
-				this.pl_creation_b_text.text(state);
-			}
-		}
 	}
-	
 });
 
 
@@ -264,16 +210,16 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	getVBarWidth: function() {
 		return this.tpl.ancs['v-bar'].width();
 	},
-	'stch-key_vol_hole_w': function(value) {
+	'stch-key_vol_hole_w': function(target, value) {
 		if (value) {
-			pv.update(this, 'vis_volume-hole-width', this.getBoxDemensionByKey(this.getVHoleWidth, value));
+			pvUpdate(target, 'vis_volume-hole-width', target.getBoxDemensionByKey(target.getVHoleWidth, value));
 		}
 	},
-	'stch-vis_volume-hole-width': function(state) {
+	'stch-vis_volume-hole-width': function(target, state) {
 		if (state) {
-			this.updateManyStates({
-				'v-bar-o-width': this.getBoxDemension(this.getVBarOuterWidth, 'v-bar-o-width'),
-				'v-bar-width': this.getBoxDemension(this.getVBarWidth, 'v-bar-width')
+			target.updateManyStates({
+				'v-bar-o-width': target.getBoxDemension(target.getVBarOuterWidth, 'v-bar-o-width'),
+				'v-bar-width': target.getBoxDemension(target.getVBarWidth, 'v-bar-width')
 			});
 		}
 	},

@@ -29,15 +29,15 @@ var album_placeholder = {
 				return can_load_songcard && songcard;
 			}
 		],
-		'stch-$relation:songcard-for-active_song': pv.Model.prototype.hndRDep,
+		'stch-$relation:songcard-for-active_song': pv.getRDep('$relation:songcard-for-active_song'),
 
-		'stch-can_load_baseinfo': function(state) {
+		'stch-can_load_baseinfo': function(target, state) {
 			if (state){
-				var artcard = this.getNesting('artist');
+				var artcard = target.getNesting('artist');
 				if (artcard){
 					var req = artcard.requestState('bio');
 					if (req){
-						this.addRequest(req);
+						target.addRequest(req);
 					}
 				} else {
 					console.warn('no nested artcard');
@@ -45,15 +45,15 @@ var album_placeholder = {
 				
 			}
 		},
-		'stch-can_load_images':function(state) {
+		'stch-can_load_images':function(target, state) {
 			if (state){
-				var artcard = this.getNesting('artist');
+				var artcard = target.getNesting('artist');
 				if (artcard){
 					
 					var req = artcard.requestState('profile_image');
 					//artcard.requestState('images');
 					if (req){
-						this.addRequest(req);
+						target.addRequest(req);
 					}
 					
 				} else {
@@ -112,7 +112,6 @@ var album_placeholder = {
 			}
 
 			this.initStates();
-			//this.nextTick(this.initHeavyPart);
 		},
 		twistStates: function() {
 			this.initHeavyPart();

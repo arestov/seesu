@@ -3,16 +3,12 @@ function(spv, app_serv, BrowseMap, ArtCard, LoadableList, SongsList, declr_parse
 "use strict";
 var localize = app_serv.localize;
 
-
+var AlbumsList = ArtCard.AlbumsList;
+var ArtistsList = ArtCard.ArtistsList;
 
 var SimilarTags = function() {};
 
 LoadableList.TagsList.extendTo(SimilarTags, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-	},
 	'nest_req-tags_list': [
 		[{
 			is_array: true,
@@ -24,7 +20,7 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 		}],
 		['lfm', 'get', function() {
 			return ['tag.getSimilar', {
-				tag: this.tag_name
+				tag: this.head.tag_name
 			}];
 		}]
 	]
@@ -32,52 +28,45 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 
 var TagAlbums = function() {};
 
-ArtCard.AlbumsList.extendTo(TagAlbums, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-	},
+AlbumsList.extendTo(TagAlbums, {
+
 	page_limit: 50,
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('topalbums'),
 		['lfm', 'get', function() {
 			return ['tag.getTopAlbums', {
-				tag: this.tag_name
+				tag: this.head.tag_name
 			}];
 		}]
 	]
 });
 
 
+function getHypeTagName(tag_name) {
+	// instrumental hip-hop >> instrumental hip hop,
+	//but trip-hip >> trip-hip (not change)
+	var test_regexp = /\s|-/gi;
+	var result = tag_name.match(test_regexp);
+	if (result && result.length >= 2){
+		return tag_name.replace(test_regexp, ' ');
+	} else {
+		return tag_name;
+	}
+}
+
+
 var HypemTagPlaylist = function() {};
 SongsList.HypemPlaylist.extendTo(HypemTagPlaylist, {
-	getHypeTagName: function() {
-		// instrumental hip-hop >> instrumental hip hop,
-		//but trip-hip >> trip-hip (not change)
-		var test_regexp = /\s|-/gi;
-		var result = this.tag_name.match(test_regexp);
-		if (result && result.length >= 2){
-			return this.tag_name.replace(test_regexp, ' ');
-		} else {
-			return this.tag_name;
-		}
-	},
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
 		['hypem', 'get', function(opts) {
-			var path = '/playlist/tags/' + this.getHypeTagName() + '/json/' + opts.paging.next_page +'/data.js';
+			var path = '/playlist/tags/' + getHypeTagName(this.head.tag_name) + '/json/' + opts.paging.next_page +'/data.js';
 			return [path, this.send_params];
 		}]
 	]
 });
 var Fav25HypemTagSongs = function() {};
 HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-	},
 	send_params: {
 		fav_from: 25,
 		fav_to: 250
@@ -85,11 +74,6 @@ HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
 });
 var Fav250HypemTagSongs = function() {};
 HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-	},
 	send_params: {
 		fav_from: 250,
 		fav_to: 100000
@@ -98,60 +82,10 @@ HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
 
 var AllHypemTagSongs = function() {};
 HypemTagPlaylist.extendTo(AllHypemTagSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-	}
 });
-
-/*var ExplorableTagSongs = function() {};
-SongsList.extendTo(ExplorableTagSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-	},
-	page_limit: 100,
-	'nest_req-songs-list': [
-		declr_parsers.exfm.tracks_no_paging,
-		['exfm', 'get', function(opts) {
-			return ['explore/' + this.tag_name, {
-				results: opts.paging.page_limit,
-				start: opts.paging.next_page
-			}];
-		}]
-	]
-});
-
-var TrendingTagSongs = function() {};
-SongsList.extendTo(TrendingTagSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-
-		this.initStates();
-	},
-	page_limit: 100,
-	'nest_req-songs-list': [
-		declr_parsers.exfm.tracks_no_paging,
-		['exfm', 'get', function(opts) {
-			return ['trending/tag/' + this.tag_name, {
-				results: opts.paging.page_limit,
-				start: opts.paging.next_page
-			}];
-		}]
-	]
-});*/
 
 var FreeTagSongs = function() {};
 SongsList.extendTo(FreeTagSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		[
 			{
@@ -176,7 +110,7 @@ SongsList.extendTo(FreeTagSongs, {
 		],
 		['lfm', 'get', function() {
 			return ['playlist.fetch', {
-				playlistURL: 'lastfm://playlist/tag/' + this.tag_name + '/freetracks'
+				playlistURL: 'lastfm://playlist/tag/' + this.head.tag_name + '/freetracks'
 			}];
 		}]
 	]
@@ -187,18 +121,11 @@ SongsList.extendTo(FreeTagSongs, {
 
 var TopTagSongs = function() {};
 SongsList.extendTo(TopTagSongs, {
-	init: function(opts, params) {
-
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
 			return ['tag.getTopTracks', {
-				tag: this.tag_name
+				tag: this.head.tag_name
 			}];
 		}]
 	]
@@ -208,13 +135,6 @@ SongsList.extendTo(TopTagSongs, {
 
 var SongsLists = function() {};
 BrowseMap.Model.extendTo(SongsLists, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-
-		this.sub_pa_params = {tag_name:this.tag_name};
-	},
 	'nest-lists_list': [['_', 'free', /*'trending_exfm', 'explore_exfm',*/
 			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], true],
 	model_name: 'tag_songs',
@@ -252,17 +172,12 @@ BrowseMap.Model.extendTo(SongsLists, {
 
 
 var WeekTagArtists = function() {};
-ArtCard.ArtistsList.extendTo(WeekTagArtists, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
+ArtistsList.extendTo(WeekTagArtists, {
 
-		this.initStates();
-	},
 	page_limit: 130,
 	getRqData: function(paging_opts) {
 		return {
-			tag: this.tag_name,
+			tag: this.head.tag_name,
 			limit: paging_opts.page_limit,
 		};
 	},
@@ -275,17 +190,11 @@ ArtCard.ArtistsList.extendTo(WeekTagArtists, {
 });
 
 var TagTopArtists = function() {};
-ArtCard.ArtistsList.extendTo(TagTopArtists, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-
-		this.initStates();
-	},
+ArtistsList.extendTo(TagTopArtists, {
 	page_limit: 130,
 	getRqData: function(paging_opts) {
 		return {
-			tag: this.tag_name,
+			tag: this.head.tag_name,
 			limit: paging_opts.page_limit
 		};
 	},
@@ -299,13 +208,6 @@ ArtCard.ArtistsList.extendTo(TagTopArtists, {
 
 var ArtistsLists = function() {};
 BrowseMap.Model.extendTo(ArtistsLists, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.tag_name = params.tag_name;
-		this.initStates();
-
-		this.sub_pa_params = {tag_name:this.tag_name};
-	},
 	'nest-lists_list': [['_', 'week'], true],
 	model_name: 'tag_artists',
 	sub_pa: {
@@ -323,21 +225,6 @@ BrowseMap.Model.extendTo(ArtistsLists, {
 
 var TagPage = function() {};
 BrowseMap.Model.extendTo(TagPage, {
-	init: function(opts, data) {
-		this._super.apply(this, arguments);
-
-		this.tag_name = data.tag_name;
-		//this.updateManyStates(data);
-		this.initStates();
-		//pv.update(this, 'tag_name', this.head_props.tag_name);
-		//this.sub_pa_params = {tag_name:this.tag_name};
-
-	},
-	allow_data_init: true,
-	data_by_hp: true,
-	hp_bound: {
-		tag_name: null
-	},
 	'nest-artists_lists': ['artists'],
 	'nest-songs_list': ['songs'],
 	'nest-albums_list': ['albums'],
@@ -349,7 +236,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		'similar': {
 			constr: SimilarTags,
 			getTitle: function() {
-				return localize('Similar-to') + ' ' + this.head_props.tag_name + ' ' + localize('Tags').toLowerCase();
+				return localize('Similar-to') + ' ' + this.head.tag_name + ' ' + localize('Tags').toLowerCase();
 			}
 		},
 		'artists': {
@@ -363,7 +250,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		'albums': {
 			constr: TagAlbums,
 			getTitle: function() {
-				return localize('Top') + ' ' + this.head_props.tag_name + ' ' + localize('Albums');
+				return localize('Top') + ' ' + this.head.tag_name + ' ' + localize('Albums');
 			}
 		}
 	}
@@ -375,7 +262,6 @@ var TagsList = function() {};
 LoadableList.TagsList.extendTo(TagsList, {
 	init: function() {
 		this._super.apply(this, arguments);
-		this.initStates();
 
 		if (lastfm_data.toptags) {
 			this.setPreview(lastfm_data.toptags.map(function(el) {
@@ -410,9 +296,15 @@ LoadableList.TagsList.extendTo(TagsList, {
 			var instance = new Constr();
 			this.sub_pages[page_name] = instance;
 			return [instance, {
-				nav_title: localize('Tag') + ' ' + page_name,
-				url_part: '/' + page_name,
-				tag_name: page_name
+				states: {
+					nav_title: localize('Tag') + ' ' + page_name,
+					url_part: '/' + page_name
+				}, 
+				head: {
+					tag_name: page_name
+				}
+				
+				
 			}];
 		}
 		return this.sub_pages[page_name];

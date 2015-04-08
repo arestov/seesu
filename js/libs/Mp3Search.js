@@ -402,7 +402,11 @@ var getMatchedSongs = function(music_list, msq) {
 					if (inj_f && inj_f.length){
 						all = all.concat(inj_f);
 					}
-					this.mp3_search.sortMusicFilesArray(all, this.msq);
+
+					if (all.length) {
+						this.mp3_search.sortMusicFilesArray(all, this.msq);
+					}
+					
 
 					return !!all.length && all;
 				}
@@ -410,6 +414,7 @@ var getMatchedSongs = function(music_list, msq) {
 			'has_mp3_files': [
 				['files-list'],
 				function(sarr) {
+					if (!sarr) {return;}
 					for (var i = 0; i < sarr.length; i++) {
 						if (sarr[i].media_type =='mp3'){
 							return true;
@@ -420,6 +425,7 @@ var getMatchedSongs = function(music_list, msq) {
 			'has_best_files': [
 				['files-list'],
 				function(fslist) {
+					if (!fslist) {return;}
 					var field_name = 'query_match_index.' + getQueryString(this.msq).replace(/\./gi, '');
 					var best_songs = spv.filter(fslist, field_name, function(value){
 						if (value !== -1 && value < 20){
@@ -432,7 +438,7 @@ var getMatchedSongs = function(music_list, msq) {
 			'has_files': [
 				['files-list'],
 				function(fslist) {
-					return !!fslist.length;
+					return fslist && !!fslist.length;
 				}
 			],
 			'has_any_data': [
@@ -442,9 +448,9 @@ var getMatchedSongs = function(music_list, msq) {
 				}
 			]
 		},
-		'stch-request_required': function(state) {
+		'stch-request_required': function(target, state) {
 			if (state) {
-				this.startSearch();
+				target.startSearch();
 			}
 		},
 		makeRequest: function(msq, opts) {
@@ -477,9 +483,9 @@ var getMatchedSongs = function(music_list, msq) {
 							search_result: null,
 							search_fail: true,
 
-							search_complete: true,
 							search_progress: false,
-							has_request: false
+							has_request: false,
+							search_complete: true
 						});
 					} else if (music_list instanceof pv.Model) {
 						pv.update(_this, 'search_fail', false);
@@ -503,9 +509,10 @@ var getMatchedSongs = function(music_list, msq) {
 							search_result: getMatchedSongs(music_list, msq),
 							search_fail: false,
 
-							search_complete: true,
+							
 							search_progress: false,
-							has_request: false
+							has_request: false,
+							search_complete: true
 						});
 					}
 					
@@ -515,9 +522,9 @@ var getMatchedSongs = function(music_list, msq) {
 					_this.updateManyStates({
 						search_fail: true,
 
-						search_complete: true,
 						search_progress: false,
-						has_request: false
+						has_request: false,
+						search_complete: true
 					});
 				});
 
@@ -534,6 +541,22 @@ var getMatchedSongs = function(music_list, msq) {
 		}
 	});
 
+	var isDepend = pv.utils.isDepend;
+	var pvState = pv.state;
+	var updateNesting = pv.updateNesting;
+
+	var filterList = function(target_list_name, check) {
+		return function(target, newst, old, source) {
+			var result = [];
+			for (var i = 0; i < source.items.length; i++) {
+				if ( check( source.items[i] ) ) {
+					result.push( source.items[i] );
+				}
+			}
+			updateNesting(target, target_list_name, result);
+		};
+	};
+
 	var FilesInvestg = function() {};
 	pv.Model.extendTo(FilesInvestg, {
 		init: function(opts, params) {
@@ -545,19 +568,6 @@ var getMatchedSongs = function(music_list, msq) {
 			this.msq = params.msq;
 			this.query_string = params.query_string;
 
-
-
-			
-
-			this.bindNestingFlows('sources_list', 'disable_search', function(item) {
-				return !item.state('disable_search');
-			}, 'available_sources');
-			this.bindNestingFlows('sources_list', 'wait_before_playing', function(item) {
-				return item.state('wait_before_playing');
-			}, 'expected_sources');
-
-
-
 			this.createRelationsBinder();
 
 			//this.on('vip_state_change-search_progress', function(e) {
@@ -567,12 +577,19 @@ var getMatchedSongs = function(music_list, msq) {
 			this.mp3_search.on('list-changed', this.hndListChange, {soft_reg: false, context: this});
 
 			this.wch(this.mp3_search, 'big_files_list', this.hndBigFilesList);
-			this.nextTick(function() {
-				this.startSearch( {only_cache: true} );
+
+			this.nextTick(function(target) {
+				target.startSearch( {only_cache: true} );
 			});
 			
 			
 		},
+		'stch-disable_search@sources_list': filterList('available_sources', function(item) {
+			return !pvState(item, 'disable_search');
+		}),
+		'stch-wait_before_playing@sources_list': filterList('expected_sources', function(item) {
+			return pvState(item, 'wait_before_playing');
+		}),
 		'compx-has_request': [
 			['@some:has_request:available_sources']
 		],
@@ -597,30 +614,15 @@ var getMatchedSongs = function(music_list, msq) {
 		'compx-exsrc_search_complete': [
 			['@every:search_complete:expected_sources']
 		],
-		bindNestingFlows: function(donor_list_name, state_name, check, target_list_name) {
-			/*
-			watchChildrenStates: function(collection_name, state_name, callback) {
-			archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
-			*/
-			this.watchChildrenStates(donor_list_name, state_name, function(e) {
-				var result = [];
-				for (var i = 0; i < e.items.length; i++) {
-					if ( check( e.items[i] ) ) {
-						result.push( e.items[i] );
-					}
-				}
-				pv.updateNesting(this, target_list_name, result);
-			});
-		},
 		'compx-must_load': [
 			['investg_to_load-for-song_need'],
 			function(state) {
-				return this.utils.isDepend(state);
+				return isDepend(state);
 			}
 		],
-		'stch-must_load': function(state) {
+		'stch-must_load': function(target, state) {
 			if (state) {
-				this.startSearch();
+				target.startSearch();
 			}
 		},
 		createRelationsBinder: function() {
@@ -701,11 +703,11 @@ var getMatchedSongs = function(music_list, msq) {
 				['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
 				function(h_best_f, h_files, h_mp3_files, s_complete, exsrc_incomplete) {
 					return {
-						search_complete: s_complete,
 						have_best_tracks: h_best_f,
 						have_tracks: h_files,
 						have_mp3_tracks: h_mp3_files,
-						exsrc_incomplete: exsrc_incomplete
+						exsrc_incomplete: exsrc_incomplete,
+						search_complete: s_complete
 					};
 				}
 			],
@@ -756,8 +758,8 @@ var getMatchedSongs = function(music_list, msq) {
 		},
 		delayFileCheck: function(file) {
 			if (file.artist == this.msq.artist){
-				this.nextTick(function() {
-					this.checkFile(file);
+				this.nextTick(function(target) {
+					target.checkFile(file);
 				});
 			}
 		},
@@ -859,21 +861,12 @@ var getAverageDurations = function(mu_array, time_limit){
 	
 	Mp3Search.getSongFileModel = function(map_parent){
 		return map_parent.initSi(SongFileModel, null, {file:this});
-
-		// return (new SongFileModel()).init({file: this, mo: mo, player: player});
 	};
 	Mp3Search.getSFM = function(map_parent, file) {
 		if (file.getSongFileModel) {
 			return file.getSongFileModel(map_parent);
 		} else {
 			return map_parent.initSi(SongFileModel, null, {file: file});
-			// var md = new SongFileModel();
-			// md.init({
-			// 	file: file,
-			// 	mo: mo,
-			// 	player: player
-			// });
-			// return md;
 		}
 		
 	};

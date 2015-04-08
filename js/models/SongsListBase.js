@@ -45,29 +45,29 @@ define(['pv', 'spv'], function(pv, spv){
 	};
 
 
-	var hndTickListChanges = function(last_usable_song) {
+	var hndTickListChanges = function(target, last_usable_song) {
 		if (last_usable_song && last_usable_song.isImportant()){
-			//this.checkNeighboursChanges(last_usable_song);
+			//target.checkNeighboursChanges(last_usable_song);
 		}
-		var w_song = getWantedSong(this);
-		var v_song = getViewingSong(this, w_song);
-		var p_song = getPlayerSong(this, v_song);
+		var w_song = getWantedSong(target);
+		var v_song = getViewingSong(target, w_song);
+		var p_song = getPlayerSong(target, v_song);
 
 		if (w_song && !w_song.hasNextSong()){
-			checkNeighboursChanges(this, w_song, false, false);
+			checkNeighboursChanges(target, w_song, false, false);
 		}
 
 		if (v_song && !v_song.hasNextSong()) {
-			checkNeighboursChanges(this, v_song, false, false);
+			checkNeighboursChanges(target, v_song, false, false);
 		}
 		
 		if (p_song && v_song != p_song && !p_song.hasNextSong()){
-			checkNeighboursChanges(this, p_song, false, false);
+			checkNeighboursChanges(target, p_song, false, false);
 		}
 
-		if (this.state('want_be_played')) {
-			if (this.getMainlist()) {
-				this.getMainlist()[0].wantSong();
+		if (target.state('want_be_played')) {
+			if (target.getMainlist()) {
+				target.getMainlist()[0].wantSong();
 			}
 		}
 	};
@@ -76,7 +76,7 @@ define(['pv', 'spv'], function(pv, spv){
 		if (!e.skip_report){
 			markTracksForFilesPrefinding(this);
 			this.makePlayable();
-			this.nextTick(hndTickListChanges, [e.last_usable_song]);
+			this.nextTick(hndTickListChanges, [this, e.last_usable_song]);
 			
 		}
 	};
@@ -93,57 +93,16 @@ define(['pv', 'spv'], function(pv, spv){
 	var findWTPS = getFindSomeFunc(function(item) {
 		return item && item.state('want_to_play');
 	});
-	var hndChangedWantPlay = function(e) {
-		if (!e.item) {
-			var item = findWTPS(e.items);
-			this.idx_wplay_song = item;
-		} else {
-			if (e.value){
-				this.idx_wplay_song = e.item;
-			} else if (this.idx_wplay_song == e.item) {
-				this.idx_wplay_song = null;
-			}
-		}
-		
-	};
 
 	var findMPSS = getFindSomeFunc(function(item) {
 		return item && item.state('mp_show');
 	});
-	var hndChangedMPShow = function(e) {
-		if (!e.item) {
-			var item = findMPSS(e.items);
-			this.idx_show_song = item;
-		} else {
-			if (e.value){
-				this.idx_show_song = e.item;
-			} else if (this.idx_show_song == e.item) {
-				this.idx_show_song = null;
-			}
-		}
-		
-		this.checkShowedNeighboursMarks();
-		
-	};
+
 
 	var findPS = getFindSomeFunc(function(item) {
 		return item && item.state('player_song');
 	});
-	var hndChangedPlayerSong = function(e) {
-		if (!e.item) {
-			var item = findPS(e.items);
-			this.idx_player_song = item;
-		} else {
-			if (e.value){
-				this.idx_player_song = e.item;
-			} else if (this.idx_player_song == e.item) {
-				this.idx_player_song = null;
-			}
-		}
-		pv.updateNesting(this, 'last_played_song', this.idx_player_song || this.getNesting('last_played_song'));
-		pv.update(this, 'last_played_song_start', Date.now());
-		
-	};
+
 	var checkNeighboursStatesCh = function(md, target_song) {
 		
 		var v_song = getViewingSong(md, target_song);
@@ -158,13 +117,6 @@ define(['pv', 'spv'], function(pv, spv){
 		if (w_song && w_song != p_song && w_song != v_song){
 			checkNeighboursChanges(md, w_song, target_song);
 		}
-		
-	};
-	var hndChangedNeigUse = function(e) {
-		if (!e.item) {
-			return;
-		}
-		checkNeighboursStatesCh(this, e.item);
 		
 	};
 
@@ -189,19 +141,6 @@ define(['pv', 'spv'], function(pv, spv){
 		checkNeighboursChanges(pl, md);
 	};
 
-	var hndChangedImportant = function(e) {
-		if (!e.item) {
-			var array = findImportantSongs(e.items);
-			if (array) {
-				for (var i = 0; i < array.length; i++) {
-					checkImportant(this, array[i]);
-					
-				}
-			}
-		} else if (e.item.isImportant()) {
-			checkImportant(this, e.item);
-		}
-	};
 	var setWaitingNextSong = function(mdpl, mo) {
 		mdpl.waiting_next = mo;
 		mdpl.player.setWaitingPlaylist(mdpl);
@@ -442,19 +381,71 @@ define(['pv', 'spv'], function(pv, spv){
 				return mp_show || want_be_played;
 			}
 		],
-		'stch-pl-shuffle': function() {
-			checkNeighboursStatesCh(this);
+		'stch-pl-shuffle': function(target) {
+			checkNeighboursStatesCh(target);
+		},
+		'stch-want_to_play@songs-list': function(target, new_state, old, source) {
+			if (!source.item) {
+				var item = findWTPS(source.items);
+				target.idx_wplay_song = item;
+			} else {
+				if (new_state){
+					target.idx_wplay_song = source.item;
+				} else if (target.idx_wplay_song == source.item) {
+					target.idx_wplay_song = null;
+				}
+			}
+		},
+		'stch-player_song@songs-list': function(target, new_state, old, source) {
+			if (!source.item) {
+				var item = findPS(source.items);
+				target.idx_player_song = item;
+			} else {
+				if (new_state){
+					target.idx_player_song = source.item;
+				} else if (target.idx_player_song == source.item) {
+					target.idx_player_song = null;
+				}
+			}
+			pv.updateNesting(target, 'last_played_song', target.idx_player_song || target.getNesting('last_played_song'));
+			pv.update(target, 'last_played_song_start', Date.now());
+		},
+		'stch-can-use-as-neighbour@songs-list': function(target, new_state, old, source) {
+			if (!source.item) {
+				return;
+			}
+			checkNeighboursStatesCh(target, source.item);
+		},
+		'stch-is_important@songs-list': function(target, new_state, old, source) {
+			if (!source.item) {
+				var array = findImportantSongs(source.items);
+				if (array) {
+					for (var i = 0; i < array.length; i++) {
+						checkImportant(target, array[i]);
+						
+					}
+				}
+			} else if (source.item.isImportant()) {
+				checkImportant(target, source.item);
+			}
+		},
+		'stch-mp_show@songs-list': function(target, new_state, old, source) {
+			if (!source.item) {
+				var item = findMPSS(source.items);
+				target.idx_show_song = item;
+			} else {
+				if (new_state){
+					target.idx_show_song = source.item;
+				} else if (target.idx_show_song == source.item) {
+					target.idx_show_song = null;
+				}
+			}
+			
+			target.checkShowedNeighboursMarks();
 		},
 		bindStaCons: function() {
 			this._super();
-			this.on('child_change-' + this.main_list_name, hndChangedPlaylist);
-			this.watchChildrenStates(this.main_list_name, 'want_to_play', hndChangedWantPlay);
-			
-			this.watchChildrenStates(this.main_list_name, 'player_song', hndChangedPlayerSong);
-			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', hndChangedNeigUse);
-			this.watchChildrenStates(this.main_list_name, 'is_important', hndChangedImportant);
-			this.watchChildrenStates(this.main_list_name, 'mp_show', hndChangedMPShow);
-			
+			this.on('child_change-' + this.main_list_name, hndChangedPlaylist);			
 			this.on('child_change-' + 'vis_neig_prev', hndNeighboursRemarks);
 			this.on('child_change-' + 'vis_neig_next', hndNeighboursRemarks);
 		},

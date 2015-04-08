@@ -98,6 +98,7 @@ return {
 				is_array: true,
 				source: field + '.artist',
 				props_map: {
+					artist_name: 'name',
 					artist: 'name',
 					lfm_img: ['lfm_image', 'image']
 				}

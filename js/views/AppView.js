@@ -13,15 +13,15 @@ var localize = app_serv.localize;
 var AppExposedView = function() {};
 AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
 	location_name: 'exposed_root_view',
-	"stch-doc_title": function(title) {
-		this.d.title = title || "";
+	'stch-doc_title': function(target, title) {
+		target.d.title = title || "";
 	},
-	'stch-playing': function(state) {
+	'stch-playing': function(target, state) {
 		if (app_env.need_favicon){
 			if (state){
-				this.changeFavicon('playing');
+				target.changeFavicon('playing');
 			} else {
-				this.changeFavicon('usual');
+				target.changeFavicon('usual');
 			}
 		}
 	},
@@ -192,21 +192,21 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	},
 
 	state_change: {
-		"wait-vk-login": function(state) {
-			this.toggleBodyClass(state, 'wait-vk-login');
+		"wait-vk-login": function(target, state) {
+			target.toggleBodyClass(state, 'wait-vk-login');
 		},
-		"vk-waiting-for-finish": function(state){
-			this.toggleBodyClass(state, 'vk-waiting-for-finish');
+		"vk-waiting-for-finish": function(target, state){
+			target.toggleBodyClass(state, 'vk-waiting-for-finish');
 		},
-		"slice-for-height": function(state){
-			this.toggleBodyClass(state, 'slice-for-height');
+		"slice-for-height": function(target, state){
+			target.toggleBodyClass(state, 'slice-for-height');
 		},
-		"deep_sandbox": function(state){
-			this.toggleBodyClass(state, 'deep-sandbox');
+		"deep_sandbox": function(target, state){
+			target.toggleBodyClass(state, 'deep-sandbox');
 		},
 
-		"search_query": function(state) {
-			this.search_input.val(state || '');
+		"search_query": function(target, state) {
+			target.search_input.val(state || '');
 		}
 		
 	},
@@ -317,9 +317,6 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		artcard: function() {
 			return this.els.ui_samples.children('.art_card');
 		},
-		track_c: function() {
-			return this.els.ui_samples.children('.track-context');
-		},
 		lfm_authsampl: function() {
 			return this.els.ui_samples.children('.lfm-auth-module');
 		},
@@ -328,7 +325,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		}
 	},
 
-	buildWidthStreamer: function() {
+	buildWidthStreamer: function(target) {
 		(function(_this) {
 			var app_workplace_width_stream_node = $("#pages_area_width_streamer", _this.d);
 			var awwst_win =  app_workplace_width_stream_node[0].contentWindow;
@@ -355,7 +352,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			});
 
 
-		})(this);
+		})(target);
 	},
 	buildVKSamples: function() {
 		var vklc = this.els.ui_samples.children('.vk-login-context');
@@ -521,9 +518,9 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		_this.tpls.push( pv.$v.createTemplate( this, np_button ) );
 		this.nav.daddy.append(np_button);
 	},
-	'stch-nav_helper_is_needed': function(state) {
+	'stch-nav_helper_is_needed': function(target, state) {
 		if (!state) {
-			pv.update(this, 'nav_helper_full', false);
+			pv.update(target, 'nav_helper_full', false);
 		}
 	},
 	tpl_events: {
@@ -557,8 +554,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		});
 
 	},
-	buildAppDOM: function() {
-		this._super();
+	buildAppDOM: spv.precall(AppBaseView.WebComplexTreesView.prototype.buildAppDOM, function() {
 		var _this = this;
 		var d = this.d;
 		
@@ -622,7 +618,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 				_this = null;
 				d = null;
 			});
-	},
+	}),
 	inputs_names: ['input'],
 	key_codes_map:{
 		'13': 'Enter',
@@ -664,17 +660,13 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			this.scrollTo($(cwp.node), false, {vp_limit: 0.6, animate: 117});
 		}
 	},
-	'stch-vis_current_wpoint': function(nst, ost) {
+	'stch-vis_current_wpoint': function(target, nst, ost) {
 		if (ost){
 			$(ost.node).removeClass('surf_nav');
 		}
 		if (nst) {
 			$(nst.node).addClass('surf_nav');
-			//if (nst.view.getRooConPresentation(this) ==)
-
-			this.scrollToWP(nst);
-
-			//
+			target.scrollToWP(nst);
 		}
 	},
 	

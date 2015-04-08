@@ -107,6 +107,7 @@ var getTorrentFile = function(raw, torrent, torrent_api) {
 		}
 	};
 };
+var isDepend = pv.utils.isDepend;
 
 var Torrent = function() {};
 pv.Model.extendTo(Torrent, {
@@ -121,7 +122,7 @@ pv.Model.extendTo(Torrent, {
 		['file_data-for-song_file', 'list_loaded', 'files_list-for-search', 'invalid'],
 		function(file_data, list_loaded, files_list, invalid) {
 			if (invalid) {return false;}
-			return this.utils.isDepend(file_data) || (!list_loaded && this.utils.isDepend(files_list));
+			return isDepend(file_data) || (!list_loaded && isDepend(files_list));
 		}
 	],
 	'state-progress_info': [
@@ -165,9 +166,9 @@ pv.Model.extendTo(Torrent, {
 			};
 		}
 	],
-	'stch-invalid': function(state) {
+	'stch-invalid': function(target, state) {
 		if (state) {
-			disallowed_links[this.state('url')] = true;
+			disallowed_links[target.state('url')] = true;
 		}
 	},
 	'state-files_list_raw': [
@@ -213,24 +214,23 @@ pv.Model.extendTo(Torrent, {
 			};
 		}
 	],
-	'stch-torrent_required': function(state) {
-		var _this = this;
+	'stch-torrent_required': function(target, state) {
 		if (state ) {
-			clearTimeout(this.remove_timeout);
-			this.remove_timeout = null;
-			if (!this.troxent && !this.queued) {
-				this.queued = this.queue.add(function() {
-					//torrents_manager.get(_this.state('url'));
+			clearTimeout(target.remove_timeout);
+			target.remove_timeout = null;
+			if (!target.troxent && !target.queued) {
+				target.queued = target.queue.add(function() {
+					//torrents_manager.get(target.state('url'));
 					//_this.troxent = true;
-					_this.troxent = torrents_manager.get(_this.state('url'));
-					_this.useInterface('troxent', _this.troxent);
-					_this.queued = null;
+					target.troxent = torrents_manager.get(target.state('url'));
+					target.useInterface('troxent', target.troxent);
+					target.queued = null;
 				});				
 			}
 		} else {
-			if (this.troxent && !this.remove_timeout) {
-				this.remove_timeout = setTimeout(function() {
-					_this.destroyPeerflix();
+			if (target.troxent && !target.remove_timeout) {
+				target.remove_timeout = setTimeout(function() {
+					target.destroyPeerflix();
 				}, 7000);
 			}
 		}

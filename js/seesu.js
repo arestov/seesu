@@ -31,7 +31,7 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
-
+var pvUpdate = pv.update;
 var lfm = new LastfmAPIExtended();
 
 lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
@@ -52,14 +52,14 @@ var chrome = window.chrome;
 var ChromeExtensionButtonView = function() {};
 pv.View.extendTo(ChromeExtensionButtonView, {
 	state_change: {
-		"playing": function(state) {
+		"playing": function(target, state) {
 			if (state){
 				chrome.browserAction.setIcon({path:"/icons/icon19p.png"});
 			} else {
 				chrome.browserAction.setIcon({path:"/icons/icon19.png"});
 			}
 		},
-		'now_playing': function(text) {
+		'now_playing': function(target, text) {
 			chrome.browserAction.setTitle({title: localize('now_playing','Now Playing') + ': ' + text});
 		}
 	}
@@ -67,15 +67,15 @@ pv.View.extendTo(ChromeExtensionButtonView, {
 var OperaExtensionButtonView = function() {};
 pv.View.extendTo(OperaExtensionButtonView, {
 	state_change: {
-		"playing": function(state) {
+		"playing": function(target, state) {
 			if (state){
-				this.opts.opera_ext_b.icon = "/icons/icon18p.png";
+				target.opts.opera_ext_b.icon = "/icons/icon18p.png";
 			} else {
-				this.opts.opera_ext_b.icon = "/icons/icon18.png";
+				target.opts.opera_ext_b.icon = "/icons/icon18.png";
 			}
 		},
-		'now_playing': function(text) {
-			this.opts.opera_ext_b.title = localize('now_playing','Now Playing') + ': ' + text;
+		'now_playing': function(target, text) {
+			target.opts.opera_ext_b.title = localize('now_playing','Now Playing') + ': ' + text;
 		}
 	}
 });
@@ -85,7 +85,8 @@ var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
 	initAPIs: function() {
 		var _this = this;
-		this.lfm_auth = new LfmAuth(lfm, {
+
+		this.lfm_auth = this.initSi(LfmAuth, {lfm: lfm}, {
 			deep_sanbdox: app_env.deep_sanbdox,
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
@@ -96,7 +97,8 @@ AppModel.extendTo(SeesuApp, {
 			//_this.auth.setScrobbling(true);
 		});
 
-		this.vk_auth = new VkAuth({
+		this.vk_auth = (new VkAuth());
+		this.vk_auth.init({
 			app_id: this.vkappid,
 			urls: {
 				bridge: 'http://seesu.me/vk/bridge.html',
@@ -213,12 +215,15 @@ AppModel.extendTo(SeesuApp, {
 			}
 			reportSearchEngs(list.join(','));
 		});
+
+		this.updateNesting('lfm_auth', this.lfm_auth);
+
 		if (this.lfm.username){
 			pv.update(this, 'lfm_userid', this.lfm.username);
 		} else {
-			this.lfm_auth.on('session', function() {
-				pv.update(_this, 'lfm_userid', _this.lfm.username);
-			});
+			// this.lfm_auth.on('session', function() {
+			// 	pv.update(_this, 'lfm_userid', _this.lfm.username);
+			// });
 		}
 		
 
@@ -277,7 +282,12 @@ AppModel.extendTo(SeesuApp, {
 		});
 
 	},
-	tickStat: function(data_array) {
+	'stch-session@lfm_auth': function(target, state) {
+		if (state) {
+			pvUpdate(target, 'lfm_userid', target.lfm.username);
+		}
+	},
+	tickStat: function(target, data_array) {
 		window._gaq.push(data_array);
 	},
 	init: function(version){
@@ -789,6 +799,7 @@ AppModel.extendTo(SeesuApp, {
 		if (vk_t_raw){
 			var vk_token = new VkAuth.VkTokenAuth(su.vkappid, vk_t_raw);
 			su.vk_auth.api = su.connectVKApi(vk_token, true);
+			pvUpdate(su.vk_auth, 'has_token', true);
 			su.vk_auth.trigger('full-ready', true);
 				
 		}

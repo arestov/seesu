@@ -6,7 +6,7 @@ pv.Model.extendTo(AppModelBase, {
 	init: function() {
 		this._super();
 		this.navigation = [];
-		this.map = new BrowseMap();
+		// this.map = ;
 		this.current_mp_md = null;
 		this.on('child_change-current_mp_md', function(e) {
 			if (e.target){
@@ -20,8 +20,9 @@ pv.Model.extendTo(AppModelBase, {
 			
 		pv.updateNesting(this, 'navigation', [start_page]);
 		pv.updateNesting(this, 'start_page', start_page);
+		this.map = new BrowseMap(this.start_page);
 		this.map
-			.init(this.start_page)
+			// .init(this.start_page)
 			
 			.on('changes', function(changes, models, bwlevs) {
 				//console.log(changes);

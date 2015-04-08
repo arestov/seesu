@@ -17,12 +17,12 @@ pv.View.extendTo(MusicConductorPreview, {
 		this.createTemplate();
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
-	'stch-mp_show': function(state) {
-		this.button.toggleClass('button_selected', !!state);
+	'stch-mp_show': function(target, state) {
+		target.button.toggleClass('button_selected', !!state);
 	},
-	'stch-can_expand': function(state){
+	'stch-can_expand': function(target, state){
 		if (state){
-			this.requirePart('current-seesu-users');
+			target.requirePart('current-seesu-users');
 		}
 	},
 

@@ -1,26 +1,33 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(pv, spv, app_serv, morph_helpers){
 "use strict";
 var localize = app_serv.localize;
+var pvUpdate = pv.update;
 
-var CommonMessagesStore = function(glob_store, store_name) {
-	this.init();
-	this.glob_store = glob_store;
-	this.store_name = store_name;
-};
-
-
-pv.Eventor.extendTo(CommonMessagesStore, {
-	markAsReaded: function(message) {
-		var changed = this.glob_store.set(this.store_name, message);
-		if (changed){
-			this.trigger('read', message);
-		}
+var CommonMessagesStore = spv.inh(pv.Eventor, {
+	naming: function(constr) {
+		return function CommonMessagesStore(glob_store, store_name){
+			constr(this, glob_store, store_name);
+		};
 	},
-	getReadedMessages: function() {
-		return this.glob_store.get(this.store_name);
+	building: function(pconstr) {
+		return function buildComMS(obj, glob_store, store_name){
+			pconstr(obj);
+			obj.glob_store = glob_store;
+			obj.store_name = store_name;
+		};
+	},
+	props: {
+		markAsReaded: function(message) {
+			var changed = this.glob_store.set(this.store_name, message);
+			if (changed){
+				this.trigger('read', message);
+			}
+		},
+		getReadedMessages: function() {
+			return this.glob_store.get(this.store_name);
+		}
 	}
 });
-
 
 var GMessagesStore = function(set, get) {
 	this.sset = set;
@@ -233,6 +240,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'artist.similar.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method + '.similar');
 			}
 			
@@ -242,6 +250,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'similarartists.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		},
@@ -297,6 +306,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 
@@ -318,6 +328,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'results.artistmatches.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		},
@@ -336,6 +347,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			artists = artists || spv.toRealArray(spv.getTargetField(r, 'topartists.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 
@@ -344,6 +356,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			artists = artists || spv.toRealArray(spv.getTargetField(r, 'weeklyartistchart.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
+				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		}
@@ -420,20 +433,28 @@ pv.Model.extendTo(BaseCRow, {
 var VkLoginB = function() {};
 pv.Model.extendTo(VkLoginB, {
 	model_name: 'auth_block_vk',
+	access_desc: null,
 	init: function(opts, data, params) {
 		this._super.apply(this, arguments);
 
 		var _this = this;
-		this.auth = (params && params.auth) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) || opts.auth;
+		this.auth =
+			(params && params.auth) ||
+			(this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) ||
+			opts.auth ||
+			this.app.vk_auth;
+
 		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
 
-		var settings_bits;
+		this.updateNesting('auth', this.auth);
+
+		var target_bits;
 
 		if (params) {
 			if (params.open_opts){
 				this.open_opts = params.open_opts;
 				if (this.open_opts.settings_bits){
-					settings_bits = this.open_opts.settings_bits;
+					target_bits = this.open_opts.settings_bits;
 				}
 			}
 			if (params.notf){
@@ -459,34 +480,35 @@ pv.Model.extendTo(VkLoginB, {
 
 			
 		} else {
-			this.setRequestDesc();
+			this.setRequestDesc(this.access_desc);
 		}
 
 		if (this.auth.deep_sanbdox){
 			pv.update(_this, 'deep_sandbox', true);
 		}
 		
+		pvUpdate(this, 'target_bits', target_bits);
 
-		if (settings_bits){
-			if (this.auth.checkSettings(settings_bits)){
-				this.triggerSession();
-			}
-			this.auth.on('settings-change', function(sts) {
-				if ((sts & settings_bits) * 1){
-					_this.triggerSession();
-				} else {
-					pv.update(_this, 'has_session', false);
-				}
-			});
+		// if (target_bits){
+		// 	if (this.auth.checkSettings(target_bits)){
+		// 		this.triggerSession();
+		// 	}
+		// 	this.auth.on('settings-change', function(sts) {
+		// 		if ((sts & target_bits) * 1){
+		// 			_this.triggerSession();
+		// 		} else {
+		// 			pv.update(_this, 'has_session', false);
+		// 		}
+		// 	});
 			
-		}
+		// }
 
-		if (this.auth.has_session){
-			this.triggerSession();
-		}
-		this.auth.once('full-ready', function(){
-			_this.triggerSession();
-		});
+		// if (this.auth.has_session){
+		// 	this.triggerSession();
+		// }
+		// this.auth.once('full-ready', function(){
+		// 	_this.triggerSession();
+		// });
 
 		if (this.auth && this.auth.data_wait){
 			this.waitData();
@@ -497,15 +519,24 @@ pv.Model.extendTo(VkLoginB, {
 		}
 
 	},
+	'compx-has_session': [
+		['@one:has_token:auth', 'target_bits', '@one:settings_bits:auth'],
+		function(has_token, target_bits, settings_bits) {
+			if (has_token) {return true;}
+			if (typeof target_bits != 'undefined' && settings_bits != 'undefined') {
+				return (settings_bits & target_bits) * 1;
+			}
+		}
+	],
 	removeNotifyMark: function() {
 		this.notf.markAsReaded('vk_audio_auth ');
 	},
 	bindAuthReady: function(exlusive_space, callback) {
 		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
 	},
-	triggerSession: function() {
-		pv.update(this, 'has_session', true);
-	},
+	// triggerSession: function() {
+	// 	pv.update(this, 'has_session', true);
+	// },
 	waitData: function() {
 		pv.update(this, 'data_wait', true);
 	},

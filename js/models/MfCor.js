@@ -163,7 +163,6 @@ LoadableList.extendTo(MfCor, {
 			if (!this.getLength('yt_videos')){
 				this.requestMoreData('yt_videos');
 			}
-			//this.nextTick(this.loadVideos);
 		}
 	},
 	hndTrackNameCh: function(e) {
@@ -265,19 +264,19 @@ LoadableList.extendTo(MfCor, {
 			return !has_vk_tool && !has_any_vk_results;
 		}
 	],
-	'stch-needs_vk_auth': function(state) {
+	'stch-needs_vk_auth': function(target, state) {
 		if (state) {
-			this.notifier.addMessage('vk_audio_auth ');
+			target.notifier.addMessage('vk_audio_auth ');
 		} else {
-			this.notifier.removeMessage('vk_audio_auth ');
+			target.notifier.removeMessage('vk_audio_auth ');
 		}
 
 		if (state) {
 
 		} else {
-			var vk_auth = this.getNesting('vk_auth');
+			var vk_auth = target.getNesting('vk_auth');
 			if (vk_auth) {
-				pv.updateNesting(this, 'vk_auth', null);
+				pv.updateNesting(target, 'vk_auth', null);
 				vk_auth.die();
 			}
 			
@@ -442,15 +441,15 @@ LoadableList.extendTo(MfCor, {
 		}
 	},
 	state_change: {
-		"mopla_to_use": function(nmf, omf) {
+		"mopla_to_use": function(target, nmf, omf) {
 			if (nmf){
-				this.listenMopla(nmf);
+				target.listenMopla(nmf);
 			}
 		},
 		"selected_mopla": function() {
 
 		},
-		"current_mopla": function(nmf, omf) {
+		"current_mopla": function(target, nmf, omf) {
 			if (omf){
 				omf.stop();
 				omf.deactivate();
@@ -458,9 +457,9 @@ LoadableList.extendTo(MfCor, {
 			if (nmf){
 				nmf.activate();
 			}
-			pv.updateNesting(this, 'current_mopla', nmf);
+			pv.updateNesting(target, 'current_mopla', nmf);
 		},
-		"mopla_to_preload": function(nmf, omf){
+		"mopla_to_preload": function(target, nmf, omf){
 			if (omf){
 				//omf.removeCache();
 			}
@@ -468,7 +467,7 @@ LoadableList.extendTo(MfCor, {
 				//nmf.load();
 			}
 		},
-		"default_mopla": function(nmf, omf) {
+		"default_mopla": function(target, nmf, omf) {
 			
 		}
 
@@ -501,9 +500,9 @@ LoadableList.extendTo(MfCor, {
 			return need_files && files_investg;
 		}
 	],
-	'stch-$relation:investg_to_load-for-song_need': pv.Model.prototype.hndRDep,
-	'stch-$relation:file_to_load-for-player_song': pv.Model.prototype.hndRDep,
-	'stch-$relation:file_to_load-for-preload_current_file': pv.Model.prototype.hndRDep,
+	'stch-$relation:investg_to_load-for-song_need': pv.getRDep('$relation:investg_to_load-for-song_need'),
+	'stch-$relation:file_to_load-for-player_song': pv.getRDep('$relation:file_to_load-for-player_song'),
+	'stch-$relation:file_to_load-for-preload_current_file': pv.getRDep('$relation:file_to_load-for-preload_current_file'),
 	
 	isSearchAllowed: function() {
 		return !this.file;

@@ -1,6 +1,8 @@
-define(['./StatesLabour', './helpers'], function(StatesLabour, hp) {
+define(['./StatesLabour', './helpers', 'spv'], function(StatesLabour, hp, spv) {
 'use strict';
 var push = Array.prototype.push;
+var getSTCHfullname = spv.getPrefixingFunc('stch-');
+var getFinupFullname = spv.getPrefixingFunc('finup-');
 
 function updateProxy(etr, changes_list, opts) {
 	if (etr._lbr && etr._lbr.undetailed_states){
@@ -131,6 +133,56 @@ function _setUndetailedState(etr, i, state_name, value) {
 	etr._lbr.undetailed_states[state_name] = value;
 }
 
+
+function proxyStch(target, value, state_name) {
+	var old_value = target.zdsv.stch_states[state_name];
+	if (old_value != value) {
+		target.zdsv.stch_states[state_name] = value;
+		var method = (target[ getSTCHfullname( state_name ) ] || (target.state_change && target.state_change[state_name]));
+
+		method(target, value, old_value);
+	}
+}
+
+function _handleStch(etr, original_states, state_name, value, skip_handler, sync_tpl) {
+	var stateChanger = !skip_handler && (etr[ getSTCHfullname( state_name ) ] || (etr.state_change && etr.state_change[state_name]));
+	if (stateChanger) {
+		etr.zdsv.abortFlowSteps('stch', state_name, true);
+	} else {
+		return;
+	}
+	var old_value = etr.zdsv.stch_states[state_name];
+	if (old_value != value) {
+		var method;
+		
+		if (stateChanger){
+			if (typeof stateChanger == 'function'){
+				method = stateChanger;
+			} else if (etr.checkDepVP){
+				if (etr.checkDepVP(stateChanger)){
+					method = stateChanger.fn;
+				}
+			}
+		}
+
+		if (method){
+			if (!sync_tpl) {
+				var flow_step = etr.nextLocalTick(proxyStch, [etr, value, state_name], true, method.finup);
+				flow_step.p_space = 'stch';
+				flow_step.p_index_key = state_name;
+				etr.zdsv.createFlowStepsArray('stch', state_name, flow_step);
+			} else {
+				proxyStch(etr, value, state_name);
+			}
+			
+			
+			//method.call(this, value, old_value);
+		}
+	}
+}
+
+
+
 function getChanges(etr, original_states, changes_list, opts, result_arr) {
 	var changed_states = result_arr || [];
 	var i;
@@ -141,7 +193,7 @@ function getChanges(etr, original_states, changes_list, opts, result_arr) {
 		etr.updateTemplatesStates(changes_list, opts && opts.sync_tpl);
 	}
 	for (i = 0; i < changes_list.length; i+=2) {
-		etr._handleStch(original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, opts && opts.sync_tpl);
+		_handleStch(etr, original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, opts && opts.sync_tpl);
 	}
 	return changed_states;
 }
@@ -165,6 +217,19 @@ function _replaceState(etr, original_states, state_name, value, stack) {
 			stack.push(state_name, value);
 		}
 	}
+}
+
+function getComplexInitList(etr) {
+	var result_array = [];
+
+	if (!etr.full_comlxs_list) {return result_array;}
+
+	for (var i = 0; i < etr.full_comlxs_list.length; i++) {
+		var cur = etr.full_comlxs_list[i];
+		result_array.push(cur.name, compoundComplexState(etr, cur));
+	}
+
+	return result_array;
 }
 
 
@@ -256,7 +321,7 @@ function _triggerVipChanges(etr, i, state_name, value, zdsv) {
 	zdsv.abortFlowSteps('vip_stdch_ev', state_name);
 
 
-	var vip_cb_cs = etr.evcompanion.getMatchedCallbacks(vip_name).matched;
+	var vip_cb_cs = etr.evcompanion.getMatchedCallbacks(vip_name);
 	if (vip_cb_cs.length) {
 		var flow_steps = zdsv.createFlowStepsArray('vip_stdch_ev', state_name);
 		var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], etr);
@@ -267,8 +332,8 @@ function _triggerVipChanges(etr, i, state_name, value, zdsv) {
 	}
 }
 
-function triggerLegacySChEv(etr, state_name, value, zdsv, default_cb_cs, default_name, flow_steps) {
-	var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], etr);
+function triggerLegacySChEv(etr, state_name, value, old_value, default_cb_cs, default_name, flow_steps) {
+	var event_arg = new PVStateChangeEvent(state_name, value, old_value, etr);
 			//вызов стандартного события
 	etr.evcompanion.triggerCallbacks(default_cb_cs, false, st_event_opt, default_name, event_arg, flow_steps);
 }
@@ -277,11 +342,23 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 
 	zdsv.abortFlowSteps('stev', state_name);
 
+
+	var links = etr.states_links && etr.states_links[state_name];
+	if (links) {
+		for (var k = 0; k < links.length; k++) {
+			var cur = links[k];
+			// var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
+			var calls_flow = etr._getCallsFlow();
+			calls_flow.pushToFlow(null, null, [cur, value, zdsv.original_states[state_name], etr], cur, cur.state_handler, null, etr.current_motivator);
+			
+		}
+	}
+
 	var default_name = hp.getSTEVNameDefault( state_name );
 	var light_name = hp.getSTEVNameLight( state_name );
 
-	var default_cb_cs = etr.evcompanion.getMatchedCallbacks(default_name).matched;
-	var light_cb_cs = etr.evcompanion.getMatchedCallbacks(light_name).matched;
+	var default_cb_cs = etr.evcompanion.getMatchedCallbacks(default_name);
+	var light_cb_cs = etr.evcompanion.getMatchedCallbacks(light_name);
 	
 	if (light_cb_cs.length || default_cb_cs.length) {
 		var flow_steps = zdsv.createFlowStepsArray('stev', state_name);
@@ -291,7 +368,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 		}
 
 		if (default_cb_cs.length) {
-			triggerLegacySChEv(etr, state_name, value, zdsv, default_cb_cs, default_name, flow_steps);
+			triggerLegacySChEv(etr, state_name, value, zdsv.original_states[state_name], default_cb_cs, default_name, flow_steps);
 		}
 
 		if (flow_steps) {
@@ -300,10 +377,23 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 
 	}
 
-
+	// states_links
 
 }
 
+updateProxy.update = function(md, state_name, state_value, opts) {
+	/*if (state_name.indexOf('-') != -1 && console.warn){
+		console.warn('fix prop state_name: ' + state_name);
+	}*/
+	if (md.hasComplexStateFn(state_name)){
+		throw new Error("you can't change complex state " + state_name);
+	}
+	return updateProxy(md, [state_name, state_value], opts);
+
+
+	// md.updateState(state_name, state_value, opts);
+};
+updateProxy.getComplexInitList = getComplexInitList;
 
 return updateProxy;
 });

@@ -1,4 +1,4 @@
-define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'], function(pv, app_serv, LoadableList, comd, Song, lb){
+define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase', 'spv'], function(pv, app_serv, LoadableList, comd, Song, lb, spv){
 	"use strict";
 	var localize = app_serv.localize;
 	var app_env = app_serv.app_env;
@@ -90,11 +90,10 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 	var SongsList = function(){};
 	SongsListBase.extendTo(SongsList, {
 		'nest-plarow': [PlARow],
-		bindStaCons: function() {
-			this._super();
+		bindStaCons: spv.precall(SongsListBase.prototype.bindStaCons, function() {
 			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
 			this.wch(this.app, 'settings-pl-shuffle', 'pl-shuffle');
-		},
+		}),
 		'nest_rqc-songs-list': Song,
 		/*makeDataItem: function(obj) {
 			return this.extendSong(obj);

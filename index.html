@@ -93,8 +93,7 @@
 			><b></b><span class="icon">&nbsp;</span></span>
 
 		<!-- -->
-	
-		
+
 
 		<div 
 			class="complex-page inactive-page can_be_animated"
@@ -124,6 +123,18 @@
 			<div pv-anchor="lilists_con"></div>
 			<!--pv-replace sample_name:view_sources-->
 			
+		</div>
+		<div class="list-of-playlists list_of_playlists">
+			<div
+				class='create-named-playlist hidden suggest'
+				pv-class="{{!need_creation_button && 'hidden'}} create-named-playlist suggest"
+				pv-events="click::findAddPlaylist"
+				pv-type="way-point">
+				<span class="lang localize-cr-new-playlist"></span> 
+				"<em pv-text="{{query}}"></em>"
+			</div>
+			<!--pv-replace sample_name:song_acting_playlist_add-->
+
 		</div>
 
 
@@ -311,7 +322,8 @@
 				{{can_play && 'has-files-in-songs'}}
 				{{!vis_overview && !mp_has_focus && 'show-zoom-to-track'}}
 				">
-
+			<!--pv-replace sample_name:playlist_panel-->
+				
 			<ul
 				class="tracks-for-play"
 				pv-anchor="lc"
@@ -519,6 +531,8 @@
 				</div>
 				<div class="aqc_preview preview_ffp" pv-anchor="users_acqutes"></div>
 			</div>
+			<!--pv-replace sample_name:vk_pthgs-->
+			<!--pv-replace sample_name:lastfm_pthgs-->
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page">
@@ -533,6 +547,7 @@
 					<a pv-type="way-point" class="external" pv-props="href:{{'http://last.fm/user/' + userid}}">last.fm profile</a>
 				</div>
 			</div>
+			<!--pv-replace sample_name:lastfm_pthgs-->
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 		
@@ -547,6 +562,7 @@
 					<a pv-type="way-point" class="external" pv-props="href:{{'https://vk.com/id' + userid}}">vk.com profile</a>
 				</div>
 			</div>
+			<!--pv-replace sample_name:vk_pthgs-->
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 
@@ -558,7 +574,7 @@
 			<div 
 				class="load-more-list-data hidden lang localize-load-more"
 				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}"
-				pv-events="click::requestMoreData"
+				pv-events="click::requestMoreData:albums_list"
 				pv-type="{{more_load_available && 'way-point'}}">Load more</div>
 			<!--pv-replace sample_name:view_sources-->
 		</div>
@@ -848,9 +864,9 @@
 			
 		</div>
 		
-		<div class="song-row-content moplas-block" pv-class="song-row-content moplas-block {{want_more_songs && 'want_more_songs'}}">
+		<div class="song-row-content moplas-block moplas_block" pv-nest="mf_cor" pv-class="song-row-content moplas-block {{want_more_songs && 'want_more_songs'}}">
 			<div class="show-all-songs hidden" pv-class="show-all-songs {{!must_be_expandable && 'hidden'}}">
-				<a pv-anchor='more_songs_b'>
+				<a pv-events="click::switchMoreSongsView" pv-type="way-point">
 					<span class="notifier hidden" pv-nest='notifier' pv-text='{{counter}}'></span>
 					<span class="lang localize-files">Files</span>
 				</a>
@@ -1028,10 +1044,15 @@
 					</span>
 					<span class="placeholder-decor"></span>
 				</a>
+				<!--pv-replace sample_name:track-context pv-when:must_expand-->
 			</li>
 		</ul>
 			
 		<div class="track-context" >
+			<!--pv-replace sample_name:moplas_block pv-when:must_expand-->
+			<div >
+				
+			</div>
 			<div class="song-actions" pv-anchor="song-actions" pv-nest="actionsrow">
 				<div class="track-panel" pv-anchor="buttons_panel">
 					<div class="buttons-panel">
@@ -1089,8 +1110,16 @@
 					<div class="addsong-to-playlist hidden" pv-nest="context_parts for_model:row-playlist-add" pv-class="addsong-to-playlist {{!active_view && 'hidden'}}">
 						<h4><span class="lang localize-addsong ">add song to</span>:</h4>
 						<div>
-							<input type="search" class="playlist-query" autocomplete="off"/>
+							<input type="search" class="playlist-query" autocomplete="off"
+								pv-events="{{
+									keyup:input_search
+									change:input_search
+									search:input_search
+									mousemoveinput_search
+								}}"
+							/>
 						</div>
+						<!--pv-replace sample_name:list_of_playlists pv-when:active_view-->
 					</div>
 					<div class="share-song hidden" pv-nest="context_parts for_model:row-share" pv-class="share-song {{!active_view && 'hidden'}}">
 						<input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
@@ -1257,7 +1286,9 @@
 						pv-class="artist_image {{$first && 'album_insong_image'}}"
 						pv-props="src:{{(image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + image.lfm_id)|| image.url}}">
 				</div></div>
-				<div pv-nest="artist" class="nested_artist"></div>
+				<div pv-nest="artist" class="nested_artist">
+					<!--pv-replace sample_name:artist_preview-base-->
+				</div>
 			</div>
 			
 			<div pv-nest="songcard">
@@ -1503,7 +1534,7 @@
 				<span class="lang localize-disabled">disabled</span>
 			</label></p>
 		</form>
-		<div class="song_acting_playlist_add">
+		<div class="song_acting_playlist_add" pv-nest="searcher">
 			<ul pv-nest="section for_model:section-playlist">
 				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="suggest">
 					<a pv-text="{{text_title}}"></a>
@@ -1868,6 +1899,7 @@
 				<div 
 					id="root_level"
 					class="complex-page root_level full-page can_be_animated"
+					pv-foreign
 					pv-class="
 						complex-page root_level
 						{{current_lev_num != $lev_num && 'inactive-page'}}

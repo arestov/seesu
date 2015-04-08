@@ -175,13 +175,13 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 			this.hideAll();
 		}
 	},
-	initHeavyPart: function() {
+	initHeavyPart: function(target) {
 
-		this.wch(this.app, 'settings-volume', function(e) {
+		target.wch(target.app, 'settings-volume', function(e) {
 			if (!e.value) {
 				return;
 			}
-			this.setVolumeState(e.value);
+			target.setVolumeState(e.value);
 		});
 	},
 	switchPart: function(part_name) {

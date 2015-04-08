@@ -11,6 +11,14 @@ var sortFlows = function(item_one, item_two) {
 		return 1;
 	}
 
+	if (item_one.finup && item_two.finup) {
+
+	} else if (item_one.finup){
+		return 1;
+	} else if (item_two.finup) {
+		return -1;
+	}
+
 
 	var max_length;
 
@@ -165,8 +173,8 @@ CallbacksFlow.prototype = {
 			this.iteration_delayed = true;
 		}
 	},
-	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator) {
-		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator);
+	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup) {
+		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup);
 		if (motivator){
 			var last_item = this.flow[ this.flow.length - 1 ];
 			var result = last_item && sortFlows(last_item, flow_step);

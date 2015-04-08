@@ -21,22 +21,16 @@ var other = new EventEmitter()
 reemit(emitter, other, ['foo', 'bar'])
 
 other.on('foo', function () {
-  t.pass('foo fired')
+  // foo will fire on other emitter!
 })
 
 emitter.emit('foo')
 
 other.on('baz', function () {
-  t.fail('baz should not fire on other emitter')
+  // baz will not fire on other emitter
 })
 
 emitter.emit('baz')
-
-emitter.on('bar', function () {
-  t.fail('bar should not fire on original emitter')
-})
-
-other.emit('bar')
 ```
 
 ### contributors

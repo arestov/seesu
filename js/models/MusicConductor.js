@@ -1,6 +1,13 @@
 define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', 'js/modules/declr_parsers', 'pv'],
 function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, declr_parsers, pv){
 "use strict";
+var parent_focus = [['^mp_has_focus']];
+var heavyInitReactn = function(target, state) {
+	if (state) {
+		target.heavyInit();
+	}
+};
+
 var MusicConductor;
 //http://hypem.com/latest
 var HypemPlaylist = SongsList.HypemPlaylist;
@@ -8,10 +15,7 @@ var ArtistsList = ArtCard.ArtistsList;
 var localize = app_serv.localize;
 var AllPHypemLatestSongs = function() {};
 HypemPlaylist.extendTo(AllPHypemLatestSongs, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
+
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
 		['hypem', 'get', function(opts) {
@@ -23,10 +27,7 @@ HypemPlaylist.extendTo(AllPHypemLatestSongs, {
 });
 var AllPHypemLatestRemixesSongs = function() {};
 HypemPlaylist.extendTo(AllPHypemLatestRemixesSongs, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
+
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
 		['hypem', 'get', function(opts) {
@@ -38,10 +39,7 @@ HypemPlaylist.extendTo(AllPHypemLatestRemixesSongs, {
 
 var AllPHypemNowSongs = function() {};
 HypemPlaylist.extendTo(AllPHypemNowSongs, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
+
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
 		['hypem', 'get', function(opts) {
@@ -51,32 +49,21 @@ HypemPlaylist.extendTo(AllPHypemNowSongs, {
 	]
 
 });
-var AllPHypemWeekSongs = function() {};
-HypemPlaylist.extendTo(AllPHypemWeekSongs, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.updateManyStates({
-			'nav_title': 'Popular last Week on hypem.com',
-			'url_part': '/topweek_hypem'
-		});
-	},
-	'nest_req-songs-list': [
-		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
-			var path = '/playlist/popular/lastweek/json/' + opts.paging.next_page +'/data.js';
-			return [path, null];
-		}]
-	]
-});
+// var AllPHypemWeekSongs = function() {};
+// HypemPlaylist.extendTo(AllPHypemWeekSongs, {
+// 	'nest_req-songs-list': [
+// 		declr_parsers.hypem.tracks,
+// 		['hypem', 'get', function(opts) {
+// 			var path = '/playlist/popular/lastweek/json/' + opts.paging.next_page +'/data.js';
+// 			return [path, null];
+// 		}]
+// 	]
+// });
 
 
 
 var AllPSongsChart = function() {};
 SongsList.extendTo(AllPSongsChart, {
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
 		['lfm', 'get', function() {
@@ -86,10 +73,6 @@ SongsList.extendTo(AllPSongsChart, {
 });
 var AllPSongsHyped = function() {};
 SongsList.extendTo(AllPSongsHyped, {
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
 		['lfm', 'get', function() {
@@ -100,10 +83,6 @@ SongsList.extendTo(AllPSongsHyped, {
 
 var AllPSongsLoved = function() {};
 SongsList.extendTo(AllPSongsLoved, {
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
 		['lfm', 'get', function() {
@@ -116,11 +95,6 @@ SongsList.extendTo(AllPSongsLoved, {
 
 var AllPlacesSongsLists = function() {};
 BrowseMap.Model.extendTo(AllPlacesSongsLists, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.initStates();
-
-	},
 	'nest-lists_list':[['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'], true],
 	sub_pa: {
 		latest: {
@@ -151,15 +125,9 @@ BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 	model_name: 'songs_lists'
 });
 
-var AllPHypemWeekArtists = function() {};
-//ArtistsList.extendTo()
 
 var AllPArtistsHyped = function() {};
 ArtistsList.extendTo(AllPArtistsHyped, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('artists'),
 		['lfm', 'get', function() {
@@ -170,10 +138,6 @@ ArtistsList.extendTo(AllPArtistsHyped, {
 
 var AllPArtistsChart = function() {};
 ArtistsList.extendTo(AllPArtistsChart, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('artists'),
 		['lfm', 'get', function() {
@@ -185,10 +149,6 @@ ArtistsList.extendTo(AllPArtistsChart, {
 
 var AllPlacesArtistsLists = function() {};
 BrowseMap.Model.extendTo(AllPlacesArtistsLists, {
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest-lists_list':[ ['hyped', '_'], true],
 	model_name: 'artists_lists',
 	sub_pa: {
@@ -209,10 +169,6 @@ BrowseMap.Model.extendTo(AllPlacesArtistsLists, {
 var AllPlaces = function() {};
 BrowseMap.Model.extendTo(AllPlaces, {
 	model_name:'allplaces',
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.initStates();
-	},
 	'nest-songs_lists': ['songs'],
 	'nest-artists_lists': ['artists'],
 	'nest-lists_list': [['songs', 'artists']],
@@ -232,66 +188,38 @@ BrowseMap.Model.extendTo(AllPlaces, {
 	}
 });
 
+var metroP = function(md) {
+	return {
+		metro: md.head.city_name,
+		country: md.head.country_name
+	};
+};
+
 var CityAritstsTop = function() {};
 ArtistsList.extendTo(CityAritstsTop, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-	},
-	getRqData: function() {
-		return {
-			metro: this.city_name,
-			country: this.country_name
-		};
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroArtistChart', this.getRqData()];
+			return ['geo.getMetroArtistChart', metroP(this)];
 		}]
 	]
 });
 var CityArtistsHype = function() {};
 ArtistsList.extendTo(CityArtistsHype, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-	},
-	getRqData: function() {
-		return {
-			metro: this.city_name,
-			country: this.country_name
-		};
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroHypeArtistChart', this.getRqData()];
+			return ['geo.getMetroHypeArtistChart', metroP(this)];
 		}]
 	]
 });
 var CityArtistsUnique = function() {};
 ArtistsList.extendTo(CityArtistsUnique, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-	},
-	getRqData: function() {
-		return {
-			metro: this.city_name,
-			country: this.country_name
-		};
-	},
+
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroUniqueArtistChart', this.getRqData()];
+			return ['geo.getMetroUniqueArtistChart', metroP(this)];
 		}]
 	]
 });
@@ -299,19 +227,6 @@ ArtistsList.extendTo(CityArtistsUnique, {
 var CityArtistsLists = function() {};
 BrowseMap.Model.extendTo(CityArtistsLists, {
 	model_name: 'artists_lists',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-
-		this.sub_pa_params = {
-			city_name: this.city_name,
-			country_name: this.country_name
-		};
-
-
-	},
 	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
 	sub_pa: {
 		'_': {
@@ -332,55 +247,28 @@ BrowseMap.Model.extendTo(CityArtistsLists, {
 
 var CitySongsTop = function() {};
 SongsList.extendTo(CitySongsTop,{
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroTrackChart', {
-				metro: this.city_name,
-				country: this.country_name
-			}];
+			return ['geo.getMetroTrackChart', metroP(this)];
 		}]
 	]
 });
 var CitySongsHype = function() {};
 SongsList.extendTo(CitySongsHype,{
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroHypeTrackChart', {
-				metro: this.city_name,
-				country: this.country_name
-			}];
+			return ['geo.getMetroHypeTrackChart', metroP(this)];
 		}]
 	]
 });
 var CitySongsUnique = function() {};
 SongsList.extendTo(CitySongsUnique,{
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
-			return ['geo.getMetroUniqueTrackChart', {
-				metro: this.city_name,
-				country: this.country_name
-			}];
+			return ['geo.getMetroUniqueTrackChart', metroP(this)];
 		}]
 	]
 });
@@ -388,17 +276,6 @@ SongsList.extendTo(CitySongsUnique,{
 var CitySongsLists = function() {};
 BrowseMap.Model.extendTo(CitySongsLists, {
 	model_name: 'songs_lists',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.city_name = params.city_name;
-		this.country_name = params.country_name;
-		this.initStates();
-		this.sub_pa_params = {
-			country_name: this.country_name,
-			city_name: this.city_name
-		};
-
-	},
 	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
 	sub_pa: {
 		'_': {
@@ -419,15 +296,6 @@ BrowseMap.Model.extendTo(CitySongsLists, {
 var CityPlace = function() {};
 BrowseMap.Model.extendTo(CityPlace, {
 	model_name: 'city_place',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-//		this.country_name = params.country_name;
-//		this.city_name = params.city_name;
-		this.initStates();
-
-
-	},
-	allow_data_init: true,
 	hp_bound: {
 		country_name: null,
 		city_name: null
@@ -446,25 +314,17 @@ BrowseMap.Model.extendTo(CityPlace, {
 	}
 });
 
+
+
 var CountryCitiesList = function() {};
 BrowseMap.Model.extendTo(CountryCitiesList, {
 	model_name: 'cities_list',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.country_name = params.country_name;
-		this.initStates();
-		
 
-		var _this = this;
-		this.map_parent.on('state_change-mp_has_focus', function(e) {
-			if (e.value){
-				_this.heavyInit();
-			}
-		});
-	},
-	hp_bound: {
-		country_name: null
-	},
+	'compx-parent_focus': parent_focus,
+	'stch-parent_focus': heavyInitReactn,
+
+	'stch-mp_has_focus': heavyInitReactn,
+
 	data_by_hp: true,
 	heavyInit: function() {
 		if (this.heavy_inited){
@@ -474,7 +334,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 
 		var lists_list = [];
 
-		var citiesl = lastfm_data.сountries[this.head_props.country_name];
+		var citiesl = lastfm_data.сountries[this.head.country_name];
 
 		for (var i = 0; i < citiesl.length; i++) {
 			var name = citiesl[i];
@@ -499,10 +359,13 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 			this.sub_pages[page_name] = instance;
 
 			return [instance, {
-				nav_title: page_name + ', ' + this.head_props.country_name,
-				url_part: '/' + sub_path_string,
-				country_name: this.head_props.country_name,
-				city_name: page_name
+				states: {
+					nav_title: page_name + ', ' + this.head.country_name,
+					url_part: '/' + sub_path_string,
+				},
+				head: {
+					city_name: page_name
+				}
 			}];
 		}
 
@@ -511,67 +374,36 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 
 var CountryTopArtists = function() {};
 ArtistsList.extendTo(CountryTopArtists, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.country_name = params.country_name;
-		this.initStates();
-	},
-	getRqData: function() {
-		return {
-			country: this.country_name
-		};
-	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
 		['lfm', 'get', function() {
-			return ['geo.getTopArtists', this.getRqData()];
+			return ['geo.getTopArtists', {
+				country: this.head.country_name
+			}];
 		}]
 	]
 });
 var CountryTopSongs = function() {};
 SongsList.extendTo(CountryTopSongs, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.country_name = params.country_name;
-		this.initStates();
-	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
 			return ['geo.getTopTracks', {
-				country: this.country_name
-
+				country: this.head.country_name
 			}];
 		}]
 	]
 });
+
 var CountryPlace = function() {};
 BrowseMap.Model.extendTo(CountryPlace, {
 	model_name: 'country_place',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		//this.country_name = params.country_name;
-		this.initStates();
 
-		this.on('state_change-mp_has_focus', function(e) {
-			if (e.value){
-				this.heavyInit();
-			}
-		});
-		var _this = this;
-		this.map_parent.on('state_change-mp_has_focus', function(e) {
-			if (e.value){
-				_this.heavyInit();
-			}
-		});
+	'compx-parent_focus': parent_focus,
+	'stch-parent_focus': heavyInitReactn,
 
-			
-	},
-	hp_bound: {
-		country_name: null
-	},
-	data_by_hp: true,
-	allow_data_init: true,
+	'stch-mp_has_focus': heavyInitReactn,
+
 	'nest-lists_list':[ ['artists_top', 'songs_top', 'cities'], false, 'mp_alhf' ],
 	'nest-pwis':[ ['artists_top', 'songs_top'], true, 'mp_alhf' ],
 	sub_pa: {
@@ -586,7 +418,7 @@ BrowseMap.Model.extendTo(CountryPlace, {
 		'cities': {
 			constr: CountryCitiesList,
 			getTitle: function() {
-				return localize('Cities of %country%').replace('%country%', this.head_props.country_name);
+				return localize('Cities of %country%').replace('%country%', this.head.country_name);
 			}
 		}
 	},
@@ -603,7 +435,7 @@ BrowseMap.Model.extendTo(CountryPlace, {
 var CountriesList = function() {};
 BrowseMap.Model.extendTo(CountriesList, {
 	model_name: 'сountries_list',
-	init: function(opts) {
+	init: function() {
 		this._super.apply(this, arguments);
 		var lists_list = [];
 		for (var country in lastfm_data.сountries){
@@ -611,7 +443,6 @@ BrowseMap.Model.extendTo(CountriesList, {
 			lists_list.push(country_place);
 		}
 		pv.updateNesting(this, 'lists_list', lists_list);
-		this.initStates();
 		
 	},
 	'nest_posb-lists_list': [CountryPlace],
@@ -625,9 +456,13 @@ BrowseMap.Model.extendTo(CountriesList, {
 			var instance = new Constr();
 			this.sub_pages[page_name] = instance;
 			return [instance, {
-				nav_title: page_name,
-				url_part: '/' + sub_path_string,
-				country_name: page_name
+				states: {
+					nav_title: page_name,
+					url_part: '/' + sub_path_string
+				},
+				head: {
+					country_name: page_name
+				}
 			}];
 		}
 		return this.sub_pages[page_name];
@@ -640,15 +475,6 @@ BrowseMap.Model.extendTo(CountriesList, {
 MusicConductor = function() {};
 BrowseMap.Model.extendTo(MusicConductor, {
 	model_name: 'mconductor',
-	init: function() {
-		this._super.apply(this, arguments);
-
-
-		this.initStates();
-		
-		//var mixcloud
-		return this;
-	},
 	'compx-can_expand': [
 		['^can_expand'],
 		function (can_expand) {

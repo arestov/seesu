@@ -33,6 +33,7 @@ pv.Model.extendTo(FileInTorrent, {
 	}
 });
 
+	var isDepend = pv.utils.isDepend;
 
 	var counter = 0;
 	var SongFileModel = function(){};
@@ -148,15 +149,15 @@ pv.Model.extendTo(FileInTorrent, {
 		'compx-load_file': [
 			['file_to_load-for-player_song', 'file_to_load-for-preload_current_file'],
 			function(player_song, preload_current_file) {
-				return this.utils.isDepend(player_song) || this.utils.isDepend(preload_current_file);
+				return isDepend(player_song) || isDepend(preload_current_file);
 			}
 		],
-		'stch-load_file': function(state) {
+		'stch-load_file': function(target, state) {
 			if (state) {
 				
-				this.load();
+				target.load();
 			} else {
-				this.removeCache();
+				target.removeCache();
 			}
 		},
 		getTitle: function() {

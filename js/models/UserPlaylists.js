@@ -3,11 +3,6 @@ define(['js/libs/BrowseMap', 'spv', './SongsList', 'pv'], function(BrowseMap, sp
 
 var ManualPlaylist = function() {};
 SongsList.extendTo(ManualPlaylist, {
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-		this.initStates();
-		
-	}
 });
 
 var UserPlaylists = function() {};
@@ -103,8 +98,6 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 				'songs-list': saved_pl
 			}
 		});
-
-		//p.insertDataAsSubitems(this.main_list_name, saved_pl);
 
 		this.watchOwnPlaylist(pl_r);
 		return pl_r;

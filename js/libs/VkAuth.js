@@ -1,6 +1,8 @@
 define(['pv', 'jquery', 'spv', 'hex_md5'], function(pv, $, spv, hex_md5){
 "use strict";
 
+var pvUpdate = pv.update;
+
 var VkTokenAuth = function(app_id, vk_t) {
 	vk_t = (vk_t ===  Object(vk_t)) ? vk_t : JSON.parse(vk_t);
 	vk_t.expires_in = parseFloat(vk_t.expires_in) * 1000;
@@ -8,53 +10,46 @@ var VkTokenAuth = function(app_id, vk_t) {
 	this.app_id = app_id;
 };
 
+function buildVkAuth(obj, opts) {
+	// pconstr(obj);
 
-var VkAuth = function(opts) {
-	this.init(opts);
-};
-pv.Eventor.extendTo(VkAuth, {
+	//app_id, urls, permissions, open_api, deep_sanbdox
+	obj.app_id = opts.app_id;
+	obj.urls = opts.urls;
+	obj.permissions = spv.toRealArray(opts.permissions);
+	obj.open_api = !!opts.open_api;
+
+
+	obj.display_type = opts.display_type;
+
+	obj.vksite_app = !!opts.vksite_app;
+	obj.vksite_settings = obj.vksite_app && opts.vksite_settings && parseFloat(opts.vksite_settings);
+
+	obj.deep_sanbdox = !!opts.deep_sanbdox;
+
+	pvUpdate(obj, 'settings_bits', obj.vksite_settings);
+
+	obj.on('vk-site-api', function(VK) {
+		var _this = this;
+		if (_this.vksite_app){
+			pvUpdate('settings_bits', this.vksite_settings);
+			VK.addCallback('onSettingsChanged', function(sts){
+				_this.vksite_settings = sts;
+				setTimeout(function() {
+					pvUpdate(_this, 'settings_bits', sts);
+					_this.trigger('settings-change', sts);
+				}, 500);
+			});
+		}
+		_this.VK = VK;
+	});
+}
+
+var VkAuth = function() {};
+pv.Model.extendTo(VkAuth, {
 	init: function(opts) {
-
-		//app_id, urls, permissions, open_api, deep_sanbdox
-
-
-
-		this.app_id = opts.app_id;
-		this.urls = opts.urls;
-		this.permissions = spv.toRealArray(opts.permissions);
-		if (opts.open_api){
-			this.open_api = true;
-		}
-		if (opts.display_type) {
-			this.display_type = opts.display_type;
-		}
-		if (opts.vksite_app){
-			this.vksite_app = true;
-			if (opts.vksite_settings){
-				this.vksite_settings = parseFloat(opts.vksite_settings);
-			}
-		}
-		if (opts.deep_sanbdox){
-			this.deep_sanbdox = true;
-		}
 		this._super();
-
-		this.on('vk-site-api', function(VK) {
-			var _this = this;
-			if (_this.vksite_app){
-				VK.addCallback('onSettingsChanged', function(sts){
-					_this.vksite_settings = sts;
-					setTimeout(function() {
-						_this.trigger('settings-change', sts);
-					}, 500);
-					
-					
-				});
-			}
-			
-			_this.VK = VK;
-		});
-		return this;
+		buildVkAuth(this, opts);
 	},
 	checkSettings: function(settings_bits) {
 		if (this.vksite_app && this.vksite_settings){
@@ -191,8 +186,21 @@ pv.Eventor.extendTo(VkAuth, {
 		}
 		return init_auth_data;
 	}
-	
 });
+
+// var VkAuth = spv.inh(pv.Eventor, {
+// 	naming: function(constr) {
+// 		return function VkAuth(opts) {
+// 			constr(this, opts);
+// 		};
+// 	},
+// 	building: function(pconstr) {
+// 		return 
+// 	},
+// 	props: {
+		
+// 	}
+// });
 
 VkAuth.VkTokenAuth = VkTokenAuth;
 return VkAuth;

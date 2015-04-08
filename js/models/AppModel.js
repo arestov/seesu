@@ -118,15 +118,6 @@ AppModelBase.extendTo(AppModel, {
 		showArtcardPage: function(artist){
 			var md = this.getArtcard(artist);
 			md.showOnMap();
-			/*
-			var md = new ArtCard();
-			md.init({
-				app: this,
-				map_parent: page_md || this.start_page
-			}, {
-				artist: artist
-			});
-			md.showOnMap();*/
 			return md;
 		},
 		showArtistAlbum: function(params, page_md){
@@ -223,10 +214,10 @@ AppModelBase.extendTo(AppModel, {
 		}
 		pv.update(this, 'search_query', query);
 	},
-	'stch-search_request_freshness': function() {
-		var query = this.state('search_query');
+	'stch-search_request_freshness': function(target) {
+		var query = target.state('search_query');
 		if (query) {
-			this.showResultsPage(query);
+			target.showResultsPage(query);
 		}
 
 	},

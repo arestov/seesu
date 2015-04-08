@@ -3,8 +3,8 @@ function(pv, $, SongUI, etc_views, coct) {
 	"use strict";
 	var PlaylistSettingsRowView = function(){};
 	pv.View.extendTo(PlaylistSettingsRowView, {
-		"stch-dont_rept_pl": function(state) {
-			this.dont_rept_pl_chbx.prop('checked', !!state);
+		"stch-dont_rept_pl": function(target, state) {
+			target.dont_rept_pl_chbx.prop('checked', !!state);
 		},
 		bindBase: function() {
 			var _this = this;
@@ -78,11 +78,7 @@ function(pv, $, SongUI, etc_views, coct) {
 	var SongsListView = function(){};
 	SongsListViewBase.extendTo(SongsListView, {
 		base_tree: {
-			sample_name: 'playlist-container',
-			children_by_selector: [{
-				sample_name: 'playlist_panel',
-				prepend: true
-			}]
+			sample_name: 'playlist-container'
 		},
 		children_views: {
 			plarow: PlARowView,

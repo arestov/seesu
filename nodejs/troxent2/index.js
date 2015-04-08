@@ -20,6 +20,11 @@ server.listen(8888);
 
 var root_href = 'http://' + address() + ':' + server.address().port + '/';
 
+process.on('uncaughtException', function(err) {
+	console.log(err, err.stack);
+	debugger;
+});
+
 
 
 var getMagnetTorrent = function(url) {

@@ -21,12 +21,108 @@ var getLightConnector = function(state_name) {
 	}
 	return light_con_store[state_name];
 };
+var getBaseTreeCheckList = function(start) {
+	var i, result = [];
+	var chunks_counter = 0;
+	var all_items = [null, start];
+
+	while (all_items.length) {
+		
+
+		var cur_parent = all_items.shift();
+		var cur = all_items.shift();
+
+		cur.parent = cur_parent;
+		cur.chunk_num = chunks_counter;
+
+		if (cur.children_by_selector) {
+			for (i = cur.children_by_selector.length - 1; i >= 0; i--) {
+				all_items.push( cur, cur.children_by_selector[i] );
+			}
+		}
+		
+		if (cur.children_by_anchor) {
+			for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
+				all_items.push( cur, cur.children_by_anchor[i] );
+			}
+
+		}
+
+		result.push( cur );
+		chunks_counter++;
 
 
+	}
+	return result;
 
+};
 
-function StatesEmitter() {}
-Eventor.extendTo(StatesEmitter, function(add) {
+var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
+
+var onPropsExtend = function (props) {
+	if (this.collectStateChangeHandlers){
+		this.collectStateChangeHandlers(props);
+	}
+	var collches_modified;
+	if (this.collectCollectionChangeDeclarations){
+		collches_modified = this.collectCollectionChangeDeclarations(props);
+	}
+	if (this.collectSelectorsOfCollchs) {
+		this.collectSelectorsOfCollchs(props);
+	}
+	this.collectStatesBinders(props);
+	this.collectCompxs(props);
+	this.collectRegFires(props);
+
+	if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
+		this.nest_match = (this.st_nest_matches || []).concat(this.compx_nest_matches || []);
+	}
+
+	var base_tree_mofified;
+	if (props.hasOwnProperty('base_tree')) {
+		base_tree_mofified = true;
+		this.base_tree_list = getBaseTreeCheckList(props.base_tree);
+	}
+	if (collches_modified || base_tree_mofified) {
+		this.collectBaseExtendStates();
+	}
+
+	if (this.collectNestingsDeclarations) {
+		this.collectNestingsDeclarations(props);
+	}
+
+	if (this.changeDataMorphDeclarations) {
+		this.changeDataMorphDeclarations(props);
+	}
+
+	if (this.changeChildrenViewsDeclarations) {
+		this.changeChildrenViewsDeclarations(props);
+	}
+
+	
+	for (var i = 0; i < xxxx_morph_props.length; i++) {
+		// если есть декларации - парсим, делаем функции
+		// на вход функции - одна структура, на выход - другая
+		var cur = xxxx_morph_props[i];
+		var cur_name = Array.isArray(cur) ? cur[0] : cur;
+		var subfield = Array.isArray(cur) && cur[1];
+		if (props.hasOwnProperty(cur_name)) {
+			if (typeof this[cur_name] != 'function' && this[cur_name] !== true) {
+				var obj = {
+					props_map: this[cur_name]
+				};
+				if (subfield) {
+					obj.source = subfield;
+				}
+				this[cur_name] = spv.mmap(obj);
+			}
+			
+		}
+	}	
+};
+
+// Eventor.extendTo(StatesEmitter, 
+function props(add) {
 
 
 var stackStateFlowStep = function(flow_step, state_name) {
@@ -87,7 +183,6 @@ var regfr_stev = (function() {
 	};
 })();
 
-
 var regfr_lightstev = (function() {
 	var getState = spv.getDeprefixFunc('lgh_sch-');
 	return {
@@ -107,47 +202,9 @@ var regfr_lightstev = (function() {
 	};
 })();
 
-
-
 var EvConxOpts = function(context, immediately) {
 	this.context = context;
 	this.immediately = immediately;
-};
-
-var getBaseTreeCheckList = function(start) {
-	var i, result = [];
-	var chunks_counter = 0;
-	var all_items = [null, start];
-
-	while (all_items.length) {
-		
-
-		var cur_parent = all_items.shift();
-		var cur = all_items.shift();
-
-		cur.parent = cur_parent;
-		cur.chunk_num = chunks_counter;
-
-		if (cur.children_by_selector) {
-			for (i = cur.children_by_selector.length - 1; i >= 0; i--) {
-				all_items.push( cur, cur.children_by_selector[i] );
-			}
-		}
-		
-		if (cur.children_by_anchor) {
-			for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
-				all_items.push( cur, cur.children_by_anchor[i] );
-			}
-
-		}
-
-		result.push( cur );
-		chunks_counter++;
-
-
-	}
-	return result;
-
 };
 
 var getStateUpdater = function(em, state_name) {
@@ -166,23 +223,12 @@ add({
 	onDie: function(cb) {
 		this.on('die', cb);
 	},
-	init: function(){
-		this._super();
-		this.conx_optsi = null;
-		this.conx_opts = null;
-		this.zdsv = null;
-		this.current_motivator = this.current_motivator || null;
+	// init: function(){
+	// 	this._super();
+		
 
-		this._state_updaters = null;
-		this._used_interfaces = null;
-		this._unuse_interface_instr = null;
-
-		this.states = {};
-
-		//this.collectCompxs();
-
-		return this;
-	},
+	// 	return this;
+	// },
 	useInterface: function(interface_name, obj) {
 		var old_interface = this._used_interfaces && this._used_interfaces[interface_name];
 		if (obj !== old_interface) {
@@ -286,64 +332,8 @@ add({
 		return this;
 
 	},
-	onExtend: function(props) {
-		if (this.collectStateChangeHandlers){
-			this.collectStateChangeHandlers(props);
-		}
-		var collches_modified;
-		if (this.collectCollectionChangeDeclarations){
-			collches_modified = this.collectCollectionChangeDeclarations(props);
-		}
-		if (this.collectSelectorsOfCollchs) {
-			this.collectSelectorsOfCollchs(props);
-		}
-		this.collectStatesBinders(props);
-		this.collectCompxs(props);
-		this.collectRegFires(props);
-
-		var base_tree_mofified;
-		if (props.hasOwnProperty('base_tree')) {
-			base_tree_mofified = true;
-			this.base_tree_list = getBaseTreeCheckList(props.base_tree);
-		}
-		if (collches_modified || base_tree_mofified) {
-			this.collectBaseExtendStates();
-		}
-
-		if (this.collectNestingsDeclarations) {
-			this.collectNestingsDeclarations(props);
-		}
-
-		if (this.changeDataMorphDeclarations) {
-			this.changeDataMorphDeclarations(props);
-		}
-
-		if (this.changeChildrenViewsDeclarations) {
-			this.changeChildrenViewsDeclarations(props);
-		}
-
-		
-		for (var i = 0; i < this.xxxx_morph_props.length; i++) {
-			var cur = this.xxxx_morph_props[i];
-			var cur_name = Array.isArray(cur) ? cur[0] : cur;
-			var subfield = Array.isArray(cur) && cur[1];
-			if (props.hasOwnProperty(cur_name)) {
-				if (typeof this[cur_name] != 'function' && this[cur_name] !== true) {
-					var obj = {
-						props_map: this[cur_name]
-					};
-					if (subfield) {
-						obj.source = subfield;
-					}
-					this[cur_name] = spv.mmap(obj);
-				}
-				
-			}
-		}
-
-		
-	},
-	xxxx_morph_props: [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'],
+	onExtend: onPropsExtend,
+	
 	checkExpandableTree: function(state_name) {
 		var i, cur, cur_config, has_changes = true, append_list = [];
 		while (this.base_skeleton && has_changes) {
@@ -477,10 +467,7 @@ add({
 	})()
 });
 
-
 var nes_as_state_cache = {};
-
-
 var watchNestingAsState = function(md, nesting_name, state_name) {
 	if (!nes_as_state_cache[state_name]) {
 		nes_as_state_cache[state_name] = function(e) {
@@ -490,9 +477,6 @@ var watchNestingAsState = function(md, nesting_name, state_name) {
 
 	md.on( hp.getFullChilChEvName(nesting_name), nes_as_state_cache[state_name]);
 };
-
-
-
 
 add({
 	prsStCon: {
@@ -538,9 +522,9 @@ add({
 					var cur = list[i];
 					
 					if (cur.state_name) {
-						md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
+						// md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
 					} else {
-						watchNestingAsState(md, cur.nesting_name, cur.full_name);
+						// watchNestingAsState(md, cur.nesting_name, cur.full_name);
 					}
 					
 					
@@ -571,10 +555,20 @@ add({
 	
 		}]
 		*/
+		/*
+
+
+				nest_match: [
+			['songs-list', 'mf_cor', 'sorted_completcs']
+		]
+
+		*/
+
+		this.compx_nest_matches = []
+
 		var states_of_parent = {};
 		var states_of_nesting = {};
 		var states_of_root = {};
-
 
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
 			var cur = this.full_comlxs_list[i];
@@ -590,6 +584,9 @@ add({
 					} else  if (parsing_result.rel_type == 'nesting') {
 						if (!states_of_nesting[state_name]) {
 							states_of_nesting[state_name] = parsing_result;
+							this.compx_nest_matches.push( parsing_result.nwatch );
+							
+							// debugger;
 						}
 					} else if (parsing_result.rel_type == 'parent') {
 						if (!states_of_parent[state_name]) {
@@ -600,7 +597,6 @@ add({
 				
 			}
 		}
-
 
 		this.conndst_parent = this.prsStCon.toList(states_of_parent);
 		this.conndst_nesting = this.prsStCon.toList(states_of_nesting);
@@ -627,6 +623,7 @@ add({
 				if (name){
 					
 					var cur = this[comlx_name];
+					if (!cur) {continue;}
 					if (cur instanceof Array){
 						cur = {
 							depends_on: cur[0],
@@ -649,7 +646,7 @@ add({
 				if (!compx_check[comlx_name]){
 					
 					var cur = this.complex_states[comlx_name];
-
+					if (!cur) {continue;}
 					if (cur instanceof Array){
 						cur = {
 							depends_on: cur[0],
@@ -764,63 +761,6 @@ add({
 	}
 });
 
-
-
-
-
-var getSTCHfullname = spv.getPrefixingFunc('stch-');
-
-add({
-	
-	proxyStch: function(value, old_value_trans, state_name) {
-		var old_value = this.zdsv.stch_states[state_name];
-		if (old_value != value) {
-			this.zdsv.stch_states[state_name] = value;
-			var method = (this[ getSTCHfullname( state_name ) ] || (this.state_change && this.state_change[state_name]));
-			method.call(this, value, old_value, state_name);
-		}
-	},
-	_handleStch: function(original_states, state_name, value, skip_handler, sync_tpl) {
-		var stateChanger = !skip_handler && (this[ getSTCHfullname( state_name ) ] || (this.state_change && this.state_change[state_name]));
-		if (stateChanger) {
-			this.zdsv.abortFlowSteps('stch', state_name, true);
-		} else {
-			return;
-		}
-		var old_value = this.zdsv.stch_states[state_name];
-		if (old_value != value) {
-			var method;
-			
-			if (stateChanger){
-				if (typeof stateChanger == 'function'){
-					method = stateChanger;
-				} else if (this.checkDepVP){
-					if (this.checkDepVP(stateChanger)){
-						method = stateChanger.fn;
-					}
-				}
-			}
-
-			if (method){
-				if (!sync_tpl) {
-					var flow_step = this.nextLocalTick(this.proxyStch, [value, old_value, state_name], true);
-					flow_step.p_space = 'stch';
-					flow_step.p_index_key = state_name;
-					this.zdsv.createFlowStepsArray('stch', state_name, flow_step);
-				} else {
-					this.proxyStch(value, old_value, state_name);
-				}
-				
-				
-				//method.call(this, value, old_value);
-			}
-		}
-	}
-});
-
-
-
-
 add({
 	
 
@@ -828,16 +768,15 @@ add({
 		var changes_list = [];
 		for (var state_name in obj) {
 			if (obj.hasOwnProperty(state_name)){
+				if (this.hasComplexStateFn(state_name)) {
+					throw new Error("you can't change complex state " + state_name);
+				}
 				changes_list.push(state_name, obj[state_name]);
 			}
 		}
 		this._updateProxy(changes_list);
 	},
-	utils: {
-		isDepend: function(obj) {
-			return obj && !!obj.count;
-		}
-	},
+
 	updateState: function(state_name, value, opts){
 		/*if (state_name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop state_name: ' + state_name);
@@ -847,24 +786,6 @@ add({
 		}
 		return this._updateProxy([state_name, value], opts);
 	},
-	hndRDep: (function() {
-		var cache = {};
-		var getTargetName = function(state_name) {
-			if (!cache[state_name]) {
-				cache[state_name] = state_name.split( ':' )[ 1 ];
-			}
-			return cache[state_name];
-		};
-		return function(state, oldstate, state_name) {
-			var target_name = getTargetName(state_name);
-			if (oldstate) {
-				oldstate.setStateDependence(target_name, this, false);
-			}
-			if (state) {
-				state.setStateDependence(target_name, this, true);
-			}
-		};
-	})(),
 	setStateDependence: function(state_name, source_id, value) {
 		if (typeof source_id == 'object') {
 			source_id = source_id._provoda_id;
@@ -900,7 +821,37 @@ add({
 		updateProxy(this, changes_list, opts);
 	}
 });
+}
+
+var StatesEmitter = spv.inh(Eventor, {
+	naming: function(construct) {
+		return function StatesEmitter() {
+			construct(this);
+		};
+	},
+	building: function(parentBuilder) {
+		return function StatesEmitterBuilder(obj) {
+			parentBuilder(obj);
+
+			obj.conx_optsi = null;
+			obj.conx_opts = null;
+			obj.zdsv = null;
+			obj.current_motivator = obj.current_motivator || null;
+
+			obj._state_updaters = null;
+			obj._used_interfaces = null;
+			obj._unuse_interface_instr = null;
+
+			obj.states = {};
+		};
+	},
+	onExtend: function(md, props, original) {
+		onPropsExtend.call(md, props, original);
+	},
+	props: props
 });
+spv.inh.legInit(StatesEmitter);
+
 return StatesEmitter;
 };
 });

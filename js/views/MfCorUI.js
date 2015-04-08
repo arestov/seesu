@@ -1,21 +1,21 @@
 define(['pv', 'jquery', 'spv', './etc_views'], function(pv, $, spv, etc_views) {
 "use strict";
-
+var pvUpdate = pv.update;
 var notifyCounterUI = function() {};
 pv.View.extendTo(notifyCounterUI, {
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
 	state_change: {
-		counter: function(state) {
-			this.c.toggleClass('hidden', !state);
+		counter: function(target, state) {
+			target.c.toggleClass('hidden', !state);
 		}
 	}
 });
 var FileIntorrentPromiseUI = function(){};
 pv.View.extendTo(FileIntorrentPromiseUI, {
-	'stch-infoHash': function(state) {
-		this.c.text(state);
+	'stch-infoHash': function(target, state) {
+		target.c.text(state);
 	},
 	createBase: function(){
 		this.c = $('<li></li>');
@@ -25,24 +25,24 @@ pv.View.extendTo(FileIntorrentPromiseUI, {
 var FileInTorrentUI = function() {};
 pv.View.extendTo(FileInTorrentUI,{
 	state_change: {
-		"download-pressed": function(state) {
+		"download-pressed": function(target, state) {
 			if (state){
-				this.downloadlink.addClass('download-pressed');
+				target.downloadlink.addClass('download-pressed');
 			}
 		},
-		overstock: function(state) {
+		overstock: function(target, state) {
 			if (state){
-				this.c.addClass('overstocked');
+				target.c.addClass('overstocked');
 			} else {
-				this.c.removeClass('overstocked');
+				target.c.removeClass('overstocked');
 			}
 		},
-		'full_title': function(state) {
-			this.f_text.text(state);
+		'full_title': function(target, state) {
+			target.f_text.text(state);
 
 		},
-		'torrent_link': function(state) {
-			this.downloadlink.attr('href', state);
+		'torrent_link': function(target, state) {
+			target.downloadlink.attr('href', state);
 		}
 	},
 	createBase: function() {
@@ -76,11 +76,11 @@ pv.View.extendTo(SongFileModelUI, {
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
 	},
-	'stch-key-progress-c-width': function(state) {
+	'stch-key-progress-c-width': function(target, state) {
 		if (state) {
-			pv.update(this, 'vis_progress-c-width', this.getBoxDemensionByKey(this.getProgressWidth, state));
+			pvUpdate(target, 'vis_progress-c-width', target.getBoxDemensionByKey(target.getProgressWidth, state));
 		} else {
-			pv.update(this, 'vis_progress-c-width', 0);
+			pvUpdate(target, 'vis_progress-c-width', 0);
 		}
 	},
 	complex_states: {
@@ -235,26 +235,12 @@ pv.View.extendTo(SongFileModelUI, {
 		'selectFile': function() {
 			if (!this.state('selected')){
 				this.RPCLegacy('requestPlay', pv.$v.getBwlevId(this));
-				// this.RPCLegacy('trigger', 'want-to-play-sf');
 			}
 		},
 		'switchPlay': function(e) {
-			// var _this = this;
 			e.stopPropagation();
 			
 			this.RPCLegacy('switchPlay', pv.$v.getBwlevId(this));
-			// this.
-			// if (_this.state('selected')){
-
-			// 	if (_this.state('play') == 'play'){
-			// 		_this.RPCLegacy('pause');
-			// 	} else {
-			// 		_this.RPCLegacy('trigger', 'want-to-play-sf');
-			// 		//_this.RPCLegacy('play');
-			// 	}
-			// } else {
-			// 	_this.RPCLegacy('trigger', 'want-to-play-sf');
-			// }
 		}
 	}
 });
@@ -337,17 +323,17 @@ pv.View.extendTo(YoutubePreview, {
 		this._super();
 		this.user_link = $();
 	},
-	'stch-nav_title': function(state) {
-		this.c.attr('title', state || "");
+	'stch-nav_title': function(target, state) {
+		target.c.attr('title', state || "");
 	},
-	'stch-cant_show': function(state) {
-		this.c.toggleClass('cant-show', !!state);
+	'stch-cant_show': function(target, state) {
+		target.c.toggleClass('cant-show', !!state);
 	},
-	'stch-yt_id': function(state) {
+	'stch-yt_id': function(target, state) {
 		var link = 'http://www.youtube.com/watch?v=' + state;
-		this.user_link.attr('href', link);
+		target.user_link.attr('href', link);
 	},
-	'stch-previews': function(thmn) {
+	'stch-previews': function(target, thmn) {
 		var imgs = $();
 
 		if (thmn.start && thmn.middle &&  thmn.end){
@@ -364,7 +350,7 @@ pv.View.extendTo(YoutubePreview, {
 		} else {
 			imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn['default']));
 		}
-		this.user_link.empty().append(imgs);
+		target.user_link.empty().append(imgs);
 		imgs = null;
 						
 	}
@@ -384,23 +370,23 @@ pv.View.extendTo(MfCorUI, {
 		strict: true
 	},
 	'collch-yt_videos': 'tpl.ancs.video_list',
-	bindBase: function() {
-		//this.createTemplate();
-		var _this = this;
-		this.tpl.ancs.more_songs_b.click(function() {
-			_this.RPCLegacy('switchMoreSongsView');
-		});
-		this.addWayPoint(this.tpl.ancs.more_songs_b);
-	},
+	// bindBase: function() {
+	// 	//this.createTemplate();
+	// 	var _this = this;
+	// 	this.tpl.ancs.more_songs_b.click(function() {
+	// 		_this.RPCLegacy('switchMoreSongsView');
+	// 	});
+	// 	this.addWayPoint(this.tpl.ancs.more_songs_b);
+	// },
 	'compx-vis_is_visible':{
 		'depends_on': ['^^^mp_show_end'],
 		fn: function(mp_show_end) {
 			return !!mp_show_end;
 		}
 	},
-	base_tree: {
-		sample_name: 'moplas-block'
-	}
+	// base_tree: {
+	// 	sample_name: 'moplas-block'
+	// }
 });
 
 return MfCorUI;

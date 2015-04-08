@@ -1,6 +1,6 @@
 define([], function() {
 'use strict';
-var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, parent_motivator) {
+var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, parent_motivator, finup) {
 	this.aborted = false;
 	this.p_space = '';
 	this.p_index_key = '';
@@ -11,8 +11,13 @@ var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, p
 	this.arg = arg || null;
 	this.cb_wrapper = cb_wrapper || null;
 	this.real_context = real_context;
+	this.finup = !!finup || null;
 	this.complex_order = ( parent_motivator && parent_motivator.complex_order.slice() ) || [];
 	this.complex_order.push(this.num);
+
+	if (!this.fn && !this.cb_wrapper) {
+		throw new Error('how to handle this step!?');
+	}
 	//this.custom_order = null;
 };
 FlowStep.prototype.abort = function() {

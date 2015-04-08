@@ -1,7 +1,7 @@
 define(['pv', 'spv', 'app_serv', 'hex_md5'], function(pv, spv, app_serv, hex_md5) {
 "use strict";
 var localize = app_serv.localize;
-
+var pvUpdate = pv.update;
 
 
 var LfmLogin = function() {};
@@ -12,24 +12,29 @@ pv.Model.extendTo(LfmLogin, {
 		this._super.apply(this, arguments);
 
 		var _this = this;
-		this.auth = (params && params.auth) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) || opts.auth;
+		this.auth = 
+			(params && params.auth) ||
+			(this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) ||
+			opts.auth ||
+			this.app.lfm_auth;
+
 		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
 
-		if (data && data.desc){
-			this.setRequestDesc(data.desc);
-		} else {
-			this.setRequestDesc(this.access_desc);
-		}
+		this.updateNesting('auth', this.auth);
+
+		var access_desc = (data && data.desc) || (this.map_parent && this.map_parent.access_desc) || this.access_desc;
+		this.setRequestDesc(access_desc);
 
 		if (this.auth.deep_sanbdox){
-			pv.update(_this, 'deep_sandbox', true);
+			pvUpdate(_this, 'deep_sandbox', true);
 		}
-		if (this.auth.has_session){
-			this.triggerSession();
-		}
-		this.auth.once('session', function(){
-			_this.triggerSession();
-		});
+
+		// if (this.auth.has_session){
+		// 	this.triggerSession();
+		// }
+		// this.auth.once('session', function(){
+		// 	_this.triggerSession();
+		// });
 		if (this.auth && this.auth.data_wait){
 			this.waitData();
 		} else {
@@ -40,18 +45,20 @@ pv.Model.extendTo(LfmLogin, {
 		return this;
 	},
 	access_desc: localize('to-get-access'),
+	'compx-has_session': [[
+		'@one:session:auth'
+	]],
 	triggerSession: function() {
-		pv.update(this, 'has_session', true);
-		
+		pvUpdate(this, 'has_session', true);
 	},
 	waitData: function() {
-		pv.update(this, 'data_wait', true);
+		pvUpdate(this, 'data_wait', true);
 	},
 	notWaitData: function() {
-		pv.update(this, 'data_wait', false);
+		pvUpdate(this, 'data_wait', false);
 	},
 	setRequestDesc: function(text) {
-		pv.update(this, 'request_description', text ? text + " " + localize("lfm-auth-invitation") : "");
+		pvUpdate(this, 'request_description', text ? text + " " + localize("lfm-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
@@ -67,7 +74,7 @@ pv.Model.extendTo(LfmLogin, {
 		this.auth.requestAuth(opts);
 	},
 	switchView: function(){
-		pv.update(this, 'active', !this.state('active'));
+		pvUpdate(this, 'active', !this.state('active'));
 	}
 });
 
@@ -86,7 +93,7 @@ LfmLogin.extendTo(LfmScrobble, {
 
 	
 		this.setRequestDesc(localize('lastfm-scrobble-access'));
-		pv.update(this, 'active', true);
+		pvUpdate(this, 'active', true);
 	},
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -99,31 +106,20 @@ LfmLogin.extendTo(LfmScrobble, {
 		}, {exlusive: true});
 	},
 	setScrobbling: function(state) {
-		pv.update(this, 'scrobbling', state);
+		pvUpdate(this, 'scrobbling', state);
 		su.setSetting('lfm-scrobbling', state);
 		//this.auth.setScrobbling(state);
 	}
 });
 
-
-
-
-var LfmAuth = function(lfm, opts) {
-	this.api = lfm;
-	this.opts = opts || {};
-	if (this.opts){
-		this.init(this.opts);
-	}
-};
-pv.Eventor.extendTo(LfmAuth, {
-	init: function(opts) {
-		this._super();
-		if (this.api.sk){
-			this.has_session = true;
-		}
-		if (opts.deep_sanbdox){
-			this.deep_sanbdox = true;
-		}
+var LfmAuth = pv.Model.extendTo(function LfmAuth() {}, {
+	init: function(opts, data, params) {
+		this._super(opts);
+		this.api = data.lfm;
+		this.opts = params || {};
+		this.has_session = !!this.api.sk;
+		this.deep_sanbdox = !!params.deep_sanbdox;
+		pvUpdate(this, 'session', !!this.has_session);
 	},
 	requestAuth: function(p){
 		
@@ -220,7 +216,9 @@ pv.Eventor.extendTo(LfmAuth, {
 				.done(function(r){
 					if (!r.error) {
 						_this.login(r,callback);
+						pvUpdate(_this, 'session', true);
 						_this.trigger("session");
+						
 						_this.has_session = true;
 						_this.trigger('api-full-ready');
 
