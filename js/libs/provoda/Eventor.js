@@ -34,8 +34,8 @@ var Eventor = spv.inh(function() {}, {
 			item.current_motivator = old_value;
 			return result;
 		},
-		nextLocalTick: function(fn, args, use_current_motivator) {
-			return this._getCallsFlow().pushToFlow(fn, this, args, false, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
+		nextLocalTick: function(fn, args, use_current_motivator, finup) {
+			return this._getCallsFlow().pushToFlow(fn, this, args, false, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator, finup);
 		},
 		nextTick: function(fn, args, use_current_motivator) {
 			return main_calls_flow.pushToFlow(fn, this, args, !args && this, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);

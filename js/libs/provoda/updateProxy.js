@@ -2,6 +2,7 @@ define(['./StatesLabour', './helpers', 'spv'], function(StatesLabour, hp, spv) {
 'use strict';
 var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
+var getFinupFullname = spv.getPrefixingFunc('finup-');
 
 function updateProxy(etr, changes_list, opts) {
 	if (etr._lbr && etr._lbr.undetailed_states){
@@ -166,7 +167,7 @@ function _handleStch(etr, original_states, state_name, value, skip_handler, sync
 
 		if (method){
 			if (!sync_tpl) {
-				var flow_step = etr.nextLocalTick(proxyStch, [etr, value, state_name], true);
+				var flow_step = etr.nextLocalTick(proxyStch, [etr, value, state_name], true, method.finup);
 				flow_step.p_space = 'stch';
 				flow_step.p_index_key = state_name;
 				etr.zdsv.createFlowStepsArray('stch', state_name, flow_step);

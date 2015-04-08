@@ -11,6 +11,11 @@ var playRelative = function(mo, result) {
 	}
 };
 
+var finup = function(callback) {
+	callback.finup = true;
+	return callback;
+};
+
 function PlayRequest() {}
 pv.Model.extendTo(PlayRequest, {
 	// init: function() {
@@ -29,7 +34,7 @@ pv.Model.extendTo(PlayRequest, {
 		  return active && (play_inited ? next_song : (!wanted_file && wanted_song));
 		}
 	],
-	'stch-possible_song': function(target, song, oldsong) {
+	'stch-possible_song': finup(function(target, song, oldsong) {
 		target.updateNesting('possible_song', song);
 
 		if (oldsong) {
@@ -40,7 +45,7 @@ pv.Model.extendTo(PlayRequest, {
 			pvUpdate(song, 'want_to_play', true);
 			song.makeSongPlayalbe(true);
 		}
-	},
+	}),
 	'compx-song_files_ready': [
 		['@one:files_search:possible_song', '@one:player_song:possible_song'],
 		function(files_search, is_player_song) {
@@ -65,13 +70,13 @@ pv.Model.extendTo(PlayRequest, {
 			}
 		}
 	],
-	'stch-playable_mopla': function(target, mopla) {
+	'stch-playable_mopla': finup(function(target, mopla) {
 		if (mopla) {
 			var mo = target.getNesting('possible_song');
 			mo.play();
 			// mopla.play();
 		}
-	},
+	}),
 	// 'stch-song_files_ready': function(target, opts) {
 	// 	if (!opts) {return;}
 	// 	var mo = this.getNesting('possible_song');

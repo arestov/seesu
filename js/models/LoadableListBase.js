@@ -84,15 +84,16 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	getMainListChangeOpts: function() {},
 	page_limit: 30,
 	getPagingInfo: function(nesting_name) {
+		var page_limit = this.page_limit || this.map_parent.page_limit;
 		var length = this.getLength(nesting_name);
-		var has_pages = Math.floor(length/this.page_limit);
-		var remainder = length % this.page_limit;
+		var has_pages = Math.floor(length/page_limit);
+		var remainder = length % page_limit;
 		var next_page = has_pages + 1;
 
 		return {
 			current_length: length,
 			has_pages: has_pages,
-			page_limit: this.page_limit || this.map_parent.page_limit,
+			page_limit: page_limit,
 			remainder: remainder,
 			next_page: next_page
 		};
