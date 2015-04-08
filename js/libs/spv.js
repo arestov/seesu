@@ -674,6 +674,8 @@ var constr_id = 0;
   * Gleb Arestov mod
   */
 // Inspired by base2 and Prototype
+
+// var llcount = 0;
 (function(){
 	var
 		fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/,
@@ -723,14 +725,15 @@ var constr_id = 0;
 			prototype[prop_name] = needSuper ?
 				allowParentCall(prop_name, props[prop_name], _super) :
 				props[prop_name];
-			if (needSuper && prop_name == 'init' && props[prop_name].length > 3) {
-				// prop_name
-				// props[prop_name]
-				var value = props[prop_name];
-				console.log(value.length, value);
-				// debugger;
+			// if (needSuper && prop_name == 'init' && props[prop_name].length > 1) {
+			// 	llcount++
+			// 	// prop_name
+			// 	// props[prop_name]
+			// 	var value = props[prop_name];
+			// 	console.log(llcount, value.length, value.toString());
+			// 	// debugger;
 
-			}
+			// }
 		}
 
 		// Populate our constructed prototype object
