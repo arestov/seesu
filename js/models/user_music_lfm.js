@@ -97,12 +97,15 @@ SongsList.extendTo(LULATracks, cloneObj({
 	]
 }, auth_bh));
 
+var slashPrefix = function(src) {
+	return '/' + src;
+};
 
 var LULA = function() {};//artist, один артист с треками
 BrowseMap.Model.extendTo(LULA, cloneObj({
 	model_name: 'lula',
 	netdata_as_states: {
-		url_part: 'artist',
+		url_part: [slashPrefix, 'artist'],
 		nav_title: 'artist',
 		artist_name: 'artist',
 		playcount: null,

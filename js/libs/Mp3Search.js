@@ -483,9 +483,9 @@ var getMatchedSongs = function(music_list, msq) {
 							search_result: null,
 							search_fail: true,
 
-							search_complete: true,
 							search_progress: false,
-							has_request: false
+							has_request: false,
+							search_complete: true
 						});
 					} else if (music_list instanceof pv.Model) {
 						pv.update(_this, 'search_fail', false);
@@ -509,9 +509,10 @@ var getMatchedSongs = function(music_list, msq) {
 							search_result: getMatchedSongs(music_list, msq),
 							search_fail: false,
 
-							search_complete: true,
+							
 							search_progress: false,
-							has_request: false
+							has_request: false,
+							search_complete: true
 						});
 					}
 					
@@ -521,9 +522,9 @@ var getMatchedSongs = function(music_list, msq) {
 					_this.updateManyStates({
 						search_fail: true,
 
-						search_complete: true,
 						search_progress: false,
-						has_request: false
+						has_request: false,
+						search_complete: true
 					});
 				});
 
@@ -702,11 +703,11 @@ var getMatchedSongs = function(music_list, msq) {
 				['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
 				function(h_best_f, h_files, h_mp3_files, s_complete, exsrc_incomplete) {
 					return {
-						search_complete: s_complete,
 						have_best_tracks: h_best_f,
 						have_tracks: h_files,
 						have_mp3_tracks: h_mp3_files,
-						exsrc_incomplete: exsrc_incomplete
+						exsrc_incomplete: exsrc_incomplete,
+						search_complete: s_complete
 					};
 				}
 			],
