@@ -13,16 +13,16 @@ var isEvNSMatching = (function() {
 	var ev_na_cache = {};
 
 	return function isEvNSMatching(listener_name, trigger_name) {
-			if (!ev_na_cache.hasOwnProperty(trigger_name)) {
-				ev_na_cache[trigger_name] = {};
-			}
-			var cac_space = ev_na_cache[trigger_name];
-			if (!cac_space.hasOwnProperty(listener_name)) {
-				cac_space[listener_name] = check(listener_name, trigger_name);
-			}
-			return cac_space[listener_name];
+		if (!ev_na_cache.hasOwnProperty(trigger_name)) {
+			ev_na_cache[trigger_name] = {};
+		}
+		var cac_space = ev_na_cache[trigger_name];
+		if (!cac_space.hasOwnProperty(listener_name)) {
+			cac_space[listener_name] = check(listener_name, trigger_name);
+		}
+		return cac_space[listener_name];
 
-		};
+	};
 })();
 
 var clean_obj = {};
@@ -246,7 +246,7 @@ FastEventor.prototype = {
 		var reg_fires = this.getPossibleRegfires(namespace);
 		if (reg_fires && reg_fires.length){
 			reg_args = reg_fires[0].fn.call(this.sputnik, namespace, name_parts);
-			if (reg_args) {
+			if (typeof reg_args != 'undefined') {
 				fired = true;
 				if (!Array.isArray(reg_args)) {
 					one_reg_arg = reg_args;
