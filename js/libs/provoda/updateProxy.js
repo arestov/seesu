@@ -136,7 +136,7 @@ function _setUndetailedState(etr, i, state_name, value) {
 
 function proxyStch(target, value, state_name) {
 	var old_value = target.zdsv.stch_states[state_name];
-	if (old_value != value) {
+	if (old_value !== value) {
 		target.zdsv.stch_states[state_name] = value;
 		var method = (target[ getSTCHfullname( state_name ) ] || (target.state_change && target.state_change[state_name]));
 
@@ -152,7 +152,7 @@ function _handleStch(etr, original_states, state_name, value, skip_handler, sync
 		return;
 	}
 	var old_value = etr.zdsv.stch_states[state_name];
-	if (old_value != value) {
+	if (old_value !== value) {
 		var method;
 		
 		if (stateChanger){
@@ -206,7 +206,7 @@ function getComplexChanges(etr, original_states, changes_list) {
 function _replaceState(etr, original_states, state_name, value, stack) {
 	if (state_name){
 		var old_value = etr.states[state_name];
-		if (old_value != value){
+		if (old_value !== value){
 			//value = value || false;
 			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 
