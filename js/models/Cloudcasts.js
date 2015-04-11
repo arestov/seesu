@@ -99,7 +99,6 @@ LoadableList.extendTo(CloudcastsList, {
 			}
 		}, true],
 		['mixcloud', 'get', function() {
-			debugger;
 			return [['track', this.state('artist_key'), this.state('track_key'), this.tcl_type].join('/') + '/', null];
 		}]
 	]
