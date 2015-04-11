@@ -313,6 +313,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			for (i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
 					ba_die( this.levels[i].freezed );
+					this.levels[i].freezed.closed = false;
 					this.levels[i].freezed = null;
 				}
 				
