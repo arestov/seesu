@@ -184,7 +184,6 @@ LoadableList.extendTo(MfCor, {
 		this.files_investg = null;
 		this.last_search_opts = null;
 		this.file = null;
-		this.videos_loaded = null;
 		this.notifier = null;
 		this.sf_notf = null;
 		this.vk_ntf_readed = null;

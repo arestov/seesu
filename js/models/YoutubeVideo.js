@@ -30,6 +30,15 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 			}
 		});
 	},
+	'compx-triple': [
+		['previews'],
+		function(previews) {
+			if (previews && previews.start && previews.middle &&  previews.end) {
+				return [previews.start, previews.middle, previews.end];
+				// return previews;
+			}
+		}
+	],
 	full_page_need: true,
 	requestVideo: function() {
 		var cant_show = this.state('cant_show');

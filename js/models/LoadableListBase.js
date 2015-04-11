@@ -1,5 +1,7 @@
 define(['js/libs/BrowseMap', 'spv', 'pv'], function(BrowseMap, spv, pv) {
 "use strict";
+var pvUpdate = pv.update;
+
 var LoadableListBase = function() {};
 BrowseMap.Model.extendTo(LoadableListBase, {
 	hndSPlOnFocus: function(e) {
@@ -143,6 +145,8 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			}
 			target.dataListChange(mlc_opts, items_list, nesting_name);
 		}
+		pvUpdate(target, nesting_name + '$length', target.getLength(nesting_name));
+
 	},
 	getRelativeRequestsGroups: function(space) {
 		var main_models = this.getNesting(this.main_list_name);

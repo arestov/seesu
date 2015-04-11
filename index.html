@@ -950,9 +950,8 @@
 
 			</div>
 			<div class="files_appendix">
-				<div class="track-video">
-					<ul pv-anchor='video_list'></ul>
-				</div>
+				<!--pv-replace sample_name:track-video pv-when:yt_videos$length-->
+	
 				<div class="file_source">
 					<span class="hidden file_source_cont" pv-class="file_source_cont {{!current_source && 'hidden'}}">
 						<span class="desc">file from</span> <a href="" class="external" pv-props="href:{{current_source.source_link}}" pv-text="{{current_source.source_name}}"></a>
@@ -1799,6 +1798,30 @@
 				<a class="external" pv-props="href:{{entity.link}}" pv-text="{{entity.link_text}}"></a>
 			</span>
 		</div>
+		<ul class="track-video" >
+			<li class="you-tube-video-link"
+				pv-nest="yt_videos"
+				pv-props="title:{{nav_title}}"
+				pv-events="click|(sp,pd)::requestVideo"
+				pv-type="way-point"
+				pv-class="you-tube-video-link {{cant_show && 'cant-show'}}">
+				<a class='video-preview external' pv-props="href:{{ yt_id && 'http://www.youtube.com/watch?v=' + yt_id }}">
+					<img  alt="" class="whole" pv-props="src:{{previews.default}}" pv-when="!triple"/>
+					<span class="preview-slicer" pv-repeat="pict in triple">
+						<img
+							class="preview-part" alt="" 
+							pv-props="src:{{pict}}"
+							pv-class="
+								preview-part
+								{{$first && 'preview-start'}}
+								{{$middle && 'preview-middle'}}
+								{{$last  && 'preview-end'}}						
+								"
+						/>
+					</span>
+				</a>
+			</li>
+		</ul>
 		<!-- // ui samples -->
 	</div>
 <div id="slider">
