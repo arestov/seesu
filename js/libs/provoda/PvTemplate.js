@@ -479,8 +479,9 @@ var parser = {
 			var result = [];
 			var declarations = full_declaration.split(regxp_spaces);
 			for (var i = 0; i < declarations.length; i++) {
-				var decr_parts =  declarations[i].split('|');
-				var cur = decr_parts[0].split(':');
+				var cur = declarations[i].split(':');
+				var decr_parts =  cur[0].split('|');
+				
 				var dom_event = cur.shift();
 
 				result.push(this.createPVEventData(dom_event, this.createEventParams(cur), decr_parts[1]));
