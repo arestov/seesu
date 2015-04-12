@@ -137,11 +137,7 @@ LoadableListBase.extendTo(VKPostsList, {
 		}
 	],
 	model_name: 'vk_posts',
-	hp_bound: {
-		artist_name: null,
-		track_name: null
-	},
-	//model_name: 'cloudcasts_list',
+
 	//splitItemData: ,
 	
 	'nest_rqc-lists_list': VKPostSongs,
@@ -224,7 +220,7 @@ LoadableListBase.extendTo(VKPostsList, {
 		]],
 		['vktapi', 'get', function() {
 			return ['newsfeed.search', {
-				q: this.head_props.artist_name + ' ' + this.head_props.track_name + ' has:audio',
+				q: this.head.artist_name + ' ' + this.head.track_name + ' has:audio',
 				extended: 1
 			}, null];
 		}]
