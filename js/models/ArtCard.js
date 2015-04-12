@@ -763,7 +763,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 				}
 
 				return {
-					discogs_id: artist_info.id
+					discogs_id: artist_info && artist_info.id
 				};
 
 				// return {
