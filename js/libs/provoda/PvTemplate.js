@@ -474,17 +474,18 @@ var parser = {
 		'pv-events': function(node, full_declaration) {
 			/*
 			click:Callback
-			mousemove|(sp,pd):MovePoints
+			mousemove|sp,pd:MovePoints
 			*/
 			var result = [];
 			var declarations = full_declaration.split(regxp_spaces);
 			for (var i = 0; i < declarations.length; i++) {
 				var cur = declarations[i].split(':');
-				var decr_parts =  cur[0].split('|');
-				
 				var dom_event = cur.shift();
+				var decr_parts =  dom_event.split('|');
+				
+				
 
-				result.push(this.createPVEventData(dom_event, this.createEventParams(cur), decr_parts[1]));
+				result.push(this.createPVEventData(decr_parts[0], this.createEventParams(cur), decr_parts[1]));
 			}
 			return result;
 		}
