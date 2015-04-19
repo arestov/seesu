@@ -36,6 +36,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 	'compx-possible_tags':{
 		depends_on: ['user_tags_string'],
 		fn: function(user_tags_string) {
+			if (!user_tags_string) {return [];}
 			return (user_tags_string && spv.getExistingItems(user_tags_string.trim().split(this.comma_regx))).slice(0, 10) || [];
 		}
 	},
