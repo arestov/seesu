@@ -13,9 +13,7 @@ test('reconnect when peer disconnects', function (t) {
   var swarm1 = new Swarm(infoHash, peerId1)
   portfinder.getPort(function (err, port) {
     if (err) throw err
-    swarm1.listen(port)
-
-    swarm1.on('listening', function () {
+    swarm1.listen(port, function () {
       var swarm2 = new Swarm(infoHash, peerId2)
 
       var time1 = 0
@@ -24,11 +22,13 @@ test('reconnect when peer disconnects', function (t) {
           t.ok(wire, 'Peer joined via listening port')
           t.equal(swarm1.wires.length, 1)
 
-          // at some point in future, end wire and prevent reconnect by
-          // using `destroy`
+          // at some point in future, end wire
           setTimeout(function () {
             wire.destroy()
           }, 100)
+
+          // ...and prevent reconnect
+          swarm1._drain = function () {}
         } else if (time1 === 1) {
           t.ok(wire, 'Remote peer reconnected')
           t.equal(swarm1.wires.length, 1)
@@ -60,7 +60,7 @@ test('reconnect when peer disconnects', function (t) {
         time2 += 1
       })
 
-      swarm2.addPeer('127.0.0.1:' + swarm1.port)
+      swarm2.addPeer('127.0.0.1:' + swarm1.address().port)
     })
   })
 })
