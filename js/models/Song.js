@@ -224,17 +224,17 @@ var album_placeholder = {
 
 		}),
 		'compx-mf_cor_has_available_tracks': [
-			['@some:has_available_tracks:mf_cor'],
-			function(state) {
-				return state;
-			}
+			['@some:has_available_tracks:mf_cor']
+		],
+		'compx-play': [
+			['@one:play:current_mopla']
 		],
 
 		hndMfcBeforePlay: function(mopla) {
 			this.player.changeNowPlaying(this, mopla.state('play'));
 			this.mopla = mopla;
-			pv.updateNesting(this, 'current_mopla', mopla);
-			pv.update(this, 'play', mopla.state('play'));
+			// pv.updateNesting(this, 'current_mopla', mopla);
+			// pv.update(this, 'play', mopla.state('play'));
 		},
 		hndMfcError: function(can_play) {
 			this.player.trigger("song-play-error", this, can_play);

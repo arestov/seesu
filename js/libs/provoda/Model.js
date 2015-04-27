@@ -835,7 +835,8 @@ add({
 		} else {
 			var nesting_name = nwatch.selector[skip];
 			if (this.nes_match_index && this.nes_match_index[nesting_name]) {
-				this.nes_match_index[nesting_name].remoVe();
+				this.nes_match_index[nesting_name] = spv.findAndRemoveItem(this.nes_match_index[nesting_name], nwatch);
+				// this.nes_match_index[nesting_name].remoVe();
 			}
 		}
 		

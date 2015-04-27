@@ -22,9 +22,9 @@ PlayerBase.extendTo(PlayerComplex, {
 		this.resolved.playNext();
 	},
 	onPlaybackError: function(mo, can_play) {
-		if (this.c_song == mo) {
-			pv.update(mo, "player_song", false);
-		}
+		// if (this.c_song == mo) {
+		// 	pv.update(mo, "player_song", false);
+		// }
 
 		var resolved = this.resolved;
 		var cur_song = resolved && resolved.state('current_song');
