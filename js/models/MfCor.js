@@ -178,7 +178,12 @@ LoadableList.extendTo(MfCor, {
 		}
 		
 	},
-
+	'compx-play': [
+		['@one:play:used_mopla']
+	],
+	'stch-used_mopla': function(target, state) {
+		target.updateNesting('used_mopla', state);
+	},
 	init: function(opts, data, omo) {
 		this._super.apply(this, arguments);
 		this.files_investg = null;
@@ -195,19 +200,19 @@ LoadableList.extendTo(MfCor, {
 		this.mo = this.map_parent;
 		this.files_models = {};
 		this.complects = {};
-		this.subscribed_to = [];
+		// this.subscribed_to = [];
 
 
-		var _this = this;
+		// var _this = this;
 
-		this.mfPlayStateChange = function(e) {
-			if (_this.state('used_mopla') == this){
-				pv.update(_this, 'play', e.value);
-			}
-		};
-		this.mfError = function() {
-			_this.checkMoplas(this);
-		};
+		// this.mfPlayStateChange = function(e) {
+		// 	if (_this.state('used_mopla') == this){
+		// 		pv.update(_this, 'play', e.value);
+		// 	}
+		// };
+		// this.mfError = function() {
+		// 	_this.checkMoplas(this);
+		// };
 		/*
 		this.semChange = function(val) {
 			_this.semChanged(val);
@@ -412,7 +417,12 @@ LoadableList.extendTo(MfCor, {
 				return selected_mopla_to_use || almost_selected_mopla;
 			}
 		},
-		
+		can_play: [
+			['mopla_to_use'],
+			function(mopla) {
+				return !!mopla;
+			}
+		],
 		
 		mopla_to_use: {
 			depends_on: ["user_preferred", "default_mopla"],
@@ -439,12 +449,20 @@ LoadableList.extendTo(MfCor, {
 			}
 		}
 	},
+	'stch-unavailable@sorted_completcs.moplas_list': function(target, state, old_state, source) {
+
+		//source.item
+		if (state) {
+			target.checkMoplas(source.item);
+			// debugger;
+		}
+	},
 	state_change: {
-		"mopla_to_use": function(target, nmf, omf) {
-			if (nmf){
-				target.listenMopla(nmf);
-			}
-		},
+		// "mopla_to_use": function(target, nmf, omf) {
+		// 	if (nmf){
+		// 		target.listenMopla(nmf);
+		// 	}
+		// },
 		"selected_mopla": function() {
 
 		},
@@ -458,17 +476,17 @@ LoadableList.extendTo(MfCor, {
 			}
 			pv.updateNesting(target, 'current_mopla', nmf);
 		},
-		"mopla_to_preload": function(target, nmf, omf){
-			if (omf){
-				//omf.removeCache();
-			}
-			if (nmf) {
-				//nmf.load();
-			}
-		},
-		"default_mopla": function(target, nmf, omf) {
+		// "mopla_to_preload": function(target, nmf, omf){
+		// 	if (omf){
+		// 		//omf.removeCache();
+		// 	}
+		// 	if (nmf) {
+		// 		//nmf.load();
+		// 	}
+		// }
+		// "default_mopla": function(target, nmf, omf) {
 			
-		}
+		// }
 
 	},
 	'compx-current_source': [
@@ -685,15 +703,15 @@ LoadableList.extendTo(MfCor, {
 		pv.updateNesting(this, 'sorted_completcs', sorted_completcs);
 
 	},*/
-	listenMopla: function(mopla) {
-		if (this.subscribed_to.indexOf(mopla) == -1){
-			mopla.on('state_change-play', this.mfPlayStateChange);
-			mopla.on('unavailable', this.mfError);
+	// listenMopla: function(mopla) {
+	// 	if (this.subscribed_to.indexOf(mopla) == -1){
+	// 		mopla.on('state_change-play', this.mfPlayStateChange);
+	// 		mopla.on('unavailable', this.mfError);
 
-			this.subscribed_to.push(mopla);
-		}
-		return this;
-	},
+	// 		this.subscribed_to.push(mopla);
+	// 	}
+	// 	return this;
+	// },
 	checkMoplas: function(unavailable_mopla) {
 		var current_mopla_unavailable;
 		if (this.state("used_mopla") == unavailable_mopla){
@@ -764,22 +782,24 @@ LoadableList.extendTo(MfCor, {
 		}
 		
 	},
-	playSelectedByUser: function(mopla) {
-		mopla.use_once = true;
+	selectMopla: function(mopla) {
 		this.updateManyStates({
 			'selected_mopla_to_use': mopla,
 			'selected_mopla': mopla
 		});
-
 
 		var t_mopla = this.state("mopla_to_use");
 		if (t_mopla){
 			if (this.state("used_mopla") != t_mopla){
 				pv.update(this, "used_mopla", false);
 			}
+			return true;
+		}
+	},
+	playSelectedByUser: function(mopla) {
+		if (this.selectMopla(mopla)) {
 			this.play();
 		}
-		
 	},
 	play: function(){
 		if (this.mo.state('forbidden_by_copyrh')) {
