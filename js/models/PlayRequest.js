@@ -130,7 +130,7 @@ pv.Model.extendTo(PlayRequest, {
 		}
 
 	},
-	'no_wait': [
+	'compx-no_wait': [
 		['possible_song', 'song_of_wanted_file'],
 		function(possible_song, song_of_wanted_file) {
 			return possible_song === song_of_wanted_file;
