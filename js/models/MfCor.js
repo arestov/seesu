@@ -156,15 +156,15 @@ var sources_map = {
 
 var MfCor = function() {};
 LoadableList.extendTo(MfCor, {
-	hndMoImportant: function(e) {
+	// hndMoImportant: function(e) {
 			
-		if (e.value){
+	// 	if (e.value){
 
-			if (!this.getLength('yt_videos')){
-				this.requestMoreData('yt_videos');
-			}
-		}
-	},
+	// 		if (!this.getLength('yt_videos')){
+	// 			this.requestMoreData('yt_videos');
+	// 		}
+	// 	}
+	// },
 	hndTrackNameCh: function(e) {
 		if (e.value){
 			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track}, this.current_motivator);
@@ -218,7 +218,7 @@ LoadableList.extendTo(MfCor, {
 			_this.semChanged(val);
 		};
 		*/
-		this.wch(this.mo, 'is_important', this.hndMoImportant);
+		// this.wch(this.mo, 'is_important', this.hndMoImportant);
 
 
 
@@ -250,6 +250,9 @@ LoadableList.extendTo(MfCor, {
 
 		this.intMessages();
 	},
+	'compx-is_important': [
+		['^is_important']
+	],
 	'compx-has_any_vk_results': [
 		['@some:has_any_data:vk_source'],
 		function (has_any_data) {
@@ -312,58 +315,29 @@ LoadableList.extendTo(MfCor, {
 			return array && array[0] > 0.8;
 		}
 	],
-	chldStHasFiles: function(values_array) {
-		var args = values_array;
-		for (var i = 0; i < args.length; i++) {
-			var cur = args[i];
-			if (cur && cur.length > 1){
-				return true;
-			}
+	'stch-is_important': function(target, state) {
+		if (state) {
+			target.requestMoreData('yt_videos');
 		}
-		return false;
 	},
 	'nest_rqc-yt_videos': YoutubeVideo,
 	'nest_req-yt_videos': [
 		[function(r) {
-			var vs = r && r.feed && r.feed.entry;
-			if (vs && vs.length){
-				
-			
-				
-				var preview_types = ["default","start","middle","end"];
-
-				//set up filter app$control.yt$state.reasonCode != limitedSyndication
-				var length = Math.min(vs.length, 3);
-				var video_arr = new Array(length);
-
-				for (var i=0, l = length; i < l; i++) {
-					var
-						_v = vs[i],
-						tmn = {},
-						v_id = _v['media$group']['yt$videoid']['$t'],
-						v_title = _v['media$group']['media$title']['$t'];
-					var cant_show = spv.getTargetField(_v, "app$control.yt$state.name") == "restricted";
-					cant_show = cant_show || spv.getTargetField(spv.filter(spv.getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
-
-
-					var thmn_arr = spv.getTargetField(_v, "media$group.media$thumbnail");
-					
-					$.each(preview_types, function(i, el) {
-						tmn[el] = spv.filter(thmn_arr, 'yt$name', el)[0].url;
+			var items = r && r.items;
+			if (items && items.length) {
+				var result = [];
+				for (var i = 0; i < Math.min(items.length, 3); i++) {
+					var cur = items[i];
+					result.push({
+						yt_id: cur.id.videoId,
+						title: cur.snippet.title,
+						cant_show: true,
+						previews: {
+							'default': cur.snippet.thumbnails.default.url
+						}
 					});
-
-					video_arr[i] = {
-						yt_id: v_id,
-						cant_show: cant_show,
-						previews: tmn,
-						title: v_title
-					};
 				}
-
-				video_arr.sort(function(a, b){
-					return spv.sortByRules(a, b, ["cant_show"]);
-				});
-				return video_arr;
+				return result;
 			} else {
 				return [];
 			}
@@ -374,24 +348,24 @@ LoadableList.extendTo(MfCor, {
 				source_name: 'youtube.com',
 				get: function(q) {
 					var data = {
-						q: q,
-						v: 2,
-						alt: 'json-in-script'
-						
+						key: 'AIzaSyBvg9b_rzQJJ3ubhS1TeipHpOTqsVnShj4',
+						part: 'id,snippet',
+						maxResults: 3,
+						q: q
 					};
 					
 					return aReq({
-						url: 'http://gdata.youtube.com/feeds/api/videos',
+						url: 'https://www.googleapis.com/youtube/v3/search',
 						dataType: 'jsonp',
 						data: data,
 						resourceCachingAvailable: true,
-						afterChange: function(opts) {
-							if (opts.dataType == 'json'){
-								data.alt = 'json';
-								opts.headers = null;
-							}
+						// afterChange: function(opts) {
+						// 	if (opts.dataType == 'json'){
+						// 		data.alt = 'json';
+						// 		opts.headers = null;
+						// 	}
 
-						},
+						// },
 						thisOriginAllowed: true
 					});
 				},
