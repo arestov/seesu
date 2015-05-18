@@ -1,6 +1,7 @@
 var auto = require('run-auto')
 var DHT = require('bittorrent-dht/server')
 var fs = require('fs')
+var networkAddress = require('network-address')
 var parseTorrent = require('parse-torrent')
 var test = require('tape')
 var WebTorrent = require('../')
@@ -13,7 +14,7 @@ leavesParsed.announce = []
 leavesParsed.announceList = []
 
 test('blocklist blocks peers discovered via DHT', function (t) {
-  t.plan(6)
+  t.plan(7)
 
   var dhtServer = new DHT({ bootstrap: false })
 
@@ -49,7 +50,7 @@ test('blocklist blocks peers discovered via DHT', function (t) {
         t.fail('client1 should not find any peers')
       })
 
-      torrent1.on('blocked-peer', function () {
+      torrent1.on('blockedPeer', function () {
         t.fail('client1 should not block any peers')
       })
     }],
@@ -58,13 +59,13 @@ test('blocklist blocks peers discovered via DHT', function (t) {
       var client2 = new WebTorrent({
         tracker: false,
         dht: { bootstrap: '127.0.0.1:' + r.dhtPort },
-        blocklist: [ '127.0.0.1' ]
+        blocklist: [ '127.0.0.1', networkAddress.ipv4() ]
       })
       client2.on('error', function (err) { t.fail(err) })
 
       var torrent2 = client2.add(leavesParsed)
 
-      torrent2.on('blocked-peer', function () {
+      torrent2.on('blockedPeer', function () {
         t.pass('client2 blocked connection to client1')
       })
 
@@ -73,7 +74,7 @@ test('blocklist blocks peers discovered via DHT', function (t) {
         cb(null, client2)
       })
 
-      torrent2.on('peer', function () {
+      torrent2.on('peer', function (addr) {
         t.fail('client2 should not find any peers')
       })
     }]

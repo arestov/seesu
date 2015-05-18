@@ -65,6 +65,9 @@ pv.addPrototype("SongBase",{
 			}
 		}
 	},
+	'stch-mf_cor_current_mopla': function(target, state) {
+		target.updateNesting('current_mopla', state);
+	},
 	complex_states: {
 		'needs_states_connecting': [
 			['^active_use']

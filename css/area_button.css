@@ -44,26 +44,26 @@
 	.access-request .area_for_button .area-description {
 		display: none;
 		}
-	.area_for_button .desc_prevw_list{
+	.desc_prevw_list{
 		padding:0.2rem 1rem;
 		height: 2rem;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		}
 
-		.area_for_button .desc_prevw_list .desc_item{
+		.desc_prevw_list .desc_item{
 			
 			margin-right: 1rem;
 			}
 			.preview_line-wrap{
 				white-space: nowrap;
 				}
-		.area_for_button .desc_prevw_list .desc_item:after{
+		.desc_prevw_list .desc_item:after{
 			content: " ";
 			visibility: hidden;
 			white-space: normal;
 			}
-			.area_for_button .desc_prevw_list .desc_item-imgcon{
+			.desc_prevw_list .desc_item-imgcon{
 				width: 1rem;
 				height: 1rem;
 				display: inline-block;
@@ -74,7 +74,7 @@
 				background: #666;
 				border-radius: 50%;
 			}
-			.area_for_button .desc_prevw_list .desc_item img{
+			.desc_item-imgcon img{
 				width: 1rem;
 				height: 1rem;
 				border-radius: 50%;

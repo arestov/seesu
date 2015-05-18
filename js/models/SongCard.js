@@ -25,11 +25,6 @@ var sortByGif = spv.getSortFunc([{
 
 var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.initStates(params);
-		
-	},
 	getRqData: function() {
 		return {
 			artist: this.state('artist_name'),
@@ -142,11 +137,7 @@ LoadableListBase.extendTo(VKPostsList, {
 		}
 	],
 	model_name: 'vk_posts',
-	hp_bound: {
-		artist_name: null,
-		track_name: null
-	},
-	//model_name: 'cloudcasts_list',
+
 	//splitItemData: ,
 	
 	'nest_rqc-lists_list': VKPostSongs,
@@ -229,7 +220,7 @@ LoadableListBase.extendTo(VKPostsList, {
 		]],
 		['vktapi', 'get', function() {
 			return ['newsfeed.search', {
-				q: this.head_props.artist_name + ' ' + this.head_props.track_name + ' has:audio',
+				q: this.head.artist_name + ' ' + this.head.track_name + ' has:audio',
 				extended: 1
 			}, null];
 		}]
@@ -240,14 +231,6 @@ var isDepend = pv.utils.isDepend;
 var SongCard = function() {};
 BrowseMap.Model.extendTo(SongCard, {
 	model_name: 'songcard',
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.sub_pa_params = {
-			artist_name: params.artist_name,
-			track_name: params.track_name
-		};
-		this.initStates(params);
-	},
 	'compx-nav_title': {
 		depends_on: ['artist_name', 'track_name'],
 		fn: function(artist_name, track_name) {

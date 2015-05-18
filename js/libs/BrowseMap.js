@@ -271,12 +271,13 @@ var BrowseMap = spv.inh(pv.Eventor, {
 		if (!this.levels[num]){
 			this.levels[num] = {};
 		}
-		if (this.levels[num].free && this.levels[num].free != this.levels[num].freezed){
-			return this.levels[num].free;
+		var levcon = this.levels[num];
+		if (levcon.free && levcon.free != levcon.freezed){
+			return levcon.free;
 		} else{
 			
-			this.levels[num].free = this.createLevel(num, parent_bwlev, resident);
-			return this.levels[num].free;
+			levcon.free = this.createLevel(num, parent_bwlev, resident);
+			return levcon.free;
 		}
 	},
 	freezeMapOfLevel : function(num){
@@ -288,32 +289,33 @@ var BrowseMap = spv.inh(pv.Eventor, {
 		this.startChangesGrouping('freezing');
 
 		for (i = l; i >= 0; i--){
-			if (this.levels[i]){
-				if (this.levels[i].free){
-					if (this.levels[i].free != this.levels[i].freezed){
-						if (this.levels[i].freezed){ //removing old freezed
-							ba_die( this.levels[i].freezed );
-							this.levels[i].freezed.closed = false;
-							this.levels[i].freezed = null;
+			var curf = this.levels[i];
+			if (curf){
+				if (curf.free){
+					if (curf.free != curf.freezed){
+						if (curf.freezed){ //removing old freezed
+							ba_die( curf.freezed );
+							curf.freezed.closed = false;
+							curf.freezed = null;
 						}
-						this.levels[i].freezed = this.levels[i].free;
-						ba_markAsFreezed( this.levels[i].freezed );
+						curf.freezed = curf.free;
+						ba_markAsFreezed( curf.freezed );
 						fresh_freeze = true;
 					}
 				}
-				this.levels[i].free = null;
+				curf.free = null;
 			}
-			
-			
 		}
 
 		
 		//clearing if have too much levels !?!?!??!?!?!
 		if (l + 1 < this.levels.length -1) {
 			for (i= l + 1; i < this.levels.length; i++) {
-				if (this.levels[i].freezed){
-					ba_die( this.levels[i].freezed );
-					this.levels[i].freezed = null;
+				var curd = this.levels[i];
+				if (curd.freezed){
+					curd.freezed.closed = false;
+					ba_die( curd.freezed );
+					curd.freezed = null;
 				}
 				
 			}

@@ -4,22 +4,22 @@ var localize = app_serv.localize;
 var MusicConductorPreview = function() {};
 pv.View.extendTo(MusicConductorPreview, {
 	dom_rp: true,
-	createBase: function() {
-		this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
-		var _this = this;
+	// createBase: function() {
+	// 	this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
+	// 	var _this = this;
 
-		this.button = this.c.find('.area-button').removeClass('hidden');
-		this.button.click(function() {
-			_this.requestPage();
-		});
-		this.addWayPoint(this.button);
-		this.dom_related_props.push('button');
-		this.createTemplate();
-		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
-	},
-	'stch-mp_show': function(target, state) {
-		target.button.toggleClass('button_selected', !!state);
-	},
+	// 	this.button = this.c.find('.area-button').removeClass('hidden');
+	// 	this.button.click(function() {
+	// 		_this.requestPage();
+	// 	});
+	// 	this.addWayPoint(this.button);
+	// 	this.dom_related_props.push('button');
+	// 	this.createTemplate();
+	// 	//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
+	// },
+	// 'stch-mp_show': function(target, state) {
+	// 	target.button.toggleClass('button_selected', !!state);
+	// },
 	'stch-can_expand': function(target, state){
 		if (state){
 			target.requirePart('current-seesu-users');

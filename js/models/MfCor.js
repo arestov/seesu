@@ -156,15 +156,15 @@ var sources_map = {
 
 var MfCor = function() {};
 LoadableList.extendTo(MfCor, {
-	hndMoImportant: function(e) {
+	// hndMoImportant: function(e) {
 			
-		if (e.value){
+	// 	if (e.value){
 
-			if (!this.getLength('yt_videos')){
-				this.requestMoreData('yt_videos');
-			}
-		}
-	},
+	// 		if (!this.getLength('yt_videos')){
+	// 			this.requestMoreData('yt_videos');
+	// 		}
+	// 	}
+	// },
 	hndTrackNameCh: function(e) {
 		if (e.value){
 			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track}, this.current_motivator);
@@ -178,13 +178,17 @@ LoadableList.extendTo(MfCor, {
 		}
 		
 	},
-
+	'compx-play': [
+		['@one:play:used_mopla']
+	],
+	'stch-used_mopla': function(target, state) {
+		target.updateNesting('used_mopla', state);
+	},
 	init: function(opts, data, omo) {
 		this._super.apply(this, arguments);
 		this.files_investg = null;
 		this.last_search_opts = null;
 		this.file = null;
-		this.videos_loaded = null;
 		this.notifier = null;
 		this.sf_notf = null;
 		this.vk_ntf_readed = null;
@@ -196,25 +200,25 @@ LoadableList.extendTo(MfCor, {
 		this.mo = this.map_parent;
 		this.files_models = {};
 		this.complects = {};
-		this.subscribed_to = [];
+		// this.subscribed_to = [];
 
 
-		var _this = this;
+		// var _this = this;
 
-		this.mfPlayStateChange = function(e) {
-			if (_this.state('used_mopla') == this){
-				pv.update(_this, 'play', e.value);
-			}
-		};
-		this.mfError = function() {
-			_this.checkMoplas(this);
-		};
+		// this.mfPlayStateChange = function(e) {
+		// 	if (_this.state('used_mopla') == this){
+		// 		pv.update(_this, 'play', e.value);
+		// 	}
+		// };
+		// this.mfError = function() {
+		// 	_this.checkMoplas(this);
+		// };
 		/*
 		this.semChange = function(val) {
 			_this.semChanged(val);
 		};
 		*/
-		this.wch(this.mo, 'is_important', this.hndMoImportant);
+		// this.wch(this.mo, 'is_important', this.hndMoImportant);
 
 
 
@@ -246,6 +250,9 @@ LoadableList.extendTo(MfCor, {
 
 		this.intMessages();
 	},
+	'compx-is_important': [
+		['^is_important']
+	],
 	'compx-has_any_vk_results': [
 		['@some:has_any_data:vk_source'],
 		function (has_any_data) {
@@ -308,58 +315,29 @@ LoadableList.extendTo(MfCor, {
 			return array && array[0] > 0.8;
 		}
 	],
-	chldStHasFiles: function(values_array) {
-		var args = values_array;
-		for (var i = 0; i < args.length; i++) {
-			var cur = args[i];
-			if (cur && cur.length > 1){
-				return true;
-			}
+	'stch-is_important': function(target, state) {
+		if (state) {
+			target.requestMoreData('yt_videos');
 		}
-		return false;
 	},
 	'nest_rqc-yt_videos': YoutubeVideo,
 	'nest_req-yt_videos': [
 		[function(r) {
-			var vs = r && r.feed && r.feed.entry;
-			if (vs && vs.length){
-				
-			
-				
-				var preview_types = ["default","start","middle","end"];
-
-				//set up filter app$control.yt$state.reasonCode != limitedSyndication
-				var length = Math.min(vs.length, 3);
-				var video_arr = new Array(length);
-
-				for (var i=0, l = length; i < l; i++) {
-					var
-						_v = vs[i],
-						tmn = {},
-						v_id = _v['media$group']['yt$videoid']['$t'],
-						v_title = _v['media$group']['media$title']['$t'];
-					var cant_show = spv.getTargetField(_v, "app$control.yt$state.name") == "restricted";
-					cant_show = cant_show || spv.getTargetField(spv.filter(spv.getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
-
-
-					var thmn_arr = spv.getTargetField(_v, "media$group.media$thumbnail");
-					
-					$.each(preview_types, function(i, el) {
-						tmn[el] = spv.filter(thmn_arr, 'yt$name', el)[0].url;
+			var items = r && r.items;
+			if (items && items.length) {
+				var result = [];
+				for (var i = 0; i < Math.min(items.length, 3); i++) {
+					var cur = items[i];
+					result.push({
+						yt_id: cur.id.videoId,
+						title: cur.snippet.title,
+						cant_show: true,
+						previews: {
+							'default': cur.snippet.thumbnails.default.url
+						}
 					});
-
-					video_arr[i] = {
-						yt_id: v_id,
-						cant_show: cant_show,
-						previews: tmn,
-						title: v_title
-					};
 				}
-
-				video_arr.sort(function(a, b){
-					return spv.sortByRules(a, b, ["cant_show"]);
-				});
-				return video_arr;
+				return result;
 			} else {
 				return [];
 			}
@@ -370,24 +348,24 @@ LoadableList.extendTo(MfCor, {
 				source_name: 'youtube.com',
 				get: function(q) {
 					var data = {
-						q: q,
-						v: 2,
-						alt: 'json-in-script'
-						
+						key: 'AIzaSyBvg9b_rzQJJ3ubhS1TeipHpOTqsVnShj4',
+						part: 'id,snippet',
+						maxResults: 3,
+						q: q
 					};
 					
 					return aReq({
-						url: 'http://gdata.youtube.com/feeds/api/videos',
+						url: 'https://www.googleapis.com/youtube/v3/search',
 						dataType: 'jsonp',
 						data: data,
 						resourceCachingAvailable: true,
-						afterChange: function(opts) {
-							if (opts.dataType == 'json'){
-								data.alt = 'json';
-								opts.headers = null;
-							}
+						// afterChange: function(opts) {
+						// 	if (opts.dataType == 'json'){
+						// 		data.alt = 'json';
+						// 		opts.headers = null;
+						// 	}
 
-						},
+						// },
 						thisOriginAllowed: true
 					});
 				},
@@ -413,7 +391,12 @@ LoadableList.extendTo(MfCor, {
 				return selected_mopla_to_use || almost_selected_mopla;
 			}
 		},
-		
+		can_play: [
+			['mopla_to_use'],
+			function(mopla) {
+				return !!mopla;
+			}
+		],
 		
 		mopla_to_use: {
 			depends_on: ["user_preferred", "default_mopla"],
@@ -440,12 +423,20 @@ LoadableList.extendTo(MfCor, {
 			}
 		}
 	},
+	'stch-unavailable@sorted_completcs.moplas_list': function(target, state, old_state, source) {
+
+		//source.item
+		if (state) {
+			target.checkMoplas(source.item);
+			// debugger;
+		}
+	},
 	state_change: {
-		"mopla_to_use": function(target, nmf, omf) {
-			if (nmf){
-				target.listenMopla(nmf);
-			}
-		},
+		// "mopla_to_use": function(target, nmf, omf) {
+		// 	if (nmf){
+		// 		target.listenMopla(nmf);
+		// 	}
+		// },
 		"selected_mopla": function() {
 
 		},
@@ -459,17 +450,17 @@ LoadableList.extendTo(MfCor, {
 			}
 			pv.updateNesting(target, 'current_mopla', nmf);
 		},
-		"mopla_to_preload": function(target, nmf, omf){
-			if (omf){
-				//omf.removeCache();
-			}
-			if (nmf) {
-				//nmf.load();
-			}
-		},
-		"default_mopla": function(target, nmf, omf) {
+		// "mopla_to_preload": function(target, nmf, omf){
+		// 	if (omf){
+		// 		//omf.removeCache();
+		// 	}
+		// 	if (nmf) {
+		// 		//nmf.load();
+		// 	}
+		// }
+		// "default_mopla": function(target, nmf, omf) {
 			
-		}
+		// }
 
 	},
 	'compx-current_source': [
@@ -686,15 +677,15 @@ LoadableList.extendTo(MfCor, {
 		pv.updateNesting(this, 'sorted_completcs', sorted_completcs);
 
 	},*/
-	listenMopla: function(mopla) {
-		if (this.subscribed_to.indexOf(mopla) == -1){
-			mopla.on('state_change-play', this.mfPlayStateChange);
-			mopla.on('unavailable', this.mfError);
+	// listenMopla: function(mopla) {
+	// 	if (this.subscribed_to.indexOf(mopla) == -1){
+	// 		mopla.on('state_change-play', this.mfPlayStateChange);
+	// 		mopla.on('unavailable', this.mfError);
 
-			this.subscribed_to.push(mopla);
-		}
-		return this;
-	},
+	// 		this.subscribed_to.push(mopla);
+	// 	}
+	// 	return this;
+	// },
 	checkMoplas: function(unavailable_mopla) {
 		var current_mopla_unavailable;
 		if (this.state("used_mopla") == unavailable_mopla){
@@ -765,22 +756,24 @@ LoadableList.extendTo(MfCor, {
 		}
 		
 	},
-	playSelectedByUser: function(mopla) {
-		mopla.use_once = true;
+	selectMopla: function(mopla) {
 		this.updateManyStates({
 			'selected_mopla_to_use': mopla,
 			'selected_mopla': mopla
 		});
-
 
 		var t_mopla = this.state("mopla_to_use");
 		if (t_mopla){
 			if (this.state("used_mopla") != t_mopla){
 				pv.update(this, "used_mopla", false);
 			}
+			return true;
+		}
+	},
+	playSelectedByUser: function(mopla) {
+		if (this.selectMopla(mopla)) {
 			this.play();
 		}
-		
 	},
 	play: function(){
 		if (this.mo.state('forbidden_by_copyrh')) {

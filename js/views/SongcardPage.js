@@ -2,6 +2,7 @@ define(['pv', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct
 function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct) {
 'use strict';
 var localize = app_serv.localize;
+var pvUpdate = pv.update;
 
 var SongcardPage = function() {};
 coct.SPView.extendTo(SongcardPage, {
@@ -91,12 +92,10 @@ pv.View.extendTo(SongcardController, {
 		}
 	],
 	'compx-can_expand_listeners': [
-		['^vmp_show', 'artist_name', 'track_name', 'disallow_seesu_listeners'],
-		function (vmp_show, artist_name, track_name) {
-			return vmp_show && artist_name && track_name;
+		['^vmp_show', 'artist_name', 'track_name', 'disallow_seesu_listeners', 'expanded'],
+		function (vmp_show, artist_name, track_name, disallow_seesu_listeners, expanded) {
+			return vmp_show && artist_name && track_name && expanded && !disallow_seesu_listeners;
 		}
-
-
 	],
 	expand: function() {
 		if (this.expanded){
@@ -121,6 +120,8 @@ pv.View.extendTo(SongcardController, {
 
 		this.rowcs.users_context = users_context;
 		this.dom_related_props.push('rowcs', 't_users');
+
+		pvUpdate(this, 'expanded', true);
 	},
 	createListenersHeader: function(){
 		if (this && this.t_users){

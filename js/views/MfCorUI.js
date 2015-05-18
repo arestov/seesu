@@ -1,6 +1,9 @@
 define(['pv', 'jquery', 'spv', './etc_views'], function(pv, $, spv, etc_views) {
 "use strict";
 var pvUpdate = pv.update;
+
+
+
 var notifyCounterUI = function() {};
 pv.View.extendTo(notifyCounterUI, {
 	createBase: function() {
@@ -12,13 +15,15 @@ pv.View.extendTo(notifyCounterUI, {
 		}
 	}
 });
+
+var li = document.createElement('li');
 var FileIntorrentPromiseUI = function(){};
 pv.View.extendTo(FileIntorrentPromiseUI, {
 	'stch-infoHash': function(target, state) {
 		target.c.text(state);
 	},
 	createBase: function(){
-		this.c = $('<li></li>');
+		this.c = $(li.cloneNode());
 	}
 });
 
@@ -300,76 +305,19 @@ pv.View.extendTo(mfComplectUI, {
 	}
 });
 
-var YoutubePreview = function() {};
-pv.View.extendTo(YoutubePreview, {
-	createBase: function() {
-		var li = $('<li class="you-tube-video-link"></li>');
-		this.c = li;
-		var _this = this;
-
-		this.c.click(function(e){
-			e.stopPropagation();
-			e.preventDefault();
-			_this.RPCLegacy('requestVideo');
-			
-			
-		});
-
-		this.user_link = $("<a class='video-preview external'></a>").appendTo(li);
-
-		this.addWayPoint(li);
-	},
-	remove: function() {
-		this._super();
-		this.user_link = $();
-	},
-	'stch-nav_title': function(target, state) {
-		target.c.attr('title', state || "");
-	},
-	'stch-cant_show': function(target, state) {
-		target.c.toggleClass('cant-show', !!state);
-	},
-	'stch-yt_id': function(target, state) {
-		var link = 'http://www.youtube.com/watch?v=' + state;
-		target.user_link.attr('href', link);
-	},
-	'stch-previews': function(target, thmn) {
-		var imgs = $();
-
-		if (thmn.start && thmn.middle &&  thmn.end){
-			$.each(["start","middle","end"], function(i, el) {
-
-				var span = $("<span class='preview-slicer'></span>");
-
-				$('<img  alt=""/>').addClass('preview-part preview-' + el).attr('src', thmn[el]).appendTo(span);
-
-				imgs = imgs.add(span);
-				span = null;
-
-			});
-		} else {
-			imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn['default']));
-		}
-		target.user_link.empty().append(imgs);
-		imgs = null;
-						
-	}
-});
-
 
 var MfCorUI = function() {};
 pv.View.extendTo(MfCorUI, {
 	children_views:{
 		notifier: notifyCounterUI,
 		vk_auth: etc_views.VkLoginUI,
-		sorted_completcs: mfComplectUI,
-		yt_videos: YoutubePreview
+		sorted_completcs: mfComplectUI
 	},
 	'collch-vk_auth': {
 		place: 'tpl.ancs.messages_c',
 		strict: true
 	},
-	'collch-yt_videos': 'tpl.ancs.video_list',
+	// 'collch-yt_videos': 'tpl.ancs.video_list',
 	// bindBase: function() {
 	// 	//this.createTemplate();
 	// 	var _this = this;

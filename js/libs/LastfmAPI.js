@@ -51,7 +51,7 @@ spv.Class.extendTo(LastfmAPI, {
 			this.username = this.stGet('lfm_user_name') || false;
 		}
 	},
-	api_path: 'http://ws.audioscrobbler.com/2.0/',
+	api_path: 'https://ws.audioscrobbler.com/2.0/',
 	cache_namespace: "lastfm",
 	thisOriginAllowed: true,
 	get: function(method, data, options){

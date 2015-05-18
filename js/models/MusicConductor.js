@@ -483,14 +483,37 @@ BrowseMap.Model.extendTo(MusicConductor, {
 	],
 	'compx-can_load_previews': [
 		['^mp_has_focus'],
-		function(mp_show) {
-			return !!mp_show;
+		function(parent_focus) {
+			return !!parent_focus;
 		}
 	],
+	'compx-preview_images': [
+		['@selected_image:preview_playlists.songs-list'],
+		function(images) {
+			if (!images) {return;}
+
+			var index = {};
+			var result = [];
+
+			for (var i = 0; i < images.length; i++) {
+				var cur = images[i];
+				if (!cur) {continue;}
+
+				var id = cur.lfm_id || cur.url;
+				if (index.hasOwnProperty(id)) {continue;}
+				index[id] = true;
+
+				result.push(cur);
+			}
+
+			return result;
+		}
+	],
+	'nest-preview_playlists': [['world/songs/topnow_hypem', 'world/songs/_'], 'can_load_previews'],
+	'nest-preview_list':
+		[['world/songs', 'world/songs/topnow_hypem', 'world/songs/_', 'world/artists', 'world']],
 	'nest-allpas': ['world'],
 	'nest-сountries': ['сountries'],
-	'nest-preview_hypem': ['world/songs/topnow_hypem', 'can_load_previews'],
-	'nest-preview_lastfm_top': ['world/songs/_', 'can_load_previews'],
 	sub_pa: {
 		сountries: {
 			title: localize('Countries'),

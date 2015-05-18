@@ -72,6 +72,7 @@ AudioCoreSm2Proxy.prototype = {
 	},
 	sendMsg: function(){
 		var args = Array.prototype.slice.call(arguments);
+
 		if (args.length){
 			this.frame.contentWindow.postMessage(this.modern_messaging ? args : JSON.stringify(args), '*');
 		}
