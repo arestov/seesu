@@ -396,6 +396,9 @@ define(['pv', 'spv'], function(pv, spv){
 				}
 			}
 		},
+		// 'compx-idx_player_song': [
+		// 	['songs-list']
+		// ],
 		'stch-player_song@songs-list': function(target, new_state, old, source) {
 			if (!source.item) {
 				var item = findPS(source.items);
