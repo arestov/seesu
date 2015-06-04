@@ -1382,6 +1382,7 @@ spv.Class.extendTo(PvTemplate, {
 		}
 		handleChunks(this.all_chunks, this, false);
 		this.all_chunks = null;
+		this.stwat_index = {};
 
 		if (this.destroyers) {
 			
