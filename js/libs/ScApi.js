@@ -135,6 +135,7 @@ ScMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.length){
 						for (var i=0; i < r.length; i++) {
+							if (!r[i]) {continue;}
 							var ent = _this.makeSong(r[i], msq);
 							if (ent){
 								if (!Mp3Search.hasMusicCopy(music_list,ent)){
