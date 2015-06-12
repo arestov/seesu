@@ -1377,6 +1377,7 @@ spv.Class.extendTo(PvTemplate, {
 		}
 	},
 	destroy: function() {
+		this.dead = true;
 		for (var i = 0; i < this.all_chunks.length; i++) {
 			this.all_chunks[i].dead = true;
 		}
@@ -1539,6 +1540,7 @@ spv.Class.extendTo(PvTemplate, {
 		});
 	},
 	checkChanges: function(changes, full_states, async_changes, current_motivator) {
+		if (this.dead) {return;}
 		//вместо того что бы собирать новый хэш на основе массива изменений используются объект всеъ состояний
 		var matched = [], i = 0;
 		for (i = 0; i < changes.length; i+= 2 ) { //ищем подходящие директивы
@@ -1558,11 +1560,13 @@ spv.Class.extendTo(PvTemplate, {
 			var remainded_stwats = spv.arrayExclude(this.states_watchers, matched);
 			for (i = 0; i < remainded_stwats.length; i++) {
 				remainded_stwats[i].checkFunc(states_summ, async_changes, current_motivator);
+				if (this.dead) {return;}
 			}
 		}
 
 		for (i = 0; i < matched.length; i++) {
 			matched[i].checkFunc(states_summ, async_changes, current_motivator);
+			if (this.dead) {return;}
 		}
 	},
 	getStatesSumm: function(states) {
@@ -1791,6 +1795,7 @@ spv.Class.extendTo(PvTemplate, {
 		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values', true);
 	},
 	parsePvDirectives: function(start_node) {
+		if (this.dead) {return;}
 		var struc_store = this.struc_store;
 		start_node = 'nodeType' in start_node ? start_node : start_node[0];
 
@@ -1806,6 +1811,7 @@ spv.Class.extendTo(PvTemplate, {
 				list_for_binding[ i + 2 ],
 				all_chunks);
 		}
+		if (this.dead) {return;}
 		this.all_chunks = this.all_chunks.concat(all_chunks);
 
 		
