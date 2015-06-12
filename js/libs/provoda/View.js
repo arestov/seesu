@@ -1,4 +1,5 @@
-define(['spv', './helpers',  'jquery', './updateProxy'], function(spv, hp, $, updateProxy) {
+define(['spv', './helpers',  'jquery', './updateProxy', './prsStCon'],
+function(spv, hp, $, updateProxy, prsStCon) {
 'use strict';
 var pvUpdate = updateProxy.update;
 var $v = hp.$v;
@@ -140,8 +141,8 @@ StatesEmitter.extendTo(View, {
 			}
 		}
 		
-		this.prsStCon.connect.parent(this);
-		this.prsStCon.connect.root(this);
+		prsStCon.connect.parent(this);
+		prsStCon.connect.root(this);
 		return this;
 	},
 	handleTemplateRPC: function(method) {
