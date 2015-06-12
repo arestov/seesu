@@ -617,50 +617,45 @@ add({
 			return state;
 		};
 
+		var fromArray = function(state_name, cur) {
+			return {
+				depends_on: cur[0],
+				fn: cur[1],
+				name: state_name
+			};
+		};
+
+		var declr = function(comlx_name, cur) {
+			var item = cur instanceof Array ? fromArray(comlx_name, cur) : cur;
+			item.name = comlx_name;
+			if (!item.fn) {
+				item.fn = identical;
+			}
+			return item;
+		};
+
 		var collectCompxs1part = function(compx_check) {
-			for (var comlx_name in this){
-				var name = getUnprefixed(comlx_name);
-				if (name){
-					
-					var cur = this[comlx_name];
+			for (var prefixed_name in this){
+				var comlx_name = getUnprefixed(prefixed_name);
+				if (comlx_name){
+					var cur = this[prefixed_name];
 					if (!cur) {continue;}
-					if (cur instanceof Array){
-						cur = {
-							depends_on: cur[0],
-							fn: cur[1],
-							name: name
-						};
-					} else {
-						this[comlx_name].name = name;
-					}
-					if (!cur.fn) {
-						cur.fn = identical;
-					}
-					compx_check[name] = cur;
-					this.full_comlxs_list.push(cur);
+
+					var item = declr(comlx_name, cur);
+					compx_check[comlx_name] = item;
+					this.full_comlxs_list.push(item);
 				}
 			}
 		};
 		var collectCompxs2part = function(compx_check) {
 			for (var comlx_name in this.complex_states){
 				if (!compx_check[comlx_name]){
-					
 					var cur = this.complex_states[comlx_name];
 					if (!cur) {continue;}
-					if (cur instanceof Array){
-						cur = {
-							depends_on: cur[0],
-							fn: cur[1],
-							name: comlx_name
-						};
-					} else {
-						this.complex_states[comlx_name].name = comlx_name;
-					}
-					if (!cur.fn) {
-						cur.fn = identical;
-					}
-					compx_check[comlx_name] = cur;
-					this.full_comlxs_list.push(cur);
+
+					var item = declr(comlx_name, cur);
+					compx_check[comlx_name] = item;
+					this.full_comlxs_list.push(item);
 				}
 			}
 		};
