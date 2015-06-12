@@ -1,4 +1,5 @@
-define(['spv', './helpers', 'jquery', './updateProxy', './StatesLabour'], function(spv, hp, $, updateProxy, StatesLabour) {
+define(['spv', './helpers', 'jquery', './updateProxy', './StatesLabour', './prsStCon'],
+function(spv, hp, $, updateProxy, StatesLabour, prsStCon) {
 'use strict';
 return function(Eventor) {
 
@@ -479,76 +480,6 @@ var watchNestingAsState = function(md, nesting_name, state_name) {
 };
 
 add({
-	prsStCon: {
-		toList: function(obj) {
-			var result = [];
-			for (var p in obj){
-				if (obj.hasOwnProperty(p)){
-					result.push(obj[p]);
-				}
-			}
-			return result;
-		},
-		connect: {
-			parent: function(md) {
-				var list = md.conndst_parent;
-				if (!list){
-					return;
-				}
-				for (var i = 0; i < list.length; i++) {
-					var cur = list[i];
-					var count = cur.ancestors;
-					var target = md;
-					while (count){
-						count--;
-						target = target.getStrucParent();
-					}
-					if (!target){
-						throw new Error();
-					}
-					md.wlch(target, cur.state_name, cur.full_name);
-				}
-
-			},
-			nesting: function(md) {
-				var list = md.conndst_nesting;
-				if (!list){
-					return;
-				}
-				if (!md.archivateChildrenStates) {
-					throw new Error('cant calculate nesting based complex states for view (only for models)');
-				}
-				for (var i = 0; i < list.length; i++) {
-					var cur = list[i];
-					
-					if (cur.state_name) {
-						// md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
-					} else {
-						// watchNestingAsState(md, cur.nesting_name, cur.full_name);
-					}
-					
-					
-					
-
-				}
-			},
-			root: function(md) {
-				var list = md.conndst_root;
-				if (!list){
-					return;
-				}
-				for (var i = 0; i < list.length; i++) {
-					var cur = list[i];
-					var target = md.getStrucRoot();
-					if (!target){
-						throw new Error();
-					}
-					md.wlch(target, cur.state_name, cur.full_name);
-				}
-				
-			}
-		}
-	},
 	collectStatesConnectionsProps: function() {
 		/*
 		'compx-some_state': [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
@@ -556,15 +487,12 @@ add({
 		}]
 		*/
 		/*
-
-
 				nest_match: [
 			['songs-list', 'mf_cor', 'sorted_completcs']
 		]
-
 		*/
 
-		this.compx_nest_matches = []
+		this.compx_nest_matches = [];
 
 		var states_of_parent = {};
 		var states_of_nesting = {};
@@ -598,13 +526,11 @@ add({
 			}
 		}
 
-		this.conndst_parent = this.prsStCon.toList(states_of_parent);
-		this.conndst_nesting = this.prsStCon.toList(states_of_nesting);
-		this.conndst_root = this.prsStCon.toList(states_of_root);
+		this.conndst_parent = prsStCon.toList(states_of_parent);
+		this.conndst_nesting = prsStCon.toList(states_of_nesting);
+		this.conndst_root = prsStCon.toList(states_of_root);
 
 	},
-
-	
 //	full_comlxs_list: [],
 	compx_check: {},
 //	full_comlxs_index: {},

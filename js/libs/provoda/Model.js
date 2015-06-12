@@ -1,4 +1,5 @@
-define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclaredNestings', './updateProxy'], function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, updateProxy) {
+define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclaredNestings', './prsStCon', './updateProxy'],
+function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy) {
 'use strict';
 return function(StatesEmitter, big_index, views_proxies, sync_sender) {
 var push = Array.prototype.push;
@@ -500,9 +501,9 @@ var modelInit = (function() {
 
 
 
-		this.prsStCon.connect.parent(this);
-		this.prsStCon.connect.root(this);
-		this.prsStCon.connect.nesting(this);
+		prsStCon.connect.parent(this);
+		prsStCon.connect.root(this);
+		prsStCon.connect.nesting(this);
 
 
 
