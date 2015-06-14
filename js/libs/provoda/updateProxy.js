@@ -211,7 +211,7 @@ function _replaceState(etr, original_states, state_name, value, stack) {
 			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 
 			if (!original_states.hasOwnProperty(state_name)) {
-				original_states[state_name] = etr.states[state_name];
+				original_states[state_name] = old_value;
 			}
 			etr.states[state_name] = value;
 			stack.push(state_name, value);
