@@ -102,9 +102,9 @@ SyncReceiver.prototype = {
 			var target_model = this.models_index[message._provoda_id];
 			var target_md_proxy = this.md_proxs_index[message._provoda_id];
 
-			for (var i = 0; i < message.value.length; i+=2) {
-				var state_name = message.value[ i ];
-				var state_value = message.value[ i +1 ];
+			for (var i = 0; i < message.value.length; i+=3) {
+				var state_name = message.value[ i +1 ];
+				var state_value = message.value[ i +2 ];
 				target_model.states[state_name] = target_md_proxy.states[state_name] = state_value;
 			}
 

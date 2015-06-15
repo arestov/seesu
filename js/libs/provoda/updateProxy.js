@@ -124,8 +124,8 @@ function updateProxy(etr, changes_list, opts) {
 }
 
 function iterateChList(changes_list, context, cb, zdsv) {
-	for (var i = 0; i < changes_list.length; i+=2) {
-		cb(context, i, changes_list[i], changes_list[i+1], zdsv);
+	for (var i = 0; i < changes_list.length; i+=3) {
+		cb(context, i, changes_list[i+1], changes_list[i+2], zdsv);
 	}
 }
 
@@ -186,14 +186,14 @@ function _handleStch(etr, original_states, state_name, value, skip_handler, sync
 function getChanges(etr, original_states, changes_list, opts, result_arr) {
 	var changed_states = result_arr || [];
 	var i;
-	for (i = 0; i < changes_list.length; i+=2) {
-		_replaceState(etr, original_states, changes_list[i], changes_list[i+1], changed_states);
+	for (i = 0; i < changes_list.length; i+=3) {
+		_replaceState(etr, original_states, changes_list[i+1], changes_list[i+2], changed_states);
 	}
 	if (etr.updateTemplatesStates){
 		etr.updateTemplatesStates(changes_list, opts && opts.sync_tpl);
 	}
-	for (i = 0; i < changes_list.length; i+=2) {
-		_handleStch(etr, original_states, changes_list[i], changes_list[i+1], opts && opts.skip_handler, opts && opts.sync_tpl);
+	for (i = 0; i < changes_list.length; i+=3) {
+		_handleStch(etr, original_states, changes_list[i+1], changes_list[i+2], opts && opts.skip_handler, opts && opts.sync_tpl);
 	}
 	return changed_states;
 }
@@ -214,19 +214,18 @@ function _replaceState(etr, original_states, state_name, value, stack) {
 				original_states[state_name] = old_value;
 			}
 			etr.states[state_name] = value;
-			stack.push(state_name, value);
+			stack.push(true, state_name, value);
 		}
 	}
 }
 
 function getComplexInitList(etr) {
+	if (!etr.full_comlxs_list) {return;}
 	var result_array = [];
-
-	if (!etr.full_comlxs_list) {return result_array;}
 
 	for (var i = 0; i < etr.full_comlxs_list.length; i++) {
 		var cur = etr.full_comlxs_list[i];
-		result_array.push(cur.name, compoundComplexState(etr, cur));
+		result_array.push(true, cur.name, compoundComplexState(etr, cur));
 	}
 
 	return result_array;
@@ -243,8 +242,8 @@ function getTargetComplexStates(etr, changes_list) {
 
 	var i, cur;
 
-	for ( i = 0; i < changes_list.length; i+=2) {
-		cur = etr.full_comlxs_index[changes_list[i]];
+	for ( i = 0; i < changes_list.length; i+=3) {
+		cur = etr.full_comlxs_index[changes_list[i+1]];
 		if (!cur){
 			continue;
 		}
@@ -257,7 +256,7 @@ function getTargetComplexStates(etr, changes_list) {
 
 	for ( i = 0; i < matched_compxs.length; i++) {
 		cur = matched_compxs[i];
-		result_array.push(cur.name, compoundComplexState(etr, cur));
+		result_array.push(true, cur.name, compoundComplexState(etr, cur));
 	}
 
 	return result_array;
@@ -273,7 +272,7 @@ function compoundComplexState(etr, temp_comx) {
 
 function compressChangesList(result_changes, changes_list, i, prop_name, value, counter) {
 	if (result_changes[prop_name] !== true){
-		var num = (changes_list.length - 1) - counter * 2;
+		var num = (changes_list.length - 1) - counter * 3;
 		changes_list[ num - 1 ] = prop_name;
 		changes_list[ num ] = value;
 
@@ -284,7 +283,7 @@ function compressChangesList(result_changes, changes_list, i, prop_name, value, 
 
 function reversedIterateChList(changes_list, context, cb) {
 	var counter = 0;
-	for (var i = changes_list.length - 1; i >= 0; i-=2) {
+	for (var i = changes_list.length - 1; i >= 0; i-=3) {
 		if (cb(context, changes_list, i, changes_list[i-1], changes_list[i], counter)){
 			counter++;
 		}
@@ -295,7 +294,7 @@ function reversedIterateChList(changes_list, context, cb) {
 function compressStatesChanges(changes_list) {
 	var result_changes = {};
 	var counter = reversedIterateChList(changes_list, result_changes, compressChangesList);
-	counter = counter * 2;
+	counter = counter * 3;
 	while (changes_list.length != counter){
 		changes_list.shift();
 	}
@@ -388,7 +387,7 @@ updateProxy.update = function(md, state_name, state_value, opts) {
 	if (md.hasComplexStateFn(state_name)){
 		throw new Error("you can't change complex state " + state_name);
 	}
-	return updateProxy(md, [state_name, state_value], opts);
+	return updateProxy(md, [true, state_name, state_value], opts);
 
 
 	// md.updateState(state_name, state_value, opts);
