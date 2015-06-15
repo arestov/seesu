@@ -934,23 +934,23 @@ add({
 			spv.cloneObj(this.init_states, more_states);
 		}
 
-		var changes_list = getComplexInitList(this);
+		var changes_list = getComplexInitList(this) || this.init_states && [];
 
-		if (changes_list.length || this.init_states) {
-			if (this.init_states) {
-				for (var state_name in this.init_states) {
-					if (!this.init_states.hasOwnProperty(state_name)) {
-						continue;
-					}
-
-					if (this.hasComplexStateFn(state_name)) {
-						throw new Error("you can't change complex state " + state_name);
-					}
-
-					changes_list.push(state_name, this.init_states[state_name]);
+		if (this.init_states) {
+			for (var state_name in this.init_states) {
+				if (!this.init_states.hasOwnProperty(state_name)) {
+					continue;
 				}
-			}
 
+				if (this.hasComplexStateFn(state_name)) {
+					throw new Error("you can't change complex state " + state_name);
+				}
+
+				changes_list.push(true, state_name, this.init_states[state_name]);
+			}
+		}
+
+		if (changes_list && changes_list.length) {
 			updateProxy(this, changes_list);
 		}
 

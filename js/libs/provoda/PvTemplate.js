@@ -10,7 +10,7 @@ var makeSpecStatesList = function(states) {
 		if (!states.hasOwnProperty(state_name)){
 			continue;
 		}
-		result.push(state_name, states[state_name]);
+		result.push(true, state_name, states[state_name]);
 	}
 	return result;
 };
@@ -1543,8 +1543,8 @@ spv.Class.extendTo(PvTemplate, {
 		if (this.dead) {return;}
 		//вместо того что бы собирать новый хэш на основе массива изменений используются объект всеъ состояний
 		var matched = [], i = 0;
-		for (i = 0; i < changes.length; i+= 2 ) { //ищем подходящие директивы
-			var name = changes[i];
+		for (i = 0; i < changes.length; i+= 3 ) { //ищем подходящие директивы
+			var name = changes[i+1];
 			if (this.stwat_index[name]){
 				push.apply(matched, this.stwat_index[name]);
 			}
@@ -1574,9 +1574,9 @@ spv.Class.extendTo(PvTemplate, {
 		if (this.spec_states_props_list){
 			states_summ = Object.create(states);
 
-			for (var i = 0; i < this.spec_states_props_list.length; i+=2) {
-				var state_name = this.spec_states_props_list[ i ];
-				var state_value = this.spec_states_props_list[ i + 1];
+			for (var i = 0; i < this.spec_states_props_list.length; i+=3) {
+				var state_name = this.spec_states_props_list[ i + 1 ];
+				var state_value = this.spec_states_props_list[ i + 2];
 				states_summ[ state_name ] = state_value;
 			}
 

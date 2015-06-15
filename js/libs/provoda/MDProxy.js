@@ -26,7 +26,7 @@ MDProxy.prototype = {
 		var changes_list = [];
 		for (var name in obj) {
 			this.vstates[name] = obj[name];
-			changes_list.push(name, obj[name]);
+			changes_list.push(true, name, obj[name]);
 		}
 		this.sendStatesToViews(changes_list);
 		return this;
@@ -42,7 +42,7 @@ MDProxy.prototype = {
 			this.vstates = {};
 		}
 		this.vstates[name] = value;
-		this.sendStatesToViews([name, value], opts);
+		this.sendStatesToViews([true, name, value], opts);
 		return this;
 	},
 	state: function(state_name) {
