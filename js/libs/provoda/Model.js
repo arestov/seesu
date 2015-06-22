@@ -1,4 +1,5 @@
-define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclaredNestings', './updateProxy'], function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, updateProxy) {
+define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclaredNestings', './prsStCon', './updateProxy'],
+function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy) {
 'use strict';
 return function(StatesEmitter, big_index, views_proxies, sync_sender) {
 var push = Array.prototype.push;
@@ -500,9 +501,9 @@ var modelInit = (function() {
 
 
 
-		this.prsStCon.connect.parent(this);
-		this.prsStCon.connect.root(this);
-		this.prsStCon.connect.nesting(this);
+		prsStCon.connect.parent(this);
+		prsStCon.connect.root(this);
+		prsStCon.connect.nesting(this);
 
 
 
@@ -933,23 +934,23 @@ add({
 			spv.cloneObj(this.init_states, more_states);
 		}
 
-		var changes_list = getComplexInitList(this);
+		var changes_list = getComplexInitList(this) || this.init_states && [];
 
-		if (changes_list.length || this.init_states) {
-			if (this.init_states) {
-				for (var state_name in this.init_states) {
-					if (!this.init_states.hasOwnProperty(state_name)) {
-						continue;
-					}
-
-					if (this.hasComplexStateFn(state_name)) {
-						throw new Error("you can't change complex state " + state_name);
-					}
-
-					changes_list.push(state_name, this.init_states[state_name]);
+		if (this.init_states) {
+			for (var state_name in this.init_states) {
+				if (!this.init_states.hasOwnProperty(state_name)) {
+					continue;
 				}
-			}
 
+				if (this.hasComplexStateFn(state_name)) {
+					throw new Error("you can't change complex state " + state_name);
+				}
+
+				changes_list.push(true, state_name, this.init_states[state_name]);
+			}
+		}
+
+		if (changes_list && changes_list.length) {
 			updateProxy(this, changes_list);
 		}
 

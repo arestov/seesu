@@ -1,4 +1,5 @@
-define(['spv', './helpers',  'jquery', './updateProxy'], function(spv, hp, $, updateProxy) {
+define(['spv', './helpers',  'jquery', './updateProxy', './prsStCon'],
+function(spv, hp, $, updateProxy, prsStCon) {
 'use strict';
 var pvUpdate = updateProxy.update;
 var $v = hp.$v;
@@ -140,8 +141,8 @@ StatesEmitter.extendTo(View, {
 			}
 		}
 		
-		this.prsStCon.connect.parent(this);
-		this.prsStCon.connect.root(this);
+		prsStCon.connect.parent(this);
+		prsStCon.connect.root(this);
 		return this;
 	},
 	handleTemplateRPC: function(method) {
@@ -900,7 +901,7 @@ StatesEmitter.extendTo(View, {
 		var states_list = [];
 
 		for (var name in states){
-			states_list.push(name, states[name]);
+			states_list.push(true, name, states[name]);
 		}
 
 		this._updateProxy(states_list);
@@ -1067,13 +1068,13 @@ StatesEmitter.extendTo(View, {
 		updateProxy(this, changes_list, opts);
 	},
 	overrideStateSilently: function(name, value) {
-		updateProxy(this, [name, value], {skip_handler: true});
+		updateProxy(this, [true, name, value], {skip_handler: true});
 	},
 	promiseStateUpdate: function(name, value) {
-		updateProxy(this, [name, value]);
+		updateProxy(this, [true, name, value]);
 	},
 	setVisState: function(name, value) {
-		updateProxy(this, ['vis_' + name, value]);
+		updateProxy(this, [true, 'vis_' + name, value]);
 	},
 	checkChildrenModelsRendering: function() {
 		var obj = spv.cloneObj(false, this.children_models);
@@ -1265,7 +1266,7 @@ StatesEmitter.extendTo(View, {
 		var total_ch = [];
 
 		for (var state_name in this.states) {
-			total_ch.push(state_name, this.states[total_ch]);
+			total_ch.push(true, state_name, this.states[total_ch]);
 		}
 
 		this.updateTemplatesStates(total_ch);

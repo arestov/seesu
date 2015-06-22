@@ -66,7 +66,7 @@ return {
 			var cur = this.streams_list[i];
 			if (this.sockets_m_index[cur.id][md._provoda_id]) {
 				if (!parsing_done) {
-					for ( var jj = 1; jj < states.length; jj += 2 ) {
+					for ( var jj = 2; jj < states.length; jj += 3 ) {
 						var cur_value = states[jj];
 						if (cur_value && typeof cur_value == 'object' && cur_value._provoda_id) {
 							needs_changes = true;

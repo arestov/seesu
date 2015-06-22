@@ -40,6 +40,18 @@ spv.once = function(fn) {
 		}
 	};
 };
+
+spv.mapfn = function(func) {
+	return function(array) {
+		if (!array) {return array;}
+		var result = new Array(array.length);
+		for (var i = 0; i < array.length; i++) {
+			result[i] = func(array[i], i);
+		}
+		return result;
+	};
+};
+
 var hasArg = function(el) {return el;};
 spv.hasEveryArgs = function() {
 	return Array.prototype.every.call(arguments, hasArg);
