@@ -268,13 +268,6 @@ AppModel.extendTo(SeesuApp, {
 		});
 		spv.domReady(window.document, function() {
 			_this.lfm_auth.try_to_login();
-			setTimeout(function(){
-				return;
-				while (big_timer.q.length){
-					_this.trackTime.apply(_this, big_timer.q.shift());
-					//console.log()
-				}
-			}, 300);
 			if (!lfm.sk) {
 				_this.lfm_auth.get_lfm_token();
 

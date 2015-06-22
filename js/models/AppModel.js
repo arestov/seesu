@@ -32,7 +32,6 @@ AppModelBase.extendTo(AppModel, {
 			this.trigger('handle-location');
 		}
 
-		//big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
 		pv.update(this.start_page, 'can_expand', true);
 
 	},

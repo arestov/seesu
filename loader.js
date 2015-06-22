@@ -1,4 +1,3 @@
-var big_timer;
 (function(){
 "use strict";
 requirejs.config({
@@ -28,23 +27,6 @@ requirejs.config({
 });
 
 window._gaq = window._gaq || [];
-big_timer = {
-	setN: function(name){
-		var time = new Date() * 1;
-		if (name){
-			this[name] = time;
-		}
-		return time;
-	},
-	comp: function(name) {
-		var now = this.setN();
-		return now - this[name];
-	},
-	base_category: 'App init',
-	"page-start": new Date() * 1,
-	q: []
-};
-
 
 (function() {
 	var cbp;
