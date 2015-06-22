@@ -9,6 +9,7 @@
 
 	"regexdash": true,
 	"browser": true,
+	"node": true,
 	"wsh": true,
 	"trailing": true,
 	"sub": true
