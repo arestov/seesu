@@ -19,11 +19,6 @@ var TagsListPage = function() {};
 coct.PageView.extendTo(TagsListPage, {
 	base_tree: {
 		sample_name: 'tags_list_page'
-	},
-	createTagLink: function(name) {
-		return $('<a class="js-serv"></a>').text(name).click(function() {
-			su.show_tag(name);
-		});
 	}
 });
 
