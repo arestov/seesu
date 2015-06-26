@@ -48,7 +48,7 @@ pv.Model.extendTo(UserAcquaintance, {
 			depends_on: ['accepted', 'remainded_date', 'userlink'],
 			fn: function(accepted, remainded_date, userlink) {
 				if (accepted && !userlink){
-					return this.app.getRemainTimeText(remainded_date, true);
+					return app_serv.getRemainTimeText(remainded_date, true);
 				}
 				
 			}

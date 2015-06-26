@@ -417,7 +417,7 @@ pv.View.extendTo(SongcardController, {
 						su.trackEvent('people likes', 'accepted', false, 5);
 						nb.c.after(
 							$('<span class="people-list-desc desc"></span>')
-								.text(su.getRemainTimeText(r.done.est, true))
+								.text(app_serv.getRemainTimeText(r.done.est, true))
 						);
 						nb.c.remove();
 					}

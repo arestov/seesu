@@ -82,7 +82,7 @@ pv.View.extendTo(UserCardPreview, {
 
 									if (r.done){
 										su.trackEvent('people likes', 'accepted', false, 5);
-										$('<span class="desc"></span>').text(su.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
+										$('<span class="desc"></span>').text(app_serv.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
 										if (new Date(r.done.est) < new Date()){
 											//checkRelationsInvites();
 										}

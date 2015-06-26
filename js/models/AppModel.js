@@ -46,21 +46,6 @@ AppModelBase.extendTo(AppModel, {
 			}
 		}
 	},
-	getRemainTimeText: function(time_string, full){
-		var d = new Date(time_string);
-		var remain_desc = '';
-		if (full){
-			remain_desc += localize('wget-link') + ' ';
-		}
-
-
-		remain_desc += d.getDate() +
-		" " + localize('m'+(d.getMonth()+1)) +
-		" " + localize('attime') + ' ' + d.getHours() + ":" + d.getMinutes();
-
-		return remain_desc;
-	},
-
 	nowPlaying: function(mo) {
 		pv.update(this, 'now_playing', mo.getTitle());
 		this.current_playing = mo;

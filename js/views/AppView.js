@@ -732,7 +732,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		if (link && rel.info.full_name){
 			return $('<a class="external"></a>').attr('href', link).text(rel.info.full_name);
 		}  else if (rel.item.est){
-			return $("<span class='desc'></span>").text(su.getRemainTimeText(rel.item.est, true));
+			return $("<span class='desc'></span>").text(app_serv.getRemainTimeText(rel.item.est, true));
 		}
 	},
 	

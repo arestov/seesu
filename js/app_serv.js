@@ -2,6 +2,21 @@ define(['spv', 'localizer', 'js/libs/w_storage', 'js/preloaded_nk', 'jquery'], f
 "use strict";
 var app_serv = {};
 
+app_serv.getRemainTimeText = function(time_string, full){
+	var d = new Date(time_string);
+	var remain_desc = '';
+
+	if (full){
+		remain_desc += localize('wget-link') + ' ';
+	}
+
+	remain_desc += d.getDate() +
+	" " + localize('m'+(d.getMonth()+1)) +
+	" " + localize('attime') + ' ' + d.getHours() + ":" + d.getMinutes();
+
+	return remain_desc;
+};
+
 
 (function(){
 
