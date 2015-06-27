@@ -252,7 +252,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 					return target.getFastPamoramaLiftWidth();
 				},
 				onUseEnd: function(){
-					seesu.trackEvent('Panoramator', 'artist photos');
+					target.root_view.trackEvent('Panoramator', 'artist photos');
 				}
 			});
 			

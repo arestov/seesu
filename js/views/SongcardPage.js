@@ -325,7 +325,7 @@ pv.View.extendTo(SongcardController, {
 						owidth: li.outerWidth()
 					};
 				});
-				su.trackEvent('peoples', 'view');
+				_this.root_view.trackEvent('peoples', 'view');
 				_this.onDie(function() {
 					su.s.auth.removeCallback('biglistener', callback);
 				});
@@ -379,6 +379,7 @@ pv.View.extendTo(SongcardController, {
 
 	},
 	createLikeButton: function(lig){
+		var _this = this;
 		var nb = this.root_view.createNiceButton();
 		nb.b.text( localize('want-meet', 'Want to meet') + '!');
 		nb.enable();
@@ -387,7 +388,7 @@ pv.View.extendTo(SongcardController, {
 			if (!pliking){
 				su.s.api('relations.setLike', {to: lig.user}, function(r){
 					if (r.done){
-						su.trackEvent('people likes', 'liked');
+						_this.root_view.trackEvent('people likes', 'liked');
 						var gc = $("<div></div>");
 						nb.c.after(gc);
 
@@ -405,6 +406,7 @@ pv.View.extendTo(SongcardController, {
 		return nb;
 	},
 	createAcceptInviteButton: function(lig){
+		var _this = this;
 		var nb = this.root_view.createNiceButton();
 		nb.b.text( localize('accept-inv', 'Accept invite'));
 		nb.enable();
@@ -414,7 +416,7 @@ pv.View.extendTo(SongcardController, {
 				su.s.api('relations.acceptInvite', {from: lig.user}, function(r){
 
 					if (r.done){
-						su.trackEvent('people likes', 'accepted', false, 5);
+						_this.root_view.trackEvent('people likes', 'accepted', false, 5);
 						nb.c.after(
 							$('<span class="people-list-desc desc"></span>')
 								.text(app_serv.getRemainTimeText(r.done.est, true))

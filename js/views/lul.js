@@ -34,7 +34,7 @@ pv.View.extendTo(LfmFriendPreview, {
 			e.preventDefault();
 			e.stopPropagation();
 			app_env.openURL($(node).attr('href'));
-			seesu.trackEvent('Links', 'just link');
+			this.root_view.trackEvent('Links', 'just link');
 		}
 	}
 });

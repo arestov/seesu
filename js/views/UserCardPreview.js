@@ -81,7 +81,7 @@ pv.View.extendTo(UserCardPreview, {
 								su.s.api('relations.acceptInvite', {from: man.user}, function(r){
 
 									if (r.done){
-										su.trackEvent('people likes', 'accepted', false, 5);
+										_this.root_view.trackEvent('people likes', 'accepted', false, 5);
 										$('<span class="desc"></span>').text(app_serv.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
 										if (new Date(r.done.est) < new Date()){
 											//checkRelationsInvites();

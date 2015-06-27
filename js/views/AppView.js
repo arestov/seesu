@@ -584,7 +584,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			var d_click_callback = function(e) {
 				e.preventDefault();
 				app_env.openURL($(this).attr('href'));
-				seesu.trackEvent('Links', 'just link');
+				_this.trackEvent('Links', 'just link');
 			};
 
 			$(d).on('click', '.external', d_click_callback);
@@ -727,6 +727,11 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		}
 		return image;
 	},
+	trackEvent: function() {
+		var args = Array.prototype.slice.apply(arguments);
+		args.unshift('trackEvent');
+		this.RPCLegacy.apply(this, args);
+	},
 	getAcceptedDesc: function(rel){
 		var link = rel.info.domain && ('https://vk.com/' + rel.info.domain);
 		if (link && rel.info.full_name){
@@ -756,6 +761,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		return youtube_video;
 	},
 	bindLfmTextClicks: function(con) {
+		var _this = this;
 		con.on('click', 'a', function(e) {
 			var node = $(this);
 			var link = node.attr('href');
@@ -763,18 +769,18 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 				e.preventDefault();
 
 				var artist_name = decodeURIComponent(link.replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-				su.showArtcardPage(artist_name);
-				seesu.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
+				_this.RPCLegacy('showArtcardPage', 'artist_name');
+				_this.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
 			} else if (node.is('.bbcode_tag')){
 				e.preventDefault();
 
 				var tag_name = decodeURIComponent(link.replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
-				su.show_tag(tag_name);
-				seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
+				_this.RPCLegacy('show_tag', 'artist_name');
+				_this.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
 			} else {
 				e.preventDefault();
 				app_env.openURL(link);
-				seesu.trackEvent('Links', 'just link');
+				_this.trackEvent('Links', 'just link');
 			}
 		});
 
