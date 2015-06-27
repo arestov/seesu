@@ -4,6 +4,7 @@ function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_s
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 
+var pvUpdate = pv.update;
 var lang = app_env.lang;
 
 var converNews = function(list) {
@@ -55,6 +56,9 @@ BrowseMap.Model.extendTo(StartPage, {
 	showPlaylists: function(){
 		this.app.search(':playlists');
 	},
+	refreshListeners: function() {
+		this.app.s.susd.ligs.getData();
+	},
 	init: function(opts){
 		this._super.apply(this, arguments);
 		this.su = opts.app;
@@ -62,8 +66,33 @@ BrowseMap.Model.extendTo(StartPage, {
 		pv.update(this, 'nav_title', 'Seesu start page');
 		pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
+		var _this = this;
+		this.app.s.susd.ligs.regCallback('start-page', function(resp){
+			var result = [];
 
+			var girls = resp[1];
+			var boys = resp[2];
 
+			var length = Math.max(girls.length, boys.length);
+
+			for (var i = 0; i < length; i++) {
+				var girl = girls[i];
+				var boy = boys[i];
+
+				if (girl) {
+					result.push(girl);
+				}
+
+				if (boy) {
+					result.push(boy);
+				}
+			}
+
+			pvUpdate(_this, 'users_listenings', result);
+			pvUpdate(_this, 'users_listenings_loading', false);
+		}, function() {
+			pvUpdate(_this, 'users_listenings_loading', true);
+		});
 
 		this.closed_messages = app_serv.store('closed-messages') || {};
 		return this;
@@ -77,7 +106,7 @@ BrowseMap.Model.extendTo(StartPage, {
 			var artist = this.state('nice_artist_hint');
 			this.app.search(artist);
 			pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
-			su.trackEvent('Navigation', 'hint artist');
+			this.app.trackEvent('Navigation', 'hint artist');
 		},
 		changeSearchHint: function() {
 			pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);

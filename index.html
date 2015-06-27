@@ -2008,10 +2008,6 @@
 											</div>
 										</div>
 									</div>
-									
-									
-
-
 								</div>
 								<div>
 									<div class="arb-union" pv-nest="tags">
@@ -2021,9 +2017,7 @@
 											</div>
 										</div>
 										<div class="hidden" pv-class="{{!inited && ''}}">
-											
 											<div class="preview_ffp tags_list">
-										
 												<span pv-repeat="tag in preview_list">
 													<a 
 														class="js-serv"
@@ -2032,24 +2026,37 @@
 														pv-events="click::#show_tag:{{tag.name}}"
 														></a> 
 												</span>
-
-												
 											</div>
 											<div class="preview_ffp tags_con"></div>
-
 										</div>
-										
 									</div>
-									
-
+								</div>
+								<div class="block-for-startpage users-play-this" pv-when="users_listenings.length">
+									<h3>
+										<span class="lang localize-User-listening"></span>
+										<a class="js-serv lang localize-refresh" pv-events="click::refreshListeners">Refresh</a>
+									</h3>
+									<ul>
+										<li pv-repeat="lig in users_listenings|limitTo:12">
+											<div class="vk-ava">
+												<img alt="user photo" pv-props="src:{{lig.info.photo}}">
+											</div>
+											<div class="desc-row">
+												<a class="" pv-text="{{lig.info.first_name}}" pv-props="href:{{'#/users/vk:' + lig.vk_id}}"></a> 
+												<span class="lang localize-listening">are listening</span> 
+											</div>
+											<a class="song-by-user" pv-props="title:{{lig.artist + ' - ' + lig.title}}"
+												pv-events="click::#showTopTacks:{{lig.artist}}:{{lig.title}}">
+												<span class="song-artist_name" pv-text="{{lig.artist}}"></span>
+												<span class="song-track-name" pv-text="{{lig.title}}"></span>
+											</a>
+										</li>
+									</ul>
 								</div>
 							</div>
 							<div class="block-for-startpage full_wide_col">
-								
-								
 								donate bitcoin: <a href="https://blockchain.info/address/1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN" class="external">1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN</a> <br/>
 								twitter: <a href="https://twitter.com/seesu_app" class="external">seesu_app</a>
-								
 							</div>
 							<div class="block-for-startpage full_wide_col">
 								<div pv-nest="news" class="hidden" pv-class="{{init && ''}}">

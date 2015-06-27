@@ -1,5 +1,5 @@
-define(['pv', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './UserCardPreview', './coct'],
-function(pv, spv, $, app_serv, MusicConductorPreview, UserCardPreview, coct) {
+define(['pv', 'spv', 'jquery', 'app_serv', './UserCardPreview', './coct'],
+function(pv, spv, $, app_serv, UserCardPreview, coct) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -39,9 +39,6 @@ coct.SPView.extendTo(StartPageView, {
 	'collch-pstuff': true,
 	'collch-tags': true,
 	children_views: {
-		muco:{
-			main: MusicConductorPreview
-		},
 		pstuff: {
 			main: UserCardPreview
 		},

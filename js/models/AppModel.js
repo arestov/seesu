@@ -157,6 +157,11 @@ AppModelBase.extendTo(AppModel, {
 			md.showOnMap();
 			return md;
 		},
+		showTopTacks: function(artist, track_name) {
+			var artcard = this.showArtcardPage(artist);
+			var pl = artcard.showTopTacks(track_name);
+			return pl;
+		},
 		showArtistTopTracks: function(artist, page_md, start_song) {
 			var artcard = this.showArtcardPage(artist, page_md);
 
