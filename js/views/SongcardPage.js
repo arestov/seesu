@@ -182,7 +182,6 @@ pv.View.extendTo(SongcardController, {
 						}
 					});
 					if (users.length){
-
 						var above_limit_value = 0;
 						var uul = $("<ul></ul>");
 						for (var i=0; i < r.done.length; i++) {
@@ -190,7 +189,6 @@ pv.View.extendTo(SongcardController, {
 								above_limit_value = target.createSongListeners(
 									r.done[i], uul, above_limit_value, current_user, target.rowcs.users_context);
 							}
-
 						}
 						if (target.t_users.other_users){
 							target.t_users.other_users.remove();
@@ -203,14 +201,10 @@ pv.View.extendTo(SongcardController, {
 						target.t_users.other_users = uul;
 					}
 				}
-				//console.log(r)
-
 			});
 			target.t_users.last_update = (+new Date());
 		}
-
 	},
-
 	showBigListener: function(c, lig){
 		var _this = this;
 		c.empty();
