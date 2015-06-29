@@ -280,7 +280,7 @@ AppModel.extendTo(SeesuApp, {
 			pvUpdate(target, 'lfm_userid', target.lfm.username);
 		}
 	},
-	tickStat: function(target, data_array) {
+	tickStat: function(data_array) {
 		window._gaq.push(data_array);
 	},
 	init: function(version){
