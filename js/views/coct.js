@@ -325,7 +325,8 @@ return {
 	ListSimplePreview: ListSimplePreview,
 	ImagedListPreview: ImagedListPreview,
 	VKPostsView: VKPostsView,
-	AppNewsView: AppNewsView
+	AppNewsView: AppNewsView,
+	SoftVkLoginUI: SoftVkLoginUI
 };
 
 });

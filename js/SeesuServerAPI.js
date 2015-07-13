@@ -1,7 +1,7 @@
 define(['pv', 'jquery', 'spv', 'hex_md5', 'app_serv'], function(pv, $, spv, hex_md5, app_serv){
 "use strict";
 
-
+var pvUpdate = pv.update;
 var AsyncDataSteam = function(getDataFunc, freshness, interval, data){
 	this._getDataFunc = getDataFunc;
 	this._interval = interval;
@@ -124,6 +124,12 @@ AsyncDataSteam.prototype = {
 	}
 };
 
+var updateRelations = function(su_serv, rels, place){
+	var index = spv.makeIndexByField(rels, 'user');
+	su_serv.susd.relations[place] = index;
+	pvUpdate(su_serv.app, 'relations_' + place, index);
+};
+
 var SeesuServerAPI = function(app, auth, url){
 	this.app = app;
 	this.init();
@@ -138,14 +144,14 @@ var SeesuServerAPI = function(app, auth, url){
 	
 	this.susd.rl = new AsyncDataSteam(function(callback){
 		_this.api('relations.getLikes', function(r){
-			_this.susd.updateRelationsLikes(r.done);
+			updateRelations(_this, r.done, 'likes');
 			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
 	
 	this.susd.ri = new AsyncDataSteam(function(callback){
 		_this.api('relations.getInvites', function(r){
-			_this.susd.updateRelationsInvites(r.done);
+			updateRelations(_this, r.done, 'invites');
 			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
@@ -179,6 +185,8 @@ var SeesuServerAPI = function(app, auth, url){
 };
 
 pv.Eventor.extendTo(SeesuServerAPI, {
+	source_name: 'seesu.me',
+	errors_fields: ['error'],
 	susd: {
 		rl: false,
 		ri: false,
@@ -289,7 +297,7 @@ pv.Eventor.extendTo(SeesuServerAPI, {
 			
 		}
 		
-		$.ajax({
+		return $.ajax({
 			type: "GET",
 			url: _this.url + 'api/',
 			data: params,
@@ -299,15 +307,10 @@ pv.Eventor.extendTo(SeesuServerAPI, {
 			success: function(r){
 				if (r){
 					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
-						
 						//_this.setAuth('');
 						//_this.getAuth(_this.vk_id);
-						
-						
-						
-						
 					} else{
-						if (callback){callback(r);}
+						if (typeof callback == 'function'){callback(r);}
 					}
 				}
 				

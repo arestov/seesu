@@ -371,21 +371,6 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			});
 		}
 	},
-	authSwitching: function(auth, AuthConstr, data) {
-		var _this = this;
-		var auth_rqb = this.initSi(AuthConstr, data, {auth: auth, pmd: this});
-
-
-		auth_rqb.on('state_change-has_session', function(e) {
-			pv.update(_this, 'has_no_auth', !e.value);
-			_this.switchPmd(false);
-		});
-
-		pv.updateNesting(this, 'auth_part', auth_rqb);
-
-		this.setPmdSwitcher(this.map_parent);
-
-	},
 	requestPage: function() {
 		if (!this.state('has_no_access')){
 			this.loadStart();

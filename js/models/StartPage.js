@@ -1,8 +1,9 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', 'pv'],
-function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, pv) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv'],
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
+var complexEach = app_serv.complexEach;
 
 var pvUpdate = pv.update;
 var lang = app_env.lang;
@@ -68,25 +69,16 @@ BrowseMap.Model.extendTo(StartPage, {
 
 		var _this = this;
 		this.app.s.susd.ligs.regCallback('start-page', function(resp){
-			var result = [];
-
-			var girls = resp[1];
-			var boys = resp[2];
-
-			var length = Math.max(girls.length, boys.length);
-
-			for (var i = 0; i < length; i++) {
-				var girl = girls[i];
-				var boy = boys[i];
-
+			var result = complexEach([resp[1], resp[2]], function(result, girl, boy) {
 				if (girl) {
 					result.push(girl);
 				}
-
 				if (boy) {
 					result.push(boy);
 				}
-			}
+
+				return result;
+			});
 
 			pvUpdate(_this, 'users_listenings', result);
 			pvUpdate(_this, 'users_listenings_loading', false);
@@ -180,6 +172,15 @@ BrowseMap.Model.extendTo(StartPage, {
 						}
 					}];
 					// return subPageInitWrap(UserCard.VkUserCard, full_name, {userid: name_spaced[1]});
+				} else if (namespace == 'su') {
+					return [SeesuUser, {
+						states: {
+							url_part: '/' + full_name
+						},
+						head: {
+							vk_userid: name_spaced[1]
+						}
+					}];
 				}
 			}
 		},

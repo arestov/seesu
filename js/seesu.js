@@ -542,11 +542,10 @@ AppModel.extendTo(SeesuApp, {
 			store = this.vk_users;
 			character_id = key;
 		} else {
-
-
 			store = this.vk_groups;
 			character_id = key * -1;
 		}
+
 		md.wch(store, character_id, result_state);
 
 	},
@@ -746,6 +745,7 @@ AppModel.extendTo(SeesuApp, {
 					
 
 					_this.s.setInfo('vk', _d);
+					pvUpdate(_this, 'current_su_user_info', _d);
 
 					if (!_this.s.loggedIn()){
 						_this.s.getAuth(user_id, function() {
@@ -879,19 +879,26 @@ AppModel.extendTo(SeesuApp, {
 		});
 	},
 	nsd_handlers: {
+		su_users: function(list) {
+			var app = this;
+
+			for (var i = 0; i < list.length; i++) {
+				var id = list[i].user;
+				var md = app.routePathByModels('users/su:' + id);
+				md.updateManyStates(list[i]);
+			}			
+		},
 		vk_groups: function(list) {
 			var store = this.vk_groups;
 			for (var i = 0; i < list.length; i++) {
 				pv.update(store, list[i].id, list[i]);
 			}
-			//console.log(list);
 		},
 		vk_users: function(list) {
 			var store = this.vk_users;
 			for (var i = 0; i < list.length; i++) {
 				pv.update(store, list[i].id, list[i]);
 			}
-			//console.log(list);
 		},
 		files: function(list, source_name, md) {
 
@@ -900,11 +907,9 @@ AppModel.extendTo(SeesuApp, {
 				track: md.state('track')
 			};
 
-			//var result = [];
 			for (var i = 0; i < list.length; i++) {
 				var cur = list[i];
 				if (!cur.link) {
-					//debugger;
 					continue;
 					
 				}
@@ -915,7 +920,7 @@ AppModel.extendTo(SeesuApp, {
 				if (!cur.media_type) {
 					cur.media_type = 'mp3';
 				}
-				//result.puhs(list);
+
 				this.mp3_search.addFileToInvestg(cur, cur);
 				if (second_msq) {
 					this.mp3_search.addFileToInvestg(cur, second_msq);

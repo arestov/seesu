@@ -1,13 +1,14 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
 './user_music_lfm', './Cloudcasts', './LoadableListBase', './SongsList',
-'js/modules/declr_parsers'],
+'./SeesuListening', 'js/modules/declr_parsers'],
 function(pv, spv, app_serv, BrowseMap, morph_helpers,
 user_music_lfm, Cloudcasts, LoadableListBase, SongsList,
-declr_parsers) {
+SeesuListening, declr_parsers) {
 'use strict';
 var localize = app_serv.localize;
+var complexEach = app_serv.complexEach;
 
-
+var pvUpdate = pv.update;
 var sortByGif = spv.getSortFunc([{
 		field: function(item) {
 			var image = item.state('lfm_img');
@@ -154,70 +155,72 @@ LoadableListBase.extendTo(VKPostsList, {
 		}];
 	},
 	'nest_req-lists_list': [
-		[{
-			is_array: true,
-			source: 'response.items',
-			props_map: {
-				props: {
-					nav_title: 'owner_id',
-					url_part: ['urlp', 'owner_id'],
-					from_id: 'from_id',
-					owner_id: 'owner_id',
-					date: ['timestamp', 'date'],
-					post_type: 'post_type',
-					text_body: 'text',
-					likes: 'likes.count',
-					reposts: 'reposts.count',
+		[
+			{
+				is_array: true,
+				source: 'response.items',
+				props_map: {
+					props: {
+						nav_title: 'owner_id',
+						url_part: ['urlp', 'owner_id'],
+						from_id: 'from_id',
+						owner_id: 'owner_id',
+						date: ['timestamp', 'date'],
+						post_type: 'post_type',
+						text_body: 'text',
+						likes: 'likes.count',
+						reposts: 'reposts.count',
 
-					photos: [function(array) {
+						photos: [function(array) {
 
+							if (!array) {
+								return;
+							}
+							var photos = [];
+							for (var i = 0; i < array.length; i++) {
+								var cur = array[i];
+				
+								if (cur.type == 'photo') {
+									photos.push(cur.photo);
+									
+								}
+							}
+							return photos;
+
+						}, 'attachments']
+					},
+					attachments: [function(array) {
 						if (!array) {
 							return;
 						}
-						var photos = [];
+						var songs = [];
+						
 						for (var i = 0; i < array.length; i++) {
 							var cur = array[i];
-			
-							if (cur.type == 'photo') {
-								photos.push(cur.photo);
-								
+							if (cur.type == 'audio') {
+								songs.push(parseVKPostSong(cur.audio));
 							}
-						}
-						return photos;
-
-					}, 'attachments']
-				},
-				attachments: [function(array) {
-					if (!array) {
-						return;
-					}
-					var songs = [];
 					
-					for (var i = 0; i < array.length; i++) {
-						var cur = array[i];
-						if (cur.type == 'audio') {
-							songs.push(parseVKPostSong(cur.audio));
 						}
-				
-					}
-					return {
-						songs: songs
-					};
-				}, 'attachments']
+						return {
+							songs: songs
+						};
+					}, 'attachments']
 
-			}
-		},
-		true,
-		[
-			['vk_users',
-			function(r) {
-				return r.response.profiles;
-			}],
-			['vk_groups',
-			function(r) {
-				return r.response.groups;
-			}]
-		]],
+				}
+			},
+			true, //support paging
+			[//side data
+				['vk_users',
+				function(r) {
+					return r.response.profiles;
+				}],
+				['vk_groups',
+				function(r) {
+					return r.response.groups;
+				}]
+			]
+		],
 		['vktapi', 'get', function() {
 			return ['newsfeed.search', {
 				q: this.head.artist_name + ' ' + this.head.track_name + ' has:audio',
@@ -229,7 +232,7 @@ LoadableListBase.extendTo(VKPostsList, {
 var isDepend = pv.utils.isDepend;
 
 var SongCard = function() {};
-BrowseMap.Model.extendTo(SongCard, {
+LoadableListBase.extendTo(SongCard, {
 	model_name: 'songcard',
 	'compx-nav_title': {
 		depends_on: ['artist_name', 'track_name'],
@@ -249,7 +252,72 @@ BrowseMap.Model.extendTo(SongCard, {
 			return mp_has_focus || nest_need;
 		}
 	],
+	'compx-load_listeners': [
+		['wide_need', 'artist_name', 'track_name'],
+		function(wide_need, artist_name, track_name) {
+			return wide_need && artist_name && track_name && {
+				artist_name: artist_name,
+				track_name: track_name
+			};
+		}
+	],
+	'stch-load_listeners': function(target, state) {
+		if (state) {
+			target.requestMoreData('listenings');
+		}
+	},
+	'compx-vswitched_select': [['vswitched']],
+	'stch-vswitched_select': function(target, state) {
+		pv.updateNesting(target, 'selected', state && pv.getModelById(state));
+	},
+	'compx-current_su_user_info': [['#current_su_user_info']],
+	'nest_rqc-listenings': SeesuListening,
+	'nest_req-listenings': [
+		[function(resp) {
+			if (!resp || !resp.done) {return;}
 
+			var listeners_raw = resp.done;
+
+			return complexEach([listeners_raw[1], listeners_raw[2]], function(result, girl, boy) {
+				if (girl) {
+					result.push(girl);
+				}
+				if (boy) {
+					result.push(boy);
+				}
+
+				return result;
+			});
+		}, false, [
+			['su_users', function(resp) {
+				var girls = resp.done && resp.done[1];
+				var boys = resp.done && resp.done[2];
+				var arr = [];
+
+				if (girls) {
+					arr = arr.concat(girls);
+				}
+
+				if (boys) {
+					arr = arr.concat(boys);
+				}
+
+				for (var i = 0; i < arr.length; i++) {
+					var info = arr[i].info;
+					info.user = arr[i].user;
+					arr[i] = info;
+				}
+				return arr;
+				
+			}]
+		]],
+		['s', 'api', function() {
+			return ['track.getListeners', {
+				artist: this.head.artist_name,
+				title: this.head.track_name
+			}];
+		}]
+	],
 	'nest-fans': ['fans', 'wide_need','wide_need'],
 	'nest-cloudcasts': ['cloudcasts', false, 'wide_need'],
 	'nest-vk_posts': ['vk_posts', 'nest_need','nest_need'],

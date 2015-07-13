@@ -18,6 +18,33 @@ app_serv.getRemainTimeText = function(time_string, full){
 };
 
 
+app_serv.complexEach = function(items, callback, start) {
+	if (!items) {return;}
+
+	var length = 0;
+
+	for (var i = 0; i < items.length; i++) {
+		if (!items[i]) {continue;}
+		
+		if (items[i].length > length) {
+			length = items[i].length;
+		}
+	}
+
+	var start_result = start || [];
+	var result;
+
+	for (var bb = 0; bb < length; bb++) {
+		var args = [start_result];
+		for (var kk = 0; kk < items.length; kk++) {
+			args.push(items[kk] && items[kk][bb]);
+		}
+		result = callback.apply(null, args);
+	}
+
+	return result;
+};
+
 (function(){
 
 function isFileReady ( readyState ) {

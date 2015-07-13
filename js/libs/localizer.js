@@ -417,7 +417,10 @@ define({
 		"ru": "Некоторые файлы найдены с помощью тестовой учётной записи vkontakte.ru (vk.com), поиск файлов для новых композиций может прекратится в любой момент. Этого не произойдёт, если ты будешь использовать свою учётную запись vkontakte"
 	},
 	
-	
+	'to-meet-man-vk-short': {
+		"original": "To meet with this man",
+		"ru": "Чтобы познакомиться с этим человеком"
+	},
 	"to-meet-man-vk":{
 		"original": "If you want to meet this man you need to sign in to vk.com (vkontakte.ru)",
 		"ru": "Если ты хочешь познакомиться с этим человеком, то ты должен войти во vkontakte.ru (vk.com)"

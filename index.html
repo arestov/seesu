@@ -1292,15 +1292,78 @@
 			</div>
 			
 			<div pv-nest="songcard">
-				<div class="track-listeners" pv-class="track-listeners {{disallow_seesu_listeners && 'hidden'}}" pv-anchor="track-listeners" >
-					<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>
+
+				<div class="track-listeners" pv-class="track-listeners {{disallow_seesu_listeners && 'hidden'}}">
+					<div class="lang localize-listeners-looks">People who have listened to this track, look like this</div>
+					<div class="song-listeners-list">
+						<div class="song-listener current-user-listen" pv-when="current_su_user_info">
+							<div class="image-cropper">
+								<img alt="user photo" pv-props="src:{{current_su_user_info.photo}}"/>
+							</div>
+						</div>
+						<ul pv-when="listenings$length">
+							<li class="song-listener" pv-class="song-listener {{is_current_user && 'hidden'}}" pv-nest="listenings" pv-events="click::switchPmd">
+								<div class="image-cropper" pv-nest="user">
+									<img alt="user photo" pv-props="src:{{photo}}"/>
+								</div>
+								<span class="rc-arrow" pv-when="pmd_vswitched">
+									<span class="tl-arrow  arrow-part"><span class="tl-arrow-bg arrow-part"></span></span>
+								</span>
+							</li>
+						</ul>
+					</div>
 				</div>
-				<div class="song-row-content row-listeners-context hidden" pv-anchor="row-listeners-context">
-					<span class="rc-arrow hidden">
-						<span class="tl-arrow  arrow-part"><span class="tl-arrow-bg arrow-part"></span></span>
-					</span>
-					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
+				<div class="song-row-content row-listeners-context" pv-when="vswitched_select">
+
+					<div class="big-listener-info" pv-nest="selected">
+						<div class="big-user-avatar">
+							<img class="big-user-avatar--img" alt="user photo" pv-props="src:{{info.photo_big}}">
+						</div>
+						<div pv-when="rel">
+							<a
+								class="external"
+								pv-when="rel.info.full_name && rel.info.domain"
+								pv-text="{{rel.info.full_name}}"
+								pv-props="href:{{rel.info.domain && ('https://vk.com/' + rel.info.domain)}}"></a>
+
+							<span
+								pv-when="remain_time_desc"
+								pv-text="{{remain_time_desc}}"></span>
+
+							<div pv-when="!invite_accepted && !rel.item.accepted">
+								<div pv-when="rel.item.from == user">
+									<span class="desc people-list-desc">
+										<span class="lang localize-user-want-you"></span>
+									</span>
+									<span class="button-hole">
+										<a class="nicebutton lang localize-accept-inv" pv-events="click::acceptInvite">Accept invite</a>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div pv-when="like_just_sended || (rel.item.to == user)">
+							<span class="desc people-list-desc">
+								<span class="lang localize-if-user-accept-i"></span>
+								<span class="lang localize-will-get-link"></span>
+							</span>
+						</div>
+
+						<div  pv-when="!rel.item.accepted && has_vk_auth && !current_user_has_photo">
+							<span class="button-hole">
+								<a class="nicebutton lang localize-vk_photo_update" pv-events="click::#getPhotoFromVK">Get photo from my vk.com profile</a>
+							</span>
+						</div>
+
+						<div pv-when="!like_just_sended && !rel.item.accepted && has_vk_auth && current_user_has_photo">
+							<span class="button-hole">
+								<a class="nicebutton lang localize-want-meet" pv-events="click::setLike">Want to meet!</a>
+							</span>
+						</div>
+
+						<div class="soft_auth_con" pv-anchor="auth_con"></div>
+					</div>
 				</div>
+
 				<div class="song_fans-b-intrack intrack_page"
 					pv-nest="fans" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h lang localize-lastfm_fans">
