@@ -344,22 +344,13 @@ var parser = {
 				complects[i] = complects[i].replace( this.regxp_props_spaces, '' );
 				var splitter_index = complects[i].indexOf(':');
 
-
-				//var parts = complects[i].split(this.regxp_props_coms_part);
-				//if ()
-
 				var prop = complects[i].slice( 0, splitter_index );
 				var statement = complects[i].slice( splitter_index + 1 ).replace( this.regxp_props_statement, '' );
 
 				if (!prop || !statement){
 					throw new Error('wrong declaration: ' + complex_value);
-					//return;
 				}
 				index[prop] = statement;
-				/*var item = this.createPropChange(node, prop, statement, prop + '$' + directive_name);
-				if (item){
-					result.push(item);
-				}*/
 				
 			}
 
@@ -382,15 +373,6 @@ var parser = {
 				};
 				return ['replaced', comment_anchor, directives_data];
 			}
-
-			
-
-			
-			// //'samplexx'
-			// if (index['pv-when']) {
-
-			// }
-			// return index;
 		}
 	},
 	directives_p: {
@@ -438,10 +420,6 @@ var parser = {
 				return;
 			}
 			var parent_node = node.parentNode;
-			// var comment_anchor = document.createComment('anchor for pv-when');
-			// parent_node.replaceChild(comment_anchor, node);
-			
-			
 
 			var comment_anchor = document.createComment('anchor for pv-when');
 			parent_node.replaceChild(comment_anchor, node);
