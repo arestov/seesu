@@ -308,33 +308,6 @@ var parser = {
 	regxp_props_spaces: /^\s*|s*?$/,
 	regxp_props_coms_part: /\s*\:\s*?(?=\{\{)/,
 	regxp_props_statement: /(^\{\{)|(\}\}$)/gi,
-	dom_helpres: {
-		getTextValue: function(node) {
-			return $(node).text();
-		},
-		setTextValue: function(node, new_value) {
-			$(node).text(new_value);
-		},
-		getClassName: function(node) {
-			return node.className;
-		},
-		setClassName: function(node, new_value) {
-			node.className = new_value;
-		},
-		getPVTypes: function() {
-			return '';
-		},
-		setPVTypes: function(node, new_value, ov, wwtch){
-			var types = new_value.split(regxp_spaces);
-			wwtch.pv_type_data.marks = {};
-			for (var i = 0; i < types.length; i++) {
-				if (types[i]){
-					wwtch.pv_type_data.marks[types[i]] = true;
-				}
-			}
-			wwtch.context._pvTypesChange();
-		}
-	},
 	comment_directives_p: {
 		'pv-replace': function(node, full_declaration, directive_name, getSample) {
 			var index = {};
@@ -376,22 +349,38 @@ var parser = {
 		}
 	},
 	directives_p: {
-		'pv-text': function(node, full_declaration, directive_name) {
-			return new this.StandartChange(node, {
-				complex_statement: full_declaration,
-				getValue: this.dom_helpres.getTextValue,
-				setValue: this.dom_helpres.setTextValue
-			}, directive_name);
-		},
-		'pv-class': function(node, full_declaration, directive_name) {
-			full_declaration = hlpSimplifyValue(full_declaration);
-			return new this.StandartChange(node, {
-				complex_statement: full_declaration,
-				getValue: this.dom_helpres.getClassName,
-				setValue: this.dom_helpres.setClassName,
-				simplifyValue: hlpSimplifyValue
-			}, directive_name);
-		},
+		'pv-text': (function() {
+			var getTextValue = function(node) {
+				return $(node).text();
+			};
+			var setTextValue = function(node, new_value) {
+				$(node).text(new_value);
+			};
+			return function(node, full_declaration, directive_name) {
+				return new this.StandartChange(node, {
+					complex_statement: full_declaration,
+					getValue: getTextValue,
+					setValue: setTextValue
+				}, directive_name);
+			};
+		})(),
+		'pv-class': (function() {
+			var getClassName = function(node) {
+				return node.className;
+			};
+			var setClassName = function(node, new_value) {
+				node.className = new_value;
+			};
+			return function(node, full_declaration, directive_name) {
+				full_declaration = hlpSimplifyValue(full_declaration);
+				return new this.StandartChange(node, {
+					complex_statement: full_declaration,
+					getValue: getClassName,
+					setValue: setClassName,
+					simplifyValue: hlpSimplifyValue
+				}, directive_name);
+			};
+		})(),
 		'pv-props': function(node, full_declaration, directive_name) {
 			var result = [];
 			var complex_value = full_declaration;
@@ -433,22 +422,39 @@ var parser = {
 
 
 		},
-		'pv-type': function(node, full_declaration, directive_name) {
-			if (!full_declaration){
-				return;
-			}
-			full_declaration = hlpSimplifyValue(full_declaration);
+		'pv-type': (function() {
+			var getPVTypes = function() {
+				return '';
+			};
 
-			//если pv-types не требует постоянных вычислений (не зависит ни от одного из состояний)
-			//то использующие шаблон ноды могут выдавать общий результирующий объект - это нужно реализовать fixme
+			var setPVTypes = function(node, new_value, ov, wwtch){
+				var types = new_value.split(regxp_spaces);
+				wwtch.pv_type_data.marks = {};
+				for (var i = 0; i < types.length; i++) {
+					if (types[i]){
+						wwtch.pv_type_data.marks[types[i]] = true;
+					}
+				}
+				wwtch.context._pvTypesChange();
+			};
 
-			return new this.StandartChange(node, {
-				complex_statement: full_declaration,
-				getValue: this.dom_helpres.getPVTypes,
-				setValue: this.dom_helpres.setPVTypes,
-				simplifyValue: hlpSimplifyValue
-			}, directive_name);
-		},
+			return function(node, full_declaration, directive_name) {
+				if (!full_declaration){
+					return;
+				}
+				full_declaration = hlpSimplifyValue(full_declaration);
+
+				//если pv-types не требует постоянных вычислений (не зависит ни от одного из состояний)
+				//то использующие шаблон ноды могут выдавать общий результирующий объект - это нужно реализовать fixme
+
+				return new this.StandartChange(node, {
+					complex_statement: full_declaration,
+					getValue: getPVTypes,
+					setValue: setPVTypes,
+					simplifyValue: hlpSimplifyValue
+				}, directive_name);
+			};
+		})(),
 		'pv-events': function(node, full_declaration) {
 			/*
 			click:Callback
@@ -570,30 +576,29 @@ var parser = {
 		}
 		return parts.join('');
 	},
-
-	
-	prop_ch_helpers: {
-		getValue: function(node, prop) {
+	createPropChange: (function() {
+		var getValue = function(node, prop) {
 			return spv.getTargetField(node, prop);
-		},
-		setValue: function(node, value, old_value, wwtch) {
+		};
+		var setValue = function(node, value, old_value, wwtch) {
 			return spv.setTargetField(node, wwtch.data, value || '');
-		}
-	},
-	createPropChange: function(node, prop, statement, directive_name) {
-		var parts = prop.split(DOT);
-		for (var i = 0; i < parts.length; i++) {
-			parts[i] = this.convertFieldname(parts[i]);
-		}
-		prop = parts.join(DOT);
+		};
 
-		return new this.StandartChange(node, {
-			data: prop,
-			statement: statement,
-			getValue: this.prop_ch_helpers.getValue,
-			setValue: this.prop_ch_helpers.setValue
-		}, directive_name);
-	},
+		return function(node, prop, statement, directive_name) {
+			var parts = prop.split(DOT);
+			for (var i = 0; i < parts.length; i++) {
+				parts[i] = this.convertFieldname(parts[i]);
+			}
+			prop = parts.join(DOT);
+
+			return new this.StandartChange(node, {
+				data: prop,
+				statement: statement,
+				getValue: getValue,
+				setValue: setValue
+			}, directive_name);
+		};
+	})(),
 	StandartChange: (function() {
 		var StandartChange = function(node, opts, directive_name) {
 			var calculator = opts.calculator;
@@ -664,29 +669,28 @@ var parser = {
 					
 				}
 			},
-			helpers: {
-				checkFuncPublic: function(states, async_changes, current_motivator) {
+			createBinding: (function() {
+				var checkFuncPublic = function(states, async_changes, current_motivator) {
 					this.standch.checkFunc(states, this, async_changes, current_motivator);
-				}
-			},
-			createBinding: function(node, context) {
-				//var sfy_values = getFieldsTreesBases(standch.all_vs);
-				
-				var wwtch = {
-					w_cache_key: node.pvprsd + '_' + node.pvprsd_inst + '*' + this.directive_name,
-					data: this.data,
-					standch: this,
-					context: context,
-					node: node,
-					current_value: this.original_value,
-					pv_type_data: null,
-
-					values: this.all_vs,
-					sfy_values: this.sfy_values,
-					checkFunc: this.helpers.checkFuncPublic
 				};
-				return wwtch;
-			}
+
+				return function(node, context) {				
+					var wwtch = {
+						w_cache_key: node.pvprsd + '_' + node.pvprsd_inst + '*' + this.directive_name,
+						data: this.data,
+						standch: this,
+						context: context,
+						node: node,
+						current_value: this.original_value,
+						pv_type_data: null,
+
+						values: this.all_vs,
+						sfy_values: this.sfy_values,
+						checkFunc: checkFuncPublic
+					};
+					return wwtch;
+				};
+			})()
 		};
 		return StandartChange;
 	})(),
