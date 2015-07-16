@@ -66,28 +66,31 @@ spv.getExistingItems = function(arr) {
 	return result;
 };
 
-addEvent = spv.addEvent = window.addEventListener ?
-function(elem, evType, fn){
-	elem.addEventListener(evType, fn, false);
-	return fn;
-}:
-function(elem, evType, fn){
-	elem.attachEvent('on' + evType, fn);
-	return fn;
-};
-removeEvent = spv.removeEvent = window.addEventListener ?
-function(elem, evType, fn){
-	if (!elem.removeEventListener){
-		return;
-	}
-	elem.removeEventListener(evType, fn, false);
-}:
-function(elem, evType, fn){
-	if (!elem.detachEvent){
-		return;
-	}
-	elem.detachEvent('on' + evType, fn);
-};
+if (typeof window !== 'undefined') {
+	addEvent = spv.addEvent = window.addEventListener ?
+	function(elem, evType, fn){
+		elem.addEventListener(evType, fn, false);
+		return fn;
+	}:
+	function(elem, evType, fn){
+		elem.attachEvent('on' + evType, fn);
+		return fn;
+	};
+	removeEvent = spv.removeEvent = window.addEventListener ?
+	function(elem, evType, fn){
+		if (!elem.removeEventListener){
+			return;
+		}
+		elem.removeEventListener(evType, fn, false);
+	}:
+	function(elem, evType, fn){
+		if (!elem.detachEvent){
+			return;
+		}
+		elem.detachEvent('on' + evType, fn);
+	};
+}
+
 getDefaultView = spv.getDefaultView = function(d) {
 	return d.defaultView || d.parentWindow;
 };
