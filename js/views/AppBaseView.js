@@ -1,12 +1,14 @@
-define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', './modules/getUsageTree'], function(pv, spv, $, filters, app_serv, getUsageTree){
+define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', './modules/getUsageTree', 'view_serv'],
+function(pv, spv, $, filters, app_serv, getUsageTree, view_serv){
 "use strict";
-var transform_props = [app_serv.app_env.transform];
+var css_transform = view_serv.css.transform;
+var transform_props = css_transform ? [css_transform] : [];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
 var empty_transform_props = {};
 transform_props.forEach(function(el) {
 	empty_transform_props[el] = '';
 });
-var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
+var can_animate = view_serv.css.transform && view_serv.css.transition;
 
 pv.setTplFilterGetFn(function(filter_name) {
 	if (filters[filter_name]){

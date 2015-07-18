@@ -16,6 +16,8 @@ requirejs.config({
 		localizer: 'js/libs/localizer',
 		cache_ajax: 'js/libs/cache_ajax',
 		app_serv: "js/app_serv",
+		view_serv: "js/views/modules/view_serv",
+		env: "js/env",
 		hex_md5: 'js/common-libs/md5.min',
 	},
 	shim: {
@@ -40,8 +42,8 @@ window._gaq = window._gaq || [];
 	//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
 	var need_ui = (!cbp || cbp != window) && (!opera || !opera.contexts);
 	if (need_ui){
-		requirejs(['spv', 'app_serv'], function(spv, app_serv) {
-			app_serv.handleDocument(window.document);
+		requirejs(['spv', 'view_serv'], function(spv, view_serv) {
+			view_serv.handleDocument(window.document);
 		});
 	}
 	if (!need_ui){

@@ -1,5 +1,5 @@
-define(['pv', 'jquery', './coct', 'app_serv', './modules/Panoramator', 'spv'],
-function(pv, $, coct, app_serv, Panoramator, spv) {
+define(['pv', 'jquery', './coct', 'app_serv', 'view_serv', './modules/Panoramator', 'spv'],
+function(pv, $, coct, app_serv, view_serv, Panoramator, spv) {
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -275,7 +275,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 
 				var image_jnode = target.img_sample.clone();
 				var url = (sizes[5] || sizes[0])["#text"];
-				var req = app_serv.loadImage({
+				var req = view_serv.loadImage({
 					url: url,
 					timeout: 40000,
 					queue: queue,

@@ -5,6 +5,12 @@ var getSongFileModel = function(map_parent) {
 	map_parent.initSi(SongFileModel.FileInTorrent, null, {file:this});
 };
 
+var getHTMLText = function(text) {
+	var safe_node = document.createElement('div');
+	safe_node.innerHTML = text;
+	return $(safe_node).text();
+};
+
 var isohuntTorrentSearch = function(opts) {
 	//this.crossdomain = cross_domain_allowed;
 	this.mp3_search = opts.mp3_search;
@@ -83,7 +89,7 @@ isohuntTorrentSearch.prototype = {
 	wrapItem: function(r, sitem, query) {
 		r.push({
 			isohunt_id: sitem.guid,
-			HTMLTitle: sitem.title,
+			title: getHTMLText(sitem.title),
 			media_type: 'torrent',
 			torrent_link: 'http://isohunt.com/download/' + sitem.guid,
 			query: query,

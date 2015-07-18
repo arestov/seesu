@@ -101,6 +101,27 @@ NigmaAPI.prototype = {
 	}
 };
 
+var getTagRegExp = function(tag_name, simple, flags){
+	var reg_string = "<" + tag_name + "[\\s\\S]*?>";
+	if (!simple){
+		reg_string += "[\\s\\S]*?<\/" + tag_name + ">";
+	}
+	return new RegExp(reg_string, flags || "gi");
+};
+
+var getCleanDocumentBodyHTML = function(text) {
+	var body = text.match(getTagRegExp("body"));
+	body = body && body[0];
+	if (body){
+		var wrap = document.createElement("html");
+		wrap.innerHTML = body
+			.replace(getTagRegExp("script"), "")
+			.replace(getTagRegExp("style"), "")
+			.replace(getTagRegExp("img", true) , "")
+			.replace(getTagRegExp("link", true) , "");
+		return wrap;
+	}
+};
 
 var NigmaMusicSearch = function(opts) {
 	this.api = opts.api;

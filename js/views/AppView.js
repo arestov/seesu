@@ -1,11 +1,11 @@
 define(['pv', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
 './StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
 './SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
-'./lul', './SongcardPage', './AppBaseView', './modules/WPBox'],
+'./lul', './SongcardPage', './AppBaseView', './modules/WPBox', 'view_serv'],
 function(pv, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
 StartPageView, SearchPageView, ArtcardUI, ArtistListView,
 SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
-lul, SongcardPage, AppBaseView, WPBox) {
+lul, SongcardPage, AppBaseView, WPBox, view_serv) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -724,7 +724,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			}
 			opts.timeout = opts.timeout || 40000;
 			opts.queue = opts.queue || queue;
-			return app_serv.loadImage(opts);
+			return view_serv.loadImage(opts);
 		}
 	},
 	createNiceButton: function(position){

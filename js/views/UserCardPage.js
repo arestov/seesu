@@ -1,6 +1,6 @@
-define(['pv', 'jquery', './coct', './uacq', 'app_serv'], function(pv, $, coct, uacq, app_serv) {
+define(['pv', 'jquery', './coct', './uacq', 'env'], function(pv, $, coct, uacq, env) {
 "use strict";
-var app_env = app_serv.app_env;
+var app_env = env;
 
 var UserCardPage = function(){};
 coct.PageView.extendTo(UserCardPage, {

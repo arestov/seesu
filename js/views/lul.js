@@ -1,6 +1,6 @@
-define(['pv', './coct', 'app_serv', 'jquery'], function(pv, coct, app_serv, $) {
+define(['pv', './coct', 'env', 'jquery'], function(pv, coct, env, $) {
 "use strict";
-var app_env = app_serv.app_env;
+var app_env = env;
 var LULAPageVIew = function() {};
 pv.View.extendTo(LULAPageVIew, {
 	base_tree: {
