@@ -1,5 +1,5 @@
-define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/libs/Mp3Search', 'jquery', './comd', './YoutubeVideo', './LoadableList'],
-function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, $, comd, YoutubeVideo, LoadableList) {
+define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/libs/Mp3Search', './comd', './YoutubeVideo', './LoadableList'],
+function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, LoadableList) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -848,11 +848,12 @@ LoadableList.extendTo(MfCor, {
 			//all_files = this.files_investg.getFiles(source_name, type);
 		}
 		if (fn){
-			$.each(all_files, function(i, el) {
+			for (var i = 0; i < all_files.length; i++) {
+				var el = all_files[i];
 				if (fn(el)){
 					mfs.push(el);
 				}
-			});
+			}
 			return mfs;
 		} else {
 			return all_files;
@@ -869,11 +870,12 @@ LoadableList.extendTo(MfCor, {
 			mfs.push.apply(mfs, all[i].t);
 		}
 		if (fn){
-			$.each(mfs, function(i, el) {
+			for (var i = 0; i < mfs.length; i++) {
+				var el = mfs[i];
 				if (fn(el)){
 					r.push(el);
 				}
-			});
+			}
 			return r;
 		} else {
 			return mfs;

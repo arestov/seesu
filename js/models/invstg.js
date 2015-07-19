@@ -1,5 +1,5 @@
-define(['pv', 'js/modules/lfmhelp', 'app_serv', 'spv', 'jquery', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
-function(pv, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data, BrowseMap, invstg_obj) {
+define(['pv', 'js/modules/lfmhelp', 'app_serv', 'spv', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
+function(pv, lfmhelp, app_serv, spv, cache_ajax, hex_md5, lastfm_data, BrowseMap, invstg_obj) {
 "use strict";
 var localize = app_serv.localize;
 var
@@ -473,19 +473,20 @@ Investigation.extendTo(SearchPage, {
 			});
 			if (!cache_used) {
 				var all_parts = [this.g('section-artist'), this.g('section-track'), this.g('section-tag'), this.g('section-album')];
-				$.each(all_parts, function(i, el) {
+				for (var i = 0; i < all_parts.length; i++) {
+					var el = all_parts[i];
 					if (el) {
 						el.loading();
 					}
-					
-				});
+				}
+
 				lfmhelp.get_fast_suggests(q, function(r){
-					$.each(all_parts, function(i, el) {
+					for (var i = 0; i < all_parts.length; i++) {
+						var el = all_parts[i];
 						if (el) {
 							el.loaded();
 						}
-						
-					});
+					}
 					lfmhelp.fast_suggestion(r, q, _this);
 				}, hash, this);
 				

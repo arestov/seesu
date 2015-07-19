@@ -1,7 +1,7 @@
-define(['pv', 'spv', 'app_serv', './comd', 'jquery',
+define(['pv', 'spv', 'app_serv', './comd',
 'js/libs/BrowseMap', './SongsList' , 'js/common-libs/htmlencoding',
 './UserAcquaintancesLists', './SuUsersPlaylists', './user_music_lfm', './user_music_vk'],
-function(pv, spv, app_serv, comd, $,
+function(pv, spv, app_serv, comd,
 BrowseMap, SongsList, htmlencoding,
 UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, user_music_vk){
 "use strict";

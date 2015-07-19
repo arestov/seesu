@@ -1,4 +1,4 @@
-define(['pv', 'spv', 'jquery'],function(pv, spv, $){
+define(['pv', 'spv'],function(pv, spv){
 	"use strict";
 	pv.addPrototype("Investigation", {
 		model_name: 'invstg',
@@ -98,9 +98,10 @@ define(['pv', 'spv', 'jquery'],function(pv, spv, $){
 		},
 		refreshEnterItems: function(){
 			var r = this.getAllItems();
-			$.each(r, function(i, el){
+			for (var i = 0; i < r.length; i++) {
+				var el = r[i];
 				el.serial_number = i;
-			});
+			}
 			this.enter_items = r;
 			this.setItemForEnter(r[this.selected_inum || 0]);
 		},
