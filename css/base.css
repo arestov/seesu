@@ -82,7 +82,7 @@ a.bbcode_tag{
 	a.bbcode_tag:active{
 		border-bottom-color:#999  !important;
 		}
-.hidden{
+.hidden, [pv-when]{
 	display:none !important;
 }
 a.desc{
