@@ -128,17 +128,35 @@ pv.Model.extendTo(Torrent, {
 	'state-progress_info': [
 		'troxent',
 		function(troxent, update) {
+			var swarm;
+
 			var progresInfo = function() {
 				update({
-					total_peers:  troxent.swarm.numPeers || 0.1
+					total_peers:  (troxent.swarm && troxent.swarm.numPeers) || 0.1
 				});
 			};
 			update({
-				total_peers:  troxent.swarm.numPeers || 0.1
+				total_peers:  (troxent.swarm && troxent.swarm.numPeers) || 0.1
 			});
-			troxent.swarm.on('numPeers', progresInfo);
+
+
+			var gotHash = function() {
+				swarm = troxent.swarm;
+				swarm.on('numPeers', progresInfo);
+
+				update({
+					total_peers:  (troxent.swarm && troxent.swarm.numPeers) || 0.1
+				});
+			};
+
+			troxent.on('infoHash', gotHash);
+
+			
 			return function() {
-				troxent.swarm.removeListener('numPeers', progresInfo);
+				troxent.removeListener('infoHash', gotHash);
+				if (swarm) {
+					swarm.removeListener('numPeers', progresInfo);
+				}
 			};
 		}
 	],
