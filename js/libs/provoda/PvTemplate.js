@@ -54,16 +54,18 @@ var PvTemplate = function(opts) {
 	this.pvTypesChange = opts.pvTypesChange;
 	this.pvTreeChange = opts.pvTreeChange;
 	this.struc_store = opts.struc_store;
-	this.ancs = {};
+	this.ancs = null;
 	//this.pv_views = [];
 	//this.parsed_pv_views = [];
 	this.pv_repeats = {};
 	this.children_templates = {};
+	this.pv_repeats = null;
+	this.children_templates = null;
 
 	this.states_watchers = [];
 	this.stwat_index = {};
-	this.pv_types = [];
-	this.pv_repeats_data = [];
+	this.pv_types = null;
+	this.pv_repeats_data = null;
 	this.destroyers = null;
 
 	this.getSample = opts.getSample;
@@ -202,6 +204,9 @@ var hndPVRepeat = function(new_fv, states) {
 			repeat_data.array.push(template);
 		}
 		$(comment_anchor).after(fragt);
+		if (!context.pv_repeats) {
+			context.pv_repeats = {};
+		}
 		context.pv_repeats[full_pv_context] = repeats_array;
 		context.pv_types_collecting = false;
 		context._pvTypesChange();
@@ -1277,16 +1282,19 @@ var handleChunks = (function() {
 			tpl.states_watchers = spv.findAndRemoveItem(tpl.states_watchers, chunk.data);
 		},
 		'ancs': function(chunk, tpl) {
+			if (!tpl.ancs) {return;}
 			var anchor_name = chunk.data.anchor_name;
 			tpl.ancs[anchor_name] = null;
 		},
 		'pv_type': function(chunk, tpl) {
+			if (!tpl.pv_types) {return;}
 			tpl.pv_types = spv.findAndRemoveItem(tpl.pv_types, chunk.data);
 		},
 		'pv_event': function(chunk) {
 			chunk.destroyer();
 		},
 		'pv_view': function(chunk, tpl) {
+			if (!tpl.children_templates) {return;}
 			removePvView(chunk.data, tpl.children_templates);
 			if (chunk.data.destroyers) {
 				while (chunk.data.destroyers.length) {
@@ -1296,6 +1304,7 @@ var handleChunks = (function() {
 			}
 		},
 		'pv_repeat': function(chunk, tpl) {
+			if (!tpl.pv_repeats_data) {return;}
 			tpl.pv_repeats_data = spv.findAndRemoveItem(tpl.pv_repeats_data, chunk.data);
 		}
 	};
@@ -1304,6 +1313,9 @@ var handleChunks = (function() {
 			tpl.states_watchers.push(chunk.data);
 		},
 		'ancs': function(chunk, tpl) {
+			if (!tpl.ancs) {
+				tpl.ancs = {};
+			}
 			var anchor_name = chunk.data.anchor_name;
 			if (tpl.ancs[anchor_name]){
 				throw new Error('anchors exists');
@@ -1312,16 +1324,24 @@ var handleChunks = (function() {
 			}
 		},
 		'pv_type': function(chunk, tpl) {
+			if (!tpl.pv_types) {
+				tpl.pv_types = [];
+			}
 			tpl.pv_types.push(chunk.data);
 		},
 		'pv_event': function(chunk, tpl) {
 			chunk.destroyer = tpl.bindPVEvent(chunk.data.node, chunk.data.evdata);
 		},
 		'pv_view': function(chunk, tpl) {
+			if (!tpl.children_templates) {
+				tpl.children_templates = {};
+			}
 			indexPvView(chunk.data, tpl.children_templates);
-
 		},
 		'pv_repeat': function(chunk, tpl) {
+			if (!tpl.pv_repeats_data) {
+				tpl.pv_repeats_data = [];
+			}
 			tpl.pv_repeats_data.push(chunk.data);
 		}
 	};
@@ -1390,8 +1410,12 @@ spv.Class.extendTo(PvTemplate, {
 		var objs = [this];
 		while (objs.length){
 			var cur = objs.shift();
-			if (cur.pv_types.length){
+			if (cur.pv_types && cur.pv_types.length){
 				result.push(cur.pv_types);
+			}
+
+			if (!cur.pv_repeats_data) {
+				continue;
 			}
 
 			for (var i = 0; i < cur.pv_repeats_data.length; i++) {
@@ -1615,7 +1639,6 @@ spv.Class.extendTo(PvTemplate, {
 			'pv-text': function(node, standch){
 				if (standch){
 					var wwtch = standch.createBinding(node, this);
-					
 					return new BnddChunk('states_watcher', wwtch);
 				}
 			},
