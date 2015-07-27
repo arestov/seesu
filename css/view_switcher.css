@@ -217,7 +217,8 @@
 .full_wide_col{
 	clear:both;
 	}
-	.full_wide_col .area_for_button .albums_previews{
+	.full_wide_col .area_for_button .albums_previews,
+	.full_wide_col .albums_previews-con .area_for_button .desc_prevw_list{
 		height: 4.6rem;
 		}
 
@@ -261,7 +262,8 @@
 		padding-top:1rem;
 		overflow: hidden;
 		}
-		.area_for_button .albums_previews{
+		.area_for_button .albums_previews,
+		.albums_previews-con .area_for_button .desc_prevw_list{
 			height: 9.4rem;
 			}
 	

@@ -158,6 +158,56 @@
 			<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 		</div>
 
+		<div 
+			class="area_for_button imp-area_for_button"
+			pv-class="area_for_button {{mp_show && 'button_selected'}}"
+			pv-events="click:requestPage"
+			pv-type="way-point">
+			<div class="area-button">
+				<span pv-text="{{nav_title}}"></span>
+			</div>
+			<div
+				class="area-description desc_prevw_list"
+				pv-class="area-description desc_prevw_list {{list_loading && 'list_loading'}}">
+				<span class="desc_item preview_line" pv-nest="preview_list">
+					<span class="preview_line-wrap">
+						<span class="desc_item-imgcon">
+							<img src="" alt=""
+								pv-class="{{!selected_image && 'hidden'}}" 
+								pv-props=
+								"src: {{
+									(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
+									|| selected_image.url
+								}}">
+						</span>
+						<span class="desc_item-text" pv-text="{{selected_title || nav_short_title || nav_title}}"></span>
+					</span>
+					
+				</span>
+			</div>
+		</div>
+
+		<div 
+			class="area_for_button imp-area_for_button-simple"
+			pv-class="area_for_button {{mp_show && 'button_selected'}}"
+			pv-events="click:requestPage"
+			pv-type="way-point">
+			<div class="area-button">
+				<span pv-text="{{nav_title}}"></span>
+			</div>
+			<div
+				class="area-description desc_prevw_list"
+				pv-class="area-description desc_prevw_list {{list_loading && 'list_loading'}}">
+				<span class="desc_item preview_line" pv-nest="preview_list">
+					<span class="preview_line-wrap">
+						<span class="desc_item-text" pv-text="{{selected_title || nav_short_title || nav_title}}"></span>
+					</span>
+					
+
+				</span>
+			</div>
+		</div>
+
 		<span class="desc_item preview_line">
 			<span class="preview_line-wrap">
 				<span 
@@ -182,25 +232,11 @@
 			pv-class="lula_page usual_page"
 			>
 			<div class="preview_area" pv-nest="tracks">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">Tracks</span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			<div class="preview_area" pv-nest="artists">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">Artists</span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			<div class="preview_area" pv-nest="albums">
@@ -347,17 +383,11 @@
 				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}">Load more</a>
 		</div>
 		<div class="music_conductor_page usual_page">
-			<div class="area_for_button" pv-nest='allpas'>
-				<div class="area-button" pv-anchor='big_button'>
-					<span pv-text="{{nav_title}}">World</span>
-				</div>
-				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			<div pv-nest='allpas'>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
 			</div>
-			<div class="area_for_button" pv-nest='сountries'>
-				<div class="area-button" pv-anchor='big_button'>
-					<span pv-text="{{nav_title}}">Countries</span>
-				</div>
-				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			<div pv-nest='сountries'>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
 			</div>
 			<!--pv-replace sample_name:view_sources-->
 		</div>
@@ -431,104 +461,47 @@
 
 
 		<div class="vk_pthgs">
-			<div class="area_for_button" pv-nest='vk__tracks'>
-				<div class="area-button" pv-anchor='big_button'>
-					<span pv-text="{{nav_title}}"></span>
-				</div>
-				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			<div pv-nest='vk__tracks'>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
 			</div>
 			<div class="preview_area" pv-nest="vk__friends">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			
 		</div>
+
 		<div class="lastfm_pthgs">
 			<div class="preview_area" pv-nest="lfm__friends">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			<div class="preview_area" pv-nest="lfm__neighbours">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			<div class="preview_area" pv-nest="lfm__tracks">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			<div class="preview_area" pv-nest="lfm__tags">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			<div class="preview_area" pv-nest="lfm__artists">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 			<div class="preview_area" pv-nest="lfm__albums">
-				<div class="area_for_button" pv-anchor="button_area">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description" >
-						<div class="desc_prevw_list" pv-anchor="listc"></div>
-					</div>
-				</div>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
-
-			
-			
 		</div>
 
 		<div class="usual_page user_page">
 			<div class="internal_pthgs">
-				<div class="area_for_button" pv-nest='user-playlists'>
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">Playlists</span>
-					</div>
-					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+				<div pv-nest='user-playlists'>
+					<!--pv-replace sample_name:imp-area_for_button-simple-->
 				</div>
 				<div class="aqc_preview preview_ffp" pv-anchor="users_acqutes"></div>
 			</div>
@@ -636,23 +609,13 @@
 		<div class="tag_page usual_page">
 			<h2 pv-text="{{tag_name}}"></h2>
 			<div class="leftcol">
-				<div class="artists_lists">
-					<div class="area_for_button tag_artists-preview" pv-nest='artists_lists'>
-						<div class="area-button" pv-anchor="big_button">
-							<span pv-text="{{nav_title}}">Artists</span>
-						</div>
-						<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
-					</div>
+				<div pv-nest='artists_lists'>
+					<!--pv-replace sample_name:imp-area_for_button-simple-->
 				</div>
 			</div>
 			<div class="rightcol">
-				<div class="songs_list">
-					<div class="area_for_button tag_artists-preview" pv-nest='songs_list'>
-						<div class="area-button" pv-anchor="big_button">
-							<span pv-text="{{nav_title}}">Songs</span>
-						</div>
-						<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
-					</div>
+				<div pv-nest='songs_list'>
+					<!--pv-replace sample_name:imp-area_for_button-simple-->
 				</div>
 			</div>
 			<div class="full_wide_col">
@@ -678,57 +641,23 @@
 
 		<div class="art_card">
 			<div class="leftcol">
-				<div class="area_for_button" pv-nest="top_songs">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">
-							Top
-						</span>
-					</div>
-					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				<div pv-nest="top_songs">
+					<!--pv-replace sample_name:imp-area_for_button-->
 				</div>
-
-				<div class="area_for_button" pv-nest="hypem_new">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">
-							Свежее
-						</span>
-					</div>
-					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				<div pv-nest="hypem_new">
+					<!--pv-replace sample_name:imp-area_for_button-->
 				</div>
-
-				<div class="area_for_button" pv-nest="hypem_fav">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">
-							В избранном
-						</span>
-					</div>
-					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				<div pv-nest="hypem_fav">
+					<!--pv-replace sample_name:imp-area_for_button-->
 				</div>
-				<div class="area_for_button" pv-nest="hypem_reblog">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">
-							Популярно в блогах
-						</span>
-					</div>
-					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+				<div pv-nest="hypem_reblog">
+					<!--pv-replace sample_name:imp-area_for_button-->
 				</div>
-				<div class="area_for_button" pv-nest="soundc_prof">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">
-							Из souncloud профиля
-						</span>
-					</div>
-					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				<div pv-nest="soundc_prof">
+					<!--pv-replace sample_name:imp-area_for_button-->
 				</div>
-
-
-				<div class="area_for_button" pv-nest="soundc_likes">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">
-							Понравившиеся артисту
-						</span>
-					</div>
-					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				<div pv-nest="soundc_likes">
+					<!--pv-replace sample_name:imp-area_for_button-->
 				</div>
 			</div>
 			<div class="rightcol">
@@ -738,11 +667,8 @@
 					</div>
 					<div class="area-description desc_prevw_list  tags_list-preview" pv-anchor="listc"></div>
 				</div>
-				<div class="area_for_button" pv-nest="similar_artists">
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}">Similar Artists</span>
-					</div>
-					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				<div pv-nest="similar_artists">
+					<!--pv-replace sample_name:imp-area_for_button-->
 				</div>
 				<div class="area_for_button" pv-nest="albums_list">
 					<div class="area-button" pv-anchor="big_button">

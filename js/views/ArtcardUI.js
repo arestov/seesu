@@ -10,13 +10,13 @@ pv.View.extendTo(ArtcardUI, {
 		this._super();
 	},
 	children_views: {
-		top_songs: coct.ItemOfLL,
-		soundc_prof: coct.ItemOfLL,
-		hypem_new: coct.ItemOfLL,
-		hypem_fav: coct.ItemOfLL,
-		hypem_reblog: coct.ItemOfLL,
-		soundc_likes: coct.ItemOfLL,
-		similar_artists: coct.ItemOfLL,
+		// top_songs: coct.ItemOfLL,
+		// soundc_prof: coct.ItemOfLL,
+		// hypem_new: coct.ItemOfLL,
+		// hypem_fav: coct.ItemOfLL,
+		// hypem_reblog: coct.ItemOfLL,
+		// soundc_likes: coct.ItemOfLL,
+		// similar_artists: coct.ItemOfLL,
 		albums_list: coct.AlbumsListPreview,
 		dgs_albums: coct.AlbumsListPreview,
 		tags_list: coct.TagsListPreview

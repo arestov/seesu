@@ -9,16 +9,16 @@ coct.PageView.extendTo(UserCardPage, {
 
 	},
 	children_views: {
-		'user-playlists': coct.ListSimplePreview,
+		// 'user-playlists': coct.ListSimplePreview,
 		users_acqutes: uacq.UserAcquaintancesListPreview,
-		vk__tracks: coct.ListSimplePreview,
-		vk__friends: coct.ImagedListPreview,
-		lfm__friends: coct.ImagedListPreview,
-		lfm__neighbours: coct.ImagedListPreview,
-		lfm__artists: coct.ListSimplePreview,
-		lfm__tracks: coct.ListSimplePreview,
-		lfm__tags: coct.ListSimplePreview,
-		lfm__albums: coct.ListSimplePreview
+		// vk__tracks: coct.ListSimplePreview,
+		// vk__friends: coct.ImagedListPreview,
+		// lfm__friends: coct.ImagedListPreview,
+		// lfm__neighbours: coct.ImagedListPreview,
+		// lfm__artists: coct.ListSimplePreview,
+		// lfm__tracks: coct.ListSimplePreview,
+		// lfm__tags: coct.ListSimplePreview,
+		// lfm__albums: coct.ListSimplePreview
 	},
 	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
 });
@@ -29,12 +29,12 @@ pv.View.extendTo(LfmUsercardPageView, {
 		sample_name: 'lfm_user_page'
 	},
 	children_views: {
-		lfm__friends: coct.ImagedListPreview,
-		lfm__neighbours: coct.ImagedListPreview,
-		lfm__artists: coct.ListSimplePreview,
-		lfm__tracks: coct.ListSimplePreview,
-		lfm__tags: coct.ListSimplePreview,
-		lfm__albums: coct.ListSimplePreview
+		// lfm__friends: coct.ImagedListPreview,
+		// lfm__neighbours: coct.ImagedListPreview,
+		// lfm__artists: coct.ListSimplePreview,
+		// lfm__tracks: coct.ListSimplePreview,
+		// lfm__tags: coct.ListSimplePreview,
+		// lfm__albums: coct.ListSimplePreview
 	}
 });
 
@@ -45,8 +45,8 @@ pv.View.extendTo(VkUsercardPageView, {
 		sample_name: 'vk_user_page'
 	},
 	children_views: {
-		vk__tracks: coct.ListSimplePreview,
-		vk__friends: coct.ImagedListPreview
+		// vk__tracks: coct.ListSimplePreview,
+		// vk__friends: coct.ImagedListPreview
 	}
 });
 
