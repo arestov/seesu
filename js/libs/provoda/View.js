@@ -123,7 +123,7 @@ StatesEmitter.extendTo(View, {
 		this.mpx = view_otps.mpx;
 		this.proxies_space = view_otps.proxies_space || null;
 		
-		this.way_points = [];
+		this.way_points = null;
 
 		this.dom_related_props = null;
 		if (this.dom_rp){
@@ -325,14 +325,19 @@ StatesEmitter.extendTo(View, {
 		if (!opts || (!opts.simple_check && !opts.canUse)){
 			//throw new Error('give me check tool!');
 		}
+		if (!this.way_points) {
+			this.way_points = [];
+		}
 		this.way_points.push(obj);
 		return obj;
 	},
 	hasWaypoint: function(point) {
+		if (!this.way_points) {return;}
 		var arr = spv.filter(this.way_points, 'node');
 		return arr.indexOf(point) != -1;
 	},
 	removeWaypoint: function(point) {
+		if (!this.way_points) {return;}
 		var stay = [];
 		for (var i = 0; i < this.way_points.length; i++) {
 			var cur = this.way_points[i];
