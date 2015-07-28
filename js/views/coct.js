@@ -1,5 +1,8 @@
 define(['spv', 'pv', 'jquery', './etc_views'], function(spv, pv, $, etc_views) {
 "use strict";
+
+var pvUpdate = pv.update;
+
 var SoftVkLoginUI = function() {};
 etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
 	createBase: function() {
@@ -219,6 +222,32 @@ pv.View.extendTo(AlbumsListPreviewItem, {
 	}
 });
 
+var ImageLoader = pv.View.extendTo(function ImageLoader(){}, {
+	'stch-selected_image': function(target, lfm_wrap) {
+		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
+		if (url){
+			pvUpdate(target, 'queued_image$loading', true);
+			var req = target.root_view.loadImage({
+					url: url,
+					cache_allowed: true
+				}).done(function(){
+					pvUpdate(target, 'queued_image', lfm_wrap);
+				}).fail(function(){
+
+				})
+				.always(function(){
+					pvUpdate(target, 'queued_image$loading', false);
+				});
+			target.addRequest(req);
+			target.on('die', function() {
+				req.abort();
+			});
+		} else {
+			pvUpdate(target, 'queued_image', null);
+		}
+	}
+});
+
 
 var BigAlbumPreview = function() {};
 pv.View.extendTo(BigAlbumPreview, {
@@ -308,6 +337,7 @@ PageView.extendTo(AppNewsView, {
 	}
 });
 return {
+	ImageLoader:ImageLoader, 
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
 	ListPreviewLine:ListPreviewLine,

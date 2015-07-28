@@ -582,7 +582,14 @@ StatesEmitter.extendTo(View, {
 		} else {
 
 			var ConstrObj;
-			if (address_opts.by_model_name) {
+			var controller_name = address_opts.controller_name;
+			if (controller_name) {				
+				ConstrObj = this.root_view.controllers && this.root_view.controllers[controller_name];
+				if (!ConstrObj) {
+					throw new Error('controller `' + controller_name + 
+						'` should be defined in root_view.controllers');
+				}
+			} else if (address_opts.by_model_name) {
 
 				ConstrObj = this.children_views_by_mn &&
 					(this.children_views_by_mn[address_opts.nesting_name][md.model_name] ||
@@ -1113,6 +1120,7 @@ StatesEmitter.extendTo(View, {
 
 			var view = this.view.getFreeChildView({
 				by_model_name: true,
+				controller_name: pv_view.controller_name,
 				nesting_name: this.nesname,
 				nesting_space: this.space_name,
 				sampleController: View
@@ -1175,6 +1183,7 @@ StatesEmitter.extendTo(View, {
 			var pv_view = this.pv_view;
 			var view = this.view.getFreeChildView({
 				by_model_name: false,
+				controller_name: pv_view.controller_name,
 				nesting_name: this.nesname,
 				nesting_space: this.space_name,
 				sampleController: View

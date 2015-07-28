@@ -111,6 +111,9 @@ pv.View.extendTo(BrowseLevView, {
 	children_views_by_mn: {
 		pioneer: map_slice_by_model
 	},
+	controllers: {
+		image_loader: coct.ImageLoader
+	},
 	base_tree: {
 		sample_name: 'browse_lev_con'
 	},

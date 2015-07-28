@@ -20,6 +20,9 @@ var removeEvent = spv.removeEvent;
 		      }],
 		      "songs"
 		    ]
+		  },
+		  {
+			'imp-desc_item': 'imp-desc_item-tag'
 		  }
 		]
 	</script>
@@ -92,7 +95,19 @@ var PvTemplate = function(opts) {
 	this.pv_imports = null;
 	this.destroyers = null;
 
+	var samples_map = this.data_limitations && this.data_limitations[2];
+
 	this.getSample = opts.getSample;
+	var getSample = opts.getSample;
+	if (samples_map) {
+		this.getSample = function(sample_name, simple) {
+			if (samples_map[sample_name]) {
+				return getSample(samples_map[sample_name], simple);
+			} else {
+				return getSample(sample_name, simple);
+			}
+		};
+	}
 
 
 	
@@ -535,6 +550,7 @@ var parser = {
 			var parts = filter_parts[0].split(/\s+/gi);
 			var for_model,
 				coll_name,
+				controller_name,
 				space;
 
 			for (var i = 0; i < parts.length; i++) {
@@ -546,6 +562,8 @@ var parser = {
 
 				if (spv.startsWith(cur_part, 'for_model:')){
 					for_model = cur_part.slice('for_model:'.length);
+				} else if (spv.startsWith(cur_part, 'controller:')) {
+					controller_name = cur_part.slice('controller:'.length);
 				} else {
 					var space_parts = cur_part.split(':');
 					if (!coll_name){
@@ -561,6 +579,7 @@ var parser = {
 			return {
 				coll_name: coll_name,
 				for_model: for_model,
+				controller_name: controller_name,
 				space: space,
 				filterFn: filterFn
 			};
@@ -1525,6 +1544,7 @@ spv.Class.extendTo(PvTemplate, {
 					node: node,
 					sampler: new SimplePVSampler(node, this.struc_store, this.getSample),
 					coll_name: data.coll_name,
+					controller_name: data.controller_name,
 					for_model: data.for_model,
 					space: data.space,
 					filterFn: data.filterFn,
