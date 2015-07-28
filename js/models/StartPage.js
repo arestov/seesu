@@ -69,6 +69,7 @@ BrowseMap.Model.extendTo(StartPage, {
 
 		var _this = this;
 		this.app.s.susd.ligs.regCallback('start-page', function(resp){
+			if (!resp) {return;}
 			var result = complexEach([resp[1], resp[2]], function(result, girl, boy) {
 				if (girl) {
 					result.push(girl);
