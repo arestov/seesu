@@ -169,21 +169,7 @@
 			<div
 				class="area-description desc_prevw_list"
 				pv-class="area-description desc_prevw_list {{list_loading && 'list_loading'}}">
-				<span class="desc_item preview_line" pv-nest="preview_list">
-					<span class="preview_line-wrap">
-						<span class="desc_item-imgcon">
-							<img src="" alt=""
-								pv-class="{{!selected_image && 'hidden'}}" 
-								pv-props=
-								"src: {{
-									(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
-									|| selected_image.url
-								}}">
-						</span>
-						<span class="desc_item-text" pv-text="{{selected_title || nav_short_title || nav_title}}"></span>
-					</span>
-					
-				</span>
+				<!--pv-replace sample_name:imp-desc_item-->
 			</div>
 		</div>
 
@@ -224,6 +210,30 @@
 				<span class="desc_item-text" pv-text="{{selected_title}}"></span>
 			</span>
 			
+		</span>
+
+		<span class="imp-desc_item desc_item preview_line" pv-nest="preview_list">
+			<span class="preview_line-wrap">
+				<span class="desc_item-imgcon">
+					<img src="" alt=""
+						pv-class="{{!selected_image && 'hidden'}}" 
+						pv-props=
+						"src: {{
+							(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
+							|| selected_image.url
+						}}">
+				</span>
+				<span class="desc_item-text" pv-text="{{selected_title || nav_short_title || nav_title}}"></span>
+			</span>
+			
+		</span>
+		<span class="imp-desc_item-tag desc_item preview_line" pv-repeat="tag in simple_tags_list">
+			<a 
+				class="js-serv"
+				pv-text="{{tag.name}}"
+				pv-type="way-point"
+				pv-events="click::#show_tag:{{tag.name}}"
+				></a>
 		</span>
 
 
