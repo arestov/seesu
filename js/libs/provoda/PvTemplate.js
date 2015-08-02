@@ -963,11 +963,9 @@ var parser = {
 
 				replacer = directives_data.replacing_data;
 
-				if (replacer) {
-					if (replacer.data) {
-						var r_pvprsd = asignId(replacer.node, _cache_index);
-						_cache_index[r_pvprsd] = replacer.data;
-					}
+				if (replacer && replacer.data) {
+					var r_pvprsd = asignId(replacer.node, _cache_index);
+					_cache_index[r_pvprsd] = replacer.data;
 				}
 
 				_cache_index[pvprsd] = directives_data;
