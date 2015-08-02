@@ -22,7 +22,7 @@ var removeEvent = spv.removeEvent;
 		    ]
 		  },
 		  {
-			'imp-desc_item': 'imp-desc_item-tag'
+			"imp-desc_item": "imp-desc_item-tag"
 		  }
 		]
 	</script>
