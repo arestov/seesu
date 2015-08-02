@@ -1148,6 +1148,7 @@ var SimplePVSampler = function(node, struc_store, getSample) {
 	this._id = ++samplers_counter;
 
 	this.getSample = getSample;
+	this.pstd_cache = null;
 };
 (function() {
 	var setStructureData = function(struc_store, is_root_node, cur_node, bind_data, states_list, children_list, getSample) {
@@ -1246,13 +1247,15 @@ var SimplePVSampler = function(node, struc_store, getSample) {
 	SimplePVSampler.prototype.getStructure = function(is_not_root) {
 		var str_d_prop_name = 'structure_data' + (is_not_root ? '' : '_as_root');
 
-		if (!this[str_d_prop_name]) {
-			this[str_d_prop_name] = parseStructureData(this.onode, this.struc_store, is_not_root, this.getSample);
+		if (!this.pstd_cache) {this.pstd_cache = {};}
+
+		if (!this.pstd_cache[str_d_prop_name]) {
+			this.pstd_cache[str_d_prop_name] = parseStructureData(this.onode, this.struc_store, is_not_root, this.getSample);
 			//this[str_d_prop_name]._id = this._id;
 			this.parsed = true;
 			
 		}
-		return this[str_d_prop_name];
+		return this.pstd_cache[str_d_prop_name];
 		
 	};
 
