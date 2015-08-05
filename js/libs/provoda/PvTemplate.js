@@ -95,7 +95,6 @@ var PvTemplate = function(opts) {
 	this.stwat_index = {};
 	this.pv_types = null;
 	this.pv_repeats_data = null;
-	this.pv_imports = null;
 	this.destroyers = null;
 
 	this.getSample = opts.getSample;
@@ -333,37 +332,9 @@ var handleChunks = (function() {
 		'pv_repeat': function(chunk, tpl) {
 			if (!tpl.pv_repeats_data) {return;}
 			tpl.pv_repeats_data = spv.findAndRemoveItem(tpl.pv_repeats_data, chunk.data);
-		},
-		'pv-import': function(chunk, tpl) {
-			if (!tpl.pv_imports) {return;}
-			tpl.pv_imports = spv.findAndRemoveItem(tpl.pv_imports, chunk.data);
-		},
+		}
 	};
 	var chunk_handlers = {
-		'pv-import': function(chunk, tpl) {
-
-			var clone = chunk.data.getSample();
-
-			var template = new PvTemplate({
-				node: clone,
-				// pv_repeat_context: full_pv_context,
-				// scope: scope,
-				data_limitations: chunk.data.map,
-				callCallbacks: tpl.sendCallback,
-				struc_store: tpl.struc_store,
-				calls_flow: tpl.calls_flow
-			});
-
-			$(chunk.data.anchor).after(clone);
-
-			chunk.data.template = template;
-
-			if (!tpl.pv_imports) {
-				tpl.pv_imports = [];
-			}
-
-			tpl.pv_imports.push(chunk.data);
-		},
 		'states_watcher': function(chunk, tpl) {
 			tpl.states_watchers.push(chunk.data);
 		},
@@ -630,12 +601,6 @@ spv.Class.extendTo(PvTemplate, {
 			matched[i].checkFunc(states_summ, async_changes, current_motivator);
 			if (this.dead) {return;}
 		}
-
-		if (this.pv_imports && this.pv_imports.length) {
-			for (var i = 0; i < this.pv_imports.length; i++) {
-				this.pv_imports[i].template.checkChanges(changes, full_states, async_changes, current_motivator);
-			}
-		}
 	},
 	getStatesSumm: function(states) {
 		var states_summ;
@@ -660,11 +625,7 @@ spv.Class.extendTo(PvTemplate, {
 		for (var i = 0; i < this.states_watchers.length; i++) {
 			this.states_watchers[i].checkFunc(states_summ);
 		}
-		if (this.pv_imports && this.pv_imports.length) {
-			for (var i = 0; i < this.pv_imports.length; i++) {
-				this.pv_imports[i].setStates(states);
-			}
-		}
+
 	},
 	/*
 	checkValues: function(array, all_states) {
@@ -689,19 +650,6 @@ spv.Class.extendTo(PvTemplate, {
 			// 		}
 			// 	}
 			// },
-			'pv-import': function(node, data) {
-				var getSample = this.getSample;
-				var templateOptions = data.map[2] ? {
-					samples: data.map[2]
-				} : null;
-				data.getSample = function () {
-					return getSample(data.sample_name, true, templateOptions);
-				};
-				data.anchor = document.createComment('anchor for pv-import');
-				$(node).before(data.anchor);
-
-				return new BnddChunk('pv-import', data);
-			},
 			'pv-when-condition': function(node, standch) {
 				if (standch) {
 					var wwtch = standch.createBinding(node, this);
@@ -868,11 +816,6 @@ spv.Class.extendTo(PvTemplate, {
 					}
 				}
 
-				if (directives_data.instructions['pv-import']) {
-					var chunks_i = this.handleDirective('pv-import', cur_node, directives_data.instructions['pv-import']);
-					pushChunks(all_chunks, chunks_i);
-				}
-				
 			}
 			return all_chunks;
 		};

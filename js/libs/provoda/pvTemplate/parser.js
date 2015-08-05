@@ -68,6 +68,7 @@ var PvSimpleSampler = (function(){
 		}
 		this.onode = node;
 		this.mod_root_node = null;
+		this.patched_cache = null;
 		
 		this.parsed = false;
 		this.structure_data_as_root = null;
@@ -134,7 +135,7 @@ var PvSimpleSampler = (function(){
 					cur_node = bind_data_list[ i + 1 ],
 					bind_data = bind_data_list[ i + 2 ];
 
-				setStructureData(struc_store, is_root_node, cur_node, bind_data, structure_data.states, children_list);
+				setStructureData(struc_store, is_root_node, cur_node, bind_data, structure_data.states, children_list, getSample);
 			}
 			structure_data.states = spv.getArrayNoDubs(structure_data.states);
 
@@ -253,6 +254,10 @@ var PvSimpleSampler = (function(){
 			return;
 		}
 
+		if (opts && !opts.key) {
+			throw new Error('opts should have uniq key');
+		}
+
 		if (opts) {
 			debugger;
 			console.log("IMPLEMENT OPTIONS SUPPORT");
@@ -263,13 +268,25 @@ var PvSimpleSampler = (function(){
 		}
 
 		if (opts) {
-			return getPatched(
-				buildClone(this.onode, this.struc_store, this._id),
-				this.struc_store, this.getSample, opts);
-		} else if (!this.mod_root_node) {
-			this.mod_root_node = getPatched(
-				buildClone(this.onode, this.struc_store, this._id),
-				this.struc_store, this.getSample, opts);
+			if (!this.patched_cache) {
+				this.patched_cache = {};
+			}
+			if (!this.patched_cache[opts.key]) {
+				this.patched_cache[opts.key] = getPatched(
+					buildClone(this.onode, this.struc_store, this._id),
+					this.struc_store, this.getSample, opts);
+			}
+
+			return buildClone(this.patched_cache[opts.key], this.struc_store, this._id);
+
+		} else {
+			if (!this.mod_root_node) {
+				this.mod_root_node = getPatched(
+					buildClone(this.onode, this.struc_store, this._id),
+					this.struc_store, this.getSample, opts);
+			}
+
+			return buildClone(this.mod_root_node, this.struc_store, this._id);
 		}
 
 		// if (!this.parsed){
@@ -277,7 +294,7 @@ var PvSimpleSampler = (function(){
 		// 	parser.parse(this.onode, this.struc_store, this.getSample, opts);
 		// }
 
-		return buildClone(this.mod_root_node, this.struc_store, this._id);
+		
 	};
 	PvSimpleSampler.prototype.clone = PvSimpleSampler.prototype.getClone;
 

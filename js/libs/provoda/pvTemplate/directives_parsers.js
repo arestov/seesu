@@ -119,6 +119,7 @@ return {
 	config: (function(){
 		var config = {
 			one_parse: {
+				'pv-import': true,
 				'pv-when': true
 			},
 			one_parse_list: [],
@@ -178,6 +179,22 @@ return {
 	getIndexList: getIndexList,
 	getFieldsTreesBases: getFieldsTreesBases,
 	patching_directives: {
+		'pv-import': (function(){
+			var counter = 1;
+			return function(node, params, getSample, opts) {
+				var templateOptions = params.map[2] ? {
+					key: counter,
+					samples: params.map[2]
+				} : null;
+
+				var instance = getSample(params.sample_name, true, templateOptions);
+
+				var parent_node = node.parentNode;
+				parent_node.replaceChild(instance, node);
+
+				return instance;
+			};
+		})(),
 		'pv-when': function(node, params, getSample, opts) {
 			var parser = this;
 
