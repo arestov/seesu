@@ -10,7 +10,7 @@ coct.PageView.extendTo(TagPageView, {
 		// artists_lists: coct.LiListsPreview,
 		// songs_list: coct.LiListsPreview,
 		albums_list: coct.AlbumsListPreview,
-		similar_tags: coct.TagsListPreview
+		// similar_tags: coct.TagsListPreview
 	}
 });
 

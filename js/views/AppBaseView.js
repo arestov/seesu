@@ -112,8 +112,8 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		this._super();
 
 		var getSampleForTemplate = (function(_this) {
-			return function(sample_name, simple) {
-				return _this.getSample(sample_name, simple);
+			return function(sample_name, simple, opts) {
+				return _this.getSample(sample_name, simple, opts);
 			};
 		})(this);
 
@@ -313,16 +313,19 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		}
 		return sampler;
 	},
-	getSample: function(sample_name, simple) {
+	getSample: function(sample_name, simple, options) {
 		var sampler = this.getSampler(sample_name);
 		
 		if (sampler.getClone){
 			if (simple) {
-				return sampler.getClone();
+				return sampler.getClone(options);
 			} else {
-				return $(sampler.getClone());
+				return $(sampler.getClone(options));
 			}
 		} else {
+			if (options) {
+				throw new Error('not support options here');
+			}
 			return $(sampler).clone();
 		}
 	},

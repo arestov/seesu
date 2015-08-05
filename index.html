@@ -227,13 +227,9 @@
 			</span>
 			
 		</span>
-		<span class="imp-desc_item-tag desc_item preview_line" pv-repeat="tag in simple_tags_list">
-			<a 
-				class="js-serv"
-				pv-text="{{tag.name}}"
-				pv-type="way-point"
-				pv-events="click::#show_tag:{{tag.name}}"
-				></a>
+		<span class="imp-desc_item-tag" 
+			pv-repeat="tag in simple_tags_list">
+			<span class="tags_list-tag" pv-text="{{tag.name}}"></span> 
 		</span>
 
 
@@ -635,11 +631,12 @@
 					</div>
 					<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
 				</div>
-				<div class="area_for_button" pv-nest='similar_tags'>
-					<div class="area-button" pv-anchor="big_button">
-						<span pv-text="{{nav_title}}">Similar tags</span>
+				<div pv-nest='similar_tags'>
+					<div pv-import="imp-area_for_button">
+						<script type="pv-import-map">
+							[ null, null, { "imp-desc_item": "imp-desc_item-tag" }]
+						</script>
 					</div>
-					<div class="area-description desc_prevw_list  tags_list-preview" pv-anchor="listc"></div>
 				</div>
 			</div>
 			<!--pv-replace sample_name:view_sources-->
