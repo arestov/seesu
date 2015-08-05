@@ -59,17 +59,16 @@ var getCommentDirectivesData = function(cur_node, getSample, parser) {
 };
 var getDirectivesData = (function() {
 	var parsePVImport = function(node, sample_name) {
-		var scripts = node.querySelectorAll('script[type="pv-import-map"]');
-		var script;
-		for (var i = 0; i < scripts.length; i++) {
-			if (scripts[i].parentNode == node) {
-				script = scripts[i];
-				break;
-			}	
-		}
-		scripts = null;
 
-		if (script) {
+		var possible = node.nodeName === 'SCRIPT' ?
+			node : node.querySelector('script[type="pv-import-map"]');
+
+		var script;
+		if (possible === node) {
+			script = node;
+		}
+		if (possible.parentNode === node) {
+			script = node;
 			node.removeChild(script);
 		}
 
