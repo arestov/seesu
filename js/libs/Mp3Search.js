@@ -2,8 +2,8 @@ define(['pv', 'spv', '../models/SongFileModel'], function(pv, spv, SongFileModel
 "use strict";
 
 
-var guessArtist = function(track_title, query_artist){
-
+var guessArtist = function(track_title_raw, query_artist){
+	var track_title = track_title_raw.slice(0, 80);
 
 	var r = {};
 	if (!track_title){
