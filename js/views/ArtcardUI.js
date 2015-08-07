@@ -19,7 +19,7 @@ pv.View.extendTo(ArtcardUI, {
 		// similar_artists: coct.ItemOfLL,
 		albums_list: coct.AlbumsListPreview,
 		dgs_albums: coct.AlbumsListPreview,
-		tags_list: coct.TagsListPreview
+		// tags_list: coct.TagsListPreview
 	},
 	state_change: {
 		'selected_image': function(target, lfm_wrap) {

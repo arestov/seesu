@@ -666,11 +666,10 @@
 				</div>
 			</div>
 			<div class="rightcol">
-				<div class="area_for_button" pv-nest='tags_list'>
-					<div class="area-button" pv-anchor="big_button">
-						<span pv-text="{{nav_title}}">Tags</span>
-					</div>
-					<div class="area-description desc_prevw_list  tags_list-preview" pv-anchor="listc"></div>
+				<div pv-nest='tags_list'>
+					<script pv-import="imp-area_for_button" type="pv-import-map">
+						[ null, null, { "imp-desc_item": "imp-desc_item-tag" }]
+					</script>
 				</div>
 				<div pv-nest="similar_artists">
 					<!--pv-replace sample_name:imp-area_for_button-->
