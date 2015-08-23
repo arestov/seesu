@@ -907,7 +907,8 @@ FastEventor.prototype = {
 						}
 						var has_data_holes = serv_data === true || (serv_data && serv_data.has_data_holes === true);
 
-						sputnik.loaded_nestings_items[nesting_name] += has_data_holes ? paging_opts.page_limit : items.length;
+						sputnik.loaded_nestings_items[nesting_name] +=
+							has_data_holes ? paging_opts.page_limit : (items ? items.length : 0);
 						//special logic where server send us page without few items. but it can be more pages available
 						//so serv_data in this case is answer for question "Is more data available?"
 
