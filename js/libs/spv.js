@@ -594,7 +594,19 @@ $filter = function(array, field, value_or_testfunc){
 	return r;
 };
 
+var simpleClone = function(_no, donor) {
+	for (var prop in donor) {
+		if (!donor.hasOwnProperty(prop)){
+			continue;
+		}
+		_no[prop] = donor[prop];
+	}
+	return _no;
+};
 
+var doClone = Object.assign ? function(_no, donor) {
+	return Object.assign(_no, donor);
+} : simpleClone;
 
 
 cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
@@ -612,15 +624,10 @@ cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 				}
 			}
 		}
+		return _no;
 	} else {
-		for(prop in donor){
-			if (!donor.hasOwnProperty(prop)){
-				continue;
-			}
-			_no[prop] = donor[prop];
-		}
+		return doClone(_no, donor);
 	}
-	return _no;
 };
 
 getUnitBaseNum = function(_c){
