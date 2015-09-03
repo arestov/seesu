@@ -461,7 +461,7 @@ Investigation.extendTo(SearchPage, {
 		}
 		return tags_results;
 	},
-	searchNetwork: app_serv.app_env.cross_domain_allowed ?
+	searchNetwork: (app_serv.app_env.cross_domain_allowed && false) ?
 		function(q){
 			var _this = this;
 			this.loading();
