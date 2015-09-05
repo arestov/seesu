@@ -350,6 +350,7 @@ LoadableList.extendTo(MfCor, {
 					var data = {
 						key: 'AIzaSyBvg9b_rzQJJ3ubhS1TeipHpOTqsVnShj4',
 						part: 'id,snippet',
+						type: 'video',
 						maxResults: 3,
 						q: q
 					};
