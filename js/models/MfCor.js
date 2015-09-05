@@ -322,26 +322,44 @@ LoadableList.extendTo(MfCor, {
 	},
 	'nest_rqc-yt_videos': YoutubeVideo,
 	'nest_req-yt_videos': [
-		[function(r) {
-			var items = r && r.items;
-			if (items && items.length) {
-				var result = [];
-				for (var i = 0; i < Math.min(items.length, 3); i++) {
-					var cur = items[i];
-					result.push({
-						yt_id: cur.id.videoId,
-						title: cur.snippet.title,
-						cant_show: true,
-						previews: {
-							'default': cur.snippet.thumbnails.default.url
-						}
-					});
+		[(function(r) {
+			var end = /default.jpg$/;
+			var list = ['start', 'middle', 'end'];
+			var previews = function(url) {
+				if (end.test(url)) {
+					var result = {};
+					for (var i = 0; i < list.length; i++) {
+						var key = list[i];
+						var file_name = (i + 1) + '.jpg';
+						result[key] = url.replace(end, file_name);
+					}
+					return result;
+				} else {
+					return {
+						'default': url
+					};
 				}
-				return result;
-			} else {
-				return [];
-			}
-		}],
+				// var url2 = 
+			};
+			return function(r) {
+				var items = r && r.items;
+				if (items && items.length) {
+					var result = [];
+					for (var i = 0; i < Math.min(items.length, 3); i++) {
+						var cur = items[i];
+						result.push({
+							yt_id: cur.id.videoId,
+							title: cur.snippet.title,
+							cant_show: true,
+							previews: previews(cur.snippet.thumbnails.default.url)
+						});
+					}
+					return result;
+				} else {
+					return [];
+				}
+			};
+		})()],
 		[function() {
 			return {
 				api_name: 'youtube_d',
