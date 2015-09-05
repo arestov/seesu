@@ -322,7 +322,7 @@ LoadableList.extendTo(MfCor, {
 	},
 	'nest_rqc-yt_videos': YoutubeVideo,
 	'nest_req-yt_videos': [
-		[(function(r) {
+		[(function() {
 			var end = /default.jpg$/;
 			var list = ['start', 'middle', 'end'];
 			var previews = function(url) {
