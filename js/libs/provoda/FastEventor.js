@@ -386,31 +386,30 @@ FastEventor.prototype = {
 			return matched;
 		};
 
-		return function(namespace){
+		return function(namespace_raw){
+			var namespace;
 			if (this.sputnik.convertEventName){
-				namespace = this.sputnik.convertEventName(namespace);
+				namespace = this.sputnik.convertEventName(namespace_raw);
+			} else {
+				namespace = namespace_raw;
 			}
-			var
-				r, short_name = parseNamespace(namespace)[0];
 
+			var short_name = parseNamespace(namespace)[0];
 			var cb_cs = this.subscribes && this.subscribes[short_name];
-			if (cb_cs){
+
+			if (!cb_cs){
+				return _empty_callbacks_package;
+			} else {
 				var cached_r = this.subscribes_cache && this.subscribes_cache[namespace];
 				if (cached_r){
 					return cached_r;
 				} else {
-					r = find(namespace, cb_cs);
 					if (!this.subscribes_cache) {
 						this.subscribes_cache = {};
 					}
-					this.subscribes_cache[namespace] = r;
+					return (this.subscribes_cache[namespace] = find(namespace, cb_cs));
 				}
-
-			} else {
-				return _empty_callbacks_package;
 			}
-
-			return r;
 		};
 	})(),
 	callEventCallback: function(cur, args, opts, arg) {
