@@ -8,9 +8,10 @@
 	"predef": ["define", "require", "requirejs"],
 
 	"regexdash": true,
-	"browser": true,
+	"globals": {
+	  "window": false
+	},
 	"node": true,
-	"wsh": true,
 	"trailing": true,
 	"sub": true
 }
