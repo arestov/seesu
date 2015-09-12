@@ -37,7 +37,7 @@ var app_env = app_serv.app_env;
 		}
 	};
 
-	var use_order_list = ['sm2-proxy', 'html5mp3', 'wmpactivex'];
+	var use_order_list = ['html5mp3', 'sm2-proxy', 'wmpactivex'];
 
 
 	var features_storage = {
