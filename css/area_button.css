@@ -132,9 +132,6 @@
 		#474747;
 		*/
 		border-bottom: 1px solid #474747;
-		background-image: -o-linear-gradient(#545454,#4D4D4D);
-		background-image: -moz-linear-gradient(100% 0% 270deg, #545454, #4D4D4D);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#545454), to(#4D4D4D)) ;
 		background-image: linear-gradient(#545454,#4D4D4D);
 		}
 	.area_for_button:active,

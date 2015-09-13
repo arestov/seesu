@@ -8,6 +8,7 @@ gulp.task('default', function() {
 gulp.task('css', function() {
 	var concat = require('gulp-concat');
 	var postcss = require('gulp-postcss');
+	var autoprefixer = require('autoprefixer');
 	// var sourcemaps   = require('gulp-sourcemaps');
 
 	var files = [
@@ -27,7 +28,7 @@ gulp.task('css', function() {
 
 	return gulp.src(files)
 		// .pipe(sourcemaps.init())
-		.pipe( postcss([ require('./dev/svg-mod')() ]) )
+		.pipe( postcss([ require('./dev/svg-mod')(), autoprefixer({ browsers: ['> 1%', 'opera 12'] }) ]) )
 		.pipe(concat('combined.css'))
 		// .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist/'));

@@ -111,8 +111,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	border-right: 1px solid #4E4E4E;
 	border-bottom: 1px solid #767676;
 	border-left: 1px solid #4E4E4E;
-	-webkit-border-radius: 7px;
-	-moz-border-radius: 7px;
 	border-radius: 7px;
 	
 	
@@ -132,10 +130,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display: block;
 		width:0;
 		height:100%;
-		-webkit-border-radius: 5px;
-		
-		
-		-moz-border-radius: 5px;
 		border-radius: 5px;
 		background:#484848;
 		cursor:pointer;
@@ -149,9 +143,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display: block;
 		width:0;
 		height:100%;
-		-webkit-border-radius: 5px;
-		
-		-moz-border-radius: 5px;
 		border-radius: 5px;
 		background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
 		cursor:pointer;

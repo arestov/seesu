@@ -3,9 +3,6 @@
 
 
 	max-width: 750px;
-	-webkit-transform-origin: 0 0;
-	-moz-transform-origin: 0 0;
-	-o-transform-origin: 0 0;
 	transform-origin: 0 0;
 	}
 .complex-page-scroll_con{
@@ -41,7 +38,6 @@
 @media (min-width:760px) {
 	.app_map_con{
 		padding-right: 240px;
-		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 		}
 		.full_page_need .app_map_con {
@@ -78,36 +74,19 @@
 
 	.yes-transform_support .complex-page{
 		left: auto;
-
-		-webkit-transform: translateX(240px);
-		-moz-transform: translateX(240px);
-		-o-transform: translateX(240px);
 		transform: translateX(240px);
 
 		}
 		.yes-transform_support .full_page_need .full-page.complex-page{
-			
-
-			-webkit-transform: translateX(0);
-			-moz-transform: translateX(0);
-			-o-transform: translateX(0);
 			transform: translateX(0);
 
 			}
 	.yes-transform_support .shared-parts {
 		left: auto;
-
-		-webkit-transform: translateX(240px);
-		-moz-transform: translateX(240px);
-		-o-transform: translateX(240px);
 		transform: translateX(240px);
 		}
 	.yes-transform_support .page-scheme{
 		left: auto;
-	
-		-webkit-transform: translateX(0);
-		-moz-transform: translateX(0);
-		-o-transform: translateX(0);
 		transform: translateX(0);
 	}
 
@@ -136,9 +115,6 @@
 		
 		}
 	.app-loaded .can_be_animated.complex-page{
-		-webkit-transition: left 0.12s ease-out, -webkit-transform 0.12s ease-out;
-		-moz-transition: left 0.12s ease-out, -moz-transform 0.12s ease-out;
-		-o-transition: left 0.12s ease-out, -o-transform 0.12s ease-out;
 		transition: left 0.12s ease-out, transform 0.12s ease-out;
 
 

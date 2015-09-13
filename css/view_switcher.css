@@ -8,10 +8,6 @@
 	min-height:36px;
 	border-bottom:1px solid #252525;
 	background:#444 url(../i/nav/head-gradient.png) repeat-x;
-	
-	background-image: -o-linear-gradient(#525252,#363636);
-	background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #363636);
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#525252), to(#363636));
 	background-image: linear-gradient(#525252,#363636);
 	
 	font-size: 1.28rem;
@@ -131,9 +127,6 @@
 
 .nav-start{
 	border-left:1px solid transparent;
-	-webkit-transition: margin-right 0.1s ease-out;
-	-moz-transition: margin-right 0.1s ease-out;
-	-o-transition: margin-right 0.1s ease-out;
 	transition: margin-right 0.1s ease-out;
 }	
 
@@ -170,11 +163,6 @@
 	border-radius: 0.5rem;
 	border-top: 1px solid #666;
 	border-bottom: 1px solid #313131;
-}
-@-webkit-keyframes grayPulse {
-  from { -webkit-box-shadow: 0 0 3px #333; }
-  50% { -webkit-box-shadow: 0 0 8px #777; }
-  to { -webkit-box-shadow: 0 0 3px #333; }
 }
 @keyframes grayPulse {
   from { box-shadow: 0 0 3px #333; }
@@ -228,7 +216,6 @@
 		width: 50%;
 		float:left;
 		min-width: 15rem;
-		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 		padding-right: 0.86rem;
 		}
@@ -236,7 +223,6 @@
 		width: 50%;
 		float:right;
 		padding-left: 0.86rem;
-		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 		min-width: 15rem;
 		}

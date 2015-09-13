@@ -201,18 +201,12 @@
 	border-right: 0;
 	border-bottom:1px solid #3D3D3D;
 	border-left: 0;
-	background-image: -o-linear-gradient(#5a5a5a,#4a4a4a);
-	background-image: -moz-linear-gradient(100% 0% 270deg, #5a5a5a, #4a4a4a);
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#4a4a4a));
 	background-image: linear-gradient(#5a5a5a,#4a4a4a);
 	color:#aaa;
 	cursor:pointer;
 		
 	}
 	.nicebutton:hover{
-		background-image: -o-linear-gradient(#5a5a5a,#444);
-		background-image: -moz-linear-gradient(100% 0% 270deg, #5a5a5a, #444);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#444)) ;
 		background-image: linear-gradient(#5a5a5a,#444);
 		}
 
@@ -221,9 +215,6 @@
 	}
 	.has-dark-buttons .button-hole{
 		border-bottom-color:#595959;
-		background-image: -o-linear-gradient(#575757,#4D4D4D);
-		background-image: -moz-linear-gradient(100% 0% 270deg, #575757, #4D4D4D);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#575757), to(#4D4D4D)) ;
 		background-image: linear-gradient(#575757,#4D4D4D);
 		}
 	.has-dark-buttons .nicebutton{
@@ -283,24 +274,14 @@
 		cursor: pointer;
 		height: 1.5rem;
 		line-height: 1.5rem;
-		-moz-box-sizing:border-box;
 		box-sizing:border-box;
 		border: 0.125rem solid #454545;
 		float:left;
 		width: 50%;
 		position: relative;
-
-
-
-		background-image: -o-linear-gradient(#535353,#4B4B4B);
-		background-image: -moz-linear-gradient(100% 0% 270deg, #535353, #4B4B4B);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#535353), to(#4B4B4B));
 		background-image: linear-gradient(#535353,#4B4B4B);
 	}
 	.min_details:hover,.max_details:hover{
-		background-image: -o-linear-gradient(#666,#555);
-		background-image: -moz-linear-gradient(100% 0% 270deg, #666, #555);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#555));
 		background-image: linear-gradient(#666,#555);
 		}
 	.min_details:active,.min_details.active,.max_details:active,.max_details.active{
@@ -327,7 +308,6 @@
 		
 		border: 0.2rem solid #333;
 		vertical-align: middle;
-		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 	}
 

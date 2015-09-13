@@ -89,13 +89,9 @@ html.opera-extension{
 
 
 .as-application .navs{
-	-webkit-border-radius:0.5rem 0.5rem 0 0;
-	-moz-border-radius:0.5rem 0.5rem 0 0;
 	border-radius:0.5rem 0.5rem 0 0;
 }
 .as-application #slider-materail{
-	-webkit-border-radius: 0 0 0.5rem 0.5rem;
-	-moz-border-radius:0 0 0.5rem 0.5rem;
 	border-radius: 0 0 0.5rem 0.5rem;
 }
 

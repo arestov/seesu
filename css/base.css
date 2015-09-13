@@ -119,10 +119,7 @@ a.desc{
 	padding:4px 0;
 	height:20px;
 	border-top:1px solid transparent;
-	line-height:20px;
-  	-webkit-transition: margin-left 0.1s ease-out;  
-  	-moz-transition: margin-left 0.1s ease-out; 
-  	-o-transition: margin-left 0.1s ease-out; 
+	line-height:20px; 
   	transition: margin-left 0.1s ease-out; 
 }
 
@@ -173,8 +170,6 @@ a.desc{
 	
 	padding:4px 1rem 4px 9px;
 	min-width: 15px;
-	-webkit-border-radius:0 6px 6px 0;
-	-moz-border-radius:0 6px 6px 0;
 	border-radius:0 6px 6px 0;
 	}
 	.nnav b{

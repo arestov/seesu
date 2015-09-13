@@ -134,41 +134,7 @@ a.track_name_loading .song-track-name,
 		float:right;
 		margin-bottom: 1rem;
 		margin-left:1rem;
-		}
-@-webkit-keyframes "pulse1" {
-	 0% {
-	    background-color: red;
-	 }
-	 50% {
-	    background-color: #bb17b5;
-	 }
-	 100% {
-	    background-color: red;
-	 }
- 
-}
-@-moz-keyframes pulse1 {
-     0% {
-	    background-color: red;
-	 }
-	 50% {
-	    background-color: #bb17b5;
-	 }
-	 100% {
-	    background-color: red;
-	 }
-}
-@-o-keyframes pulse1 {
-     0% {
-	    background-color: red;
-	 }
-	 50% {
-	    background-color: #bb17b5;
-	 }
-	 100% {
-	    background-color: red;
-	 }
-}	
+		}	
 @keyframes "pulse1" {
 	 0% {
 	    background-color: red;
@@ -198,9 +164,6 @@ a.track_name_loading .song-track-name,
 		line-height: 1.5rem;
 		opacity: 0.8;
 		color:#fff;
-		-webkit-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
-		-moz-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
-		-o-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
 		animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
 		}
 	.moplas-block .show-all-songs a{
@@ -915,7 +878,6 @@ a.track_name_loading .song-track-name,
 	
 	}
 #search #q{
-	-moz-box-sizing:border-box;
 	box-sizing:border-box;
 	
 	padding: 2px 0;
@@ -1163,10 +1125,7 @@ a.track_name_loading .song-track-name,
 	position: absolute;
 	top:50%;
 	left:50%;
-	-webkit-transform-origin: translateY(-50%) translateX(-50%);
-    -moz-transform-origin: translateY(-50%) translateX(-50%);
-    -o-transform-origin: translateY(-50%) translateX(-50%);
-    transform-origin: translateY(-50%) translateX(-50%);
+ transform-origin: translateY(-50%) translateX(-50%);
 	transform: translateY(-50%) translateX(-50%);
 }
 .song-listeners-list{
@@ -1420,7 +1379,6 @@ iframe.you-tube-video,embed.you-tube-video{
 	padding-top:1rem;
 	}
 	.share-song .song-link{
-		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 		width:100%;
 		}
@@ -1985,7 +1943,6 @@ body .surf_nav{
 	line-height: 1;
 	font-size: 0.8em;
 	padding: 0.3rem;
-	-moz-box-sizing:border-box;
 	box-sizing: border-box;
 	}
 
@@ -1993,7 +1950,6 @@ body .surf_nav{
 .song-act-tagging input{
 	display: block;
 	width: 100%;
-	-moz-box-sizing:border-box;
 	box-sizing: border-box;
 	margin-bottom: 1rem;
 	
