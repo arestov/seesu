@@ -1,12 +1,3 @@
-
-.tracks-for-play .play-controls{
-	position:absolute;
-	top:0;
-	right:115px;
-	
-	z-index:7;
-	margin-top:5px;
-}
 .track-panel .pc-place{
 	float:left;
 	margin-right:6px;
@@ -231,11 +222,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:none;
 	}
 
-	li.playing-song .play-controls{
-		
-	}
-
-
 	ul.tracks-for-play > li{
 		background-color: #505050;
 	}
@@ -411,9 +397,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	.show-zoom-to-track .playlist_panel{
 		display:none;
 	}
-	.show-zoom-to-track ul.tracks-for-play .play-controls{
-		display:none;
-	}
+
 	.show-zoom-to-track ul.tracks-for-play{
 
 		padding-top:40px;

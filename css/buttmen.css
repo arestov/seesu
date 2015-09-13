@@ -100,3 +100,87 @@
 		}
 
 
+/*
+<dl class="buttmen play-controls">
+	<dt class="main-button">
+		<a class="pc pc-add "  title="add to playlist">
+		</a>
+		
+		<span class="buttmen-mask"></span>
+	</dt>
+	<dd class="buttmen-hlts">
+		<ul>
+			<li class="buttmen-hlt-top"></li>
+			<li class="buttmen-hlt-right"></li>
+			<li class="buttmen-hlt-bottom"></li>
+			<li class="buttmen-hlt-left"></li>
+		</ul>
+	</dd>
+	<dd class="buttmen-butts">
+		<ul>
+			<li class="buttmen-butt-top">
+				<a class="pc pc-prev" ></a>
+			</li>
+			<li class="buttmen-butt-right">
+				<a class="pc pc-stop"></a>	
+			</li>
+			<li class="buttmen-butt-bottom">
+				<a class="pc pc-next"></a>
+			</li>
+			<li class="buttmen-butt-left">
+				<a class="pc pc-play" ></a>
+			</li>
+		</ul>
+	</dd>
+</dl>
+
+.play-controls{
+	display:none;
+	
+}
+
+	.play-control{
+		display:inline-block;
+		padding:0;
+		width:16px;
+		height:16px;
+		border:0  !important;
+		background: transparent no-repeat 0 0;
+		cursor:pointer;
+		}
+		.play-control:hover,.play-control.hover{
+			background-image:url(../i/buttons_hover.png) ;
+			}
+		.play-control:active{
+			background-image:url(../i/buttons_active.png) !important;
+			}
+.player-paused .playing-song .play-control.pause,
+.player-stopped .playing-song .play-control.stop,
+.player-played .playing-song .play-control.play{
+	background-image:url(../i/buttons_active.png) !important;
+}
+
+
+
+
+.play-control.pause{
+	display:inline-block;
+	}
+
+.tracks-for-play .play-controls{
+	position:absolute;
+	top:0;
+	right:115px;
+	
+	z-index:7;
+	margin-top:5px;
+}
+
+li.playing-song .play-controls{
+	
+}
+
+.show-zoom-to-track ul.tracks-for-play .play-controls{
+	display:none;
+}
+*/

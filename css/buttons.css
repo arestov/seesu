@@ -1,37 +1,3 @@
-.play-controls{
-	display:none;
-	
-}
-
-	.play-control{
-		display:inline-block;
-		padding:0;
-		width:16px;
-		height:16px;
-		border:0  !important;
-		background: transparent no-repeat 0 0;
-		cursor:pointer;
-		}
-		.play-control:hover,.play-control.hover{
-			background-image:url(../i/buttons_hover.png) ;
-			}
-		.play-control:active{
-			background-image:url(../i/buttons_active.png) !important;
-			}
-.player-paused .playing-song .play-control.pause,
-.player-stopped .playing-song .play-control.stop,
-.player-played .playing-song .play-control.play{
-	background-image:url(../i/buttons_active.png) !important;
-}
-
-
-
-
-.play-control.pause{
-	display:inline-block;
-	}
-	
-	
 .pc{
 	display:inline-block; 
 	padding:0;
