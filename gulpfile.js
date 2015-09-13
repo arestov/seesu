@@ -7,6 +7,7 @@ gulp.task('default', function() {
 
 gulp.task('css', function() {
 	var concat = require('gulp-concat');
+	var postcss = require('gulp-postcss');
 	// var sourcemaps   = require('gulp-sourcemaps');
 
 	var files = [
@@ -26,11 +27,11 @@ gulp.task('css', function() {
 
 	return gulp.src(files)
 		// .pipe(sourcemaps.init())
+		.pipe( postcss([ require('./dev/svg-mod')() ]) )
 		.pipe(concat('combined.css'))
 		// .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist/'));
 });
-
 
 gulp.task('js', function() {
 	var rjs = require('gulp-requirejs-optimize');
