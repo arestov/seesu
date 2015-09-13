@@ -89,7 +89,6 @@
 			class="complex-page inactive-page can_be_animated"
 			pv-class="
 				complex-page 
-				{{'index-of-cp-is-' + $lev_num}}
 				{{current_lev_num != $lev_num && 'inactive-page'}}
 				{{current_lev_num == $lev_num && 'full-page'}}
 				{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}
@@ -1717,7 +1716,7 @@
 				</div>
 				<div pv-text="{{text_body}}" class="vk_post_text_body"></div>
 				<div >
-					<span pv-repeat="photo in photos" pv-class="{{!hidden && ''}}" class="hidden">
+					<span pv-repeat="photo in photos" pv-class="{{nothing && 'hidden'}}" class="hidden">
 						<img src="" alt="" class="vk_post_oneimage" pv-props="src:{{photo.photo_604}}">
 					</span>
 
@@ -1978,7 +1977,7 @@
 												<span class="lang localize-Tags">Tags</span>
 											</div>
 										</div>
-										<div class="hidden" pv-class="{{!inited && ''}}">
+										<div class="hidden" pv-class="{{nothing && 'hidden'}}">
 											<div class="preview_ffp tags_list">
 												<span pv-repeat="tag in preview_list">
 													<a 
@@ -2021,7 +2020,7 @@
 								twitter: <a href="https://twitter.com/seesu_app" class="external">seesu_app</a>
 							</div>
 							<div class="block-for-startpage full_wide_col">
-								<div pv-nest="news" class="hidden" pv-class="{{init && ''}}">
+								<div pv-nest="news" class="hidden" pv-class="{{nothing && 'hidden'}}">
 									<a pv-text="{{nav_title}}:" class="js-serv" pv-events="click:requestPage"></a>
 									<span pv-repeat="entity in news_list|limitTo:1">
 										<span pv-text="{{entity.date}}" class="desc"></span>
