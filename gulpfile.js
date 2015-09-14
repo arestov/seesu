@@ -52,7 +52,7 @@ gulp.task('js', function() {
 		paths: {
 			spv: 'js/libs/spv',
 			su: 'js/seesu',
-			jquery: 'js/common-libs/jquery-2.1.0.min',
+			jquery: 'js/common-libs/jquery-2.1.4.min',
 			localizer: 'js/libs/localizer',
 			cache_ajax: 'js/libs/cache_ajax',
 			app_serv: "js/app_serv",
