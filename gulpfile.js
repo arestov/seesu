@@ -71,3 +71,15 @@ gulp.task('js', function() {
 		// .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist'));
 });
+
+
+gulp.task('pvclass', function() {
+	var posthtml = require('./dev/gulp-posthtml');
+	var pvclass = require('./dev/gulp-posthtml-pvclass.js');
+
+	return gulp.src('index.html')
+		// .pipe(sourcemaps.init())
+		.pipe(posthtml([pvclass()]))
+		// .pipe(sourcemaps.write('.'))
+		.pipe(gulp.dest('dev-dist'));
+});
