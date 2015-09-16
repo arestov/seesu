@@ -307,7 +307,7 @@ AppModel.extendTo(SeesuApp, {
 			window._gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
 			window._gaq.push(['_setCustomVar', 2, 'version', version, 1]);
 			spv.domReady(window.document, function(){
-				app_serv.loadJS('js/common-libs/ga.mod.min.js', function(){
+				app_serv.loadJS('js-sep/ga.mod.min.js', function(){
 					console.log('ga done');
 				});
 			});
