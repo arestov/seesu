@@ -182,9 +182,7 @@ return {
 		} else if (typeof api_name == 'function') {
 			network_api = api_name.call(sputnik);
 		}
-		if(!network_api) {
-			debugger;
-		}
+
 		return network_api;
 	},
 	getPropsPrefixChecker: function(check) {

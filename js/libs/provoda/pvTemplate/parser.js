@@ -259,7 +259,6 @@ var PvSimpleSampler = (function(){
 		}
 
 		if (opts) {
-			debugger;
 			console.log("IMPLEMENT OPTIONS SUPPORT");
 		}
 

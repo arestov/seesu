@@ -383,7 +383,6 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		return target_in_parent;
 	},
 	getMapSliceChildInParenViewOLD: function(md) {
-		debugger;
 		var parent_md = md.map_parent;
 
 
