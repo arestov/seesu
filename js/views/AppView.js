@@ -332,6 +332,14 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		(function(_this) {
 			var app_workplace_width_stream_node = $("#pages_area_width_streamer", _this.d);
 			var awwst_win =  app_workplace_width_stream_node[0].contentWindow;
+
+			var style = awwst_win.document.documentElement.style; 
+
+			style.padding = 0;
+			style.margin = 0;
+			style.border = 0;
+			style.background = 'transparent';
+			
 		// spv.getDefaultView(app_workplace_width_stream_node[0]);
 			_this.updateManyStates({
 				workarea_width: awwst_win.innerWidth
