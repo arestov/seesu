@@ -1,9 +1,7 @@
 'use strict';
 var gulp = require('gulp');
 
-gulp.task('default', function() {  
-	gulp.run('css', 'js');
-});
+gulp.task('default', ['css', 'js']);
 
 gulp.task('css', function() {
 	var concat = require('gulp-concat');
