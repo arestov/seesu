@@ -5,7 +5,7 @@
 	"undef": true,
 	"unused": true,
 	"strict": true,
-	"predef": ["define", "require", "requirejs"],
+	"predef": ["define", "Promise", "require", "requirejs"],
 
 	"regexdash": true,
 	"globals": {
