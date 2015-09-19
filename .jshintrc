@@ -1,7 +1,7 @@
 {
 	"indent": 1,
 	"curly": true,
-	"latedef": true,
+	"latedef": "nofunc",
 	"undef": true,
 	"unused": true,
 	"strict": true,

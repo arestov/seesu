@@ -1,3 +1,4 @@
 *.eprj
 nodejs/troxent2/
 node_modules
+dist-envs
