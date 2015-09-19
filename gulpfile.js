@@ -1,7 +1,9 @@
 'use strict';
 var gulp = require('gulp');
 
-gulp.task('default', ['css', 'js']);
+gulp.task('common', ['css', 'js']);
+
+gulp.task('default', ['common']);
 
 gulp.task('css', function() {
 	var concat = require('gulp-concat');
@@ -72,6 +74,50 @@ gulp.task('js', function() {
 		.pipe(gulp.dest('dist'));
 });
 
+combo('webapp', {
+	'index': function() {
+		var patch = require('./dev/gulp-patch.js');
+
+		return gulp.src('index.html')
+			.pipe(patch('./src/index.html.web.patch'))
+			.pipe(gulp.dest('dist-envs/webapp'));
+	},
+	css: [['css'], function() {
+		return gulp.src('dist/combined.css')
+			.pipe(gulp.dest('dist-envs/webapp/dist'));
+	}],
+	js: [['js'], function() {
+		return gulp.src('dist/loader.js')
+			.pipe(gulp.dest('dist-envs/webapp/dist'));
+	}],
+	images: function() {
+		return gulp.src('i/**/*')
+			.pipe(gulp.dest('dist-envs/webapp/i'));
+	},
+	'js-sep': function() {
+		return gulp.src('js-sep/**/*')
+			.pipe(gulp.dest('dist-envs/webapp/js-sep'));
+
+	}
+});
+
+function combo(task, deps) {
+	var array = [];
+
+	for (var name in deps) {
+		var task_name = task + '-' + name;
+		var value = deps[name];
+		if (Array.isArray(value)) {
+			gulp.task(task_name, value[0], value[1]);
+		} else {
+			gulp.task(task_name, value);
+		}
+		array.push(task_name);
+	}
+	console.log(task, array);
+
+	gulp.task(task, array);
+}
 
 gulp.task('pvclass', function() {
 	var posthtml = require('./dev/gulp-posthtml');
