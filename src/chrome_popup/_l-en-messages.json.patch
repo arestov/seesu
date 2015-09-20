@@ -1,0 +1,5 @@
+--- a/_locales/en/messages.json
++++ b/_locales/en/messages.json
+@@ -3 +3 @@
+-		"message": "Seesu Music App",
++		"message": "Seesu Music",

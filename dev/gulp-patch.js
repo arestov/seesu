@@ -8,7 +8,12 @@ var jsdiff = require('diff');
 
 var diff_options = {
   compareLine: function (lineNumber, line, operation, patchContent) {
-    return line.replace(/\s+$/gi, '') === patchContent.replace(/\s+$/gi, '');
+    var matched = line.replace(/\s+$/gi, '') === patchContent.replace(/\s+$/gi, '');
+    if (!matched) {
+      console.log('no patch match', lineNumber, line, patchContent);
+      // throw new Error();
+    }
+    return matched;
   }
 };
 
@@ -19,10 +24,10 @@ module.exports = function (patch_path) {
   // }
 
   var stream = new Stream.Transform({ objectMode: true });
-console.log('vv');
+
   stream._transform = function (file, encoding, cb) {
-    console.log('bb');
-    gutil.log('gulp-patch:', file);
+    // console.log('bb');
+    // gutil.log('gulp-patch:', file);
     // console.log(file)
     if (file.isStream()) {
       // return handleError('Streams are not supported!')
@@ -38,7 +43,10 @@ console.log('vv');
 
 
       var result = jsdiff.applyPatch(source, patch.toString(), diff_options);
-      console.log(result)
+
+      if (!result) {
+        return cb(new Error('gulp-patch error' + patch.toString()));
+      }
 
       file.contents = new Buffer(result);
 
