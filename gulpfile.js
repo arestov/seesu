@@ -74,47 +74,68 @@ gulp.task('js', function() {
 		.pipe(gulp.dest('dist'));
 });
 
-combo('webapp', extend({
+combo('webapp', extend(common('webapp'), {
 	'index': patch(
 		'index.html', './src/webapp/index.html.patch',
 		'dist-envs/webapp')
-}, common('webapp')));
+}));
 
-combo('chrome_popup', extend({
-	'index': patch(
-		'index.html', './src/chrome_popup/index.html.patch',
-		'dist-envs/chrome_popup'),
-	'manifest': patch(
-		'manifest.json', './src/chrome_popup/manifest.json.patch',
-		'dist-envs/chrome_popup'),
-	'locales-en': patch(
-		'./_locales/en/messages.json',
-		'./src/chrome_popup/_l-en-messages.json.patch',
-		'dist-envs/chrome_popup/_locales/en/messages.json'
+combo('chrome_popup', chromeExtension('chrome_popup'));
+combo('opera_popup', extend(chromeExtension('opera_popup'), {
+	'config.xml': copy(
+		'./src/opera_popup/config.xml',
+		'dist-envs/' + 'opera_popup'
 	),
-	'locales-ru': patch(
-		'./_locales/ru/messages.json',
-		'./src/chrome_popup/_l-ru-messages.json.patch',
-		'dist-envs/chrome_popup/_locales/ru/messages.json'
+	'background': copy(
+		'./src/opera_popup/bg.html', 
+		'dist-envs/' + 'opera_popup'
 	),
+	'js': copy('js/**/*', 'dist-envs/' + 'opera_popup' + '/js'),
+	'js-loader': copy(
+		'./loader.js', 
+		'dist-envs/' + 'opera_popup'
+	),
+}));
 
+function chromeExtension(dest_env) {
+	var dest_folder = 'dist-envs/' + dest_env;
+	return extend(common(dest_env), {
+		'index': patch(
+			'index.html', './src/chrome_popup/index.html.patch',
+			dest_folder),
+		'manifest': patch(
+			'manifest.json', './src/chrome_popup/manifest.json.patch',
+			dest_folder),
+		'locales-en': patch(
+			'./_locales/en/messages.json',
+			'./src/chrome_popup/_l-en-messages.json.patch',
+			dest_folder + '/_locales/en/'
+		),
+		'locales-ru': patch(
+			'./_locales/ru/messages.json',
+			'./src/chrome_popup/_l-ru-messages.json.patch',
+			dest_folder +'/_locales/ru/'
+		),
 
-	'background': copy('./src/chrome_popup/bg.html', 'dist-envs/chrome_popup'),
-	'ui-init': copy('./src/chrome_popup/ui-init.js', 'dist-envs/chrome_popup'),
+		icons: copy('icons/**/*', dest_folder + '/icons'),
 
-	// ''
-	/*
+		'background': copy('./src/chrome_popup/bg.html', dest_folder),
+		'ui-init': copy('./src/chrome_popup/ui-init.js', dest_folder),
 
-	index.html
-	manifest.json
-	/_locales/en/messages.json
-	_locales/ru/messages.json
+		// ''
+		/*
 
-	bg.html
-	ui-init.js	
-	
-	*/
-}, common('chrome_popup')));
+		index.html
+		manifest.json
+		/_locales/en/messages.json
+		_locales/ru/messages.json
+
+		bg.html
+		ui-init.js	
+		
+		*/
+	});
+}
 
 function patch(source, patch_path, dest) {
 	return function() {
