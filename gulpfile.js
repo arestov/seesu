@@ -83,7 +83,11 @@ combo('webapp', extend(common('webapp'), {
 combo('chrome_app', extend(common('chrome_app'), {
 	'index': patch(
 		'index.html', './src/index.dist-js.patch',
-		'dist-envs/chrome_app')
+		'dist-envs/chrome_app'),
+	'manifest': copy(
+			'manifest.json', 'dist-envs/' + 'chrome_app'),
+	icons: copy('icons/**/*', 'dist-envs/' + 'chrome_app' + '/icons'),
+	_locales: copy('_locales/**/*', 'dist-envs/' + 'chrome_app' + '/_locales')
 }));
 combo('chrome_popup', chromeExtension('chrome_popup'));
 combo('opera_popup', extend(chromeExtension('opera_popup'), {
