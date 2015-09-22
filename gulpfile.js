@@ -80,6 +80,11 @@ combo('webapp', extend(common('webapp'), {
 		'dist-envs/webapp')
 }));
 
+combo('chrome_app', extend(common('chrome_app'), {
+	'index': patch(
+		'index.html', './src/index.dist-js.patch',
+		'dist-envs/chrome_app')
+}));
 combo('chrome_popup', chromeExtension('chrome_popup'));
 combo('opera_popup', extend(chromeExtension('opera_popup'), {
 	'config.xml': copy(
@@ -96,6 +101,8 @@ combo('opera_popup', extend(chromeExtension('opera_popup'), {
 		'dist-envs/' + 'opera_popup'
 	),
 }));
+
+gulp.task('envs', ['chrome_app', 'chrome_popup', 'opera_popup']);
 
 function chromeExtension(dest_env) {
 	var dest_folder = 'dist-envs/' + dest_env;

@@ -10,7 +10,9 @@ var diff_options = {
   compareLine: function (lineNumber, line, operation, patchContent) {
     var matched = line.replace(/\s+$/gi, '') === patchContent.replace(/\s+$/gi, '');
     if (!matched) {
-      console.log('no patch match', lineNumber, line, patchContent);
+      console.log('no patch match', lineNumber);
+      console.log(line);
+      console.log(patchContent);
       // throw new Error();
     }
     return matched;
