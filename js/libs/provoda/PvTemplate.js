@@ -670,10 +670,14 @@ spv.Class.extendTo(PvTemplate, {
 					return new BnddChunk('states_watcher', wwtch);
 				}
 			},
-			'pv-class': function(node, standch) {
-				if (standch){
-					var wwtch = standch.createBinding(node, this);
-					return new BnddChunk('states_watcher', wwtch);
+			'pv-class': function(node, standches) {
+				if (standches){
+					var result = [];
+					for (var i = 0; i < standches.length; i++) {
+						var wwtch = standches[i].createBinding(node, this);
+						result.push(new BnddChunk('states_watcher', wwtch));
+					}
+					return result;
 				}
 			},
 			'pv-props': function(node, standches) {

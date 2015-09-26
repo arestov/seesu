@@ -24,7 +24,7 @@ var getFieldsTreesBases = function(all_vs) {
 };
 
 
-var StandartChange = function(node, opts, directive_name) {
+var StandartChange = function(node, opts, w_cache_subkey) {
 	var calculator = opts.calculator;
 	var all_vs;
 	if (!calculator){
@@ -39,11 +39,11 @@ var StandartChange = function(node, opts, directive_name) {
 		}
 	}
 
-	if (!directive_name) {
-		throw new Error('directive_name must be provided');
+	if (!w_cache_subkey) {
+		throw new Error('w_cache_subkey (usualy just directive_name) must be provided');
 	}
 
-	this.directive_name = directive_name;
+	this.w_cache_subkey = w_cache_subkey;
 	this.data = opts.data;
 	this.calculator = calculator;
 	this.all_vs = all_vs;
@@ -100,7 +100,7 @@ StandartChange.prototype = {
 
 		return function(node, context) {				
 			var wwtch = {
-				w_cache_key: node.pvprsd + '_' + node.pvprsd_inst + '*' + this.directive_name,
+				w_cache_key: node.pvprsd + '_' + node.pvprsd_inst + '*' + this.w_cache_subkey,
 				data: this.data,
 				standch: this,
 				context: context,

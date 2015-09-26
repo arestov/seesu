@@ -31,7 +31,7 @@
   <body>
 	<div id="ui-samples" style="display:none">
 		<!-- -->
-		<span class="brow_lev_nav" pv-class="brow_lev_nav {{!vmp_show && 'hidden'}}"></span>
+		<span class="brow_lev_nav" pv-class="hidden: !vmp_show"></span>
 		<span
 			class="common-nav nav-item"
 			pv-props="title:{{nav_title}}"
@@ -39,12 +39,11 @@
 			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
 			pv-class="
-				nav-item
-				{{!mp_has_focus && 'nnav'}}
-				{{mp_stack == 'top' && 'stack-top'}}
-				{{mp_stack == 'bottom' && 'stack-bottom'}}
-				{{mp_stack == 'middle' && 'stack-middle'}}
-				{{nav_clickable && 'nav_clickable'}}
+				nnav: !mp_has_focus
+				stack-top: {{ mp_stack == 'top' }}
+				stack-bottom: {{ mp_stack == 'bottom' }}
+				stack-middle: {{ mp_stack == 'middle' }}
+				nav_clickable: nav_clickable
 			"
 			
 			><span
@@ -58,12 +57,11 @@
 			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
-				nav-item nav-search_results
-				{{!mp_has_focus && 'nnav'}}
-				{{mp_stack == 'top' && 'stack-top'}}
-				{{mp_stack == 'bottom' && 'stack-bottom'}}
-				{{mp_stack == 'middle' && 'stack-middle'}}
-				{{nav_clickable && 'nav_clickable'}}
+				nnav: !mp_has_focus
+				stack-top: {{ mp_stack == 'top' }}
+				stack-bottom: {{ mp_stack == 'bottom' }}
+				stack-middle: {{ mp_stack == 'middle' }}
+				nav_clickable: nav_clickable
 			"
 			><b></b><span class="icon">&nbsp;</span></span>
 		<span 
@@ -74,11 +72,9 @@
 			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
-				nav-item nav-start
-				{{!mp_has_focus && 'nav-button'}}
-				{{(mp_stack && mp_stack == !!mp_stack) && 'stacked'}}
-				{{nav_clickable && 'nav_clickable'}}
-				
+				nav-button: !mp_has_focus
+				stacked: {{ (mp_stack && mp_stack == !!mp_stack) }}
+				nav_clickable: nav_clickable
 			"
 			><b></b><span class="icon">&nbsp;</span></span>
 
@@ -88,12 +84,11 @@
 		<div 
 			class="complex-page inactive-page can_be_animated"
 			pv-class="
-				complex-page 
-				{{current_lev_num != $lev_num && 'inactive-page'}}
-				{{current_lev_num == $lev_num && 'full-page'}}
-				{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}
-				{{!disallow_animation && 'can_be_animated'}}
-				{{map_animating && 'map_animating'}}
+				inactive-page: {{ current_lev_num != $lev_num }}
+				full-page: {{ current_lev_num == $lev_num }}
+				page-scheme: {{ (current_lev_num - 1) == $lev_num }}
+				can_be_animated: !disallow_animation
+				map_animating: map_animating
 				"
 			pv-anchor="con">
 			<div 
@@ -105,7 +100,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="browse_lev_con" pv-class="browse_lev_con {{!vmp_show && 'hidden'}}">
+		<div class="browse_lev_con" pv-class="hidden: !vmp_show">
 			
 		</div>
 		<div class="usual_page lilists">
@@ -116,7 +111,7 @@
 		<div class="list-of-playlists list_of_playlists">
 			<div
 				class='create-named-playlist hidden suggest'
-				pv-class="{{!need_creation_button && 'hidden'}} create-named-playlist suggest"
+				pv-class="hidden: !need_creation_button "
 				pv-events="click::findAddPlaylist"
 				pv-type="way-point">
 				<span class="lang localize-cr-new-playlist"></span> 
@@ -148,7 +143,7 @@
 
 		<div 
 			class="area_for_button imp-area_for_button"
-			pv-class="area_for_button {{mp_show && 'button_selected'}}"
+			pv-class="button_selected: mp_show"
 			pv-events="click:requestPage"
 			pv-type="way-point">
 			<div class="area-button">
@@ -156,14 +151,14 @@
 			</div>
 			<div
 				class="area-description desc_prevw_list"
-				pv-class="area-description desc_prevw_list {{list_loading && 'list_loading'}}">
+				pv-class="list_loading: list_loading">
 				<!--pv-replace sample_name:imp-desc_item-->
 			</div>
 		</div>
 
 		<div 
 			class="area_for_button imp-area_for_button-simple"
-			pv-class="area_for_button {{mp_show && 'button_selected'}}"
+			pv-class="button_selected: mp_show"
 			pv-events="click:requestPage"
 			pv-type="way-point">
 			<div class="area-button">
@@ -171,7 +166,7 @@
 			</div>
 			<div
 				class="area-description desc_prevw_list"
-				pv-class="area-description desc_prevw_list {{list_loading && 'list_loading'}}">
+				pv-class="list_loading: list_loading">
 				<span class="desc_item preview_line" pv-nest="preview_list">
 					<span class="preview_line-wrap">
 						<span class="desc_item-text" pv-text="{{selected_title || nav_short_title || nav_title}}"></span>
@@ -186,9 +181,9 @@
 			<span class="preview_line-wrap">
 				<span 
 					class="desc_item-imgcon hidden" 
-					pv-class="desc_item-imgcon {{!vis_img_allowed && 'hidden'}}">
+					pv-class="hidden: !vis_img_allowed">
 					<img src="" alt=""
-						pv-class="{{!selected_image && 'hidden'}}" 
+						pv-class="hidden: !selected_image" 
 						pv-props=
 						"src: {{
 						(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
@@ -204,7 +199,7 @@
 			<span class="preview_line-wrap">
 				<span class="desc_item-imgcon">
 					<img src="" alt=""
-						pv-class="{{!selected_image && 'hidden'}}" 
+						pv-class="hidden: !selected_image" 
 						pv-props=
 						"src: {{
 							(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
@@ -222,8 +217,7 @@
 
 
 		<div
-			class="user_tag_page usual_page"
-			pv-class="lula_page usual_page"
+			class="user_tag_page usual_page lula_page"
 			>
 			<div class="preview_area" pv-nest="tracks">
 				<!--pv-replace sample_name:imp-area_for_button-->
@@ -246,8 +240,7 @@
 			</div>
 		</div>
 		<div
-			class="user_tags_page usual_page"
-			pv-class="lula_page usual_page">
+			class="user_tags_page usual_page lula_page">
 			<ul>
 				<li pv-nest="tags" class="user_tag" pv-events="click:requestPage" pv-type="way-point">
 					<span class="user_tag-count" pv-text="{{count}}"></span>
@@ -257,7 +250,7 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 
-		<div class="lula_page usual_page" pv-class="lula_page usual_page">
+		<div class="lula_page usual_page">
 			<div class="preview_area" pv-nest="all_time">
 				<div class="area_for_button" pv-anchor="button_area">
 					<div class="area-button" pv-anchor='big_button'>
@@ -272,7 +265,7 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 
-		<div class="lulas_page usual_page" pv-class="lulas_page usual_page">
+		<div class="lulas_page usual_page">
 			<ul>
 				<li pv-nest="artists" pv-events="click:requestPage" class="user_artist" pv-type="way-point">
 					<div class="user_artist-image_con">
@@ -282,7 +275,7 @@
 								alt: {{artist_name}}
 								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
 							"
-							pv-class="{{!selected_image && 'hidden'}}"
+							pv-class="hidden: !selected_image"
 						>
 					</div>
 					<div 
@@ -306,12 +299,12 @@
 				<div 
 					pv-anchor="row_context"
 					class="pla-row-content has-dark-buttons hidden"
-					pv-class="pla-row-content has-dark-buttons {{!active_part && 'hidden'}}"
+					pv-class="hidden: !active_part"
 					style="position:relative">
-					<span class="rc-arrow hidden" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}" pv-class="rc-arrow {{!active_part && 'hidden'}}">
+					<span class="rc-arrow hidden" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}" pv-class="hidden: !active_part">
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
-					<div class="pla-row hidden" pv-nest="context_parts for_model:row-multiatcs" pv-class="pla-row {{!active_view && 'hidden'}}">
+					<div class="pla-row hidden" pv-nest="context_parts for_model:row-multiatcs" pv-class="hidden: !active_view">
 						<div class="left-buttons-group">
 							<span class="button-hole">
 								<a 
@@ -331,7 +324,7 @@
 						</div>
 						
 					</div>
-					<div class="pla-settings hidden" pv-nest="context_parts for_model:row-pl-settings" pv-class="pla-settings {{!active_view && 'hidden'}}">
+					<div class="pla-settings hidden" pv-nest="context_parts for_model:row-pl-settings" pv-class="hidden: !active_view">
 						<label class="dont-rept-pl">
 							<input type="checkbox" pv-anchor="dont-rept-pl"/>
 							<span class="lang localize-dont-rept-pl">Do not repeat playlist</span>
@@ -341,7 +334,7 @@
 			</div>
 			<div 
 				class="loader_disallowing_desc hidden"
-				pv-class="loader_disallowing_desc {{!loader_disallowing_desc && 'hidden'}}"
+				pv-class="hidden: !loader_disallowing_desc"
 				pv-text="{{loader_disallowing_desc}}"
 			></div>
 			
@@ -349,9 +342,8 @@
 		</div>
 		<div class="playlist-container"
 			pv-class="
-				playlist-container 
-				{{can_play && 'has-files-in-songs'}}
-				{{!vis_overview && !mp_has_focus && 'show-zoom-to-track'}}
+				has-files-in-songs: can_play
+				show-zoom-to-track: {{ !vis_overview && !mp_has_focus }}
 				">
 			<!--pv-replace sample_name:playlist_panel-->
 				
@@ -359,13 +351,12 @@
 				class="tracks-for-play"
 				pv-anchor="lc"
 				pv-class="
-					tracks-for-play
-					{{list_loading && 'loading'}}
-					{{mp_has_focus && 'list-overview'}}
+					loading: list_loading
+					list-overview: mp_has_focus
 				"
 				></ul>
-			<div class="lang localize-nothing-found" pv-class="{{!error && 'hidden'}}"></div>
-			<div class="hidden "  pv-class="{{vis_overview && 'hidden'}}">
+			<div class="lang localize-nothing-found" pv-class="hidden: !error"></div>
+			<div class="hidden "  pv-class="hidden: vis_overview">
 				<!--pv-replace sample_name:view_sources-->
 			</div>
 			
@@ -374,7 +365,7 @@
 				class='load-more-list-data lang localize-load-more'
 				pv-events="click::requestMoreData:songs-list"
 				pv-type="{{more_load_available && 'way-point'}}"
-				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}">Load more</a>
+				pv-class="hidden: !more_load_available">Load more</a>
 		</div>
 		<div class="music_conductor_page usual_page">
 			<div pv-nest='allpas'>
@@ -392,17 +383,17 @@
 			>
 			<img src="" alt="" pv-anchor="imgc"/>
 			<div class="full_album_name">
-				<div class="desc hidden" pv-class="desc {{!album_year && 'hidden'}}" pv-text="{{album_year}}"></div>
+				<div class="desc hidden" pv-class="hidden: !album_year" pv-text="{{album_year}}"></div>
 				<div 
 					class="artist_name_alb" 
-					pv-class="artist_name_alb {{can_hide_artist_name && 'hidden'}}"
+					pv-class="hidden: can_hide_artist_name"
 					pv-anchor="artist_name_c" pv-text="{{album_artist}}"></div>
 				<div class="album_name" pv-anchor="album_name_c" pv-text="{{album_name}}"></div>
 			</div>
 		</div>
 		
 		<!-- userslist -->
-		<div class="vk_users_page usual_page" pv-class="vk_users_page usual_page">
+		<div class="vk_users_page usual_page">
 			<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click:followTo" pv-type="way-point">
 				<img class="vk_friend-ava" src="" alt="" pv-props="
 					src: {{ava_image.url}}">
@@ -414,32 +405,32 @@
 		</div>
 
 		<!-- userslist -->
-		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page">
+		<div class="lfm_users_page usual_page">
 			<div pv-nest="list_items" class="lfm_friend-base-preview hidden" pv-events="click:followTo"
-			pv-type="way-point" pv-class="lfm_friend-base-preview">
+			pv-type="way-point">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
 				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
 				<div class="lfm_friend-desc">
 					<span pv-text="{{big_desc}}"></span>
 				</div>
-				<div class="lfm_friend-scrobbler" pv-class="lfm_friend-scrobbler {{!scrobbler && 'hidden'}}">
+				<div class="lfm_friend-scrobbler" pv-class="hidden: !scrobbler">
 					<a 
 						href=""
 						class="external"
 						pv-props="href: {{scrobbler.url}}"
-						pv-class="external {{!scrobbler.url && 'hidden'}}"
+						pv-class="hidden: !scrobbler.url"
 						pv-events="click:open_link"
 						>
 						<img src="" alt="" 
 							pv-props="src: {{scrobbler.image}}" 
-							pv-class="{{!scrobbler.image && 'hidden'}}">
+							pv-class="hidden: !scrobbler.image">
 						<span pv-text="{{scrobbler.name}}"></span>
 					</a>
 					<span
 						class="desc" 
 						pv-text="{{scrobbler.name}}" 
-						pv-class="desc {{scrobbler.url && 'hidden'}}"></span>
+						pv-class="hidden: scrobbler.url"></span>
 				</div>
 				<div class="lfm_friend-recent_song">
 					<span pv-text="{{song}}"></span>
@@ -503,7 +494,7 @@
 			<!--pv-replace sample_name:lastfm_pthgs-->
 			<!--pv-replace sample_name:view_sources-->
 		</div>
-		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page">
+		<div class="lfm_user_page usual_page">
 			<div class="lfm_user_page-header">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
@@ -519,7 +510,7 @@
 			<!--pv-replace sample_name:view_sources-->
 		</div>
 		
-		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page">
+		<div class="vk_user_page usual_page">
 			<div class="vk_user_page-header">
 				<img class="vk_friend-ava" src="" alt="" pv-props="
 					src: {{ava_image.url}}">
@@ -541,7 +532,7 @@
 
 			<div 
 				class="load-more-list-data hidden lang localize-load-more"
-				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}"
+				pv-class="hidden: !more_load_available"
 				pv-events="click::requestMoreData:albums_list"
 				pv-type="{{more_load_available && 'way-point'}}">Load more</div>
 			<!--pv-replace sample_name:view_sources-->
@@ -552,7 +543,7 @@
 
 		<div 
 			class="artists_list no_arfb" 
-			pv-class="artists_list no_arfb {{list_loading && 'list_loading_state'}}">
+			pv-class="list_loading_state: list_loading">
 			
 			<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
@@ -573,7 +564,7 @@
 								alt: {{artist_name}}
 								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
 							"
-							pv-class="{{!selected_image && 'hidden'}}"
+							pv-class="hidden: !selected_image"
 						>
 					</span>
 				</li>
@@ -682,13 +673,12 @@
 				<div class="leftcol art_card-image ">
 					<div class="" pv-anchor="bigimagec"></div>
 				</div>
-				<div class="rightcol art_card-bio " pv-anchor="bio" pv-class="rightcol art_card-bio {{bio__loading && 'loading'}}"></div>
+				<div class="rightcol art_card-bio " pv-anchor="bio" pv-class="loading: bio__loading"></div>
 			</div>
 
 			<!--pv-replace sample_name:view_sources-->
 		</div>
-		<div class="songcard_page usual_page"
-			pv-class="songcard_page usual_page">
+		<div class="songcard_page usual_page">
 			<h4 class="songcard_page-header">
 				<span pv-text="{{track_name}}"></span> - <span pv-text="{{artist_name}}"></span>
 			</h4>
@@ -712,7 +702,7 @@
 				<img
 					class="artist_image hidden"
 					pv-anchor="first-image" 
-					pv-class="{{!selected_image && 'hidden'}} artist_image"
+					pv-class="hidden: !selected_image "
 					pv-props="
 						alt: {{artist_name}}
 						src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + selected_image.lfm_id) || selected_image.url}}
@@ -723,7 +713,7 @@
 		</div>
 		<div 
 		class="artist_preview-base"
-		pv-class="artist_preview-base {{vis_wamo_info && 'want-more-info'}}"
+		pv-class="want-more-info: vis_wamo_info"
 		>
 			<div class="possible_images_con"></div>
 			
@@ -731,7 +721,7 @@
 				<div class="dominator-head">
 					<div 
 						class="closer-to-track"
-						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
+						pv-class="one-artist-playlist: one_artist_playlist ">
 						<a 
 							class="js-serv lang localize-artcard"
 							
@@ -743,13 +733,13 @@
 						class="extend-switcher"
 						pv-events="click:showMoreInfo"
 						pv-type="way-point"
-						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
+						pv-class="hidden: !infb_text ">
 						<span class="big-space" pv-text="{{infb_text}}"></span>
 					</a>
 					<p 
 					pv-nest="tags_list"
 					class="artist-tags hidden" 
-					pv-class="artist-tags {{(!preview_list || !preview_list.length) && 'hidden'}}" >
+					pv-class="hidden: {{ (!preview_list || !preview_list.length) }}" >
 						<span class="simple-header">
 							<em class="lang localize-Tags">Tags</em>
 						</span>
@@ -763,11 +753,11 @@
 				</div>
 				<div class="artist-info">
 					<p class="artist-stat-in-song">
-						<span pv-class="{{!listeners && 'hidden'}}" class="playcount">
+						<span pv-class="hidden: !listeners" class="playcount">
 							<span class="desc">Listeners:</span>
 							<span pv-text="{{listeners}}"></span>
 						</span> 
-						<span pv-class="{{!playcount && 'hidden'}}" class="hidden">
+						<span pv-class="hidden: !playcount" class="hidden">
 							<span class="desc">Playcount:</span>
 							<span pv-text="{{playcount}}"></span>
 						</span>
@@ -800,8 +790,8 @@
 			
 		</div>
 		
-		<div class="song-row-content moplas-block moplas_block" pv-nest="mf_cor" pv-class="song-row-content moplas-block {{want_more_songs && 'want_more_songs'}}">
-			<div class="show-all-songs hidden" pv-class="show-all-songs {{!must_be_expandable && 'hidden'}}">
+		<div class="song-row-content moplas-block moplas_block" pv-nest="mf_cor" pv-class="want_more_songs: want_more_songs">
+			<div class="show-all-songs hidden" pv-class="hidden: !must_be_expandable">
 				<a pv-events="click::switchMoreSongsView" pv-type="way-point">
 					<span class="notifier hidden" pv-nest='notifier' pv-text='{{counter}}'></span>
 					<span class="lang localize-files">Files</span>
@@ -810,7 +800,7 @@
 				
 			</div>
 			<div class="messages-c" pv-anchor='messages_c'>
-				<div class="cant_play_music_message hidden" pv-class="cant_play_music_message {{!cant_play_music && 'hidden'}}" >
+				<div class="cant_play_music_message hidden" pv-class="hidden: !cant_play_music" >
 					<span class="lang localize-need-audioplayers"></span>
 				</div>
 			</div>
@@ -820,29 +810,28 @@
 				</div>
 				<div
 					class="moplas-list"
-					pv-class="moplas-list {{show_overstocked && 'want-overstocked-songs'}}"
+					pv-class="want-overstocked-songs: show_overstocked"
 					pv-nest="sorted_completcs"
 					>
 					<div 
 
 						pv-nest="pioneer"
-						class="files-list-pioneer full_mb_part" 
-						pv-class="files-list-pioneer full_mb_part ">
-						<div class="moplas-block-shift" pv-class="moplas-block-shift {{has_request && 'list_loading'}}">
+						class="files-list-pioneer full_mb_part">
+						<div class="moplas-block-shift" pv-class="list_loading: has_request">
 							<span class="moplas_source-icon" pv-events="click::switchTunerVisibility"></span>
 							<a 
 								pv-type="way-point"
 								pv-props="href: {{dmca_url}}" 
-								pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
+								pv-class="hidden: !dmca_url dmca_url: dmca_url"
 								class="external hidden lang localize-report-abuse"></a>
-							<span pv-text="{{search_name}}" pv-class="{{ search_complete && !has_files && 'moplas_source-unavailable'}} {{disable_search && 'disabled_search'}}"></span>
+							<span pv-text="{{search_name}}" pv-class="moplas_source-unavailable: {{  search_complete && !has_files }} disabled_search: disable_search"></span>
 						</div>
 						
 
 						<div
 							pv-nest="vis_tuner" 
 							class="moplas_source-tuner moplas-block-shift hidden"
-							pv-class="moplas_source-tuner moplas-block-shift {{hidden && 'hidden'}}">
+							pv-class="hidden: hidden">
 							<div>
 								<label>
 									<input type="checkbox" pv-events="click:changeTune" name="disable_search" pv-props="checked:{{disable_search}}">
@@ -857,7 +846,7 @@
 										checked: {{wait_before_playing}}
 										disabled: {{disable_search}}
 									">
-									<span pv-class="{{disable_search && 'desc'}}" class="lang localize-wait-before-play">
+									<span pv-class="desc: disable_search" class="lang localize-wait-before-play">
 										
 									</span>
 									
@@ -873,9 +862,9 @@
 					<ul pv-anchor='listc-start'></ul>
 					<div class="full_mb_part full_list_switch">
 						<a
-							class="hidden lang localize-full-list"
+							class="hidden lang localize-full-list js-serv"
 							pv-type="{{overstock && 'way-point'}}"
-							pv-class="js-serv {{!overstock && 'hidden'}}"
+							pv-class="hidden: !overstock"
 							pv-events="click::toggleOverstocked"
 							>full list</a>
 					</div>
@@ -888,10 +877,10 @@
 				<!--pv-replace sample_name:track-video pv-when:yt_videos$length-->
 	
 				<div class="file_source">
-					<span class="hidden file_source_cont" pv-class="file_source_cont {{!current_source && 'hidden'}}">
+					<span class="hidden file_source_cont" pv-class="hidden: !current_source">
 						<span class="desc">file from</span> <a href="" class="external" pv-props="href:{{current_source.source_link}}" pv-text="{{current_source.source_name}}"></a>
 					</span>
-					<span pv-nest="current_mopla " class="hidden" pv-class="{{!progress_info && 'hidden'}}">
+					<span pv-nest="current_mopla " class="hidden" pv-class="hidden: !progress_info">
 						<!-- <span title="downloaded" pv-text="{{progress_info.downloaded}}"></span> -->
 						<span class="desc">
 							active peers: <span title="" pv-text="{{progress_info.active_peers}}"></span> 
@@ -917,44 +906,42 @@
 		<ul>
 			<li class="song-view" 
 				pv-class="
-					{{player_song && 'player_song'}}
-					{{play && 'playing-song'}}
-					{{!vmp_show && marked_as && 'v-song-sibling'}}
-					{{marked_as == 'next' && 'to-play-next'}}
-					{{marked_as == 'prev' && 'to-play-previous'}}
-					{{vmp_show && 'viewing-song'}}
-					{{vis_lite_view && vmp_show && 'selected_song'}}
+					player_song: player_song
+					playing-song: play
+					v-song-sibling: {{ !vmp_show && marked_as }}
+					to-play-next: {{ marked_as == 'next' }}
+					to-play-previous: {{ marked_as == 'prev' }}
+					viewing-song: vmp_show
+					selected_song: {{ vis_lite_view && vmp_show }}
 				">
 				<a 
 					pv-anchor="song-link"
 					class="track-node"
 					pv-type="{{(vis_lite_view || !vmp_show) && 'way-point'}}"
 					pv-class="
-						track-node
-						{{want_to_play && 'marked-for-play'}}
-						{{has_none_files_to_play && !playable && 'search-mp3-failed'}}
-						{{!has_none_files_to_play && !playable && 'waiting-full-render'}}
-						{{searching_files && 'search-mp3'}}
-						{{track_name_loading && 'track_name_loading'}}
-						{{playable && 'song'}}
+						marked-for-play: want_to_play
+						search-mp3-failed: {{ has_none_files_to_play && !playable }}
+						waiting-full-render: {{ !has_none_files_to_play && !playable }}
+						search-mp3: searching_files
+						track_name_loading: track_name_loading
+						song: playable
 					"
 					pv-events="click:showSong"
 					pv-props="title: {{song_title}}"
 					>
 					<span
 						class="playing-song-mark"
-						pv-class="{{play == 'play' && 'playing-process'}} playing-song-mark"
+						pv-class="playing-process: {{ play == 'play' }} "
 						>
 					</span>
 					<span class="files-load-states">
 						<span 
 							class="song-files-search-status"
 							pv-class="
-								song-files-search-status
-								{{has_none_files_to_play && 'has-none-files'}}
-								{{!has_none_files_to_play && files_search.have_best_tracks && 'has_best_files'}}
-								{{!has_none_files_to_play && files_search.have_mp3_tracks && 'has-some-files'}}
-								{{forbidden_by_copyrh && 'forbidden_by_copyrh'}}
+								has-none-files: has_none_files_to_play
+								has_best_files: {{ !has_none_files_to_play && files_search.have_best_tracks }}
+								has-some-files: {{ !has_none_files_to_play && files_search.have_mp3_tracks }}
+								forbidden_by_copyrh: forbidden_by_copyrh
 								"
 							pv-text="{{forbidden_by_copyrh && '©'}}"
 						>
@@ -970,10 +957,10 @@
 								alt: {{song_title}}
 								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
 							"
-							pv-class="{{!selected_image && 'hidden'}}"
+							pv-class="hidden: !selected_image"
 						>
 					</span>
-					<span class="full-song_title" pv-class="full-song_title {{!track && 'has-no_track_title'}}">
+					<span class="full-song_title" pv-class="has-no_track_title: !track">
 						<span class="song-artist_name" pv-text="{{artist}}"></span>
 						<span class="song-track-name" pv-text="{{track}}"></span>
 					</span>
@@ -1035,14 +1022,14 @@
 				<div 
 					pv-anchor="row_context"
 					class="song-row-content row-song-context hidden"
-					pv-class="song-row-content row-song-context {{!active_part && 'hidden'}}"
+					pv-class="hidden: !active_part"
 					>
-					<span class="rc-arrow hidden" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}" pv-class="rc-arrow {{!active_part && 'hidden'}}">
+					<span class="rc-arrow hidden" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}" pv-class="hidden: !active_part">
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
 
 
-					<div class="addsong-to-playlist hidden" pv-nest="context_parts for_model:row-playlist-add" pv-class="addsong-to-playlist {{!active_view && 'hidden'}}">
+					<div class="addsong-to-playlist hidden" pv-nest="context_parts for_model:row-playlist-add" pv-class="hidden: !active_view">
 						<h4><span class="lang localize-addsong ">add song to</span>:</h4>
 						<div>
 							<input type="search" class="playlist-query" autocomplete="off"
@@ -1056,11 +1043,10 @@
 						</div>
 						<!--pv-replace sample_name:list_of_playlists pv-when:active_view-->
 					</div>
-					<div class="share-song hidden" pv-nest="context_parts for_model:row-share" pv-class="share-song {{!active_view && 'hidden'}}">
+					<div class="share-song hidden" pv-nest="context_parts for_model:row-share" pv-class="hidden: !active_view">
 						<input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
 						<div
 							class="shareb-base  users-list"
-							pv-class="shareb-base  users-list "
 							pv-anchor="vk_share_b">
 							
 							<div class="shareb-con">
@@ -1075,11 +1061,11 @@
 										
 										<div pv-nest="section for_model:section-vk-users" class="vk_share">
 											<div class="vk_auth" pv-anchor="vk_auth"></div>
-											<div pv-class="{{needs_vk_auth && 'hidden'}}">
+											<div pv-class="hidden: needs_vk_auth">
 												<div>
 													<div class="share_header_wrap">
 														<h3 class="vk_share_header lang localize-post-song"></h3>
-														<div class="post-to-my-vk-wall" pv-class="post-to-my-vk-wall {{!own_photo && 'hidden'}}" pv-events="click::postToVKWall" pv-type="way-point">
+														<div class="post-to-my-vk-wall" pv-class="hidden: !own_photo" pv-events="click::postToVKWall" pv-type="way-point">
 															<img pv-props="src: {{own_photo}}">
 															<span class="lang localize-to-own-wall"></span>
 														</div>
@@ -1093,20 +1079,20 @@
 													<div class="details_switch" >
 														<div 
 															class="min_details"
-															pv-class="min_details {{!vis_full_view_mode && 'active'}}"
+															pv-class="active: !vis_full_view_mode"
 															pv-events="click:toggleVisState:full_view_mode::">
 															<span class="icon"></span>
 														</div>
 														<div
 															class="max_details"
-															pv-class="max_details {{vis_full_view_mode && 'active'}}"
+															pv-class="active: vis_full_view_mode"
 															pv-events="click:toggleVisState:full_view_mode:true">
 															<span class="icon"></span>
 														</div>
 													</div>
 												</div>
 												
-												<div class="compact_share" pv-class="{{!vis_full_view_mode && 'compact_share'}}">
+												<div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
 													<div class="song_acting_vk_search protect_clicks  details_for_switcher ">
 														<ul>
 															<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
@@ -1129,7 +1115,7 @@
 										<div pv-anchor="lfm_auth_con"></div>
 										<div pv-nest="section for_model:section-lfm-user"
 											class="lfm_share"
-											pv-class="lfm_share {{!can_share && 'hidden'}}">
+											pv-class="hidden: !can_share">
 											<ul >
 												<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
 													<a>
@@ -1147,7 +1133,7 @@
 										</div>
 										<div pv-nest="section for_model:section-lfm-friends"
 											class="lfm_share"
-											pv-class="lfm_share {{!can_share && 'hidden'}}"
+											pv-class="hidden: !can_share"
 		
 										>
 											<div class="details_switch_block">
@@ -1156,20 +1142,20 @@
 												<div class="details_switch" >
 													<div 
 														class="min_details"
-														pv-class="min_details {{!vis_full_view_mode && 'active'}}"
+														pv-class="active: !vis_full_view_mode"
 														pv-events="click:toggleVisState:full_view_mode::">
 														<span class="icon"></span>
 													</div>
 													<div
 														class="max_details"
-														pv-class="max_details {{vis_full_view_mode && 'active'}}"
+														pv-class="active: vis_full_view_mode"
 														pv-events="click:toggleVisState:full_view_mode:true">
 														<span class="icon"></span>
 													</div>
 												</div>
 											</div>
 											
-											<div class="compact_share" pv-class="{{!vis_full_view_mode && 'compact_share'}}">
+											<div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
 												<div class="song_acting_lfm_search protect_clicks details_for_switcher" >
 													<ul >
 														<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
@@ -1194,17 +1180,17 @@
 							</div>
 						</div>
 					</div>
-					<div class="love-song hidden" pv-nest="context_parts for_model:row-love" pv-class="love-song {{!active_view && 'hidden'}}"></div>
-					<div class="song-tagging hidden" pv-nest="context_parts for_model:row-tag" pv-class="song-tagging {{!active_view && 'hidden'}}"></div>
-					<div class="last-fm-scrobbling hidden" pv-nest="context_parts for_model:row-lastfm" pv-class="last-fm-scrobbling {{!active_view && 'hidden'}}"></div>
-					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="simple_row_setting {{!active_view && 'hidden'}}">
+					<div class="love-song hidden" pv-nest="context_parts for_model:row-love" pv-class="hidden: !active_view"></div>
+					<div class="song-tagging hidden" pv-nest="context_parts for_model:row-tag" pv-class="hidden: !active_view"></div>
+					<div class="last-fm-scrobbling hidden" pv-nest="context_parts for_model:row-lastfm" pv-class="hidden: !active_view"></div>
+					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="hidden: !active_view">
 						<label class="song-row-label">
 							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
 							<span class="lang localize-rept-song">Repeat playing song</span>
 						</label>
 						
 					</div>
-					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-pl-shuffle" pv-class="simple_row_setting {{!active_view && 'hidden'}}">
+					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-pl-shuffle" pv-class="hidden: !active_view">
 						<label class="song-row-label">
 							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
 							<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
@@ -1218,7 +1204,7 @@
 					<img 
 						src="" alt="" class="artist_image" 
 						pv-repeat="image in available_images"
-						pv-class="artist_image {{$first && 'album_insong_image'}}"
+						pv-class="album_insong_image: $first"
 						pv-props="src:{{(image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + image.lfm_id)|| image.url}}">
 				</div></div>
 				<div pv-nest="artist" class="nested_artist">
@@ -1228,7 +1214,7 @@
 			
 			<div pv-nest="songcard">
 
-				<div class="track-listeners" pv-class="track-listeners {{disallow_seesu_listeners && 'hidden'}}">
+				<div class="track-listeners" pv-class="hidden: disallow_seesu_listeners">
 					<div class="lang localize-listeners-looks">People who have listened to this track, look like this</div>
 					<div class="song-listeners-list">
 						<div class="song-listener current-user-listen" pv-when="current_su_user_info">
@@ -1237,7 +1223,7 @@
 							</div>
 						</div>
 						<ul pv-when="listenings$length">
-							<li class="song-listener" pv-class="song-listener {{is_current_user && 'hidden'}}" pv-nest="listenings" pv-events="click::switchPmd">
+							<li class="song-listener" pv-class="hidden: is_current_user" pv-nest="listenings" pv-events="click::switchPmd">
 								<div class="image-cropper" pv-nest="user">
 									<img alt="user photo" pv-props="src:{{photo}}"/>
 								</div>
@@ -1303,18 +1289,18 @@
 					pv-nest="fans" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h lang localize-lastfm_fans">
 					</div>
-					<div class="song_fans-l-intrack" pv-class="song_fans-l-intrack {{loading_nesting_list_items && 'loading_list_items'}}">
+					<div class="song_fans-l-intrack" pv-class="loading_list_items: loading_nesting_list_items">
 						<div
 							pv-nest="list_items | limitTo: 13"
 							class="song_fan-b-tck hidden" 
-							pv-class="song_fan-b-tck {{!userid && 'hidden'}}"
+							pv-class="hidden: !userid"
 							pv-props="title:{{userid}}"
 							>
 							<div pv-text="{{userid}}" class="song_fan-h-tck"></div>
 							<img src="" alt=""
 								class="hidden"
 								pv-anchor="user-image"
-								pv-class="{{!can_use_image && 'hidden'}}">
+								pv-class="hidden: !can_use_image">
 						</div>
 					</div>
 					
@@ -1322,7 +1308,7 @@
 				<div class="intrack_page" 
 					pv-nest="vk_posts" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h"><span class="lang localize-posts-from">Posts form</span><br/>vk.com</div>
-					<div class="song_fans-l-intrack" pv-class="song_fans-l-intrack {{loading_nesting_lists_list && 'loading_list_items'}}">
+					<div class="song_fans-l-intrack" pv-class="loading_list_items: loading_nesting_lists_list">
 						<div
 							pv-repeat="image in image_previews | limitTo: 13"
 							class="song_fan-b-tck"
@@ -1350,11 +1336,11 @@
 			pv-type="{{!selected && vis_wp_usable && 'way-point'}}"
 			pv-events="click:selectFile"
 			pv-class="
-				{{unavailable && 'mf-unavailable'}}
-				{{buffering_progress && 'buffering-progress'}}
-				{{play == 'play' && 'playing-file'}}
-				{{selected && 'selected-mf'}}
-				{{overstock && 'overstocked'}}
+				mf-unavailable: unavailable
+				buffering-progress: buffering_progress
+				playing-file: {{ play == 'play' }}
+				selected-mf: selected
+				overstocked: overstock
 			">
 			<span 
 				class="play-button-place"
@@ -1435,7 +1421,7 @@
 		</div>
 		<div class="song-act-tagging">
 			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input" pv-type="way-point"/>
-			<div class="save_tags_b hidden" pv-class="save_tags_b {{!has_changes && 'hidden'}}">
+			<div class="save_tags_b hidden" pv-class="hidden: !has_changes">
 				<span class="button-hole">
 					<span class="nicebutton" pv-events="click::saveTagsChanges" pv-type="way-point">save</span>
 				</span>
@@ -1449,7 +1435,7 @@
 			</div>
 			<div class="song_tagging_help">
 				<div class="personal_tags">
-					<h4 class="tagging_header" pv-class="{{petags_result.length && 'has_tags'}}  tagging_header" >
+					<h4 class="tagging_header" pv-class="has_tags: petags_result.length  " >
 						<span class="lang localize-your_tags">Your tags</span>
 					</h4>
 					<div class="tagging_help">
@@ -1460,7 +1446,7 @@
 
 				
 				<div class="top_tags">
-					<h4 class="tagging_header" pv-class="{{toptags.length && 'has_tags'}}  tagging_header">
+					<h4 class="tagging_header" pv-class="has_tags: toptags.length  ">
 						<span class="lang localize-top_track_tags">Top tags of track</span>
 					</h4>
 					<div class="tagging_help">
@@ -1470,7 +1456,7 @@
 				</div>
 				
 				<div class="artist_tags">
-					<h4 class="tagging_header" pv-class="{{artist_tags.length && 'has_tags'}} tagging_header">
+					<h4 class="tagging_header" pv-class="has_tags: artist_tags.length ">
 						<span class="lang localize-artist_tags">Artist tags</span>
 						
 					</h4>
@@ -1503,7 +1489,7 @@
 			</ul>
 		</div>
 		
-		<div class="search_results-container" pv-class="search_results-container {{!needs_search_from && 'does-not-need-search-from'}}">
+		<div class="search_results-container" pv-class="does-not-need-search-from: !needs_search_from">
 			<p class="search-desc">
 				<span class="desc lang localize-search-control-hint"></span>
 			</p>
@@ -1512,56 +1498,55 @@
 			
 				<div
 					pv-nest="section for_model:section-tag"
-					pv-class="{{!active && 'hidden'}}">
-					<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 					<ul
 						class="sugg-section results-suggests"
-						pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+						pv-class="odd_section: odd_section active-section: active">
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
 							pv-type="way-point" pv-events="click::view"
-							pv-class="suggest 
-								{{!text_title && 'hidden'}}
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
 							">
-							<a pv-class="{{active && 'active'}}" >
+							<a pv-class="active: active" >
 								<span pv-text="{{text_title}}"></span>
 							</a>
 						</li>
 						<li class="suggest" pv-nest="button"
 							pv-type="way-point" pv-events="click::view"
 							pv-class="
-								suggest
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+								searched-bordered: bordered
+								hidden: disabled
 							">
 							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
 						</li>
-						<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<li  pv-class="hidden: !no_results_text">
 							<a pv-text="{{no_results_text}}"></a>
 						</li>
 					</ul>
 				</div>
 				<div
 					pv-nest="section for_model:section-artist"
-					pv-class="{{!active && 'hidden'}}">
-					<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 					<ul
 						class="sugg-section results-suggests"
-						pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+						pv-class="odd_section: odd_section active-section: active">
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
 							pv-type="way-point" pv-events="click::view"
-							pv-class="suggest 
-								{{!text_title && 'hidden'}}
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
 							">
 
-							<a pv-class="{{active && 'active'}}" >
+							<a pv-class="active: active" >
 								<img
 									pv-props="
 										src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
@@ -1574,35 +1559,34 @@
 						<li class="suggest" pv-nest="button"
 							pv-type="way-point" pv-events="click::view"
 							pv-class="
-								suggest
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+								searched-bordered: bordered
+								hidden: disabled
 							">
 							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
 						</li>
-						<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<li  pv-class="hidden: !no_results_text">
 							<a pv-text="{{no_results_text}}"></a>
 						</li>
 					</ul>
 				</div>
 				<div
 					pv-nest="section for_model:section-album"
-					pv-class="{{!active && 'hidden'}}">
-					<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 					<ul
 						class="sugg-section results-suggests"
-						pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+						pv-class="odd_section: odd_section active-section: active">
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
 							pv-type="way-point" pv-events="click::view"
-							pv-class="suggest 
-								{{!text_title && 'hidden'}}
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
 							">
 
-							<a pv-class="{{active && 'active'}}" >
+							<a pv-class="active: active" >
 								<img
 									pv-props="
 										src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
@@ -1616,35 +1600,34 @@
 						<li class="suggest" pv-nest="button"
 							pv-type="way-point" pv-events="click::view"
 							pv-class="
-								suggest
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+								searched-bordered: bordered
+								hidden: disabled
 							">
 							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
 						</li>
-						<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<li  pv-class="hidden: !no_results_text">
 							<a pv-text="{{no_results_text}}"></a>
 						</li>
 					</ul>
 				</div>
 				<div
 					pv-nest="section for_model:section-track"
-					pv-class="{{!active && 'hidden'}}">
-					<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 					<ul
 						class="sugg-section results-suggests"
-						pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+						pv-class="odd_section: odd_section active-section: active">
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
 							pv-type="way-point" pv-events="click::view"
-							pv-class="suggest 
-								{{!text_title && 'hidden'}}
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
 							">
 
-							<a pv-class="{{active && 'active'}}" >
+							<a pv-class="active: active" >
 								<img
 									pv-props="
 										src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
@@ -1659,35 +1642,34 @@
 						<li class="suggest" pv-nest="button"
 							pv-type="way-point" pv-events="click::view"
 							pv-class="
-								suggest
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+								searched-bordered: bordered
+								hidden: disabled
 							">
 							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
 						</li>
-						<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<li  pv-class="hidden: !no_results_text">
 							<a pv-text="{{no_results_text}}"></a>
 						</li>
 					</ul>
 				</div>
 				<div
 					pv-nest="section for_model:section-playlist"
-					pv-class="{{!active && 'hidden'}}"
+					pv-class="hidden: !active"
 					class="hidden">
-					<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 					<ul
 						class="sugg-section results-suggests playlist-results"
-						pv-class="sugg-section results-suggests playlist-results {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+						pv-class="odd_section: odd_section active-section: active">
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
 							pv-type="way-point" pv-events="click::view"
-							pv-class="suggest 
-								{{!text_title && 'hidden'}}
-								{{bordered && 'searched-bordered'}}
-								{{disabled && 'hidden'}}
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
 							">
-							<a pv-class="{{active && 'active'}}" >
+							<a pv-class="active: active" >
 								<span pv-text="{{text_title}}"></span>
 							</a>
 						</li>
@@ -1716,7 +1698,7 @@
 				</div>
 				<div pv-text="{{text_body}}" class="vk_post_text_body"></div>
 				<div >
-					<span pv-repeat="photo in photos" pv-class="{{nothing && 'hidden'}}" class="hidden">
+					<span pv-repeat="photo in photos" pv-class="hidden: nothing" class="hidden">
 						<img src="" alt="" class="vk_post_oneimage" pv-props="src:{{photo.photo_604}}">
 					</span>
 
@@ -1731,7 +1713,7 @@
 									alt: {{song_title}}
 									src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
 								"
-								pv-class="{{!selected_image && 'hidden'}}"
+								pv-class="hidden: !selected_image"
 							>
 						</div>
 						<div pv-text="{{artist}}" class="compact_song-artist_name"></div>
@@ -1741,7 +1723,7 @@
 			</div>
 			
 		</div>
-		<div class="view_sources hidden" pv-class="view_sources {{!view_sources.length && 'hidden'}}">
+		<div class="view_sources hidden" pv-class="hidden: !view_sources.length">
 			Powered by
 			<div>
 				<a class="external data_source_link" pv-repeat="source in view_sources" pv-text="{{source}} " pv-props="href:{{'http://' + source}}"></a>
@@ -1765,7 +1747,7 @@
 				pv-props="title:{{nav_title}}"
 				pv-events="click|sp,pd::requestVideo"
 				pv-type="way-point"
-				pv-class="you-tube-video-link {{cant_show && 'cant-show'}}">
+				pv-class="cant-show: cant_show">
 				<a class='video-preview external' pv-props="href:{{ yt_id && 'http://www.youtube.com/watch?v=' + yt_id }}">
 					<img  alt="" class="whole" pv-props="src:{{previews.default}}" pv-when="!triple"/>
 					<span class="preview-slicer" pv-repeat="pict in triple">
@@ -1773,10 +1755,9 @@
 							class="preview-part" alt="" 
 							pv-props="src:{{pict}}"
 							pv-class="
-								preview-part
-								{{$first && 'preview-start'}}
-								{{$middle && 'preview-middle'}}
-								{{$last  && 'preview-end'}}						
+								preview-start: $first
+								preview-middle: $middle
+								preview-end: {{ $last  }}						
 								"
 						/>
 					</span>
@@ -1792,13 +1773,11 @@
 					class="nav-item np-button hidden"
 					pv-props="title:{{now_playing_text}}"
 					pv-class="
-						nav-item np-button
-						{{!now_playing_text && 'hidden'}}
-						{{!viewing_playing && 'nav-button'}}
-						{{!nav_helper_is_needed && viewing_playing && (played_playlists_length > 1) && 'np-button-nh_intend'}}
-						{{playing && 'player-played'}}
-						{{nav_helper_is_needed && !viewing_playing && 'np-button-can_ff'}}
-
+						hidden: !now_playing_text
+						nav-button: !viewing_playing
+						np-button-nh_intend: {{ !nav_helper_is_needed && viewing_playing && (played_playlists_length > 1) }}
+						player-played: playing
+						np-button-can_ff: {{ nav_helper_is_needed && !viewing_playing }}
 					"
 					pv-events="click::suggestNavHelper"
 					pv-type="{{!viewing_playing && 'way-point'}}"
@@ -1815,9 +1794,8 @@
 			<div id="nav-helper" 
 				class="nav_helper hidden"
 				pv-class="
-					nav_helper 
-					{{!nav_helper_is_needed && 'hidden'}}
-					{{nav_helper_full && 'nav_helper-full'}}">
+					hidden: !nav_helper_is_needed
+					nav_helper-full: nav_helper_full">
 				<div class="nvh-arrow">
 					<div class="nvh-s-arrow arrow-part">
 						<div class="nvh-s-arrow-bg arrow-part"></div>
@@ -1831,21 +1809,20 @@
 					pv-nest="played_playlists" 
 					class="nav_pl_hitem"
 					pv-class="
-						nav_pl_hitem {{$index < 2 && 'nav_pl_hitem-allow_preview'}}
-						{{mp_show && 'nav_pl_hitem-selected'}}
-						
+						nav_pl_hitem-allow_preview: {{ $index < 2 }}
+						nav_pl_hitem-selected: mp_show
 					"
 					pv-events="click::#closeNavHelper click::requestLastPlayedSong">
 					<span pv-text="{{nav_title}}"></span>
-					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" nav_pl_hitem-song {{player_song && 'player_song'}}">
+					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" player_song: player_song">
 						<span pv-text="{{nav_title}}"></span>
-						<div class="playing-song-mark" pv-class="playing-song-mark {{play == 'play' && 'playing-process'}}"></div>
+						<div class="playing-song-mark" pv-class="playing-process: {{ play == 'play' }}"></div>
 					</div>
 					
 				</div>
 				<span 
 					class="hidden nav_helper-fullb" 
-					pv-class="nav_helper-fullb {{(played_playlists_length < 3 || nav_helper_full) && 'hidden'}}" 
+					pv-class="hidden: {{ (played_playlists_length < 3 || nav_helper_full) }}" 
 					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists_length - 2}}"></span> items</span>
 
 				<span pv-events="click::closeNavHelper" class="nav_helper-closer">&times;</span>
@@ -1859,7 +1836,7 @@
 				
 				<div class="app_map_con">
 				<div class="shared-parts">
-					<form id="search" name="search" action='/o' method="get" class="" pv-class="{{!show_search_form && 'hidden'}}">
+					<form id="search" name="search" action='/o' method="get" class="" pv-class="hidden: !show_search_form">
 						<!-- google stat for custom search in browsers -->
 						<div>
 							<input type="hidden" name="utm_source" value="web_app" id="app_type">
@@ -1869,7 +1846,7 @@
 						<!-- / google stat -->
 						<p id="search-p">
 							<label>
-								<span class='main_search_label lang localize-search-big' pv-class="main_search_label {{search_query && 'hidden'}}">Search artists, albums, songs, tags</span>
+								<span class='main_search_label lang localize-search-big' pv-class="hidden: search_query">Search artists, albums, songs, tags</span>
 								<span class="inpt"><input 
 									type="search" name="q" id="q" size="50"  autocomplete="off"
 									pv-type="{{show_search_form && 'way-point'}}" /></span>
@@ -1886,11 +1863,10 @@
 					class="complex-page root_level full-page can_be_animated"
 					pv-foreign
 					pv-class="
-						complex-page root_level
-						{{current_lev_num != $lev_num && 'inactive-page'}}
-						{{current_lev_num == $lev_num && 'full-page'}}
-						{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}
-						{{!disallow_animation && 'can_be_animated'}}"
+						inactive-page: {{ current_lev_num != $lev_num }}
+						full-page: {{ current_lev_num == $lev_num }}
+						page-scheme: {{ (current_lev_num - 1) == $lev_num }}
+						can_be_animated: !disallow_animation"
 					pv-anchor="con">
 					<div 
 						class="complex-page-scroll_con"
@@ -1944,7 +1920,7 @@
 								<div class="music-conductor-preview" pv-nest="muco">
 									<div class="arb-union">
 										<div
-											class="area_for_button" pv-class="area_for_button {{mp_show && 'button_selected'}}"
+											class="area_for_button" pv-class="button_selected: mp_show"
 											pv-events="click::requestPage" pv-type="way-point">
 											<div class="to-open-block area-button">
 												<span class="lang localize-music-cond">Music Conductor</span>
@@ -1952,11 +1928,11 @@
 											<div class="area-description">
 												<div class="desc_prevw_list">
 													<span pv-nest="preview_list" pv-text="{{nav_title}}{{!$last && ', '}}"></span>
-													<div pv-when="preview_images.length" class="hidden" pv-class="{{!preview_images.length && 'hidden'}}">
+													<div pv-when="preview_images.length" class="hidden" pv-class="hidden: !preview_images.length">
 														<span pv-repeat="selected_image in preview_images"
 															class="desc_item-imgcon">
 															<img src="" alt=""
-																pv-class="{{!selected_image && 'hidden'}}" 
+																pv-class="hidden: !selected_image" 
 																pv-props=
 																"src: {{
 																(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
@@ -1977,7 +1953,7 @@
 												<span class="lang localize-Tags">Tags</span>
 											</div>
 										</div>
-										<div class="hidden" pv-class="{{nothing && 'hidden'}}">
+										<div class="hidden" pv-class="hidden: nothing">
 											<div class="preview_ffp tags_list">
 												<span pv-repeat="tag in preview_list">
 													<a 
@@ -2020,7 +1996,7 @@
 								twitter: <a href="https://twitter.com/seesu_app" class="external">seesu_app</a>
 							</div>
 							<div class="block-for-startpage full_wide_col">
-								<div pv-nest="news" class="hidden" pv-class="{{nothing && 'hidden'}}">
+								<div pv-nest="news" class="hidden" pv-class="hidden: nothing">
 									<a pv-text="{{nav_title}}:" class="js-serv" pv-events="click:requestPage"></a>
 									<span pv-repeat="entity in news_list|limitTo:1">
 										<span pv-text="{{entity.date}}" class="desc"></span>
