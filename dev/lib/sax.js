@@ -710,6 +710,10 @@ function attrib (parser) {
     return parser.attribName = parser.attribValue = ""
   }
 
+
+  var endPosition = parser.posAttrEndPosition === null ?
+    parser.position : parser.posAttrEndPosition;
+
   if (parser.opt.xmlns) {
     var qn = qname(parser.attribName, true)
       , prefix = qn.prefix
@@ -738,14 +742,19 @@ function attrib (parser) {
     // defer onattribute events until all attributes have been seen
     // so any new bindings can take effect; preserve attribute order
     // so deferred events can be emitted in document order
-    parser.attribList.push([parser.attribName, parser.attribValue])
+    parser.attribList.push([
+      parser.attribName, parser.attribValue,
+      parser.startAttribPosition, parser.startAttribValuePosition, endPosition])
   } else {
     // in non-xmlns mode, we can emit the event right away
     parser.tag.attributes[parser.attribName] = parser.attribValue
     emitNode( parser
             , "onattribute"
             , { name: parser.attribName
-              , value: parser.attribValue } )
+              , value: parser.attribValue
+              , startPosition: parser.startAttribPosition
+              , startValuePosition: parser.startAttribValuePosition
+              , endPosition: endPosition } )
   }
 
   parser.attribName = parser.attribValue = ""
@@ -793,6 +802,9 @@ function openTag (parser, selfClosing) {
               , prefix: prefix
               , local: local
               , uri: uri
+              , startPosition: nv[2]
+              , startValuePosition: nv[3]
+              , endPosition: nv[4]
               }
 
       // if there's any attributes with an undefined namespace,
@@ -809,6 +821,7 @@ function openTag (parser, selfClosing) {
   }
 
   parser.tag.isSelfClosing = !!selfClosing
+  // parser.tag.openingEndPosition = parser.tagNameOpeningEndPosition;
 
   // process the tag
   parser.sawRoot = true
@@ -846,7 +859,6 @@ function closeTag (parser) {
     emitNode(parser, "onscript", parser.script)
     parser.script = ""
   }
-
   // first make sure that the closing tag actually exists.
   // <a><b></c></b></a> will close everything, otherwise.
   var t = parser.tags.length
@@ -1188,11 +1200,14 @@ function write (chunk) {
         if (is(nameBody, c)) parser.tagName += c
         else {
           newTag(parser)
+          parser.tag.openingEndPosition = parser.position - 1;
           if (c === ">") openTag(parser)
           else if (c === "/") parser.state = S.OPEN_TAG_SLASH
           else {
             if (not(whitespace, c)) strictFail(
               parser, "Invalid character in tag name")
+            
+            // parser.tagNameOpeningEndPosition = parser.position;
             parser.state = S.ATTRIB
           }
         }
@@ -1217,36 +1232,51 @@ function write (chunk) {
           parser.attribName = c
           parser.attribValue = ""
           parser.state = S.ATTRIB_NAME
+          parser.startAttribPosition = parser.position - 1;
         } else strictFail(parser, "Invalid attribute name")
       continue
 
       case S.ATTRIB_NAME:
-        if (c === "=") parser.state = S.ATTRIB_VALUE
+        if (c === "=") {
+          parser.startAttribValuePosition = parser.position;
+          parser.posAttrEndPosition = null;
+          parser.state = S.ATTRIB_VALUE
+        }
         else if (c === ">") {
           strictFail(parser, "Attribute without value")
-          parser.attribValue = parser.attribName
+          parser.posAttrEndPosition = parser.position - 1;
+          parser.attribValue = null;
           attrib(parser)
           openTag(parser)
         }
-        else if (is(whitespace, c)) parser.state = S.ATTRIB_NAME_SAW_WHITE
+        else if (is(whitespace, c)) {
+          parser.posAttrEndPosition = parser.position - 1;
+          parser.state = S.ATTRIB_NAME_SAW_WHITE
+        }
         else if (is(nameBody, c)) parser.attribName += c
         else strictFail(parser, "Invalid attribute name")
       continue
 
       case S.ATTRIB_NAME_SAW_WHITE:
-        if (c === "=") parser.state = S.ATTRIB_VALUE
+        if (c === "=") {
+          parser.startAttribValuePosition = parser.position;
+          parser.state = S.ATTRIB_VALUE
+        }
         else if (is(whitespace, c)) continue
         else {
           strictFail(parser, "Attribute without value")
           parser.tag.attributes[parser.attribName] = ""
           parser.attribValue = ""
           emitNode(parser, "onattribute",
-                   { name : parser.attribName, value : "" })
+            { name : parser.attribName, value : null,
+              startPosition: parser.startAttribPosition,
+              endPosition: parser.posAttrEndPosition })
           parser.attribName = ""
           if (c === ">") openTag(parser)
           else if (is(nameStart, c)) {
             parser.attribName = c
             parser.state = S.ATTRIB_NAME
+            parser.startAttribPosition = parser.position - 1;
           } else {
             strictFail(parser, "Invalid attribute name")
             parser.state = S.ATTRIB
@@ -1255,7 +1285,10 @@ function write (chunk) {
       continue
 
       case S.ATTRIB_VALUE:
-        if (is(whitespace, c)) continue
+        if (is(whitespace, c)) {
+          parser.startAttribValuePosition = parser.position;
+          continue
+        }
         else if (is(quote, c)) {
           parser.q = c
           parser.state = S.ATTRIB_VALUE_QUOTED
