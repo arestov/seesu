@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style type="text/css">
+    body {
+      width: 600px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <style type="text/css" scoped>
+    .nice {
+      background: green;
+      border: 1px solid #DDD;
+    }
+
+    .complex-nice .nice {
+      background: oldlace;
+    }    
+  </style>
+  <div class="nice">
+    Great!
+  </div>
+  <div class="complex-nice">
+    <div class="nice">
+      Super!
+    </div>
+  </div>
+</body>
+</html>
