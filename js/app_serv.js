@@ -53,7 +53,7 @@ function isFileReady ( readyState ) {
 	return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
 }
 
-var p = document.firstElementChild.firstElementChild.getElementsByTagName('script');
+var p = document.documentElement.firstElementChild.getElementsByTagName('script');
 p = p[p.length-1];
 		
 app_serv.loadJS = function(src, callback){
