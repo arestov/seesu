@@ -1,0 +1,78 @@
+<div 
+	class="artist_preview-base"
+	pv-class="want-more-info: vis_wamo_info"
+	>
+	<div class="possible_images_con"></div>
+	
+	<div class="artist_preview-texcon">
+		<div class="dominator-head">
+			<div 
+				class="closer-to-track"
+				pv-class="one-artist-playlist: one_artist_playlist ">
+				<a 
+					class="js-serv lang localize-artcard"
+					
+					pv-type="way-point"
+					pv-events="click:requestPage"
+					>artcard</a>
+			</div>
+			<a 
+				class="extend-switcher"
+				pv-events="click:showMoreInfo"
+				pv-type="way-point"
+				pv-class="hidden: !infb_text ">
+				<span class="big-space" pv-text="{{infb_text}}"></span>
+			</a>
+			<p 
+			pv-nest="tags_list"
+			class="artist-tags hidden" 
+			pv-class="hidden: {{ (!preview_list || !preview_list.length) }}" >
+				<span class="simple-header">
+					<em class="lang localize-Tags">Tags</em>
+				</span>
+				<span pv-anchor="tags-c"><a 
+					class="music-tag js-serv" 
+					pv-repeat="tag in preview_list" 
+					pv-type="hard-way-point" 
+					pv-events="click:showTag" 
+					pv-text="{{tag.name}}"></a></span>
+			</p>
+		</div>
+		<div class="artist-info">
+			<p class="artist-stat-in-song">
+				<span pv-class="hidden: !listeners" class="playcount">
+					<span class="desc">Listeners:</span>
+					<span pv-text="{{listeners}}"></span>
+				</span> 
+				<span pv-class="hidden: !playcount" class="hidden">
+					<span class="desc">Playcount:</span>
+					<span pv-text="{{playcount}}"></span>
+				</span>
+			</p>
+			<div class="artist-bio" pv-anchor="artbio">...</div>
+			<div class="artist-meta-info">
+				<p 
+					pv-nest="similar_artists"
+					class="artist-similar">
+					<span class="desc-name">
+						<em>
+							<a 
+								class="similar-artists js-serv lang localize-similar-arts"
+								pv-type="hard-way-point"
+								pv-events="click:requestPage"
+								>Similar artists:</a>
+						</em>
+					</span>
+					<span class="desc-text" pv-anchor="similars-c"><a 
+						pv-nest="preview_list"
+
+						class="artist js-serv" 
+						pv-events="click::showArtcard" 
+						pv-type="hard-way-point"
+						pv-text="{{artist_name}}"></a></span>
+				</p>
+			</div>
+		</div>
+	</div>
+	
+</div>

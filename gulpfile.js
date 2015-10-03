@@ -1,7 +1,19 @@
 'use strict';
 var gulp = require('gulp');
 
-gulp.task('common', ['css', 'js']);
+gulp.task('index', function() {
+	var fileinclude = require('gulp-file-include');
+
+	return gulp.src('./src/index.html')
+    .pipe(fileinclude({
+    	indent: true,
+    	prefix: '<!--import-',
+    	suffix: '-->'
+    }))
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('common', ['css', 'js' , 'index']);
 
 gulp.task('default', ['common']);
 
@@ -75,20 +87,20 @@ gulp.task('js', function() {
 });
 
 combo('webapp', extend(common('webapp'), {
-	'index': function() {
+	'index': [['index'], function() {
 		var patch = require('./dev/gulp-patch.js');
 
 		gulp.src('index.html')
 			.pipe(patch('./src/index.dist-js.patch'))
 			.pipe(patch('./src/webapp/index.html.patch'))
 			.pipe(gulp.dest('dist-envs/webapp'));
-	}
+	}]
 }));
 
 combo('chrome_app', extend(common('chrome_app'), {
-	'index': patch(
+	'index': [['index'], patch(
 		'index.html', './src/index.dist-js.patch',
-		'dist-envs/chrome_app'),
+		'dist-envs/chrome_app')],
 	'manifest': copy(
 			'manifest.json', 'dist-envs/' + 'chrome_app'),
 	icons: copy('icons/**/*', 'dist-envs/' + 'chrome_app' + '/icons'),
@@ -124,9 +136,9 @@ function chromeExtension(dest_env) {
 		bg.html
 		ui-init.js
 */
-		'index': patch(
+		'index': [['index'], patch(
 			'index.html', './src/chrome_popup/index.html.patch',
-			dest_folder),
+			dest_folder)],
 		'manifest': patch(
 			'manifest.json', './src/chrome_popup/manifest.json.patch',
 			dest_folder),
@@ -167,6 +179,7 @@ function copy(source, dest) {
 
 function common(env) {
 	return {
+		index: [['index']],
 		css: [['css'],
 			copy('dist/combined.css', 'dist-envs/' + env + '/dist')],
 		js: [['js'], 

@@ -1,0 +1,30 @@
+<div 
+	class="artists_list no_arfb" 
+	pv-class="list_loading_state: list_loading">
+	
+	<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
+		<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
+	</div>
+	<ul>
+		<li
+			pv-type="way-point"
+			pv-nest="artists_list"
+			class="artist_in_list"
+			pv-events="click::showArtcard"
+			>
+			<span class="" pv-text="{{artist_name}}"></span>
+			<span class="song-image-con">
+				<img
+					alt=""
+					class="hidden"
+					pv-props="
+						alt: {{artist_name}}
+						src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+					"
+					pv-class="hidden: !selected_image"
+				>
+			</span>
+		</li>
+	</ul>
+	<!--pv-replace sample_name:view_sources-->
+</div>

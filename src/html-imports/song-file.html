@@ -1,0 +1,37 @@
+<li
+	class="song-file"
+	pv-type="{{!selected && vis_wp_usable && 'way-point'}}"
+	pv-events="click:selectFile"
+	pv-class="
+		mf-unavailable: unavailable
+		buffering-progress: buffering_progress
+		playing-file: {{ play == 'play' }}
+		selected-mf: selected
+		overstocked: overstock
+	">
+	<span 
+		class="play-button-place"
+		pv-type="{{selected && 'way-point'}}"
+		pv-events="click:switchPlay">
+		<span class="pc-indicator big-indicator play-indicator pc-place">
+			<span class="pc pc-play big-control"></span>
+		</span>
+		
+	</span>
+	<div class="mf-progress" pv-anchor="progress_c">
+		<div 
+			class="mf-load-progress"
+			pv-props="style.width:{{vis_loading_p}}"
+			></div>
+		<div
+			class="mf-play-progress"
+			pv-props="style.width:{{vis_playing_p}}"
+			></div>
+		<div class="mf-text">
+			<span class="mf-duration" pv-text="{{visible_duration_text}}"></span>
+			<span class="mf-source" pv-text="{{source_name}}"></span>
+			<span class="main-mf-text" pv-text="{{title}}" pv-props="title:{{description}}"></span>
+			
+		</div>
+	</div>
+</li>

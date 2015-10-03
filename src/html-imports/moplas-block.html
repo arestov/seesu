@@ -1,0 +1,113 @@
+<div class="song-row-content moplas-block moplas_block" pv-nest="mf_cor" pv-class="want_more_songs: want_more_songs">
+	<div class="show-all-songs hidden" pv-class="hidden: !must_be_expandable">
+		<a pv-events="click::switchMoreSongsView" pv-type="way-point">
+			<span class="notifier hidden" pv-nest='notifier' pv-text='{{counter}}'></span>
+			<span class="lang localize-files">Files</span>
+		</a>
+		
+		
+	</div>
+	<div class="messages-c" pv-anchor='messages_c'>
+		<div class="cant_play_music_message hidden" pv-class="hidden: !cant_play_music" >
+			<span class="lang localize-need-audioplayers"></span>
+		</div>
+	</div>
+	<div class="music-files-lists" pv-anchor='mufils_c'>
+		<div class="dmca_notice lang localize-dmca_notice">
+			Seesu follows terms of service of each api it uses. Seesu does not store any content. Each service follows DMCA, feel free to report abuse.
+		</div>
+		<div
+			class="moplas-list"
+			pv-class="want-overstocked-songs: show_overstocked"
+			pv-nest="sorted_completcs"
+			>
+			<div 
+
+				pv-nest="pioneer"
+				class="files-list-pioneer full_mb_part">
+				<div class="moplas-block-shift" pv-class="list_loading: has_request">
+					<span class="moplas_source-icon" pv-events="click::switchTunerVisibility"></span>
+					<a 
+						pv-type="way-point"
+						pv-props="href: {{dmca_url}}" 
+						pv-class="hidden: !dmca_url dmca_url: dmca_url"
+						class="external hidden lang localize-report-abuse"></a>
+					<span pv-text="{{search_name}}" pv-class="moplas_source-unavailable: {{  search_complete && !has_files }} disabled_search: disable_search"></span>
+				</div>
+				
+
+				<div
+					pv-nest="vis_tuner" 
+					class="moplas_source-tuner moplas-block-shift hidden"
+					pv-class="hidden: hidden">
+					<div>
+						<label>
+							<input type="checkbox" pv-events="click:changeTune" name="disable_search" pv-props="checked:{{disable_search}}">
+							<span class="lang localize-disable-search"></span>
+							
+						</label>
+					</div>
+					<div>
+						<label>
+							<input type="checkbox" pv-events="click:changeTune" name="wait_before_playing" 
+							pv-props="
+								checked: {{wait_before_playing}}
+								disabled: {{disable_search}}
+							">
+							<span pv-class="desc: disable_search" class="lang localize-wait-before-play">
+								
+							</span>
+							
+						</label>
+					</div>
+					
+				</div>
+			</div>
+
+
+
+
+			<ul pv-anchor='listc-start'></ul>
+			<div class="full_mb_part full_list_switch">
+				<a
+					class="hidden lang localize-full-list js-serv"
+					pv-type="{{overstock && 'way-point'}}"
+					pv-class="hidden: !overstock"
+					pv-events="click::toggleOverstocked"
+					>full list</a>
+			</div>
+			<ul pv-anchor='listc-end'></ul>
+			
+		</div>
+
+	</div>
+	<div class="files_appendix">
+		<!--pv-replace sample_name:track-video pv-when:yt_videos$length-->
+
+		<div class="file_source">
+			<span class="hidden file_source_cont" pv-class="hidden: !current_source">
+				<span class="desc">file from</span> <a href="" class="external" pv-props="href:{{current_source.source_link}}" pv-text="{{current_source.source_name}}"></a>
+			</span>
+			<span pv-nest="current_mopla " class="hidden" pv-class="hidden: !progress_info">
+				<!-- <span title="downloaded" pv-text="{{progress_info.downloaded}}"></span> -->
+				<span class="desc">
+					active peers: <span title="" pv-text="{{progress_info.active_peers}}"></span> 
+					/ total peers: <span title="progress_info.total_peers" pv-text="{{progress_info.total_peers}}"></span>
+				</span>
+				
+				<br/>
+				<span class="desc">
+					<span title="download speed" pv-text="{{progress_info.downloadSpeed}}"></span>
+					
+					<span title="upload speed" pv-text="{{progress_info.uploadSpeed}}"></span>
+					<span title="loaded percents" pv-text="{{progress_info.percent}}"></span>%
+				</span>
+				
+
+			</span>
+			
+		</div>
+		
+	</div>
+	
+</div>
