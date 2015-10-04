@@ -1,8 +1,6 @@
 'use strict';
-
 var Stream = require('stream');
 var gutil = require('gulp-util');
-var path = require('path');
 var fs = require('fs');
 var jsdiff = require('diff');
 
