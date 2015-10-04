@@ -20,19 +20,11 @@ var diff_options = {
 };
 
 module.exports = function (patch_path) {
-
-  // if (!Array.isArray(processors)) {
-  //   throw new gutil.PluginError('gulp-patch', 'Please provide array of posthtml processors!')
-  // }
-
   var stream = new Stream.Transform({ objectMode: true });
 
   stream._transform = function (file, encoding, cb) {
-    // console.log('bb');
-    // gutil.log('gulp-patch:', file);
-    // console.log(file)
     if (file.isStream()) {
-      // return handleError('Streams are not supported!')
+      return cb(new gutil.PluginError('gulp-patch', 'Streams are not supported!'));
     }
 
     var source = file.contents.toString();
@@ -41,13 +33,11 @@ module.exports = function (patch_path) {
       if (err) {return console.error(err);}
 
       patch = patch.toString();
-      // console.log(jsdiff.parsePatch(patch)[0].hunks);
-
 
       var result = jsdiff.applyPatch(source, patch.toString(), diff_options);
 
       if (!result) {
-        return cb(new Error('gulp-patch error' + patch.toString()));
+        return cb(new gutil.PluginError('gulp-patch', patch.toString()));
       }
 
       file.contents = new Buffer(result);
@@ -55,13 +45,7 @@ module.exports = function (patch_path) {
       setImmediate(function () {
         cb(null, file);
       });
-
-      // fs.writeFile()
     });
-
-
-
   };
-
   return stream;
 };
