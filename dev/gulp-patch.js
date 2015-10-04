@@ -1,6 +1,6 @@
 'use strict';
-var Stream = require('stream');
 var gutil = require('gulp-util');
+var plugin = require('./gulp-plugin');
 var fs = require('fs');
 var jsdiff = require('diff');
 
@@ -16,34 +16,24 @@ var diff_options = {
     return matched;
   }
 };
+module.exports = plugin('gulp-patch', function(patch_path, file, encoding, cb) {
+  var source = file.contents.toString();
 
-module.exports = function (patch_path) {
-  var stream = new Stream.Transform({ objectMode: true });
+  fs.readFile(patch_path, function (err, patch) {
+    if (err) {return console.error(err);}
 
-  stream._transform = function (file, encoding, cb) {
-    if (file.isStream()) {
-      return cb(new gutil.PluginError('gulp-patch', 'Streams are not supported!'));
+    patch = patch.toString();
+
+    var result = jsdiff.applyPatch(source, patch.toString(), diff_options);
+
+    if (!result) {
+      return cb(new gutil.PluginError('gulp-patch', patch.toString()));
     }
 
-    var source = file.contents.toString();
+    file.contents = new Buffer(result);
 
-    fs.readFile(patch_path, function (err, patch) {
-      if (err) {return console.error(err);}
-
-      patch = patch.toString();
-
-      var result = jsdiff.applyPatch(source, patch.toString(), diff_options);
-
-      if (!result) {
-        return cb(new gutil.PluginError('gulp-patch', patch.toString()));
-      }
-
-      file.contents = new Buffer(result);
-
-      setImmediate(function () {
-        cb(null, file);
-      });
+    setImmediate(function () {
+      cb(null, file);
     });
-  };
-  return stream;
-};
+  });
+});
