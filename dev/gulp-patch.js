@@ -1,5 +1,4 @@
 'use strict';
-var gutil = require('gulp-util');
 var plugin = require('./gulp-plugin');
 var fs = require('fs');
 var jsdiff = require('diff');
@@ -27,7 +26,7 @@ module.exports = plugin('gulp-patch', function(patch_path, file, encoding, cb) {
     var result = jsdiff.applyPatch(source, patch.toString(), diff_options);
 
     if (!result) {
-      return cb(new gutil.PluginError('gulp-patch', patch.toString()));
+      return cb(patch.toString());
     }
 
     file.contents = new Buffer(result);
