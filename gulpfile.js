@@ -1,23 +1,39 @@
 'use strict';
 var gulp = require('gulp');
+var foreach = require("gulp-foreach");
+var path = require('path');
 
 gulp.task('index', function() {
 	var fileinclude = require('gulp-file-include');
+	var deinline = require('./dev/gulp-extract-html-style');
 
 	return gulp.src('./src/index.html')
-    .pipe(fileinclude({
-    	indent: true,
-    	prefix: '<!--import-',
-    	suffix: '-->'
-    }))
-    .pipe(gulp.dest('./'));
+		.pipe(fileinclude({
+			indent: true,
+			prefix: '<!--import-',
+			suffix: '-->'
+		}))
+		.pipe(deinline({noInject: true}))
+		.pipe(foreach(function(stream, f) {
+			if (path.basename(f.path) == 'index.html') {
+				return stream.pipe(gulp.dest('./'));
+			} else {
+				return stream.pipe(gulp.dest('./dist-envs/temp'));
+			}
+		}));
 });
+
+// gulp.task('css-deinline', function() {
+	
+// 	return gulp.src('./index.html')
+// 		;
+// });
 
 gulp.task('common', ['css', 'js' , 'index']);
 
 gulp.task('default', ['common']);
 
-gulp.task('css', function() {
+gulp.task('css', ['index'], function() {
 	var concat = require('gulp-concat');
 	var postcss = require('gulp-postcss');
 	var autoprefixer = require('autoprefixer');
@@ -35,7 +51,8 @@ gulp.task('css', function() {
 		'css/buttmen.css',
 		'css/play-list-panel.css',
 		'css/abs_layout.css',
-		'css/pv-layout.css'
+		'css/pv-layout.css',
+		'dist-envs/temp/uninlined.css'
 	];
 
 	return gulp.src(files)
@@ -207,13 +224,13 @@ function combo(task, deps) {
 }
 
 function extend(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || typeof add !== 'object') {return origin;}
+	// Don't do anything if add isn't an object
+	if (!add || typeof add !== 'object') {return origin;}
 
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
+	var keys = Object.keys(add);
+	var i = keys.length;
+	while (i--) {
+		origin[keys[i]] = add[keys[i]];
+	}
+	return origin;
 }
