@@ -357,7 +357,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			var prev = lvls[1];
 			// lvls[0] is bwlev, 
 			// lvls[1] is bwlev.map_parent;
-			if (prev){
+			if (prev && prev != root){
 				// this is top of stack, but only if we have "stack";
 				stackNav(prev, 'top');
 				stackNav(root, true);
