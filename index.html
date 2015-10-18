@@ -30,6 +30,7 @@
   
   <body>
 	<div id="ui-samples" style="display:none">
+		
 		<span class="brow_lev_nav" pv-class="hidden: !vmp_show"></span>
 		<span
 			class="common-nav nav-item"
@@ -72,7 +73,7 @@
 	
 			pv-class="
 				nav-button: !mp_has_focus
-				stacked: {{ (mp_stack && mp_stack == !!mp_stack) }}
+				stacked: {{ mp_stack && (mp_stack == !!mp_stack) }}
 				nav_clickable: nav_clickable
 			"
 			><b></b><span class="icon">&nbsp;</span></span>
@@ -383,6 +384,7 @@
 		</div>
 
 
+		
 		<div class="album_preview-big" 
 			pv-events="click:requestPage"
 			pv-type="way-point"
@@ -717,6 +719,7 @@
 		</div>
 
 
+		
 		<div 
 			class="artist_preview-base"
 			pv-class="want-more-info: vis_wamo_info"
@@ -1381,6 +1384,7 @@
 		</li>
 
 					
+		
 		<div class="vk-login-context attention-focuser">
 			<div class="decor">
 				<div class="vk-login-reg-link">
@@ -1742,6 +1746,7 @@
 		</div>
 
 
+		
 		<div class="view_sources hidden" pv-class="hidden: !view_sources.length">
 			Powered by
 			<div>

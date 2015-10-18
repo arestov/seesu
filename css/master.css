@@ -498,49 +498,6 @@ a.track_name_loading .song-track-name,
 			min-height: 422px;
 			}
 		}
-.artist-info{
-	position:relative;
-	overflow:hidden;
-	zoom:1;
-
-}
-
-
-	.desc-name{
-		float:left;
-		min-height:1.5rem;
-	}
-	.desc-text{
-		display: table-cell;
-		overflow:hidden;
-	}
-	.desc-text2{
-		overflow:hidden;
-	}
-
-
-
-	
-
-@media (max-width:500px) {
-
-	.desc-name{
-		float:none;
-		width:auto;
-	}
-	.desc-text{
-		display: block;
-		overflow:visible;
-	}
-	.desc-text2{
-		overflow:visible;
-	}
-
-	.artist-info .artist-tags, .artist-info .artist-similar{
-		height:auto;
-	}
-}
-
 
 .playlist-container{
 	padding-top: 4px;
@@ -624,79 +581,12 @@ a.track_name_loading .song-track-name,
 		}
 
 
-.artist_preview-base .artist-tags{
-	margin:0;
-	padding:0.25rem 0 0;
-	
-	}
-.want-more-info .artist-tags{
-	clear:both;
-	margin-bottom:1rem;
-	}
-
-
-
-.artist_preview-base .artist-tags, .artist_preview-base .artist-similar{
-	position:relative;
-	height:2rem;
-	line-height: 2rem;
-}
-.artist-bio{
-	position:relative;
-	top:-3px;
-	overflow:hidden;
-	height:1.55rem;
-	line-height:1.5rem;
-	
-	}
-	
-	@media (min-height:600px) {
-		.artist-bio{
-			height:4.7rem;
-		}
-	}
-	
-	
-	.artist-similar a.artist{
-		margin-right:8px;
-		display: inline-block;
-		line-height: 1.2;
-		}
-	
-	.artist-tags a.music-tag{
-		margin-right:0.5rem;
-		white-space: nowrap;
-		display: inline-block;
-		line-height: 1.2;
-		}
-.artist-stat-in-song span{
-	
-}
-.artist-meta-info{
-	position:relative;
-	z-index:2;
-	clear:left;
-	overflow:hidden;
-	}
-	.artist-meta-info .desc-name{
-		
-		}
-		.artist-meta-info .desc-name em {
-			font-style:normal;
-			
-		}
-
-
 .track-context .photo_and_artinfo{
 	border-top:1px solid #555555;
 	border-bottom:1px solid #6e6e6e;
 	background:#5a5a5a;
 	margin:0 -13px;
 }
-
-.track-context .artist_preview-texcon{
-	padding: 0 1rem;
-	}
 .photo_and_artinfo{
 	clear: both;
 	
@@ -710,117 +600,6 @@ a.track_name_loading .song-track-name,
 		}
 	}
 
-	.artist_preview-base > .vk-login-context, .track-context > .vk-login-context{
-		margin:5px -13px 1.72rem;
-		border-radius:0;
-		}	
-	.artist_preview-base .dominator-head{
-			overflow:hidden;
-			padding:0;
-			min-height: 2rem;
-		}
-		.artist_preview-base .dominator-head .closer-to-track{
-			float:left;
-			margin-right:1rem;
-			padding-top:0.25rem;
-			width:126px;
-			line-height: 2rem;
-
-		}
-		.one-artist-playlist a{
-			color:#666;
-			}
-			.one-artist-playlist a:hover{
-				color:#777;
-				}
-	.artist_preview-base .extend-switcher{
-		float:right;
-		cursor: pointer;
-		max-width: 20rem;
-		margin-left:-0.5rem;
-		padding: 0.5rem 0.6rem;
-		border:0;
-		border-radius: 0 0  0.5rem 0.5rem;
-		color: hsl(0, 0%, 60%);
-		text-shadow: 0 1px 0 #4A4A4A;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		}
-		.artist_preview-base .extend-switcher .big-space{
-			padding-bottom: 1px;
-			border-bottom: 1px dotted #696969;
-		}
-
-		
-		.artist_preview-base .extend-switcher:hover{
-			background-color:#555;
-			}
-			.artist_preview-base .extend-switcher:hover .big-space{
-				border-bottom-color:transparent; 
-				}
-		.track-context .want-more-info .extend-switcher{
-			text-shadow:0;
-		}
-		.track-context .want-more-info .extend-switcher:hover{
-			background-color:#585858;
-		}
-	
-
-	.artist_preview-base.want-more-info{
-		padding-bottom:1rem;
-	}
-	.artist_preview-base .artist-info {
-		display: none;
-		}	
-
-		.want-more-info .artist-info{
-			display: block;
-			}
-
-	.artist_preview-base .extending-info{
-		display:none;
-		}
-
-	
-	
-	.want-more-info .extending-info{
-		display:block;
-		}	
-	.want-more-info .artist-bio,
-	.want-more-info .artist-tags,
-	.want-more-info .artist-similar{
-		height:auto;
-		}
-
-
-	.track-context .want-more-info .image img.artist_image{
-		position:static;
-	}
-
-	
-
-.artist-albums, .artist-similar,.artist-tags{
-	overflow: hidden;
-	
-}
-.artist-info .artist-albums, .artist-info .artist-similar{
-	margin: 0.5rem 0;
-	padding: 2px 0;
-}
-.artist-tags .simple-header{
-	margin-right:1rem;
-	font-style:normal;
-	}
-.desc-name{
-	margin-right: 13px;
-}
-.artist-albums .desc-name{
-	float:left;
-}
-.desc-text{
-	padding-bottom:2px;
-}	
 
 	
 #slider-materail{
@@ -1664,42 +1443,7 @@ body .surf_nav{
 .albums_list_con{
 	overflow: hidden;
 	}
-.album_preview-big{
-	cursor: pointer;
-	}
-	.album_preview-big:hover{
-		background: #555;
-		}
-.full-page .album_preview-big{
-	float:left;
-	}
-	
-	.album_preview-big img{
-		display: block;
-		height: 9rem;
-		width: 9rem;
-		background-color: #666;
-		}
-	.album_preview-big .full_album_name{
-		
-		padding:0.5rem 0;
-		overflow: hidden;
-		bottom:0;
-		}
-	.full-page .album_preview-big .full_album_name{
-		width:9rem;
-		height: 9.5rem;
-		}
-	.page-scheme .album_preview-big img{
-		height: 6rem;
-		width: 6rem;
-		}
-	.page-scheme .album_preview-big .full_album_name{
-		margin-bottom: 1rem;
-		}
-	.full_album_name .album_name{
-		color: #999;
-		}
+
 .notify-closer{
 	display: none;
 	position: absolute;
@@ -2074,21 +1818,6 @@ body .surf_nav{
 		height: 1px;
 
 		}
-.view_sources {
-	margin-top:1rem;
-	margin-bottom: 1rem;
-}
-	.data_source_link {
-		font-size: 1.2em;
-		margin-right: 1em;
-	}
-.lilists .view_sources {
-	padding: 0 1rem;
-}
-
-.page-scheme .view_sources {
-	font-size: 0.8rem;
-}
 
 
 .nav_helper {
@@ -2181,3 +1910,21 @@ body .surf_nav{
 	pointer-events: none;
 	z-index: 10;
 	}
+
+
+.people-list-item{
+	overflow: hidden;
+	}
+	.people-list-item .desc{
+		display:block;
+		font-size:0.8rem;
+		line-height:1.4;
+	}
+	.people-image{
+		float:left;
+		margin-right:1rem;
+	}
+	.people-image img{
+		width: 50px;
+		height: 50px;
+		}
