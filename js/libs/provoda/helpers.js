@@ -15,23 +15,26 @@ var NestWatch = function(selector, state_name, zin_func, full_name, handler) {
 
 var encoded_states = {};
 var enc_states = {
-	parent_count_regexp: /^\^+/gi,
-	parent: function(string) {
-		//example: '^visible'
+	parent: (function(){
+		var parent_count_regexp = /^\^+/gi;
 
-		if (!encoded_states[string]){
-			var state_name = string.replace(this.parent_count_regexp, '');
-			var count = string.length - state_name.length;
-			encoded_states[string] = {
-				rel_type: 'parent',
-				full_name: string,
-				ancestors: count,
-				state_name: state_name
-			};
-		}
+		return function(string) {
+			//example: '^visible'
 
-		return encoded_states[string];
-	},
+			if (!encoded_states[string]){
+				var state_name = string.replace(parent_count_regexp, '');
+				var count = string.length - state_name.length;
+				encoded_states[string] = {
+					rel_type: 'parent',
+					full_name: string,
+					ancestors: count,
+					state_name: state_name
+				};
+			}
+
+			return encoded_states[string];
+		};
+	})(),
 	nesting: function(string) {
 		//example:  '@some:complete:list'
 		if (!encoded_states[string]){
