@@ -68,15 +68,15 @@ pv.Model.extendTo(BigContextNotify, {
 				if (value == _this.notify_name){
 					pv.update(_this, 'notify_readed', true);
 				}
-				
+
 			});
 
 			if (params.notify_readed){
 				pv.update(_this, 'notify_readed', true);
 			}
 		}
-		
-	
+
+
 	},
 	cant_hide_notify: true,
 	notify_name: 'vk_audio_auth'
@@ -107,13 +107,13 @@ pv.Model.extendTo(ImagesPack, {
 			if (best_data.length){
 				pv.update(this, 'best_image', best_data[0].data);
 			}
-			
+
 		}
 		if (!this.state('just_image')){
 			if (best_data.not.length){
 				pv.update(this, 'just_image', best_data.not[0].data);
 			}
-			
+
 		}
 	}
 });
@@ -121,7 +121,7 @@ var TrackImages  = function() {};
 ImagesPack.extendTo(TrackImages, {
 	init: function(artmd, info) {
 		this._super();
-	
+
 		this.artmd = artmd;
 		this.artist = info.artist;
 		this.track = info.track;
@@ -147,7 +147,7 @@ ImagesPack.extendTo(ArtistImages, {
 		this._super();
 
 		this.artist_name = artist_name;
-		
+
 	},
 	complex_states: {
 		'image-to-use': {
@@ -181,7 +181,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 		this.getArtistImagesModel(artist_name).addImage(this.getImageWrap(lfm_arr), source);
 	},
 	setTrackImage: function(info, lfm_arr, source) {
-		
+
 		this.getTrackImagesModel(info).addImage(this.getImageWrap(lfm_arr), source);
 	},
 	setImage: function(info, source) {
@@ -197,7 +197,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			throw new Error ('give me full track info');
 		}
 		info = spv.cloneObj({}, info);
-		
+
 		info.artist = this.convertEventName(info.artist);
 		info.track = this.convertEventName(info.track);
 
@@ -215,7 +215,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 			throw new Error('give me artist name');
 		}
 		artist_name = this.convertEventName(artist_name);
-		
+
 		if (!this.art_models[artist_name]){
 			var md = new ArtistImages();
 			md.init(artist_name);
@@ -243,8 +243,8 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 				if (!cur.image) {continue;}
 				this.setArtistImage(cur.name, cur.image, method + '.similar');
 			}
-			
-			
+
+
 		},
 		'artist.getSimilar': function(r, method) {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'similarartists.artist'));
@@ -262,7 +262,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 					artist: cur.artist.name,
 					track: cur.name
 				}, cur.image, method);
-				
+
 			}
 		},
 		'album.getInfo': function(r, method) {
@@ -274,7 +274,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 					artist: cur.artist.name,
 					track: cur.name
 				}, image, method);
-				
+
 			}
 		},
 		'playlist.fetch': function(r, method) {
@@ -297,7 +297,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 					artist: cur.artist.name,
 					track: cur.name
 				}, cur.image, method);
-				
+
 			}
 
 		},
@@ -320,7 +320,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 					artist: cur.artist,
 					track: cur.name
 				}, cur.image, method);
-				
+
 			}
 
 		},
@@ -340,7 +340,7 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 					artist: cur.artist.name,
 					track: cur.name
 				}, cur.image, method);
-				
+
 			}
 		},
 		'tag.getTopArtists': function(r, method, artists) {
@@ -404,8 +404,8 @@ pv.Model.extendTo(PartsSwitcher, {
 			this.active_part = this.context_parts[name];
 			pv.update(this, 'active_part', name);
 			this.active_part.acivate();
-			
-	
+
+
 		} else {
 			this.hideAll();
 		}
@@ -458,13 +458,13 @@ pv.Model.extendTo(VkLoginB, {
 				}
 			}
 			if (params.notf){
-				
+
 				this.notf = params.notf;
 				this.notf.on('read', function(value) {
 					if (value == 'vk_audio_auth '){
 						pv.update(_this, 'notify_readed', true);
 					}
-					
+
 				});
 
 				if (params.notify_readed){
@@ -475,10 +475,10 @@ pv.Model.extendTo(VkLoginB, {
 		}
 
 		if (data){
-			
+
 			this.setRequestDesc(data.desc);
 
-			
+
 		} else {
 			this.setRequestDesc(this.access_desc);
 		}
@@ -486,7 +486,7 @@ pv.Model.extendTo(VkLoginB, {
 		if (this.auth.deep_sanbdox){
 			pv.update(_this, 'deep_sandbox', true);
 		}
-		
+
 		pvUpdate(this, 'target_bits', target_bits);
 
 		// if (target_bits){
@@ -500,7 +500,7 @@ pv.Model.extendTo(VkLoginB, {
 		// 			pv.update(_this, 'has_session', false);
 		// 		}
 		// 	});
-			
+
 		// }
 
 		// if (this.auth.has_session){
