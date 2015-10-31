@@ -63,7 +63,7 @@ pv.View.extendTo(UserAcquaintanceView, {
 				target.af_ac_desc.remove();
 			}
 		}
-		
+
 	}
 });
 
@@ -73,7 +73,7 @@ coct.PageView.extendTo(UserAcquaintancesListView, {
 		this._super();
 
 		var fr_so_wrap = $('<div class="relations-invites-wrap"></div>').appendTo(this.c);
-		
+
 		$('<h3></h3>')
 			.text(localize('rels-people-you'))
 			.appendTo(fr_so_wrap);

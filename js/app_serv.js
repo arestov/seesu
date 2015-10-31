@@ -26,7 +26,7 @@ app_serv.complexEach = function(items, callback, start) {
 
 	for (var i = 0; i < items.length; i++) {
 		if (!items[i]) {continue;}
-		
+
 		if (items[i].length > length) {
 			length = items[i].length;
 		}
@@ -55,7 +55,7 @@ function isFileReady ( readyState ) {
 
 var p = document.documentElement.firstElementChild.getElementsByTagName('script');
 p = p[p.length-1];
-		
+
 app_serv.loadJS = function(src, callback){
 	var s = document.createElement('script'),
 		done;
@@ -100,7 +100,7 @@ var get_url_parameters = function(str, decode_uri_c){
 			prop_value = decodeURIComponent(prop_value);
 		}
 
-		
+
 		full_url[prop_name] = prop_value;
 	}
 	return full_url;
@@ -119,7 +119,7 @@ app_serv.get_url_parameters = get_url_parameters;
 				try {
 					r_value = JSON.parse(r_value);
 				} catch (e) {
-					
+
 				}
 			}
 			return r_value;
@@ -135,14 +135,14 @@ app_serv.get_url_parameters = get_url_parameters;
 			}
 
 			return w_storage(key, value, opts);
-			
+
 		} else{
-			
+
 			value =  w_storage(key, value, opts);
 			if (sensitive && env.pokki_app){
 				value = pokki.descramble(value);
 			}
-			
+
 			return parse(value);
 		}
 	};
@@ -157,7 +157,7 @@ app_serv.get_url_parameters = get_url_parameters;
 		if (nk && nk[key]){
 			return nk[key];
 		}
-		
+
 	};
 
 })();
@@ -188,10 +188,10 @@ var localize= (function(){
 				};
 				return j;
 			}
-			
+
 			return 'no this localization: ' + string;
 		}
-		
+
 	};
 })();
 app_serv.localize = localize;

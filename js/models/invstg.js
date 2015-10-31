@@ -153,7 +153,7 @@ var trackSuggest = function(data){
 	if (this.image){
 		pv.update(this, 'image', data.image);
 	}
-	
+
 
 	if (data.duration){
 		this.duration = data.duration;
@@ -277,7 +277,7 @@ var albumSuggest = function(data){
 	this.name = data.album;
 	pv.update(this, 'artist', data.artist);
 	pv.update(this, 'name', data.album);
-	
+
 	if (data.image){
 		this.image = data.image;
 		pv.update(this, 'image', data.image);
@@ -346,10 +346,10 @@ Investigation.extendTo(SearchPage, {
 	// 	this._super.apply(this, arguments);
 
 	// 	pv.update(this, 'mp_freezed', false);
-		
+
 	// },
 	'compx-focused': [
-		['focused', 'mp_has_focus'], 
+		['focused', 'mp_has_focus'],
 		function (focused, mp_has_focus){
 			return focused || mp_has_focus;
 		}
@@ -362,7 +362,7 @@ Investigation.extendTo(SearchPage, {
 	],
 	'nest-section': [[PlaylistsSection, ArtistsSection, AlbumsSection, TagsSection, TracksSection]],
 	setItemForEnter: function() {
-		
+
 	},
 	complex_states: {
 		"needs_search_from": {
@@ -392,7 +392,7 @@ Investigation.extendTo(SearchPage, {
 			pl_sec,
 			i;
 		var serplr;
-		
+
 
 		if (':playlists'.match(spv.getStringPattern(this.q))){
 			this.setInactiveAll('section-playlist');
@@ -415,7 +415,7 @@ Investigation.extendTo(SearchPage, {
 		} else if (!this.q.match(/^:/)){
 			this.setActiveAll('section-playlist');
 			//playlist search
-			
+
 
 			serplr = su.getPlaylists(this.q);
 			if (serplr.length){
@@ -425,7 +425,7 @@ Investigation.extendTo(SearchPage, {
 					});
 				}
 			}
-			
+
 			if (pl_results.length){
 				pl_sec =  this.g('section-playlist');
 				if (pl_sec) {
@@ -433,9 +433,9 @@ Investigation.extendTo(SearchPage, {
 					pl_sec.appendResults(pl_results);
 					pl_sec.renderSuggests(true);
 				}
-			
+
 			}
-			
+
 			//===playlists search
 			this.searchOffline(this.q);
 			this.searchNetwork(this.q);
@@ -448,11 +448,11 @@ Investigation.extendTo(SearchPage, {
 			tags.appendResults(r);
 			tags.renderSuggests(r);
 		}
-			
+
 	},150),
 	searchTags: function(q){
 		var tags_results = [];
-		
+
 		var tags = spv.searchInArray(lastfm_data.toptags, q);
 		for (var i=0; i < tags.length; i++) {
 			tags_results.push({
@@ -467,7 +467,7 @@ Investigation.extendTo(SearchPage, {
 			this.loading();
 			var hash = hex_md5(q);
 			var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
-				
+
 				_this.loaded();
 				lfmhelp.fast_suggestion(r, q, _this);
 			});
@@ -489,7 +489,7 @@ Investigation.extendTo(SearchPage, {
 					}
 					lfmhelp.fast_suggestion(r, q, _this);
 				}, hash, this);
-				
+
 			}
 		}
 		:
@@ -501,7 +501,7 @@ Investigation.extendTo(SearchPage, {
 		}, 400),
 	getTitleString: function(text){
 		var original = localize('Search-resuls');
-		
+
 		if (text){
 			return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
 		} else{

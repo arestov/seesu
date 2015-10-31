@@ -7,7 +7,7 @@ define(['spv', 'jquery'], function(spv, $) {
 		//var a//
 		//application/x-quicktimeplayer
 		//'<object id="sound_#{track}_#{id}" width="0" height="0" type="application/x-quicktimeplayer" data="#{url}"/>')
-	
+
 
 	/*
 
@@ -92,7 +92,7 @@ var a = document.createElement("object");a.onload = function(){console.log("load
 		this.id = opts.id;
 		this.cb = cb;
 		//this.requireAE();
-		
+
 	};
 	QuickTimeSound.prototype = {
 		requireAE: function() {

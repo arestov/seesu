@@ -22,17 +22,17 @@ var createMPXesByRawData = function(raw_array, ids_index, mpxes_index) {
 			local_index[cur_id] = true;
 			clean_array.push(raw_array[i]);
 		}
-		
+
 	}
 	if (clean_array.length) {
 		var full_array = [];
 		for (i = 0; i < clean_array.length; i++) {
 			push.apply(full_array, clean_array[i].getLinedStructure(ids_index));
-		
+
 		}
 		createMPXes(full_array, mpxes_index);
 	}
-	
+
 };
 
 return {
@@ -78,8 +78,8 @@ return {
 		this.spaces[id] = null;
 		this.spaces_list = spv.arrayExclude(this.spaces_list, space);
 	},
-	
-	
+
+
 	pushNesting: function(md, nesname, value, oldv, removed) {
 		var collected;
 		var raw_array = [];
@@ -109,7 +109,7 @@ return {
 				cur.mpxes_index[md._provoda_id].sendCollectionChange(nesname, value, oldv, removed);
 			}
 		}
-		
+
 
 
 	},

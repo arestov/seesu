@@ -86,7 +86,7 @@ spv.Class.extendTo(DiscogsApi, {
 			params.secret = this.secret;
 		}
 
-		
+
 
 		//cache_ajax.get('vk_api', p.cache_key, function(r){
 

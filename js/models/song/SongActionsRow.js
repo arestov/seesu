@@ -40,8 +40,8 @@ LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
 				});
 			this.app.trackEvent('song actions', 'love');
 		}
-		
-		
+
+
 	}
 });
 var LoveRow = function(){};
@@ -56,7 +56,7 @@ comd.BaseCRow.extendTo(LoveRow, {
 			auth: this.app.lfm_auth,
 			pmd: this
 		};
-		
+
 
 		var old_lit = null;
 		var hide_on_love = function() {
@@ -72,7 +72,7 @@ comd.BaseCRow.extendTo(LoveRow, {
 			}
 			old_lit = e.value;
 		});
-		
+
 	},
 	model_name: 'row-love'
 });
@@ -88,7 +88,7 @@ var ScrobbleRow = function(){};
 comd.BaseCRow.extendTo(ScrobbleRow, {
 	'nest-lfm_scrobble': [LfmAuth.LfmScrobble],
 	init: function(){
-		
+
 		this._super.apply(this, arguments);
 		this.nestings_opts = {
 			auth: this.app.lfm_auth,
@@ -109,7 +109,7 @@ comd.BaseCRow.extendTo(ShuffleListRow, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.actionsrow = this.map_parent;
-		
+
 
 		this.wch(this.app, 'settings-pl-shuffle', function(e) {
 			pv.update(this, 'pl_shuffle', e.value);
@@ -144,7 +144,7 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 		pv.update(this, 'rept_song', state);
 		su.setSetting('rept-song', state);
 	}
-	
+
 });
 
 var constrs = [ScrobbleRow, RepeatSongRow, ShuffleListRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging];
@@ -213,7 +213,7 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		}
 		pv.update(this, 'volume', fac[0]/fac[1]);
 		this.sendVolume(fac);
-		
+
 	}
 });
 

@@ -70,7 +70,7 @@ PlayerBase.extendTo(PlayerComplex, {
 				}
 			}
 			pv.update((this.wanted_song = mo), 'want_to_play', true);
-			
+
 			var opts = mo.state('files_search');
 			if (opts && !opts.exsrc_incomplete && ((opts.search_complete && opts.have_mp3_tracks) || opts.have_best_tracks)){
 				mo.play();
@@ -88,7 +88,7 @@ PlayerBase.extendTo(PlayerComplex, {
 									if (_this.wanted_song == mo){
 										mo.play();
 									}
-									
+
 								}, 20000);
 							}
 						}
@@ -98,7 +98,7 @@ PlayerBase.extendTo(PlayerComplex, {
 				};
 				mo.on('state_change-files_search', filesSearch, {skip_reg: true});
 			}
-			
+
 		}
 	},
 
@@ -159,7 +159,7 @@ PlayerBase.extendTo(PlayerComplex, {
 
 				var bwlev = this.resolved.getNesting('bwlev');
 				var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, mo.map_parent);
-				
+
 				if (pl_bwlev){
 					BrowseMap.freeze(pl_bwlev);
 					// pl_bwlev.freeze();
@@ -173,7 +173,7 @@ PlayerBase.extendTo(PlayerComplex, {
 			throw new Error('do not expect this!');
 		}
 
-		
+
 	}
 });
 

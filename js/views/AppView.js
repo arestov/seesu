@@ -33,7 +33,7 @@ AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
 		if (type){
 			link.type = type;
 		}
-		
+
 		link.href = src;
 		d.head.replaceChild(link, oldLink);
 		this.favicon_node = link;
@@ -211,7 +211,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 		"search_query": function(target, state) {
 			target.search_input.val(state || '');
 		}
-		
+
 	},
 	'compx-now_playing_text': {
 		depends_on: ['now_playing'],
@@ -299,8 +299,8 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			return window_width + '-' + window_height;
 		}
 	},*/
-	
-	
+
+
 	toggleBodyClass: function(add, class_name){
 		if (add){
 			this.c.addClass(class_name);
@@ -308,7 +308,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			this.c.removeClass(class_name);
 		}
 	},
-	
+
 	parts_builder: {
 		//samples
 		alb_prev_big: function() {
@@ -333,13 +333,13 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			var app_workplace_width_stream_node = $("#pages_area_width_streamer", _this.d);
 			var awwst_win =  app_workplace_width_stream_node[0].contentWindow;
 
-			var style = awwst_win.document.documentElement.style; 
+			var style = awwst_win.document.documentElement.style;
 
 			style.padding = 0;
 			style.margin = 0;
 			style.border = 0;
 			style.background = 'transparent';
-			
+
 		// spv.getDefaultView(app_workplace_width_stream_node[0]);
 			_this.updateManyStates({
 				workarea_width: awwst_win.innerWidth
@@ -495,13 +495,13 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	buildAppDOM: spv.precall(AppBaseView.WebComplexTreesView.prototype.buildAppDOM, function() {
 		var _this = this;
 		var d = this.d;
-		
+
 			console.log('dom ready');
 
 			_this.checkSizeDetector();
 			_this.nextTick(_this.buildWidthStreamer);
 			_this.els.search_form.find('#app_type').val(app_env.app_type);
-			
+
 			_this.wrapStartScreen(this.els.start_screen);
 			$('#widget-url',d).val(location.href.replace('index.html', ''));
 
@@ -518,7 +518,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 
 			_this.buildNowPlayingButton();
 			_this.buildNavHelper();
-			
+
 			var d_click_callback = function(e) {
 				e.preventDefault();
 				app_env.openURL($(this).attr('href'));
@@ -607,7 +607,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			target.scrollToWP(nst);
 		}
 	},
-	
+
 	appendStyle: function(style_text){
 		//fixme - check volume ondomready
 		var style_node = this.d.createElement('style');
@@ -678,7 +678,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 			return $("<span class='desc'></span>").text(app_serv.getRemainTimeText(rel.item.est, true));
 		}
 	},
-	
+
 
 	create_youtube_video: function(id){
 		var youtube_video = document.createElement('embed');
@@ -689,7 +689,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 				youtube_video.setAttribute('wmode',"opaque");
 			}
 		}
-		
+
 
 		youtube_video.setAttribute('type',"application/x-shockwave-flash");
 		youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');

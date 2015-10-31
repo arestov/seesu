@@ -34,7 +34,7 @@ function updateProxy(etr, changes_list, opts) {
 	var all_i_cg = zdsv.all_i_cg;
 	var all_ch_compxs = zdsv.all_ch_compxs;
 	var changed_states = zdsv.changed_states;
-	
+
 	while (zdsv.states_changing_stack.length){
 
 		//spv.cloneObj(original_states, etr.states);
@@ -69,7 +69,7 @@ function updateProxy(etr, changes_list, opts) {
 			current_compx_chs = null;
 		}
 
-		
+
 
 		//собираем все группы изменений
 		if (changed_states.length){
@@ -82,10 +82,10 @@ function updateProxy(etr, changes_list, opts) {
 		compressStatesChanges(all_i_cg);
 
 
-		
+
 		iterateChList(all_i_cg, etr, _triggerVipChanges, zdsv);
 
-		
+
 
 		if (all_i_cg.length){
 			push.apply(total_ch, all_i_cg);
@@ -97,9 +97,9 @@ function updateProxy(etr, changes_list, opts) {
 		if (all_ch_compxs) {
 			all_ch_compxs.length = 0;
 		}
-		
+
 		//объекты используются повторно, ради выиграша в производительности
-		//которые заключается в исчезновении пауз на сборку мусора 
+		//которые заключается в исчезновении пауз на сборку мусора
 	}
 
 	//устраняем измененное дважды и более
@@ -154,7 +154,7 @@ function _handleStch(etr, original_states, state_name, value, skip_handler, sync
 	var old_value = etr.zdsv.stch_states[state_name];
 	if (old_value !== value) {
 		var method;
-		
+
 		if (stateChanger){
 			if (typeof stateChanger == 'function'){
 				method = stateChanger;
@@ -174,8 +174,8 @@ function _handleStch(etr, original_states, state_name, value, skip_handler, sync
 			} else {
 				proxyStch(etr, value, state_name);
 			}
-			
-			
+
+
 			//method.call(this, value, old_value);
 		}
 	}
@@ -324,7 +324,7 @@ function _triggerVipChanges(etr, i, state_name, value, zdsv) {
 	if (vip_cb_cs.length) {
 		var flow_steps = zdsv.createFlowStepsArray('vip_stdch_ev', state_name);
 		var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], etr);
-		
+
 		//вызов внутреннего для самого объекта события
 		etr.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg, flow_steps);
 		hp.markFlowSteps(flow_steps, 'vip_stdch_ev', state_name);
@@ -349,7 +349,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 			// var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
 			var calls_flow = etr._getCallsFlow();
 			calls_flow.pushToFlow(null, null, [cur, value, zdsv.original_states[state_name], etr], cur, cur.state_handler, null, etr.current_motivator);
-			
+
 		}
 	}
 
@@ -358,7 +358,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 
 	var default_cb_cs = etr.evcompanion.getMatchedCallbacks(default_name);
 	var light_cb_cs = etr.evcompanion.getMatchedCallbacks(light_name);
-	
+
 	if (light_cb_cs.length || default_cb_cs.length) {
 		var flow_steps = zdsv.createFlowStepsArray('stev', state_name);
 

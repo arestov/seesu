@@ -24,7 +24,7 @@ define(['spv'],function(spv){
 			console.log('waiting');
 		});
 		*/
-		
+
 		spv.addEvent(a, 'timeupdate', function(){
 			var current_time = a.currentTime * 1000;
 			var duration = a.duration * 1000;
@@ -69,7 +69,7 @@ define(['spv'],function(spv){
 		this.id = opts.id;
 		this.cb = cb;
 		this.requireAE();
-		
+
 	};
 	Html5Sound.prototype = {
 		requireAE: function() {
@@ -96,20 +96,20 @@ define(['spv'],function(spv){
 			}
 		},
 		play: function() {
-			
+
 			this.requireAE();
 			this.a.play();
 		},
 		load: function() {
-			
+
 			this.requireAE();
 			if (this.a.networkState === 0){
 				this.a.load();
 			}
-			
+
 		},
 		stop: function() {
-			
+
 			try{
 				this.clearLoad();
 				this.a.pause();
@@ -126,13 +126,13 @@ define(['spv'],function(spv){
 			} else {
 				this.a.volume = vol/100;
 			}
-			
+
 		},
 		setPosition: function(pos, fac) {
 			var target_pos;
 			var available;
 			var possible_position;
-			
+
 			try{
 				available = this.a.buffered.length && this.a.buffered.end(0);
 				if (fac){
@@ -145,19 +145,19 @@ define(['spv'],function(spv){
 						if (available > 2){
 							target_pos = Math.min(available - 2, possible_position);
 						}
-						
+
 					} else {
 						target_pos = Math.max(0, possible_position);
 					}
 
 					this.a.currentTime = target_pos;
 				}
-				
-				
-				
+
+
+
 			} catch(e){}
-			
-			
+
+
 			}
 	};
 

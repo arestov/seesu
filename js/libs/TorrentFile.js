@@ -63,13 +63,13 @@ songFileModel.extendTo(FileInTorque, {
 			file_in_torrent.get('properties').save({priority: 15});
 		}
 
-		
-		
-		
-		
-		
+
+
+
+
+
 	//	this.forceStream();
-		
+
 		//this.forceStream();
 	},
 	forceStream: function() {

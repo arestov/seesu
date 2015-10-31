@@ -7,7 +7,7 @@ var FstackAtom = function(stack, func, done, data) {
 	this.func = func;
 	this.func_result = null;
 	this.done = done;
-	
+
 	this.data = null;
 	this.qf = null;
 	this.aborted = null;
@@ -82,7 +82,7 @@ FuncsStack.prototype = {
 			setTimeout(function() {
 				_this.goAhead(atom, _this.wait_next);
 			},0);
-			
+
 		}
 
 		return this;
@@ -96,7 +96,7 @@ FuncsStack.prototype = {
 	},
 	start: function() {
 		if (!this.want_start){
-			
+
 			if (this.arr[0]){
 				this.goAhead(this.arr[0], arguments);
 			} else {

@@ -14,7 +14,7 @@ var MDProxy = function(_provoda_id, states, children_models, md) {
 MDProxy.prototype = {
 	RPCLegacy: function() {
 		this.md.RPCLegacy.apply(this.md, arguments);
-		
+
 	},
 	setStates: function() {},
 	updateStates: function() {},
@@ -70,7 +70,7 @@ MDProxy.prototype = {
 			return;
 		}
 		var removed = hp.getRemovedNestingItems(array, old_value);
-		
+
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].stackCollectionChange(collection_name, array, old_value, removed);
 		}
@@ -104,7 +104,7 @@ MDProxy.prototype = {
 					}
 				}
 			}
-			
+
 		}
 		if (this.views) {
 			var dead = [], alive = [];
@@ -129,7 +129,7 @@ MDProxy.prototype = {
 				}
 			}
 		}
-		
+
 
 		return this;
 	},
@@ -195,7 +195,7 @@ MDProxy.prototype = {
 					return cur;
 				}
 
-			
+
 			}
 		}
 		for (var jj = 0; jj < views.length; jj++) {

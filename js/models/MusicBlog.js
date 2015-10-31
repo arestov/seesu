@@ -8,7 +8,7 @@ SongsList.extendTo(MusicBlogSongs, {
 		this.initStates(params);
 
 	},
-	
+
 	'nest_req-songs-list': [
 		[{
 			is_array: true,

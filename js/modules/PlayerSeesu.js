@@ -19,14 +19,14 @@ var app_env = app_serv.app_env;
 			}
 		}
 	}
-	
+
 
 	var done;
 	var useLib = function(cb){
 		if (!done){
 			//done = true;
 			cb();
-			
+
 		}
 	};
 	var checkTracking = function(last_try, done){
@@ -66,7 +66,7 @@ var app_env = app_serv.app_env;
 					feature_to_use = cur;
 					break;
 				}
-				
+
 			}
 			checkTracking(feature_to_use, use_order_list.length == i);
 			if (feature_to_use){
@@ -126,7 +126,7 @@ var app_env = app_serv.app_env;
 								}
 							}, 7000);
 						});
-						
+
 						pcore
 							.done(function(){
 								complete = true;
@@ -134,7 +134,7 @@ var app_env = app_serv.app_env;
 									pcon.addClass('sm2-complete');
 								}, 1000);
 								features_storage.setAsAccessible(feature, pcore);
-								
+
 
 							})
 							.fail(function(){
@@ -161,7 +161,7 @@ var app_env = app_serv.app_env;
 								pcon
 									.addClass('sm2proxy')
 									.attr('scrolling', 'no');
-								
+
 								pcon.on('load', function() {
 									setTimeout(function() {
 										if (!complete){
@@ -191,17 +191,17 @@ var app_env = app_serv.app_env;
 					});
 
 				});*/
-				
+
 
 		}
 	};
 
 
 
-	
 
 
-	
+
+
 
 
 	var flash_plgs = spv.filter(spv.toRealArray(navigator.plugins),"name", "Shockwave Flash");
@@ -216,8 +216,8 @@ var app_env = app_serv.app_env;
 	var quick_time_plgs = spv.filter(plugins_list,"name", function(el){
 		return el && el.indexOf("QuickTime") != -1;
 	});
-	
-	
+
+
 	var qt_plugin = !!quick_time_plgs.length;
 	if (qt_plugin){
 		var all_qt_mimetypes = [];
@@ -235,7 +235,7 @@ var app_env = app_serv.app_env;
 		console.log(best_mimetypes);
 	}*/
 
-	
+
 
 	var detectors = [
 		function(h5a){
@@ -255,7 +255,7 @@ var app_env = app_serv.app_env;
 				features_storage.setAsInaccessible('wmpactivex');
 			}
 		}
-		
+
 
 	];
 	var want_detecting;
@@ -266,7 +266,7 @@ var app_env = app_serv.app_env;
 		}
 	};
 
-	
+
 	if (!done){
 		spv.domReady(document, function(){
 			detectors.push(
@@ -304,9 +304,9 @@ var app_env = app_serv.app_env;
 					//check preffered mimetype!!!
 
 					aqt.type= "application/x-quicktimeplayer" || "video/quicktime";
-					
 
-					
+
+
 					//window.dizi = aqt;
 					try {
 						document.body.appendChild(aqt);
@@ -315,8 +315,8 @@ var app_env = app_serv.app_env;
 						}
 						//document.body.removeChild(aqt);
 					} catch (e){}
-					
-					
+
+
 				},
 				function(){
 					if (flash_plgs.length && app_env.iframe_support && !app_env.tizen_app){
@@ -324,7 +324,7 @@ var app_env = app_serv.app_env;
 					} else {
 						features_storage.setAsInaccessible('sm2-proxy');
 					}
-					
+
 				},
 				function(){
 					return; //code is not finished
@@ -339,7 +339,7 @@ var app_env = app_serv.app_env;
 				detectAudioCores();
 			}
 		});
-		
+
 	}
 
 
@@ -358,7 +358,7 @@ var app_env = app_serv.app_env;
 			this._super();
 			this.app = app;
 			su = app;
-				
+
 			this
 			.on('finish', function(e){
 				e.song_file.mo.submitPlayed();
@@ -381,7 +381,7 @@ var app_env = app_serv.app_env;
 				} else {
 					_this.setVolume(false, false, fac);
 				}
-				
+
 			};
 
 			su.on('state_change-settings-volume', function(e) {
@@ -399,7 +399,7 @@ var app_env = app_serv.app_env;
 			finish: function(e){
 				if (this.c_song == e.song_file.mo){
 					this.onPlaybackFinish(e.song_file.mo);
-					
+
 				}
 			},
 			play: function(e){
@@ -424,7 +424,7 @@ var app_env = app_serv.app_env;
 				}
 			},
 			playing: function(){
-				
+
 			}
 		},
 		setPlayMark: function(playing){
@@ -436,7 +436,7 @@ var app_env = app_serv.app_env;
 		},
 		notPlaying: function(){
 			su.notPlaying();
-			
+
 		},
 		playing: function(){
 			su.playing();
@@ -457,9 +457,9 @@ var app_env = app_serv.app_env;
 		}
 	});
 
-		
 
-	
+
+
 
 
 

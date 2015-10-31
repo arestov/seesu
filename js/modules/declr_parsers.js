@@ -162,7 +162,7 @@ return {
 						};
 					}
 
-					
+
 				}
 				song_data.track = htmlencoding.decode(song_data.track);
 				song_data.image_url = cur.artwork_url;

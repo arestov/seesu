@@ -197,7 +197,7 @@ AppModel.extendTo(SeesuApp, {
 			if (vkapi) {
 				_this.getAuthAndTransferVKInfo(vkapi, user_id);
 			}
-			
+
 		});
 
 
@@ -225,7 +225,7 @@ AppModel.extendTo(SeesuApp, {
 			// 	pv.update(_this, 'lfm_userid', _this.lfm.username);
 			// });
 		}
-		
+
 
 		this.lfm_auth.on('session.ga_tracking', function(){
 			_this.trackEvent('Auth to lfm', 'end');
@@ -245,16 +245,16 @@ AppModel.extendTo(SeesuApp, {
 							var params = get_url_parameters(url.replace(sb, ''));
 							if (params.token){
 								_this.lfm_auth.setToken(params.token);
-								
+
 							}
 							app_env.clearWebPageCookies();
 							return true;
 						}
 					}
-					
+
 				}, function(e){
 					app_env.openURL(wurl);
-					
+
 				}, 960, 750);
 				if (!opend){
 					app_env.openURL(wurl);
@@ -321,7 +321,7 @@ AppModel.extendTo(SeesuApp, {
 		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
-		
+
 		setInterval(function(){
 
 			var now = new Date();
@@ -367,7 +367,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.initAPIs();
 
-		
+
 
 
 
@@ -392,15 +392,15 @@ AppModel.extendTo(SeesuApp, {
 		}
 
 
-		
+
 		this.start_page = (new StartPage()).init({
 			app: this
 		});
-		
+
 		this.initMapTree(this.start_page, app_env.needs_url_history, navi)
 			/*
 			.on('residents-tree', function() {
-				
+
 			}, this.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
@@ -412,7 +412,7 @@ AppModel.extendTo(SeesuApp, {
 			}, this.getContextOptsI())
 			.makeMainLevel();
 
-		
+
 
 		if (app_env.tizen_app){
 			//https://developer.tizen.org/
@@ -426,12 +426,12 @@ AppModel.extendTo(SeesuApp, {
 					} else {
 						history.back();
 					}
-					
+
 				}
 			});
 		}
 
-		
+
 
 
 
@@ -441,7 +441,7 @@ AppModel.extendTo(SeesuApp, {
 
 
 			var mpx = _this.connectMPX();
-			
+
 
 			mpx.addView(view, name);
 
@@ -466,7 +466,7 @@ AppModel.extendTo(SeesuApp, {
 			_this.checkStats();
 		},100);
 
-		
+
 		setTimeout(function() {
 			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
 				var cur = _this.supported_settings[i];
@@ -483,7 +483,7 @@ AppModel.extendTo(SeesuApp, {
 						value = false;
 					}
 				}
-				
+
 
 				_this.letAppKnowSetting(cur, value);
 			}
@@ -494,10 +494,10 @@ AppModel.extendTo(SeesuApp, {
 		}, 200);
 
 
-		
 
 
-		
+
+
 		if (app_env.needs_url_history){
 			navi.init(function(e){
 				var url = e.newURL;
@@ -656,7 +656,7 @@ AppModel.extendTo(SeesuApp, {
 		} else {
 			this.trackStat.call(this, args);
 		}
-		
+
 	},
 	checkPageTracking: function() {
 		if (this.app_view_id && this.last_page_tracking_data){
@@ -691,7 +691,7 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return sp;
 	},
-	
+
 	getPlaylists: function(query) {
 		var r = [],i;
 		if (this.gena){
@@ -742,7 +742,7 @@ AppModel.extendTo(SeesuApp, {
 					_this.s.vk_id = user_id;
 
 					var _d = spv.cloneObj({data_source: 'vkontakte'}, info);
-					
+
 
 					_this.s.setInfo('vk', _d);
 					pvUpdate(_this, 'current_su_user_info', _d);
@@ -794,7 +794,7 @@ AppModel.extendTo(SeesuApp, {
 			su.vk_auth.api = su.connectVKApi(vk_token, true);
 			pvUpdate(su.vk_auth, 'has_token', true);
 			su.vk_auth.trigger('full-ready', true);
-				
+
 		}
 	},
 	connectVKApi: function(vk_token, access, not_save) {
@@ -886,7 +886,7 @@ AppModel.extendTo(SeesuApp, {
 				var id = list[i].user;
 				var md = app.routePathByModels('users/su:' + id);
 				md.updateManyStates(list[i]);
-			}			
+			}
 		},
 		vk_groups: function(list) {
 			var store = this.vk_groups;
@@ -911,12 +911,12 @@ AppModel.extendTo(SeesuApp, {
 				var cur = list[i];
 				if (!cur.link) {
 					continue;
-					
+
 				}
 				if (!cur.from) {
 					cur.from = source_name;
 				}
-				
+
 				if (!cur.media_type) {
 					cur.media_type = 'mp3';
 				}
@@ -937,15 +937,15 @@ AppModel.extendTo(SeesuApp, {
 		} else {
 			console.log(source_name, ns, data);
 		}
-		
+
 	},
 	suggestNavHelper: function() {
 		this.showNowPlaying();
 		if (this.state('played_playlists_length') > 1) {
 			pv.update(this, 'nav_helper_is_needed', true);
 		}
-	
-		
+
+
 	},
 	closeNavHelper: function() {
 		pv.update(this, 'nav_helper_is_needed', false);
@@ -1016,7 +1016,7 @@ pv.sync_s.setRootModel(su);
 					mp3_search: su.mp3_search
 				})
 			}));
-			
+
 		});
 	} else {
 		var allow_torrents = false || app_env.nodewebkit;
@@ -1047,9 +1047,9 @@ pv.sync_s.setRootModel(su);
 		}
 	}
 
-	
 
-	
+
+
 
 
 })();
@@ -1112,7 +1112,7 @@ spv.domReady(window.document, function(){
 					}
 
 					lindex[ lc_artist ][ data[artist][i].toLowerCase() ] = true;
-					
+
 				}
 
 			}
@@ -1135,7 +1135,7 @@ spv.domReady(window.document, function(){
 						require('nodejs/update-receiver')(data.package_url, seesu_version);
 					}
 
-					//var 
+					//var
 				}
 			});
 		}

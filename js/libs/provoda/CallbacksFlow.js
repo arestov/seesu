@@ -111,7 +111,7 @@ var getBoxedRAFFunc = function(win) {
 		return raf.call(win, fn);
 	};
 };
-	
+
 var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	this.flow = [];
 	this.busy = null;
@@ -134,7 +134,7 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 			return setImmediate(fn);
 		};
 	}
-	
+
 };
 
 CallbacksFlow.prototype = {
@@ -154,7 +154,7 @@ CallbacksFlow.prototype = {
 				if (this.flow_steps_collating_invalidated <= cur.complex_order[0]) {
 					this.flow_steps_collating_invalidated = null;
 					this.flow.sort(sortFlows);
-					
+
 				}
 			}
 			cur = this.flow.shift();
@@ -169,7 +169,7 @@ CallbacksFlow.prototype = {
 	checkCallbacksFlow: function() {
 		if (!this.iteration_delayed && !this.callbacks_busy){
 			this.pushIteration(this.hndIterateCallbacksFlow);
-			
+
 			this.iteration_delayed = true;
 		}
 	},
@@ -193,7 +193,7 @@ CallbacksFlow.prototype = {
 				}
 
 				spv.insertItem(this.flow, flow_step, last_matched + 1);
-				
+
 				//this.flow_steps_collating_invalidated = Math.min( flow_step.complex_order[0], this.flow_steps_collating_invalidated || Infinity );
 			} else {
 				this.flow.push(flow_step);
@@ -201,8 +201,8 @@ CallbacksFlow.prototype = {
 		} else {
 			this.flow.push(flow_step);
 		}
-		
-		
+
+
 		this.checkCallbacksFlow();
 		return flow_step;
 

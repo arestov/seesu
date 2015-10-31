@@ -6,7 +6,7 @@ define(['spv', 'jquery'], function(spv, $) {
 var AudioCoreSm2Proxy = function(origin, path, opts) {
 	var _this = this;
 	this.origin = origin;
-	
+
 
 	spv.addEvent(window, "message", function(e){
 		if (_this.frame && _this.frame.contentWindow == e.source) {
@@ -16,7 +16,7 @@ var AudioCoreSm2Proxy = function(origin, path, opts) {
 				_this.fail();
 			}
 		}
-		
+
 	});
 
 	if (opts && opts === Object(opts)){
@@ -30,7 +30,7 @@ var AudioCoreSm2Proxy = function(origin, path, opts) {
 	this.frame = document.createElement('iframe');
 	this.frame.src = this.origin + path;
 	this.def = $.Deferred();
-	
+
 };
 
 AudioCoreSm2Proxy.prototype = {

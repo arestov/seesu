@@ -52,7 +52,7 @@ var Eventor = spv.inh(function() {}, {
 		trigger: function() {
 			this.evcompanion.trigger.apply(this.evcompanion, arguments);
 		},
-		
+
 		addRequest: function() {
 			return this.evcompanion.addRequest.apply(this.evcompanion, arguments);
 		},

@@ -76,12 +76,12 @@ var initVk = function(su) {
 				}
 			}
 		});
-		
-		
-		
+
+
+
 	} else {
-	
-		
+
+
 
 		var save_token = app_serv.store('vk_token_info');
 		if (save_token){
@@ -94,9 +94,9 @@ var initVk = function(su) {
 			}
 
 			pvUpdate(su.vk_auth, 'has_token', true);
-			
+
 			su.vk_auth.trigger('full-ready', true);
-			
+
 		}
 
 		su.vk_auth
@@ -108,7 +108,7 @@ var initVk = function(su) {
 				}
 
 				pvUpdate(this, 'has_token', true);
-				
+
 				this.trigger('full-ready', true);
 			})
 			.on('want-open-url', function(wurl){
@@ -136,7 +136,7 @@ var initVk = function(su) {
 
 							}
 							return true;
-							
+
 						}
 					}, function(e){
 						app_env.openURL(wurl);

@@ -28,7 +28,7 @@ var getBaseTreeCheckList = function(start) {
 	var all_items = [null, start];
 
 	while (all_items.length) {
-		
+
 
 		var cur_parent = all_items.shift();
 		var cur = all_items.shift();
@@ -41,7 +41,7 @@ var getBaseTreeCheckList = function(start) {
 				all_items.push( cur, cur.children_by_selector[i] );
 			}
 		}
-		
+
 		if (cur.children_by_anchor) {
 			for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
 				all_items.push( cur, cur.children_by_anchor[i] );
@@ -100,7 +100,7 @@ var onPropsExtend = function (props) {
 		this.changeChildrenViewsDeclarations(props);
 	}
 
-	
+
 	for (var i = 0; i < xxxx_morph_props.length; i++) {
 		// если есть декларации - парсим, делаем функции
 		// на вход функции - одна структура, на выход - другая
@@ -117,12 +117,12 @@ var onPropsExtend = function (props) {
 				}
 				this[cur_name] = spv.mmap(obj);
 			}
-			
+
 		}
-	}	
+	}
 };
 
-// Eventor.extendTo(StatesEmitter, 
+// Eventor.extendTo(StatesEmitter,
 function props(add) {
 
 
@@ -226,7 +226,7 @@ add({
 	},
 	// init: function(){
 	// 	this._super();
-		
+
 
 	// 	return this;
 	// },
@@ -271,7 +271,7 @@ add({
 			}
 		}
 	},
-	
+
 	'regfr-vipstev': regfr_vipstev,
 	'regfr-stev': regfr_stev,
 	'regfr-lightstev': regfr_lightstev,
@@ -313,7 +313,7 @@ add({
 
 	},
 	wch: function(donor, donor_state, acceptor_state, immediately) {
-	
+
 		var cb;
 
 		var event_name = immediately ?
@@ -325,16 +325,16 @@ add({
 		} else {
 			acceptor_state = acceptor_state || donor_state;
 			cb = getConnector(acceptor_state);
-			
+
 		}
 		this._bindLight(donor, event_name, cb, immediately);
-		
+
 
 		return this;
 
 	},
 	onExtend: onPropsExtend,
-	
+
 	checkExpandableTree: function(state_name) {
 		var i, cur, cur_config, has_changes = true, append_list = [];
 		while (this.base_skeleton && has_changes) {
@@ -362,7 +362,7 @@ add({
 						//part_name
 					}
 				}
-				
+
 				//chunk_num
 			}
 			while (append_list.length) {
@@ -406,10 +406,10 @@ add({
 					this.checkChildrenModelsRendering();
 					this.requestAll();
 				}
-				
+
 			}
 		}
-		
+
 
 		//если есть прикреплённый родитель и пришло время прикреплять (если оно должно было прийти)
 		//
@@ -452,7 +452,7 @@ add({
 							}
 							dclrs_expandable[state_name].push( getUnprefixed(nesting_name) );
 						}
-						 
+
 					}
 				}
 			}
@@ -483,7 +483,7 @@ add({
 	collectStatesConnectionsProps: function() {
 		/*
 		'compx-some_state': [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
-	
+
 		}]
 		*/
 		/*
@@ -513,7 +513,7 @@ add({
 						if (!states_of_nesting[state_name]) {
 							states_of_nesting[state_name] = parsing_result;
 							this.compx_nest_matches.push( parsing_result.nwatch );
-							
+
 							// debugger;
 						}
 					} else if (parsing_result.rel_type == 'parent') {
@@ -522,7 +522,7 @@ add({
 						}
 					}
 				}
-				
+
 			}
 		}
 
@@ -622,7 +622,7 @@ add({
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 
-		return function(props) {			
+		return function(props) {
 			if (!hasPrefixedProps(props)){
 				return;
 			}
@@ -683,7 +683,7 @@ add({
 });
 
 add({
-	
+
 
 	updateManyStates: function(obj) {
 		var changes_list = [];

@@ -9,7 +9,7 @@ var getLFMImageId = function(url) {
 		return url_parts[4].replace(/png$/, 'jpg');
 
 	}
-	
+
 };
 
 var getLFMImageWrap = function(array) {
@@ -42,10 +42,10 @@ var getLFMImageWrap = function(array) {
 			}
 		}
 
-		
+
 	}
 
-	
+
 };
 
 return {

@@ -9,7 +9,7 @@ var localize = app_serv.localize;
 
 var UsersList = function() {};
 BrowseMap.Model.extendTo(UsersList, {
-	
+
 });
 
 
@@ -84,7 +84,7 @@ BrowseMap.Model.extendTo(UserCard, {
 	init: function() {
 		this._super.apply(this, arguments);
 		var _this = this;
-		
+
 		//плейлисты
 		var gena = this.getSPI('playlists', true);
 		var hasPlaylistCheck = function(items) {
@@ -92,7 +92,7 @@ BrowseMap.Model.extendTo(UserCard, {
 		};
 		hasPlaylistCheck(this.app.gena.playlists);
 		this.app.gena.on('playlists-change', hasPlaylistCheck);
-		
+
 		return this;
 	}
 });

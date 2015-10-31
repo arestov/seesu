@@ -42,24 +42,24 @@ var album_placeholder = {
 				} else {
 					console.warn('no nested artcard');
 				}
-				
+
 			}
 		},
 		'stch-can_load_images':function(target, state) {
 			if (state){
 				var artcard = target.getNesting('artist');
 				if (artcard){
-					
+
 					var req = artcard.requestState('profile_image');
 					//artcard.requestState('images');
 					if (req){
 						target.addRequest(req);
 					}
-					
+
 				} else {
 					console.warn('no nested artcard');
 				}
-				
+
 			}
 		},
 		init: function(opts, omo) {
@@ -134,7 +134,7 @@ var album_placeholder = {
 							return index[artist_lc] === true;
 						}
 					}
-					
+
 				}
 
 
@@ -160,7 +160,7 @@ var album_placeholder = {
 				if (artist_images) {
 					arr.push.apply(arr, artist_images);
 				}
-				
+
 				return arr;
 			}
 		],
@@ -214,11 +214,11 @@ var album_placeholder = {
 			}
 
 			this.mf_cor = this.initSi(MfCor, null, omo);
-			
+
 			this.mf_cor
 				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())
 				.on("error", this.hndMfcError, this.getContextOpts());
-			
+
 			pv.updateNesting(this, 'mf_cor', this.mf_cor);
 			pv.update(this, 'mf_cor', this.mf_cor);
 
@@ -283,7 +283,7 @@ var album_placeholder = {
 			});
 			this.addRequest(req);
 			return req;
-			
+
 		},
 		postToVKWall: function(uid){
 			var

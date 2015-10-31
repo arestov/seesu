@@ -9,7 +9,7 @@ var StatesLabour = function(has_complex_states, need_stch_storage) {
 
 	this.collecting_states_changing = false;
 	this.original_states = {};
-	
+
 	this.states_changing_stack = [];
 	this.all_i_cg = [];
 
@@ -39,7 +39,7 @@ StatesLabour.prototype.abortFlowSteps = function(space, index_key, is_one_item) 
 		array.abort();
 		this[full_space][index_key] = null;
 	}
-	
+
 	return;
 };
 StatesLabour.prototype.createFlowStepsArray = function(space, index_key, one_item) {
@@ -68,7 +68,7 @@ StatesLabour.prototype.removeFlowStep = function(space, index_key, item) {
 		//var pos = target.indexOf(item);
 		//target.splice(pos, 1);
 
-		
+
 	} else {
 		if (target == item) {
 			this[full_space][index_key] = null;
@@ -76,7 +76,7 @@ StatesLabour.prototype.removeFlowStep = function(space, index_key, item) {
 			console.log('wrong motivator !?');
 		}
 	}
-	
+
 
 };
 return StatesLabour;

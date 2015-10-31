@@ -92,7 +92,7 @@ pv.Model.extendTo(FileInTorrent, {
 			// this.makeSongPlayalbe(true);
 		},
 		switchPlay: function(bwlev_id) {
-			// 
+			//
 
 			if (this.state('selected')){
 
@@ -163,7 +163,7 @@ pv.Model.extendTo(FileInTorrent, {
 		],
 		'stch-load_file': finup(function(target, state) {
 			if (state) {
-				
+
 				target.load();
 			} else {
 				target.removeCache();
@@ -239,7 +239,7 @@ pv.Model.extendTo(FileInTorrent, {
 				if (this.parent){
 					this.parent.error = d;
 				}
-				
+
 				var _this = this;
 				app_serv.getInternetConnectionStatus(function(has_connection) {
 					if (has_connection) {
@@ -247,14 +247,14 @@ pv.Model.extendTo(FileInTorrent, {
 						if (!pp){
 							_this.failPlaying();
 						} else {
-							
+
 							setTimeout(function() {
 								if (_this.state("playing_progress") == pp){
 									_this.failPlaying();
 								}
 							}, 3500);
 						}
-						
+
 					}
 				});
 			}
@@ -294,7 +294,7 @@ pv.Model.extendTo(FileInTorrent, {
 					this.player.play(this);
 					return true;
 				}
-				
+
 			}
 		},
 		removeCache: function(){
@@ -313,7 +313,7 @@ pv.Model.extendTo(FileInTorrent, {
 				pv.update(this, 'play', false);
 				pv.update(this, 'loading_progress', 0);
 				pv.update(this, 'playing_progress', 0);
-				
+
 				this.sound = null;
 			}
 		},
@@ -342,9 +342,9 @@ pv.Model.extendTo(FileInTorrent, {
 				if (!not_submit){
 					this.mo.posistionChangeInMopla(this);
 				}
-				
-				
-				
+
+
+
 			}
 		},
 		load: function(){
@@ -356,7 +356,7 @@ pv.Model.extendTo(FileInTorrent, {
 				if (this.sound){
 					this.player.load(this);
 				}
-				
+
 			}
 		},
 		activate: function() {
@@ -366,10 +366,10 @@ pv.Model.extendTo(FileInTorrent, {
 			pv.update(this, 'selected', false);
 		},
 		markAsPlaying: function() {
-			
+
 		},
 		unmarkAsPlaying: function() {
-			
+
 		}
 	});
 

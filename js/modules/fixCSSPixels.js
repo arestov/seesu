@@ -32,7 +32,7 @@ define(['app_serv', 'jquery', 'spv'], function(app_serv, $, spv) {
 				var sel_tabs = sel_prev_text.match(/\t+(?:$)/gi);
 				var sel_tabs_count = sel_tabs && sel_tabs[0].length || 0;
 				//sel_tabs_count += 1;
-				
+
 			//	console.log(sel_tabs_count);
 				complects.push(rulll);
 				if (rulll.px_props.length){
@@ -58,9 +58,9 @@ define(['app_serv', 'jquery', 'spv'], function(app_serv, $, spv) {
 					//getRulesString
 				//	big_string += rulll.stretch_selector + ' {\n' + '\t/* rem hack */\n' + rulll.string + '}\n\n';
 				}
-				
+
 			}
-			
+
 		}
 
 		return string ? big_result : complects;
@@ -68,8 +68,8 @@ define(['app_serv', 'jquery', 'spv'], function(app_serv, $, spv) {
 	var checkPX = function(url, root_font_size) {
 		//var complects = [];
 
-	
-	
+
+
 
 
 		var big_string = '';
@@ -89,7 +89,7 @@ define(['app_serv', 'jquery', 'spv'], function(app_serv, $, spv) {
 			file_name = file_name && file_name[file_name.length -1];
 			window.open('data:text/plain;base64,' + btoa( '/*\n' + file_name + "\n*/ \n" + test));
 		});
-		
+
 		return big_string;
 
 	};

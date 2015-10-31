@@ -7,7 +7,7 @@ var getTreeSample = function() {
 			stch: [],
 			compx_deps: [],
 			deep_compx_deps: [],
-			
+
 		},
 		constr_children: {
 			children: {},
@@ -63,7 +63,7 @@ var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
 		if (used_base.children_by_mn) {
 			iterateChildrenByMN(used_base.children_by_mn, bChByMN, children_list_index, children_list);
 		}
-		
+
 	}
 	if (base_from_parent && base_from_parent.states) {
 		tree.merged_states = spv.collapseAll(tree.merged_states, base_from_parent.states);
@@ -100,11 +100,11 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 	/*
 	{
 		stch
-		состояния-источники для compx 
+		состояния-источники для compx
 		свои состояния как состояния-источники для compx внутри потомков
 		используемые в шаблоне состояния (tpl, tpls, base_tree)
 
-		шаблон, который задекларирован у потомка или шаблон, который родитель сам передаст потомку 
+		шаблон, который задекларирован у потомка или шаблон, который родитель сам передаст потомку
 	}
 	*/
 	getUsageTree = getUsageTree || this.getUsageTree;
@@ -151,7 +151,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 		}
 
 		return spv.collapseAll(spv.arrayExclude(result, compxs_itself));
-		
+
 	}).call(this);
 
 
@@ -178,10 +178,10 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 				var sampler = root_view.getSampler(sample_name);
 
 				var structure_data = sampler.getStructure(cur.parse_as_tplpart);
-	
+
 				arr.push(structure_data);
 				//this.structure_data
-				
+
 			}
 			var merged_tree = {
 				node_id: null,
@@ -241,11 +241,11 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 			}
 			merged_tree.node_id = tree_id.join('&');
 			return merged_tree;
-			
+
 		} else {
 			return null;
 		}
-		
+
 	}).call(this);
 
 
@@ -253,7 +253,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 		tree.merged_states = spv.collapseAll(tree.merged_states, tree.basetree.states);
 	}
 
-	
+
 
 	//создаём список для итерации по потомкам
 	//могут быть и basetree и конструкторы для одного nest и space а может быть только basetree или только конструктор
@@ -280,11 +280,11 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 		if (used_base.children_by_mn) {
 			iterateChildrenByMN(used_base.children_by_mn, bChByMN, children_list_index, children_list);
 		}
-		
+
 	}
 
 
-	
+
 
 	if (base_from_parent && base_from_parent.children) {
 		//debugger;
@@ -312,7 +312,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 		}
 
 
-		
+
 
 		if (constr) {
 			var struc = getUsageTree.call(constr.prototype, getUsageTree, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);

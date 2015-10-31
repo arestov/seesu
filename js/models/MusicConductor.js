@@ -341,7 +341,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 			var instance = this.getSPI(name, true);
 			lists_list.push(instance);
 		}
-		
+
 		pv.updateNesting(this, 'lists_list', lists_list);
 	},
 	'nest_posb-lists_list': [CityPlace],
@@ -443,7 +443,7 @@ BrowseMap.Model.extendTo(CountriesList, {
 			lists_list.push(country_place);
 		}
 		pv.updateNesting(this, 'lists_list', lists_list);
-		
+
 	},
 	'nest_posb-lists_list': [CountryPlace],
 	getSPC: function() {

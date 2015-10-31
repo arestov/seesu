@@ -113,7 +113,7 @@ BrowseMap.Model.extendTo(LULA, cloneObj({
 	},
 	net_head: ['artist_name'],
 	'nest-all_time': ['all_time', true],
-	
+
 	'compx-selected_image': {
 		depends_on: ['lfm_image'],
 		fn: function(lfm_i) {
@@ -147,7 +147,7 @@ LoadableList.extendTo(UserArtists, {
 // 			}];
 // 		}]
 // 	]
-	
+
 // }, auth_bh));
 
 var TopLUArt = function() {};
@@ -331,7 +331,7 @@ SongsList.extendTo(LfmRecentUserTracks, cloneObj({
 			nowplaying: true
 		};
 	},
-	
+
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('recenttracks'),
 		['lfm', 'get', function() {
@@ -445,7 +445,7 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 		[user_albums_sp],
 	'nest-preview_list':
 		[user_albums_sp, true],
-	
+
 	sub_pa: {
 		'recommended': {
 			constr: RecommNewReleases,
@@ -584,7 +584,7 @@ LoadableList.extendTo(LfmUserTags, cloneObj({
 		}]
 	],
 	'nest_rqc-tags': UserTag,
-	
+
 
 	tagsParser: function(r, field_name) {
 		var result = [];

@@ -78,7 +78,7 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 			return !can_search_friends;
 		}
 	],
-	//desc: improve ? 
+	//desc: improve ?
 	'nest-vk_auth': [VKLoginFSearch, false, 'needs_vk_auth'],
 	init: function() {
 		this._super.apply(this, arguments);
@@ -158,7 +158,7 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 
 
 var LFMUserSuggest = function(params) {
-	
+
 
 	this.init();
 	var user = params.user;
@@ -206,7 +206,7 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 			pv.updateNesting(this, 'friends', e.value);
 			this.changeQuery('');
 			this.searchByQuery(this.state('query'));
-			
+
 
 		}, this.getContextOpts());
 
@@ -215,7 +215,7 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 				this.lfm_friends.preloadStart();
 				this.searchLFMFriends();
 			}
-			
+
 		});
 
 
@@ -258,11 +258,11 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 var LFMOneUserSuggest = function(params) {
 	this.init();
 	var user = params.user;
-//	
+//
 	this.app = params.app;
 	this.mo = params.mo;
 	this.row = params.row;
-	
+
 
 	this.userid = user.name;
 	this.text_title = this.userid;
@@ -282,7 +282,7 @@ invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
 		/*.done(function() {
 			_this.row.hide();
 		});*/
-		
+
 	}
 });
 
@@ -340,14 +340,14 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 								app: _this.app,
 
 								user: r.user
-								
+
 							});
-					
+
 						}
 						//r = r && parser(r, this.resItem, method);
 						_this.appendResults(result, true);
 
-						
+
 					})
 					.fail(function(){
 						if (!_this.doesNeed(q)){return;}
@@ -393,9 +393,9 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 			auth: this.app.lfm_auth,
 			pmd: this
 		};
-		
+
 	},
-	
+
 	searchf: function() {
 		var query = this.q;
 		var _this = this;
@@ -415,8 +415,8 @@ var SongActSharing = function(){};
 comd.BaseCRow.extendTo(SongActSharing, {
 	init: function(){
 
-		
-		
+
+
 		this._super.apply(this, arguments);
 		this.actionsrow = this.map_parent;
 		this.mo = this.map_parent.map_parent;
@@ -428,7 +428,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		this.search('');
 
 		//this.share_url = this.mo.getShareUrl();
-		
+
 	},
 	'nest-searcher': [StrusersRowSearch],
 	hndUpdateShareURL: function() {

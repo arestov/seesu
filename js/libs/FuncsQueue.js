@@ -16,7 +16,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 			if (!this.atom.complete){
 				this.atom.abort();
 			}
-			
+
 			this.q = null;
 			this.atom = null;
 			this.pr = null;
@@ -25,7 +25,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 			if (this.q){
 				this.pr = this.q.getTopPrio() + 1;
 			}
-			
+
 		},
 		removePr: function() {
 			this.pr = null;
@@ -56,7 +56,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 		};
 
 		this.fstack = new FuncsStack(selectNext, initAtom);
-		
+
 
 		if (small_delay) {
 			this.small_delay = small_delay;
@@ -125,7 +125,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 				time,
 				last_num = this.using_stat.length - 1,
 				bigdelay_turn = (!this.nobigdelay && last_num > 1  && (last_num  % this.big_delay_interval === 0));
-			
+
 			if (bigdelay_turn){
 				var real_bdinterval = Date.now() - this.using_stat[last_num - (this.big_delay_interval + 1)];
 				var _unit = (this.small_delay * this.big_delay_interval + this.big_delay);
@@ -146,11 +146,11 @@ define(['./FuncsStack'], function(FuncsStack) {
 					} else{
 						time = 0;
 					}
-					
+
 				}
-				
+
 			}
-				
+
 			return  time;
 		},
 		add: function(func, not_init){
@@ -165,12 +165,12 @@ define(['./FuncsStack'], function(FuncsStack) {
 				var atom = this;
 				func();
 				_this.using_stat.push(Date.now());
-				
+
 				atom.done(my_queue);
 			});
 
 			var _ob = my_queue[my_queue.length-1].qf;
-		
+
 			if (!not_init) {
 				this.init();
 			}
@@ -227,7 +227,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 			}
 
 			var vip = prior_el || preferred_by_default;
-			
+
 			if (vip){
 				vip.func();
 				return vip.func;

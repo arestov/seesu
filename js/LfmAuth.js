@@ -12,7 +12,7 @@ pv.Model.extendTo(LfmLogin, {
 		this._super.apply(this, arguments);
 
 		var _this = this;
-		this.auth = 
+		this.auth =
 			(params && params.auth) ||
 			(this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) ||
 			opts.auth ||
@@ -91,7 +91,7 @@ LfmLogin.extendTo(LfmScrobble, {
 		this.wch(su, 'settings-lfm-scrobbling', 'scrobbling');
 
 
-	
+
 		this.setRequestDesc(localize('lastfm-scrobble-access'));
 		pvUpdate(this, 'active', true);
 	},
@@ -122,7 +122,7 @@ var LfmAuth = pv.Model.extendTo(function LfmAuth() {}, {
 		pvUpdate(this, 'session', !!this.has_session);
 	},
 	requestAuth: function(p){
-		
+
 		this.authInit(p || {});
 		return;
 	},
@@ -141,7 +141,7 @@ var LfmAuth = pv.Model.extendTo(function LfmAuth() {}, {
 			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
 			link_tag += '?key=' + o.bridgekey;
 		}
-		
+
 		o.link += '&cb=' + encodeURIComponent(link_tag);
 		return o;
 	},
@@ -181,10 +181,10 @@ var LfmAuth = pv.Model.extendTo(function LfmAuth() {}, {
 		}
 	},
 	authInit: function(p){
-		
-		
+
+
 		//init_auth_data.bridgekey
-		
+
 		var init_auth_data = this.getInitAuthData();
 		if (init_auth_data.bridgekey){
 			this.setAuthBridgeKey(init_auth_data.bridgekey);
@@ -193,10 +193,10 @@ var LfmAuth = pv.Model.extendTo(function LfmAuth() {}, {
 			this.trigger('want-open-url', init_auth_data.link, init_auth_data);
 			this.waitData();
 		}
-			
-		
+
+
 		return;
-		
+
 	},
 	setToken: function(token){
 		this.newtoken = token;
@@ -218,18 +218,18 @@ var LfmAuth = pv.Model.extendTo(function LfmAuth() {}, {
 						_this.login(r,callback);
 						pvUpdate(_this, 'session', true);
 						_this.trigger("session");
-						
+
 						_this.has_session = true;
 						_this.trigger('api-full-ready');
 
 
-						
-						
+
+
 						console.log('lfm scrobble access granted');
 					} else{
 						console.log('error while granting lfm scrobble access');
 					}
-					
+
 				});
 		}
 	}

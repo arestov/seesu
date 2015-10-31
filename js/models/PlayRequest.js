@@ -126,7 +126,7 @@ pv.Model.extendTo(PlayRequest, {
 			pv.update(this, 'next_song', current_song);
 		} else {
 			var next_song = playRelative(current_song, current_song.map_parent.switchTo(current_song, true, true));
-			this.switchSong(next_song);			
+			this.switchSong(next_song);
 		}
 
 	},

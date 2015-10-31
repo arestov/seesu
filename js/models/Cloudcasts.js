@@ -108,7 +108,7 @@ LoadableList.extendTo(CloudcastsList, {
 
 var TrackCloudcastsNew = function() {};
 CloudcastsList.extendTo(TrackCloudcastsNew, {
-	tcl_type: 'new'	
+	tcl_type: 'new'
 });
 var TrackCloudcastsPopular = function() {};
 CloudcastsList.extendTo(TrackCloudcastsPopular, {

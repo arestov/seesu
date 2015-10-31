@@ -2,6 +2,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 	"use strict";
 	var localize = app_serv.localize;
 	var app_env = app_serv.app_env;
+	var escape = window.escape;
 
 	var ExternalTextedPlaylist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
 		this.result = this.header + '\n';
@@ -9,7 +10,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 			this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
 		}
 		this.data_uri = this.request_header + escape(this.result);
-		
+
 	};
 	ExternalTextedPlaylist.prototype = {
 		header : '#EXTM3U',
@@ -20,7 +21,6 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 
 
 	var PlARow = function(){};
-
 	comd.PartsSwitcher.extendTo(PlARow, {
 		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
 		init: function() {
@@ -47,11 +47,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		init: function(actionsrow){
 			this.actionsrow = actionsrow;
 			this._super();
-
-
 			this.wch(su, 'settings-dont-rept-pl', 'dont_rept_pl');
-
-
 		},
 		setDnRp: function(state) {
 			pv.update(this, 'dont_rept_pl', state);
@@ -59,9 +55,6 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		},
 		model_name: 'row-pl-settings'
 	});
-
-
-
 
 	var MultiAtcsRow = function(actionsrow){
 		this.init(actionsrow);
@@ -85,7 +78,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 
 	var SongsListBase = function() {};
 	pv.extendFromTo("SongsListBase", LoadableList, SongsListBase);
-	
+
 
 	var SongsList = function(){};
 	SongsListBase.extendTo(SongsList, {
@@ -122,10 +115,8 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 						mp3link: song.link
 					});
 				}
-					
-				
 			}
-			
+
 			if (simple_playlist.length){
 				this.current_external_playlist = new ExternalTextedPlaylist(simple_playlist);
 				//su.ui.els.export_playlist.attr('href', su.p.current_external_playlist.data_uri);
@@ -134,11 +125,11 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 						'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(this.current_external_playlist.result)
 					);
 				}
-					
+
 			}
 		}
 	});
-	
+
 
 
 var HypemPlaylist = function() {};

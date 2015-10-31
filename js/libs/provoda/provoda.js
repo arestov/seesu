@@ -142,7 +142,7 @@ pv = provoda = {
 		if (model.init_states) {
 			model.initStates();
 		}
-		
+
 		return model;
 	}
 };
@@ -151,7 +151,7 @@ provoda.Controller = provoda.View;
 provoda.Model.extendTo(provoda.HModel, {
 	network_data_as_states: true,
 	init: function(opts) {
-		
+
 		//opts = opts || {};
 		if (!this.app){
 			this.app = null;
@@ -161,7 +161,7 @@ provoda.Model.extendTo(provoda.HModel, {
 		if (!this.map_parent){
 			this.map_parent = null;
 		}
-		
+
 		this.pmd_switch = null;
 
 		if (!this.skip_map_init){
@@ -190,7 +190,7 @@ provoda.Model.extendTo(provoda.HModel, {
 
 		this._super.apply(this, arguments);
 	},
-	
+
 	_hndOnPMDSwitch: function(e) {
 		this.checkPMDSwiched(e.value);
 	},

@@ -37,7 +37,7 @@ var detectBrowser;
 
 		return { browser: match[1] || "", version: match[2] || "0" };
 	};
-	
+
 })(window);
 
 var xhr2_support = window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest());  //https://gist.github.com/1431660
@@ -52,9 +52,9 @@ var env = (function(wd){
 	};
 
 	var url = get_url_parameters(wd.location.search, true);
-	
+
 	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);
-	
+
 	env.xhr2 = !!xhr2_support;
 
 	if (typeof lg_smarttv_app != 'undefined' || (navigator.userAgent.search(/LG Browser/i) && (window.NetCastExit || window.NetCastBack))){
@@ -84,7 +84,7 @@ var env = (function(wd){
 				env.app_type = 'opera_widget';
 				env.deep_sanbdox = true;
 			}
-			
+
 		} else {
 			env.app_type = 'apple_db_widget';
 		}
@@ -92,7 +92,7 @@ var env = (function(wd){
 		env.as_application = true;
 
 	} else if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
-		
+
 		var opera = navigator.userAgent.indexOf('OPR') != -1;
 		if (wd.location.pathname == '/index.html'){
 			env.app_type = opera ? 'opera_app' : 'chrome_app';
@@ -104,9 +104,9 @@ var env = (function(wd){
 			env.app_type = opera ? 'opera_extension' : 'chrome_extension';
 			env.as_application = true;
 		}
-		
+
 	} else if (wd.location.protocol.match(/http/)){
-		
+
 		if (wd.parent != wd && url.access_token && url.user_id){
 			env.app_type = 'vkontakte';
 			env.check_resize = true;
@@ -114,12 +114,12 @@ var env = (function(wd){
 
 			env.need_favicon = true;
 			env.app_type = 'web_app';
-			
+
 		}
 
 		env.as_application = false;
 		env.needs_url_history = true;
-		
+
 	} else if (wd.pokki && wd.pokki.show){
 		env.safe_data = true;
 		env.app_type = 'pokki_app';
@@ -130,7 +130,7 @@ var env = (function(wd){
 		env.app_type = 'utorrent_app';
 		env.as_application = false;
 		env.deep_sanbdox = true;
-		
+
 	} else if (bro.browser == 'mozilla'){
 		env.app_type = 'firefox_widget';
 		env.as_application = true;
@@ -146,11 +146,11 @@ var env = (function(wd){
 			env.touch_support = true;
 		}
 	} catch(e){}
-	
-	
-	
+
+
+
 	//env.needs_url_history = false; //TEMP
-	
+
 	if (!env.app_type){
 		env.app_type = 'unknown_app_type' + (wd.navigator.userAgent && ': ' + wd.navigator.userAgent);
 		env.unknown_app_type = true;
@@ -158,14 +158,14 @@ var env = (function(wd){
 	} else{
 		env[env.app_type] = true;
 	}
-	
+
 
 	env.iframe_support = !env.utorrent_app && (!env.unknown_app_type || wd.location.protocol == 'file:');
 
 	var getLang = function() {
 		return (wd.navigator.language || wd.navigator.browserLanguage || 'en').slice(0,2).toLowerCase();
 	};
-	
+
 	if (env.vkontakte){
 		if (url.language === '0'){
 			env.lang = 'ru';
@@ -177,10 +177,10 @@ var env = (function(wd){
 	} else{
 		env.lang = getLang();
 	}
-	
-	
-	
-	
+
+
+
+
 	return env;
 })(window);
 
@@ -212,7 +212,7 @@ if (typeof widget != 'object'){
 					link_node.click();
 			};
 		}
-		
+
 	} else if (window.pokki && pokki.openURLInDefaultBrowser) {
 		openURL = function(){
 			return pokki.openURLInDefaultBrowser.apply(pokki, arguments);
@@ -226,7 +226,7 @@ if (typeof widget != 'object'){
 				function(){console.log("launch appControl succeeded");},
 				function(e){console.log("launch appControl failed. Reason: " + e && e.name);}
 			);
-			
+
 
 		};
 	} else {
@@ -263,7 +263,7 @@ if (typeof widget != 'object'){
 			return pokki.clearWebSheetCookies();
 		};
 	}
-	
+
 
 })();
 
@@ -272,11 +272,11 @@ if (typeof widget != 'object'){
 
 if (typeof console != 'object'){
 	var console = {};
-	
+
 	if  (window.navigator.userAgent.match(/Opera/)){
 		console.log = function(){
 				opera.postError.apply(opera, arguments);
-			
+
 		};
 	} else if ((typeof System != "undefined") && System.Debug) {
 		console.log = function(text){

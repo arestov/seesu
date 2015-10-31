@@ -56,7 +56,7 @@ var addClass = function(old_c, cl){
 	}
 	return new_c;
 };
- 
+
 var removeClass = function(old_c, add_c){
 	var re = new RegExp("(^|\\s)" + add_c + "(\\s|$)", "g");
 	return old_c.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
@@ -98,7 +98,7 @@ serv.handleDocument = function(d, tracking_opts) {
 
 	if (env.touch_support){dstates.addState('touch-screen');}
 	if (env.as_application){
-		
+
 		dstates.addState('as-application');
 		dstates.removeState('not-as-application');
 	} else{
@@ -110,7 +110,7 @@ serv.handleDocument = function(d, tracking_opts) {
 		} else {
 			dstates.addState(env.app_type.replace('_','-'));
 		}
-		
+
 
 	}
 	if (env.cross_domain_allowed) {dstates.addState('cross-domain-allowed');}
@@ -125,7 +125,7 @@ serv.handleDocument = function(d, tracking_opts) {
 		var current_dst = new NodeClassStates(d.documentElement, dstates.getFullState());
 		current_dst.applyStates();
 	});
-	
+
 
 	spv.domReady(d, function() {
 		if (!d.head){
@@ -170,7 +170,7 @@ serv.handleDocument = function(d, tracking_opts) {
 		for (i = 0; i < translatable.length; i++) {
 			var cur = translatable[i];
 			emptyNode(cur[0]).appendChild(d.createTextNode(cur[1]));
-			
+
 		}
 	});
 };
@@ -216,7 +216,7 @@ var loadImage = (function() {
 				if (node){
 					node.src = '';
 				}
-				
+
 				if (this.queued){
 					this.queued.abort();
 				}
@@ -278,7 +278,7 @@ var loadImage = (function() {
 				return;
 			}
 			accomplished = true;
-			
+
 			node.src = opts.url;
 			if (node.complete){
 				if (opts.cache_allowed){
@@ -302,7 +302,7 @@ var loadImage = (function() {
 		if (opts.queue && !loaded_images[opts.url]){
 			addImageLoadCallback(opts.url, imageLoadCallback);
 			async_obj.queued = opts.queue.add(accomplishLoad);
-			
+
 		} else {
 			accomplishLoad();
 		}
@@ -310,7 +310,7 @@ var loadImage = (function() {
 	};
 })();
 
-serv.loadImage = loadImage;	
+serv.loadImage = loadImage;
 
 return serv;
 });

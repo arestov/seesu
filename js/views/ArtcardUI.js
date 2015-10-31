@@ -189,7 +189,7 @@ pv.View.extendTo(ArtistInSongConstroller, {
 			if (!panorama || !artist_name || !images_combination || !pvm_key){
 				return;
 			}
-			
+
 			return this.getBoxDemensionKey('panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
 			//ширина лифта  зависит от артиста, комбинации загруженных картинок, высоты экрана + состояния mp-show
 
@@ -255,19 +255,19 @@ pv.View.extendTo(ArtistInSongConstroller, {
 					target.root_view.trackEvent('Panoramator', 'artist photos');
 				}
 			});
-			
+
 
 			//bindPanoramaResizeByWindow(img_panorama);
 			pv.update(target, 'panorama', true);
-			
+
 			var images_collection = [];
 
 			var updatePanorama = spv.debounce(function(){
 				images_collection.sort(sortByNum);
 				var images_combination = spv.filter(images_collection, 'num').join('_');
-				
+
 				target.nextLocalTick(target.updatePanoramaIMGs, [spv.filter(images_collection, 'item'), images_combination, target.img_panorama]);
-				
+
 			}, 100);
 
 			var appendImage = function(el, index) {

@@ -9,7 +9,7 @@ var contextRow = function(container){
 	};
 	this.arrow = container.children('.rc-arrow');
 	this.parts = {};
-	
+
 };
 contextRow.prototype = {
 	getC: function(){
@@ -23,7 +23,7 @@ contextRow.prototype = {
 				active: false
 			};
 		}
-		
+
 	},
 	C: function(name){
 		return this.parts[name] && this.parts[name].c;
@@ -36,28 +36,28 @@ contextRow.prototype = {
 				return this.parts[name].d[key];
 			}
 		}
-		
+
 	},
 	isActive: function(name){
 		return !!this.parts[name].active;
 	},
 	showPart: function(name, posFn){
-		
+
 
 		if (!this.parts[name].active){
 
 			this.hide(true);
-		
-		
+
+
 			this.parts[name].c.removeClass('hidden');
 			this.parts[name].active = true;
-			
-			
+
+
 			if (!this.m.active){
 				this.m.c.removeClass('hidden');
 				this.m.active = true;
 			}
-			
+
 		}
 		if (posFn){
 			//used for positioning
@@ -67,9 +67,9 @@ contextRow.prototype = {
 
 			//.removeClass('hidden');
 			this.arrow.css('left', ((pos.left + pos.owidth/2) - arrow_papos.left) + 'px');
-			
+
 		}
-		
+
 	},
 	hide: function(not_itself, skip_arrow){
 		if (!not_itself){
@@ -77,22 +77,22 @@ contextRow.prototype = {
 				this.m.c.addClass('hidden');
 				this.m.active = false;
 			}
-			
+
 		}
-		
+
 		for (var a in this.parts){
 			if (this.parts[a].active){
 				this.parts[a].c.addClass('hidden');
 				this.parts[a].active = false;
 			}
-			
+
 		}
 		if (!skip_arrow){
 			this.arrow.addClass('hidden');
 		}
-		
-		
-		
+
+
+
 	}
 };
 
@@ -151,8 +151,8 @@ pv.View.extendTo(VkLoginUI, {
 		this.c.find('.use-vk-code').click(function() {
 			var vk_t_raw = input.val();
 			_this.root_view.RPCLegacy('vkSessCode', vk_t_raw);
-			
-			
+
+
 		});
 		this.addWayPoint(input, {
 			canUse: function() {
@@ -166,7 +166,7 @@ pv.View.extendTo(VkLoginUI, {
 		var inpco = this.c.find('.js-input-code').click(function() {
 			_this.RPCLegacy('waitData');
 		});
-		
+
 		if (inpco[0]) {
 			this.addWayPoint(inpco);
 		}
@@ -238,8 +238,8 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		this.addWayPoint(this.nloveb.b);
 		this.nloveb.b.text(localize('addto-lfm-favs'));
 		this.c.append(wrap);
-		
-	
+
+
 	},
 	"stch-has_session": function(target, state) {
 		state = !!state;
@@ -261,7 +261,7 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 		this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
 		this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
 		var _this = this;
-		
+
 
 		this.chbx_enabl.click(function() {
 			_this.RPCLegacy('setScrobbling', true);
@@ -270,10 +270,10 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 			_this.RPCLegacy('setScrobbling', false);
 		});
 		this.addWayPoint(this.chbx_enabl, {
-			
+
 		});
 		this.addWayPoint(this.chbx_disabl, {
-			
+
 		});
 	},
 	"stch-has_session": function(target, state) {
@@ -311,7 +311,7 @@ pv.View.extendTo(ActionsRowUI, {
 		var current_button = this.getCurrentButton();
 		return current_button.offset();
 	},
-	
+
 	'compx-key-button_owidth': [
 		['#workarea_width', 'active_part'],
 		function(workarea_width, active_part) {

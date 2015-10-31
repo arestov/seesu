@@ -10,16 +10,16 @@ define(function(){
 			} else{
 				return value;
 			}
-			
+
 		};
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	var ram_storage = {};
-	
+
 	var store_get = function(){return false;};
 	var store_set = function(){return false;};
 	if ((typeof widget == 'object') && !widget.fake_widget && (typeof widget.setPreferenceForKey == 'function')) {
@@ -32,7 +32,7 @@ define(function(){
 	} else if (typeof localStorage == 'object') {
 		store_get = function(key){
 			return localStorage.getItem(key);
-			
+
 		};
 		store_set = function(key, value, important){
 			if (!important){return null;}
@@ -41,7 +41,7 @@ define(function(){
 			} catch(e){
 				return null;
 			}
-			
+
 		};
 	} else if ( (typeof System != "undefined") && System.Gadget && System.Gadget.Settings){
 		store_get = function(key){
@@ -55,7 +55,7 @@ define(function(){
 		var r_value = ram_storage[key];
 		if (typeof r_value != 'undefined'){
 			return r_value;
-			
+
 		} else{
 			return store_get(key);
 		}
@@ -64,12 +64,12 @@ define(function(){
 		ram_storage[key] = value;
 		return store_set(key, value, opts);
 	};
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	var w_storage = function(key, value, opts){
 		if (key){
 			if (typeof value == 'undefined'){
@@ -80,9 +80,9 @@ define(function(){
 		} else {
 			return false;
 		}
-		
+
 	};
-	
+
 	return w_storage;
 });
 

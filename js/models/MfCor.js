@@ -103,7 +103,7 @@ var MfComplect = function(opts, params) {
 			pv.updateNesting(this, 'moplas_list_end', part_end);
 		}
 	});
-	
+
 };
 
 pv.Model.extendTo(MfComplect, {
@@ -119,13 +119,13 @@ pv.Model.extendTo(MfComplect, {
 		pv.update(this, 'overstock', files_list.length > this.overstock_limit);
 		var sf;
 		for (var i = 0; i < files_list.length; i++) {
-		
+
 			sf =
 				this.mf_cor.getSFM(files_list[i]);
 			//	.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
 			pv.update(sf, 'overstock', i + 1 > this.overstock_limit);
 			moplas_list.push(sf);
-			
+
 		}
 		pv.updateNesting(this, 'moplas_list', moplas_list);
 		pv.update(this, 'list_length', moplas_list.length);
@@ -157,7 +157,7 @@ var sources_map = {
 var MfCor = function() {};
 LoadableList.extendTo(MfCor, {
 	// hndMoImportant: function(e) {
-			
+
 	// 	if (e.value){
 
 	// 		if (!this.getLength('yt_videos')){
@@ -176,7 +176,7 @@ LoadableList.extendTo(MfCor, {
 			}
 			pv.update(this, 'files_investg', this.files_investg);
 		}
-		
+
 	},
 	'compx-play': [
 		['@one:play:used_mopla']
@@ -222,7 +222,7 @@ LoadableList.extendTo(MfCor, {
 
 
 
-		
+
 		this.initNotifier();
 		if (omo.file){
 			this.file = omo.file;
@@ -241,7 +241,7 @@ LoadableList.extendTo(MfCor, {
 		} else {
 			//this.wch(this.mo, 'track', )
 			this.mo.on('vip_state_change-track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
-			
+
 		}
 		this.wlch(this.mo.mp3_search, 'tools_by_name');
 		this.on('child_change-sorted_completcs', function() {
@@ -286,13 +286,13 @@ LoadableList.extendTo(MfCor, {
 				pv.updateNesting(target, 'vk_auth', null);
 				vk_auth.die();
 			}
-			
+
 		}
 	},
 	'nest-vk_auth': [MFCorVkLogin, false, 'needs_vk_auth'],
 
 	getSFM: function(file) {
-		
+
 		if (!file.hasOwnProperty('file_id')){
 			file.file_id = ++file_id_counter;
 		}
@@ -300,7 +300,7 @@ LoadableList.extendTo(MfCor, {
 			this.sfs_models[ file.file_id ] = Mp3Search.getSFM(this, file);
 		}
 		return this.sfs_models[ file.file_id ];
-		
+
 
 	},
 	'compx-has_files': [
@@ -339,7 +339,7 @@ LoadableList.extendTo(MfCor, {
 						'default': url
 					};
 				}
-				// var url2 = 
+				// var url2 =
 			};
 			return function(r) {
 				var items = r && r.items;
@@ -372,7 +372,7 @@ LoadableList.extendTo(MfCor, {
 						maxResults: 3,
 						q: q
 					};
-					
+
 					return aReq({
 						url: 'https://www.googleapis.com/youtube/v3/search',
 						dataType: 'jsonp',
@@ -402,8 +402,8 @@ LoadableList.extendTo(MfCor, {
 				return !!(has_files || needs_vk_auth || fsrs || cant_play);
 			}
 		},
-		
-		
+
+
 		user_preferred: {
 			depends_on: ["selected_mopla_to_use", "almost_selected_mopla"],
 			fn: function(selected_mopla_to_use, almost_selected_mopla) {
@@ -416,7 +416,7 @@ LoadableList.extendTo(MfCor, {
 				return !!mopla;
 			}
 		],
-		
+
 		mopla_to_use: {
 			depends_on: ["user_preferred", "default_mopla"],
 			fn: function(user_preferred, default_mopla){
@@ -478,7 +478,7 @@ LoadableList.extendTo(MfCor, {
 		// 	}
 		// }
 		// "default_mopla": function(target, nmf, omf) {
-			
+
 		// }
 
 	},
@@ -513,7 +513,7 @@ LoadableList.extendTo(MfCor, {
 	'stch-$relation:investg_to_load-for-song_need': pv.getRDep('$relation:investg_to_load-for-song_need'),
 	'stch-$relation:file_to_load-for-player_song': pv.getRDep('$relation:file_to_load-for-player_song'),
 	'stch-$relation:file_to_load-for-preload_current_file': pv.getRDep('$relation:file_to_load-for-preload_current_file'),
-	
+
 	isSearchAllowed: function() {
 		return !this.file;
 	},
@@ -533,7 +533,7 @@ LoadableList.extendTo(MfCor, {
 	},
 	intMessages: function() {
 		this.player = this.mo.player;
-		
+
 		this.player
 			.on('core-fail', this.hndPCoreFail, this.getContextOpts())
 			.on('core-ready', this.hndPCoreReady, this.getContextOpts());
@@ -562,13 +562,13 @@ LoadableList.extendTo(MfCor, {
 		} else {
 			pv.update(this, 'want_more_songs', false);
 		}
-		
+
 	},
 	markMessagesReaded: function() {
 		this.sf_notf.markAsReaded('vk_audio_auth ');
 		//this.notifier.banMessage('vk_audio_auth ');
 	},
-	
+
 
 	/*hndNFSearch: function(search, name) {
 		if (name == 'vk'){
@@ -582,11 +582,11 @@ LoadableList.extendTo(MfCor, {
 
 		/*var _this = this;
 		if (this.mo.mp3_search){
-			
+
 			this.mo.mp3_search.on('new-search', this.hndNFSearch, this.getContextOpts());
 		}*/
 		this.sf_notf.on('read', this.hndNtfRead, this.getContextOpts());
-		
+
 	},
 	collapseExpanders: function() {
 		pv.update(this, 'want_more_songs', false);
@@ -603,7 +603,7 @@ LoadableList.extendTo(MfCor, {
 			this.sem  = sem;
 			sem.on('changed', this.semChange);
 		}
-		
+
 	},*/
 	addMFComplect: function(complect, name) {
 		this.complects[name] = complect;
@@ -626,7 +626,7 @@ LoadableList.extendTo(MfCor, {
 			});
 			this.addMFComplect(complect, source_name);
 			this.wch(f_investg_s, 'files-list', this.hndFilesListCh);
-			
+
 		//	many_files = many_files || complect.hasManyFiles();
 		}
 
@@ -656,8 +656,8 @@ LoadableList.extendTo(MfCor, {
 		}
 		this.wch(investg, 'search_ready_to_use', 'search_ready');
 		investg.on('child_change-sources_list', this.hndSourcesList, this.getContextOpts());
-		
-		
+
+
 
 	},
 	/*
@@ -682,8 +682,8 @@ LoadableList.extendTo(MfCor, {
 					sem_part: songs_packs[i]
 				});
 				this.addMFComplect(complect, cp_name);
-				
-				
+
+
 				many_files = many_files || complect.hasManyFiles();
 			}
 			sorted_completcs.push(this.complects[cp_name]);
@@ -766,14 +766,14 @@ LoadableList.extendTo(MfCor, {
 		} else {
 			this.play();
 		}
-		
+
 	},
 	pause: function(){
 		var cmf = this.state('current_mopla');
 		if (cmf){
 			cmf.pause();
 		}
-		
+
 	},
 	selectMopla: function(mopla) {
 		this.updateManyStates({
@@ -812,7 +812,7 @@ LoadableList.extendTo(MfCor, {
 				mopla.play();
 			}
 		}
-		
+
 	},
 	raw: function(){
 		return !!this.omo && !!this.omo.raw;
@@ -853,14 +853,14 @@ LoadableList.extendTo(MfCor, {
 				if (complect){
 					all_files = all_files.concat(complect.getFiles(type));
 				}
-				
+
 			} else {
 				var sources_list = this.getNesting('sorted_completcs');
 				for (var i = 0; i < sources_list.length; i++) {
 					all_files = all_files.concat(sources_list[i].getFiles(type));
 				}
 				this.mo.mp3_search.sortMusicFilesArray(all_files, this.files_investg.msq);
-				
+
 
 
 			}

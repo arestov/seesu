@@ -6,9 +6,9 @@ var create_jsonp_callback;
 	create_jsonp_callback = function(func){
 		var func_name = 'jspc_' + (++jsonp_counter);
 		window[func_name] = func;
-		
-		
-		
+
+
+
 		return func_name;
 	};
 })();
@@ -49,12 +49,12 @@ var aReq = function(options){
 				abort: function(){
 					this.aborted = true;
 					cancelLoad();
-					
+
 
 				}
 			};
 		deferred.promise( complex_response );
-		
+
 		var timeout = options.timeout || ($.ajaxSettings && $.ajaxSettings.timeout);
 		if (timeout){
 			script_load_timeout = setTimeout(function() {
@@ -72,8 +72,8 @@ var aReq = function(options){
 				if (script_load_timeout){
 					clearTimeout(script_load_timeout);
 				}
-				
-				
+
+
 				deferred.resolve(r);
 			});
 			params[callback_param_name] = callback_func_name;
@@ -83,18 +83,18 @@ var aReq = function(options){
 		var params_url = $.param(params);
 		var full_url = (options.url || "") + (params_url ? "?" + params_url : "");
 
-		
 
-		
+
+
 		var done;
 		var loadScript = function(){
 			script = document.createElement("script");
 			script.async = true;
 			script.onload = function(){
 				//document.documentElement.firstChild.removeChild(script);
-				
 
-				
+
+
 			};
 			script.onerror = function(){
 				deferred.reject();
@@ -120,7 +120,7 @@ var aReq = function(options){
 			};
 
 			img.src = full_url;
-			
+
 			if (img.complete){
 				setTimeout(completeImage,0);
 			} else {
@@ -130,11 +130,11 @@ var aReq = function(options){
 		} else {
 			loadScript();
 		}
-			
-		
-		
+
+
+
 		return complex_response;
-		
+
 	}
 };
 return aReq;

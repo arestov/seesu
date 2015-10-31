@@ -34,7 +34,7 @@ spv.Class.extendTo(vkCoreApi, {
 	cache_namespace: "vk_api",
 	send: function(method, params, options){ //nocache, after_ajax, cache_key, only_cache
 		var _this = this;
-		
+
 		if (method) {
 			options = options || {};
 			params = params || {};
@@ -81,7 +81,7 @@ spv.Class.extendTo(vkCoreApi, {
 			});
 
 			return wrap_def.complex;
-			
+
 		}
 
 	}
@@ -130,7 +130,7 @@ VkSearch.prototype = {
 		var music_list = [];
 		for (var i=1, l = r.length; i < l; i++) {
 			var entity = this.makeSong(r[i], msq);
-			
+
 			if (entity){
 
 				if (!entity.link.match(/audio\/.mp3$/) && !Mp3Search.hasMusicCopy( music_list, entity)){
@@ -138,7 +138,7 @@ VkSearch.prototype = {
 				}
 			}
 		}
-		
+
 		return music_list;
 	},
 	findAudio: function(msq, opts) {
@@ -189,7 +189,7 @@ VkSearch.prototype = {
 		if (async_ans.cache_used){
 			complex_response.cache_used = async_ans.cache_used;
 		}
-		
+
 		return complex_response;
 	}
 };
@@ -206,7 +206,7 @@ var VkApi = function(vk_t, params) {
 	if (vk_t) {
 		this.setAccessToken(vk_t.access_token);
 	}
-	
+
 
 	if (p.queue){
 		this.queue = p.queue;

@@ -29,7 +29,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			obj.onNavUrlChange = null;
 
 
-			
+
 			obj.levels = [];
 			if (!maleres){
 				throw new Error('give me 0 index level (start screen)');
@@ -52,7 +52,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			if (!soft_allowed){
 				throw new Error('already grouping');
 			}
-			
+
 		} else {
 			this.changes_group = {
 				name: group_name,
@@ -103,11 +103,11 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			if (!soft_allowed){
 				throw new Error('already collecting');
 			}
-			
+
 		} else {
 			this.collecting_changes = opts || {};
 			return true;
-			
+
 		}
 	},
 	finishChangesCollecting: function() {
@@ -137,7 +137,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 					prev = cur;
 				}
 			}
-			
+
 			cur = this.chans_coll[i];
 			if (prev && cur.name == prev.name){
 				prev.changes = prev.changes.concat(cur.changes);
@@ -164,12 +164,12 @@ var BrowseMap = spv.inh(pv.Eventor, {
 
 			for (var jj = 0; jj < move_view_changes.length; jj++) {
 				var cur = move_view_changes[jj];
-				if (jj == move_view_changes.length -1){					
+				if (jj == move_view_changes.length -1){
 					this.updateNav(cur.bwlev.getMD(), opts);
 				}
 			}
 
-			
+
 
 			var bwlev = this.getCurrentLevel();
 
@@ -181,7 +181,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			this.chans_coll.changes_number = ++this.cha_counter;
 
 		}
-		
+
 	},
 	makeMainLevel: function(){
 		this.startChangesGrouping('zoom-in');
@@ -224,7 +224,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 		// }
 
 		var parent_md = md.map_parent;
-		
+
 		var target_lev;
 		// if (md.lev && md.lev.canUse()){
 		// 	// есть ли на карте уровень для этой модели, который можно использовать повторно
@@ -256,7 +256,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			this.finishChangesGrouping('zoom-in');
 		}
 		return target_lev;
-		
+
 	},
 	// goDeeper: function(md, parent_bwlev, bwlev){
 	// 	return this._goDeeper(md, parent_bwlev, bwlev);
@@ -275,7 +275,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 		if (levcon.free && levcon.free != levcon.freezed){
 			return levcon.free;
 		} else{
-			
+
 			levcon.free = this.createLevel(num, parent_bwlev, resident);
 			return levcon.free;
 		}
@@ -307,7 +307,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			}
 		}
 
-		
+
 		//clearing if have too much levels !?!?!??!?!?!
 		if (l + 1 < this.levels.length -1) {
 			for (i= l + 1; i < this.levels.length; i++) {
@@ -317,7 +317,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 					ba_die( curd.freezed );
 					curd.freezed = null;
 				}
-				
+
 			}
 		}
 		this.finishChangesGrouping('freezing');
@@ -336,9 +336,9 @@ var BrowseMap = spv.inh(pv.Eventor, {
 					ba_hide(lev.freezed);
 				}
 			}
-			
+
 			this.hideFreeLevel(lev, exept);
-			
+
 		}
 	},
 	updateNav: (function(){
@@ -355,7 +355,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 			stackNav(bwlev, false);
 
 			var prev = lvls[1];
-			// lvls[0] is bwlev, 
+			// lvls[0] is bwlev,
 			// lvls[1] is bwlev.map_parent;
 			if (prev && prev != root){
 				// this is top of stack, but only if we have "stack";
@@ -523,7 +523,7 @@ var BrowseMap = spv.inh(pv.Eventor, {
 				url += joinSubtree(groups[i]);
 
 				//url.push(url_part);
-				
+
 			}
 
 			return url;
@@ -575,21 +575,21 @@ var BrowseMap = spv.inh(pv.Eventor, {
 		if (current_num != -1){
 			for (var i = current_num; i >= 0; i--) {
 				this.hideLevel(this.levels[i]);
-				
+
 			}
 		}
 	},
 	startNewBrowse: function(){
 
 		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
-		
+
 		this.clearCurrent();
 		this.setLevelPartActive(this.getLevel(-1));
 		if (just_started_zoomout){
 			this.finishChangesGrouping('zoom-out');
 		}
 	}
-	
+
 }});
 
 // BrowseMap
@@ -607,7 +607,7 @@ var isBigStep = function(cur, cur_child) {
 var getNavGroups = function(bwlev) {
 	var cur_group = [];
 	var groups = [cur_group];
-	
+
 	var cur = bwlev;
 	var cur_child = cur.getNesting('pioneer');
 	while (cur) {
@@ -694,11 +694,11 @@ var getLimitedParent = function(parent_bwlev, end_md){
 
 	// var cut = false;
 
-	
+
 	var groups_count = countGroups(parent_bwlev);
 	var all_groups_count = groups_count + (pre_group ? 1 : 0);
 
-	
+
 	var similar_model_edge = getEdgeSimilarModelPos(parent_bwlev, end_md.model_name, 3);
 
 	if (all_groups_count > 3 || similar_model_edge != -1) {
@@ -984,7 +984,7 @@ pv.Model.extendTo(BrowseLevel, {
 		}
 		// md.requestPage();
 		followFromTo(this.map, this, md);
-	
+
 	},
 	'stch-mpl_attached': function(target, state) {
 		var md = target.getNesting('pioneer');
@@ -1016,7 +1016,7 @@ var getBWlev = function(md, parent_bwlev, map_level_num){
 		if (cache) {
 			cache[key] = bwlev;
 		}
-		
+
 	} else {
 		bwlev = cache[key];
 	}
@@ -1063,7 +1063,7 @@ BrowseMap.showInterest = function(map, interest) {
 			parent_bwlev = map._goDeeper(md, parent_bwlev);
 			distance--;
 		}
-		
+
 
 	}
 
@@ -1183,8 +1183,8 @@ var getSPOpts = function(md, sp_name) {
 
 var getInitData = function(md, common_opts) {
 	var pre_instance_data = {};
-				
-	
+
+
 	var params_from_parent = md.data_by_hp === true ? md.head_props : md.sub_pa_params;
 
 	var data_parts = [
@@ -1226,16 +1226,16 @@ var getNestingConstr = function(app, md, nesting_name) {
 					} else {
 						result.push( index[prop] );
 					}
-					
+
 				}
 				target.constrs_array = result;
 			}
-			
+
 			return target.constrs_array;
 		} else {
 			return target;
 		}
-		
+
 	} else if (md[ 'nest_posb-' + nesting_name ]) {
 		return md[ 'nest_posb-' + nesting_name ];
 	} else if (md[ 'nest-' + nesting_name]) {
@@ -1252,11 +1252,11 @@ var getNestingConstr = function(app, md, nesting_name) {
 		} else {
 			return getDeclrConstr(app, md, items);
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 };
 BrowseMap.getNestingConstr = getNestingConstr;
 
@@ -1271,14 +1271,14 @@ var getModelSources = function(app, md, cur) {
 	}
 
 	unfolded_states = spv.collapseAll.apply(null, unfolded_states);
-	
+
 	for (i = 0; i < unfolded_states.length; i++) {
 		var state_name = unfolded_states[i];
 		var arr = md.getStateSources(state_name, app);
 		if (arr) {
 			states_sources.push(arr);
 		}
-		
+
 
 	}
 	states_sources = spv.collapseAll.apply(null, states_sources);
@@ -1309,7 +1309,7 @@ var getModelSources = function(app, md, cur) {
 	for (nesting_name in cur.m_children.children) {
 		var items = getNestingConstr(app, md, nesting_name);
 		for (var space_name in cur.m_children.children[nesting_name]) {
-			
+
 			var constr_sources;
 			if (!items) {
 				continue;
@@ -1330,7 +1330,7 @@ var getModelSources = function(app, md, cur) {
 				all_nest_sources = all_nest_sources.concat(constr_sources);
 			}
 		}
-		
+
 	}
 
 
@@ -1382,7 +1382,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 				}
 			}
 		}
-		
+
 		this._super.apply(this, arguments);
 
 		this.lists_list = null;
@@ -1390,7 +1390,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 		this.head_props = this.head_props || null;
 
 		/*
-			результат работы этого кода - это 
+			результат работы этого кода - это
 			1) установленное значение head_props
 			2) состояния url_part и nav_title
 			3) установленное значение sub_pa_params
@@ -1410,7 +1410,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 			if (this.head_props) {
 				console.log('already has head_props');
 			} else if (this.hp_bound) {
-				
+
 				var complex_obj = {
 					'--data--': null
 				};
@@ -1432,8 +1432,8 @@ pv.HModel.extendTo(BrowseMap.Model, {
 			this.sub_pa_params = this.data_by_hp(data);
 		}
 
-		
-		
+
+
 		if (this.allow_data_init) {
 			this.updateManyStates(data);
 		}
@@ -1473,7 +1473,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 				data_by_hp
 
 				берем данные из родителя
-				накладываем стандартные данные 
+				накладываем стандартные данные
 				накладываем данные из урла
 				*/
 				var Constr = target.constr;
@@ -1511,8 +1511,8 @@ pv.HModel.extendTo(BrowseMap.Model, {
 				});
 			}
 		}
-		
-		
+
+
 		return instance;
 	},
 	preloadNestings: function(array) {
@@ -1522,7 +1522,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 			if (md) {
 				md.preloadStart();
 			}
-			
+
 		}
 	},
 	requestPage: function() {

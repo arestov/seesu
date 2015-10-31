@@ -4,7 +4,7 @@ var cache_ajax = {
 		storage: {},
 		get: function(prefix, hash_key, callback){
 			var _this= this;
-			
+
 			var cached_response = (cached_response = _this.storage['c_' + prefix + '_' + hash_key]) && cached_response.v;
 			if (cached_response) {
 

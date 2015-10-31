@@ -49,7 +49,7 @@ ProspApi.prototype = {
 					if (opts.dataType == 'json'){
 						opts.headers = null;
 					}
-					
+
 				},
 				context: options.context
 			}, {
@@ -119,7 +119,7 @@ ProspMusicSearch.prototype = {
 			}
 		}
 
-		
+
 
 		return cursor;
 	},
@@ -160,7 +160,7 @@ ProspMusicSearch.prototype = {
 						music_list.push(item);
 					}
 
-					
+
 
 					result = music_list;
 				}

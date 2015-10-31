@@ -86,7 +86,7 @@ comd.BaseCRow.extendTo(SongActPlaylisting, {
 			searcher.changeQuery(q);
 		}
 
-		
+
 		this.checkFullMatch();
 
 	},

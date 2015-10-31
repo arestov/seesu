@@ -3,7 +3,7 @@ define(['jquery'], function($) {
 return function(request_params, options, complex_response){
 	complex_response = complex_response || {};
 	var deferred = $.Deferred();
-	
+
 	complex_response.abort = function(){
 		this.aborted = true;
 		deferred.reject('abort');
@@ -60,14 +60,14 @@ return function(request_params, options, complex_response){
 				if (!error) {
 					options.cache_ajax.set(options.cache_namespace, options.cache_key, r, options.cache_timeout);
 				}
-				
+
 			}
 		};
 		var sendRequest = function(){
 			if (complex_response.aborted){
 				return;
 			}
-			
+
 			if (!options.manualSend){
 				var cache_used;
 				if (!options.nocache){
@@ -93,7 +93,7 @@ return function(request_params, options, complex_response){
 					if (deferred.notify){
 						deferred.notify('just-requested');
 					}
-				
+
 					//console.log(params)
 				}
 
@@ -102,7 +102,7 @@ return function(request_params, options, complex_response){
 					deferred.resolve(r);
 				});
 			}
-			
+
 		};
 
 		if (options.queue){

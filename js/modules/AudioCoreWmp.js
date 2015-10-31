@@ -31,7 +31,7 @@ define(['spv', 'jquery'], function(spv, $) {
 			6: 'next',
 			7: 'prev',
 			8: 'closed'
-				
+
 		};
 
 	var createAE = function(id, url, cb) {
@@ -56,7 +56,7 @@ define(['spv', 'jquery'], function(spv, $) {
 		a.attachEvent('ReadyStateChange', function(e){
 			console.log('ReadyStateChange: ' + r_states[e]);
 		//	if (_this.current_song != aud){console.log('wrong event');return false}
-			
+
 			/*
 			if (r_states[e] == 'enough' || r_states[e] == 'complete'){
 				aud.enough = true;
@@ -70,32 +70,32 @@ define(['spv', 'jquery'], function(spv, $) {
 
 			}
 		});
-		
+
 		a.attachEvent('Error', function(e){
 			cb('error', id);
 			console.log(e);
 			//if (_this.current_song != aud){console.log('wrong event');return false}
-			
-			
+
+
 		});
-		
-		
+
+
 		a.attachEvent('EndOfStream', function(){
 			cb('finish', id);
 			console.log('EndOfStream');
 			//if (_this.current_song != aud){console.log('wrong event');return false}
-			
-			
+
+
 			//_this.wmp_p_events.finished(_this);
-			
-			
+
+
 		});
 		a.attachEvent('PlayStateChange', function(old_s, new_s){
 			var pstate = p_states[new_s];
-			
+
 			console.log('StateChange: ' + pstate);
 			//if (_this.current_song != aud){console.log('wrong event');return false}
-			
+
 			if (p_states[old_s] == 'waiting'){
 				/*
 				aud.canplay = true;
@@ -104,8 +104,8 @@ define(['spv', 'jquery'], function(spv, $) {
 				}
 				*/
 			}
-			
-			
+
+
 			if (pstate == 'stopped'){
 				cb('stop', id);
 				//_this.wmp_p_events.stopped(_this);
@@ -125,15 +125,15 @@ define(['spv', 'jquery'], function(spv, $) {
 				}
 			}
 		});
-			
+
 		//var bf;
 		a.attachEvent('Buffering', function(buffering_started){
 			cb('buffering', id, buffering_started);
 			/*
 			console.log('Buffering: ' + a.BufferingProgress)
 			//if (_this.current_song != aud){console.log('wrong event');return false}
-			
-			
+
+
 			if (buffering_started){
 				clearTimeout(bf);
 				bf = setInterval(function(){
@@ -147,10 +147,10 @@ define(['spv', 'jquery'], function(spv, $) {
 				clearTimeout(bf);
 			}*/
 		});
-		
-	
-	
-		
+
+
+
+
 
 		/*
 		spv.addEvent(a, 'play', function(){
@@ -197,7 +197,7 @@ define(['spv', 'jquery'], function(spv, $) {
 		this.id = opts.id;
 		this.cb = cb;
 		//this.requireAE();
-		
+
 	};
 	WmpSound.prototype = {
 		requireAE: function() {

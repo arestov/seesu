@@ -39,7 +39,7 @@ define(['pv', 'spv'], function(pv, spv){
 					packsearch: from_collection,
 					last_in_collection: i == mdpl.getMainlist().length-1
 				});
-			
+
 		}
 		return mdpl;
 	};
@@ -60,7 +60,7 @@ define(['pv', 'spv'], function(pv, spv){
 		if (v_song && !v_song.hasNextSong()) {
 			checkNeighboursChanges(target, v_song, false, false);
 		}
-		
+
 		if (p_song && v_song != p_song && !p_song.hasNextSong()){
 			checkNeighboursChanges(target, p_song, false, false);
 		}
@@ -77,7 +77,7 @@ define(['pv', 'spv'], function(pv, spv){
 			markTracksForFilesPrefinding(this);
 			this.makePlayable();
 			this.nextTick(hndTickListChanges, [this, e.last_usable_song]);
-			
+
 		}
 	};
 	var getFindSomeFunc = function(check) {
@@ -104,7 +104,7 @@ define(['pv', 'spv'], function(pv, spv){
 	});
 
 	var checkNeighboursStatesCh = function(md, target_song) {
-		
+
 		var v_song = getViewingSong(md, target_song);
 		var p_song = getPlayerSong(md, target_song);
 		var w_song = getWantedSong(md, target_song);
@@ -117,7 +117,7 @@ define(['pv', 'spv'], function(pv, spv){
 		if (w_song && w_song != p_song && w_song != v_song){
 			checkNeighboursChanges(md, w_song, target_song);
 		}
-		
+
 	};
 
 	var findImportantSongs = (function() {
@@ -144,7 +144,7 @@ define(['pv', 'spv'], function(pv, spv){
 	var setWaitingNextSong = function(mdpl, mo) {
 		mdpl.waiting_next = mo;
 		mdpl.player.setWaitingPlaylist(mdpl);
-		
+
 	};
 
 	var getNeighbours = function(mdpl, mo, neitypes){
@@ -159,7 +159,7 @@ define(['pv', 'spv'], function(pv, spv){
 		var c_num = mdpl.getMainlist().indexOf(mo);
 
 		if (!neitypes || neitypes.prev_song){
-			//ищем пред. композицию если нет ограничений 
+			//ищем пред. композицию если нет ограничений
 			//или ограничения не касаются пред. композиции
 			for (i = c_num - 1; i >= 0; i--) {
 				if (mdpl.getMainlist()[i].canUseAsNeighbour()){
@@ -172,7 +172,7 @@ define(['pv', 'spv'], function(pv, spv){
 		var shuffle = mdpl.state('pl-shuffle');
 
 		if (!neitypes || neitypes.next_song){
-			//ищем след. композицию если нет ограничений 
+			//ищем след. композицию если нет ограничений
 			//или ограничения не касаются след. композиции
 
 			for (i = c_num + 1; i < mdpl.getMainlist().length; i++) {
@@ -232,7 +232,7 @@ define(['pv', 'spv'], function(pv, spv){
 		var neighbours_changes;
 		var changed_song_roles;
 
-		
+
 		if (changed_song){
 			/*
 			если знаем состояние какой именно композиции изменилось ("changed_song"),
@@ -259,7 +259,7 @@ define(['pv', 'spv'], function(pv, spv){
 				if (changed_song.canUseAsNeighbour()){
 					neighbours_changes = getNeighbours(this, target_song);
 				}
-				
+
 			}
 		} else {
 			/*
@@ -288,7 +288,7 @@ define(['pv', 'spv'], function(pv, spv){
 			spv.cloneObj(original_clone, neighbours_changes);
 		}
 
-		
+
 
 
 		return spv.getDiffObj(o_ste, original_clone);
@@ -304,14 +304,14 @@ define(['pv', 'spv'], function(pv, spv){
 
 
 	};
-		
+
 
 	var checkNeighboursChanges = function(md, target_song, changed_neighbour, viewing) {
 		var changes = getNeighboursChanges.call(md, target_song, changed_neighbour);
 		//console.log("changes");
 		//console.log(); isImportant
 		applySongRolesChanges(target_song, changes);
-		
+
 
 
 		viewing = viewing || !!target_song.state("mp_show");
@@ -350,13 +350,13 @@ define(['pv', 'spv'], function(pv, spv){
 			if (cur.canUseAsNeighbour()){
 				return cur;
 			}
-			
+
 		}
 	};
 
 
 	var getWantedSong= function(mdpl, exept) {
-		
+
 		//return spv.filter(mdpl.getMainlist(), 'states.want_to_play', function(v) {return !!v;})[0];
 		return mdpl.idx_wplay_song != exept && mdpl.idx_wplay_song;
 	};
@@ -368,10 +368,10 @@ define(['pv', 'spv'], function(pv, spv){
 		//var song = spv.filter(mdpl.getMainlist(), "states.player_song", true)[0];
 		return mdpl.idx_player_song != exept && mdpl.idx_player_song;
 	};
-		
-		
 
-		
+
+
+
 
 	add({
 		model_name: "playlist",
@@ -425,7 +425,7 @@ define(['pv', 'spv'], function(pv, spv){
 				if (array) {
 					for (var i = 0; i < array.length; i++) {
 						checkImportant(target, array[i]);
-						
+
 					}
 				}
 			} else if (source.item.isImportant()) {
@@ -443,12 +443,12 @@ define(['pv', 'spv'], function(pv, spv){
 					target.idx_show_song = null;
 				}
 			}
-			
+
 			target.checkShowedNeighboursMarks();
 		},
 		bindStaCons: function() {
 			this._super();
-			this.on('child_change-' + this.main_list_name, hndChangedPlaylist);			
+			this.on('child_change-' + this.main_list_name, hndChangedPlaylist);
 			this.on('child_change-' + 'vis_neig_prev', hndNeighboursRemarks);
 			this.on('child_change-' + 'vis_neig_next', hndNeighboursRemarks);
 		},
@@ -461,7 +461,7 @@ define(['pv', 'spv'], function(pv, spv){
 
 			this.vis_neig_next = null;
 			this.vis_neig_prev= null;
-			
+
 			this.app = opts.app;
 			this.player = this.app.p;
 			this.mp3_search = this.app.mp3_search;
@@ -512,7 +512,7 @@ define(['pv', 'spv'], function(pv, spv){
 			for (var i=0; i < list.length; i++) {
 				npl[i] = list[i].simplify();
 			}
-			
+
 			return spv.cloneObj({
 				length: npl.length,
 				playlist_title: this.state('nav_title') || ''
@@ -559,7 +559,7 @@ define(['pv', 'spv'], function(pv, spv){
 		},
 		setWaitingNextSong: setWaitingNextSong,
 		switchTo: function(mo, direction) {
-	
+
 			var playlist = [];
 			for (var i=0; i < this.getMainlist().length; i++) {
 				var ts = this.getMainlist()[i].canPlay();
@@ -569,7 +569,7 @@ define(['pv', 'spv'], function(pv, spv){
 			}
 			var current_number  = playlist.indexOf(mo),
 				total			= playlist.length || 0;
-				
+
 			if (playlist.length > 1) {
 				var s = false;
 				if (direction) {
@@ -591,7 +591,7 @@ define(['pv', 'spv'], function(pv, spv){
 								// setWaitingNextSong(this, mo);
 							}
 						}
-						
+
 					} else if (this.state('can_load_more')){
 						return true;
 						// setWaitingNextSong(this, mo);
@@ -601,13 +601,13 @@ define(['pv', 'spv'], function(pv, spv){
 							if (can_repeat){
 								s = playlist[0];
 							}
-							
+
 						} else {
 							s = playlist[current_number+1];
 						}
 					}
 
-					
+
 				} else {
 					if ( current_number === 0 ) {
 						s = playlist[total-1];
@@ -623,13 +623,13 @@ define(['pv', 'spv'], function(pv, spv){
 				return playlist[0];
 				// playlist[0].play();
 			}
-		
+
 		},
 
-		
+
 		checkNavRequestsPriority: function() {
 			var i;
-			
+
 			var demonstration = [];
 
 			var waiting_next = this.waiting_next;
@@ -697,7 +697,7 @@ define(['pv', 'spv'], function(pv, spv){
 
 	});
 	}));
-	
-	
+
+
 return {};
 });

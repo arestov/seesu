@@ -269,7 +269,7 @@ LoadableList.TagsList.extendTo(TagsList, {
 					name: el
 				};
 			}));
-			
+
 		}
 
 	},
@@ -299,12 +299,12 @@ LoadableList.TagsList.extendTo(TagsList, {
 				states: {
 					nav_title: localize('Tag') + ' ' + page_name,
 					url_part: '/' + page_name
-				}, 
+				},
 				head: {
 					tag_name: page_name
 				}
-				
-				
+
+
 			}];
 		}
 		return this.sub_pages[page_name];

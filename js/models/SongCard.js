@@ -81,7 +81,7 @@ SongsList.extendTo(VKPostSongs, {
 
 			//дата публикации
 
-			
+
 	},
 	'compx-date_desc': [
 		['date'],
@@ -130,7 +130,7 @@ LoadableListBase.extendTo(VKPostsList, {
 				if (!cur) {
 					continue;
 				}
-				
+
 				result.push(cur.photo_medium_rec || cur.photo_50);
 			}
 
@@ -140,7 +140,7 @@ LoadableListBase.extendTo(VKPostsList, {
 	model_name: 'vk_posts',
 
 	//splitItemData: ,
-	
+
 	'nest_rqc-lists_list': VKPostSongs,
 
 	'nest_rq_split-lists_list': function(data, source_name) {
@@ -179,10 +179,10 @@ LoadableListBase.extendTo(VKPostsList, {
 							var photos = [];
 							for (var i = 0; i < array.length; i++) {
 								var cur = array[i];
-				
+
 								if (cur.type == 'photo') {
 									photos.push(cur.photo);
-									
+
 								}
 							}
 							return photos;
@@ -194,13 +194,13 @@ LoadableListBase.extendTo(VKPostsList, {
 							return;
 						}
 						var songs = [];
-						
+
 						for (var i = 0; i < array.length; i++) {
 							var cur = array[i];
 							if (cur.type == 'audio') {
 								songs.push(parseVKPostSong(cur.audio));
 							}
-					
+
 						}
 						return {
 							songs: songs
@@ -308,7 +308,7 @@ LoadableListBase.extendTo(SongCard, {
 					arr[i] = info;
 				}
 				return arr;
-				
+
 			}]
 		]],
 		['s', 'api', function() {

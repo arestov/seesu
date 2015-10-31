@@ -21,7 +21,7 @@ createPrototype(muansPack, new pv.Eventor(), {
 					return true;
 				}
 			}
-		}	
+		}
 	}
 });
 
@@ -38,7 +38,7 @@ createPrototype(muAns, new pv.Eventor(), {
 		this.progress = !!state;
 	},
 	isBusy: function() {
-		return this.progress	
+		return this.progress
 	},
 	reject: function(non_fixable, only_others) {
 		this.error = true;
@@ -108,7 +108,7 @@ var FileInTorrent = function(query, torrent_link){
 /*
 <div id="cse" style="width: 100%;">Loading</div>
 <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript"> 
+<script type="text/javascript">
   google.load('search', '1', {language : 'en', style : google.loader.themes.V2_DEFAULT});
   google.setOnLoadCallback(function() {
     var customSearchOptions = {};  var customSearchControl = new google.search.CustomSearchControl(
@@ -119,7 +119,7 @@ var FileInTorrent = function(query, torrent_link){
 </script>
 
 001069742470440223270:3zaccy_n32i
-      
+
 */
 //Star Slinger  Elizabeth Fraser ".mp3" -inurl:(htm|html|php) intitle:("index of")
 //"Hudson Mohawke" "All Your Love" -inurl:(htm|html|php) intitle:"index of" "last modified" "parent directory" description size mp3
@@ -136,7 +136,7 @@ var findTorrentMP3Song = function(data) {
 		},
 		success: function(r){
 			console.log(r);
-			
+
 		}
 	});
 };

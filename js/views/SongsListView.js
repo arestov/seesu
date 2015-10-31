@@ -68,11 +68,11 @@ function(pv, $, SongUI, etc_views, coct) {
 			player_song
 			marked_as
 			vmp_show
-			
+
 
 
 			*/
-			
+
 		}
 	});
 	var SongsListView = function(){};

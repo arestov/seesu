@@ -118,7 +118,7 @@ domReady = spv.domReady = function(d, callback){
 
 doesContain = spv.doesContain = function(target, valueOf){
 	var cached_t_value = valueOf ? valueOf.call(target) : (target.valueOf());
-	
+
 	for (var i=0; i < this.length; i++) {
 		if (valueOf){
 			if (valueOf.call(this[i]) == cached_t_value){
@@ -129,8 +129,8 @@ doesContain = spv.doesContain = function(target, valueOf){
 				return i;
 			}
 		}
-		
-		
+
+
 	}
 	return -1;
 };
@@ -294,7 +294,7 @@ spv.escapeRegExp = function(str, clean) {
 
 getStringPattern = function (str) {
 	if (str.replace(/\s/g, '')){
-		
+
 		str = spv.escapeRegExp(str, true).split(/\s/g);
 		for (var i=0; i < str.length; i++) {
 			str[i] = '((^\|\\s)' + str[i] + ')';
@@ -466,16 +466,16 @@ var getFieldValueByRule = function(obj, rule){
 	} else{
 		return spv.getTargetField(obj, rule);
 	}
-	
-	
-	
+
+
+
 };
 
 
 sortByRules = spv.sortByRules = function(a, b, rules){
 	if (a instanceof Object && b instanceof Object){
 		var shift = 0;
-		
+
 		for (var i=0; i < rules.length; i++) {
 			if (!shift){
 				var cr = rules[i];
@@ -637,7 +637,7 @@ getUnitBaseNum = function(_c){
 		} else {
 			var _cc = '0' + _c;
 			_cc = parseFloat(_cc.slice(_cc.length-1));
-			
+
 			if (_cc === 0){
 				return 2;
 			} else if (_cc == 1){
@@ -669,7 +669,7 @@ stringifyParams = spv.stringifyParams = function(params, ignore_params, splitter
 	if (!opts.not_sort){
 		pv_signature_list.sort();
 	}
-	
+
 	return pv_signature_list.join(joiner || '');
 };
 
@@ -786,7 +786,7 @@ spv.passingContext = function passingContext (func) {
 	return function(obj) {
 		var arr = new Array(arguments.length);
 		for (var i = 0; i < arguments.length; i++) {
-			arr[i] = arguments[i];	
+			arr[i] = arguments[i];
 		}
 		arr.shift();
 
@@ -988,11 +988,11 @@ spv.capitalize = function(string, just_first) {
 		return this;
 	};
 	var setVar = function(name, value) {
-		
+
 		for (var i = 0; i < this.vars[name].length; i++) {
 			this[this.vars[name][i]] = value;
 		}
-	
+
 		return this;
 	};
 	spv.createComlexText = function(text, not_make_dom){
@@ -1174,7 +1174,7 @@ var parseMap = function(map) {
 		//	console.log(full_propslist);
 			cur.props_map = full_propslist;
 		}
-		
+
 	}
 
 
@@ -1216,7 +1216,7 @@ var getPropValueByField = function(fpv, iter, scope, spec_data) {
 
 var getComplexPropValueByField = function(fpv, scope, iter, spec_data, converters) {
 
-	
+
 
 	var cur_value;
 
@@ -1235,7 +1235,7 @@ var getComplexPropValueByField = function(fpv, scope, iter, spec_data, converter
 		} else {
 			cur_value = fpv[0];
 		}
-		
+
 	}
 	return cur_value;
 };
@@ -1309,7 +1309,7 @@ var executeMap = function(map, data, spec_data, converters) {
 		} else {
 			cvalue = cur.parent_data;
 		}
-		
+
 		if (!cvalue) {
 			continue;
 		}
@@ -1324,15 +1324,15 @@ var executeMap = function(map, data, spec_data, converters) {
 		} else {
 			cur.data_scope = toRealArray( cvalue );
 			cur.writeable_array.length = cur.data_scope.length;
-			
+
 			for (var i = 0; i < cur.data_scope.length; i++) {
 				var scope = cur.data_scope[i];
 				cur.writeable_array[i] = handlePropsMapScope(spec_data, cur, objects_list, scope, converters);
-				
-				
+
+
 			}
 		}
-		
+
 
 
 

@@ -13,7 +13,7 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 		this.mo = this.map_parent.mo;
 		this.map_parent = this.map_parent.map_parent;//hack, fixme
 
-		
+
 		pvUpdate(this, 'yt_id', params.yt_id);
 
 		pvUpdate(this, 'cant_show', params.cant_show);
@@ -43,7 +43,7 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 		var link = 'http://www.youtube.com/watch?v=' + this.state('yt_id');
 		if (!cant_show && !app_env.tizen_app){
 			this.showOnMap();
-			
+
 		} else{
 			app_env.openURL(link);
 		}

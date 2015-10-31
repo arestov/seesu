@@ -11,7 +11,7 @@ AppModelBase.extendTo(AppModel, {
 		for (var func_name in this.bmap_travel){
 			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
 		}
-		
+
 		return this;
 	},
 	checkUserInput: function(opts) {
@@ -71,7 +71,7 @@ AppModelBase.extendTo(AppModel, {
 		} else {
 			spv.removeItem(array, pos);
 			array.unshift( mo.map_parent );
-			
+
 		}
 		pv.updateNesting(this, 'played_playlists', array);
 		pv.update(this, 'played_playlists_length', array.length);
@@ -153,7 +153,7 @@ AppModelBase.extendTo(AppModel, {
 		},
 		show_tag: function(tag){
 			var md = this.routePathByModels('tags/' + tag );
-			
+
 			md.showOnMap();
 			return md;
 		},
@@ -246,7 +246,7 @@ AppModelBase.extendTo(AppModel, {
 
 		for (i = 0; i < raw_array.length; i++) {
 			addToArray(acting, raw_array[i]);
-			
+
 		}
 
 		acting.reverse();

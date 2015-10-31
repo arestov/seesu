@@ -41,7 +41,7 @@ define([], function() {
 				}
 				for (var i = 0; i < list.length; i++) {
 					var cur = list[i];
-					
+
 					if (cur.state_name) {
 						// md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
 					} else {
@@ -62,7 +62,7 @@ define([], function() {
 					}
 					md.wlch(target, cur.state_name, cur.full_name);
 				}
-				
+
 			}
 		}
 	};

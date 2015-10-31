@@ -35,7 +35,7 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 		this.nloveb.b.text(localize('addto-lfm-favs'));
 		this.c.append(wrap);
 		*/
-	
+
 	},
 	tpl_r_events: {
 		'petags_result': {
@@ -66,9 +66,9 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 		target.c.toggleClass('has_session', state);
 		target.auth_block.toggleClass('hidden', state);
 		/*
-		
-		
-		
+
+
+
 		target.nloveb.toggle(state);
 		*/
 	},

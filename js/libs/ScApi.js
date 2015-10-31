@@ -24,14 +24,14 @@ ScApi.prototype = {
 				params.offset = options.paging.page_limit * (options.paging.next_page -1);
 			}
 
-			
 
-	
+
+
 			params.consumer_key = this.key;
 
 			options.cache_key = options.cache_key || hex_md5("http://api.soundcloud.com/" + method + spv.stringifyParams(params));
 
-			
+
 
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
@@ -47,7 +47,7 @@ ScApi.prototype = {
 					if (opts.dataType == 'json'){
 						opts.headers = null;
 					}
-					
+
 				},
 				thisOriginAllowed: this.thisOriginAllowed,
 				context: options.context
@@ -90,7 +90,7 @@ ScMusicSearch.prototype = {
 		if (search_string){
 
 			var guess_info = Mp3Search.guessArtist(search_string, msq && msq.artist);
-			
+
 			entity = {
 				artist		: htmlencoding.decode(guess_info.artist || cursor.user.permalink || ""),
 				track		: htmlencoding.decode(guess_info.track || search_string),
@@ -105,8 +105,8 @@ ScMusicSearch.prototype = {
 				type: 'mp3',
 				media_type: 'mp3',
 			};
-			
-			
+
+
 		}
 		return entity;
 	},

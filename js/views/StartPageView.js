@@ -79,10 +79,10 @@ coct.SPView.extendTo(StartPageView, {
 				spm_c.append(target.message_arh_c);
 
 				/*
-				
+
 
 				Поддержи сису — поставь оценку
-				
+
 				*/
 			} else {
 				if (target.message_arh_c){

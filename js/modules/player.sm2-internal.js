@@ -60,7 +60,7 @@ var soundManager;
 		if (opts && opts === Object(opts)){
 			cloneObj(  sm2opts, opts  );
 		}
-		
+
 
 		soundManager = new SoundManager(path || 'swf', false, sm2opts);
 		soundManager.onready(function() {
@@ -70,7 +70,7 @@ var soundManager;
 			} else {
 				_this.sm2Loaded();
 				console.log('internal sm2 notok')
-		
+
 			}
 		});
 		soundManager.ontimeout(function() {
@@ -183,7 +183,7 @@ var soundManager;
 					cloneObj(opts, {id: id});
 				}
 				this.plc[method].call(this, this.sm2.getSoundById(id), opts);
-			}	
+			}
 		},
 		callSongMethod: function() {
 			this.callCore.apply(this, arguments)

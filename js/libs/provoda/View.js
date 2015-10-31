@@ -74,7 +74,7 @@ function View() {}
 StatesEmitter.extendTo(View, {
 	init: function(view_otps, opts){
 		this._lbr = new ViewLabour();
-		
+
 		this.req_order_field = null;
 		this.tpl = null;
 		this.c = null;
@@ -119,10 +119,10 @@ StatesEmitter.extendTo(View, {
 		if (!view_otps.mpx){
 			throw new Error('give me model!');
 		}
-		
+
 		this.mpx = view_otps.mpx;
 		this.proxies_space = view_otps.proxies_space || null;
-		
+
 		this.way_points = null;
 
 		this.dom_related_props = null;
@@ -140,7 +140,7 @@ StatesEmitter.extendTo(View, {
 				this.on( hp.getSTEVNameDefault(this.base_tree_expand_states[i]) , hndExpandViewTree);
 			}
 		}
-		
+
 		prsStCon.connect.parent(this);
 		prsStCon.connect.root(this);
 		return this;
@@ -152,7 +152,7 @@ StatesEmitter.extendTo(View, {
 			this.RPCLegacy(method, bwlev_id);
 		} else {
 			this.RPCLegacy.apply(this, arguments);
-		}		
+		}
 	},
 	requestPage: function() {
 		var bwlev_view = $v.getBwlevView(this);
@@ -183,7 +183,7 @@ StatesEmitter.extendTo(View, {
 			spv.cloneObj(this.tpl_r_events, original.tpl_r_events);
 			spv.cloneObj(this.tpl_r_events, props.tpl_r_events);
 		}
-		
+
 
 	}),
 	'stch-map_slice_view_sources': function(target, state) {
@@ -196,7 +196,7 @@ StatesEmitter.extendTo(View, {
 				push.apply(arr, state[1][target.nesting_space]);
 				pvUpdate(target, 'view_sources', arr);
 			}
-			
+
 		}
 	},
 	_getCallsFlow: function() {
@@ -234,7 +234,7 @@ StatesEmitter.extendTo(View, {
 		var args = new Array(arguments.length); //optimization
 		for (var i = 0; i < arguments.length; i++) {
 			args[i] = arguments[i];
-			
+
 		}
 		this.checkDemensionsKeyStart();
 		return this._lbr.demensions_key_start.concat(args.join('-'));
@@ -269,7 +269,7 @@ StatesEmitter.extendTo(View, {
 			return views_proxies.getMPX(this.root_view.proxies_space, md);
 		}
 		//
-		
+
 	},
 	RPCLegacy: function() {
 		this.mpx.RPCLegacy.apply(this.mpx, arguments);
@@ -289,7 +289,7 @@ StatesEmitter.extendTo(View, {
 			if (this.way_points) {
 				push.apply(result_array, this.way_points);
 			}
-			
+
 		}
 		//return this.canUseWaypoints() ? this.way_points : [];
 	},
@@ -363,7 +363,7 @@ StatesEmitter.extendTo(View, {
 		}
 
 		var tpl = $v.createTemplate(this, con);
-		
+
 		if (!ext_node) {
 			this.tpl = tpl;
 		}
@@ -499,7 +499,7 @@ StatesEmitter.extendTo(View, {
 				throw new Error('there is no anchor for view of ' + child_name + ' child model');
 			}
 		}
-		
+
 	},
 	getAncestorByRooViCon: function(view_space, strict) { //находит родительскую вьюху соеденённую с корневой вьюхой
 		//by root view connection
@@ -565,7 +565,7 @@ StatesEmitter.extendTo(View, {
 				continue;
 			}
 			return true;
-			
+
 		}
 		return false;
 	},
@@ -583,10 +583,10 @@ StatesEmitter.extendTo(View, {
 
 			var ConstrObj;
 			var controller_name = address_opts.controller_name;
-			if (controller_name) {				
+			if (controller_name) {
 				ConstrObj = this.root_view.controllers && this.root_view.controllers[controller_name];
 				if (!ConstrObj) {
-					throw new Error('controller `' + controller_name + 
+					throw new Error('controller `' + controller_name +
 						'` should be defined in root_view.controllers');
 				}
 			} else if (address_opts.by_model_name) {
@@ -594,12 +594,12 @@ StatesEmitter.extendTo(View, {
 				ConstrObj = this.children_views_by_mn &&
 					(this.children_views_by_mn[address_opts.nesting_name][md.model_name] ||
 					this.children_views_by_mn[address_opts.nesting_name]['$default']);
-				
+
 			} else {
 				ConstrObj = this.children_views[address_opts.nesting_name];
 			}
 
-			
+
 			var Constr;
 			if (typeof ConstrObj == 'function' && view_space == 'main'){
 				Constr = ConstrObj;
@@ -668,7 +668,7 @@ StatesEmitter.extendTo(View, {
 	},
 	addChildView: function(view) {
 		this.children.push.call(this.children, view);
-		//fixme - possible memory leak when child is dead (this.children) 
+		//fixme - possible memory leak when child is dead (this.children)
 	},
 	getChildViewsByMpx: function(mpx, nesting_name) {
 		var result = [];
@@ -757,7 +757,7 @@ StatesEmitter.extendTo(View, {
 			this.tpl.destroy();
 			this.tpl = null;
 		}
-		
+
 		if (this.tpls){
 			for (i = 0; i < this.tpls.length; i++) {
 				this.tpls[i].destroy();
@@ -772,9 +772,9 @@ StatesEmitter.extendTo(View, {
 		if (this.pv_view_node){
 			this.pv_view_node = null;
 		}
-		
 
-		
+
+
 		if (this.dom_related_props){
 			for (i = 0; i < this.dom_related_props.length; i++) {
 				this[this.dom_related_props[i]] = null;
@@ -788,7 +788,7 @@ StatesEmitter.extendTo(View, {
 		//debugger?
 		this.view_parts = null;
 
-		
+
 
 	},
 	remove: function(con, anchor) {
@@ -849,7 +849,7 @@ StatesEmitter.extendTo(View, {
 
 
 		this.nextLocalTick(this.__tickDetRequest);
-		
+
 		return this;
 	},
 	softRequestChildrenDetLev: function(rel_depth) {
@@ -964,7 +964,7 @@ StatesEmitter.extendTo(View, {
 			var result = [];
 
 			this.stch_hs_list = [];
-			
+
 
 			for (prop in this) {
 
@@ -1005,7 +1005,7 @@ StatesEmitter.extendTo(View, {
 
 			// 		console.log(cur.item);
 			// 	}
-				
+
 			// }
 		};
 	})(),
@@ -1037,7 +1037,7 @@ StatesEmitter.extendTo(View, {
 						cur.item.fn.call(this, this.states[cur.name]);
 					}
 				}
-				
+
 			}
 			return this.view_parts[part_name];
 		}
@@ -1105,10 +1105,10 @@ StatesEmitter.extendTo(View, {
 	},
 	pvserv: {
 		simple: {
-			
+
 		},
 		bymodel: {
-			
+
 		}
 	},
 	checkCollchItemAgainstPvViewByModelName: (function(){
@@ -1215,7 +1215,7 @@ StatesEmitter.extendTo(View, {
 		return function(nesname, real_array, space_name, pv_view) {
 		//	if (!pv_view.original_node){
 		//		pv_view.original_node = pv_view.node.cloneNode(true);
-				
+
 		//	}
 			if (!pv_view.comment_anchor){
 				pv_view.comment_anchor = document.createComment('collch anchor for: ' + nesname + ", " + space_name);
@@ -1226,7 +1226,7 @@ StatesEmitter.extendTo(View, {
 				$(pv_view.node).detach();
 				pv_view.node = null;
 			}
-			
+
 			var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
 
 			this.appendCollection(space_name, {
@@ -1258,7 +1258,7 @@ StatesEmitter.extendTo(View, {
 			spv.cloneObj(new_cache, this.dclrs_fpckgs);
 			this.dclrs_fpckgs = new_cache;
 		}
-		
+
 
 		this.dclrs_fpckgs[nesname] = this.dclrs_fpckgs[ '$ondemand-' + nesname ];
 		if (this.children_models[nesname]){
@@ -1312,7 +1312,7 @@ StatesEmitter.extendTo(View, {
 					this.removeViewsByMds(removed, nesname, space_name);
 				}
 			}
-			
+
 
 			for (space_name in pv_views_complex_index.usual){
 				cur = pv_views_complex_index.usual[space_name];
@@ -1325,7 +1325,7 @@ StatesEmitter.extendTo(View, {
 				this.checkCollchItemAgainstPvViewByModelName(nesname, array, space_name, cur);
 			}
 			/*
-			for (var 
+			for (var
 				i = 0; i < space.length; i++) {
 				space[i]
 			};*/
@@ -1541,7 +1541,7 @@ StatesEmitter.extendTo(View, {
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 		return function(props) {
 			var need_recalc = hasPrefixedProps( props );
-		
+
 
 			if (!need_recalc){
 				return;
@@ -1572,7 +1572,7 @@ StatesEmitter.extendTo(View, {
 		if (typeof dclr_fpckg == 'function'){
 			dclr_fpckg.call(this, nesname, array, old_value, removed);
 		} else {
-			
+
 			var real_array = spv.toRealArray(array);
 			var array_limit;
 			if (dclr_fpckg.limit){
@@ -1627,7 +1627,7 @@ StatesEmitter.extendTo(View, {
 
 	},
 	getPrevView: function(array, start_index, location_id, view_itself) {
-		
+
 
 		var i = start_index - 1;
 		if (i >= array.length || i < 0){
@@ -1710,7 +1710,7 @@ StatesEmitter.extendTo(View, {
 	appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
 		var location_id = $v.getViewLocationId(this, nesname, space || 'main');
 
-		
+
 
 		var ordered_rend_list = this.getRendOrderedNesting(nesname, array);
 		if (ordered_rend_list){
@@ -1899,9 +1899,9 @@ StatesEmitter.extendTo(View, {
 			if (view){
 				view._lbr.innest_prev_view = this.getPrevView(array, i, location_id, true);
 				view._lbr.innest_next_view = this.getNextView(array, i, location_id, true);
-				
+
 			}
-			
+
 		}
 
 		for (i = 0; i < apd_views.length; i++) {

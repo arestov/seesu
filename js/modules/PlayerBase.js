@@ -34,7 +34,7 @@ pv.Eventor.extendTo(PlayerBase, {
 		if (core == this.core){
 			return;
 		}
-		
+
 		if (!this.subscriber){
 			var _this = this;
 			this.subscriber = function(){

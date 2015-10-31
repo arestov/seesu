@@ -36,7 +36,7 @@ var FileNameSQMatchIndex = function(file, query) {
 };
 Mp3Search.QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 	init: function(file, query) {
-		
+
 		return this;
 	},
 	matchers: {
@@ -76,7 +76,7 @@ Mp3Search.QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 					}
 				}
 
-				
+
 			}
 		}
 	}
@@ -151,7 +151,7 @@ pv.Model.extendTo(Torrent, {
 
 			troxent.on('infoHash', gotHash);
 
-			
+
 			return function() {
 				troxent.removeListener('infoHash', gotHash);
 				if (swarm) {
@@ -193,7 +193,7 @@ pv.Model.extendTo(Torrent, {
 		'troxent',
 		function (troxent, update) {
 			var hndList = function(list) {
-				
+
 				update(list);
 			};
 			troxent.on('served-files-list', hndList);
@@ -243,7 +243,7 @@ pv.Model.extendTo(Torrent, {
 					target.troxent = torrents_manager.get(target.state('url'));
 					target.useInterface('troxent', target.troxent);
 					target.queued = null;
-				});				
+				});
 			}
 		} else {
 			if (target.troxent && !target.remove_timeout) {
@@ -374,7 +374,7 @@ TorqueSearch.prototype = {
 			};
 		deferred.promise(complex_response);
 
-		//запросить troxent 
+		//запросить troxent
 
 		var push = Array.prototype.push;
 		FuncsStack.chain([
@@ -420,7 +420,7 @@ TorqueSearch.prototype = {
 						torrent_obj: torrent_obj,
 						infoHash: torrent_obj.infoHash
 					});
-					
+
 					var query = pv.create(QueriedFileInTorrent, {
 						link: el.torrent_link,
 						torrent_obj: torrent_obj,

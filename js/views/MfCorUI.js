@@ -56,7 +56,7 @@ pv.View.extendTo(FileInTorrentUI,{
 
 
 		$('<span class="play-button-place"></span>').appendTo(this.c);
-		
+
 
 		var pg = $('<span class="mf-progress"></span>');
 		this.f_text = $('<span class="mf-text"></span>').appendTo(pg);
@@ -68,7 +68,7 @@ pv.View.extendTo(FileInTorrentUI,{
 		}).text('torrent').appendTo(this.c);
 
 		this.addWayPoint(this.downloadlink, {
-			
+
 		});
 
 		pg.appendTo(this.c);
@@ -244,7 +244,7 @@ pv.View.extendTo(SongFileModelUI, {
 		},
 		'switchPlay': function(e) {
 			e.stopPropagation();
-			
+
 			this.RPCLegacy('switchPlay', pv.$v.getBwlevId(this));
 		}
 	}
@@ -258,7 +258,7 @@ pv.View.extendTo(FilesSourceTunerView, {
 			var tune_name = node.name;
 			this.overrideStateSilently(tune_name, node.checked);
 			this.RPCLegacy('changeTune', tune_name, node.checked);
-			
+
 			//disable_search
 			//wait_before_playing
 			//changeTuneconsole.log(arguments);

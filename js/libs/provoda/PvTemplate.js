@@ -29,7 +29,7 @@ var PvSimpleSampler = parser.PvSimpleSampler;
 		  }
 		]
 	</script>
-</div> 
+</div>
 -->
 */
 
@@ -75,7 +75,7 @@ var PvTemplate = function(opts) {
 	this.spec_states_props_list = null;
 	if (opts.spec_states){
 		this.spec_states_props_list = makeSpecStatesList(opts.spec_states);
-		//spec_states 
+		//spec_states
 	}
 	if (opts.callCallbacks){
 		this.sendCallback = opts.callCallbacks;
@@ -98,7 +98,7 @@ var PvTemplate = function(opts) {
 	this.destroyers = null;
 
 	this.getSample = opts.getSample;
-	
+
 	this.pv_types_collecting = true;
 	this.parsePvDirectives(this.root_node, opts.struc_store);
 	if (!angbo || !angbo.interpolateExpressions){
@@ -112,7 +112,7 @@ var PvTemplate = function(opts) {
 	// 		$(cur.node).after(sample);
 	// 		this.parsePvDirectives(sample, opts.struc_store);
 
-			
+
 	// 	}
 	// }
 
@@ -124,7 +124,7 @@ var PvTemplate = function(opts) {
 		this._pvTypesChange();
 	}
 
-	
+
 };
 
 
@@ -150,7 +150,7 @@ var hndPVRepeat = function(new_fv, states) {
 	var wwtch = this;
 	removeFlowStep(wwtch.context, wwtch.w_cache_key);
 	//var new_fv = spv.getTargetField(states, wwtch.field_name);
-	
+
 
 	if (wwtch.original_fv != new_fv){
 		var context = wwtch.context;
@@ -234,7 +234,7 @@ var checkPVRepeat = function(states, async_changes, current_motivator) {
 	abortFlowStep(wwtch.context, wwtch.w_cache_key);
 	var new_fv = spv.getTargetField(states, wwtch.field_name);
 
-	
+
 
 	if (wwtch.original_fv != new_fv) {
 		if (async_changes) {
@@ -280,9 +280,9 @@ var indexPvView = function(item, index) {
 			storage.comment_anchor = document.createComment('collch anchor for: ' + real_name + ", " + space + ' (by_model_name)');
 			$(item.node).before(storage.comment_anchor);
 		}
-		//cur.sampler 
+		//cur.sampler
 		item.original_node = item.node;
-		//cur.sampler = 
+		//cur.sampler =
 		$(item.node).detach();
 
 		storage.index[item.for_model] = item;
@@ -414,7 +414,7 @@ spv.Class.extendTo(PvTemplate, {
 		this.stwat_index = {};
 
 		if (this.destroyers) {
-			
+
 
 			while (this.destroyers.length) {
 				var cur = this.destroyers.shift();
@@ -426,7 +426,7 @@ spv.Class.extendTo(PvTemplate, {
 				if (this.calls_flow_index.hasOwnProperty(w_cache_key) && typeof this.calls_flow_index[w_cache_key] == 'function') {
 					this.calls_flow_index[w_cache_key].abort();
 					this.calls_flow_index[w_cache_key] = null;
-		
+
 				}
 			}
 		}
@@ -436,7 +436,7 @@ spv.Class.extendTo(PvTemplate, {
 		var objs = [this];
 		while (objs.length){
 			var cur = objs.shift();
-			if (cur.pv_types && cur.pv_types.length){				
+			if (cur.pv_types && cur.pv_types.length){
 				result.push(cur.pv_types);
 			}
 
@@ -453,8 +453,8 @@ spv.Class.extendTo(PvTemplate, {
 		}
 		return result;
 	},
-	
-	
+
+
 	scope_generators:{
 
 		'pv-nest': function(node, data) {
@@ -484,7 +484,7 @@ spv.Class.extendTo(PvTemplate, {
 			if (node == this.root_node){
 				return;
 			}
-			
+
 			var
 				expression = data.expression,
 				valueIdent = data.valueIdent,
@@ -508,11 +508,11 @@ spv.Class.extendTo(PvTemplate, {
 					original_fv: nothing,
 					old_nodes: [],
 
-					
+
 					repeat_data: repeat_data,
 					comment_anchor: comment_anchor,
 
-					
+
 					sampler: new PvSimpleSampler(node, this.struc_store, this.getSample),
 					valueIdent: valueIdent,
 					keyIdent: keyIdent,
@@ -526,9 +526,9 @@ spv.Class.extendTo(PvTemplate, {
 			];
 		}
 	},
-	
+
 	empty_state_obj: {},
-	
+
 	bindPVEvent: (function() {
 		var getDestroer = function(node, event_name, callback) {
 			return function destroyer() {
@@ -560,7 +560,7 @@ spv.Class.extendTo(PvTemplate, {
 			return destroyer;
 		};
 	})(),
-	
+
 
 	callEventCallback: function(node, e, data) {
 		this.sendCallback({
@@ -690,7 +690,7 @@ spv.Class.extendTo(PvTemplate, {
 					return result;
 				}
 			},
-			
+
 			'pv-anchor': function(node, full_declaration) {
 				var anchor_name = full_declaration;
 				return new BnddChunk('ancs', {
@@ -741,16 +741,16 @@ spv.Class.extendTo(PvTemplate, {
 			}
 			var result = method.call(this, node, full_declaration);
 			return result;
-			
+
 
 		};
 	})(),
 	indexPvViews: function(array, result) {
-		
+
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
 			indexPvView(cur, result);
-			
+
 		}
 		return result;
 	},
@@ -795,10 +795,10 @@ spv.Class.extendTo(PvTemplate, {
 					if (directives_data.instructions[directive_name]){
 						var chunks_s = this.scope_generators[directive_name]
 							.call(this, cur_node, directives_data.instructions[directive_name]);
-						
+
 						pushChunks(all_chunks, chunks_s);
 					}
-					
+
 				}
 			}
 			if (!directives_data.new_scope_generator || is_root_node){
@@ -848,14 +848,14 @@ spv.Class.extendTo(PvTemplate, {
 		if (this.dead) {return;}
 		this.all_chunks = this.all_chunks.concat(all_chunks);
 
-		
+
 		this.checkChunks();
 		//this.children_templates = this.indexPvViews(this.parsed_pv_views, this.children_templates);
 
 		// this.pv_views = this.pv_views.concat(this.parsed_pv_views);
 		// this.parsed_pv_views = [];
 
-		
+
 		return all_chunks;
 	}
 });

@@ -238,7 +238,7 @@ define({
 	"search-control-hint": {
 		"original": "Use keyboard: up and down arrows, enter",
 		"ru": "Используй клавиатуру: стрелки вверх, вниз и клавишу ввод"
-		
+
 	},
 	"reccoms": {
 		"original": "Recommendations",
@@ -256,7 +256,7 @@ define({
 		"original": "Vkontakte audio",
 		"ru": "Аудиозаписи во вконтакте"
 	},
-	
+
 	"grant": {
 		"original": "grant",
 		"ru": "дать доступ"
@@ -395,7 +395,7 @@ define({
 		"ru": "тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
 	"to-find-and-play":{
-		
+
 		"original": "To find and play",
 		"ru": "Чтобы найти и прослушать"
 	},
@@ -411,12 +411,12 @@ define({
 		"original" : "need to login to vk.com (vkontakte.ru)",
 		"ru": "тебе необходимо войти во vkontakte.ru (vk.com)"
 	},
-	
+
 	"stabilization-of-vk":{
 		"original": "Some files were found using test vkontakte.ru (vk.com) accaunt. Searching files for new compositions can break at any time. This will not happen if you use your own accaunt",
 		"ru": "Некоторые файлы найдены с помощью тестовой учётной записи vkontakte.ru (vk.com), поиск файлов для новых композиций может прекратится в любой момент. Этого не произойдёт, если ты будешь использовать свою учётную запись vkontakte"
 	},
-	
+
 	'to-meet-man-vk-short': {
 		"original": "To meet with this man",
 		"ru": "Чтобы познакомиться с этим человеком"
@@ -449,7 +449,7 @@ define({
 		"original": "(it's free)",
 		"ru": "(это бесплатно)"
 	},
-   
+
 	"open-api-secure": {
 		"original": "Try both if you get «Open API security breach».",
 		"ru": "Попробуй и то и другое, если у тебя появляется сообщение «Open API security breach»."
@@ -660,8 +660,8 @@ define({
 		"original": "Cities of %country%",
 		"ru": "Города страны \"%country%\""
 	},
-	
-	
+
+
 
 	"Artists lists":{
 		"original": "Artists lists",

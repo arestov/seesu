@@ -17,7 +17,7 @@ var guessArtist = function(track_title_raw, query_artist){
 			track_title = track_title.replace(/^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/,"");
 		}
 		///^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/  for "813 - Elastique ( Rinse FM Rip )"
-		
+
 		//01 The Killers - Song - ::remove number
 	}
 
@@ -72,7 +72,7 @@ spv.Class.extendTo(QueryMatchIndex, {
 				this.match_index = i * 10 + match_index * 1;
 				break;
 			}
-			
+
 		}
 		if (typeof this.match_index != 'number'){
 			this.match_index = -1;
@@ -88,7 +88,7 @@ spv.Class.extendTo(QueryMatchIndex, {
 	hardTrim: function(string, min_length){
 		var trimmed;
 		if (!this.trim_index[string]) {
-			
+
 			trimmed = spv.hardTrim(string);
 			/*
 			trimmed = string.toLowerCase()
@@ -99,11 +99,11 @@ spv.Class.extendTo(QueryMatchIndex, {
 			this.trim_index[string] = trimmed;
 		}
 
-		
+
 
 		trimmed = this.trim_index[string];
 
-		
+
 		if (!min_length){
 			return trimmed;
 		} else {
@@ -136,10 +136,10 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 			if (query.artist && file_song.artist){
 				if (this.hardTrim(query.artist).length >= 3 && (!query.track || this.hardTrim(query.track).length >= 3)){
 					return (this.hardTrim(query.artist) == this.hardTrim(file_song.artist) && (!query.track || this.hardTrim(query.track) == this.hardTrim(file_song.track))) && 0;
-					
+
 				}
 			}
-			
+
 		},
 		anyGood: function(file_song, query){
 			var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
@@ -170,7 +170,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 						}
 					}
 				}
-				
+
 
 			}
 		},
@@ -232,9 +232,9 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 						return 9;
 					}
 				}
-				
 
-				
+
+
 			}
 		}
 	}
@@ -256,7 +256,7 @@ pv.Model.extendTo(FilesSourceTuner, {
 	},
 
 
-	
+
 	'compx-disable_search': [
 		['settings'],
 		function(settings) {
@@ -323,7 +323,7 @@ var getMatchedSongs = function(music_list, msq) {
 		init: function(opts, params, search_eng_name) {
 			this.map_parent = opts.map_parent;
 			this._super();
-			
+
 			this.mp3_search = opts.mp3_search;
 			this.search_name = search_eng_name;
 			this.search_eng = this.mp3_search.getSearchByName(search_eng_name);
@@ -369,7 +369,7 @@ var getMatchedSongs = function(music_list, msq) {
 			new_array = new_array.concat(inj_arr);
 			new_array.push(file);
 			pv.update(this, 'injected_files', new_array);
-			
+
 		},
 		getFiles: function(type) {
 
@@ -406,7 +406,7 @@ var getMatchedSongs = function(music_list, msq) {
 					if (all.length) {
 						this.mp3_search.sortMusicFilesArray(all, this.msq);
 					}
-					
+
 
 					return !!all.length && all;
 				}
@@ -457,7 +457,7 @@ var getMatchedSongs = function(music_list, msq) {
 			if (!this.search_eng || opts.only_cache || this.state('has_request')){
 				return;
 			}
-			
+
 
 			var
 				_this = this,
@@ -509,14 +509,14 @@ var getMatchedSongs = function(music_list, msq) {
 							search_result: getMatchedSongs(music_list, msq),
 							search_fail: false,
 
-							
+
 							search_progress: false,
 							has_request: false,
 							search_complete: true
 						});
 					}
-					
-					
+
+
 				})
 				.fail(function(){
 					_this.updateManyStates({
@@ -573,7 +573,7 @@ var getMatchedSongs = function(music_list, msq) {
 			//this.on('vip_state_change-search_progress', function(e) {
 			//	console.log('search_progress: ' + e.value);
 			//}, {immediately: true});
-			
+
 			this.mp3_search.on('list-changed', this.hndListChange, {soft_reg: false, context: this});
 
 			this.wch(this.mp3_search, 'big_files_list', this.hndBigFilesList);
@@ -581,8 +581,8 @@ var getMatchedSongs = function(music_list, msq) {
 			this.nextTick(function(target) {
 				target.startSearch( {only_cache: true} );
 			});
-			
-			
+
+
 		},
 		'stch-disable_search@sources_list': filterList('available_sources', function(item) {
 			return !pvState(item, 'disable_search');
@@ -673,7 +673,7 @@ var getMatchedSongs = function(music_list, msq) {
 
 				pv.updateNesting(this, 'sources_list', this.sources_list);
 			}
-			
+
 		},
 		bindSource: function(name, params, mp3_search) {
 			var files_by_source = new FilesBySource();
@@ -687,7 +687,7 @@ var getMatchedSongs = function(music_list, msq) {
 			files_by_source.on('requests', function(requests) {
 				_this.addRequests(requests);
 			});
-			
+
 			return files_by_source;
 		},
 		complex_states: {
@@ -697,7 +697,7 @@ var getMatchedSongs = function(music_list, msq) {
 					return exsrc_has_request && !exsrc_search_complete;
 				}
 			],
-			
+
 
 			'legacy-files-search': [
 				['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
@@ -771,7 +771,7 @@ var getMatchedSongs = function(music_list, msq) {
 				this.checked_files[search_name] = this.checked_files[search_name] || {};
 				this.checked_files[search_name][file_id] = true;
 				var qmi = this.mp3_search.setFileQMI(file, this.msq);
-	
+
 				if (qmi !== -1 && qmi < 20){
 					this.addFile(file, search_name);
 				}
@@ -783,9 +783,9 @@ var getMatchedSongs = function(music_list, msq) {
 			this.sources[search_name].addFile(file);
 		}
 	});
-	
 
-	
+
+
 
 
 
@@ -797,7 +797,7 @@ var getMatchedSongs = function(music_list, msq) {
 var hasMusicCopy = function (array, entity, from_position){
 	var ess = /(^\s*)|(\s*$)/g;
 	if (!array.length) {return false;}
-	
+
 	for (var i = from_position || 0, l = array.length; i < l; i++) {
 		if ((array[i].artist.replace(ess, '') == entity.artist.replace(ess, '')) && (array[i].track.replace(ess, '') == entity.track.replace(ess, '')) && (array[i].duration == entity.duration)) {
 			return true;
@@ -817,7 +817,7 @@ var getAverageDurations = function(mu_array, time_limit){
 	for (var a in mu_array.qmi_index){
 		var durs = spv.filter(spv.filter(mu_array.qmi_index[a], 'duration', filtr), "duration");
 
-		
+
 		var summ = 0;
 
 		for (var i = 0; i < durs.length; i++) {
@@ -858,7 +858,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			pv.update(this, 'tools_by_name', tools_by_name);
 		});
 	};
-	
+
 	Mp3Search.getSongFileModel = function(map_parent){
 		return map_parent.initSi(SongFileModel, null, {file:this});
 	};
@@ -868,7 +868,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		} else {
 			return map_parent.initSi(SongFileModel, null, {file: file});
 		}
-		
+
 	};
 	Mp3Search.setFileQMI = setFileQMI;
 	Mp3Search.getFileQMI = getFileQMI;
@@ -957,7 +957,7 @@ var getAverageDurations = function(mu_array, time_limit){
 						query_string: query_string
 					});
 				}, motivator);
-				
+
 
 				this.investgs[query_string] = investg;
 
@@ -972,18 +972,18 @@ var getAverageDurations = function(mu_array, time_limit){
 		/*
 		getCache: function(sem, name){
 			return cache_ajax.get(name + 'mp3', sem.q, function(r){
-				
+
 				sem.addSteamPart(r.search_source, r.music_list, r.type);
 				sem.change();
-				
+
 			});
 		},*/
 		newSearchInit: function(filter, search){
 			this.tools_by_name[filter] = search;
-			
+
 			this.trigger('list-changed', this.se_list);
 			this.trigger('new-search', search, filter);
-			
+
 		},
 		getMasterSlaveSearch: function(filter){
 			var o = {
@@ -1029,9 +1029,9 @@ var getAverageDurations = function(mu_array, time_limit){
 				var investg = this.getFilesInvestg(msq);
 				investg.addFile(file, file.from);
 			}
-			
 
-			
+
+
 		},
 		pushSomeResults: function(music_list) {
 			var allowed_files = [];
@@ -1042,7 +1042,7 @@ var getAverageDurations = function(mu_array, time_limit){
 					this.files_ids[file_id] = true;
 					allowed_files.push(cur);
 				}
-				
+
 			}
 			var original_array = this.state('big_files_list ') || [];
 			original_array = original_array.concat(allowed_files);
@@ -1094,7 +1094,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			if (se_list.length != this.se_list){
 				this.trigger('list-changed', this.se_list);
 			}
-			
+
 		}
 
 	});

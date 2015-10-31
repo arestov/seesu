@@ -31,7 +31,7 @@ ExfmApi.prototype = {
 
 			options.cache_key = options.cache_key || hex_md5(method + spv.stringifyParams(params));
 
-			
+
 			//params_full.consumer_key = this.key;
 
 
@@ -47,7 +47,7 @@ ExfmApi.prototype = {
 					if (opts.dataType == 'json'){
 						opts.headers = null;
 					}
-					
+
 				},
 				thisOriginAllowed: this.thisOriginAllowed,
 				context: options.context
@@ -106,8 +106,8 @@ ExfmMusicSearch.prototype = {
 			}
 		}
 
-		
-		
+
+
 		return entity;
 	},
 	findAudio: function(msq, opts) {
@@ -149,17 +149,17 @@ ExfmMusicSearch.prototype = {
 								music_list.push(ent);
 
 
-							
+
 							}
 						}
-						
+
 						result = music_list;
 					} else {
 						result = new Error('bad response from server');
 					}
 
 
-					
+
 				}
 				cb(result, 'mp3');
 

@@ -66,13 +66,13 @@ pv.Model.extendTo(VkAuth, {
 			if (this.VK){
 				this.VK.callMethod('showSettingsBox', p.settings_bits);
 			} else {
-				
+
 			}
 			return true;
 		} else {
 			return this.authInit(p || {});
 		}
-		
+
 	},
 	bindAuthReady: function(exlusive_space, callback, settings_bits) {
 		var event_name;
@@ -86,7 +86,7 @@ pv.Model.extendTo(VkAuth, {
 				} else {
 					callback.call(this);
 				}
-				
+
 			}, {
 				exlusive: !!exlusive_space
 			});
@@ -98,10 +98,10 @@ pv.Model.extendTo(VkAuth, {
 		}
 	},
 	startIndicating: function() {
-		
+
 	},
 	stopIndicating: function() {
-		
+
 	},
 	getInitAuthData: function(p){
 		var o = {};
@@ -165,7 +165,7 @@ pv.Model.extendTo(VkAuth, {
 	},
 	authInit: function(p){
 		var _this = this;
-		
+
 		//init_auth_data.bridgekey
 
 		var init_auth_data = this.getInitAuthData(p);
@@ -182,7 +182,7 @@ pv.Model.extendTo(VkAuth, {
 			setTimeout(function(){
 				_this.stopIndicating();
 			},10000);
-			
+
 		}
 		return init_auth_data;
 	}
@@ -195,10 +195,10 @@ pv.Model.extendTo(VkAuth, {
 // 		};
 // 	},
 // 	building: function(pconstr) {
-// 		return 
+// 		return
 // 	},
 // 	props: {
-		
+
 // 	}
 // });
 

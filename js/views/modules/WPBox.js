@@ -39,14 +39,14 @@ spv.Class.extendTo(WPBox, {
 		var cur_mp_md = this.getStartModel();
 		var roocon_view =  (cur_mp_md && this.root_view.getStoredMpx(cur_mp_md).getRooConPresentation(this.root_view, true)) || this.root_view;
 		if (roocon_view){
-			
+
 
 			var cwp = this.getRelativeWP();
 			if (nav_type == 'Enter'){
 
 				if (cwp){
 					this.press(cwp);
-					
+
 				}
 
 			} else if (this.wp_dirs.all[nav_type]){
@@ -149,7 +149,7 @@ spv.Class.extendTo(WPBox, {
 		if (dems_storage) {
 			dems_storage[cur_wayp.wpid] = dems || {disabled: true};
 		}
-		
+
 		return dems;
 	},
 	getWPDems: function(cur_wayp) {
@@ -208,13 +208,13 @@ spv.Class.extendTo(WPBox, {
 		var p_cur = cur.parent();
 		while (p_cur[0]){
 			if (p_cur[0].ownerDocument) {
-				
+
 				parents.push(p_cur);
 				p_cur = p_cur.parent();
 			} else {
 				break;
 			}
-			
+
 		}
 
 		var break_of_disnone = false;

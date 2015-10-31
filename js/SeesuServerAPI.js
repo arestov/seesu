@@ -6,35 +6,35 @@ var AsyncDataSteam = function(getDataFunc, freshness, interval, data){
 	this._getDataFunc = getDataFunc;
 	this._interval = interval;
 	this._freshness = freshness;
-	
+
 	if (data){
 		this._store = data;
 	} else{
 		this._store = false;
 	}
-	
+
 	this._processing = false;
 	this._timestamp = false;
 	this._callbacks = {};
 	this._onetime_callbacks = [];
-	
+
 };
 AsyncDataSteam.prototype = {
 	_request: function(){
 		if (this._getDataFunc){
 			var _this = this;
-		
+
 			this._processing = true;
-			
+
 			this._fireCallbacks();
-			
+
 			this._getDataFunc(function(r){
 				_this.setNewData(r);
-				
+
 				_this._processing = false;
 			});
 		}
-	
+
 	},
 	setNewData: function(data){
 		this._timestamp = 1*(new Date());
@@ -44,31 +44,31 @@ AsyncDataSteam.prototype = {
 	init: function(){
 		if (!this._inited){
 			var _this = this;
-			
+
 			if (this._interval){
 				setInterval(function(){
 					_this._request();
 				}, this._interval);
 			}
-			
-			
+
+
 			this._request();
-			
+
 			this._inited = true;
 		}
-		
-		
+
+
 	},
 
 	getData: function(callback, force_newdata, loading_marking){
-		
+
 		if (!force_newdata && callback && this._freshness && this._store && (this._timestamp + this._freshness > (1* new Date()))){
 			callback(this._store);
 		} else{
 			if (callback){
 				this.regCallback(false, callback, loading_marking);
 			}
-			
+
 			if (!this._processing){
 				this._request();
 			}
@@ -81,7 +81,7 @@ AsyncDataSteam.prototype = {
 
 	},
 	regCallback: function(key, cb, lcb){
-	
+
 		if (key){
 			if (cb){
 				this._callbacks[key] = {cb: cb, lcb: lcb};
@@ -90,7 +90,7 @@ AsyncDataSteam.prototype = {
 					setTimeout(function(){
 						cb(_this._store);
 					},10);
-					
+
 				}
 			} else{
 				delete this._callbacks[key];
@@ -99,7 +99,7 @@ AsyncDataSteam.prototype = {
 			if (cb){
 				this._onetime_callbacks.push({cb: cb, lcb: lcb});
 			}
-			
+
 		}
 
 	},
@@ -134,21 +134,21 @@ var SeesuServerAPI = function(app, auth, url){
 	this.app = app;
 	this.init();
 	var _this = this;
-	
+
 	this.url  = url;
 	if (auth){
 		this.setAuth(auth, true);
 	}
-	
+
 	var update_interval = 1000 * 60 * 4;
-	
+
 	this.susd.rl = new AsyncDataSteam(function(callback){
 		_this.api('relations.getLikes', function(r){
 			updateRelations(_this, r.done, 'likes');
 			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
-	
+
 	this.susd.ri = new AsyncDataSteam(function(callback){
 		_this.api('relations.getInvites', function(r){
 			updateRelations(_this, r.done, 'invites');
@@ -160,8 +160,8 @@ var SeesuServerAPI = function(app, auth, url){
 		_this.susd.rl.init();
 		_this.susd.ri.init();
 	});
-	
-	
+
+
 	this.susd.ligs =  new AsyncDataSteam(function(callback){
 		$.ajax({
 			url: _this.url + 'last_listenings/',
@@ -181,7 +181,7 @@ var SeesuServerAPI = function(app, auth, url){
 	spv.domReady(window.document, function(){
 		_this.susd.ligs.init();
 	});
-	
+
 };
 
 pv.Eventor.extendTo(SeesuServerAPI, {
@@ -230,7 +230,7 @@ pv.Eventor.extendTo(SeesuServerAPI, {
 		this.trigger('info-change.' + type, data);
 	},
 
-	
+
 	getId: function(){
 		return this.auth._store && this.auth._store.userid;
 	},
@@ -268,25 +268,25 @@ pv.Eventor.extendTo(SeesuServerAPI, {
 
 							//su.s.api('user.update', su.vk.user_info);
 							_this.app.trigger('dg-auth');
-							
+
 							if (callback){callback();}
 						}
 					});
 			}
-			
+
 		});
 	},
 	api: function(method, p, c, error){
 		var params = (typeof p == 'object' && p) || {};
 		var callback = c || (typeof p == 'function' && p);
 		var _this = this;
-		
-	
+
+
 		params.method = method;
-		
+
 		var auth = this.auth._store;
-		
-		
+
+
 		if (['track.getListeners', 'user.getAuth'].indexOf(method) == -1){
 			if (!auth){
 				return false;
@@ -294,9 +294,9 @@ pv.Eventor.extendTo(SeesuServerAPI, {
 				params.sid = auth.sid;
 				params.sig = hex_md5(spv.stringifyParams(params, ['sid']) + auth.secret);
 			}
-			
+
 		}
-		
+
 		return $.ajax({
 			type: "GET",
 			url: _this.url + 'api/',
@@ -313,11 +313,11 @@ pv.Eventor.extendTo(SeesuServerAPI, {
 						if (typeof callback == 'function'){callback(r);}
 					}
 				}
-				
+
 			},
 			error: error
 		});
-		
+
 	}
 });
 

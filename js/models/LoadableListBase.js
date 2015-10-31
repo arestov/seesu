@@ -127,7 +127,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 
 			var splitItemData = target['nest_rq_split-' + nesting_name];
 			for (var i = 0; i < data_list.length; i++) {
-				
+
 
 
 				var splited_data = splitItemData && splitItemData(data_list[i], target.getNestingSource(nesting_name, target.app));
@@ -298,7 +298,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 						network_states: data
 					};
 				}
-				
+
 			} else {
 				data_po_pass = data;
 			}

@@ -35,14 +35,14 @@ var idToModel = function(index, ids) {
 		var result = new Array(ids.length);
 		for (var i = 0; i < ids.length; i++) {
 			result[i] = index[ids[i]];
-			
+
 		}
 		return result;
 	} else {
 		/*if (ids){
 			debugger;
 		}*/
-		
+
 		return ids;
 	}
 };
@@ -56,7 +56,7 @@ var SyncReceiver = function(stream){
 };
 
 SyncReceiver.prototype = {
-	
+
 	buildTree: function(array) {
 		var i, cur, cur_pvid;
 
@@ -77,7 +77,7 @@ SyncReceiver.prototype = {
 			cur.map_parent = idToModel(this.models_index, cur.map_parent);
 			for (var nesting_name in cur.children_models) {
 				cur.children_models[nesting_name] = idToModel(this.models_index, cur.children_models[nesting_name]);
-		
+
 			}
 
 		}
@@ -108,7 +108,7 @@ SyncReceiver.prototype = {
 				target_model.states[state_name] = target_md_proxy.states[state_name] = state_value;
 			}
 
-			
+
 			this.md_proxs_index[message._provoda_id].stackReceivedStates(message.value);
 		},
 		update_nesting: function(message) {
@@ -120,7 +120,7 @@ SyncReceiver.prototype = {
 			var target_md_proxy = this.md_proxs_index[message._provoda_id];
 
 			var fakes_models = idToModel(this.models_index, message.value);
-			
+
 
 			target_model.children_models[message.name]= fakes_models;
 			//target_md_proxy.children_models[message.name] = fakes_models;

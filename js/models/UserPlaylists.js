@@ -38,7 +38,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		var matched;
 		for (var i = 0; i < this.playlists.length; i++) {
 			var cur = this.playlists[i];
-			
+
 			if (cur.state('nav_title') == title){
 				matched = cur;
 				break;

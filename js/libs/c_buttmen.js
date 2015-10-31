@@ -4,11 +4,11 @@ var button_menu = function(jq_node, d){
 	this.node = jq_node;
 	this.sectors = 20;
 	this.node.data('buttmen', this);
-		
-	
+
+
 	var style = '  ';
 	for (var i=1; i <= this.sectors; i++) {
-		
+
 		var x = i;
 		var y = (((Math.atan(x - (this.sectors/2)))/Math.PI) + 0.5).toFixed(1);
 		var style_ver = '\n .buttmen-hlts ' + '.buttmen-hlt-vertical-' + i + ' ';
@@ -26,8 +26,8 @@ var button_menu = function(jq_node, d){
 		.mousedown(this.events.mousedown)
 		.mouseup(this.events.mouseup)
 		.mousemove(this.events.mousemove);
-		
-	
+
+
 	this.node.find('.pc')
 		.mouseover(function(){
 			$(this).addClass('hover');
@@ -35,8 +35,8 @@ var button_menu = function(jq_node, d){
 		.mouseleave(function(){
 			$(this).removeClass('hover');
 		});
-	
-	
+
+
 }
 button_menu.prototype = {
 	rebind: function(){
@@ -46,7 +46,7 @@ button_menu.prototype = {
 			.mousedown(this.events.mousedown)
 			.mouseup(this.events.mouseup)
 			.mousemove(this.events.mousemove);
-			
+
 		this.node.find('.pc')
 			.mouseover(function(){
 				$(this).addClass('hover');
@@ -54,10 +54,10 @@ button_menu.prototype = {
 			.mouseleave(function(){
 				$(this).removeClass('hover');
 			});
-			
+
 		return this.node;
-		
-		
+
+
 	},
 	events:{
 		mousedown: function(e){
@@ -75,11 +75,11 @@ button_menu.prototype = {
 				if (playing_with_dots){
 					_tr('dots was showed and played');
 				}
-				
+
 			},200)
-			
-			
-			
+
+
+
 			_this.addClass('buttmen-highlighting');
 			var butt_main = $('dt.main-button', this).mouseleave(function(e){
 				e.preventDefault();
@@ -97,14 +97,14 @@ button_menu.prototype = {
 					butt_hlts.attr('class', '' );
 					_tr('some button was pressed');
 				},10);
-				
+
 				$(d).unbind('mouseup');
 				$(d).unbind('mousemove');
-				
+
 				//return test_pressed_node(e, {mouseup: true})
 			})
-			
-			
+
+
 			var width = _this.width();
 			var height = _this.height();
 			var el_position = _this.offset();
@@ -112,33 +112,33 @@ button_menu.prototype = {
 			var border_left 	= el_position.left;
 			var border_right 	= border_left + width;
 			var border_bottom 	= border_top + height;
-			
-			
+
+
 			var sector_vertical = height/_this.data('buttmen').sectors;
 			var sector_horizontal = width/_this.data('buttmen').sectors;
-			
+
 			$(d).mousemove(function(e){
 				e.preventDefault();
 				var x = e.pageX;
 				var y = e.pageY;
 				if ( (x > border_left) && (x < border_right) && (y > border_top ) && (y < border_bottom)){
-					
+
 					var sector_y = (y - border_top)/sector_vertical;
-					
-					
+
+
 					var remainder_x = (x - border_left) % sector_horizontal;
 					var sector_x = ((x - border_left) - remainder_x)/sector_horizontal + (remainder_x ? 1 : 0);
-					
+
 					var remainder_y = (y - border_top) % sector_vertical;
 					var sector_y = ((y - border_top) - remainder_y)/sector_vertical + (remainder_y ? 1 : 0);
-					
+
 					butt_hlts.attr('class', 'buttmen-hlt-vertical-' + sector_y + ' '+ 'buttmen-hlt-horizontal-' + sector_x )
 				}
 				playing_with_dots = true;
-				
+
 			});
-			
-			
+
+
 		},
 		mouseup: function(e){
 			var d = this.ownerDocument;
@@ -149,7 +149,7 @@ button_menu.prototype = {
 		mousemove: function(e){
 			var d = this.ownerDocument;
 			e.preventDefault();
-			if (window.getSelection) { window.getSelection().removeAllRanges(); } else 
+			if (window.getSelection) { window.getSelection().removeAllRanges(); } else
 			if (d.selection && d.selection.clear) {d.selection.clear();}
 		}
 	}

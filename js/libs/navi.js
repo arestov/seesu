@@ -6,9 +6,9 @@ var hash_start = /^\#/;
 
 var bindLocationChange = function(hashchangeHandler) {
 	if (history_api){
-		
+
 		spv.addEvent(window, 'popstate', function(e){
-			
+
 			if (!e.state){
 				var newhash = decodeURI(location.hash).replace(hash_start, '');
 				if (typeof hashchangeHandler == 'function'){
@@ -32,7 +32,7 @@ var bindLocationChange = function(hashchangeHandler) {
 				e = e || window.Event;
 				var newhash = decodeURI(location.hash).replace(hash_start, '');
 				if (newhash != hash){
-					
+
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
 							newURL: newhash
@@ -51,7 +51,7 @@ var bindLocationChange = function(hashchangeHandler) {
 			setInterval(function(){
 				var newhash = decodeURI(location.hash).replace(hash_start, '');
 				if (newhash != hash){
-					
+
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
 							newURL: newhash
@@ -78,7 +78,7 @@ var navi;
 			}
 			url_base = cbase;
 		}
-		
+
 		return url_base;
 	};
 	var zerofy = function(str, digits){
@@ -165,9 +165,9 @@ var navi;
 							}
 						}
 
-						
-						
-						
+
+
+
 					} else {
 
 						var num = (current_histate && current_histate.num);
@@ -187,8 +187,8 @@ var navi;
 								location.replace(getURLBase() + '#' + ud.uniq_url);
 							}
 						}
-						
-						
+
+
 
 					}
 					current_histate = history_obj;
@@ -216,7 +216,7 @@ var navi;
 		trickyBack: function() {
 			if (current_histate){
 				this.hashChangeRecover({
-					
+
 				});
 				return true;
 			} else {

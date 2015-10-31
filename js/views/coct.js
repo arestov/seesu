@@ -114,7 +114,7 @@ var ListSimplePreview = function() {};
 ListPreview.extendTo(ListSimplePreview, {
 	children_views: {
 		preview_list: ListPreviewLine
-		
+
 	},
 	children_views_by_mn: {
 		auth_part: {
@@ -337,7 +337,7 @@ PageView.extendTo(AppNewsView, {
 	}
 });
 return {
-	ImageLoader:ImageLoader, 
+	ImageLoader:ImageLoader,
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
 	ListPreviewLine:ListPreviewLine,

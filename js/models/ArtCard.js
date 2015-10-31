@@ -28,7 +28,7 @@ SongsList.extendTo(ArtistAlbumSongs, {
 
 		this.playlist_type = 'album';
 		if (params.lfm_image){
-			
+
 			pv.update(this, 'lfm_image', this.app.art_images.getImageWrap(params.lfm_image.array));
 		}
 		if (params.lfm_img) {
@@ -178,7 +178,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 					if (array[i].join){
 						result += (" " + array[i].join + " ");
 					}
-					
+
 				}
 				return result;
 			};
@@ -427,7 +427,7 @@ SongsList.extendTo(TopArtistSongs, {
 		this._super(opts, params);
 
 		this.playlist_type = 'artist';
-		this.playlist_artist = this.map_parent.head.artist;		
+		this.playlist_artist = this.map_parent.head.artist;
 	},
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
@@ -445,11 +445,11 @@ SongsList.extendTo(FreeArtistTracks, {
 		[
 			function(r) {
 				var tracks = spv.toRealArray(spv.getTargetField(r, 'rss.channel.item'));
-				
+
 				var track_list = [];
 				//var files_list = [];
 				if (tracks) {
-					
+
 					for (var i = 0; i < tracks.length; i++) {
 						var cur = tracks[i];
 
@@ -465,12 +465,12 @@ SongsList.extendTo(FreeArtistTracks, {
 						if (!track_obj.artist){
 							//track_obj.artist = artist_name;
 						}
-	
+
 						track_list.push(track_obj);
 						//files_list.push(_this.app.createLFMFile(track_obj.artist, track_obj.track, link));
-						
+
 					}
-					
+
 				}
 				return track_list;
 			}
@@ -555,7 +555,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 	},
 	'nest-tags_list': ['tags', false, 'init_ext'],
 	'nest-similar_artists': ['+similar', false, 'init_ext'],
-	
+
 
 
 	'nest-top_songs': ['_', true, 'init_heavy'],
@@ -567,7 +567,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 	'nest-hypem_fav': ['most_favorites', true, 'init_heavy'],
 	'nest-hypem_reblog': ['blogged', true, 'init_heavy'],
 
-	
+
 	initHeavy: pv.getOCF('heavy_oi', function() {
 		this.albums_models = {};
 		pv.update(this, 'init_heavy', true);
@@ -608,7 +608,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 		}
 
 		var pl = this.getSPI('albums_lfm', true).getSPI(params.album_artist + ',' + params.album_name, true);
-		
+
 		pl.showOnMap();
 		return pl;
 	},
@@ -640,7 +640,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 							link_node.href = url;
 							var url_parts = link_node.pathname.replace(/^\//,'').split('/');
 							if (url_parts.length == 1){
-								artist_nickname = url_parts[0];	
+								artist_nickname = url_parts[0];
 								break;
 							}
 							break;
@@ -808,7 +808,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 			return this.similar_artists;
 		}
 
-		var artl = 
+		var artl =
 		pv.updateNesting(this, 'similar_artists', artl);
 		this.similar_artists = artl;*/
 		return this.getSPI('+similar', true);
@@ -945,7 +945,7 @@ ArtistsList.extendTo(SimilarArtists, {
 				preview_list.push(this.initSi(ArtistInArtl, {
 					network_states: raw_array[i]
 				}));
-				
+
 			}
 			pv.updateNesting(this, this.preview_mlist_name, preview_list);
 		}

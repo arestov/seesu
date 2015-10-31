@@ -28,7 +28,7 @@ NigmaAPI.prototype = {
 				}
 			};
 		deferred.promise( complex_response );
-		
+
 			options = options || {};
 			options.nocache = options.nocache || !this.cache_ajax;
 			options.cache_key = options.cache_key || hex_md5(method + spv.stringifyParams(params));
@@ -41,7 +41,7 @@ NigmaAPI.prototype = {
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
 			if (!options.nocache){
-				
+
 				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
 					deferred.resolve(r);
 				});
@@ -68,7 +68,7 @@ NigmaAPI.prototype = {
 							deferred.resolve(r);
 						});
 					}
-					
+
 					if (!cache_used){
 						complex_response.xhr = aReq({
 							url: "http://nigma.ru/" + (method || ""),
@@ -94,9 +94,9 @@ NigmaAPI.prototype = {
 				}
 			}
 
-			
 
-		
+
+
 		return complex_response;
 	}
 };
@@ -147,8 +147,8 @@ NigmaMusicSearch.prototype = {
 			_id			: cursor.id,
 			media_type: 'mp3'
 		};
-		
-		
+
+
 		return entity;
 	},
 	nigma_file: {
@@ -220,12 +220,12 @@ NigmaMusicSearch.prototype = {
 								file.media_type = 'mp3';
 								music_list.push(file);
 
-								
-								
+
+
 								//mp3_links.push();
-								
+
 							});
-						
+
 
 						});
 					}

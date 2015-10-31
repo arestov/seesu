@@ -43,14 +43,14 @@ define(['pv', 'spv'],function(pv, spv){
 
 			for (var i=0; i < sections_array.length; i++) {
 				var cur = sections_array[i];
-				
+
 				if ((!except || cur != except) && !remove){
 					cur.setActive();
 				} else{
 					cur.setInactive();
 				}
-				
-				
+
+
 			}
 		},
 		doesNeed: function(q){
@@ -63,7 +63,7 @@ define(['pv', 'spv'],function(pv, spv){
 			if (!q || this.doesNeed(q)){
 				this.trigger('stateChange', 'complete');
 			}
-			
+
 		},
 		remarkStyles: function(){
 			var c = 0;
@@ -122,7 +122,7 @@ define(['pv', 'spv'],function(pv, spv){
 					this.enter_item.setActive();
 				}
 			}
-			
+
 		},
 		selectEnterItemAbove: function(){
 			var ci = (this.enter_item && this.enter_item.serial_number) || 0,
@@ -163,14 +163,14 @@ define(['pv', 'spv'],function(pv, spv){
 					sections_array[i].changeQuery(q);
 				}
 				this.q = q;
-				
+
 				delete this.selected_inum;
 				pv.update(this, 'query', q);
 				this.changeResultsCounter();
 				this.doEverythingForQuery();
 				pv.update(this, 'url_part', this.getURL());
 			}
-			
+
 		},
 		query_regexp: /\ ?\%query\%\ ?/
 	});
@@ -187,7 +187,7 @@ define(['pv', 'spv'],function(pv, spv){
 		}
 	});
 
-	
+
 
 	pv.addPrototype("BaseSuggest", {
 		setActive: function(){
@@ -207,7 +207,7 @@ define(['pv', 'spv'],function(pv, spv){
 		}
 	});
 
-	
+
 	var searchResults = function(query, prepared, valueOf){
 		if (query){
 			this.query = query;
@@ -233,12 +233,12 @@ define(['pv', 'spv'],function(pv, spv){
 		append: function(array, valueOf){
 			for (var i=0; i < array.length; i++) {
 				this.add(array[i], valueOf);
-				
+
 			}
 		}
 	});
 
-	
+
 	pv.addPrototype("SearchSection", {
 		init: function(opts){
 			this._super.apply(this, arguments);
@@ -247,7 +247,7 @@ define(['pv', 'spv'],function(pv, spv){
 			this.edges_list = [];
 			this.rendering_list = [];
 
-			
+
 			var map_parent = opts.map_parent;
 			opts = null;
 			this
@@ -283,7 +283,7 @@ define(['pv', 'spv'],function(pv, spv){
 			pv.update(this, 'active', true);
 		},
 		setInactive: function(){
-			
+
 			pv.update(this, 'active', false);
 		},
 		loading: function(){
@@ -317,7 +317,7 @@ define(['pv', 'spv'],function(pv, spv){
 			if (this.button && this.getButtonText){
 				this.button.setText(this.getButtonText(have_results, q));
 			}
-			
+
 		},
 		doesNeed: function(q){
 			return q == (this.r && this.r.query);
@@ -329,8 +329,8 @@ define(['pv', 'spv'],function(pv, spv){
 			this.loaded();
 			this.removeOldResults();
 			pv.update(this, 'no_results_text', false);
-			
-			
+
+
 			this.r = new searchResults(q);
 			this.rendering_list = [];
 			this.edges_list = [];
@@ -345,16 +345,16 @@ define(['pv', 'spv'],function(pv, spv){
 				this.rendering_list[i].die();
 			}
 			pv.updateNesting(this, 'rendering_list', []);
-			
+
 		},
 		renderSuggests: function(no_more_results, preview){
 
-			
+
 			var slice = preview && !this.edges_list.length,
 				last_rendered = this.edges_list && this.edges_list[this.edges_list.length-1],
 				start = (last_rendered) || 0,
 				end   = (slice && Math.min(this.r.length, start + 5)) || this.r.length;
-			
+
 			if (this.r.length){
 				for (var i=start; i < end; i++) {
 					this.rendering_list.push(this.r[i]);
@@ -368,18 +368,18 @@ define(['pv', 'spv'],function(pv, spv){
 					} else{
 						this.setInactive();
 					}
-					
-					
+
+
 				}
 			}
 
 			for (var i = 0; i < this.edges_list.length; i++) {
-				
+
 				var cur = this.rendering_list[this.edges_list[i]];
 				if (cur){
 					pv.update(cur, 'bordered', true);
 				}
-				
+
 			}
 
 			pv.update(this, 'no_more_results', no_more_results);

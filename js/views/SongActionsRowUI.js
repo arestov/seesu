@@ -60,7 +60,7 @@ var ShareSearchCtr = function() {};
 pv.View.extendTo(ShareSearchCtr, {
 	children_views:{
 		'lfm_auth': etc_views.LfmLoginView
-		
+
 	},
 	children_views_by_mn: {
 		section: {
@@ -79,7 +79,7 @@ var ShareRowUI = function(){};
 pv.View.extendTo(ShareRowUI, {
 	dom_rp: true,
 	children_views: {
-		
+
 		searcher: ShareSearchCtr
 	},
 	bindBase: function(){
@@ -91,7 +91,7 @@ pv.View.extendTo(ShareRowUI, {
 				_this.RPCLegacy('search', newval);
 				oldv = newval;
 			}
-			
+
 		}, 100);
 
 		this.tpl.ancs['vk_share_search'].bind('keyup change search mousemove', inputSearch);
@@ -165,7 +165,7 @@ pv.View.extendTo(ScrobbleRowUI, {
 		place: 'c',
 		needs_expand_state: 'active_view'
 	}
-	
+
 });
 
 
@@ -179,7 +179,7 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 		this._super();
 
 		this.createVolumeControl();
-		
+
 		this.wch(this.parent_view, 'mp_show_end', function(e){
 			this.setVisState('is_visible', !!e.value);
 		});
@@ -240,7 +240,7 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 				if (vvh_w){
 					return  vvh_w - ( v_bar_o_w - v_bar_w);
 				}
-				
+
 			}
 		},
 		"vis_volume": {

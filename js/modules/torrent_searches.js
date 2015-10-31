@@ -76,7 +76,7 @@ isohuntTorrentSearch.prototype = {
 							_this.wrapItem(result, r.items.list[i], msq);
 						}
 					}
-					
+
 				}
 				cb(result, 'torrent');
 
@@ -115,7 +115,7 @@ BtdiggTorrentSearch.prototype = {
 	},
 	send: function(query, options) {
 		var _this = this;
-			
+
 		if (query) {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
@@ -131,7 +131,7 @@ BtdiggTorrentSearch.prototype = {
 				},
 				timeout: 20000,
 				context: options.context
-				
+
 			}, {
 				cache_ajax: this.cache_ajax,
 				nocache: options.nocache,
@@ -193,7 +193,7 @@ BtdiggTorrentSearch.prototype = {
 				magnet_link = href;
 				break;
 			}
-			
+
 		}
 		if (!magnet_link){
 			return;
@@ -204,7 +204,7 @@ BtdiggTorrentSearch.prototype = {
 		r.push({
 			torrent_link: magnet_link,
 			title: node.text(),
-			
+
 			query: query,
 			media_type: 'torrent',
 			models: {},
@@ -229,7 +229,7 @@ googleTorrentSearch.prototype = {
 	},
 	send: function(query, options) {
 		var _this = this;
-			
+
 		if (query) {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
@@ -246,7 +246,7 @@ googleTorrentSearch.prototype = {
 				},
 				timeout: 20000,
 				context: options.context
-				
+
 			}, {
 				cache_ajax: this.cache_ajax,
 				nocache: options.nocache,
@@ -304,7 +304,7 @@ googleTorrentSearch.prototype = {
 			item.models = {};
 			item.getSongFileModel = getSongFileModel;
 		}
-		
+
 	}
 };
 

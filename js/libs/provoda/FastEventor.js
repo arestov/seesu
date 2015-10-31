@@ -64,7 +64,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		non_standart_api_opts = send_declr[3];
 
 	var network_api = hp.getNetApiByDeclr(send_declr, sputnik);
-	
+
 
 	if (!network_api.source_name) {
 		throw new Error('network_api must have source_name!');
@@ -91,7 +91,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		} else {
 		}
 	}
-	
+
 	var cache_key;
 	if (!non_standart_api_opts && !manual_nocache) {
 		var big_string = JSON.stringify([api_name, api_method, api_args]);
@@ -101,7 +101,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		}
 
 	}
-	
+
 
 
 	var request = network_api[ api_method ].apply(network_api, api_args);
@@ -205,7 +205,7 @@ FastEventor.prototype = {
 				}
 			}
 		}
-		
+
 		if (!this.reg_fires.cache){
 			this.reg_fires.cache = {};
 		}
@@ -253,7 +253,7 @@ FastEventor.prototype = {
 					reg_args = null;
 				}
 			}
-			
+
 		}
 		if (fired){
 			if (reg_fires[0].getWrapper){
@@ -267,7 +267,7 @@ FastEventor.prototype = {
 					} else {
 						cb.apply(mo_context, reg_args);
 					}
-					
+
 				} else {
 					var flow_step = this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
 					if (reg_fires[0].handleFlowStep) {
@@ -356,7 +356,7 @@ FastEventor.prototype = {
 					}
 				}
 
-				// losing `order by subscriging time` here 
+				// losing `order by subscriging time` here
 				// clean.push.apply(clean, queried.not_matched);
 
 				if (clean.length != this.subscribes[short_name].length){
@@ -364,7 +364,7 @@ FastEventor.prototype = {
 					resetSubscribesCache(this, short_name);
 				}
 			}
-			
+
 		}
 
 		return this.sputnik;
@@ -420,7 +420,7 @@ FastEventor.prototype = {
 			} else {
 				cur.cb.call(cur.context || this.sputnik, arg);
 			}
-			
+
 		} else {
 			var callback_context = cur.context || this.sputnik;
 			var wrapper_context = this.sputnik;
@@ -462,7 +462,7 @@ FastEventor.prototype = {
 				resetSubscribesCache(this, short_name);
 			}
 		}
-		
+
 	},
 	triggerCallbacks: function(cb_cs, args, opts, ev_name, arg, flow_steps_array){
 		var need_cleanup = false;
@@ -548,13 +548,13 @@ FastEventor.prototype = {
 		}
 
 		var target_arr = this.requests[space];
-		
+
 		var bindRemove = function(_this, req) {
 			req.always(function() {
 				if (_this.requests && _this.requests[space]){
 					_this.requests[space] = spv.findAndRemoveItem(_this.requests[space], req);
 				}
-				
+
 			});
 		};
 		var added = [];
@@ -647,7 +647,7 @@ FastEventor.prototype = {
 		if (queued){
 			queued.reverse();
 		}
-		
+
 		return queued;
 	},
 	setPrio: function(space) {
@@ -669,8 +669,8 @@ FastEventor.prototype = {
 		}
 		return this.sputnik;
 	},
-	
-	
+
+
 	requestState: function(state_name) {
 		var current_value = this.sputnik.state(state_name);
 		if (current_value) {
@@ -689,7 +689,7 @@ FastEventor.prototype = {
 				}
 			}
 		}
-		
+
 		if (cant_request) {
 			return;
 		}
@@ -711,13 +711,13 @@ FastEventor.prototype = {
 
 		var store = this.mapped_reqs[selected_map_num];
 
-		
+
 		states_list = selected_map[0];
 		this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
 		var parse = selected_map[1], send_declr = selected_map[2];
-		
 
-		
+
+
 
 		var request = getRequestByDeclr(send_declr, this.sputnik,
 			{has_error: store.error},
@@ -770,10 +770,10 @@ FastEventor.prototype = {
 						} else {
 							store.error = true;
 						}
-						
+
 					}
 				});
-		
+
 		this.addRequest(request);
 		return request;
 
@@ -783,7 +783,7 @@ FastEventor.prototype = {
 		for (var i = 0; i < states_list.length; i++) {
 
 			loading_marks[ states_list[i] + '__loading'] = value;
-			
+
 		}
 		return loading_marks;
 	},
@@ -828,9 +828,9 @@ FastEventor.prototype = {
 		if (supports_paging) {
 			network_api_opts.paging = paging_opts;
 		}
-		
 
-		
+
+
 
 		var request = getRequestByDeclr(send_declr, this.sputnik,
 			{has_error: store.error, paging: paging_opts},
@@ -860,8 +860,8 @@ FastEventor.prototype = {
 					} else {
 						var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers);
 						var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
-						
-				
+
+
 
 						if (!supports_paging) {
 							store.has_all_items = true;
@@ -925,7 +925,7 @@ FastEventor.prototype = {
 
 						}
 
-						
+
 
 
 						//сделать выводы о завершенности всех данных

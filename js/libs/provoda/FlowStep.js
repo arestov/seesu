@@ -46,12 +46,12 @@ FlowStep.prototype.call = function() {
 			} else {
 				this.fn.call(this.context, this.args[0]);
 			}
-			
+
 		} else {
 			this.fn.call(this.context, this.arg);
 		}
 	}
-	
+
 };
 return FlowStep;
 });

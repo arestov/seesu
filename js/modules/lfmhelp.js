@@ -3,8 +3,8 @@ define(['spv', 'jquery', 'cache_ajax'], function(spv, $, cache_ajax){
 
 var parseArtistsResults = function(r, sectionItem){
 	var artists_results = [];
-	
-	var artists = r.results.artistmatches.artist || false; 
+
+	var artists = r.results.artistmatches.artist || false;
 	artists = artists && spv.toRealArray(artists, 'name');
 	for (var i=0; i < artists.length; i++) {
 		artists_results.push(
@@ -20,7 +20,7 @@ var parseArtistsResults = function(r, sectionItem){
 
 var parseTracksResults = function(r, sectionItem){
 	var tracks_results = [];
-	var tracks = r.results.trackmatches.track || false; 
+	var tracks = r.results.trackmatches.track || false;
 	tracks = tracks && spv.toRealArray(tracks, 'name');
 	for (var i=0; i < tracks.length; i++) {
 		tracks_results.push(
@@ -38,8 +38,8 @@ var parseTracksResults = function(r, sectionItem){
 
 var parseTagsResults = function(r, sectionItem){
 	var tags_results = [];
-	
-	var tags = r.results.tagmatches.tag || false; 
+
+	var tags = r.results.tagmatches.tag || false;
 	tags = tags && spv.toRealArray(tags, 'name');
 	for (var i=0; i < tags.length; i++) {
 		tags_results.push({
@@ -77,24 +77,24 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 					} else{
 						section.renderSuggests(true, !no_preview);
 					}
-					
+
 				})
 				.fail(function(){
 					if (!section.doesNeed(q)){return;}
 					section.loaded();
 				})
-			
+
 	);
 };
 
 var parseFastSuggests = function(r){
-	
-	
-	
+
+
+
 	var sugg_arts = spv.filter(r.response.docs, 'restype', 6);
 	$.each(sugg_arts, function(i, el){
 		sugg_arts[i] = {
-			artist: el.artist, 
+			artist: el.artist,
 			image: el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false
 		};
 	});
@@ -102,7 +102,7 @@ var parseFastSuggests = function(r){
 	var sugg_tracks = spv.filter(r.response.docs, 'restype', 9);
 	$.each(sugg_tracks, function(i, el){
 		sugg_tracks[i] ={
-			artist: el.artist, 
+			artist: el.artist,
 			track: el.track,
 			image: el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
 			duration: el.duration
@@ -116,7 +116,7 @@ var parseFastSuggests = function(r){
 		};
 	});
 
-	
+
 	var sugg_albums = spv.filter(r.response.docs, 'restype', 8);
 	$.each(sugg_albums, function(i, el){
 		sugg_albums[i] = {
@@ -126,8 +126,8 @@ var parseFastSuggests = function(r){
 			resid: el.resid
 		};
 	});
-	
-	
+
+
 	return {
 		artists: sugg_arts,
 		tracks: sugg_tracks,
@@ -147,13 +147,13 @@ var fast_suggestion = function(r, q, invstg){
 
 			artists.appendResults(r.artists);
 			artists.renderSuggests();
-	
+
 			tracks.appendResults(r.tracks);
 			tracks.renderSuggests();
-	
+
 			tags.appendResults(r.tags);
 			tags.renderSuggests();
-		
+
 			albums.appendResults(r.albums);
 			albums.renderSuggests();
 	}
@@ -184,9 +184,9 @@ var get_fast_suggests = spv.debounce(function(q, callback, hash, invstg){
 			invstg.loaded(q);
 		}
 	});
-	
-	
-	
+
+
+
 },400);
 
 

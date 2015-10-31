@@ -55,7 +55,7 @@ var executeStringTemplate = function(app, md, obj, need_constr) {
 			if (cur_state) {
 				full_path += (md._provoda_id && app.encodeURLPart(md.state(cur_state) || '')) || 'null';
 			}
-			
+
 		}
 
 	} else {
@@ -98,7 +98,7 @@ var getParsedPath = function(string_template) {
 var getSPByPathTemplate = function(app, md, string_template, need_constr) {
 
 	var parsed_template = getParsedPath(string_template);
-	
+
 
 	return executeStringTemplate(app, md, parsed_template, need_constr);
 };
@@ -109,7 +109,7 @@ var getSubPByDeclr = function(md, cur) {
 	} else {
 		return getSPByPathTemplate(md.app, md, cur);
 	}
-	
+
 };
 
 var getSubpages = function(md, array) {
@@ -136,7 +136,7 @@ var initOneDeclaredNesting = function(md, el) {
 
 	if (el.init_state_name) {
 		var init_func = function(state) {
-		
+
 			if (state) {
 				this.updateNesting(el.nesting_name, getSubpages( this, el.subpages_names_list ));
 				if (preload_state_name && this.state(preload_state_name)) {
@@ -148,7 +148,7 @@ var initOneDeclaredNesting = function(md, el) {
 		};
 
 		md.on('lgh_sch-' + el.init_state_name, init_func);
-		
+
 	} else {
 		md.updateNesting(el.nesting_name, getSubpages( md, el.subpages_names_list ));
 	}

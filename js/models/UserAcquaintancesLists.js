@@ -50,7 +50,7 @@ pv.Model.extendTo(UserAcquaintance, {
 				if (accepted && !userlink){
 					return app_serv.getRemainTimeText(remainded_date, true);
 				}
-				
+
 			}
 		},
 		needs_accept_b: {
@@ -75,7 +75,7 @@ pv.Model.extendTo(UserAcquaintance, {
 				pv.update(_this, 'remainded_date', r.done.est);
 				pv.update(_this, 'accepted', true);
 				su.trackEvent('people likes', 'accepted', false, 5);
-				
+
 				if (new Date(r.done.est) < new Date()){
 					su.s.susd.ri.getData();
 					//checkRelationsInvites();
@@ -139,7 +139,7 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		if (!this.state('current_user')){
 			throw new Error('there is no current_user!');
 		}
-		
+
 
 		var filtered = spv.filter(new_array, 'item.accepted', function(v){
 			return !!v;
@@ -147,12 +147,12 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 
 		var concated = [].concat(filtered, filtered.not);
 
-		
+
 
 		for (var i = 0; i < concated.length; i++) {
 			var cur = concated[i];
 			var user_acq = new UserAcquaintance();
-			
+
 			user_acq.init({
 				app: this.app
 			}, {

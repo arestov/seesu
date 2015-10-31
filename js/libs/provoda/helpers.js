@@ -29,7 +29,7 @@ var enc_states = {
 				state_name: state_name
 			};
 		}
-		
+
 		return encoded_states[string];
 	},
 	nesting: function(string) {
@@ -268,7 +268,7 @@ return {
 				throw new Error('no nesting_name');
 			}
 			/*
-			помогает определить есть ли у модели вьюха, ассоциированная с локацией - с родительской вьюхой (а также с гнездом внутри родительской вьюхи) 
+			помогает определить есть ли у модели вьюха, ассоциированная с локацией - с родительской вьюхой (а также с гнездом внутри родительской вьюхи)
 
 			*/
 			return parent_view.view_id + ':' +  nesting_space + ':' + nesting_name;
@@ -288,7 +288,7 @@ return {
 					if (!cb_data[0] && cb_data[1]){
 						var target_view;
 						//var view =
-						
+
 						if (spv.startsWith(cb_data[1], '#')) {
 							target_view = view.root_view;
 							cb_data[1] = cb_data[1].slice(1);
@@ -304,7 +304,7 @@ return {
 
 						cb_data.shift();
 						target_view.handleTemplateRPC.apply(target_view, cb_data);
-						
+
 					} else {
 						if (!e.pv_repeat_context){
 							view.tpl_events[e.callback_name].call(view, e.event, e.node, cb_data);
@@ -312,7 +312,7 @@ return {
 							view.tpl_r_events[e.pv_repeat_context][e.callback_name].call(view, e.event, e.node, e.scope);
 						}
 					}
-					
+
 				};
 			}
 
@@ -394,7 +394,7 @@ return {
 							}
 							return dclr;
 						}
-						 
+
 					}
 				}
 			};

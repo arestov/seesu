@@ -298,7 +298,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 
 				sampler = this.samples[sample_name] = this.pvsampler(sample_node);
 			}
-			
+
 		}
 		if (!sampler){
 			sample_node = $(this.requirePart(sample_name));
@@ -306,7 +306,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			if (sample_node){
 				sampler = this.samples[sample_name] = this.pvsampler(sample_node);
 			}
-			
+
 		}
 		if (!sampler){
 			throw new Error('no such sample');
@@ -315,7 +315,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	},
 	getSample: function(sample_name, simple, options) {
 		var sampler = this.getSampler(sample_name);
-		
+
 		if (sampler.getClone){
 			if (simple) {
 				return sampler.getClone(options);
@@ -434,7 +434,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 						return targt_con.outerHeight();
 					}, 'con_height', this.state('window_height'), this.state('workarea_width'));
 
-					
+
 					// var width = targt_con.outerWidth();  //domread
 					// var height = targt_con.outerHeight(); //domread
 
@@ -557,7 +557,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 		if (transaction_data.bwlev){
 			var target_md = transaction_data.bwlev.getMD();
 			var current_lev_num = pv.state(target_md, 'map_level_num');
-			
+
 			if (animation_data){
 				pv.update(this, 'disallow_animation', true, sync_opt);
 				animation_data.lc.c.css(animation_data.transform_values);
@@ -571,7 +571,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				animation_data.lc.c.height(); //заставляем всё пересчитать
 				animation_data.lc.c.css(empty_transform_props);
 				/*this.nextLocalTick(function() {
-					
+
 				});*/
 				animation_data.lc.c.height(); //заставляем всё пересчитать
 			}
@@ -586,7 +586,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			//
 			this.markAnimationEnd(models, transaction_data.changes_number);
 			/*this.nextLocalTick(function() {
-				
+
 			});*/
 		} else {
 			animation_data.lc.onTransitionEnd(completeAnimation);
@@ -603,7 +603,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	},
 	'sel-coll-map_slice': '$spec_common-map_slice',
 	'coll-prio-map_slice': function(array) {
-	
+
 		/*for (var i = 0; i < array.length; i++) {
 			if (array[i].mpx.states.mp_has_focus){
 				return [[array[i]]];
@@ -652,7 +652,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 					if (target_md){
 						pv.update(this, 'current_lev_num', pv.state(target_md, 'map_level_num'), sync_opt);
 					}
-					
+
 				}
 			}
 		} else {
@@ -730,7 +730,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				}, {vp_limit: 0.4, animate: 117});
 			}
 
-			
+
 		}*/
 		var md = target.getNesting('current_mp_md');
 		var bwlev = target.getNesting('current_mp_bwlev');
@@ -741,7 +741,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 				return;
 			}
 
-			// 
+			//
 
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
@@ -758,7 +758,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			}
 		}, 150);
 
-		
+
 
 
 
@@ -808,7 +808,7 @@ AppBaseView.extendTo(WebAppView, {
 		}).call(this);
 
 		this.onDie(function(){
-			
+
 			_this = null;
 		});
 	},
@@ -819,18 +819,18 @@ AppBaseView.extendTo(WebAppView, {
 			$(wd).off();
 			$(wd).remove();
 			wd = null;
-			
+
 			if (this.d.body && this.d.body.firstChild && this.d.body.firstChild.parentNode){
 				$(this.d.body).off().find('*').remove();
-				
+
 			}
 			$(this.d).off();
 			$(this.d).remove();
 
-			
+
 		}
-		
-		
+
+
 		this.d = null;
 	},
 	resortQueue: (function() {
@@ -852,7 +852,7 @@ AppBaseView.extendTo(WebAppView, {
 						this.all_queues[i].removePrioMarks();
 					}
 				}
-				
+
 			}
 			var md = this.getNesting('current_mp_md');
 			var view = md && getView.call(this, md, this.getNesting('current_mp_bwlev'));
@@ -929,7 +929,7 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 	},
 	remove: function() {
 		this._super();
-		
+
 		//this.search_input = null;
 		//this.nav = null;
 	},
@@ -957,7 +957,7 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 	buildNav: function() {
 		var justhead = this.els.navs;
 		var daddy = justhead.find('.daddy');
-		
+
 		this.nav = {
 			justhead: justhead,
 			daddy: daddy
@@ -965,13 +965,13 @@ AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
 		this.dom_related_props.push('nav');
 
 		this.nav.daddy.empty().removeClass('not-inited');
-		
+
 		return this.nav;
 	},
 	buildSearchForm: function() {
 		var search_form = $('#search', this.d);
 		this.els.search_form = search_form;
-		
+
 		search_form.submit(function(){return false;});
 		var search_input =  $('#q', search_form);
 

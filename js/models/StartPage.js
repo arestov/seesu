@@ -19,7 +19,7 @@ var converNews = function(list) {
 			link: cur[3],
 			link_text: cur[4] || "details"
 		};
-		
+
 	}
 	return result;
 };
@@ -32,7 +32,7 @@ var AppNews = BrowseMap.Model.extendTo(function AppNews() {}, {
 
 		this.initStates();
 		//pv.update(this, 'news_list', converNews(news_data));
-		
+
 		//var mixcloud
 		return this;
 	}
@@ -132,10 +132,10 @@ BrowseMap.Model.extendTo(StartPage, {
 					}
 				}];
 				// return subPageInitWrap(SongCard, full_name, {
-					
+
 				// });
 			}
-		
+
 		},
 		'users': function(name) {
 			var full_name = 'users/' + name;
@@ -232,7 +232,7 @@ BrowseMap.Model.extendTo(StartPage, {
 			if (!parts[1]){
 				return;
 			}
-			
+
 			var instance_data = this.getSPC(parsed_str, path_string);
 			var instance;
 			if (instance_data) {

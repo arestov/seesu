@@ -17,13 +17,13 @@ pv.Model.extendTo(AppModelBase, {
 		this.views_strucs = {};
 	},
 	initMapTree: function(start_page, needs_url_history, navi) {
-			
+
 		pv.updateNesting(this, 'navigation', [start_page]);
 		pv.updateNesting(this, 'start_page', start_page);
 		this.map = new BrowseMap(this.start_page);
 		this.map
 			// .init(this.start_page)
-			
+
 			.on('changes', function(changes, models, bwlevs) {
 				//console.log(changes);
 				this.animateMapChanges(changes, models, bwlevs);
@@ -45,7 +45,7 @@ pv.Model.extendTo(AppModelBase, {
 					}
 				}
 			}, this.getContextOptsI());
-		
+
 		return this.map;
 	},
 	setDocTitle: function(title) {
@@ -62,12 +62,12 @@ pv.Model.extendTo(AppModelBase, {
 		if (this.matchNav){
 			this.matchNav();
 		}
-		
+
 	},
 	showStartPage: function(){
 		//mainaly for hash url games
 		this.map.startNewBrowse();
-	},	
+	},
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
 			pv.update(models[i].getMD(), 'map_animating', mark);
@@ -187,13 +187,13 @@ pv.Model.extendTo(AppModelBase, {
 			*/
 
 			// var bwlevs = residents && spv.filter(residents, 'lev.bwlev');
-			
+
 
 			//if (tree){
 				pv.updateNesting(this, 'navigation', bwlevs);
 			//}
 
-			
+
 			if (target_item){
 				if (this.current_mp_md) {
 					pv.update(this.current_mp_md, 'mp_has_focus', false);
@@ -212,7 +212,7 @@ pv.Model.extendTo(AppModelBase, {
 
 			}
 
-			
+
 			if (target_item){
 				changes.target = target_item && target_item.target;
 				changes.bwlev = target_item && target_item.bwlev;
@@ -220,7 +220,7 @@ pv.Model.extendTo(AppModelBase, {
 
 			var mp_show_wrap;
 			if (models){
-				
+
 				var all_items = models.concat(bwlevs);
 
 				mp_show_wrap = {
@@ -238,8 +238,8 @@ pv.Model.extendTo(AppModelBase, {
 				residents_struc: mp_show_wrap,
 				transaction: changes
 			});
-		
-			
+
+
 		};
 	})(),
 	collectChanges: function(fn, args, opts) {
@@ -271,12 +271,12 @@ pv.Model.extendTo(AppModelBase, {
 				md.setPrio();
 			}
 		}
-		
+
 		this.checkActingRequestsPriority();
 	},
 	routePathByModels: function(pth_string, start_md, need_constr) {
 		return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
-	
+
 	},
 	pushVDS: (function() {
 		var path = 'm_children.children.map_slice.main.m_children.children_by_mn.pioneer';
@@ -342,21 +342,21 @@ pv.Model.extendTo(AppModelBase, {
 			}
 			var sources = getSources(md, this.used_data_structure);
 			pv.update(md, 'map_slice_view_sources', [md._network_source, sources]);
-			
+
 		};
 	})(),
 	knowViewingDataStructure: function(constr_id, used_data_structure) {
 		if (!this.used_data_structure) {
 			this.used_data_structure = used_data_structure;
 		}
-		
+
 		for (var i = 0; i < this.map.residents.length; i++) {
 			var cur = this.map.residents[i];
 			this.pushVDS(cur);
-			
+
 		}
-		
-		
+
+
 		//console.log(1313)
 	}
 });
