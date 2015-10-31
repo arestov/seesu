@@ -18,28 +18,6 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 	};
 
-
-
-	var PlARow = function(){};
-	comd.PartsSwitcher.extendTo(PlARow, {
-		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
-		init: function() {
-			this._super.apply(this, arguments);
-			this.pl = this.map_parent;
-
-			pv.update(this, 'active_part', false);
-			this.addPart(new MultiAtcsRow(this, this.pl));
-			this.addPart(new PlaylistSettingsRow(this, this.pl));
-		},
-		'compx-loader_disallowing_desc': [
-			['^loader_disallowing_desc'],
-			function(loader_disallowing_desc) {
-				return loader_disallowing_desc;
-			}
-		]
-	});
-
-
 	var PlaylistSettingsRow = function(actionsrow){
 		this.init(actionsrow);
 	};
@@ -75,6 +53,24 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		model_name: 'row-multiatcs'
 	});
 
+	var PlARow = function(){};
+	comd.PartsSwitcher.extendTo(PlARow, {
+		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
+		init: function() {
+			this._super.apply(this, arguments);
+			this.pl = this.map_parent;
+
+			pv.update(this, 'active_part', false);
+			this.addPart(new MultiAtcsRow(this, this.pl));
+			this.addPart(new PlaylistSettingsRow(this, this.pl));
+		},
+		'compx-loader_disallowing_desc': [
+			['^loader_disallowing_desc'],
+			function(loader_disallowing_desc) {
+				return loader_disallowing_desc;
+			}
+		]
+	});
 
 	var SongsListBase = function() {};
 	pv.extendFromTo("SongsListBase", LoadableList, SongsListBase);

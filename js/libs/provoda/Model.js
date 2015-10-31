@@ -138,7 +138,7 @@ StatesArchiver.prototype = {
 			}
 			this.setResult(this.calculate_result.call(this, values_list));
 		}
-		
+
 	},
 	setItemsReal: setEvLiItems,
 	setItems: function(items_list) {
@@ -237,9 +237,9 @@ var modelInit = (function() {
 		if (!lnwatch.items) {
 			lnwatch.items = [];
 		}
-		
 
-		
+
+
 
 		for (var provoda_id in lnwatch.items_index) {
 			if (!lnwatch.items_index[provoda_id]) {
@@ -323,7 +323,7 @@ var modelInit = (function() {
 				default: {
 					throw new Error('unknow zip func ' + zip_name);
 				}
-			} 
+			}
 		}
 	}, function(state_name, zip_name) {
 		return (state_name || "") + '-' + (zip_name || "");
@@ -373,7 +373,7 @@ var modelInit = (function() {
 		});
 	});
 
-	
+
 
 	var LocalWatchRoot = function(md, nwatch) {
 		this.num = ++lw_count;
@@ -409,7 +409,7 @@ var modelInit = (function() {
 		if (!this.handler) {
 			// debugger;
 		}
-		
+
 
 		// если есть state_name значит массив будет состоять не из моделей
 		// а из состояния этих моделей с соостветствующим названим
@@ -446,7 +446,7 @@ var modelInit = (function() {
 		big_index[this._provoda_id] = this;
 
 		//this.states = {};
-		
+
 		this.children_models = null;
 		this._network_source = this._network_source || null;
 
@@ -546,7 +546,7 @@ add({
 				} else {
 					result.push(this.getNonComplexStatesList(cur));
 				}
-				
+
 				//
 				//Things[i]
 			}
@@ -577,13 +577,13 @@ add({
 		}
 
 
-		
+
 	},
 	collectStateChangeHandlers: (function() {
 		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 		var NestWatch = hp.NestWatch;
-		
+
 		return function(props) {
 			var need_recalc = false;
 
@@ -672,12 +672,12 @@ add({
 						});
 					}
 				}
-				
+
 				this.nestings_declarations = result;
-				
+
 			}
-			
-			
+
+
 
 		};
 	})(),
@@ -703,7 +703,7 @@ add({
 						props.req_map[i][1] = spv.mmap( cur );
 					}
 					changeSources(this.netsources_of_states, props.req_map[i][2]);
-					
+
 				}
 
 			}
@@ -737,7 +737,7 @@ add({
 							}
 						}
 						changeSources(this.netsources_of_nestings, cur[1]);
-						
+
 					}
 				}
 			}
@@ -809,7 +809,7 @@ add({
 	initSi: function(Constr, data, params) {
 		var instance = new Constr();
 		var initsbi_opts = this.getSiOpts();
-		
+
 		this.useMotivator(instance, function(instance) {
 			instance.init(initsbi_opts, data, params);
 		});
@@ -840,7 +840,7 @@ add({
 				// this.nes_match_index[nesting_name].remoVe();
 			}
 		}
-		
+
 	},
 	addNestWatch: (function() {
 		var SublWtch = function(nwatch, skip, id) {
@@ -875,7 +875,7 @@ add({
 					this.states_links[nwatch.state_name] = [];
 				}
 				this.states_links[nwatch.state_name].push(nwatch);
-				
+
 			} else {
 				if (!this.nes_match_index) {
 					this.nes_match_index = {};
@@ -886,7 +886,7 @@ add({
 					this.nes_match_index[nesting_name] = [];
 				}
 				this.nes_match_index[nesting_name].push(new SublWtch(nwatch, skip));
-				
+
 
 				if (this.children_models) {
 					for (var nesting_name in this.children_models) {
@@ -894,7 +894,7 @@ add({
 					}
 				}
 			}
-			
+
 		};
 	})(),
 	mapStates: function(states_map, donor, acceptor) {
@@ -926,7 +926,7 @@ add({
 		if (this.init_states === false) {
 			throw new Error('states inited already, you can\'t init now');
 		}
-		
+
 		if (more_states) {
 			if (!this.init_states) {
 				this.init_states = {};
@@ -1081,7 +1081,7 @@ function checkChangedNestWatchs(md, collection_name) {
 				result.push(cur);
 				// console.log(cur.selector, cur);
 			}
-			
+
 		}
 
 		return result.length && result;
@@ -1171,22 +1171,22 @@ add({
 		if (changed_nawchs) {
 			for (var i = 0; i < changed_nawchs.length; i++) {
 				var cur = changed_nawchs[i];
-				
+
 				calls_flow.pushToFlow(null, null, null, cur, cur.handler, null, this.current_motivator);
-				
+
 			}
-			
+
 		}
 
-		
+
 		// !?
-		
-		
+
+
 
 		var full_ev_name = hp.getFullChilChEvName(collection_name);
 
 		var chch_cb_cs = this.evcompanion.getMatchedCallbacks(full_ev_name);
-		
+
 		if (chch_cb_cs.length) {
 			if (!this.zdsv) {
 				this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
@@ -1194,7 +1194,7 @@ add({
 			}
 			zdsv = this.zdsv;
 			var flow_steps = zdsv.createFlowStepsArray('collch', collection_name);
-			
+
 
 			var event_obj = {
 				value: null,
@@ -1251,8 +1251,8 @@ add({
 		}
 		//
 	}});
-	
-	
+
+
 
 
 	var getLinedStructure;
@@ -1280,7 +1280,7 @@ add({
 			var all_for_parse = [this];
 
 
-			
+
 
 
 			while (all_for_parse.length) {
@@ -1294,7 +1294,7 @@ add({
 
 				for (var state_name in cur_md.states){
 					checkModel(cur_md.states[state_name], models_index, local_index, all_for_parse);
-					
+
 				}
 
 				for (var nesting_name in cur_md.children_models){
@@ -1349,7 +1349,7 @@ add({
 			var all_for_parse = [this];
 			big_result = big_result || [];
 
-			
+
 
 			while (all_for_parse.length) {
 				var cur_md = all_for_parse.shift();
@@ -1357,7 +1357,7 @@ add({
 				if (can_push) {
 					models_index[cur_md._provoda_id] = true;
 				}
-				
+
 				var result = {
 					_provoda_id: cur_md._provoda_id,
 					model_name: cur_md.model_name,
@@ -1382,7 +1382,7 @@ add({
 						if (cur._provoda_id){
 							result.children_models[nesting_name] = checkModel(cur, models_index, local_index, all_for_parse);
 						} else {
-							
+
 							var array = new Array(cur.length);
 							for (var i = 0; i < cur.length; i++) {
 								array[i] = checkModel(cur[i], models_index, local_index, all_for_parse);
@@ -1394,7 +1394,7 @@ add({
 				if (can_push) {
 					big_result.push(result);
 				}
-				
+
 			}
 
 
