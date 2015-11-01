@@ -97,8 +97,7 @@ AppModel.extendTo(SeesuApp, {
 			//_this.auth.setScrobbling(true);
 		});
 
-		this.vk_auth = (new VkAuth());
-		this.vk_auth.init({
+		this.vk_auth = this.initSi(VkAuth, false, {
 			app_id: this.vkappid,
 			urls: {
 				bridge: 'http://seesu.me/vk/bridge.html',
@@ -111,7 +110,6 @@ AppModel.extendTo(SeesuApp, {
 			vksite_settings: this._url.api_settings,
 			display_type: app_env.tizen_app && 'mobile'
 		});
-
 
 		this.once("vk-site-api", function() {
 			window.documentScrollSizeChangeHandler = function(height){

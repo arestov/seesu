@@ -47,9 +47,9 @@ function buildVkAuth(obj, opts) {
 
 var VkAuth = function() {};
 pv.Model.extendTo(VkAuth, {
-	init: function(opts) {
-		this._super();
-		buildVkAuth(this, opts);
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
+		buildVkAuth(this, params);
 	},
 	checkSettings: function(settings_bits) {
 		if (this.vksite_app && this.vksite_settings){
