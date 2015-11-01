@@ -244,7 +244,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 var FilesSourceTuner = function() {};
 pv.Model.extendTo(FilesSourceTuner, {
 	init: function(opts, data) {
-		this._super();
+		this._super.apply(this, arguments);
 		this.app = opts.app;
 		var search_name = data.search_name;
 		this.wch(this.app, 'settings-files_sources', function (e) {
@@ -559,12 +559,12 @@ var getMatchedSongs = function(music_list, msq) {
 
 	var FilesInvestg = function() {};
 	pv.Model.extendTo(FilesInvestg, {
-		init: function(opts, params) {
-			this._super();
+		init: function(opts, data, params) {
+			this._super.apply(this, arguments);
 			this.sources = {};
 			this.sources_list = [];
 			this.checked_files = {};
-			this.mp3_search = opts.mp3_search;
+			this.mp3_search = params.mp3_search;
 			this.msq = params.msq;
 			this.query_string = params.query_string;
 
@@ -948,16 +948,11 @@ var getAverageDurations = function(mu_array, time_limit){
 			var query_string = msq.q || getQueryString(msq);
 			var investg = this.investgs[ query_string ];
 			if (!investg){
-				investg = new FilesInvestg();
-				this.useMotivator(investg, function() {
-					investg.init({
-						mp3_search: this
-					}, {
+				investg = this.initSi(FilesInvestg, null, {
+						mp3_search: this,
 						msq: msq,
 						query_string: query_string
 					});
-				}, motivator);
-
 
 				this.investgs[query_string] = investg;
 
