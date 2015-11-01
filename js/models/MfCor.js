@@ -25,14 +25,14 @@ comd.VkLoginB.extendTo(MFCorVkLogin, {
 
 
 
-var NotifyCounter = function(name, banned_messages) {
-	this.init();
-	this.messages = {};
-	this.banned_messages = banned_messages || [];
-	this.name = name;
-};
+var NotifyCounter = function() {};
 
 pv.Model.extendTo(NotifyCounter, {
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
+		this.messages = {};
+		this.banned_messages = (params && params.banned_messages) || [];
+	},
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
@@ -518,7 +518,7 @@ LoadableList.extendTo(MfCor, {
 		return !this.file;
 	},
 	initNotifier: function() {
-		this.notifier = new NotifyCounter();
+		this.notifier = this.initSi(NotifyCounter);
 		pv.updateNesting(this, 'notifier', this.notifier);
 		this.sf_notf = this.app.notf.getStore('song-files');
 		var rd_msgs = this.sf_notf.getReadedMessages();
