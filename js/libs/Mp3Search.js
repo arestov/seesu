@@ -833,31 +833,7 @@ var getAverageDurations = function(mu_array, time_limit){
 
 
 
-	var Mp3Search = window.Mp3Search = function(opts, searches_pr){
-		this.init();
-		this.app = opts.app;
-		this.se_list = [];
-		this.searches_pr  = searches_pr || {};
-		this.tools_by_name = {};
-		pv.update(this, 'tools_by_name', this.tools_by_name);
-		this.investgs = {};
-		this.investgs_by_artist = {};
-		this.files_ids = {};
-		this.pushed_files_by_artist = {};
-		this.tuners = {};
-		this.on('list-changed', function(list) {
-			var tools_by_name = {};
-			if (list) {
-				for (var i = 0; i < list.length; i++) {
-					var cur = list[i];
-					if (!cur.disabled) {
-						tools_by_name[cur.name] = true;
-					}
-				}
-			}
-			pv.update(this, 'tools_by_name', tools_by_name);
-		});
-	};
+	var Mp3Search = window.Mp3Search = function(){};
 
 	Mp3Search.getSongFileModel = function(map_parent){
 		return map_parent.initSi(SongFileModel, null, {file:this});
@@ -876,9 +852,33 @@ var getAverageDurations = function(mu_array, time_limit){
 	Mp3Search.guessArtist = guessArtist;
 	Mp3Search.QueryMatchIndex = QueryMatchIndex;
 
-
-
 	pv.Model.extendTo(Mp3Search,  {
+		init: function(opts, data, searches_pr) {
+			this._super.apply(this, arguments);
+
+			// this.app = opts.app;
+			this.se_list = [];
+			this.searches_pr  = searches_pr || {};
+			this.tools_by_name = {};
+			pv.update(this, 'tools_by_name', this.tools_by_name);
+			this.investgs = {};
+			this.investgs_by_artist = {};
+			this.files_ids = {};
+			this.pushed_files_by_artist = {};
+			this.tuners = {};
+			this.on('list-changed', function(list) {
+				var tools_by_name = {};
+				if (list) {
+					for (var i = 0; i < list.length; i++) {
+						var cur = list[i];
+						if (!cur.disabled) {
+							tools_by_name[cur.name] = true;
+						}
+					}
+				}
+				pv.update(this, 'tools_by_name', tools_by_name);
+			});
+		},
 		'regfr-listchange': {
 			event_name: 'list-changed',
 			fn: function() {

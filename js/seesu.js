@@ -287,6 +287,7 @@ AppModel.extendTo(SeesuApp, {
 		this._super();
 		this.version = version;
 		this.lfm = lfm;
+		this.app = this;
 
 		this._url = app_serv.get_url_parameters(location.search, true);
 		this.settings = {};
@@ -343,7 +344,7 @@ AppModel.extendTo(SeesuApp, {
 		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
-		this.mp3_search = (new Mp3Search({app: this}, {
+		this.mp3_search = this.initSi(Mp3Search, false, {
 			vk: 5,
 			'pleer.com': 4,
 			nigma: 1,
@@ -351,8 +352,7 @@ AppModel.extendTo(SeesuApp, {
 			soundcloud: -5,
 			lastfm:-10,
 			torrents: -15
-		}));
-
+		});
 
 		this.vk = {};
 
@@ -381,8 +381,8 @@ AppModel.extendTo(SeesuApp, {
 		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();
 
-		this.vk_users = (new pv.Model()).init();
-		this.vk_groups = (new pv.Model()).init();
+		this.vk_users = this.initSi(pv.Model);
+		this.vk_groups = this.initSi(pv.Model);
 
 		if (app_env.check_resize){
 			pv.update(this, 'slice-for-height', true);
