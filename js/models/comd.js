@@ -85,7 +85,7 @@ pv.Model.extendTo(BigContextNotify, {
 var ImagesPack = function() {};
 pv.Model.extendTo(ImagesPack, {
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.images_by_source = {};
 		this.all_images = [];
 	},
@@ -119,17 +119,14 @@ pv.Model.extendTo(ImagesPack, {
 });
 var TrackImages  = function() {};
 ImagesPack.extendTo(TrackImages, {
-	init: function(artmd, info) {
-		this._super();
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
 
-		this.artmd = artmd;
-		this.artist = info.artist;
-		this.track = info.track;
+		this.artmd = params.artmd;
+		this.artist = params.info.artist;
+		this.track = params.info.track;
 
-
-		this.wch(artmd, 'image-to-use', 'artist_image');
-
-
+		this.wch(params.artmd, 'image-to-use', 'artist_image');
 	},
 	complex_states: {
 		'image-to-use': {
@@ -143,10 +140,10 @@ ImagesPack.extendTo(TrackImages, {
 
 var ArtistImages = function() {};
 ImagesPack.extendTo(ArtistImages, {
-	init: function(artist_name) {
-		this._super();
+	init: function(opts, data, params) {
+		this._super.apply(this, arguments);
 
-		this.artist_name = artist_name;
+		this.artist_name = params.artist_name;
 
 	},
 	complex_states: {
@@ -160,9 +157,9 @@ ImagesPack.extendTo(ArtistImages, {
 });
 
 var LastFMArtistImagesSelector = function() {};
-pv.Eventor.extendTo(LastFMArtistImagesSelector, {
+pv.Model.extendTo(LastFMArtistImagesSelector, {
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.art_models = {};
 		this.track_models = {};
 		this.unknown_methods = {};
@@ -202,10 +199,12 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 		info.track = this.convertEventName(info.track);
 
 		var model_id = info.artist + ' - ' + info.track;
-		if (!this.track_models[model_id]){
+		if (!this.track_models[model_id]) {
+			var md = this.initSi(TrackImages, false, {
+				artmd: this.getArtistImagesModel(info.artist),
+				info: info
+			});
 
-			var md = new TrackImages();
-			md.init(this.getArtistImagesModel(info.artist), info);
 			this.track_models[model_id] = md;
 		}
 		return this.track_models[model_id];
@@ -217,8 +216,9 @@ pv.Eventor.extendTo(LastFMArtistImagesSelector, {
 		artist_name = this.convertEventName(artist_name);
 
 		if (!this.art_models[artist_name]){
-			var md = new ArtistImages();
-			md.init(artist_name);
+			var md = this.initSi(ArtistImages, false, {
+				artist_name: artist_name
+			});
 			this.art_models[artist_name] = md;
 		}
 		return this.art_models[artist_name];
