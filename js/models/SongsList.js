@@ -18,37 +18,26 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 	};
 
-	var PlaylistSettingsRow = function(actionsrow){
-		this.init(actionsrow);
-	};
+	var PlaylistSettingsRow = function(){};
 	comd.BaseCRow.extendTo(PlaylistSettingsRow, {
-		init: function(actionsrow){
-			this.actionsrow = actionsrow;
-			this._super();
-			this.wch(su, 'settings-dont-rept-pl', 'dont_rept_pl');
-		},
+		actionsrow_src: '^',
+		'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
 		setDnRp: function(state) {
-			pv.update(this, 'dont_rept_pl', state);
-			su.setSetting('dont-rept-pl', state);
+			this.app.setSetting('dont-rept-pl', state);
 		},
 		model_name: 'row-pl-settings'
 	});
 
-	var MultiAtcsRow = function(actionsrow){
-		this.init(actionsrow);
-	};
+	var MultiAtcsRow = function(){};
 	comd.BaseCRow.extendTo(MultiAtcsRow, {
-		init: function(actionsrow){
-			this.actionsrow = actionsrow;
-			this._super();
-		},
+		actionsrow_src: '^',
 		makePlayable: function() {
-			this.actionsrow.pl.makePlayable(true);
-			su.trackEvent('Controls', 'make playable all tracks in playlist');
+			this.map_parent.map_parent.makePlayable(true);
+			this.app.trackEvent('Controls', 'make playable all tracks in playlist');
 		},
 		makeExternalPlaylist: function() {
-			this.actionsrow.pl.makeExternalPlaylist();
-			su.trackEvent('Controls', 'make *.m3u');
+			this.map_parent.map_parent.makeExternalPlaylist();
+			this.app.trackEvent('Controls', 'make *.m3u');
 		},
 		model_name: 'row-multiatcs'
 	});
@@ -61,8 +50,8 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 			this.pl = this.map_parent;
 
 			pv.update(this, 'active_part', false);
-			this.addPart(new MultiAtcsRow(this, this.pl));
-			this.addPart(new PlaylistSettingsRow(this, this.pl));
+			this.addPart(this.initSi(MultiAtcsRow));
+			this.addPart(this.initSi(PlaylistSettingsRow));
 		},
 		'compx-loader_disallowing_desc': [
 			['^loader_disallowing_desc'],
@@ -79,10 +68,8 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 	var SongsList = function(){};
 	SongsListBase.extendTo(SongsList, {
 		'nest-plarow': [PlARow],
-		bindStaCons: spv.precall(SongsListBase.prototype.bindStaCons, function() {
-			this.wch(this.app, 'settings-dont-rept-pl', 'dont_rept_pl');
-			this.wch(this.app, 'settings-pl-shuffle', 'pl-shuffle');
-		}),
+		'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
+		'compx-pl-shuffle': [['#settings-pl-shuffle']],
 		'nest_rqc-songs-list': Song,
 		/*makeDataItem: function(obj) {
 			return this.extendSong(obj);

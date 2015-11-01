@@ -415,6 +415,20 @@ pv.Model.extendTo(PartsSwitcher, {
 
 var BaseCRow = function(){};
 pv.Model.extendTo(BaseCRow, {
+	init: function() {
+		this.actionsrow = this.actionsrow;
+		this._super.apply(this, arguments);
+		if (this.actionsrow_src && !this.actionsrow) {
+			var count = this.actionsrow_src.length;
+			var cur = count && this;
+			while (count) {
+				cur = cur.map_parent;
+				count--;
+			}
+
+			this.actionsrow = cur;
+		}
+	},
 	switchView: function(){
 		this.actionsrow.switchPart(this.model_name);
 	},
