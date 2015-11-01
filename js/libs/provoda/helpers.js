@@ -45,6 +45,10 @@ var enc_states = {
 			var state_name = parts.pop();
 			var zin_func = parts.pop();
 
+			if (!state_name) {
+				throw new Error('should be state_name');
+			}
+
 			encoded_states[string] = {
 				rel_type: 'nesting',
 				full_name: string,
@@ -60,10 +64,14 @@ var enc_states = {
 	root: function(string) {
 		//example: '#vk_id'
 		if (!encoded_states[string]){
+			var state_name = string.slice(1);
+			if (!state_name) {
+				throw new Error('should be state_name');
+			}
 			encoded_states[string] = {
 				rel_type: 'root',
 				full_name: string,
-				state_name: string.slice(1)
+				state_name: state_name
 			};
 		}
 
