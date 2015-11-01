@@ -107,9 +107,6 @@ var MfComplect = function(opts, params) {
 };
 
 pv.Model.extendTo(MfComplect, {
-	flchwp_opts: {
-		exlusive: true
-	},
 	hndFilesListCh: function(e) {
 		var files_list = e.value;
 		if (!files_list){
@@ -122,7 +119,6 @@ pv.Model.extendTo(MfComplect, {
 
 			sf =
 				this.mf_cor.getSFM(files_list[i]);
-			//	.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
 			pv.update(sf, 'overstock', i + 1 > this.overstock_limit);
 			moplas_list.push(sf);
 
