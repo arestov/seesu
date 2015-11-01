@@ -45,10 +45,6 @@ var enc_states = {
 			var state_name = parts.pop();
 			var zin_func = parts.pop();
 
-			if (!state_name) {
-				throw new Error('should be state_name');
-			}
-
 			encoded_states[string] = {
 				rel_type: 'nesting',
 				full_name: string,
