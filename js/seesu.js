@@ -282,10 +282,10 @@ AppModel.extendTo(SeesuApp, {
 		window._gaq.push(data_array);
 	},
 	init: function(version){
+		this.app = this;
 		this._super();
 		this.version = version;
 		this.lfm = lfm;
-		this.app = this;
 
 		this._url = app_serv.get_url_parameters(location.search, true);
 		this.settings = {};
