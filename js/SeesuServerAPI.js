@@ -130,41 +130,39 @@ var updateRelations = function(su_serv, rels, place){
 	pvUpdate(su_serv.app, 'relations_' + place, index);
 };
 
-var SeesuServerAPI = function(app, auth, url){
-	this.app = app;
-	this.init();
-	var _this = this;
+var init = function(self, app, auth, url){
+	self.app = app;
 
-	this.url  = url;
+	self.url  = url;
 	if (auth){
-		this.setAuth(auth, true);
+		self.setAuth(auth, true);
 	}
 
 	var update_interval = 1000 * 60 * 4;
 
-	this.susd.rl = new AsyncDataSteam(function(callback){
-		_this.api('relations.getLikes', function(r){
-			updateRelations(_this, r.done, 'likes');
+	self.susd.rl = new AsyncDataSteam(function(callback){
+		self.api('relations.getLikes', function(r){
+			updateRelations(self, r.done, 'likes');
 			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
 
-	this.susd.ri = new AsyncDataSteam(function(callback){
-		_this.api('relations.getInvites', function(r){
-			updateRelations(_this, r.done, 'invites');
+	self.susd.ri = new AsyncDataSteam(function(callback){
+		self.api('relations.getInvites', function(r){
+			updateRelations(self, r.done, 'invites');
 			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
 
-	this.auth.regCallback('relations.likes', function(){
-		_this.susd.rl.init();
-		_this.susd.ri.init();
+	self.auth.regCallback('relations.likes', function(){
+		self.susd.rl.init();
+		self.susd.ri.init();
 	});
 
 
-	this.susd.ligs =  new AsyncDataSteam(function(callback){
+	self.susd.ligs =  new AsyncDataSteam(function(callback){
 		$.ajax({
-			url: _this.url + 'last_listenings/',
+			url: self.url + 'last_listenings/',
 			type: "GET",
 			dataType: "json",
 			headers:{
@@ -179,149 +177,155 @@ var SeesuServerAPI = function(app, auth, url){
 		});
 	}, update_interval,  update_interval);
 	spv.domReady(window.document, function(){
-		_this.susd.ligs.init();
+		self.susd.ligs.init();
 	});
 
 };
 
-pv.Eventor.extendTo(SeesuServerAPI, {
-	source_name: 'seesu.me',
-	errors_fields: ['error'],
-	susd: {
-		rl: false,
-		ri: false,
-		ligs: false,
-		relations:{
-			likes: {},
-			invites: {}
-		},
-		addLike: function(user){
-			if (!this.relations.likes[user]){
-				this.relations.likes[user] = [{}];
-			}
-		},
-		addInvite: function(user){
-			if (!this.relations.likes[user]){
-				this.relations.likes[user] = [{}];
-			}
-		},
-		updateRelationsInvites: function(invites){
-			this.relations.invites = spv.makeIndexByField(invites, 'user');
-		},
-		updateRelationsLikes: function(likes){
-			this.relations.likes = spv.makeIndexByField(likes, 'user');
-		},
-		didUserInviteMe: function(user){
-			var rel = this.relations.invites[user];
-			return rel && rel[0];
-		},
-		isUserLiked: function(user){
-			var rel = this.relations.likes[user];
-			return rel && rel[0];
-		},
-		user_info: {}
+var SeesuServerAPI = spv.inh(pv.Eventor, {
+	naming: function(constructor) {
+		return function SeesuServerAPI(app, auth, url) {
+			constructor(this, app, auth, url);
+		};
 	},
-	auth: new AsyncDataSteam(false, false, false),
-	getInfo: function(type){
-		return this.susd.user_info[type];
-	},
-	setInfo: function(type, data){
-		this.susd.user_info[type] = data;
-		this.trigger('info-change.' + type, data);
-	},
-
-
-	getId: function(){
-		return this.auth._store && this.auth._store.userid;
-	},
-	loggedIn: function(){
-		var auth = this.auth._store;
-		return !!(auth.secret && auth.sid && auth.userid);
-	},
-
-	setAuth: function(auth_data, not_save){
-
-		if (!not_save){
-			app_serv.store('dg_auth', auth_data, true);
-		}
-		this.auth.setNewData(auth_data);
-		pv.update(this.app, 'su_userid', auth_data.userid);
-	},
-
-	getAuth: function(vk_user_id, callback){
-		var _this = this;
-		this.api('user.getAuth', {
-			type:'vk',
-			ver: 0.3,
-			vk_user: vk_user_id
-		}, function(su_sess){
-			if (su_sess.secret_container && su_sess.sid){
-				_this.app.vk_api.get('storage.get', {key:su_sess.secret_container})
-					.done(function(r){
-						if (r && r.response){
-							_this.setAuth({
-								userid: su_sess.userid,
-								secret: r.response,
-								sid: su_sess.sid
-							});
-							//su.s.setInfo('vk', su.vk.user_info);
-
-							//su.s.api('user.update', su.vk.user_info);
-							_this.app.trigger('dg-auth');
-
-							if (callback){callback();}
-						}
-					});
-			}
-
-		});
-	},
-	api: function(method, p, c, error){
-		var params = (typeof p == 'object' && p) || {};
-		var callback = c || (typeof p == 'function' && p);
-		var _this = this;
-
-
-		params.method = method;
-
-		var auth = this.auth._store;
-
-
-		if (['track.getListeners', 'user.getAuth'].indexOf(method) == -1){
-			if (!auth){
-				return false;
-			} else {
-				params.sid = auth.sid;
-				params.sig = hex_md5(spv.stringifyParams(params, ['sid']) + auth.secret);
-			}
-
-		}
-
-		return $.ajax({
-			type: "GET",
-			url: _this.url + 'api/',
-			data: params,
-			headers:{
-				'X-Requested-With': 'XMLHttpRequest'
+	init: init,
+	props: {
+		source_name: 'seesu.me',
+		errors_fields: ['error'],
+		susd: {
+			rl: false,
+			ri: false,
+			ligs: false,
+			relations:{
+				likes: {},
+				invites: {}
 			},
-			success: function(r){
-				if (r){
-					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
-						//_this.setAuth('');
-						//_this.getAuth(_this.vk_id);
-					} else{
-						if (typeof callback == 'function'){callback(r);}
-					}
+			addLike: function(user){
+				if (!this.relations.likes[user]){
+					this.relations.likes[user] = [{}];
+				}
+			},
+			addInvite: function(user){
+				if (!this.relations.likes[user]){
+					this.relations.likes[user] = [{}];
+				}
+			},
+			updateRelationsInvites: function(invites){
+				this.relations.invites = spv.makeIndexByField(invites, 'user');
+			},
+			updateRelationsLikes: function(likes){
+				this.relations.likes = spv.makeIndexByField(likes, 'user');
+			},
+			didUserInviteMe: function(user){
+				var rel = this.relations.invites[user];
+				return rel && rel[0];
+			},
+			isUserLiked: function(user){
+				var rel = this.relations.likes[user];
+				return rel && rel[0];
+			},
+			user_info: {}
+		},
+		auth: new AsyncDataSteam(false, false, false),
+		getInfo: function(type){
+			return this.susd.user_info[type];
+		},
+		setInfo: function(type, data){
+			this.susd.user_info[type] = data;
+			this.trigger('info-change.' + type, data);
+		},
+
+
+		getId: function(){
+			return this.auth._store && this.auth._store.userid;
+		},
+		loggedIn: function(){
+			var auth = this.auth._store;
+			return !!(auth.secret && auth.sid && auth.userid);
+		},
+
+		setAuth: function(auth_data, not_save){
+
+			if (!not_save){
+				app_serv.store('dg_auth', auth_data, true);
+			}
+			this.auth.setNewData(auth_data);
+			pv.update(this.app, 'su_userid', auth_data.userid);
+		},
+
+		getAuth: function(vk_user_id, callback){
+			var _this = this;
+			this.api('user.getAuth', {
+				type:'vk',
+				ver: 0.3,
+				vk_user: vk_user_id
+			}, function(su_sess){
+				if (su_sess.secret_container && su_sess.sid){
+					_this.app.vk_api.get('storage.get', {key:su_sess.secret_container})
+						.done(function(r){
+							if (r && r.response){
+								_this.setAuth({
+									userid: su_sess.userid,
+									secret: r.response,
+									sid: su_sess.sid
+								});
+								//su.s.setInfo('vk', su.vk.user_info);
+
+								//su.s.api('user.update', su.vk.user_info);
+								_this.app.trigger('dg-auth');
+
+								if (callback){callback();}
+							}
+						});
 				}
 
-			},
-			error: error
-		});
+			});
+		},
+		api: function(method, p, c, error){
+			var params = (typeof p == 'object' && p) || {};
+			var callback = c || (typeof p == 'function' && p);
+			var _this = this;
 
+
+			params.method = method;
+
+			var auth = this.auth._store;
+
+
+			if (['track.getListeners', 'user.getAuth'].indexOf(method) == -1){
+				if (!auth){
+					return false;
+				} else {
+					params.sid = auth.sid;
+					params.sig = hex_md5(spv.stringifyParams(params, ['sid']) + auth.secret);
+				}
+
+			}
+
+			return $.ajax({
+				type: "GET",
+				url: _this.url + 'api/',
+				data: params,
+				headers:{
+					'X-Requested-With': 'XMLHttpRequest'
+				},
+				success: function(r){
+					if (r){
+						if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
+							//_this.setAuth('');
+							//_this.getAuth(_this.vk_id);
+						} else{
+							if (typeof callback == 'function'){callback(r);}
+						}
+					}
+
+				},
+				error: error
+			});
+
+		}
 	}
 });
-
-
 
 return SeesuServerAPI;
 });
