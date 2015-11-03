@@ -3,9 +3,9 @@ define(['./PlayerComplex', 'app_serv', 'jquery', 'spv',
 AudioCoreHTML5, AudioCoreWmp, AudioCoreSm2Proxy){
 'use strict';
 var app_env = app_serv.app_env;
-	var su;
-
-
+var su;
+var document = window.document;
+var navigator = window.navigator;
 
 
 	var sm2opts = {};
@@ -339,17 +339,7 @@ var app_env = app_serv.app_env;
 				detectAudioCores();
 			}
 		});
-
 	}
-
-
-
-
-
-
-
-
-
 
 
 	var PlayerSeesu = function(){};
@@ -456,12 +446,6 @@ var app_env = app_serv.app_env;
 			su.nowPlaying(mo);
 		}
 	});
-
-
-
-
-
-
 
 return PlayerSeesu;
 });
