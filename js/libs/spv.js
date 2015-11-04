@@ -840,6 +840,13 @@ function extend(Class, params) {
 	var building = params.building || Class.building || stBuilding;
 	var partWrapping = params.partWrapping || Class.partWrapping || stPartWrapping;
 
+	if (params.init) {
+		var init = params.init;
+		building = function(parentBuilder) {
+			return stPartWrapping(parentBuilder, init);
+		};
+	}
+
 	var parentBuilder = Class.builder;
 	var partBuilder = params.partBuilder;
 	var props = typeof params.props == 'function' ?
