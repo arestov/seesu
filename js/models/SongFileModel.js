@@ -40,6 +40,17 @@ pv.Model.extendTo(FileInTorrent, {
 	}
 });
 
+var zerofyString = spv.zerofyString;
+var getNiceSeconds = function(state) {
+	if (typeof state == 'number'){
+		var duration = Math.round(state/1000);
+		if (duration){
+			var digits = duration % 60;
+			return  zerofyString(Math.floor(duration/60), 2) + ':' + zerofyString(digits, 2);
+		}
+	}
+};
+
 	var isDepend = pv.utils.isDepend;
 
 	var SongFileModel = function(){};
@@ -62,8 +73,6 @@ pv.Model.extendTo(FileInTorrent, {
 				}
 				this.parent = file;
 			}
-
-			this.createTextStates();
 
 			this.setPlayer(this.app.p);
 
@@ -107,20 +116,22 @@ pv.Model.extendTo(FileInTorrent, {
 				// this.RPCLegacy('trigger', 'want-to-play-sf');
 			}
 		},
-		createTextStates: function() {
-			var states = {};
-			states['title'] = this.getTitle();
-			if (this.state('from')){
-				states['source_name'] = this.state('from');
-			}
-			if (this.state('description')){
-				states['description'] = this.state('description');
-			}
-			if (this.state('duration')){
-				states['duration'] = this.state('duration');
-			}
-			this.updateManyStates(states);
+		getTitle: function() {
+			return this.state('title');
 		},
+		'compx-title': [
+			['artist', 'track'],
+			function(artist, track) {
+				if (artist && track) {
+					return artist + ' - ' + track;
+				} else if (artist) {
+					return artist;
+				} else if (track) {
+					return track;
+				}
+			}
+		],
+		'compx-source_name': [['from']],
 		'compx-visible_duration': [
 			['duration', 'loaded_duration'],
 			function(duration, loaded_duration) {
@@ -133,25 +144,17 @@ pv.Model.extendTo(FileInTorrent, {
 				return Math.round(duration * playing_progress);
 			}
 		],
-		getNiceSeconds: function(state) {
-			if (typeof state == 'number'){
-				var duration = Math.round(state/1000);
-				if (duration){
-					var digits = duration % 60;
-					return  spv.zerofyString(Math.floor(duration/60), 2) + ':' + spv.zerofyString(digits, 2);
-				}
-			}
-		},
+
 		'compx-visible_duration_text': [
 			['visible_duration'],
 			function (state) {
-				return this.getNiceSeconds(state);
+				return getNiceSeconds(state);
 			}
 		],
 		'compx-play_position_text': [
 			['play_position'],
 			function (state) {
-				return this.getNiceSeconds(state);
+				return getNiceSeconds(state);
 			}
 		],
 		'compx-load_file': [
@@ -168,21 +171,6 @@ pv.Model.extendTo(FileInTorrent, {
 				target.removeCache();
 			}
 		}),
-		getTitle: function() {
-			var title = [];
-
-			var artist = this.state('artist');
-			var track = this.state('track');
-
-			if (artist){
-				title.push(artist);
-			}
-			if (track){
-				title.push(track);
-			}
-
-			return title.join(' - ');
-		},
 		events: {
 			finish: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
