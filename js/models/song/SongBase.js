@@ -1,6 +1,5 @@
 define(['pv', 'spv', 'jquery', './../PlayRequest'], function(pv, spv, $, PlayRequest) {
 "use strict";
-var counter = 0;
 var isDepend = pv.utils.isDepend;
 
 var playRelative = function(mo, result) {
@@ -28,7 +27,6 @@ pv.addPrototype("SongBase",{
 		this.mp3_search = opts.app.mp3_search;
 		this.player = opts.app.player;
 
-		this.uid = ++counter;
 		if (omo.track){
 			omo.track = omo.track.trim();
 		}

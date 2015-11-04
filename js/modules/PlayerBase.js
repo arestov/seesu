@@ -82,26 +82,26 @@ var PlayerBase = spv.inh(pv.Eventor, {
 				});
 		},
 		attachSong: function(song_file){
-			this.song_files[song_file.uid] = song_file;
-			this.attached[song_file.uid] = true;
+			this.song_files[song_file._provoda_id] = song_file;
+			this.attached[song_file._provoda_id] = true;
 		},
 		dettachSong: function(song_file){
-			delete this.attached[song_file.uid];
+			delete this.attached[song_file._provoda_id];
 		},
 		create: function(song_file){
 			if (song_file && this.core){
-				if (!song_file.link){
+				if (!song_file.state('link')){
 					throw new Error('give me url of file!');
 				}
-				this.core.callSongMethod("create", song_file.uid, {
-					url: song_file.link
+				this.core.callSongMethod("create", song_file._provoda_id, {
+					url: song_file.state('link')
 				});
 				return true;
 			}
 		},
 		play: function(song_file){
 			if (song_file && this.core){
-				this.core.callSongMethod("play", song_file.uid);
+				this.core.callSongMethod("play", song_file._provoda_id);
 				if (this.global_volume && (this.volume || this.volume_fac)){
 					this.setVolume(song_file, this.volume, this.volume_fac);
 				}
@@ -110,7 +110,7 @@ var PlayerBase = spv.inh(pv.Eventor, {
 		},
 		pause: function(song_file){
 			if (song_file && this.core){
-				this.core.callSongMethod("pause", song_file.uid);
+				this.core.callSongMethod("pause", song_file._provoda_id);
 				return true;
 			}
 		},
@@ -121,7 +121,7 @@ var PlayerBase = spv.inh(pv.Eventor, {
 				console.log('wrong volume value')
 			}
 			if (song_file && this.core){
-				this.core.callSongMethod("setVolume", song_file.uid, vol, fac);
+				this.core.callSongMethod("setVolume", song_file._provoda_id, vol, fac);
 			}
 			if (this.global_volume){
 				this.volume_fac = fac;
@@ -133,25 +133,25 @@ var PlayerBase = spv.inh(pv.Eventor, {
 		},
 		setPosition: function(song_file, pos, fac){
 			if (song_file && this.core){
-				this.core.callSongMethod("setPosition", song_file.uid, pos, fac);
+				this.core.callSongMethod("setPosition", song_file._provoda_id, pos, fac);
 				return true;
 			}
 		},
 		load: function(song_file){
 			if (song_file && this.core){
-				this.core.callSongMethod("load", song_file.uid);
+				this.core.callSongMethod("load", song_file._provoda_id);
 				return true;
 			}
 		},
 		unload: function(song_file){
 			if (song_file && this.core){
-				this.core.callSongMethod("unload", song_file.uid);
+				this.core.callSongMethod("unload", song_file._provoda_id);
 				return true;
 			}
 		},
 		remove: function(song_file){
 			if (song_file && this.core){
-				this.core.callSongMethod("remove", song_file.uid);
+				this.core.callSongMethod("remove", song_file._provoda_id);
 				return true;
 			}
 		}

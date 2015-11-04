@@ -42,12 +42,13 @@ pv.Model.extendTo(FileInTorrent, {
 
 	var isDepend = pv.utils.isDepend;
 
-	var counter = 0;
 	var SongFileModel = function(){};
 	pv.Model.extendTo(SongFileModel, {
 		model_name: 'file-http',
 		init: function(opts, states, params) {
 			this._super.apply(this, arguments);
+
+			this.sound = null;
 
 			this.mo = this.map_parent.map_parent;
 
@@ -55,14 +56,12 @@ pv.Model.extendTo(FileInTorrent, {
 				var file = params.file;
 				for (var a in file){
 					if (typeof file[a] != 'function' && typeof file[a] != 'object'){
-						this[a] = file[a];
+						// this[a] = file[a];
+						pvUpdate(this, a, file[a]);
 					}
 				}
 				this.parent = file;
 			}
-
-
-			this.uid = 'song-file-' + counter++;
 
 			this.createTextStates();
 
@@ -111,14 +110,14 @@ pv.Model.extendTo(FileInTorrent, {
 		createTextStates: function() {
 			var states = {};
 			states['title'] = this.getTitle();
-			if (this.from){
-				states['source_name'] = this.from;
+			if (this.state('from')){
+				states['source_name'] = this.state('from');
 			}
-			if (this.description){
-				states['description'] = this.description;
+			if (this.state('description')){
+				states['description'] = this.state('description');
 			}
-			if (this.duration){
-				states['duration'] = this.duration;
+			if (this.state('duration')){
+				states['duration'] = this.state('duration');
 			}
 			this.updateManyStates(states);
 		},
@@ -172,12 +171,16 @@ pv.Model.extendTo(FileInTorrent, {
 		getTitle: function() {
 			var title = [];
 
-			if (this.artist){
-				title.push(this.artist);
+			var artist = this.state('artist');
+			var track = this.state('track');
+
+			if (artist){
+				title.push(artist);
 			}
-			if (this.track){
-				title.push(this.track);
+			if (track){
+				title.push(track);
 			}
+
 			return title.join(' - ');
 		},
 		events: {

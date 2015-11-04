@@ -483,8 +483,8 @@ LoadableList.extendTo(MfCor, {
 		function (current_mopla, default_mopla) {
 			var vis_mopla = current_mopla || default_mopla;
 			return vis_mopla && {
-				source_name: vis_mopla.from,
-				source_link: vis_mopla.page_link || sources_map[vis_mopla.from]
+				source_name: vis_mopla.state('from'),
+				source_link: vis_mopla.state('page_link') || sources_map[vis_mopla.state('from')]
 			};
 		}
 	],
