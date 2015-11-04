@@ -3,7 +3,7 @@ function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateP
 'use strict';
 return function(StatesEmitter, big_index, views_proxies, sync_sender) {
 var push = Array.prototype.push;
-var cloneObj = cloneObj;
+var cloneObj = spv.cloneObj;
 
 var getComplexInitList = updateProxy.getComplexInitList;
 var unsubcribeOld = function(evColr, items_list) {
