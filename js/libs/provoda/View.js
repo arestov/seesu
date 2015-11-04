@@ -2,6 +2,7 @@ define(['spv', './helpers',  'jquery', './updateProxy', './prsStCon'],
 function(spv, hp, $, updateProxy, prsStCon) {
 'use strict';
 var pvUpdate = updateProxy.update;
+var cloneObj = cloneObj;
 var $v = hp.$v;
 return function(StatesEmitter, main_calls_flow, views_proxies) {
 var push = Array.prototype.push;
@@ -130,9 +131,9 @@ StatesEmitter.extendTo(View, {
 			this.dom_related_props = [];
 		}
 
-		spv.cloneObj(this._lbr.undetailed_states, this.mpx.states);
-		spv.cloneObj(this._lbr.undetailed_states, this.mpx.vstates);
-		spv.cloneObj(this._lbr.undetailed_children_models, this.mpx.nestings);
+		cloneObj(this._lbr.undetailed_states, this.mpx.states);
+		cloneObj(this._lbr.undetailed_states, this.mpx.vstates);
+		cloneObj(this._lbr.undetailed_children_models, this.mpx.nestings);
 
 		if (this.base_tree_expand_states) {
 			for (var i = 0; i < this.base_tree_expand_states.length; i++) {
@@ -174,14 +175,14 @@ StatesEmitter.extendTo(View, {
 	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
 		if (props.tpl_events) {
 			this.tpl_events = {};
-			spv.cloneObj(this.tpl_events, original.tpl_events);
-			spv.cloneObj(this.tpl_events, props.tpl_events);
+			cloneObj(this.tpl_events, original.tpl_events);
+			cloneObj(this.tpl_events, props.tpl_events);
 		}
 
 		if (props.tpl_r_events) {
 			this.tpl_r_events = {};
-			spv.cloneObj(this.tpl_r_events, original.tpl_r_events);
-			spv.cloneObj(this.tpl_r_events, props.tpl_r_events);
+			cloneObj(this.tpl_r_events, original.tpl_r_events);
+			cloneObj(this.tpl_r_events, props.tpl_r_events);
 		}
 
 
@@ -1089,7 +1090,7 @@ StatesEmitter.extendTo(View, {
 		updateProxy(this, [true, 'vis_' + name, value]);
 	},
 	checkChildrenModelsRendering: function() {
-		var obj = spv.cloneObj(false, this.children_models);
+		var obj = cloneObj(false, this.children_models);
 		this.setMdChildren(obj);
 	},
 	setMdChildren: function(collections) {
@@ -1255,7 +1256,7 @@ StatesEmitter.extendTo(View, {
 		if (!this._lbr.dclrs_fpckgs_is_clonned){
 			this._lbr.dclrs_fpckgs_is_clonned = true;
 			var new_cache = {};
-			spv.cloneObj(new_cache, this.dclrs_fpckgs);
+			cloneObj(new_cache, this.dclrs_fpckgs);
 			this.dclrs_fpckgs = new_cache;
 		}
 
