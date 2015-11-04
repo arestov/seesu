@@ -2,7 +2,7 @@ define(['spv', './helpers',  'jquery', './updateProxy', './prsStCon'],
 function(spv, hp, $, updateProxy, prsStCon) {
 'use strict';
 var pvUpdate = updateProxy.update;
-var cloneObj = cloneObj;
+var cloneObj = spv.cloneObj;
 var $v = hp.$v;
 return function(StatesEmitter, main_calls_flow, views_proxies) {
 var push = Array.prototype.push;
