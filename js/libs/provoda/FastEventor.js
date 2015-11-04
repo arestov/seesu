@@ -386,13 +386,24 @@ FastEventor.prototype = {
 			return matched;
 		};
 
-		return function(namespace_raw){
-			var namespace;
-			if (this.sputnik.convertEventName){
-				namespace = this.sputnik.convertEventName(namespace_raw);
+		var getName = function(convertEventName, namespace_raw) {
+			if (!convertEventName) {
+				return namespace_raw;
 			} else {
-				namespace = namespace_raw;
+				return convertEventName(namespace_raw);
 			}
+		};
+
+		var setCache = function(self, namespace, value) {
+			if (!self.subscribes_cache) {
+				self.subscribes_cache = {};
+			}
+			self.subscribes_cache[namespace] = value;
+			return value;
+		};
+
+		return function(namespace_raw){
+			var namespace = getName(this.sputnik.convertEventName, namespace_raw);
 
 			var short_name = parseNamespace(namespace)[0];
 			var cb_cs = this.subscribes && this.subscribes[short_name];
@@ -404,10 +415,10 @@ FastEventor.prototype = {
 				if (cached_r){
 					return cached_r;
 				} else {
-					if (!this.subscribes_cache) {
-						this.subscribes_cache = {};
-					}
-					return (this.subscribes_cache[namespace] = find(namespace, cb_cs));
+					var value = find(namespace, cb_cs);
+
+					setCache(this, namespace, value);
+					return value;
 				}
 			}
 		};
