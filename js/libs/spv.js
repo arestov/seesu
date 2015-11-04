@@ -873,7 +873,7 @@ function extend(Class, params) {
 	result.prototype = new PrototypeConstr();
 
 	if (props) {
-		spv.cloneObj(result.prototype, props);
+		cloneObj(result.prototype, props);
 		if (onExtend) {
 			onExtend(result.prototype, props, Class.prototype);
 		}
@@ -1327,7 +1327,7 @@ var executeMap = function(map, data, spec_data, converters) {
 			if (typeof result_item != 'object') {
 				throw new Error('use something more simple!');
 			}
-			spv.cloneObj(cur.writeable_array, result_item);
+			cloneObj(cur.writeable_array, result_item);
 		} else {
 			cur.data_scope = toRealArray( cvalue );
 			cur.writeable_array.length = cur.data_scope.length;
@@ -1381,7 +1381,7 @@ spv.mmap = function(config, converters) {
 spv.coe = function(cb) {
 	var result = {};
 	var add = function(obj) {
-		spv.cloneObj(result, obj);
+		cloneObj(result, obj);
 	};
 	cb(add);
 	return result;
