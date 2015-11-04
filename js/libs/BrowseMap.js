@@ -2,6 +2,7 @@ define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 
 var pvState = pv.state;
+var cloneObj = spv.cloneObj;
 /*
 исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 поправить навигацию
@@ -989,7 +990,7 @@ pv.Model.extendTo(BrowseLevel, {
 	'stch-mpl_attached': function(target, state) {
 		var md = target.getNesting('pioneer');
 		var obj = pvState(md, 'bmpl_attached');
-		obj = obj ? spv.cloneObj({}, obj) : {};
+		obj = obj ? cloneObj({}, obj) : {};
 		obj[target._provoda_id] = state;
 		pv.update(md, 'bmpl_attached', obj);
 		pv.update(md, 'mpl_attached', spv.countKeys(obj, true));
@@ -1196,7 +1197,7 @@ var getInitData = function(md, common_opts) {
 		if (!data_parts[i]) {
 			continue;
 		}
-		spv.cloneObj(pre_instance_data, data_parts[i]);
+		cloneObj(pre_instance_data, data_parts[i]);
 	}
 
 	return pre_instance_data;
@@ -1416,7 +1417,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 				};
 
 				if (this.map_parent.sub_pa_params) {
-					spv.cloneObj(complex_obj, this.map_parent.sub_pa_params);
+					cloneObj(complex_obj, this.map_parent.sub_pa_params);
 				}
 
 				complex_obj['--data--'] = data;
@@ -1488,7 +1489,7 @@ pv.HModel.extendTo(BrowseMap.Model, {
 				if (head_by_urlname) {
 					instance_data.head = head_by_urlname;
 				}
-				spv.cloneObj(instance_data, data_by_urlname);
+				cloneObj(instance_data, data_by_urlname);
 				init_opts = [this.getSiOpts(), instance_data];
 				instance = new Constr();
 
