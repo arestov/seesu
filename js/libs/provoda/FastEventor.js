@@ -153,6 +153,14 @@ var resetSubscribesCache = iterateSubsCache(function() {
 	return null;
 });
 
+var getNsName = function(convertEventName, namespace_raw) {
+	if (!convertEventName) {
+		return namespace_raw;
+	} else {
+		return convertEventName(namespace_raw);
+	}
+};
+
 var FastEventor = function(context) {
 	this.sputnik = context;
 	this.subscribes = null;
@@ -223,11 +231,10 @@ FastEventor.prototype = {
 			fn.call(context, arg);
 		}
 	},
-	_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
+	_addEventHandler: function(namespace_raw, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
 		//common opts allowed
-		if (this.sputnik.convertEventName){
-			namespace = this.sputnik.convertEventName(namespace);
-		}
+
+		var namespace = getNsName(this.sputnik.convertEventName, namespace_raw);
 
 		var
 			fired = false,
@@ -386,13 +393,7 @@ FastEventor.prototype = {
 			return matched;
 		};
 
-		var getName = function(convertEventName, namespace_raw) {
-			if (!convertEventName) {
-				return namespace_raw;
-			} else {
-				return convertEventName(namespace_raw);
-			}
-		};
+		var getName = getNsName;
 
 		var setCache = function(self, namespace, value) {
 			if (!self.subscribes_cache) {
@@ -447,12 +448,7 @@ FastEventor.prototype = {
 	cleanOnceEvents: function(ev_name) {
 		// this.off(ev_name, false, cur);
 		//
-		var namespace;
-		if (this.sputnik.convertEventName){
-			namespace = this.sputnik.convertEventName(ev_name);
-		} else {
-			namespace = ev_name;
-		}
+		var namespace = getNsName(this.sputnik.convertEventName, ev_name);
 
 		var short_name = parseNamespace(namespace)[0];
 
