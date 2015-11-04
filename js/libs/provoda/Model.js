@@ -3,6 +3,8 @@ function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateP
 'use strict';
 return function(StatesEmitter, big_index, views_proxies, sync_sender) {
 var push = Array.prototype.push;
+var cloneObj = cloneObj;
+
 var getComplexInitList = updateProxy.getComplexInitList;
 var unsubcribeOld = function(evColr, items_list) {
 	var index = {};
@@ -460,10 +462,10 @@ var modelInit = (function() {
 
 			if (!this.init_states) {this.init_states = {};}
 
-			spv.cloneObj(this.init_states, states);
+			cloneObj(this.init_states, states);
 
 			if (data && data.states) {
-				spv.cloneObj(this.init_states, data.states);
+				cloneObj(this.init_states, data.states);
 			}
 			// pv.create must init init_states
 		}
@@ -472,17 +474,17 @@ var modelInit = (function() {
 
 		if (this.map_parent && this.map_parent.head) {
 			if (!this.head) {this.head = {};}
-			spv.cloneObj(this.head, this.map_parent.head);
+			cloneObj(this.head, this.map_parent.head);
 		}
 
 		if (data && data.head) {
 			if (!this.head) {this.head = {};}
-			spv.cloneObj(this.head, data.head);
+			cloneObj(this.head, data.head);
 		}
 
 		if (this.network_data_as_states && data && data.network_states) {
 			if (!this.init_states) {this.init_states = {};}
-			spv.cloneObj(this.init_states, data.network_states);
+			cloneObj(this.init_states, data.network_states);
 
 			if (this.net_head) {
 				if (!this.head) {this.head = {};}
@@ -496,7 +498,7 @@ var modelInit = (function() {
 		if (this.head) {
 			if (!this.init_states) {this.init_states = {};}
 
-			spv.cloneObj(this.init_states, this.head);
+			cloneObj(this.init_states, this.head);
 		}
 
 
@@ -931,7 +933,7 @@ add({
 			if (!this.init_states) {
 				this.init_states = {};
 			}
-			spv.cloneObj(this.init_states, more_states);
+			cloneObj(this.init_states, more_states);
 		}
 
 		var changes_list = getComplexInitList(this) || this.init_states && [];
@@ -1203,7 +1205,7 @@ add({
 				nesting_name: collection_name
 			};
 			if (typeof opts == 'object'){
-				spv.cloneObj(event_obj, opts);
+				cloneObj(event_obj, opts);
 			}
 			//opts = opts || {};
 			event_obj.value = array;
@@ -1361,7 +1363,7 @@ add({
 				var result = {
 					_provoda_id: cur_md._provoda_id,
 					model_name: cur_md.model_name,
-					states: spv.cloneObj({}, cur_md.states),
+					states: cloneObj({}, cur_md.states),
 					map_parent: cur_md.map_parent && checkModel(cur_md.map_parent, models_index, local_index, all_for_parse),
 					children_models: {},
 					map_level_num: cur_md.map_level_num,
