@@ -3,7 +3,6 @@ define(['./PlayerComplex', 'app_serv', 'jquery', 'spv',
 AudioCoreHTML5, AudioCoreWmp, AudioCoreSm2Proxy){
 'use strict';
 var app_env = app_serv.app_env;
-var su;
 var document = window.document;
 var navigator = window.navigator;
 
@@ -29,11 +28,11 @@ var navigator = window.navigator;
 
 		}
 	};
-	var checkTracking = function(last_try, done){
+	var checkTracking = function(app, last_try, done){
 		if (done){
-			su.trackVar(3, 'canplay', 'yes', 1);
+			app.trackVar(3, 'canplay', 'yes', 1);
 		} else if (last_try){
-			su.trackVar(3, 'canplay', 'no', 1);
+			app.trackVar(3, 'canplay', 'no', 1);
 		}
 	};
 
@@ -41,7 +40,12 @@ var navigator = window.navigator;
 
 
 	var features_storage = {
+		app: null,
 		features_states: {},
+		failed: null,
+		to_use: null,
+		done: null,
+		checks: [],
 		setAsAccessible: function(feature_name, player_core) {
 			this.features_states[feature_name] = player_core;
 			this.checkReadyFeature();
@@ -51,7 +55,7 @@ var navigator = window.navigator;
 			this.checkReadyFeature();
 		},
 		canLoad: function(feature_name) {
-			addFeature(feature_name);
+			addFeature(feature_name, this.app);
 		},
 		checkReadyFeature: function() {
 			var feature_to_use;
@@ -68,14 +72,23 @@ var navigator = window.navigator;
 				}
 
 			}
-			checkTracking(feature_to_use, use_order_list.length == i);
+
 			if (feature_to_use){
-				su.p.setCore(feature_to_use);
+				this.to_use = feature_to_use;
 			}
-			if (!feature_to_use && use_order_list.length == i){
-				su.p.setFail();
+			if (!feature_to_use && use_order_list.length == i) {
+				this.failed = true;
 			}
 
+			this.done = use_order_list.length == i;
+
+			for (var i = 0; i < this.checks.length; i++) {
+				this.check(this.checks[i]);
+			}
+
+		},
+		check: function(cur) {
+			cur(this.failed, this.to_use);
 		}
 	};
 
@@ -258,7 +271,6 @@ var navigator = window.navigator;
 
 
 	];
-	var want_detecting;
 
 	var detectAudioCores = function() {
 		while (!done && detectors.length){
@@ -335,115 +347,126 @@ var navigator = window.navigator;
 					}
 				}
 			);
-			if (want_detecting){
-				detectAudioCores();
-			}
+			// if (want_detecting){
+			// 	detectAudioCores();
+			// }
 		});
 	}
 
+	var PlayerSeesu = spv.inh(PlayerComplex, {
+		naming: function(fn) {
+			return function PlayerSeesu(app) {
+				fn(this, app);
+			};
+		},
+		init: function(self, app) {
+			self.app = app;
 
-	var PlayerSeesu = function(){};
-	PlayerComplex.extendTo(PlayerSeesu, {
-		init: function(app){
-			this._super();
-			this.app = app;
-			su = app;
+			features_storage.app = app;
 
-			this
+			self
 			.on('finish', function(e){
 				e.song_file.mo.submitPlayed();
 			})
 			.on('song-play-error', function(song, can_play) {
-				if (this.c_song == song){
-					this.onPlaybackError(song, can_play);
+				if (self.c_song == song){
+					self.onPlaybackError(song, can_play);
 				}
 			})
 			.on('play', function(e){
 				e.song_file.mo.submitNowPlaying();
 			});
 
-			var _this = this;
-
-
 			var setVolume = function(fac){
-				if (_this.c_song){
-					_this.c_song.setVolume(false, fac);
+				if (self.c_song){
+					self.c_song.setVolume(false, fac);
 				} else {
-					_this.setVolume(false, false, fac);
+					self.setVolume(false, false, fac);
 				}
 
 			};
 
-			su.on('state_change-settings-volume', function(e) {
+			self.on('state_change-settings-volume', function(e) {
 				if (!e.value) {
 					return;
 				}
 				setVolume(e.value);
 			});
 
+			features_storage.checks.push(function(fail, to_use) {
+				if (fail) {
+					self.setFail();
+				}
+				if (to_use) {
+					self.setCore(to_use);
+				}
 
-			want_detecting = true;
+				checkTracking(to_use, features_storage.done);
+			});
+
 			detectAudioCores();
 		},
-		events: {
-			finish: function(e){
-				if (this.c_song == e.song_file.mo){
-					this.onPlaybackFinish(e.song_file.mo);
+		props: {
+			events: {
+				finish: function(e){
+					if (this.c_song == e.song_file.mo){
+						this.onPlaybackFinish(e.song_file.mo);
+
+					}
+				},
+				play: function(e){
+					if (this.c_song == e.song_file.mo){
+						this.playing();
+						// if (this.c_song.next_preload_song){
+						// 	this.c_song.next_preload_song.prefindFiles();
+						// }
+						this.changeAppMode(true);
+					}
+				},
+				pause: function(e){
+					if (this.c_song == e.song_file.mo){
+						this.notPlaying();
+						this.changeAppMode();
+					}
+				},
+				stop: function(e){
+					if (this.c_song == e.song_file.mo){
+						this.notPlaying();
+						this.changeAppMode();
+					}
+				},
+				playing: function(){
 
 				}
 			},
-			play: function(e){
-				if (this.c_song == e.song_file.mo){
+			setPlayMark: function(playing){
+				if (playing){
 					this.playing();
-					// if (this.c_song.next_preload_song){
-					// 	this.c_song.next_preload_song.prefindFiles();
-					// }
-					this.changeAppMode(true);
+				} else {
+					this.notPlaying();
 				}
 			},
-			pause: function(e){
-				if (this.c_song == e.song_file.mo){
-					this.notPlaying();
-					this.changeAppMode();
-				}
-			},
-			stop: function(e){
-				if (this.c_song == e.song_file.mo){
-					this.notPlaying();
-					this.changeAppMode();
-				}
+			notPlaying: function(){
+				this.app.notPlaying();
+
 			},
 			playing: function(){
-
-			}
-		},
-		setPlayMark: function(playing){
-			if (playing){
-				this.playing();
-			} else {
-				this.notPlaying();
-			}
-		},
-		notPlaying: function(){
-			su.notPlaying();
-
-		},
-		playing: function(){
-			su.playing();
-		},
-		changeAppMode: function(playing){
-			if (playing){
-				if (window.btapp){
-					window.btapp.properties.set('background', true);
+				this.app.playing();
+			},
+			changeAppMode: function(playing){
+				if (playing){
+					if (window.btapp){
+						window.btapp.properties.set('background', true);
+					}
+				} else{
+					if (window.btapp){
+						window.btapp.properties.set('background', false);
+					}
 				}
-			} else{
-				if (window.btapp){
-					window.btapp.properties.set('background', false);
-				}
+			},
+			nowPlaying: function(mo){
+				this.app.nowPlaying(mo);
 			}
-		},
-		nowPlaying: function(mo){
-			su.nowPlaying(mo);
 		}
 	});
 

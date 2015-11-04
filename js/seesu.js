@@ -372,8 +372,7 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		this.p = new PlayerSeesu();
-		this.p.init(this);
+		this.p = new PlayerSeesu(this);
 		this.player = this.p;
 		this.app_md = this;
 		this.art_images = this.initSi(comd.LastFMArtistImagesSelector);
