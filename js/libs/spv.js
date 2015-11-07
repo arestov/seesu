@@ -878,7 +878,7 @@ function extend(Class, params, propsArg) {
 		initLength = currentBuilder.length;
 	}
 
-	if (params.check_args) {
+	if (params.strict) {
 		if (initLength > result.length + 1) {
 			throw new Error('naming should pass all arguments that expect `builder` or `init` func');
 		}
@@ -895,7 +895,7 @@ function extend(Class, params, propsArg) {
 	result.partWrapping = partWrapping;
 	result.builder = finalBuilder;
 	result.onExtend = onExtend;
-	result.initLength = initLength;
+	result.initLength = Math.max(Class.initLength || initLength, initLength);
 
 	var PrototypeConstr = parentNaming(empty);
 	PrototypeConstr.prototype = Class.prototype;
