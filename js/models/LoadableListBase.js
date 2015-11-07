@@ -2,8 +2,41 @@ define(['js/libs/BrowseMap', 'spv', 'pv'], function(BrowseMap, spv, pv) {
 "use strict";
 var pvUpdate = pv.update;
 
-var LoadableListBase = function() {};
-BrowseMap.Model.extendTo(LoadableListBase, {
+var getRelativeRequestsGroups = BrowseMap.Model.prototype.getRelativeRequestsGroups;
+
+return spv.inh(BrowseMap.Model, {
+	strict: true,
+	naming: function(fn) {
+		return function LoadableListBase(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
+	},
+	init: function(self, opts, data, params) {
+		self.excess_data_items = null;
+		self.loaded_nestings_items = null;
+		self.loadable_lists = null;
+		//self.loadable_lists[ self.main_list_name ] = [];
+		pv.updateNesting(self,  self.main_list_name, []);
+
+		var has_loader = !!self[ 'nest_req-' + self.main_list_name];
+		if (has_loader){
+			pv.update(self, "has_data_loader", true);
+		}
+
+		self.bindStaCons();
+
+		if (params && params.subitems) {
+			if (params.subitems[self.main_list_name]) {
+				self.nextTick(self.insertDataAsSubitems, [
+					self,
+					self.main_list_name,
+					params.subitems[self.main_list_name],
+					null,
+					params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true);
+			}
+		}
+	}
+}, {
 	hndSPlOnFocus: function(e) {
 		if (e.value){
 			this.preloadStart();
@@ -24,33 +57,6 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		this.on('state_change-more_load_available', this.hndSPlOnLoadAllowing);
 		if (!this.manual_previews){
 			this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
-		}
-	},
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-
-		this.excess_data_items = null;
-		this.loaded_nestings_items = null;
-		this.loadable_lists = null;
-		//this.loadable_lists[ this.main_list_name ] = [];
-		pv.updateNesting(this,  this.main_list_name, []);
-
-		var has_loader = !!this[ 'nest_req-' + this.main_list_name];
-		if (has_loader){
-			pv.update(this, "has_data_loader", true);
-		}
-
-		this.bindStaCons();
-
-		if (params && params.subitems) {
-			if (params.subitems[this.main_list_name]) {
-				this.nextTick(this.insertDataAsSubitems, [
-					this,
-					this.main_list_name,
-					params.subitems[this.main_list_name],
-					null,
-					params.subitems_source_name && params.subitems_source_name[this.main_list_name]], true);
-			}
 		}
 	},
 	'compx-list_loading': {
@@ -154,7 +160,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			return;
 		} else {
 			main_models = main_models.slice();
-			var more_models = this._super(space, true);
+			var more_models = getRelativeRequestsGroups.call(this, space, true);
 			if (more_models){
 				main_models = main_models.concat(more_models);
 			}
@@ -385,6 +391,4 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 	// :auth things
 
 });
-
-return LoadableListBase;
 });
