@@ -848,6 +848,12 @@ function extend(Class, params, propsArg) {
 			return stPartWrapping(parentBuilder, init);
 		};
 		initLength = init.length;
+	} else if (params.preinit) {
+		var preinit = params.preinit;
+		building = function(parentBuilder) {
+			return stPartWrapping(preinit, parentBuilder);
+		};
+		initLength = preinit.length;
 	}
 
 	var parentBuilder = Class.builder;
