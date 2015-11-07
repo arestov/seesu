@@ -62,54 +62,56 @@ var NotifyCounter = spv.inh(pv.Model, {
 
 
 
-var MfComplect = function() {};
+var MfComplect = spv.inh(pv.Model, {
+	naming: function(fn) {
+		return function MfComplect(opts, data, params) {
+			fn(this, opts, data, params);
+		};
+	},
+	init: function(self, opts, data, params) {
+		self.start_file = params.file;
+		self.mo = params.mo;
+		self.mf_cor = params.mf_cor;
 
-pv.Model.extendTo(MfComplect, {
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
+		self.moplas_list = null;
+		self.source_name = params.source_name;
 
-		this.start_file = params.file;
-		this.mo = params.mo;
-		this.mf_cor = params.mf_cor;
-
-		this.moplas_list = null;
-		this.source_name = params.source_name;
-
-		// var _this = this;
-		// this.selectMf = null;
-		// this.selectMf = function() {
-		// 	_this.mf_cor.playSelectedByUser(this);
+		// var _self = self;
+		// self.selectMf = null;
+		// self.selectMf = function() {
+		// 	_self.mf_cor.playSelectedByUser(this);
 		// };
-		this.search_source = null;
+		self.search_source = null;
 
 
 		var sf;
-		if (this.start_file){
-			this.moplas_list = [];
+		if (self.start_file){
+			self.moplas_list = [];
 			sf =
-				this.mf_cor.getSFM(this.start_file);
-				//.on('want-to-play-sf', this.selectMf);
-			this.moplas_list.push(sf);
-			pv.updateNesting(this, 'moplas_list', this.moplas_list);
-			pv.update(this, 'has_start_file', true);
+				self.mf_cor.getSFM(self.start_file);
+				//.on('want-to-play-sf', self.selectMf);
+			self.moplas_list.push(sf);
+			pv.updateNesting(self, 'moplas_list', self.moplas_list);
+			pv.update(self, 'has_start_file', true);
 		} else {
-			this.search_source = params.search_source;
-			this.wch(this.search_source, 'files-list', this.hndFilesListCh);
-			pv.updateNesting(this, 'pioneer', params.search_source);
+			self.search_source = params.search_source;
+			self.wch(self.search_source, 'files-list', self.hndFilesListCh);
+			pv.updateNesting(self, 'pioneer', params.search_source);
 
 		}
 
 
-		this.on('child_change-moplas_list', function(e) {
+		self.on('child_change-moplas_list', function(e) {
 			if (e.value) {
 				var part_start = e.value.slice(0, 5);
 
 				var part_end = e.value.slice(5);
-				pv.updateNesting(this, 'moplas_list_start', part_start);
-				pv.updateNesting(this, 'moplas_list_end', part_end);
+				pv.updateNesting(self, 'moplas_list_start', part_start);
+				pv.updateNesting(self, 'moplas_list_end', part_end);
 			}
 		});
-	},
+	}
+}, {
 	hndFilesListCh: function(e) {
 		var files_list = e.value;
 		if (!files_list){
