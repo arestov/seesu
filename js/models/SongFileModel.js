@@ -53,30 +53,35 @@ var getNiceSeconds = function(state) {
 
 	var isDepend = pv.utils.isDepend;
 
+
+	var initSFModel = function(self, opts, states, params) {
+		self._super.apply(self, arguments);
+
+		self.sound = null;
+
+		self.mo = self.map_parent.map_parent;
+
+		if (params.file){
+			var file = params.file;
+			for (var a in file){
+				if (typeof file[a] != 'function' && typeof file[a] != 'object'){
+					// self[a] = file[a];
+					pvUpdate(self, a, file[a]);
+				}
+			}
+			self.parent = file;
+		}
+
+		self.setPlayer(self.app.p);
+
+		return self;
+	};
+
 	var SongFileModel = function(){};
 	pv.Model.extendTo(SongFileModel, {
 		model_name: 'file-http',
 		init: function(opts, states, params) {
-			this._super.apply(this, arguments);
-
-			this.sound = null;
-
-			this.mo = this.map_parent.map_parent;
-
-			if (params.file){
-				var file = params.file;
-				for (var a in file){
-					if (typeof file[a] != 'function' && typeof file[a] != 'object'){
-						// this[a] = file[a];
-						pvUpdate(this, a, file[a]);
-					}
-				}
-				this.parent = file;
-			}
-
-			this.setPlayer(this.app.p);
-
-			return this;
+			initSFModel(this, opts, states, params);
 		},
 		requestPlay: function(bwlev_id) {
 			this.map_parent.selectMopla(this);
