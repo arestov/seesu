@@ -25,6 +25,7 @@ var hasPrefixedProps = function(props, prefix) {
 
 var Eventor = getEventor(main_calls_flow);
 var StatesEmitter = getStatesEmitter(Eventor);
+var Model = getModel(StatesEmitter, big_index, views_proxies, sync_sender);
 
 pv = provoda = {
 	CallbacksFlow: CallbacksFlow,
@@ -66,8 +67,8 @@ pv = provoda = {
 	SyncR: SyncReceiver,
 	Eventor: Eventor,
 	StatesEmitter: StatesEmitter,
-	Model: getModel(StatesEmitter, big_index, views_proxies, sync_sender),
-	HModel: function() {},
+	Model: Model,
+	HModel: getHModel(),
 	View: getView(StatesEmitter, main_calls_flow, views_proxies),
 	views_proxies: views_proxies,
 	addPrototype: function(name, obj){
@@ -109,6 +110,13 @@ pv = provoda = {
 	state: hp.state,
 	behavior: function(declr, declr_extend_from, named) {
 		var behaviorFrom = declr_extend_from || pv.Model;
+		if (typeof named == 'object') {
+			return spv.inh(behaviorFrom, {
+				naming: named.naming,
+				init: named.init,
+				props: declr
+			});
+		}
 		var func = named || function() {};
 		behaviorFrom.extendTo(func, declr);
 		return func;
@@ -148,49 +156,55 @@ pv = provoda = {
 };
 provoda.Controller = provoda.View;
 
-provoda.Model.extendTo(provoda.HModel, {
-	network_data_as_states: true,
-	init: function(opts) {
+function getHModel() {
+var HModel = spv.inh(Model, {
+	naming: function(fn) {
+		return function HModel(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
+	},
+	preinit: function(self, opts) {
 
 		//opts = opts || {};
-		if (!this.app){
-			this.app = null;
+		if (!self.app){
+			self.app = null;
 		}
 
-		this.sub_pages = null;
-		if (!this.map_parent){
-			this.map_parent = null;
+		self.sub_pages = null;
+		if (!self.map_parent){
+			self.map_parent = null;
 		}
 
-		this.pmd_switch = null;
+		self.pmd_switch = null;
 
-		if (!this.skip_map_init){
-			if (this.sub_pa || this.subPager){
-				this.sub_pages = {};
+		if (!self.skip_map_init){
+			if (self.sub_pa || self.subPager){
+				self.sub_pages = {};
 			}
 
 			if (!opts || !opts.map_parent) {
-				if (!this.zero_map_level){
+				if (!self.zero_map_level){
 					throw new Error('who is your map parent model?');
 				}
 			}
 		}
 
-		var map_parent = this.map_parent || opts.map_parent;
+		var map_parent = self.map_parent || opts.map_parent;
 
-		this.map_level_num = null;
+		self.map_level_num = null;
 
-		if (this.zero_map_level) {
-			this.map_level_num = -1;
+		if (self.zero_map_level) {
+			self.map_level_num = -1;
 		} else {
 			if (map_parent) {
-				this.map_level_num = map_parent.map_level_num + 1;
+				self.map_level_num = map_parent.map_level_num + 1;
 			}
 		}
 
-		this._super.apply(this, arguments);
+		// self._super.apply(this, arguments);
 	},
-
+}, {
+	network_data_as_states: true,
 	_hndOnPMDSwitch: function(e) {
 		this.checkPMDSwiched(e.value);
 	},
@@ -233,7 +247,8 @@ provoda.Model.extendTo(provoda.HModel, {
 	}
 });
 
-
+return HModel;
+}
 
 provoda.BaseRootView = function BaseRootView () {};
 provoda.View.extendTo(provoda.BaseRootView, {
