@@ -840,11 +840,14 @@ function extend(Class, params, propsArg) {
 	var building = params.building || Class.building || stBuilding;
 	var partWrapping = params.partWrapping || Class.partWrapping || stPartWrapping;
 
+	var initLength = false;
+
 	if (params.init) {
 		var init = params.init;
 		building = function(parentBuilder) {
 			return stPartWrapping(parentBuilder, init);
 		};
+		initLength = init.length;
 	}
 
 	var parentBuilder = Class.builder;
@@ -864,11 +867,29 @@ function extend(Class, params, propsArg) {
 	var finalBuilder = partBuilder ? partWrapping(currentBuilder, partBuilder) : currentBuilder;
 
 	var result = naming(finalBuilder);
+
+	if (initLength === false) {
+		initLength = currentBuilder.length;
+	}
+
+	if (params.check_args) {
+		if (initLength > result.length + 1) {
+			throw new Error('naming should pass all arguments that expect `builder` or `init` func');
+		}
+
+		if (Class.initLength > result.length + 1) {
+			throw new Error('naming should pass all arguments that expect parent `builder` or `init` func');
+		}
+	}
+
+
+
 	result.naming = naming;
 	result.building = building;
 	result.partWrapping = partWrapping;
 	result.builder = finalBuilder;
 	result.onExtend = onExtend;
+	result.initLength = initLength;
 
 	var PrototypeConstr = parentNaming(empty);
 	PrototypeConstr.prototype = Class.prototype;
