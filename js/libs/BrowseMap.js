@@ -1367,83 +1367,91 @@ BrowseMap.getStrucSources = function(md, struc) {
 	//console.log(md.model_name, md.constr_id, result);
 };
 
-BrowseMap.Model = function() {};
-pv.HModel.extendTo(BrowseMap.Model, {
-	network_data_as_states: true,
-	init: function(opts, data) {
-
-		if (!this.skip_map_init){
-			if (data) {
-				if (data['url_part']){
-					this.initState('url_part', data['url_part']);
-				}
-				if (data['nav_title']){
-					this.initState('nav_title', data['nav_title']);
-				}
-			}
-		}
-
-		this._super.apply(this, arguments);
-
-		this.lists_list = null;
-		// this.map_level_num = null;
-		this.head_props = this.head_props || null;
-
-		/*
-			результат работы этого кода - это
-			1) установленное значение head_props
-			2) состояния url_part и nav_title
-			3) установленное значение sub_pa_params
-
-
-			использование data_by_hp подразумевает, что у родителя есть head_props
-			head_props могут быть собраны вручную, но в основном собирается с помощью hp_bound
-			hp_bound использует data и если будет ссылатся на родителя,
-				то sub_pa_params родителя, sub_pa_params может передаваться и непосредственно как data
-
-		*/
-
-
-		if (this.hp_bound && !data) {
-			throw new Error('pass data arg!');
-		} else {
-			if (this.head_props) {
-				console.log('already has head_props');
-			} else if (this.hp_bound) {
-
-				var complex_obj = {
-					'--data--': null
-				};
-
-				if (this.map_parent.sub_pa_params) {
-					cloneObj(complex_obj, this.map_parent.sub_pa_params);
-				}
-
-				complex_obj['--data--'] = data;
-
-				this.head_props = this.hp_bound(complex_obj);
-			}
-		}
-
-		opts = opts || {};
-
-
-		if (this.data_by_hp && typeof this.data_by_hp == 'function') {
-			this.sub_pa_params = this.data_by_hp(data);
-		}
-
-
-
-		if (this.allow_data_init) {
-			this.updateManyStates(data);
-		}
-
-		if (this.preview_nesting_source) {
-			this.on('child_change-' + this.preview_nesting_source, function(e) {
-				pv.updateNesting(this, 'preview_list', e.value);
-			});
-		}
+BrowseMap.Model = spv.inh(pv.HModel, {
+	strict: true,
+	naming: function(fn) {
+		return function BrowseMapModel(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
 	},
+	building: function(parent) {
+		return function initBrowseMapModel(self, opts, data, params, more, states) {
+			if (!self.skip_map_init){
+				if (data) {
+					if (data['url_part']){
+						self.initState('url_part', data['url_part']);
+					}
+					if (data['nav_title']){
+						self.initState('nav_title', data['nav_title']);
+					}
+				}
+			}
+
+			parent(self, opts, data, params, more, states);
+
+			self.lists_list = null;
+			// self.map_level_num = null;
+			self.head_props = self.head_props || null;
+
+			/*
+				результат работы этого кода - это
+				1) установленное значение head_props
+				2) состояния url_part и nav_title
+				3) установленное значение sub_pa_params
+
+
+				использование data_by_hp подразумевает, что у родителя есть head_props
+				head_props могут быть собраны вручную, но в основном собирается с помощью hp_bound
+				hp_bound использует data и если будет ссылатся на родителя,
+					то sub_pa_params родителя, sub_pa_params может передаваться и непосредственно как data
+
+			*/
+
+
+			if (self.hp_bound && !data) {
+				throw new Error('pass data arg!');
+			} else {
+				if (self.head_props) {
+					console.log('already has head_props');
+				} else if (self.hp_bound) {
+
+					var complex_obj = {
+						'--data--': null
+					};
+
+					if (self.map_parent.sub_pa_params) {
+						cloneObj(complex_obj, self.map_parent.sub_pa_params);
+					}
+
+					complex_obj['--data--'] = data;
+
+					self.head_props = self.hp_bound(complex_obj);
+				}
+			}
+
+			opts = opts || {};
+
+
+			if (self.data_by_hp && typeof self.data_by_hp == 'function') {
+				self.sub_pa_params = self.data_by_hp(data);
+			}
+
+
+
+			if (self.allow_data_init) {
+				self.updateManyStates(data);
+			}
+
+			if (self.preview_nesting_source) {
+				self.on('child_change-' + self.preview_nesting_source, function(e) {
+					pv.updateNesting(this, 'preview_list', e.value);
+				});
+			}
+		};
+	}
+}, {
+	network_data_as_states: true,
+
 	preview_nesting_source: 'lists_list',
 	getSPIConstr: function(sp_name) {
 		var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
