@@ -77,8 +77,11 @@ var getNiceSeconds = function(state) {
 		return self;
 	};
 
-	var SongFileModel = function(){};
-	pv.Model.extendTo(SongFileModel, {
+var SongFileModel = function(){};
+pv.Model.extendTo(SongFileModel, props());
+
+function props() {
+	return {
 		model_name: 'file-http',
 		init: function(opts, states, params) {
 			initSFModel(this, opts, states, params);
@@ -367,7 +370,8 @@ var getNiceSeconds = function(state) {
 		unmarkAsPlaying: function() {
 
 		}
-	});
+	};
+}
 
 SongFileModel.FileInTorrent = FileInTorrent;
 return SongFileModel;
