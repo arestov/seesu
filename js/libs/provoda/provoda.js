@@ -126,11 +126,16 @@ pv = provoda = {
 	},
 	create: function(Constr, states, params, map_parent, app) {
 		var BehaviorContr = Constr || pv.Model;
-		var model = new BehaviorContr();
-		model.init((app || map_parent) && {
+		var opts = (app || map_parent) && {
 			app: app || map_parent.app,
 			map_parent: map_parent
-		}, null, null, null, states);
+		};
+
+		var model = new BehaviorContr(opts, null, null, null, states);
+		if (model.init) {
+			model.init(opts, null, null, null, states);
+		}
+
 
 		if (params) {
 			if (params.interfaces) {
