@@ -771,7 +771,6 @@ var StatesEmitter = spv.inh(Eventor, {
 	},
 	props: props
 });
-spv.inh.legInit(StatesEmitter);
 
 return StatesEmitter;
 };

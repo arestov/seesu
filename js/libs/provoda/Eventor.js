@@ -80,8 +80,6 @@ var Eventor = spv.inh(function() {}, {
 	}
 });
 
-spv.inh.legInit(Eventor);
-
 // function Eventor () {}
 // spv.Class.extendTo(Eventor, );
 return Eventor;

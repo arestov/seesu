@@ -883,23 +883,23 @@ function extend(Class, params) {
 
 	result.extendTo = function(Class, props) {
 		console.log('don\'t use extendTo');
+
+		var legacy = naming(empty);
+		legacy.prototype = cloneObj(new PrototypeConstr(), result.prototype);
+		legacy.prototype.init = makeInit(result.builder);
+
 		// debugger;
-		var naming = this.naming;
-		var PrototypeConstr = naming(empty);
-		PrototypeConstr.prototype = this.prototype;
-		return extendTo.call(PrototypeConstr, Class, props);
+		return extendTo.call(legacy, Class, props);
 	};
 
 	return result;
-
 }
 
-extend.legInit = function(Class) {
-	var builder = Class.builder;
-	Class.prototype.init = function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+function makeInit(builder) {
+	return function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
 		builder(this, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 	};
-};
+}
 
 spv.inh = extend;
 })();

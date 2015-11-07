@@ -426,7 +426,9 @@ var modelInit = (function() {
 
 		this.nwatch = nwatch;
 	};
-	return  function(self, opts, data, params, more, states){
+	return function initModel(self, opts, data, params, more, states) {
+		self.current_motivator = self.current_motivator || (opts && opts.motivator);
+
 		if (opts && opts.app){
 			self.app = opts.app;
 		}
@@ -439,8 +441,6 @@ var modelInit = (function() {
 		if (!self.map_parent) {
 			self.map_parent = null;
 		}
-
-		self._super();
 
 		self.req_order_field = null;
 		self.states_links = null;
@@ -533,8 +533,18 @@ var modelInit = (function() {
 		return self;
 	};
 })();
-function Model(){}
-StatesEmitter.extendTo(Model, function(add) {
+
+var Model = spv.inh(StatesEmitter, {
+	naming: function(fn) {
+		return function Model(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
+	},
+	init: modelInit,
+	props: modelProps
+});
+
+function modelProps(add) {
 add({
 	getNonComplexStatesList: function(state_name) {
 		if (!this.hasComplexStateFn(state_name)) {
@@ -809,16 +819,33 @@ add({
 		return getSiOpts(this);
 	},
 	initSi: function(Constr, data, params) {
-		var instance = new Constr();
-		var initsbi_opts = this.getSiOpts();
+		if (Constr.prototype.init) {
+			var instance = new Constr();
+			var initsbi_opts = this.getSiOpts();
 
-		this.useMotivator(instance, function(instance) {
-			instance.init(initsbi_opts, data, params);
-		});
+			this.useMotivator(instance, function(instance) {
+				instance.init(initsbi_opts, data, params);
+			});
 
-		return instance;
+			return instance;
+		} else {
+			var motivator = this.current_motivator;
+
+			var opts = {
+				_motivator: motivator,
+				map_parent: this,
+				app: this.app,
+
+			};
+
+			var instancePure = new Constr(opts, data, params);
+
+			instancePure.current_motivator = null;
+
+			return instancePure;
+		}
+
 	},
-	init: modelInitM,
 	removeNestWatch: function(nwatch, skip) {
 		if (nwatch.selector.length == skip) {
 			if (!nwatch.items_index) {
@@ -962,9 +989,8 @@ add({
 	network_data_as_states: true,
 	onExtend: (function() {
 		var check = /initStates/gi;
-		var baseInit = modelInitM;
 		return spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
-			if (props.init && props.init !== baseInit) {
+			if (props.init) {
 				if (!this.hasOwnProperty('network_data_as_states')) {
 					this.network_data_as_states = false;
 				}
@@ -1408,7 +1434,8 @@ add({
 	getLinedStructure: getLinedStructure ,
 	toSimpleStructure: toSimpleStructure
 });
-});
+}
+
 return Model;
 };
 });
