@@ -834,7 +834,7 @@ var empty = function() {};
 
 var extendTo = Class.extendTo;
 
-function extend(Class, params) {
+function extend(Class, params, propsArg) {
 	var parentNaming = Class.naming || stNaming;
 	var naming = params.naming || parentNaming;
 	var building = params.building || Class.building || stBuilding;
@@ -849,9 +849,11 @@ function extend(Class, params) {
 
 	var parentBuilder = Class.builder;
 	var partBuilder = params.partBuilder;
-	var props = typeof params.props == 'function' ?
-		spv.coe(params.props) :
-		params.props;
+
+	var passedProps = propsArg || params.props;
+	var props = typeof passedProps == 'function' ?
+		spv.coe(passedProps) :
+		passedProps;
 
 	var parentExtend = Class.onExtend;
 	var onExtend = params.onExtend ?
