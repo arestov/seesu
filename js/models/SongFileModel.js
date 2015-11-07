@@ -55,8 +55,6 @@ var getNiceSeconds = function(state) {
 
 
 	var initSFModel = function(self, opts, states, params) {
-		self._super.apply(self, arguments);
-
 		self.sound = null;
 
 		self.mo = self.map_parent.map_parent;
@@ -77,15 +75,19 @@ var getNiceSeconds = function(state) {
 		return self;
 	};
 
-var SongFileModel = function(){};
-pv.Model.extendTo(SongFileModel, props());
+var SongFileModel = spv.inh(pv.Model, {
+	naming: function(fn) {
+		return function SongFileModel(opts, states, params) {
+			fn(this, opts, states, params);
+		};
+	},
+	init: initSFModel,
+	props: props()
+});
 
 function props() {
 	return {
 		model_name: 'file-http',
-		init: function(opts, states, params) {
-			initSFModel(this, opts, states, params);
-		},
 		requestPlay: function(bwlev_id) {
 			this.map_parent.selectMopla(this);
 
