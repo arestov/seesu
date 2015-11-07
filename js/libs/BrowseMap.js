@@ -893,25 +893,30 @@ BrowseMap.getConnectedBwlev = function(bwlev, md) {
 
 BrowseMap.getBwlevFromParentBwlev = getBwlevFromParentBwlev;
 
-function BrowseLevel() {}
-pv.Model.extendTo(BrowseLevel, {
-	init: function(opts, data, params, nestings, states) {
-		this._super.apply(this, arguments);
-		this.children_bwlevs = {};
-		this.model_name = states['model_name'];
+var BrowseLevel = spv.inh(pv.Model, {
+	strict: true,
+	naming: function(fn) {
+		return function BrowseLevel(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
+	},
+	init: function(self, opts, data, params, more, states) {
+		self.children_bwlevs = {};
+		self.model_name = states['model_name'];
 
-		if (!this.model_name) {
+		if (!self.model_name) {
 			throw new Error('must have model name');
 		}
 
-		this.ptree = [this];
-		this.rtree = [states['pioneer']];
+		self.ptree = [self];
+		self.rtree = [states['pioneer']];
 
-		if (this.map_parent) {
-			this.ptree = this.ptree.concat(this.map_parent.ptree);
-			this.rtree = this.rtree.concat(this.map_parent.rtree);
+		if (self.map_parent) {
+			self.ptree = self.ptree.concat(self.map_parent.ptree);
+			self.rtree = self.rtree.concat(self.map_parent.rtree);
 		}
-	},
+	}
+}, {
 	getParentMapModel: function() {
 		return this.map_parent;
 	},
