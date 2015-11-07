@@ -1164,8 +1164,6 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr) {
 		return result;
 };
 
-BrowseMap.Model = function() {};
-
 var getSPOpts = function(md, sp_name) {
 	var target = md[ 'sub_pa-' + sp_name] || md.sub_pa[sp_name];
 	var parts = sp_name.split(':');
@@ -1369,6 +1367,7 @@ BrowseMap.getStrucSources = function(md, struc) {
 	//console.log(md.model_name, md.constr_id, result);
 };
 
+BrowseMap.Model = function() {};
 pv.HModel.extendTo(BrowseMap.Model, {
 	network_data_as_states: true,
 	init: function(opts, data) {
