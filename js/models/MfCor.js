@@ -24,15 +24,17 @@ comd.VkLoginB.extendTo(MFCorVkLogin, {
 });
 
 
-
-var NotifyCounter = function() {};
-
-pv.Model.extendTo(NotifyCounter, {
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-		this.messages = {};
-		this.banned_messages = (params && params.banned_messages) || [];
+var NotifyCounter = spv.inh(pv.Model, {
+	naming: function(fn) {
+		return function NotifyCounter(opts, data, params) {
+			fn(this, opts, data, params);
+		};
 	},
+	init: function(self, opts, data, params) {
+		self.messages = {};
+		self.banned_messages = (params && params.banned_messages) || [];
+	}
+}, {
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
