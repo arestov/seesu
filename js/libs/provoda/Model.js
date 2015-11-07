@@ -222,6 +222,7 @@ var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
 	};
 });
 
+var models_counters = 1;
 var modelInit = (function() {
 	var lw_count = 0;
 	var buildItems = function(lnwatch) {
@@ -425,114 +426,113 @@ var modelInit = (function() {
 
 		this.nwatch = nwatch;
 	};
-	return  function(opts, data, params, more, states){
+	return  function(self, opts, data, params, more, states){
 		if (opts && opts.app){
-			this.app = opts.app;
+			self.app = opts.app;
 		}
-		if (!this.app) {
-			this.app = null;
+		if (!self.app) {
+			self.app = null;
 		}
 		if (opts && opts.map_parent){
-			this.map_parent = opts.map_parent;
+			self.map_parent = opts.map_parent;
 		}
-		if (!this.map_parent) {
-			this.map_parent = null;
+		if (!self.map_parent) {
+			self.map_parent = null;
 		}
 
-		this._super();
+		self._super();
 
-		this.req_order_field = null;
-		this.states_links = null;
+		self.req_order_field = null;
+		self.states_links = null;
 
-		this._provoda_id = models_counters++;
-		big_index[this._provoda_id] = this;
+		self._provoda_id = models_counters++;
+		big_index[self._provoda_id] = self;
 
-		//this.states = {};
+		//self.states = {};
 
-		this.children_models = null;
-		this._network_source = this._network_source || null;
+		self.children_models = null;
+		self._network_source = self._network_source || null;
 
 
-		this.md_replacer = null;
-		this.mpx = null;
+		self.md_replacer = null;
+		self.mpx = null;
 
-		this.init_states = this.init_states || null;
+		self.init_states = self.init_states || null;
 
 		if (states || (data && data.states)) {
 
-			if (!this.init_states) {this.init_states = {};}
+			if (!self.init_states) {self.init_states = {};}
 
-			cloneObj(this.init_states, states);
+			cloneObj(self.init_states, states);
 
 			if (data && data.states) {
-				cloneObj(this.init_states, data.states);
+				cloneObj(self.init_states, data.states);
 			}
 			// pv.create must init init_states
 		}
 
-		this.head = null;
+		self.head = null;
 
-		if (this.map_parent && this.map_parent.head) {
-			if (!this.head) {this.head = {};}
-			cloneObj(this.head, this.map_parent.head);
+		if (self.map_parent && self.map_parent.head) {
+			if (!self.head) {self.head = {};}
+			cloneObj(self.head, self.map_parent.head);
 		}
 
 		if (data && data.head) {
-			if (!this.head) {this.head = {};}
-			cloneObj(this.head, data.head);
+			if (!self.head) {self.head = {};}
+			cloneObj(self.head, data.head);
 		}
 
-		if (this.network_data_as_states && data && data.network_states) {
-			if (!this.init_states) {this.init_states = {};}
-			cloneObj(this.init_states, data.network_states);
+		if (self.network_data_as_states && data && data.network_states) {
+			if (!self.init_states) {self.init_states = {};}
+			cloneObj(self.init_states, data.network_states);
 
-			if (this.net_head) {
-				if (!this.head) {this.head = {};}
-				for (var i = 0; i < this.net_head.length; i++) {
-					var pk = this.net_head[i];
-					this.head[pk] = data.network_states[pk];
+			if (self.net_head) {
+				if (!self.head) {self.head = {};}
+				for (var i = 0; i < self.net_head.length; i++) {
+					var pk = self.net_head[i];
+					self.head[pk] = data.network_states[pk];
 				}
 			}
 		}
 
-		if (this.head) {
-			if (!this.init_states) {this.init_states = {};}
+		if (self.head) {
+			if (!self.init_states) {self.init_states = {};}
 
-			cloneObj(this.init_states, this.head);
+			cloneObj(self.init_states, self.head);
 		}
 
 
 
-		prsStCon.connect.parent(this);
-		prsStCon.connect.root(this);
-		prsStCon.connect.nesting(this);
+		prsStCon.connect.parent(self);
+		prsStCon.connect.root(self);
+		prsStCon.connect.nesting(self);
 
 
 
-		if (this.nestings_declarations) {
-			this.nextTick(function(target) {
+		if (self.nestings_declarations) {
+			self.nextTick(function(target) {
 				initDeclaredNestings(target);
 			});
 		}
 
 
-		this.nes_match_index = null;
+		self.nes_match_index = null;
 
-		if (this.nest_match) {
-			for (var i = 0; i < this.nest_match.length; i++) {
+		if (self.nest_match) {
+			for (var i = 0; i < self.nest_match.length; i++) {
 
-				this.addNestWatch(new LocalWatchRoot(this, this.nest_match[i]), 0);
+				self.addNestWatch(new LocalWatchRoot(self, self.nest_match[i]), 0);
 			}
 		}
 
-		if (!this.manual_states_init) {
-			this.initStates();
+		if (!self.manual_states_init) {
+			self.initStates();
 		}
 
-		return this;
+		return self;
 	};
 })();
-var models_counters = 1;
 function Model(){}
 StatesEmitter.extendTo(Model, function(add) {
 add({
@@ -818,7 +818,7 @@ add({
 
 		return instance;
 	},
-	init: modelInit,
+	init: modelInitM,
 	removeNestWatch: function(nwatch, skip) {
 		if (nwatch.selector.length == skip) {
 			if (!nwatch.items_index) {
@@ -962,7 +962,7 @@ add({
 	network_data_as_states: true,
 	onExtend: (function() {
 		var check = /initStates/gi;
-		var baseInit = modelInit;
+		var baseInit = modelInitM;
 		return spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
 			if (props.init && props.init !== baseInit) {
 				if (!this.hasOwnProperty('network_data_as_states')) {
