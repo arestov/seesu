@@ -158,6 +158,7 @@ provoda.Controller = provoda.View;
 
 function getHModel() {
 var HModel = spv.inh(Model, {
+	strict: true,
 	naming: function(fn) {
 		return function HModel(opts, data, params, more, states) {
 			fn(this, opts, data, params, more, states);
