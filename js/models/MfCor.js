@@ -155,8 +155,76 @@ var sources_map = {
 	'btdigg-torrents': 'http://btdigg.org/'
 };
 
-var MfCor = function() {};
-LoadableList.extendTo(MfCor, {
+var MfCor = spv.inh(LoadableList, {
+	naming: function(fn) {
+		return function MfCor(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
+	},
+	init: function(self, opts, data, omo) {
+		self.files_investg = null;
+		self.last_search_opts = null;
+		self.file = null;
+		self.notifier = null;
+		self.sf_notf = null;
+		self.vk_ntf_readed = null;
+		self.player = null;
+		self.vk_auth_rqb = null;
+
+		self.sfs_models = {};
+		self.omo = omo;
+		self.mo = self.map_parent;
+		self.files_models = {};
+		self.complects = {};
+		// self.subscribed_to = [];
+
+
+
+		// self.mfPlayStateChange = function(e) {
+		// 	if (self.state('used_mopla') == this){
+		// 		pv.update(_this, 'play', e.value);
+		// 	}
+		// };
+		// self.mfError = function() {
+		// 	self.checkMoplas(this);
+		// };
+		/*
+		self.semChange = function(val) {
+			self.semChanged(val);
+		};
+		*/
+		// self.wch(self.mo, 'is_important', self.hndMoImportant);
+
+
+
+
+		self.initNotifier();
+		if (omo.file){
+			self.file = omo.file;
+
+			var complect = self.initSi(MfComplect, null, {
+					mf_cor: self,
+					mo: self.mo,
+					file: self.file,
+					source_name: 'vk'
+				});
+			self.addMFComplect(complect, self.file.from);
+			self.updateDefaultMopla();
+			pv.updateNesting(self, 'sorted_completcs', [complect]);
+
+		} else {
+			//self.wch(self.mo, 'track', )
+			self.mo.on('vip_state_change-track', self.hndTrackNameCh, {immediately: true, soft_reg: false, context: self});
+
+		}
+		self.wlch(self.mo.mp3_search, 'tools_by_name');
+		self.on('child_change-sorted_completcs', function() {
+			pv.updateNesting(this, 'vk_source', this.complects['vk'] && this.complects['vk'].search_source);
+		});
+
+		self.intMessages();
+	}
+}, {
 	// hndMoImportant: function(e) {
 
 	// 	if (e.value){
@@ -184,71 +252,6 @@ LoadableList.extendTo(MfCor, {
 	],
 	'stch-used_mopla': function(target, state) {
 		target.updateNesting('used_mopla', state);
-	},
-	init: function(opts, data, omo) {
-		this._super.apply(this, arguments);
-		this.files_investg = null;
-		this.last_search_opts = null;
-		this.file = null;
-		this.notifier = null;
-		this.sf_notf = null;
-		this.vk_ntf_readed = null;
-		this.player = null;
-		this.vk_auth_rqb = null;
-
-		this.sfs_models = {};
-		this.omo = omo;
-		this.mo = this.map_parent;
-		this.files_models = {};
-		this.complects = {};
-		// this.subscribed_to = [];
-
-
-		// var _this = this;
-
-		// this.mfPlayStateChange = function(e) {
-		// 	if (_this.state('used_mopla') == this){
-		// 		pv.update(_this, 'play', e.value);
-		// 	}
-		// };
-		// this.mfError = function() {
-		// 	_this.checkMoplas(this);
-		// };
-		/*
-		this.semChange = function(val) {
-			_this.semChanged(val);
-		};
-		*/
-		// this.wch(this.mo, 'is_important', this.hndMoImportant);
-
-
-
-
-		this.initNotifier();
-		if (omo.file){
-			this.file = omo.file;
-
-			var complect = this.initSi(MfComplect, null, {
-					mf_cor: this,
-					mo: this.mo,
-					file: this.file,
-					source_name: 'vk'
-				});
-			this.addMFComplect(complect, this.file.from);
-			this.updateDefaultMopla();
-			pv.updateNesting(this, 'sorted_completcs', [complect]);
-
-		} else {
-			//this.wch(this.mo, 'track', )
-			this.mo.on('vip_state_change-track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
-
-		}
-		this.wlch(this.mo.mp3_search, 'tools_by_name');
-		this.on('child_change-sorted_completcs', function() {
-			pv.updateNesting(this, 'vk_source', this.complects['vk'] && this.complects['vk'].search_source);
-		});
-
-		this.intMessages();
 	},
 	'compx-is_important': [
 		['^is_important']
