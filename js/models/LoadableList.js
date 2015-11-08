@@ -1,11 +1,14 @@
 define(['./LoadableListBase', 'spv', 'js/libs/Mp3Search', 'pv'], function(LoadableListBase, spv, Mp3Search, pv){
 "use strict";
 
-
-
-var start_end_spaces = /^\s|\s$/gi;
-var LoadableList = function() {};
-LoadableListBase.extendTo(LoadableList, {});
+var LoadableList = spv.inh(LoadableListBase, {
+	naming: function(fn) {
+		return function LoadableList(arg1, arg2, arg3, arg4, arg5, arg6) {
+			fn(this, arg1, arg2, arg3, arg4, arg5, arg6);
+		};
+	},
+	props: {}
+});
 
 var TagsList = function() {};
 LoadableList.extendTo(TagsList, {
