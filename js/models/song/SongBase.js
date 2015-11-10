@@ -1,4 +1,4 @@
-define(['pv', 'spv', 'jquery', './../PlayRequest'], function(pv, spv, $, PlayRequest) {
+define(['pv', 'spv', 'jquery', 'js/libs/BrowseMap', './../PlayRequest'], function(pv, spv, $, BrowseMap, PlayRequest) {
 "use strict";
 var isDepend = pv.utils.isDepend;
 
@@ -10,45 +10,55 @@ var playRelative = function(mo, result) {
 	}
 };
 
-pv.addPrototype("SongBase",{
-	model_name: "song",
-	init: function(opts, omo){
+return spv.inh(BrowseMap.Model, {
+	strict: true,
+	naming: function(fn) {
+		return function SongBase(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
+	},
+	init: function(self, opts, omo){
+		self.neighbour_for = null;
+		self.marked_prev_song = null;
+		self.marked_next_song = null;
+		self.ready_to_preload = null;
+		self.track = null;
+		self.rtn_request = null;
+		self.playable_info = null;
 
-		this._super.apply(this, arguments);
-
-		this.neighbour_for = null;
-		this.marked_prev_song = null;
-		this.marked_next_song = null;
-		this.ready_to_preload = null;
-		this.track = null;
-		this.rtn_request = null;
-		this.playable_info = null;
-
-		this.mp3_search = opts.app.mp3_search;
-		this.player = opts.app.player;
+		self.mp3_search = opts.app.mp3_search;
+		self.player = opts.app.player;
 
 		if (omo.track){
 			omo.track = omo.track.trim();
 		}
 
-		spv.cloneObj(this, omo, false, ['artist', 'track']);
-		this.omo = omo;
+		var artist_name = omo.artist || " ";
 
-		this.initState('no_track_title', false);
-		if (omo.artist){
-			this.initState('artist', omo.artist && omo.artist.trim());
+		self.artist = artist_name;
+		self.track = omo.track;
+
+		self.omo = omo;
+
+		self.initState('no_track_title', false);
+		if (artist_name){
+			self.initState('artist', artist_name && artist_name.trim());
 		}
 		if (omo.track){
-			this.initState('track', omo.track);
+			self.initState('track', omo.track);
 		}
-		this.initState('playlist_type', this.map_parent.playlist_type);
-		this.initState('url_part', this.getURL());
-		//this.updateManyStates(states);
+		self.initState('playlist_type', self.map_parent.playlist_type);
+		self.initState('url_part', self.getURL());
+		//self.updateManyStates(states);
 
-		this.on('requests', this.hndRequestsPrio, this.getContextOptsI());
-		this.states_was_twisted = false;
+		self.on('requests', self.hndRequestsPrio, self.getContextOptsI());
+		self.states_was_twisted = false;
 
-	},
+	}
+}, {
+	model_name: "song",
+	network_data_as_states: false,
+	manual_states_init: true,
 	hndRequestsPrio: function() {
 		this.map_parent.checkRequestsPriority();
 
@@ -782,6 +792,4 @@ pv.addPrototype("SongBase",{
 	}
 
 });
-
-return {};
 });

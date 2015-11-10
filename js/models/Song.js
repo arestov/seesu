@@ -1,5 +1,5 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
-function(pv, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
+function(pv, spv, app_serv, BrowseMap, MfCor, SongActionsRow, SongBase){
 "use strict";
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
@@ -11,17 +11,64 @@ lfm_share_url_replacers.forEach(function(el, i) {
 var album_placeholder = {
 	url: 'i/album_placeholder.png'
 };
-
-
 	var app_env = app_serv.app_env;
-	var Song;
-	var SongBase = function() {};
-	pv.extendFromTo("SongBase", BrowseMap.Model, SongBase);
 
-	Song = function(){};
+	return spv.inh(SongBase, {
+		naming: function(fn) {
+			return function Song(opts, data, params, more, states) {
+				fn(this, opts, data, params, more, states);
+			};
+		},
+		init: function(self, opts, omo) {
+			var passed_artist = omo.artist;
 
-	SongBase.extendTo(Song, {
+			self.mf_cor = null;
+			self.mopla = null;
+			self.start_time = null;
+			self.last_scrobble = null;
 
+
+			var spec_image_wrap;
+			if (omo.image_url){
+				self.initState('image_url', {url: omo.image_url});
+			}
+			if (omo.lfm_img) {
+				spec_image_wrap = omo.lfm_img;
+			} else if (omo.lfm_image){
+				spec_image_wrap = self.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
+				//pv.update(this, 'lfm_image', omo.lfm_image);
+			}
+			var images_pack;
+
+			if (omo.album_image) {
+				self.initState('album_image', omo.album_image);
+			}
+			if (omo.album_name) {
+				self.initState('album_name', omo.album_name);
+			}
+
+			if (spec_image_wrap) {
+				self.initState('lfm_image', spec_image_wrap);
+
+			} else if (passed_artist) {
+				var still_init = true;
+				if (self.init_states['track']){
+					images_pack = self.app.art_images.getTrackImagesModel({
+						artist: self.init_states['artist'],
+						track: self.init_states['track']
+					});
+				} else {
+					images_pack = self.app.art_images.getArtistImagesModel(self.init_states['artist']);
+				}
+				self.wch(images_pack, 'image-to-use', 'ext_lfm_image');
+				still_init = false;
+			}
+
+			self.initStates();
+		}
+	}, {
+		network_data_as_states: false,
+		manual_states_init: true,
 		'nest-songcard': ['#tracks/[:artist],[:track]', false, 'can_load_songcard'],
 		'compx-$relation:songcard-for-active_song': [
 			['can_load_songcard', '@songcard'],
@@ -61,57 +108,6 @@ var album_placeholder = {
 				}
 
 			}
-		},
-		init: function(opts, omo) {
-			var passed_artist = omo.artist;
-			omo.artist = omo.artist || " ";
-
-
-			this._super.apply(this, arguments);
-
-			this.mf_cor = null;
-			this.mopla = null;
-			this.start_time = null;
-			this.last_scrobble = null;
-
-
-			var spec_image_wrap;
-			if (omo.image_url){
-				this.initState('image_url', {url: omo.image_url});
-			}
-			if (omo.lfm_img) {
-				spec_image_wrap = omo.lfm_img;
-			} else if (omo.lfm_image){
-				spec_image_wrap = this.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
-				//pv.update(this, 'lfm_image', omo.lfm_image);
-			}
-			var images_pack;
-
-			if (omo.album_image) {
-				this.initState('album_image', omo.album_image);
-			}
-			if (omo.album_name) {
-				this.initState('album_name', omo.album_name);
-			}
-
-			if (spec_image_wrap) {
-				this.initState('lfm_image', spec_image_wrap);
-
-			} else if (passed_artist) {
-				var still_init = true;
-				if (this.init_states['track']){
-					images_pack = this.app.art_images.getTrackImagesModel({
-						artist: this.init_states['artist'],
-						track: this.init_states['track']
-					});
-				} else {
-					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist']);
-				}
-				this.wch(images_pack, 'image-to-use', 'ext_lfm_image');
-				still_init = false;
-			}
-
-			this.initStates();
 		},
 		twistStates: function() {
 			this.initHeavyPart();
@@ -403,5 +399,4 @@ var album_placeholder = {
 		],
 		'nest-artist': ['#catalog/[:artist]', false, 'load_artcard']
 	});
-return Song;
 });
