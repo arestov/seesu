@@ -898,8 +898,11 @@ function extend(Class, params, propsArg) {
 	result.initLength = Math.max(Class.initLength || initLength, initLength);
 
 	var PrototypeConstr = parentNaming(empty);
+
 	PrototypeConstr.prototype = Class.prototype;
 	result.prototype = new PrototypeConstr();
+	result.prototype.constr_id = constr_id++;
+	result.prototype.constructor = result;
 
 	if (props) {
 		cloneObj(result.prototype, props);
@@ -907,8 +910,6 @@ function extend(Class, params, propsArg) {
 			onExtend(result.prototype, props, Class.prototype);
 		}
 	}
-
-	result.prototype.constructor = Class;
 
 	result.extendTo = function(Class, props) {
 		console.log('don\'t use extendTo');
@@ -918,6 +919,8 @@ function extend(Class, params, propsArg) {
 			result.legacy.pureBase = result;
 			result.legacy.prototype = cloneObj(new PrototypeConstr(), result.prototype);
 			result.legacy.prototype.init = makeInit(result.builder);
+			result.legacy.prototype.constr_id = constr_id++;
+			result.legacy.prototype.constructor = result.legacy;
 		}
 
 		return extendTo.call(result.legacy, Class, props);
