@@ -913,12 +913,14 @@ function extend(Class, params, propsArg) {
 	result.extendTo = function(Class, props) {
 		console.log('don\'t use extendTo');
 
-		var legacy = naming(empty);
-		legacy.prototype = cloneObj(new PrototypeConstr(), result.prototype);
-		legacy.prototype.init = makeInit(result.builder);
+		if (!result.legacy) {
+			result.legacy = naming(empty);
+			result.legacy.pureBase = result;
+			result.legacy.prototype = cloneObj(new PrototypeConstr(), result.prototype);
+			result.legacy.prototype.init = makeInit(result.builder);
+		}
 
-		// debugger;
-		return extendTo.call(legacy, Class, props);
+		return extendTo.call(result.legacy, Class, props);
 	};
 
 	return result;
