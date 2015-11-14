@@ -188,12 +188,38 @@ shuffleArray = spv.shuffleArray = function(obj) {
 	return shuffled;
 };
 
+
+var fields_cache = {};
+var getFieldsTree = function(string) {
+	if (Array.isArray(string)){
+		return string;
+	} else {
+		if (!fields_cache[string]){
+			fields_cache[string] = string.split('.');
+		}
+		return fields_cache[string];
+	}
+};
+getTargetField = function(obj, tree){
+	tree = getFieldsTree(tree);
+	var nothing;
+	var target = obj;
+	for (var i=0; i < tree.length; i++) {
+		if (target[tree[i]] != nothing){
+			target = target[tree[i]];
+		} else{
+			return;
+		}
+	}
+	return target;
+};
+
 getFields = function(obj, fields){
 	var r = [];
 	for (var i=0; i < fields.length; i++) {
 		var cur = fields[i];
 
-		var value = (typeof cur == 'function') ? cur(obj) : spv.getTargetField(obj, cur);
+		var value = (typeof cur == 'function') ? cur(obj) : getTargetField(obj, cur);
 		if (value){
 			r.push(value);
 		}
@@ -285,17 +311,19 @@ searchInArray = spv.searchInArray = function (array, query, fields) {
 	return r;
 };
 var regexp_escaper = /([$\^*()+\[\]{}|.\/?\\])/g;
-spv.escapeRegExp = function(str, clean) {
+var escapeRegExp = function(str, clean) {
 	if (clean){
 		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
 	}
 	return str.replace(regexp_escaper, '\\$1'); //escaping regexp symbols
 };
 
+spv.escapeRegExp = escapeRegExp;
+
 getStringPattern = function (str) {
 	if (str.replace(/\s/g, '')){
 
-		str = spv.escapeRegExp(str, true).split(/\s/g);
+		str = escapeRegExp(str, true).split(/\s/g);
 		for (var i=0; i < str.length; i++) {
 			str[i] = '((^\|\\s)' + str[i] + ')';
 		}
@@ -342,7 +370,7 @@ toRealArray = spv.toRealArray = function(array, check_field){
 		return array;
 	} else if (array && (typeof array == 'object') && array.length){
 		return Array.prototype.slice.call(array);
-	} else if (array && (!check_field || spv.getTargetField(array, check_field))){
+	} else if (array && (!check_field || getTargetField(array, check_field))){
 		return [array];
 	} else{
 		return [];
@@ -407,34 +435,7 @@ spv.f = {
 		};
 	},
 };
-
-
-var fields_cache = {};
-var getFieldsTree = function(string) {
-	if (Array.isArray(string)){
-		return string;
-	} else {
-		if (!fields_cache[string]){
-			fields_cache[string] = string.split('.');
-		}
-		return fields_cache[string];
-	}
-};
-getTargetField = function(obj, tree){
-	tree = getFieldsTree(tree);
-	var nothing;
-	var target = obj;
-	for (var i=0; i < tree.length; i++) {
-		if (target[tree[i]] != nothing){
-			target = target[tree[i]];
-		} else{
-			return;
-		}
-	}
-	return target;
-};
-
-spv.setTargetField = function(obj, tree, value) {
+var setTargetField = function(obj, tree, value) {
 	tree = getFieldsTree(tree);
 	var cur_obj = obj;
 	for (var i=0; i < tree.length; i++) {
@@ -452,19 +453,22 @@ spv.setTargetField = function(obj, tree, value) {
 	return true;
 };
 
+
+spv.setTargetField = setTargetField;
+
 var getFieldValueByRule = function(obj, rule){
 	if (rule instanceof Function){
 		return rule(obj);
 	} else if (Array.isArray(rule)){
-		return spv.getTargetField(obj, rule);
+		return getTargetField(obj, rule);
 	} else if (rule instanceof Object){
 		if (typeof rule.field =='function'){
 			return rule.field(obj);
 		} else {
-			return spv.getTargetField(obj, rule.field);
+			return getTargetField(obj, rule.field);
 		}
 	} else{
-		return spv.getTargetField(obj, rule);
+		return getTargetField(obj, rule);
 	}
 
 
@@ -511,7 +515,7 @@ makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 		for (var i=0; i < array.length; i++) {
 			var simple_name,
 				cur = array[i],
-				fv = spv.getTargetField(cur, field);
+				fv = getTargetField(cur, field);
 			if (fv || typeof fv == 'number'){
 				if (fv instanceof Array){
 					for (var k=0; k < fv.length; k++) {
@@ -565,13 +569,13 @@ $filter = function(array, field, value_or_testfunc){
 				continue;
 			}
 			if (typeof value_or_testfunc == 'function'){
-				if (value_or_testfunc(spv.getTargetField(array[i], field))){
+				if (value_or_testfunc(getTargetField(array[i], field))){
 					r.push(array[i]);
 				} else{
 					r.not.push(array[i]);
 				}
 			} else{
-				if (spv.getTargetField(array[i], field) === value_or_testfunc){
+				if (getTargetField(array[i], field) === value_or_testfunc){
 					r.push(array[i]);
 				} else{
 					r.not.push(array[i]);
@@ -583,7 +587,7 @@ $filter = function(array, field, value_or_testfunc){
 			if (!array[i]){
 				continue;
 			}
-			var field_value = spv.getTargetField(array[i], field);
+			var field_value = getTargetField(array[i], field);
 			if (field_value){
 				r.push(field_value);
 			} else{
@@ -1172,9 +1176,9 @@ var getPropsListByTree = function(obj) {
 
 spv.mapProps = function(props_map, donor, acceptor) {
 	for (var name in props_map){
-		var value = spv.getTargetField(donor, props_map[name]);
+		var value = getTargetField(donor, props_map[name]);
 		if (typeof value != 'undefined'){
-			spv.setTargetField(acceptor, name, value);
+			setTargetField(acceptor, name, value);
 		}
 	}
 	return acceptor;
@@ -1292,7 +1296,7 @@ var getTargetProps = function(obj, scope, iter, spec_data, converters) {
 
 		var cur_value = getComplexPropValueByField(fpv, scope, iter, spec_data, converters);
 
-		spv.setTargetField(obj, cur.field_path, cur_value);
+		setTargetField(obj, cur.field_path, cur_value);
 	}
 
 };
@@ -1310,7 +1314,7 @@ var handlePropsMapScope = function(spec_data, cur, objects_list, scope, converte
 		var map_opts = cur.map_opts.parts_map[prop_name];
 
 		var result_value = map_opts.is_array ? [] : {} ;//объект используемый потомками создаётся в контексте родителя, что бы родитель знал о потомках
-		spv.setTargetField(result_value_item, prop_name, result_value);//здесь родитель записывает информацию о своих потомках
+		setTargetField(result_value_item, prop_name, result_value);//здесь родитель записывает информацию о своих потомках
 
 		objects_list.push({
 			map_opts: map_opts,
@@ -1447,7 +1451,7 @@ spv.insertItem = function(array, item, index) {
 	return array;
 };
 
-spv.removeItem = function(array, index) {
+var removeItem = function(array, index) {
 	//var array_length = array.length;
 	for (var i = index + 1; i < array.length; i++) {
 		array[ i - 1 ] = array[ i ];
@@ -1456,21 +1460,25 @@ spv.removeItem = function(array, index) {
 	return array;
 };
 
+spv.removeItem = removeItem;
+
 spv.findAndRemoveItem = function(array, item) {
 	var index = array.indexOf(item);
 	if (index === -1) {
 		return array;
 	} else {
-		return spv.removeItem(array, index);
+		return removeItem(array, index);
 	}
 };
+
+var startsWith;
 if (String.prototype.startsWith) {
-	spv.startsWith = function(str, substr, pos) {
+	startsWith = function(str, substr, pos) {
 		return str.startsWith(substr, pos);
 	};
 } else {
 	//http://jsperf.com/starts-with/14, without problems for GC
-	spv.startsWith = function(str, substr, pos) {
+	startsWith = function(str, substr, pos) {
 		var len = substr.length;
 		var i = pos || 0;
 
@@ -1483,11 +1491,13 @@ if (String.prototype.startsWith) {
 	};
 }
 
+spv.startsWith = startsWith;
+
 spv.getDeprefixFunc = function(prefix, simple) {
 	var cache = {};
 	return function (namespace) {
 		if (!cache.hasOwnProperty(namespace)) {
-			if (spv.startsWith(namespace, prefix)) {
+			if (startsWith(namespace, prefix)) {
 				cache[namespace] = simple ? true : namespace.slice(prefix.length);
 			} else {
 				cache[namespace] = false;
