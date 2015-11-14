@@ -1,6 +1,12 @@
 define(['spv', 'jquery',  '../StatementsAngularParser.min', './StandartChange'], function(spv, $, angbo, StandartChange) {
 'use strict';
 
+var capitalize = spv.capitalize;
+var startsWith = spv.startsWith;
+var getTargetField = spv.getTargetField;
+var setTargetField = spv.setTargetField;
+
+
 var DOT = '.';
 var regxp_complex_spaces = /(^\s+)|(\s+$)|(\s{2,})/gi;
 var regxp_spaces = /\s+/gi;
@@ -9,17 +15,17 @@ var convertFieldname = function(prop_name) {
 	var parts = prop_name.replace(/^-/, '').split('-');
 	if (parts.length > 1){
 		for (var i = 1; i < parts.length; i++) {
-			parts[i] = spv.capitalize(parts[i]);
+			parts[i] = capitalize(parts[i]);
 		}
 	}
 	return parts.join('');
 };
 var createPropChange = (function() {
 	var getValue = function(node, prop) {
-		return spv.getTargetField(node, prop);
+		return getTargetField(node, prop);
 	};
 	var setValue = function(node, value, old_value, wwtch) {
-		return spv.setTargetField(node, wwtch.data, value || '');
+		return setTargetField(node, wwtch.data, value || '');
 	};
 
 	return function(node, prop, statement, directive_name) {
@@ -80,7 +86,7 @@ function makePvWhen(anchor, expression, getSample, sample_node, parser) {
 					}
 					root_node = wwtch.data.sampler.getClone();
 				}
-				
+
 				wwtch.root_node = root_node;
 
 				$(node).after(root_node);
@@ -102,7 +108,7 @@ function makePvWhen(anchor, expression, getSample, sample_node, parser) {
 				wwtch.destroyer();
 			}
 			//	this.setValue(wwtch.node, new_value, old_value, wwtch);
-			
+
 		}
 	}, 'pv-when');
 }
@@ -162,7 +168,7 @@ return {
 		getIndexList(config.directives, config.directives_names_list);
 		//порядок директив важен, по идее
 		//должен в результате быть таким каким он задекларирован
-		
+
 		getIndexList(config.scope_generators, config.scope_g_list);
 		//порядок директив важен, по идее
 		//должен в результате быть таким каким он задекларирован
@@ -291,7 +297,7 @@ return {
 				} else {
 					node.classList.remove(class_name);
 				}
-				
+
 			};
 
 			var exp = /\S+\s*\:\s*(\{\{.+?\}\}|\S+)/gi;
@@ -339,7 +345,7 @@ return {
 				if (item){
 					result.push(item);
 				}
-				
+
 			}
 			return result;
 			//пример:
@@ -387,7 +393,7 @@ return {
 		})(),
 		'pv-events': (function(){
 				var createPVEventData = function(event_name, data, event_opts) {
-		
+
 				event_opts = event_opts && event_opts.split(',');
 				var event_handling = {};
 				if (event_opts){
@@ -433,8 +439,8 @@ return {
 					var cur = declarations[i].split(':');
 					var dom_event = cur.shift();
 					var decr_parts =  dom_event.split('|');
-					
-					
+
+
 
 					result.push(createPVEventData(decr_parts[0], createEventParams(cur), decr_parts[1]));
 				}
@@ -469,9 +475,9 @@ return {
 					continue;
 				}
 
-				if (spv.startsWith(cur_part, 'for_model:')){
+				if (startsWith(cur_part, 'for_model:')){
 					for_model = cur_part.slice('for_model:'.length);
-				} else if (spv.startsWith(cur_part, 'controller:')) {
+				} else if (startsWith(cur_part, 'controller:')) {
 					controller_name = cur_part.slice('controller:'.length);
 				} else {
 					var space_parts = cur_part.split(':');

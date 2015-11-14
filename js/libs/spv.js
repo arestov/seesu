@@ -743,6 +743,8 @@ var constr_id = 0;
 		var prototype = new this();
 		prototype.constr_id = constr_id++;
 
+		var super_init = false;
+
 		// Copy the properties over onto the new prototype
 		for (var prop_name in props) {
 			// Check if we're overwriting an existing function
@@ -751,6 +753,9 @@ var constr_id = 0;
 			prototype[prop_name] = needSuper ?
 				allowParentCall(prop_name, props[prop_name], _super) :
 				props[prop_name];
+
+			super_init = super_init || (needSuper && prop_name == 'init');
+
 			// if (needSuper && prop_name == 'init' && props[prop_name].length > 1) {
 			// 	llcount++
 			// 	// prop_name
