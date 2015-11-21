@@ -11,10 +11,11 @@ return spv.inh(BrowseMap.Model, {
 			fn(this, opts, data, params, more, states);
 		};
 	},
-	init: function(self, opts, data, params) {
+	init: function initLoadableListBase(self, opts, data, params) {
 		self.excess_data_items = null;
 		self.loaded_nestings_items = null;
 		self.loadable_lists = null;
+
 		//self.loadable_lists[ self.main_list_name ] = [];
 		pv.updateNesting(self,  self.main_list_name, []);
 
