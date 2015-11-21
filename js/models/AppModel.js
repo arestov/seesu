@@ -83,12 +83,7 @@ AppModelBase.extendTo(AppModel, {
 		pv.update(this, 'playing', false);
 	},
 	createSonglist: function(map_parent, params) {
-		var pl = new SongsList();
-		pl.init({
-			app: this,
-			map_parent: map_parent
-		}, params);
-		return pl;
+		return this.initSi(SongsList, params);
 	},
 	keyNav: function(key_name) {
 		var md = this.map.getCurMapL().getNesting('pioneer');
