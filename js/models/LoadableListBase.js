@@ -312,13 +312,6 @@ return spv.inh(BrowseMap.Model, {
 
 			return this.initSi(best_constr, data_po_pass, item_params);
 
-		} else if (this.subitemConstr){
-			var item = new this.subitemConstr();
-			item.init({
-				map_parent: this,
-				app: this.app
-			}, data, item_params);
-			return item;
 		} else if (this.makeDataItem){
 			return this.makeDataItem(data, item_params);
 		} else {
