@@ -827,8 +827,8 @@ var stNaming = function(constructor) {
 };
 
 var stBuilding = function(parentBuilder) {
-	return function classBuilder(obj) {
-		parentBuilder(obj);
+	return function classBuilder(obj, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
+		parentBuilder(obj, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
 	};
 };
 
@@ -846,7 +846,7 @@ var extendTo = Class.extendTo;
 function extend(Class, params, propsArg) {
 	var parentNaming = Class.naming || stNaming;
 	var naming = params.naming || parentNaming;
-	var building = params.building || Class.building || stBuilding;
+	var building = params.building || stBuilding;
 	var partWrapping = params.partWrapping || Class.partWrapping || stPartWrapping;
 
 	var initLength = false;
@@ -878,6 +878,8 @@ function extend(Class, params, propsArg) {
 			wrapExtend((parentExtend || empty), params.onExtend) :
 			parentExtend;
 
+
+	// building нужен что бы к родительской инициализации добавить какую-то конкретную новую
 	var currentBuilder = building(parentBuilder || empty);
 	var finalBuilder = partBuilder ? partWrapping(currentBuilder, partBuilder) : currentBuilder;
 
