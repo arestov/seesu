@@ -882,8 +882,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		},
 		getSourceTuner: function(search_name) {
 			if (!this.tuners[search_name]) {
-				var tuner = new FilesSourceTuner();
-				tuner.init({app: this.app}, {search_name: search_name});
+				var tuner = this.initSi(FilesSourceTuner, {search_name: search_name});
 				this.tuners[search_name] = tuner;
 			}
 			return this.tuners[search_name];
