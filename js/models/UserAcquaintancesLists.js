@@ -151,11 +151,7 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 
 		for (var i = 0; i < concated.length; i++) {
 			var cur = concated[i];
-			var user_acq = new UserAcquaintance();
-
-			user_acq.init({
-				app: this.app
-			}, {
+			var user_acq = this.initSi(UserAcquaintance, {
 				current_user_is_sender: this.state('current_user') == cur.item.from,
 				sender: cur.item.from,
 				receiver: cur.item.to,
