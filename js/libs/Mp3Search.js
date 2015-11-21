@@ -320,16 +320,15 @@ var getMatchedSongs = function(music_list, msq) {
 
 	var FilesBySource = function() {};
 	pv.Model.extendTo(FilesBySource, {
-		init: function(opts, params, search_eng_name) {
-			this.map_parent = opts.map_parent;
-			this._super();
+		init: function(opts, data, search_eng_name) {
+			this._super.apply(this, arguments);
 
-			this.mp3_search = opts.mp3_search;
+			this.mp3_search = this.map_parent.map_parent;
 			this.search_name = search_eng_name;
 			this.search_eng = this.mp3_search.getSearchByName(search_eng_name);
 
-			this.msq = params.msq;
-			this.query_string = params.query_string;
+			this.msq = data.msq;
+			this.query_string = data.query_string;
 
 			this.updateManyStates({
 				'dmca_url': this.search_eng && this.search_eng.dmca_url,
@@ -675,14 +674,8 @@ var getMatchedSongs = function(music_list, msq) {
 			}
 
 		},
-		bindSource: function(name, params, mp3_search) {
-			var files_by_source = new FilesBySource();
-			this.useMotivator(files_by_source, function() {
-				files_by_source.init({
-					map_parent: this,
-					mp3_search: mp3_search
-				}, params, name);
-			});
+		bindSource: function(name, data, mp3_search) {
+			var files_by_source = this.initSi(FilesBySource, data, name);
 			var _this = this;
 			files_by_source.on('requests', function(requests) {
 				_this.addRequests(requests);
