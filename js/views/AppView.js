@@ -223,8 +223,7 @@ AppBaseView.WebComplexTreesView.extendTo(AppView, {
 	createDetails: function(){
 		this._super();
 		var _this = this;
-		this.wp_box = new WPBox();
-		this.wp_box.init(this, function() {
+		this.wp_box = new WPBox(this, function() {
 			return _this.getNesting('current_mp_md');
 		}, function(waypoint) {
 			_this.setVisState('current_wpoint', waypoint);

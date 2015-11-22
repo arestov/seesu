@@ -1,18 +1,16 @@
 define(['spv', 'jquery'], function(spv, $){
 "use strict";
-var WPBox = function() {};
+var WPBox = function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
+	this.root_view = root_view;
+
+	this.getStartModel = getStartModel;
+	this.press = press;
+	this.select = select;
+	this.getRelativeWP = getRelativeWP;
+
+	this.removeWP = removeWP;
+};
 spv.Class.extendTo(WPBox, {
-	init: function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
-		this.root_view = root_view;
-
-		this.getStartModel = getStartModel;
-		this.press = press;
-		this.select = select;
-		this.getRelativeWP = getRelativeWP;
-
-		this.removeWP = removeWP;
-
-	},
 	wp_dirs: {
 		all: {
 			'Up': true,
