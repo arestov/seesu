@@ -63,9 +63,9 @@ BrowseMap.Model.extendTo(StartPage, {
 	init: function(opts){
 		this._super.apply(this, arguments);
 		this.su = opts.app;
-		pv.update(this, 'needs_search_from', true);
-		pv.update(this, 'nav_title', 'Seesu start page');
-		pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
+		pvUpdate(this, 'needs_search_from', true);
+		pvUpdate(this, 'nav_title', 'Seesu start page');
+		pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
 		var _this = this;
 		this.app.s.susd.ligs.regCallback('start-page', function(resp){
@@ -98,11 +98,11 @@ BrowseMap.Model.extendTo(StartPage, {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');
 			this.app.search(artist);
-			pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
+			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 			this.app.trackEvent('Navigation', 'hint artist');
 		},
 		changeSearchHint: function() {
-			pv.update(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
+			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 		}
 	},
 	sub_pages_routes: {
@@ -260,9 +260,9 @@ BrowseMap.Model.extendTo(StartPage, {
 		"rating-help": function(state){
 			if (this.app.app_pages[app_env.app_type]){
 				if (state){
-					pv.update(this, 'ask-rating-help', this.app.app_pages[app_env.app_type]);
+					pvUpdate(this, 'ask-rating-help', this.app.app_pages[app_env.app_type]);
 				} else {
-					pv.update(this, 'ask-rating-help', false);
+					pvUpdate(this, 'ask-rating-help', false);
 				}
 
 			}
