@@ -1811,6 +1811,7 @@ body .surf_nav{
 	left:0;
 	right: 0;
 	z-index: -10;
+	visibility: hidden;
 	}
 	#pages_area_width_streamer {
 		width: 100%;
