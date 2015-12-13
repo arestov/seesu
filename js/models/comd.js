@@ -53,35 +53,6 @@ spv.Class.extendTo(GMessagesStore, {
 	}
 });
 
-var BigContextNotify = function() {};
-pv.Model.extendTo(BigContextNotify, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		var _this = this;
-		if (!this.cant_hide_notify){
-			if (!params.notf){
-				throw new Error('you must apply "notf"');
-			}
-
-			this.notf = params.notf;
-			this.notf.on('read', function(value) {
-				if (value == _this.notify_name){
-					pv.update(_this, 'notify_readed', true);
-				}
-
-			});
-
-			if (params.notify_readed){
-				pv.update(_this, 'notify_readed', true);
-			}
-		}
-
-
-	},
-	cant_hide_notify: true,
-	notify_name: 'vk_audio_auth'
-});
-
 var ImagesPack = function() {};
 pv.Model.extendTo(ImagesPack, {
 	init: function() {
