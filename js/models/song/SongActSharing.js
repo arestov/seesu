@@ -5,24 +5,22 @@ var localize = app_serv.localize;
 var app_env = app_serv.app_env;
 var pvState = pv.state;
 
-
-var struserSuggest = function(wrap) {
-	var user = wrap.user;
-
-	this.init();
-	this.mo = wrap.mo;
-	this.row = wrap.row;
-	this.user_id = user.id;
-	this.photo = user.photo;
-	this.online = this.online;
-	//this.name = user.name;
-	this.text_title = user.first_name + " " + user.last_name;
-	this.updateManyStates({
-		photo: user.photo,
-		text_title: this.text_title
-	});
-};
-invstg.BaseSuggest.extendTo(struserSuggest, {
+var struserSuggest = spv.inh(invstg.BaseSuggest, {
+	init: function(self, wrap) {
+		var user = wrap.user;
+		self.mo = wrap.mo;
+		self.row = wrap.row;
+		self.user_id = user.id;
+		self.photo = user.photo;
+		self.online = self.online;
+		//self.name = user.name;
+		self.text_title = user.first_name + " " + user.last_name;
+		self.updateManyStates({
+			photo: user.photo,
+			text_title: self.text_title
+		});
+	}
+}, {
 	valueOf: function(){
 		return this.user_id;
 	},
@@ -46,8 +44,41 @@ comd.VkLoginB.extendTo(VKLoginFSearch, {
 
 
 
-var StrusersRSSection = function() {};
-invstg.SearchSection.extendTo(StrusersRSSection, {
+var StrusersRSSection = spv.inh(invstg.SearchSection, {
+	init: function(self) {
+		self.mo = self.map_parent.mo;
+		self.rpl = self.map_parent.map_parent;
+
+		self.updateManyStates({
+			vk_env: !!app_env.vkontakte,
+			has_vk_api: !!self.app.vk_api,
+			vk_opts: !!app_env.vkontakte && self.app._url.api_settings
+		});
+
+		self.app.on("vk-api", function(api) {
+			pv.update(self, "has_vk_api", !!api);
+		});
+
+		if (app_env.vkontakte) {
+			self.app.vk_auth.on('settings-change', function(vk_opts) {
+				pv.update(self, 'vk_opts', vk_opts);
+			});
+		}
+
+		var cu_info = self.app.s.getInfo('vk');
+		if (cu_info){
+			if (cu_info.photo){
+				pv.update(self, "own_photo", cu_info.photo);
+			}
+		} else {
+			self.app.s.once("info-change.vk", function(cu_info) {
+				if (cu_info.photo){
+					pv.update(self, "own_photo", cu_info.photo);
+				}
+			});
+		}
+	}
+}, {
 	resItem: struserSuggest,
 	model_name: "section-vk-users",
 	'compx-can_searchf_vkopt': [
@@ -80,42 +111,6 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 	],
 	//desc: improve ?
 	'nest-vk_auth': [VKLoginFSearch, false, 'needs_vk_auth'],
-	init: function() {
-		this._super.apply(this, arguments);
-		this.mo = this.map_parent.mo;
-		this.rpl = this.map_parent.map_parent;
-
-		this.updateManyStates({
-			vk_env: !!app_env.vkontakte,
-			has_vk_api: !!this.app.vk_api,
-			vk_opts: !!app_env.vkontakte && this.app._url.api_settings
-		});
-
-		var _this = this;
-
-		this.app.on("vk-api", function(api) {
-			pv.update(_this, "has_vk_api", !!api);
-		});
-
-		if (app_env.vkontakte) {
-			this.app.vk_auth.on('settings-change', function(vk_opts) {
-				pv.update(_this, 'vk_opts', vk_opts);
-			});
-		}
-
-		var cu_info = this.app.s.getInfo('vk');
-		if (cu_info){
-			if (cu_info.photo){
-				pv.update(this, "own_photo", cu_info.photo);
-			}
-		} else {
-			this.app.s.once("info-change.vk", function(cu_info) {
-				if (cu_info.photo){
-					pv.update(_this, "own_photo", cu_info.photo);
-				}
-			});
-		}
-	},
 	'stch-can_search_friends': function(target, state) {
 		if (state){
 			target.searchByQuery(pvState(target, 'query'));

@@ -1,17 +1,16 @@
-define(['../invstg', '../comd', 'pv'], function(invstg, comd, pv) {
+define(['../invstg', '../comd', 'pv', 'spv'], function(invstg, comd, pv, spv) {
 "use strict";
 var SongActPlaylisting;
 
-
-var playlistSuggest = function(data){
-	this.init();
-	this.pl = data.playlist;
-	this.mo = data.mo;
-	this.rpl = data.rpl;
-	this.text_title = this.getTitle();
-	pv.update(this, 'text_title', this.text_title);
-};
-invstg.BaseSuggest.extendTo(playlistSuggest, {
+var playlistSuggest = spv.inh(invstg.BaseSuggest, {
+	init: function(self, data) {
+		self.pl = data.playlist;
+		self.mo = data.mo;
+		self.rpl = data.rpl;
+		self.text_title = self.getTitle();
+		pv.update(self, 'text_title', self.text_title);
+	}
+}, {
 	valueOf: function(){
 		return this.pl.state('nav_title');
 	},
@@ -21,24 +20,20 @@ invstg.BaseSuggest.extendTo(playlistSuggest, {
 	}
 });
 
-
-var PlaylistRSSection = function() {};
-invstg.SearchSection.extendTo(PlaylistRSSection, {
+var PlaylistRSSection = spv.inh(invstg.SearchSection, {}, {
 	resItem: playlistSuggest,
 	model_name: "section-playlist"
 });
 
 
-var PlaylistRowSearch = function() {};
-invstg.Investigation.extendTo(PlaylistRowSearch, {
+var PlaylistRowSearch = spv.inh(invstg.Investigation, {
+	init: function(self) {
+		self.rpl = self.map_parent;
+		self.mo = self.rpl.mo;
+	}
+}, {
 	skip_map_init: true,
 	'nest-section': [[PlaylistRSSection]],
-	init: function() {
-		this._super.apply(this, arguments);
-		this.rpl = this.map_parent;
-		this.mo = this.rpl.mo;
-
-	},
 	searchf: function() {
 		var
 			pl_results = [],

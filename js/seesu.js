@@ -680,12 +680,12 @@ AppModel.extendTo(SeesuApp, {
 		this.trigger('vk-api', vkapi, user_id);
 	},
 	createSearchPage: function() {
-		var sp = new invstg.SearchPage();
-		sp.init({
-			app: this,
-			map_parent: this.start_page
-		});
-		return sp;
+		// var sp = new invstg.SearchPage();
+		// sp.init({
+		// 	app: this,
+		// 	map_parent: this.start_page
+		// });
+		return this.start_page.initSi(invstg.SearchPage);
 	},
 
 	getPlaylists: function(query) {

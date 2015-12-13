@@ -1,11 +1,8 @@
 define(['pv', 'js/modules/lfmhelp', 'app_serv', 'spv', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
-function(pv, lfmhelp, app_serv, spv, cache_ajax, hex_md5, lastfm_data, BrowseMap, invstg_obj) {
+function(pv, lfmhelp, app_serv, spv, cache_ajax, hex_md5, lastfm_data, BrowseMap, base) {
 "use strict";
 var localize = app_serv.localize;
-var
-	Investigation,
-	SearchSection,
-	SearchPage;
+var pvUpdate = pv.update;
 
 var suParseArtistsResults = function() {
 	return lfmhelp.parseArtistsResults.apply(this, arguments);
@@ -17,38 +14,18 @@ var suParseTracksResults = function() {
 var suParseTagsResults = lfmhelp.parseTagsResults;
 var suParseAlbumsResults = lfmhelp.parseAlbumsResults;
 
-var BaseSuggest = function(){};
-pv.extendFromTo('BaseSuggest', pv.Model, BaseSuggest);
-
-
-var BaseSectionButton;
-BaseSectionButton = function(){
-	this.init();
-};
-pv.extendFromTo('BaseSectionButton', BaseSuggest, BaseSectionButton);
-
-
-SearchSection = function(){};
-pv.extendFromTo("SearchSection", pv.Model, SearchSection);
-
-
-var artistSuggest = function(data){
-	//artist, image
-	this.init();
-	this.artist = data.artist;
-	this.image = data.image;
-	this.text_title = this.getTitle();
-	this.updateManyStates({
-		artist: data.artist,
-		image: data.image,
-		text_title: this.text_title
-	});
-};
-
-
-
-
-BaseSuggest.extendTo(artistSuggest, {
+var artistSuggest = spv.inh(base.BaseSuggest, {
+	init: function(self, data) {
+		self.artist = data.artist;
+		self.image = data.image;
+		self.text_title = self.getTitle();
+		self.updateManyStates({
+			artist: data.artist,
+			image: data.image,
+			text_title: self.text_title
+		});
+	}
+}, {
 	valueOf: function(){
 		return this.artist;
 	},
@@ -58,16 +35,15 @@ BaseSuggest.extendTo(artistSuggest, {
 	}
 });
 
-
-var playlistSuggest = function(data){
-	this.init();
-	this.pl = data.playlist;
-	this.text_title = this.getTitle();
-	this.updateManyStates({
-		text_title: this.text_title
-	});
-};
-BaseSuggest.extendTo(playlistSuggest, {
+var playlistSuggest = spv.inh(base.BaseSuggest, {
+	init: function(self, data) {
+		self.pl = data.playlist;
+		self.text_title = self.getTitle();
+		self.updateManyStates({
+			text_title: self.text_title
+		});
+	}
+}, {
 	valueOf: function(){
 		return this.pl.state('nav_title');
 	},
@@ -76,53 +52,41 @@ BaseSuggest.extendTo(playlistSuggest, {
 	}
 });
 
-
-
-var seesuSection = function() {};
-SearchSection.extendTo(seesuSection, {
-	no_results_text: localize('nothing-found'),
-	init: function() {
-		this._super.apply(this, arguments);
-		if (this.loadMore){
-			var _this = this;
-			this.button = (new BaseSectionButton())
+var seesuSection = spv.inh(base.SearchSection, {
+	init: function(self) {
+		if (self.loadMore){
+			self.button = (new base.BaseSectionButton())
 				.on('view', function(){
 					this.hide();
-					_this.loadMore();
+					self.loadMore();
 				})
 				.on('state_change-disabled', function(){
-					_this.trigger('items-change');
+					self.trigger('items-change');
 				}, {skip_reg: true});
-			this.setButtonText();
-			pv.updateNesting(this, 'button', this.button);
+			self.setButtonText();
+			pv.updateNesting(self, 'button', self.button);
 		}
 
 	}
+}, {
+	no_results_text: localize('nothing-found')
 });
 
-
-var PlaylistsSection = function() {};
-SearchSection.extendTo(PlaylistsSection, {
+var PlaylistsSection = spv.inh(base.SearchSection, {
+	init: function(self) {
+		pvUpdate(self, 'section_title', localize('playlists'));
+	}
+}, {
 	model_name: 'section-playlist',
-	init: function() {
-		this._super.apply(this, arguments);
-		pv.update(this, 'section_title', localize('playlists'));
-	},
 	resItem: playlistSuggest
 });
 
-
-
-
-
-var ArtistsSection = function(){};
-
-seesuSection.extendTo(ArtistsSection, {
+var ArtistsSection = spv.inh(seesuSection, {
+	init: function(self) {
+		pvUpdate(self, 'section_title', localize('Artists','Artists'));
+	}
+}, {
 	model_name: 'section-artist',
-	init: function() {
-		this._super.apply(this, arguments);
-		pv.update(this, 'section_title', localize('Artists','Artists'));
-	},
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» ' + localize('oartists', 'artists');
@@ -141,31 +105,30 @@ seesuSection.extendTo(ArtistsSection, {
 
 
 
+var trackSuggest = spv.inh(base.BaseSuggest, {
+	init: function(self, data) {
+		//artist, track, image, duration
+		self.artist = data.artist;
+		self.track = data.track;
+		self.image = data.image;
+		pvUpdate(self, 'artist', data.artist);
+		pvUpdate(self, 'track', data.track);
+		if (self.image){
+			pvUpdate(self, 'image', data.image);
+		}
 
-var trackSuggest = function(data){
-	//artist, track, image, duration
-	this.init();
-	this.artist = data.artist;
-	this.track = data.track;
-	this.image = data.image;
-	pv.update(this, 'artist', data.artist);
-	pv.update(this, 'track', data.track);
-	if (this.image){
-		pv.update(this, 'image', data.image);
+
+		if (data.duration){
+			self.duration = data.duration;
+			var track_dur = parseInt(self.duration, 10);
+			var digits = track_dur % 60;
+			track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+			pvUpdate(self, 'duration_text', track_dur);
+		}
+		self.text_title = self.getTitle();
+		pvUpdate(self, 'text_title', self.text_title);
 	}
-
-
-	if (data.duration){
-		this.duration = data.duration;
-		var track_dur = parseInt(this.duration, 10);
-		var digits = track_dur % 60;
-		track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-		pv.update(this, 'duration_text', track_dur);
-	}
-	this.text_title = this.getTitle();
-	pv.update(this, 'text_title', this.text_title);
-};
-BaseSuggest.extendTo(trackSuggest, {
+}, {
 	valueOf: function(){
 		return this.artist + ' - ' + this.track;
 	},
@@ -206,29 +169,22 @@ seesuSection.extendTo(TracksSection, {
 	resItem: trackSuggest
 });
 
+var tagSuggest = spv.inh(base.BaseSuggest, {
+	init: function(self, data) {
+		self.tag = data.tag;
+		self.image = null;
+		if (data.image){
+			self.image = data.image;
+		}
+		self.text_title = self.getTitle();
 
-
-
-
-
-
-
-var tagSuggest = function(data){
-	this.init();
-	this.tag = data.tag;
-	if (data.image){
-		this.image = data.image;
+		self.updateManyStates({
+			tag: data.tag,
+			image: data.image,
+			text_title: self.text_title
+		});
 	}
-	this.text_title = this.getTitle();
-
-	this.updateManyStates({
-		tag: data.tag,
-		image: data.image,
-		text_title: this.text_title
-	});
-};
-
-BaseSuggest.extendTo(tagSuggest, {
+}, {
 	valueOf: function(){
 		return this.tag;
 	},
@@ -239,14 +195,12 @@ BaseSuggest.extendTo(tagSuggest, {
 });
 
 
-
-var TagsSection = function() {};
-seesuSection.extendTo(TagsSection, {
+var TagsSection = spv.inh(seesuSection, {
+	init: function(self) {
+		pvUpdate(self, 'section_title',  localize('Tags'));
+	}
+}, {
 	model_name: 'section-tag',
-	init: function() {
-		this._super.apply(this, arguments);
-		pv.update(this, 'section_title',  localize('Tags'));
-	},
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otags', 'tags');
@@ -263,34 +217,26 @@ seesuSection.extendTo(TagsSection, {
 	resItem: tagSuggest
 });
 
+var albumSuggest = spv.inh(base.BaseSuggest, {
+	init: function(self, data) {
+		//artist, name, image, id
+		self.artist = data.artist;
+		self.name = data.album;
+		pvUpdate(self, 'artist', data.artist);
+		pvUpdate(self, 'name', data.album);
 
-
-
-
-
-
-var albumSuggest = function(data){
-	this.init();
-
-	//artist, name, image, id
-	this.artist = data.artist;
-	this.name = data.album;
-	pv.update(this, 'artist', data.artist);
-	pv.update(this, 'name', data.album);
-
-	if (data.image){
-		this.image = data.image;
-		pv.update(this, 'image', data.image);
+		self.image = null;
+		if (data.image){
+			self.image = data.image;
+			pv.update(self, 'image', data.image);
+		}
+		if (data.resid){
+			self.aid = data.resid;
+		}
+		self.text_title = self.getTitle();
+		pvUpdate(self, 'text_title', self.text_title);
 	}
-	if (data.resid){
-		this.aid = data.resid;
-	}
-	this.text_title = this.getTitle();
-	this.updateManyStates({
-		text_title: this.text_title
-	});
-};
-BaseSuggest.extendTo(albumSuggest, {
+}, {
 	valueOf: function(){
 		return '( ' + this.artist + ' ) ' + this.name;
 	},
@@ -304,14 +250,12 @@ BaseSuggest.extendTo(albumSuggest, {
 	}
 });
 
-
-var AlbumsSection = function() {};
-seesuSection.extendTo(AlbumsSection, {
+var AlbumsSection = spv.inh(seesuSection, {
+	init: function(self) {
+		pvUpdate(self, 'section_title', localize('Albums', 'Albums'));
+	}
+}, {
 	model_name: 'section-album',
-	init: function() {
-		this._super.apply(this, arguments);
-		pv.update(this, 'section_title', localize('Albums', 'Albums'));
-	},
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('oalbums', 'albums');
@@ -328,14 +272,7 @@ seesuSection.extendTo(AlbumsSection, {
 	resItem: albumSuggest
 });
 
-
-
-Investigation = function(){};
-pv.extendFromTo('Investigation', BrowseMap.Model, Investigation);
-
-
-SearchPage = function() {};
-Investigation.extendTo(SearchPage, {
+var SearchPage = spv.inh(base.Investigation, {}, {
 	// init: function(){
 	// 	this._super.apply(this, arguments);
 	// 	pv.update(this, 'mp_detailed', false);
@@ -514,10 +451,10 @@ Investigation.extendTo(SearchPage, {
 
 
 return {
-	Investigation: Investigation,
-	BaseSuggest: BaseSuggest,
-	baseSectionButton:BaseSectionButton,
-	SearchSection:SearchSection,
-	SearchPage:SearchPage
+	Investigation: base.Investigation,
+	BaseSuggest: base.BaseSuggest,
+	baseSectionButton: base.BaseSectionButton,
+	SearchSection: base.SearchSection,
+	SearchPage: SearchPage
 };
 });

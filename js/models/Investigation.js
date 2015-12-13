@@ -1,15 +1,13 @@
-define(['pv', 'spv'],function(pv, spv){
+define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 	"use strict";
-	pv.addPrototype("Investigation", {
-		model_name: 'invstg',
-		init: function(opts) {
-			this._super.apply(this, arguments);
-			this.names = {};
-			this.enter_items = false;
-			this.setInactiveAll();
-			pv.update(this, 'url_part', this.getURL());
+	var Investigation = spv.inh(BrowseMap.Model, {
+		init: function(self) {
+			self.names = {};
+			self.enter_items = false;
+			self.setInactiveAll();
+			pv.update(self, 'url_part', self.getURL());
 
-			this.on('child_change-section', function(e) {
+			self.on('child_change-section', function(e) {
 				this.names = {};
 				if (e.value) {
 					for (var i = 0; i < e.value.length; i++) {
@@ -19,7 +17,9 @@ define(['pv', 'spv'],function(pv, spv){
 				this.changeQuery(this.q, true);
 			});
 
-		},
+		}
+	}, {
+		model_name: 'invstg',
 		addCallback: function(event_name, func){
 			this.on(event_name, func);
 		},
@@ -174,22 +174,9 @@ define(['pv', 'spv'],function(pv, spv){
 		},
 		query_regexp: /\ ?\%query\%\ ?/
 	});
-	pv.addPrototype("BaseSectionButton", {
-		setText: function(text){
-			pv.update(this, 'button_text', text);
-		},
-		show: function(){
-			pv.update(this, 'disabled', false);
-		},
-		hide: function(){
-			pv.update(this, 'disabled', true);
-			this.setInactive();
-		}
-	});
 
 
-
-	pv.addPrototype("BaseSuggest", {
+	var BaseSuggest = spv.inh(pv.Model, {}, {
 		setActive: function(){
 			pv.update(this, 'active', true);
 		},
@@ -207,6 +194,18 @@ define(['pv', 'spv'],function(pv, spv){
 		}
 	});
 
+	var BaseSectionButton = spv.inh(BaseSuggest, {}, {
+		setText: function(text){
+			pv.update(this, 'button_text', text);
+		},
+		show: function(){
+			pv.update(this, 'disabled', false);
+		},
+		hide: function(){
+			pv.update(this, 'disabled', true);
+			this.setInactive();
+		}
+	});
 
 	var searchResults = function(query, prepared, valueOf){
 		if (query){
@@ -239,18 +238,17 @@ define(['pv', 'spv'],function(pv, spv){
 	});
 
 
-	pv.addPrototype("SearchSection", {
-		init: function(opts){
-			this._super.apply(this, arguments);
-			this.app = opts && opts.app;
-			this.map_parent = opts && opts.map_parent;
-			this.edges_list = [];
-			this.rendering_list = [];
+	var SearchSection = spv.inh(pv.Model, {
+		init: function(self) {
+			// self.app = opts && opts.app;
+			// self.map_parent = opts && opts.map_parent;
+			self.edges_list = [];
+			self.rendering_list = [];
 
 
-			var map_parent = opts.map_parent;
-			opts = null;
-			this
+			var map_parent = self.map_parent;
+			// opts = null;
+			self
 				.on('items-change', function(results){
 					map_parent.refreshEnterItems();
 					if (results){
@@ -264,7 +262,8 @@ define(['pv', 'spv'],function(pv, spv){
 				.on('requests', function(array){
 					map_parent.addRequests(array);
 				}, {immediately: true});
-		},
+		}
+	}, {
 		appendResults: function(arr, render, no_more_results) {
 			var r = [];
 			for (var i = 0; i < arr.length; i++) {
@@ -392,7 +391,12 @@ define(['pv', 'spv'],function(pv, spv){
 			return this;
 		}
 	});
-return {testdata: true};
+return {
+	Investigation: Investigation,
+	BaseSectionButton: BaseSectionButton,
+	BaseSuggest: BaseSuggest,
+	SearchSection: SearchSection
+};
 });
 
 
