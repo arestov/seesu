@@ -40,7 +40,7 @@ var AppNews = BrowseMap.Model.extendTo(function AppNews() {}, {
 AppNews.converNews = converNews;
 
 
-var StartPage = function() {};
+
 
 var subPageInitWrap = function(Constr, full_name, data) {
 	//var instance = new Constr();
@@ -51,24 +51,15 @@ var subPageInitWrap = function(Constr, full_name, data) {
 	return [Constr, data];
 
 };
-BrowseMap.Model.extendTo(StartPage, {
-	model_name: 'start_page',
-	zero_map_level: true,
-	showPlaylists: function(){
-		this.app.search(':playlists');
-	},
-	refreshListeners: function() {
-		this.app.s.susd.ligs.getData();
-	},
-	init: function(opts){
-		this._super.apply(this, arguments);
-		this.su = opts.app;
-		pvUpdate(this, 'needs_search_from', true);
-		pvUpdate(this, 'nav_title', 'Seesu start page');
-		pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
-		var _this = this;
-		this.app.s.susd.ligs.regCallback('start-page', function(resp){
+var StartPage = spv.inh(BrowseMap.Model, {
+	init: function(target, opts) {
+		target.su = opts.app;
+		pvUpdate(target, 'needs_search_from', true);
+		pvUpdate(target, 'nav_title', 'Seesu start page');
+		pvUpdate(target, 'nice_artist_hint', target.app.popular_artists[(Math.random()*10).toFixed(0)]);
+
+		target.app.s.susd.ligs.regCallback('start-page', function(resp){
 			if (!resp) {return;}
 			var result = complexEach([resp[1], resp[2]], function(result, girl, boy) {
 				if (girl) {
@@ -81,14 +72,23 @@ BrowseMap.Model.extendTo(StartPage, {
 				return result;
 			});
 
-			pvUpdate(_this, 'users_listenings', result);
-			pvUpdate(_this, 'users_listenings_loading', false);
+			pvUpdate(target, 'users_listenings', result);
+			pvUpdate(target, 'users_listenings_loading', false);
 		}, function() {
-			pvUpdate(_this, 'users_listenings_loading', true);
+			pvUpdate(target, 'users_listenings_loading', true);
 		});
 
-		this.closed_messages = app_serv.store('closed-messages') || {};
-		return this;
+		target.closed_messages = app_serv.store('closed-messages') || {};
+		return target;
+	}
+}, {
+	model_name: 'start_page',
+	zero_map_level: true,
+	showPlaylists: function(){
+		this.app.search(':playlists');
+	},
+	refreshListeners: function() {
+		this.app.s.susd.ligs.getData();
 	},
 	'nest-pstuff': ['users/me'],
 	'nest-muco': ['conductor'],

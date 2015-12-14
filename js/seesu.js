@@ -389,9 +389,7 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		this.start_page = (new StartPage()).init({
-			app: this
-		});
+		this.start_page = new StartPage({app: this});
 
 		this.initMapTree(this.start_page, app_env.needs_url_history, navi)
 			/*
