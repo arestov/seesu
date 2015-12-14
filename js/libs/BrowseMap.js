@@ -1511,7 +1511,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 				instance = sub_page[0];
 				init_opts = [this.getSiOpts(), sub_page[1]];
 			} else {
-				instance = sub_page;
+				return sub_page;
 			}
 		}
 
