@@ -2690,62 +2690,6 @@ body .surf_nav{
 		background-color: #000;
 		}
 
-
-.np-button{
-	position:absolute;
-	top:0;
-	right:0;
-	padding: 4px 8px;
-	width:20px;
-	border-right: 1px solid transparent;
-	}
-	.np{
-		width:20px;
-		height:20px;
-		background:url(../i/equalaizer_stoped.gif) no-repeat;
-		cursor:pointer;
-		}
-.np-button-nh_intend {
-	border-radius: 0.5rem;
-	border-top: 1px solid #666;
-	border-bottom: 1px solid #313131;
-}
-@-webkit-keyframes grayPulse {
-  from { box-shadow: 0 0 3px #333; }
-  50% { box-shadow: 0 0 8px #777; }
-  to { box-shadow: 0 0 3px #333; }
-}
-@-o-keyframes grayPulse {
-  from { box-shadow: 0 0 3px #333; }
-  50% { box-shadow: 0 0 8px #777; }
-  to { box-shadow: 0 0 3px #333; }
-}
-@keyframes grayPulse {
-  from { box-shadow: 0 0 3px #333; }
-  50% { box-shadow: 0 0 8px #777; }
-  to { box-shadow: 0 0 3px #333; }
-}
-.np-button-can_ff {
-	-webkit-animation-name: grayPulse;
-	-webkit-animation-duration: 4s;
-	-webkit-animation-iteration-count: infinite;
-	-webkit-animation-name: grayPulse;
-	     -o-animation-name: grayPulse;
-	        animation-name: grayPulse;
-	-webkit-animation-duration: 4s;
-	     -o-animation-duration: 4s;
-	        animation-duration: 4s;
-	-webkit-animation-iteration-count: infinite;
-	     -o-animation-iteration-count: infinite;
-	        animation-iteration-count: infinite;
-}
-@media (max-width:550px) {
-
-	.daddy .stack-top{
-		width:30px;
-		}
-
-}
 .full-page .usual_page{
 	margin-top:1.72rem;
 }
@@ -4381,6 +4325,62 @@ html.opera-extension{
 		background-image:url(../i/nav/seesu-nav-search-active.png);
 		}
 
+
+.np-button{
+	position:absolute;
+	top:0;
+	right:0;
+	padding: 4px 8px;
+	width:20px;
+	border-right: 1px solid transparent;
+	}
+	.np{
+		width:20px;
+		height:20px;
+		background:url(../i/equalaizer_stoped.gif) no-repeat;
+		cursor:pointer;
+		}
+.np-button-nh_intend {
+	border-radius: 0.5rem;
+	border-top: 1px solid #666;
+	border-bottom: 1px solid #313131;
+}
+@-webkit-keyframes grayPulse {
+  from { box-shadow: 0 0 3px #333; }
+  50% { box-shadow: 0 0 8px #777; }
+  to { box-shadow: 0 0 3px #333; }
+}
+@-o-keyframes grayPulse {
+  from { box-shadow: 0 0 3px #333; }
+  50% { box-shadow: 0 0 8px #777; }
+  to { box-shadow: 0 0 3px #333; }
+}
+@keyframes grayPulse {
+  from { box-shadow: 0 0 3px #333; }
+  50% { box-shadow: 0 0 8px #777; }
+  to { box-shadow: 0 0 3px #333; }
+}
+.np-button-can_ff {
+	-webkit-animation-name: grayPulse;
+	-webkit-animation-duration: 4s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-name: grayPulse;
+	     -o-animation-name: grayPulse;
+	        animation-name: grayPulse;
+	-webkit-animation-duration: 4s;
+	     -o-animation-duration: 4s;
+	        animation-duration: 4s;
+	-webkit-animation-iteration-count: infinite;
+	     -o-animation-iteration-count: infinite;
+	        animation-iteration-count: infinite;
+}
+@media (max-width:550px) {
+
+	.daddy .stack-top{
+		width:30px;
+		}
+
+}
 
 
 		.album_preview-big{
