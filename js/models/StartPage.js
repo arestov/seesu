@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv'],
-function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv', 'spv'],
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv, spv) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -24,18 +24,8 @@ var converNews = function(list) {
 	return result;
 };
 
-var AppNews = BrowseMap.Model.extendTo(function AppNews() {}, {
+var AppNews = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'app_news',
-	init: function() {
-		this._super.apply(this, arguments);
-
-
-		this.initStates();
-		//pv.update(this, 'news_list', converNews(news_data));
-
-		//var mixcloud
-		return this;
-	}
 });
 AppNews.converNews = converNews;
 
