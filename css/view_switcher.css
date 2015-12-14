@@ -1,6 +1,6 @@
 .navs{
 	-webkit-transform: translateZ(0);
-	
+
 	overflow:hidden;
 	padding-top:6px;
 	padding-right:1rem;
@@ -9,7 +9,7 @@
 	border-bottom:1px solid #252525;
 	background:#444 url(../i/nav/head-gradient.png) repeat-x;
 	background-image: linear-gradient(#525252,#363636);
-	
+
 	font-size: 1.28rem;
 	font-family: "Trebuchet MS", sans-serif;
 
@@ -19,7 +19,7 @@
 }
 .daddy{
 	overflow: hidden;
-	
+
 	margin-right:19px;
 	height: 31px;
 	text-overflow: ellipsis;
@@ -34,7 +34,7 @@
 }
  #slider .screens{
  	max-width: 900px;
-	
+
 }
 
 .start-screen{
@@ -55,7 +55,7 @@
 }
 #search {
 	margin: 0 auto;
-	
+
 
 	}
 
@@ -79,7 +79,7 @@
 		}
 	.page-scheme .random-metro-chart ul{
 		display: none;
-		}		
+		}
 	.page-scheme .random-metro-chart .refresh-in-header{
 		display: none;
 		}
@@ -108,44 +108,8 @@
 		background-color: #000;
 		}
 
-/**  New nav **/	
 
-	
-
-.not-as-application .navs .nav-title{
-	float:left;
-}
-
-
-		
-.nav-start{
-	margin-right: 0;
-	margin-left: 0;
-	padding: 4px 18px 4px;
-	width: 20px;
-}
-
-.nav-start{
-	border-left:1px solid transparent;
-	transition: margin-right 0.1s ease-out;
-}	
-
-.nav-start .icon{
-	background-image:url(../i/seesu_logo.svg);
-	}
-	
-.nav-search_results{
-	padding:4px 1rem 4px 9px;
-	width:15px;
-	}
-.nav-search_results .icon{
-	background-image:url(../i/nav/seesu-nav-search.png);
-	}
-	.nav-search_results:active .icon{
-		background-image:url(../i/nav/seesu-nav-search-active.png);
-		}
-
-.np-button{	
+.np-button{
 	position:absolute;
 	top:0;
 	right:0;
@@ -182,7 +146,7 @@
 	.daddy .stack-top{
 		width:30px;
 		}
-	
+
 }
 .full-page .usual_page{
 	margin-top:1.72rem;
@@ -194,7 +158,7 @@
 	display: block;
 }
 .art_card{
-	
+
 	overflow:hidden;
 	margin: 0 auto;
 	padding-bottom: 20px;
@@ -231,18 +195,18 @@
 	padding: 1.72rem 10px;
 	}
 	.art_card ul{
-		
+
 	}
 	.art_card .row-header{
 		margin-bottom:0.5rem;
 	}
 	.art_card h5{
-	
+
 		}
 		.art_card h5 a.extends-header{
 			margin-left:1rem;
 			}
-	
+
 	.art_card-statinfo{
 		clear: both;
 		padding-top:1rem;
@@ -252,8 +216,8 @@
 		.albums_previews-con .area_for_button .desc_prevw_list{
 			height: 9.4rem;
 			}
-	
-		
+
+
 
 	.page-scheme .art_card-image{
 		display: none;
@@ -283,7 +247,7 @@
 }
 
 
-		
+
 
 #slider .full_page_need#screens{
 	max-width: 100%;

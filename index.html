@@ -31,52 +31,52 @@
   <body>
 	<div id="ui-samples" style="display:none">
 		
-		<span class="brow_lev_nav" pv-class="hidden: !vmp_show"></span>
-		<span
-			class="common-nav nav-item"
-			pv-props="title:{{nav_title}}"
-			pv-events="click:zoomOut"
-			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+<span class="brow_lev_nav" pv-class="hidden: !vmp_show"></span>
+<span
+	class="common-nav nav-item"
+	pv-props="title:{{nav_title}}"
+	pv-events="click:zoomOut"
+	pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
-			pv-class="
-				nnav: !mp_has_focus
-				stack-top: {{ mp_stack == 'top' }}
-				stack-bottom: {{ mp_stack == 'bottom' }}
-				stack-middle: {{ mp_stack == 'middle' }}
-				nav_clickable: nav_clickable
-			"
-	
-			><span
-				pv-text="{{nav_title}}"
-			>&nbsp;</span><b></b></span>
-		<span 
-			class="search_page-nav nav-item nav-search_results" 
-			title="Search results"
-			pv-props="title:{{nav_title}}"
-			pv-events="click:zoomOut"
-			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
-	
-			pv-class="
-				nnav: !mp_has_focus
-				stack-top: {{ mp_stack == 'top' }}
-				stack-bottom: {{ mp_stack == 'bottom' }}
-				stack-middle: {{ mp_stack == 'middle' }}
-				nav_clickable: nav_clickable
-			"
-			><b></b><span class="icon">&nbsp;</span></span>
-		<span 
-			class="start_page-nav nav-item nav-start" 
-			title="Seesu start page"
-			pv-props="title:{{nav_title}}"
-			pv-events="click:zoomOut"
-			pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
-	
-			pv-class="
-				nav-button: !mp_has_focus
-				stacked: {{ mp_stack && (mp_stack == !!mp_stack) }}
-				nav_clickable: nav_clickable
-			"
-			><b></b><span class="icon">&nbsp;</span></span>
+	pv-class="
+		nnav: !mp_has_focus
+		stack-top: {{ mp_stack == 'top' }}
+		stack-bottom: {{ mp_stack == 'bottom' }}
+		stack-middle: {{ mp_stack == 'middle' }}
+		nav_clickable: nav_clickable
+	"
+
+	><span
+		pv-text="{{nav_title}}"
+	>&nbsp;</span><b></b></span>
+<span
+	class="search_page-nav nav-item nav-search_results"
+	title="Search results"
+	pv-props="title:{{nav_title}}"
+	pv-events="click:zoomOut"
+	pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+
+	pv-class="
+		nnav: !mp_has_focus
+		stack-top: {{ mp_stack == 'top' }}
+		stack-bottom: {{ mp_stack == 'bottom' }}
+		stack-middle: {{ mp_stack == 'middle' }}
+		nav_clickable: nav_clickable
+	"
+	><b></b><span class="icon">&nbsp;</span></span>
+<span
+	class="start_page-nav nav-item nav-start"
+	title="Seesu start page"
+	pv-props="title:{{nav_title}}"
+	pv-events="click:zoomOut"
+	pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+
+	pv-class="
+		nav-button: !mp_has_focus
+		stacked: {{ mp_stack && (mp_stack == !!mp_stack) }}
+		nav_clickable: nav_clickable
+	"
+	><b></b><span class="icon">&nbsp;</span></span>
 
 
 		<div 
@@ -175,7 +175,7 @@
 			</div>
 		</div>
 
-		
+
 		<span class="desc_item preview_line">
 			<span class="preview_line-wrap">
 				<span 
@@ -799,7 +799,7 @@
 	
 		</div>
 
-		
+
 		<div class="song-row-content moplas-block moplas_block" pv-nest="mf_cor" pv-class="want_more_songs: want_more_songs">
 			<div class="show-all-songs hidden" pv-class="hidden: !must_be_expandable">
 				<a pv-events="click::switchMoreSongsView" pv-type="way-point">
@@ -914,7 +914,7 @@
 	
 		</div>
 
-		
+
 		<ul>
 			<li class="song-view" 
 				pv-class="
@@ -982,7 +982,7 @@
 			</li>
 		</ul>
 
-		
+
 		<div class="track-context" >
 			<!--pv-replace sample_name:moplas_block pv-when:must_expand-->
 			<div >
@@ -1383,7 +1383,7 @@
 			</div>
 		</li>
 
-					
+
 		
 		<div class="vk-login-context attention-focuser">
 			<div class="decor">
@@ -1436,7 +1436,7 @@
 			</div>
 		</div>
 
-		
+
 		<div class="song-act-tagging">
 			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input" pv-type="way-point"/>
 			<div class="save_tags_b hidden" pv-class="hidden: !has_changes">
@@ -1507,7 +1507,7 @@
 			</ul>
 		</div>
 
-		
+
 		<div class="search_results-container" pv-class="does-not-need-search-from: !needs_search_from">
 			<p class="search-desc">
 				<span class="desc lang localize-search-control-hint"></span>
@@ -1795,7 +1795,6 @@
 		
 
 
-		<!-- // ui samples -->
 	</div>
 <div id="slider">
 	<div class="navs ">
