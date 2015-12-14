@@ -1472,12 +1472,17 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		}
 	},
 	getSPI: (function(){
+		var init = function(parent, target, data) {
+			parent.useMotivator(target, function(instance) {
+				instance.init(parent.getSiOpts(), data);
+			});
+			return target;
+		};
+
 		return function(sp_name) {
 			if (this.sub_pages && this.sub_pages[sp_name]){
 				return this.sub_pages[sp_name];
 			}
-			var instance;
-			var init_opts;
 			var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
 			if (target){
 				/*
@@ -1502,29 +1507,18 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 					instance_data.head = head_by_urlname;
 				}
 				cloneObj(instance_data, data_by_urlname);
-				init_opts = [this.getSiOpts(), instance_data];
-				instance = new Constr();
 
-				this.sub_pages[sp_name] = instance;
+				this.sub_pages[sp_name] = this.initSi(Constr, instance_data);
+				return this.sub_pages[sp_name];
 			} else if (this.subPager){
 				var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
 				if (Array.isArray(sub_page)) {
-					instance = sub_page[0];
-					init_opts = [this.getSiOpts(), sub_page[1]];
+					return init(this, sub_page[0], sub_page[1]);
 				} else {
 					return sub_page;
 				}
 			}
-
-			if (instance && init_opts){
-				this.useMotivator(instance, function(instance) {
-					instance.init.apply(instance, init_opts);
-				});
-			}
-
-
-			return instance;
-		}
+		};
 	})(),
 	preloadNestings: function(array) {
 		//var full_list = [];
