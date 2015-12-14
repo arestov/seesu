@@ -1505,8 +1505,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			instance = new Constr();
 
 			this.sub_pages[sp_name] = instance;
-		} else {
-			if (this.subPager){
+		} else if (this.subPager){
 				var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
 				if (Array.isArray(sub_page)) {
 					instance = sub_page[0];
@@ -1514,7 +1513,6 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 				} else {
 					instance = sub_page;
 				}
-			}
 		}
 
 		if (instance && init_opts){
