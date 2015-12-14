@@ -53,13 +53,12 @@ spv.Class.extendTo(GMessagesStore, {
 	}
 });
 
-var ImagesPack = function() {};
-pv.Model.extendTo(ImagesPack, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.images_by_source = {};
-		this.all_images = [];
-	},
+var ImagesPack = spv.inh(pv.Model, {
+	init: function(target) {
+		target.images_by_source = {};
+		target.all_images = [];
+	}
+}, {
 	addImage: function(lfm_arr, source) {
 		if (!this.images_by_source[source] && lfm_arr){
 			this.images_by_source[source] = lfm_arr;
@@ -127,14 +126,13 @@ ImagesPack.extendTo(ArtistImages, {
 	}
 });
 
-var LastFMArtistImagesSelector = function() {};
-pv.Model.extendTo(LastFMArtistImagesSelector, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.art_models = {};
-		this.track_models = {};
-		this.unknown_methods = {};
-	},
+var LastFMArtistImagesSelector = spv.inh(pv.Model, {
+	init: function(target) {
+		target.art_models = {};
+		target.track_models = {};
+		target.unknown_methods = {};
+	}
+}, {
 	convertEventName: function(event_name) {
 		return event_name.toLowerCase().replace(/^\s+|\s+$/, '');
 	},
