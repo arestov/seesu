@@ -1506,13 +1506,13 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
 			this.sub_pages[sp_name] = instance;
 		} else if (this.subPager){
-				var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
-				if (Array.isArray(sub_page)) {
-					instance = sub_page[0];
-					init_opts = [this.getSiOpts(), sub_page[1]];
-				} else {
-					instance = sub_page;
-				}
+			var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
+			if (Array.isArray(sub_page)) {
+				instance = sub_page[0];
+				init_opts = [this.getSiOpts(), sub_page[1]];
+			} else {
+				instance = sub_page;
+			}
 		}
 
 		if (instance && init_opts){
