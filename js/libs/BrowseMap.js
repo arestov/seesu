@@ -1472,57 +1472,55 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		}
 	},
 	getSPI: function(sp_name) {
-		var instance;
 		if (this.sub_pages && this.sub_pages[sp_name]){
-			instance = this.sub_pages[sp_name];
+			return this.sub_pages[sp_name];
 		}
+		var instance;
 		var init_opts;
-		if (!instance){
-			var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
-			if (target){
-				/*
-				hp_bound
-				data_by_urlname
-				data_by_hp
+		var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
+		if (target){
+			/*
+			hp_bound
+			data_by_urlname
+			data_by_hp
 
-				берем данные из родителя
-				накладываем стандартные данные
-				накладываем данные из урла
-				*/
-				var Constr = target.constr;
+			берем данные из родителя
+			накладываем стандартные данные
+			накладываем данные из урла
+			*/
+			var Constr = target.constr;
 
-				var common_opts = getSPOpts(this, sp_name);
+			var common_opts = getSPOpts(this, sp_name);
 
-				var instance_data = getInitData(this, common_opts);
-				var dbu_declr = Constr.prototype.data_by_urlname;
-				var hbu_declr = Constr.prototype.head_by_urlname;
-				var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
-				var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
-				if (head_by_urlname) {
-					instance_data.head = head_by_urlname;
-				}
-				cloneObj(instance_data, data_by_urlname);
-				init_opts = [this.getSiOpts(), instance_data];
-				instance = new Constr();
+			var instance_data = getInitData(this, common_opts);
+			var dbu_declr = Constr.prototype.data_by_urlname;
+			var hbu_declr = Constr.prototype.head_by_urlname;
+			var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
+			var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
+			if (head_by_urlname) {
+				instance_data.head = head_by_urlname;
+			}
+			cloneObj(instance_data, data_by_urlname);
+			init_opts = [this.getSiOpts(), instance_data];
+			instance = new Constr();
 
-				this.sub_pages[sp_name] = instance;
-			} else {
-				if (this.subPager){
-					var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
-					if (Array.isArray(sub_page)) {
-						instance = sub_page[0];
-						init_opts = [this.getSiOpts(), sub_page[1]];
-					} else {
-						instance = sub_page;
-					}
+			this.sub_pages[sp_name] = instance;
+		} else {
+			if (this.subPager){
+				var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
+				if (Array.isArray(sub_page)) {
+					instance = sub_page[0];
+					init_opts = [this.getSiOpts(), sub_page[1]];
+				} else {
+					instance = sub_page;
 				}
 			}
+		}
 
-			if (instance && init_opts){
-				this.useMotivator(instance, function(instance) {
-					instance.init.apply(instance, init_opts);
-				});
-			}
+		if (instance && init_opts){
+			this.useMotivator(instance, function(instance) {
+				instance.init.apply(instance, init_opts);
+			});
 		}
 
 
