@@ -1473,6 +1473,9 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	},
 	getSPI: (function(){
 		var init = function(parent, target, data) {
+			if (target.hasOwnProperty('_provoda_id')) {
+				return target;
+			}
 			parent.useMotivator(target, function(instance) {
 				instance.init(parent.getSiOpts(), data);
 			});

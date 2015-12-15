@@ -227,7 +227,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			var instance;
 			if (instance_data) {
 				if (Array.isArray(instance_data)) {
-					instance = new instance_data[0]();
+					instance = this.initSi(instance_data[0], instance_data[1]);
 
 				} else {
 					instance = instance_data;
