@@ -7,13 +7,6 @@ UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, user_music_vk){
 "use strict";
 var localize = app_serv.localize;
 
-var UsersList = function() {};
-BrowseMap.Model.extendTo(UsersList, {
-
-});
-
-
-
 var UserCard = spv.inh(BrowseMap.Model, {
 	init: function(target) {
 		//плейлисты
