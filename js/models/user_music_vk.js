@@ -119,8 +119,7 @@ VkSongList.extendTo(MyVkAudioList, {
 
 var vk_user_tracks_sp = ['my', 'recommended'];
 
-var VkUserTracks = function() {};
-BrowseMap.Model.extendTo(VkUserTracks, {
+var VkUserTracks = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'vk_users_tracks',
 	'nest-lists_list':
 		[vk_user_tracks_sp],
@@ -141,8 +140,15 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 });
 
 
-var VkUserPreview = function() {};
-BrowseMap.Model.extendTo(VkUserPreview, {
+var VkUserPreview = spv.inh(BrowseMap.Model, {
+	init: function(target, opts, data) {
+		target.mapStates(target.init_stmp, data, true);
+		target.initStates();
+		target.rawdata = data;
+	}
+}, {
+	manual_states_init: true,
+	network_data_as_states: false,
 	init_stmp: {
 		userid: 'id',
 		first_name: 'first_name',
@@ -163,12 +169,6 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 			return [first_name, last_name].join(' ');
 		}
 	},
-	init: function(opts, data) {
-		this._super.apply(this, arguments);
-		this.mapStates(this.init_stmp, data, true);
-		this.initStates();
-		this.rawdata = data;
-	},
 	getRelativeModel: function() {
 		var md = this.app.getVkUser(this.state('userid'));
 		md.setProfileData(this.mapStates(this.init_stmp, this.rawdata, {}));
@@ -181,8 +181,7 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 });
 
 
-var VKFriendsList = function(){};
-LoadableList.extendTo(VKFriendsList, cloneObj({
+var VKFriendsList = spv.inh(LoadableList, {}, cloneObj({
 	main_list_name: 'list_items',
 	model_name: 'vk_users',
 	page_limit: 200,
