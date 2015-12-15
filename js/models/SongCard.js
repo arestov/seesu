@@ -108,18 +108,14 @@ var sortByTypeAndDate = spv.getSortFunc([{
 }]);
 
 
-var VKPostsList = function() {};
-LoadableListBase.extendTo(VKPostsList, {
-	init: function(opts, data) {
-		this._super.apply(this, arguments);
-		//this.sub_pa_params = params;
-		this.initStates(data);
-		this.on('child_change-lists_list', function(e) {
+var VKPostsList = spv.inh(LoadableListBase, {
+	init: function(target) {
+		target.on('child_change-lists_list', function(e) {
 			var sorted = e.value && e.value.slice().sort(sortByTypeAndDate);
-			pv.updateNesting(this, 'sorted_list', sorted);
+			pv.updateNesting(target, 'sorted_list', sorted);
 		});
-
-	},
+	}
+}, {
 	'compx-image_previews': [
 		['@owner_info:sorted_list'],
 		function (array) {
@@ -231,8 +227,7 @@ LoadableListBase.extendTo(VKPostsList, {
 });
 var isDepend = pv.utils.isDepend;
 
-var SongCard = function() {};
-LoadableListBase.extendTo(SongCard, {
+var SongCard = spv.inh(LoadableListBase, {}, {
 	model_name: 'songcard',
 	'compx-nav_title': {
 		depends_on: ['artist_name', 'track_name'],
