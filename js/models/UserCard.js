@@ -193,8 +193,7 @@ BrowseMap.Model.extendTo(VkUserCard, {
 	}
 });
 
-var LfmUserCard = function() {};
-BrowseMap.Model.extendTo(LfmUserCard, {
+var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'lfm_usercard',
 	'compx-nav_title': [
 		['lfm_userid'],
