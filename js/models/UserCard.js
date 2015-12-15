@@ -309,17 +309,5 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 UserCard.LfmUserCard = LfmUserCard;
 UserCard.VkUserCard = VkUserCard;
 
-var SongListener = function() {};
-pv.Model.extendTo(SongListener, {
-	init: function(opts, params) {
-		this.app = opts.app;
-		this.userdata = params.data;
-		//pv.update(this, 'picture', this.userdata.big_pic.url);
-	},
-	showFullPreview: function() {
-
-	}
-});
-
 return UserCard;
 });
