@@ -14,9 +14,17 @@ BrowseMap.Model.extendTo(UsersList, {
 
 
 
-var UserCard = function() {};
-
-BrowseMap.Model.extendTo(UserCard, {
+var UserCard = spv.inh(BrowseMap.Model, {
+	init: function(target) {
+		//плейлисты
+		var gena = target.getSPI('playlists', true);
+		var hasPlaylistCheck = function(items) {
+			pv.update(target, 'has_playlists', !!items.length);
+		};
+		hasPlaylistCheck(target.app.gena.playlists);
+		target.app.gena.on('playlists-change', hasPlaylistCheck);
+	}
+}, {
 	model_name: 'usercard',
 	sub_pa: {
 		'vk:tracks': {
@@ -80,24 +88,9 @@ BrowseMap.Model.extendTo(UserCard, {
 		function(can_expand, for_current_user) {
 			return for_current_user && can_expand;
 		}
-	],
-	init: function() {
-		this._super.apply(this, arguments);
-		var _this = this;
-
-		//плейлисты
-		var gena = this.getSPI('playlists', true);
-		var hasPlaylistCheck = function(items) {
-			pv.update(_this, 'has_playlists', !!items.length);
-		};
-		hasPlaylistCheck(this.app.gena.playlists);
-		this.app.gena.on('playlists-change', hasPlaylistCheck);
-
-		return this;
-	}
+	]
 });
-var VkUserCard = function() {};
-BrowseMap.Model.extendTo(VkUserCard, {
+var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'vk_usercard',
 	sub_pa: {
 		'tracks': {
