@@ -5,14 +5,13 @@ var ManualPlaylist = function() {};
 SongsList.extendTo(ManualPlaylist, {
 });
 
-var UserPlaylists = function() {};
-BrowseMap.Model.extendTo(UserPlaylists, {
-	model_name: 'user_playlists',
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this.playlists = [];
-		pv.updateNesting(this, 'lists_list', this.playlists);
+var UserPlaylists = spv.inh(BrowseMap.Model, {
+	init: function(target) {
+		target.playlists = [];
+		pv.updateNesting(target, 'lists_list', target.playlists);
 	},
+}, {
+	model_name: 'user_playlists',
 	getSPC: function() {
 		return ManualPlaylist;
 	},
