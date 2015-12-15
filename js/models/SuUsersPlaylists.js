@@ -1,25 +1,24 @@
-define(['./UserPlaylists', 'app_serv'], function(UserPlaylists, app_serv){
+define(['./UserPlaylists', 'app_serv', 'spv'], function(UserPlaylists, app_serv, spv){
 "use strict";
 var localize = app_serv.localize;
-var SuUsersPlaylists = function() {};
-UserPlaylists.extendTo(SuUsersPlaylists, {
-	init: function(opts) {
-		this._super.apply(this, arguments);
-		this
+var SuUsersPlaylists = spv.inh(UserPlaylists, {
+	init: function(target) {
+		target
 			.on('each-playlist-change', function() {
-				su.trackEvent('song actions', 'add to playlist');
+				target.app.trackEvent('song actions', 'add to playlist');
 			});
-		this.updateManyStates({
+		target.updateManyStates({
 			'nav_title':  localize('playlists'),
 			'url_part': '/playlists'
 		});
-		this.app.gena = this;
+		target.app.gena = target;
 
 		var plsts_str = app_serv.store('user_playlists');
 		if (plsts_str){
-			this.setSavedPlaylists(plsts_str);
+			target.setSavedPlaylists(plsts_str);
 		}
-	},
+	}
+}, {
 	saveToStore: function(value) {
 		app_serv.store('user_playlists', value, true);
 	},
