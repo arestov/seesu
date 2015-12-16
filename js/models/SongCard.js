@@ -24,8 +24,7 @@ var sortByGif = spv.getSortFunc([{
 	}
 ]);
 
-var SongFansList = function(){};
-user_music_lfm.LfmUsersList.extendTo(SongFansList, {
+var SongFansList = spv.inh(user_music_lfm.LfmUsersList, {}, {
 	getRqData: function() {
 		return {
 			artist: this.state('artist_name'),
