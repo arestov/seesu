@@ -146,13 +146,13 @@ var trackSuggest = spv.inh(base.BaseSuggest, {
 
 
 
-var TracksSection = function() {};
-seesuSection.extendTo(TracksSection, {
-	model_name: 'section-track',
-	init: function() {
-		this._super.apply(this, arguments);
-		pv.update(this, 'section_title', localize('Tracks','Tracks'));
+var TracksSection = spv.inh(seesuSection, {
+	init: function(target) {
+		pvUpdate(target, 'section_title', localize('Tracks','Tracks'));
 	},
+}, {
+	model_name: 'section-track',
+
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otracks', 'tracks');
