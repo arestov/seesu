@@ -1,9 +1,23 @@
-define(['pv', 'spv'], function(pv, spv){
+define(['pv', 'spv', './LoadableList'], function(pv, spv, LoadableList){
 	"use strict";
 
 
 
-	pv.addPrototype("SongsListBase", spv.coe(function(add) {
+return spv.inh(LoadableList, {
+	init: function(target, opts){
+		target.idx_wplay_song = null;
+		target.idx_show_song = null;
+		target.idx_player_song = null;
+
+		target.vis_neig_next = null;
+		target.vis_neig_prev= null;
+
+		target.app = opts.app;
+		target.player = target.app.p;
+		target.mp3_search = target.app.mp3_search;
+		target.pmd = opts.pmd || target.pmd;
+	},
+}, spv.coe(function(add) {
 
 
 	var nesting_name_dir_cache = {};
@@ -370,6 +384,7 @@ define(['pv', 'spv'], function(pv, spv){
 	};
 
 
+	var bindStaCons = LoadableList.prototype.bindStaCons;
 
 
 
@@ -447,27 +462,10 @@ define(['pv', 'spv'], function(pv, spv){
 			target.checkShowedNeighboursMarks();
 		},
 		bindStaCons: function() {
-			this._super();
+			bindStaCons.call(this);
 			this.on('child_change-' + this.main_list_name, hndChangedPlaylist);
 			this.on('child_change-' + 'vis_neig_prev', hndNeighboursRemarks);
 			this.on('child_change-' + 'vis_neig_next', hndNeighboursRemarks);
-		},
-		init: function(opts){
-			this._super.apply(this, arguments);
-
-			this.idx_wplay_song = null;
-			this.idx_show_song = null;
-			this.idx_player_song = null;
-
-			this.vis_neig_next = null;
-			this.vis_neig_prev= null;
-
-			this.app = opts.app;
-			this.player = this.app.p;
-			this.mp3_search = this.app.mp3_search;
-			if (opts.pmd){
-				this.pmd = opts.pmd;
-			}
 		},
 		checkShowedNeighboursMarks: function() {
 			pv.updateNesting(this, 'vis_neig_prev', this.idx_show_song && this.idx_show_song.marked_prev_song || null);
@@ -696,8 +694,5 @@ define(['pv', 'spv'], function(pv, spv){
 		}
 
 	});
-	}));
-
-
-return {};
+}));
 });

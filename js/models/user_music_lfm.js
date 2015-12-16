@@ -83,9 +83,8 @@ var auth_bh = {
 };
 
 //LULA - LfmUserLibraryArtist
-//
-var LULATracks = function() {};//непосредственно список композиций артиста, которые слушал пользователь
-SongsList.extendTo(LULATracks, cloneObj({
+//непосредственно список композиций артиста, которые слушал пользователь
+var LULATracks = spv.inh(SongsList, {}, cloneObj({
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
 		['lfm', 'get', function() {
@@ -101,8 +100,8 @@ var slashPrefix = function(src) {
 	return '/' + src;
 };
 
-var LULA = function() {};//artist, один артист с треками
-BrowseMap.Model.extendTo(LULA, cloneObj({
+//artist, один артист с треками
+var LULA = spv.inh(BrowseMap.Model, {}, cloneObj({
 	model_name: 'lula',
 	netdata_as_states: {
 		url_part: [slashPrefix, 'artist'],
@@ -129,8 +128,7 @@ BrowseMap.Model.extendTo(LULA, cloneObj({
 }, auth_bh));
 
 
-var UserArtists = function() {};
-LoadableList.extendTo(UserArtists, {
+var UserArtists = spv.inh(LoadableList, {}, {
 	model_name: 'lulas',
 	main_list_name: 'artists',
 	'nest_rqc-artists': LULA,
@@ -150,8 +148,8 @@ LoadableList.extendTo(UserArtists, {
 
 // }, auth_bh));
 
-var TopLUArt = function() {};
-UserArtists.extendTo(TopLUArt, cloneObj({
+var TopLUArt = spv.inh(UserArtists, {}, cloneObj({
+	COCO: 55,
 	'nest_rqc-artists': LULA,
 	'nest_req-artists': [
 		declr_parsers.lfm.getArtists('topartists'),
@@ -167,9 +165,9 @@ UserArtists.extendTo(TopLUArt, cloneObj({
 	}
 }, auth_bh));
 
-
-var TopUserTracks = function() {};
-SongsList.extendTo(TopUserTracks, cloneObj({
+debugger;
+var TopUserTracks = spv.inh(SongsList, {}, cloneObj({
+	COCO: 55,
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
@@ -185,8 +183,7 @@ SongsList.extendTo(TopUserTracks, cloneObj({
 }, auth_bh));
 
 
-var LfmLovedList = function() {};
-SongsList.extendTo(LfmLovedList, cloneObj({
+var LfmLovedList = spv.inh(SongsList, {}, cloneObj({
 	access_desc: localize('grant-love-lfm-access'),
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('lovedtracks'),
@@ -198,8 +195,7 @@ SongsList.extendTo(LfmLovedList, cloneObj({
 	]
 }, auth_bh));
 
-var RecommArtList = function() {};
-ArtistsList.extendTo(RecommArtList, cloneObj({
+var RecommArtList = spv.inh(ArtistsList, {}, cloneObj({
 	page_limit: 30,
 	access_desc: localize('lastfm-reccoms-access'),
 	'compx-loader_disallowed': [
@@ -242,8 +238,7 @@ ArtistsList.extendTo(RecommArtList, cloneObj({
 	]
 }, auth_bh));
 
-var RecommArtListForCurrentUser = function() {};
-RecommArtList.extendTo(RecommArtListForCurrentUser, {
+var RecommArtListForCurrentUser = spv.inh(RecommArtList, {}, {
 	'compx-loader_disallowed': null,
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('recommendations'),
@@ -258,8 +253,7 @@ RecommArtList.extendTo(RecommArtListForCurrentUser, {
 var user_artists_sp = ['recommended', /*'library',*/ 'top:7day', /* 'top:1month',*/
 	'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 
-var LfmUserArtists = function() {};
-BrowseMap.Model.extendTo(LfmUserArtists, {
+var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'lfm_listened_artists',
 	'nest-lists_list':
 		[user_artists_sp],
@@ -308,8 +302,7 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 	}
 });
 
-LfmUserArtists.LfmUserArtistsForCU = function() {};
-LfmUserArtists.extendTo(LfmUserArtists.LfmUserArtistsForCU, {
+LfmUserArtists.LfmUserArtistsForCU = spv.inh(LfmUserArtists, {}, {
 	'sub_pa-recommended': {
 		constr: RecommArtListForCurrentUser,
 		title: localize('reccoms-for-you')
@@ -318,8 +311,7 @@ LfmUserArtists.extendTo(LfmUserArtists.LfmUserArtistsForCU, {
 
 
 
-var LfmRecentUserTracks = function() {};
-SongsList.extendTo(LfmRecentUserTracks, cloneObj({
+var LfmRecentUserTracks = spv.inh(SongsList, {}, cloneObj({
 	getRqData: function() {
 		if (!this.slice_time_end){
 			this.slice_time_end = (new Date()/1000).toFixed();
@@ -344,8 +336,7 @@ var user_tracks_sp = [
 	'loved', 'recent', 'top:7day', /*'top:1month',*/
 	'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 
-var LfmUserTracks = function() {};
-BrowseMap.Model.extendTo(LfmUserTracks, {
+var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'lfm_listened_tracks',
 	'nest-lists_list':
 		[user_tracks_sp],
@@ -392,8 +383,7 @@ BrowseMap.Model.extendTo(LfmUserTracks, {
 });
 
 
-var UserNewReleases = function() {};
-AlbumsList.extendTo(UserNewReleases, cloneObj({
+var UserNewReleases = spv.inh(AlbumsList, {}, cloneObj({
 	access_desc: localize('lastfm-reccoms-access'),
 	page_limit: 50,
 	'nest_req-albums_list': [
@@ -407,18 +397,14 @@ AlbumsList.extendTo(UserNewReleases, cloneObj({
 	]
 }, auth_bh));
 
-var UserLibNewReleases= function() {};
-UserNewReleases.extendTo(UserLibNewReleases, {
-});
+var UserLibNewReleases = spv.inh(UserNewReleases, {}, {});
 
-var RecommNewReleases = function() {};
-UserNewReleases.extendTo(RecommNewReleases, {
+var RecommNewReleases = spv.inh(UserNewReleases, {}, {
 	recomms: true
 });
 
 
-var LfmUserTopAlbums = function() {};
-AlbumsList.extendTo(LfmUserTopAlbums, cloneObj({
+var LfmUserTopAlbums = spv.inh(AlbumsList, {}, cloneObj({
 	head_by_urlname: {
 		timeword: 'name_spaced'
 	},
@@ -438,8 +424,7 @@ AlbumsList.extendTo(LfmUserTopAlbums, cloneObj({
 var user_albums_sp = ['recommended', 'new_releases', 'top:7day', /*'top:1month',*/
 		'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 
-var LfmUserAlbums = function() {};
-BrowseMap.Model.extendTo(LfmUserAlbums, {
+var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'lfm_listened_albums',
 	'nest-lists_list':
 		[user_albums_sp],
@@ -490,8 +475,7 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 
 
 
-var TaggedSongs = function() {};
-SongsList.extendTo(TaggedSongs, cloneObj({
+var TaggedSongs = spv.inh(SongsList, {}, cloneObj({
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('taggings.tracks', false, 'taggings'),
 		['lfm', 'get', function() {
@@ -504,8 +488,7 @@ SongsList.extendTo(TaggedSongs, cloneObj({
 	]
 }, auth_bh));
 
-var TaggedArtists = function() {};
-ArtistsList.extendTo(TaggedArtists, cloneObj({
+var TaggedArtists = spv.inh(ArtistsList, {}, cloneObj({
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('taggings.artists', false, 'taggings'),
 		['lfm', 'get', function() {
@@ -519,8 +502,7 @@ ArtistsList.extendTo(TaggedArtists, cloneObj({
 }, auth_bh));
 
 
-var TaggedAlbums = function() {};
-AlbumsList.extendTo(TaggedAlbums, cloneObj({
+var TaggedAlbums = spv.inh(AlbumsList, {}, cloneObj({
 	page_limit: 50,
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('taggings.albums', false, 'taggings'),
@@ -535,8 +517,7 @@ AlbumsList.extendTo(TaggedAlbums, cloneObj({
 }, auth_bh));
 
 var user_tag_sp = ['artists', 'tracks', 'albums'];
-var UserTag = function() {};
-BrowseMap.Model.extendTo(UserTag, {
+var UserTag = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'lfm_user_tag',
 	net_head: ['tag_name'],
 	'nest-lists_list':
@@ -559,8 +540,7 @@ BrowseMap.Model.extendTo(UserTag, {
 	}
 });
 
-var LfmUserTags = function() {};
-LoadableList.extendTo(LfmUserTags, cloneObj({
+var LfmUserTags = spv.inh(LoadableList, {}, cloneObj({
 	model_name: 'lfm_listened_tags',
 	main_list_name: 'tags',
 	page_limit: 3000,
@@ -676,12 +656,9 @@ var LfmUsersList = spv.inh(LoadableList, {}, {
 	page_limit: 200
 });
 
-var LfmUsersListOfUser = function() {};
-LfmUsersList.extendTo(LfmUsersListOfUser, cloneObj({
-}, auth_bh));
+var LfmUsersListOfUser = spv.inh(LfmUsersList, {}, cloneObj({}, auth_bh));
 
-var LfmFriendsList = function() {};
-LfmUsersListOfUser.extendTo(LfmFriendsList, {
+var LfmFriendsList = spv.inh(LfmUsersListOfUser, {}, {
 	beforeReportChange: function(list) {
 		list.sort(function(a,b ){return spv.sortByRules(a, b, [
 			{
@@ -713,8 +690,7 @@ LfmUsersListOfUser.extendTo(LfmFriendsList, {
 		}]
 	]
 });
-var LfmNeighboursList = function() {};
-LfmUsersListOfUser.extendTo(LfmNeighboursList, {
+var LfmNeighboursList = spv.inh(LfmUsersListOfUser, {}, {
 	getRqData: function() {
 		return {
 			user: this.state('userid')

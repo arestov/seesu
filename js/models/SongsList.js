@@ -1,4 +1,4 @@
-define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase', 'spv'], function(pv, app_serv, LoadableList, comd, Song, lb, spv){
+define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase', 'spv'], function(pv, app_serv, LoadableList, comd, Song, SongsListBase, spv){
 	"use strict";
 	var localize = app_serv.localize;
 	var app_env = app_serv.app_env;
@@ -61,12 +61,11 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		]
 	});
 
-	var SongsListBase = function() {};
-	pv.extendFromTo("SongsListBase", LoadableList, SongsListBase);
+	// var SongsListBase = function() {};
+	// pv.extendFromTo("SongsListBase", LoadableList, SongsListBase);
 
 
-	var SongsList = function(){};
-	SongsListBase.extendTo(SongsList, {
+	var SongsList = spv.inh(SongsListBase, {}, {
 		'nest-plarow': [PlARow],
 		'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
 		'compx-pl-shuffle': [['#settings-pl-shuffle']],

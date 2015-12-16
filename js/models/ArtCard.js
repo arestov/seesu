@@ -6,7 +6,6 @@ var localize = app_serv.localize;
 var SimilarArtists = function() {};//must be here
 
 var ArtCard;
-var AlbumsList;
 
 var ArtistAlbumSongs = function() {};
 SongsList.extendTo(ArtistAlbumSongs, {
@@ -115,8 +114,7 @@ LoadableList.TagsList.extendTo(ArtistTagsList, {
 	]
 });
 
-AlbumsList = function() {};
-LoadableList.extendTo(AlbumsList, {
+var AlbumsList = spv.inh(LoadableList, {}, {
 	model_name: 'albslist',
 	main_list_name: 'albums_list',
 	'nest_rqc-albums_list': ArtistAlbumSongs,
@@ -125,6 +123,7 @@ LoadableList.extendTo(AlbumsList, {
 		['album_name', 'album_name'],
 		['original_artist', 'original_artist']]
 });
+
 var DiscogsAlbumSongs = function() {};
 SongsList.extendTo(DiscogsAlbumSongs, {
 	init: function(opts, params) {
