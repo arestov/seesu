@@ -600,10 +600,9 @@ LoadableList.extendTo(LfmUserTags, cloneObj({
 	}
 }, auth_bh));
 
-var LfmUserPreview = function() {};
-BrowseMap.Model.extendTo(LfmUserPreview, {
-	init: function(opts, data) {
-		this._super.apply(this, arguments);
+var LfmUserPreview = spv.inh(BrowseMap.Model, {
+	init: function(target, opts, data) {
+		// this._super.apply(this, arguments);
 
 		var song, song_time;
 		var artist = spv.getTargetField(data, 'recenttrack.artist.name');
@@ -614,9 +613,9 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 				song_time = new Date(song_time * 1000);
 			}
 		}
-		var image = data.lfm_img || data.lfm_image && this.app.art_images.getImageRewrap(data.lfm_image);
+		var image = data.lfm_img || data.lfm_image && target.app.art_images.getImageRewrap(data.lfm_image);
 
-		this.initStates({
+		target.initStates({
 			selected_image: image,
 			nav_title: data.userid,
 			userid: data.userid,
@@ -631,8 +630,14 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			song_time_raw: song_time,
 			scrobbler: data.scrobblesource
 		});
-		this.rawdata = data;
-	},
+		target.rawdata = data;
+	}
+}, {
+	manual_states_init: true,
+	network_data_as_states: false,
+	// init: function(opts, data) {
+
+	// },
 
 	'compx-big_desc': [
 		['realname', 'age', 'gender', 'country'],
@@ -663,8 +668,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 
 
 
-var LfmUsersList = function() {};
-LoadableList.extendTo(LfmUsersList, {
+var LfmUsersList = spv.inh(LoadableList, {}, {
 	'nest_rqc-list_items': LfmUserPreview,
 
 	main_list_name: 'list_items',
