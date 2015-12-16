@@ -10,8 +10,7 @@ var LoadableList = spv.inh(LoadableListBase, {
 	props: {}
 });
 
-var TagsList = function() {};
-LoadableList.extendTo(TagsList, {
+var TagsList = spv.inh(LoadableList, {}, {
 	model_name: 'tagslist',
 	main_list_name: 'tags_list',
 	addTag: function(name, silent) {
