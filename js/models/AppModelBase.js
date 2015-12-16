@@ -1,21 +1,20 @@
 define(['pv', 'spv', '../libs/BrowseMap'], function(pv, spv, BrowseMap) {
 "use strict";
 var binded_models = {};
-var AppModelBase = function() {};
-pv.Model.extendTo(AppModelBase, {
-	init: function() {
-		this._super();
-		this.navigation = [];
-		// this.map = ;
-		this.current_mp_md = null;
-		this.on('child_change-current_mp_md', function(e) {
+var AppModelBase = spv.inh(pv.Model, {
+	init: function(target) {
+		target.navigation = [];
+		// target.map = ;
+		target.current_mp_md = null;
+		target.on('child_change-current_mp_md', function(e) {
 			if (e.target){
 				this.resortQueue();
 			}
 
 		});
-		this.views_strucs = {};
-	},
+		target.views_strucs = {};
+	}
+}, {
 	initMapTree: function(start_page, needs_url_history, navi) {
 
 		pv.updateNesting(this, 'navigation', [start_page]);
