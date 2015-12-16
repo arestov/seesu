@@ -1,9 +1,7 @@
 define(['js/libs/BrowseMap', 'spv', './SongsList', 'pv'], function(BrowseMap, spv, SongsList, pv){
 "use strict";
 
-var ManualPlaylist = function() {};
-SongsList.extendTo(ManualPlaylist, {
-});
+var ManualPlaylist = spv.inh(SongsList, {}, {});
 
 var UserPlaylists = spv.inh(BrowseMap.Model, {
 	init: function(target) {
