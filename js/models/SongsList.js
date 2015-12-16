@@ -113,15 +113,14 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 	});
 
 
-
-var HypemPlaylist = function() {};
-SongsList.extendTo(HypemPlaylist, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.can_use = this.app.hypem.can_send;
-		pv.update(this, 'browser_can_load', this.can_use);
-		pv.update(this, 'possible_loader_disallowing', localize('Hypem-cant-load'));
-	},
+var pvUpdate = pv.update;
+var HypemPlaylist = spv.inh(SongsList, {
+	init: function(target) {
+		target.can_use = target.app.hypem.can_send;
+		pvUpdate(target, 'browser_can_load', target.can_use);
+		pvUpdate(target, 'possible_loader_disallowing', localize('Hypem-cant-load'));
+	}
+}, {
 	page_limit: 20,
 	'compx-loader_disallowing_desc': {
 		depends_on: ['loader_disallowed', 'possible_loader_disallowing'],
