@@ -1,4 +1,4 @@
-define(['pv'], function(pv) {
+define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 
 var pvUpdate = pv.update;
@@ -16,8 +16,7 @@ var finup = function(callback) {
 	return callback;
 };
 
-function PlayRequest() {}
-pv.Model.extendTo(PlayRequest, {
+var PlayRequest = spv.inh(pv.Model, {}, {
 	// init: function() {
 	//		this._super.apply(this, arguments);
 	// },
