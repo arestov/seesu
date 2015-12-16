@@ -10,17 +10,17 @@ var finup = function(callback) {
 var pvState = pv.state;
 var pvUpdate = pv.update;
 
-var FileInTorrent = function(){};
-pv.Model.extendTo(FileInTorrent, {
-	model_name: 'file-torrent',
-	init: function(opts, states, params) {
-		this._super.apply(this, arguments);
-		this.sr_item = params.file;
-		this.updateManyStates({
-			full_title: this.sr_item.title,
-			torrent_link: this.sr_item.torrent_link
+var FileInTorrent = spv.inh(pv.Model, {
+	init: function(target, opts, states, params) {
+		target.sr_item = params.file;
+		target.updateManyStates({
+			full_title: target.sr_item.title,
+			torrent_link: target.sr_item.torrent_link
 		});
-	},
+	}
+}, {
+	model_name: 'file-torrent',
+
 	setPlayer: function() {
 		return this;
 	},
