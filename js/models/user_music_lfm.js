@@ -149,7 +149,6 @@ var UserArtists = spv.inh(LoadableList, {}, {
 // }, auth_bh));
 
 var TopLUArt = spv.inh(UserArtists, {}, cloneObj({
-	COCO: 55,
 	'nest_rqc-artists': LULA,
 	'nest_req-artists': [
 		declr_parsers.lfm.getArtists('topartists'),
@@ -165,9 +164,7 @@ var TopLUArt = spv.inh(UserArtists, {}, cloneObj({
 	}
 }, auth_bh));
 
-debugger;
 var TopUserTracks = spv.inh(SongsList, {}, cloneObj({
-	COCO: 55,
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
