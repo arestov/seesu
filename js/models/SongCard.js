@@ -59,29 +59,24 @@ var parseVKPostSong = spv.mmap({
 }, morph_helpers);
 
 
-var VKPostSongs = function() {};
-SongsList.extendTo(VKPostSongs, {
-	init: function(opts, data) {
-		this._super.apply(this, arguments);
-		this.initStates(data);
+var VKPostSongs = spv.inh(SongsList, {
+	init: function(target, opts, data) {
+		target.initStates(data);
 
-		this.app.watchVKCharacter( this, (data.post_type == 'reply' ? data.from_id : data.owner_id), 'owner_info' );
+		target.app.watchVKCharacter( target, (data.post_type == 'reply' ? data.from_id : data.owner_id), 'owner_info' );
 		if (data.owner_id != data.from_id) {
-			this.app.watchVKCharacter(this, data.from_id, 'author_info');
+			target.app.watchVKCharacter(target, data.from_id, 'author_info');
 		}
-
 		/*
 		date
 		*/
-
 			//получить информацию о разместившем пользователе
-
 			//получить информацию об авторе
-
 			//дата публикации
-
-
-	},
+	}
+}, {
+	manual_states_init: true,
+	network_data_as_states: false,
 	'compx-date_desc': [
 		['date'],
 		function(date) {
