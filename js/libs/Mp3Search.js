@@ -822,25 +822,21 @@ var getAverageDurations = function(mu_array, time_limit){
 
 
 
-	var Mp3Search = window.Mp3Search = function(){};
-
-
-
-	pv.Model.extendTo(Mp3Search,  {
-		init: function(opts, data, searches_pr) {
-			this._super.apply(this, arguments);
+	var Mp3Search = spv.inh(pv.Model, {
+		init: function(target, opts, data, searches_pr) {
+			// this._super.apply(this, arguments);
 
 			// this.app = opts.app;
-			this.se_list = [];
-			this.searches_pr  = searches_pr || {};
-			this.tools_by_name = {};
-			pv.update(this, 'tools_by_name', this.tools_by_name);
-			this.investgs = {};
-			this.investgs_by_artist = {};
-			this.files_ids = {};
-			this.pushed_files_by_artist = {};
-			this.tuners = {};
-			this.on('list-changed', function(list) {
+			target.se_list = [];
+			target.searches_pr  = searches_pr || {};
+			target.tools_by_name = {};
+			pvUpdate(target, 'tools_by_name', target.tools_by_name);
+			target.investgs = {};
+			target.investgs_by_artist = {};
+			target.files_ids = {};
+			target.pushed_files_by_artist = {};
+			target.tuners = {};
+			target.on('list-changed', function(list) {
 				var tools_by_name = {};
 				if (list) {
 					for (var i = 0; i < list.length; i++) {
@@ -850,9 +846,11 @@ var getAverageDurations = function(mu_array, time_limit){
 						}
 					}
 				}
-				pv.update(this, 'tools_by_name', tools_by_name);
+				pvUpdate(this, 'tools_by_name', tools_by_name);
 			});
-		},
+		}
+	},  {
+
 		'regfr-listchange': {
 			event_name: 'list-changed',
 			fn: function() {
