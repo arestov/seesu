@@ -240,23 +240,17 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 	}
 });
 
-
-var FilesSourceTuner = function() {};
-pv.Model.extendTo(FilesSourceTuner, {
-	init: function(opts, data) {
-		this._super.apply(this, arguments);
-		this.app = opts.app;
+var pvUpdate = pv.update;
+var FilesSourceTuner = spv.inh(pv.Model, {
+	init: function(target, opts, data) {
 		var search_name = data.search_name;
-		this.wch(this.app, 'settings-files_sources', function (e) {
-			pv.update(this, 'settings', e.value && e.value[search_name]);
+		target.wch(target.app, 'settings-files_sources', function (e) {
+			pvUpdate(this, 'settings', e.value && e.value[search_name]);
 		});
-		this.updateManyStates(data);
+		target.updateManyStates(data);
+	}
 
-		//this.data
-	},
-
-
-
+}, {
 	'compx-disable_search': [
 		['settings'],
 		function(settings) {
@@ -318,36 +312,37 @@ var getMatchedSongs = function(music_list, msq) {
 	return result;
 };
 
-	var FilesBySource = function() {};
-	pv.Model.extendTo(FilesBySource, {
-		init: function(opts, data, search_eng_name) {
-			this._super.apply(this, arguments);
+	var FilesBySource = spv.inh(pv.Model, {
+		init: function(target, opts, data, search_eng_name) {
+			// this._super.apply(this, arguments);
 
-			this.mp3_search = this.map_parent.map_parent;
-			this.search_name = search_eng_name;
-			this.search_eng = this.mp3_search.getSearchByName(search_eng_name);
+			target.mp3_search = target.map_parent.map_parent;
+			target.search_name = search_eng_name;
+			target.search_eng = target.mp3_search.getSearchByName(search_eng_name);
 
-			this.msq = data.msq;
-			this.query_string = data.query_string;
+			target.msq = data.msq;
+			target.query_string = data.query_string;
 
-			this.updateManyStates({
-				'dmca_url': this.search_eng && this.search_eng.dmca_url,
+			target.updateManyStates({
+				'dmca_url': target.search_eng && target.search_eng.dmca_url,
 				'search_name': search_eng_name
 			});
 
-			this.tuner = this.mp3_search.getSourceTuner(search_eng_name);
-			this.wch(this.tuner, 'disable_search', function(e) {
+			target.tuner = target.mp3_search.getSourceTuner(search_eng_name);
+			target.wch(target.tuner, 'disable_search', function(e) {
 				//debugger;
-				pv.update(this, 'disable_search', e.value);
+				pvUpdate(this, 'disable_search', e.value);
 			});
-			this.wch(this.tuner, 'wait_before_playing');
+			target.wch(target.tuner, 'wait_before_playing');
 
 			//this.wch(this.map_parent, 'must_load');
 
 			//cache
 			//network
 			//scope
-		},
+		}
+	}, {
+
 		switchTunerVisibility: function() {
 			var visible = this.getNesting('vis_tuner');
 			pv.updateNesting(this, 'vis_tuner', ( visible ? null : this.tuner ) );
@@ -556,33 +551,34 @@ var getMatchedSongs = function(music_list, msq) {
 		};
 	};
 
-	var FilesInvestg = function() {};
-	pv.Model.extendTo(FilesInvestg, {
-		init: function(opts, data, params) {
-			this._super.apply(this, arguments);
-			this.sources = {};
-			this.sources_list = [];
-			this.checked_files = {};
-			this.mp3_search = params.mp3_search;
-			this.msq = params.msq;
-			this.query_string = params.query_string;
+	var FilesInvestg = spv.inh(pv.Model, {
+		init: function(target, opts, data, params) {
+			// this._super.apply(this, arguments);
+			target.sources = {};
+			target.sources_list = [];
+			target.checked_files = {};
+			target.mp3_search = params.mp3_search;
+			target.msq = params.msq;
+			target.query_string = params.query_string;
 
-			this.createRelationsBinder();
+			target.createRelationsBinder();
 
 			//this.on('vip_state_change-search_progress', function(e) {
 			//	console.log('search_progress: ' + e.value);
 			//}, {immediately: true});
 
-			this.mp3_search.on('list-changed', this.hndListChange, {soft_reg: false, context: this});
+			target.mp3_search.on('list-changed', target.hndListChange, {soft_reg: false, context: target});
 
-			this.wch(this.mp3_search, 'big_files_list', this.hndBigFilesList);
+			target.wch(target.mp3_search, 'big_files_list', target.hndBigFilesList);
 
-			this.nextTick(function(target) {
+			target.nextTick(function(target) {
 				target.startSearch( {only_cache: true} );
 			});
 
 
 		},
+	}, {
+
 		'stch-disable_search@sources_list': filterList('available_sources', function(item) {
 			return !pvState(item, 'disable_search');
 		}),
