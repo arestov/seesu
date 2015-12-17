@@ -23,17 +23,18 @@ var getMixcloudNameKey = function(string) {
 
 };
 
-var Cloudcast = function() {};
-SongsList.extendTo(Cloudcast, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.initStates(params);
-		this.wch(this, 'mp_show', function(e) {
+var Cloudcast = spv.inh(SongsList, {
+	init: function(target, opts, params) {
+		target.initStates(params);
+		target.wch(target, 'mp_show', function(e) {
 			if (e.value) {
-				this.requestState('nav_title');
+				target.requestState('nav_title');
 			}
 		});
-	},
+	}
+}, {
+	manual_states_init: true,
+	network_data_as_states: false,
 	req_map: [
 		[
 			['nav_title'],
@@ -68,8 +69,7 @@ SongsList.extendTo(Cloudcast, {
 
 
 
-var CloudcastsList = function() {};
-LoadableList.extendTo(CloudcastsList, {
+var CloudcastsList = spv.inh(LoadableList, {}, {
 	'compx-artist_key': [
 		['artist_name'],
 		getMixcloudNameKey
@@ -106,23 +106,19 @@ LoadableList.extendTo(CloudcastsList, {
 });
 
 
-var TrackCloudcastsNew = function() {};
-CloudcastsList.extendTo(TrackCloudcastsNew, {
+var TrackCloudcastsNew = spv.inh(CloudcastsList, {}, {
 	tcl_type: 'new'
 });
-var TrackCloudcastsPopular = function() {};
-CloudcastsList.extendTo(TrackCloudcastsPopular, {
+var TrackCloudcastsPopular = spv.inh(CloudcastsList, {}, {
 	tcl_type: 'popular'
 });
-var TrackCloudcastsHot = function() {};
-CloudcastsList.extendTo(TrackCloudcastsHot, {
+var TrackCloudcastsHot = spv.inh(CloudcastsList, {}, {
 	tcl_type: 'hot'
 });
 
 
 var song_cloudcasts_sps = ['new', 'hot', 'popular'];
-var SongcardCloudcasts = function() {};
-BrowseMap.Model.extendTo(SongcardCloudcasts, {
+var SongcardCloudcasts = spv.inh(BrowseMap.Model, {}, {
 	// init: function(opts, data) {
 	// 	this._super.apply(this, arguments);
 
