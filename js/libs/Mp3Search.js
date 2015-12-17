@@ -824,22 +824,7 @@ var getAverageDurations = function(mu_array, time_limit){
 
 	var Mp3Search = window.Mp3Search = function(){};
 
-	Mp3Search.getSongFileModel = function(map_parent){
-		return map_parent.initSi(SongFileModel, null, {file:this});
-	};
-	Mp3Search.getSFM = function(map_parent, file) {
-		if (file.getSongFileModel) {
-			return file.getSongFileModel(map_parent);
-		} else {
-			return map_parent.initSi(SongFileModel, null, {file: file});
-		}
 
-	};
-	Mp3Search.setFileQMI = setFileQMI;
-	Mp3Search.getFileQMI = getFileQMI;
-	Mp3Search.hasMusicCopy = hasMusicCopy;
-	Mp3Search.guessArtist = guessArtist;
-	Mp3Search.QueryMatchIndex = QueryMatchIndex;
 
 	pv.Model.extendTo(Mp3Search,  {
 		init: function(opts, data, searches_pr) {
@@ -1081,6 +1066,23 @@ var getAverageDurations = function(mu_array, time_limit){
 		}
 
 	});
+
+	Mp3Search.getSongFileModel = function(map_parent){
+		return map_parent.initSi(SongFileModel, null, {file:this});
+	};
+	Mp3Search.getSFM = function(map_parent, file) {
+		if (file.getSongFileModel) {
+			return file.getSongFileModel(map_parent);
+		} else {
+			return map_parent.initSi(SongFileModel, null, {file: file});
+		}
+
+	};
+	Mp3Search.setFileQMI = setFileQMI;
+	Mp3Search.getFileQMI = getFileQMI;
+	Mp3Search.hasMusicCopy = hasMusicCopy;
+	Mp3Search.guessArtist = guessArtist;
+	Mp3Search.QueryMatchIndex = QueryMatchIndex;
 
 return Mp3Search;
 });
