@@ -85,13 +85,13 @@ var LfmScrobble = spv.inh(LfmLogin, {
 	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
-			su.setSetting('lfm-scrobbling', true);
+			_this.app.setSetting('lfm-scrobbling', true);
 			//_this.auth.setScrobbling(true);
 		}, {exlusive: true});
 	},
 	setScrobbling: function(state) {
 		pvUpdate(this, 'scrobbling', state);
-		su.setSetting('lfm-scrobbling', state);
+		this.app.setSetting('lfm-scrobbling', state);
 		//this.auth.setScrobbling(state);
 	}
 });
