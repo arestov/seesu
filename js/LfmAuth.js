@@ -29,12 +29,6 @@ pv.Model.extendTo(LfmLogin, {
 			pvUpdate(_this, 'deep_sandbox', true);
 		}
 
-		// if (this.auth.has_session){
-		// 	this.triggerSession();
-		// }
-		// this.auth.once('session', function(){
-		// 	_this.triggerSession();
-		// });
 		if (this.auth && this.auth.data_wait){
 			this.waitData();
 		} else {
