@@ -102,15 +102,16 @@ LfmLogin.extendTo(LfmScrobble, {
 	}
 });
 
-var LfmAuth = pv.Model.extendTo(function LfmAuth() {}, {
-	init: function(opts, data, params) {
-		this._super(opts);
-		this.api = data.lfm;
-		this.opts = params || {};
-		this.has_session = !!this.api.sk;
-		this.deep_sanbdox = !!params.deep_sanbdox;
-		pvUpdate(this, 'session', !!this.has_session);
+var LfmAuth = spv.inh(pv.Model, {
+	init: function(target, opts, data, params) {
+		target.api = data.lfm;
+		target.opts = params || {};
+		target.has_session = !!target.api.sk;
+		target.deep_sanbdox = !!params.deep_sanbdox;
+		pvUpdate(target, 'session', !!target.has_session);
 	},
+}, {
+
 	requestAuth: function(p){
 
 		this.authInit(p || {});
