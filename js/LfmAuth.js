@@ -4,40 +4,36 @@ var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
 
-var LfmLogin = function() {};
-
-pv.Model.extendTo(LfmLogin, {
-	model_name: 'auth_block_lfm',
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-
-		var _this = this;
-		this.auth =
+var LfmLogin = spv.inh(pv.Model, {
+	init: function(target, opts, data, params) {
+		target.auth =
 			(params && params.auth) ||
-			(this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) ||
+			(target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.auth) ||
 			opts.auth ||
-			this.app.lfm_auth;
+			target.app.lfm_auth;
 
-		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
+		target.pmd = (params && params.pmd) || (target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.pmd) || opts.pmd;
 
-		this.updateNesting('auth', this.auth);
+		target.updateNesting('auth', target.auth);
 
-		var access_desc = (data && data.desc) || (this.map_parent && this.map_parent.access_desc) || this.access_desc;
-		this.setRequestDesc(access_desc);
+		var access_desc = (data && data.desc) || (target.map_parent && target.map_parent.access_desc) || target.access_desc;
+		target.setRequestDesc(access_desc);
 
-		if (this.auth.deep_sanbdox){
-			pvUpdate(_this, 'deep_sandbox', true);
+		if (target.auth.deep_sanbdox){
+			pvUpdate(target, 'deep_sandbox', true);
 		}
 
-		if (this.auth && this.auth.data_wait){
-			this.waitData();
+		if (target.auth && target.auth.data_wait){
+			target.waitData();
 		} else {
-			this.auth.on('data_wait', function(){
-				_this.waitData();
+			target.auth.on('data_wait', function(){
+				target.waitData();
 			});
 		}
-		return this;
-	},
+		return target;
+	}
+}, {
+	model_name: 'auth_block_lfm',
 	access_desc: localize('to-get-access'),
 	'compx-has_session': [[
 		'@one:session:auth'
