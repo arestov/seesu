@@ -376,22 +376,22 @@ var PartsSwitcher = spv.inh(pv.Model, {
 });
 
 
-var BaseCRow = function(){};
-pv.Model.extendTo(BaseCRow, {
-	init: function() {
-		this.actionsrow = this.actionsrow;
-		this._super.apply(this, arguments);
-		if (this.actionsrow_src && !this.actionsrow) {
-			var count = this.actionsrow_src.length;
-			var cur = count && this;
+var BaseCRow = spv.inh(pv.Model, {
+	init: function(target) {
+		target.actionsrow = target.actionsrow;
+		if (target.actionsrow_src && !target.actionsrow) {
+			var count = target.actionsrow_src.length;
+			var cur = count && target;
 			while (count) {
 				cur = cur.map_parent;
 				count--;
 			}
 
-			this.actionsrow = cur;
+			target.actionsrow = cur;
 		}
-	},
+	}
+}, {
+
 	switchView: function(){
 		this.actionsrow.switchPart(this.model_name);
 	},
@@ -407,95 +407,92 @@ pv.Model.extendTo(BaseCRow, {
 });
 
 
-var VkLoginB = function() {};
-pv.Model.extendTo(VkLoginB, {
-	model_name: 'auth_block_vk',
-	access_desc: null,
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-
-		var _this = this;
-		this.auth =
+var VkLoginB = spv.inh(pv.Model, {
+	init: function(target, opts, data, params) {
+		target.auth =
 			(params && params.auth) ||
-			(this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.auth) ||
+			(target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.auth) ||
 			opts.auth ||
-			this.app.vk_auth;
+			target.app.vk_auth;
 
-		this.pmd = (params && params.pmd) || (this.map_parent && this.map_parent.nestings_opts && this.map_parent.nestings_opts.pmd) || opts.pmd;
+		target.pmd = (params && params.pmd) || (target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.pmd) || opts.pmd;
 
-		this.updateNesting('auth', this.auth);
+		target.updateNesting('auth', target.auth);
 
 		var target_bits;
 
 		if (params) {
 			if (params.open_opts){
-				this.open_opts = params.open_opts;
-				if (this.open_opts.settings_bits){
-					target_bits = this.open_opts.settings_bits;
+				target.open_opts = params.open_opts;
+				if (target.open_opts.settings_bits){
+					target_bits = target.open_opts.settings_bits;
 				}
 			}
 			if (params.notf){
 
-				this.notf = params.notf;
-				this.notf.on('read', function(value) {
+				target.notf = params.notf;
+				target.notf.on('read', function(value) {
 					if (value == 'vk_audio_auth '){
-						pv.update(_this, 'notify_readed', true);
+						pv.update(target, 'notify_readed', true);
 					}
 
 				});
 
 				if (params.notify_readed){
-					pv.update(_this, 'notify_readed', true);
+					pv.update(target, 'notify_readed', true);
 				}
-				pv.update(this, 'has_notify_closer', true);
+				pv.update(target, 'has_notify_closer', true);
 			}
 		}
 
 		if (data){
 
-			this.setRequestDesc(data.desc);
+			target.setRequestDesc(data.desc);
 
 
 		} else {
-			this.setRequestDesc(this.access_desc);
+			target.setRequestDesc(target.access_desc);
 		}
 
-		if (this.auth.deep_sanbdox){
-			pv.update(_this, 'deep_sandbox', true);
+		if (target.auth.deep_sanbdox){
+			pv.update(target, 'deep_sandbox', true);
 		}
 
-		pvUpdate(this, 'target_bits', target_bits);
+		pvUpdate(target, 'target_bits', target_bits);
 
 		// if (target_bits){
-		// 	if (this.auth.checkSettings(target_bits)){
-		// 		this.triggerSession();
+		// 	if (target.auth.checkSettings(target_bits)){
+		// 		target.triggerSession();
 		// 	}
-		// 	this.auth.on('settings-change', function(sts) {
+		// 	target.auth.on('settings-change', function(sts) {
 		// 		if ((sts & target_bits) * 1){
-		// 			_this.triggerSession();
+		// 			target.triggerSession();
 		// 		} else {
-		// 			pv.update(_this, 'has_session', false);
+		// 			pv.update(target, 'has_session', false);
 		// 		}
 		// 	});
 
 		// }
 
-		// if (this.auth.has_session){
-		// 	this.triggerSession();
+		// if (target.auth.has_session){
+		// 	target.triggerSession();
 		// }
-		// this.auth.once('full-ready', function(){
-		// 	_this.triggerSession();
+		// target.auth.once('full-ready', function(){
+		// 	target.triggerSession();
 		// });
 
-		if (this.auth && this.auth.data_wait){
-			this.waitData();
+		if (target.auth && target.auth.data_wait){
+			target.waitData();
 		} else {
-			this.auth.on('data_wait', function(){
-				_this.waitData();
+			target.auth.on('data_wait', function(){
+				target.waitData();
 			});
 		}
 
-	},
+	}
+}, {
+	model_name: 'auth_block_vk',
+	access_desc: null,
 	'compx-has_session': [
 		['@one:has_token:auth', 'target_bits', '@one:settings_bits:auth'],
 		function(has_token, target_bits, settings_bits) {
