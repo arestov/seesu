@@ -75,13 +75,13 @@ var ImagesPack = spv.inh(pv.Model, {
 		});
 		if (!this.state('best_image')){
 			if (best_data.length){
-				pv.update(this, 'best_image', best_data[0].data);
+				pvUpdate(this, 'best_image', best_data[0].data);
 			}
 
 		}
 		if (!this.state('just_image')){
 			if (best_data.not.length){
-				pv.update(this, 'just_image', best_data.not[0].data);
+				pvUpdate(this, 'just_image', best_data.not[0].data);
 			}
 
 		}
@@ -336,7 +336,7 @@ var PartsSwitcher = spv.inh(pv.Model, {
 }, {
 	hideAll: function() {
 		if (this.active_part){
-			pv.update(this, 'active_part', false);
+			pvUpdate(this, 'active_part', false);
 			this.active_part.deacivate();
 			this.active_part = null;
 		}
@@ -365,7 +365,7 @@ var PartsSwitcher = spv.inh(pv.Model, {
 				this.active_part.deacivate();
 			}
 			this.active_part = this.context_parts[name];
-			pv.update(this, 'active_part', name);
+			pvUpdate(this, 'active_part', name);
 			this.active_part.acivate();
 
 
@@ -399,10 +399,10 @@ var BaseCRow = spv.inh(pv.Model, {
 		this.actionsrow.hide(this.model_name);
 	},
 	deacivate: function(){
-		pv.update(this, "active_view", false);
+		pvUpdate(this, "active_view", false);
 	},
 	acivate: function(){
-		pv.update(this, "active_view", true);
+		pvUpdate(this, "active_view", true);
 	}
 });
 
@@ -433,15 +433,15 @@ var VkLoginB = spv.inh(pv.Model, {
 				target.notf = params.notf;
 				target.notf.on('read', function(value) {
 					if (value == 'vk_audio_auth '){
-						pv.update(target, 'notify_readed', true);
+						pvUpdate(target, 'notify_readed', true);
 					}
 
 				});
 
 				if (params.notify_readed){
-					pv.update(target, 'notify_readed', true);
+					pvUpdate(target, 'notify_readed', true);
 				}
-				pv.update(target, 'has_notify_closer', true);
+				pvUpdate(target, 'has_notify_closer', true);
 			}
 		}
 
@@ -455,7 +455,7 @@ var VkLoginB = spv.inh(pv.Model, {
 		}
 
 		if (target.auth.deep_sanbdox){
-			pv.update(target, 'deep_sandbox', true);
+			pvUpdate(target, 'deep_sandbox', true);
 		}
 
 		pvUpdate(target, 'target_bits', target_bits);
@@ -468,7 +468,7 @@ var VkLoginB = spv.inh(pv.Model, {
 		// 		if ((sts & target_bits) * 1){
 		// 			target.triggerSession();
 		// 		} else {
-		// 			pv.update(target, 'has_session', false);
+		// 			pvUpdate(target, 'has_session', false);
 		// 		}
 		// 	});
 
@@ -509,16 +509,16 @@ var VkLoginB = spv.inh(pv.Model, {
 		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
 	},
 	// triggerSession: function() {
-	// 	pv.update(this, 'has_session', true);
+	// 	pvUpdate(this, 'has_session', true);
 	// },
 	waitData: function() {
-		pv.update(this, 'data_wait', true);
+		pvUpdate(this, 'data_wait', true);
 	},
 	notWaitData: function() {
-		pv.update(this, 'data_wait', false);
+		pvUpdate(this, 'data_wait', false);
 	},
 	setRequestDesc: function(text) {
-		pv.update(this, 'request_description', text ? text + " " + localize("vk-auth-invitation") : "");
+		pvUpdate(this, 'request_description', text ? text + " " + localize("vk-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
@@ -534,7 +534,7 @@ var VkLoginB = spv.inh(pv.Model, {
 		this.auth.requestAuth(opts || this.open_opts);
 	},
 	switchView: function(){
-		pv.update(this, 'active', !this.state('active'));
+		pvUpdate(this, 'active', !this.state('active'));
 	}
 });
 
