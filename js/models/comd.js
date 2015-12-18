@@ -87,17 +87,15 @@ var ImagesPack = spv.inh(pv.Model, {
 		}
 	}
 });
-var TrackImages  = function() {};
-ImagesPack.extendTo(TrackImages, {
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
+var TrackImages  = spv.inh(ImagesPack, {
+	init: function(target, opts, data, params) {
+		target.artmd = params.artmd;
+		target.artist = params.info.artist;
+		target.track = params.info.track;
 
-		this.artmd = params.artmd;
-		this.artist = params.info.artist;
-		this.track = params.info.track;
-
-		this.wch(params.artmd, 'image-to-use', 'artist_image');
-	},
+		target.wch(params.artmd, 'image-to-use', 'artist_image');
+	}
+}, {
 	complex_states: {
 		'image-to-use': {
 			depends_on: ['best_image', 'just_image', 'artist_image'],
@@ -108,14 +106,11 @@ ImagesPack.extendTo(TrackImages, {
 	}
 });
 
-var ArtistImages = function() {};
-ImagesPack.extendTo(ArtistImages, {
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-
-		this.artist_name = params.artist_name;
-
-	},
+var ArtistImages = spv.inh(ImagesPack, {
+	init: function(target, opts, data, params) {
+		target.artist_name = params.artist_name;
+	}
+}, {
 	complex_states: {
 		'image-to-use': {
 			depends_on: ['best_image', 'just_image'],
