@@ -42,17 +42,16 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		model_name: 'row-multiatcs'
 	});
 
-	var PlARow = function(){};
-	comd.PartsSwitcher.extendTo(PlARow, {
-		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
-		init: function() {
-			this._super.apply(this, arguments);
-			this.pl = this.map_parent;
+	var PlARow = spv.inh(comd.PartsSwitcher, {
+		init: function(target) {
+			target.pl = target.map_parent;
 
-			pv.update(this, 'active_part', false);
-			this.addPart(this.initSi(MultiAtcsRow));
-			this.addPart(this.initSi(PlaylistSettingsRow));
-		},
+			pv.update(target, 'active_part', false);
+			target.addPart(target.initSi(MultiAtcsRow));
+			target.addPart(target.initSi(PlaylistSettingsRow));
+		}
+	}, {
+		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
 		'compx-loader_disallowing_desc': [
 			['^loader_disallowing_desc'],
 			function(loader_disallowing_desc) {

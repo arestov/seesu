@@ -156,20 +156,20 @@ constrs.forEach(function(el) {
 
 
 
-var SongActionsRow = function() {};
-comd.PartsSwitcher.extendTo(SongActionsRow, {
+var SongActionsRow = spv.inh(comd.PartsSwitcher, {
+	init: function(target) {
+		target.mo = target.map_parent;
+		pv.update(target, 'active_part', false);
+		//target.app = mo.app;
+		target.inited_parts = {};
+
+		target.nextTick(target.initHeavyPart);
+
+		target.wch(target.map_parent, 'mp_show', target.hndSongHide);
+	}
+}, {
 	'nest_posb-context_parts': constrs,
-	init: function() {
-		this._super.apply(this, arguments);
-		this.mo = this.map_parent;
-		pv.update(this, 'active_part', false);
-		//this.app = mo.app;
-		this.inited_parts = {};
 
-		this.nextTick(this.initHeavyPart);
-
-		this.wch(this.map_parent, 'mp_show', this.hndSongHide);
-	},
 	hndSongHide: function(e) {
 		if (!e.value) {
 			this.hideAll();
@@ -187,7 +187,8 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 	switchPart: function(part_name) {
 		this.initPart(part_name);
 		//this.realyHeavyPart();
-		this._super(part_name);
+		comd.PartsSwitcher.prototype.switchPart.call(this, part_name)
+		// this._super(part_name);
 	},
 	initPart: function(part_name) {
 		if (part_name){

@@ -327,14 +327,13 @@ var LastFMArtistImagesSelector = spv.inh(pv.Model, {
 	}
 });
 
-var PartsSwitcher = function() {};
-
-pv.Model.extendTo(PartsSwitcher, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.context_parts = {};
-		this.active_part = null;
-	},
+var PartsSwitcher = spv.inh(pv.Model, {
+	init: function(target) {
+		// this._super.apply(this, arguments);
+		target.context_parts = {};
+		target.active_part = null;
+	}
+}, {
 	hideAll: function() {
 		if (this.active_part){
 			pv.update(this, 'active_part', false);
