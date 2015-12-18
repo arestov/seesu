@@ -45,12 +45,11 @@ function buildVkAuth(obj, opts) {
 	});
 }
 
-var VkAuth = function() {};
-pv.Model.extendTo(VkAuth, {
-	init: function(opts, data, params) {
-		this._super.apply(this, arguments);
-		buildVkAuth(this, params);
-	},
+var VkAuth = spv.inh(pv.Model, {
+	init: function(target, opts, data, params) {
+		buildVkAuth(target, params);
+	}
+}, {
 	checkSettings: function(settings_bits) {
 		if (this.vksite_app && this.vksite_settings){
 			if ((this.vksite_settings & settings_bits) * 1){
