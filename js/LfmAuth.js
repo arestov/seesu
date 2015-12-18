@@ -72,19 +72,13 @@ var LfmLogin = spv.inh(pv.Model, {
 
 
 
-var LfmScrobble = function(){};
-LfmLogin.extendTo(LfmScrobble, {
-	init: function(){
-		this._super.apply(this, arguments);
-
-
-		this.wch(su, 'settings-lfm-scrobbling', 'scrobbling');
-
-
-
-		this.setRequestDesc(localize('lastfm-scrobble-access'));
-		pvUpdate(this, 'active', true);
-	},
+var LfmScrobble = spv.inh(LfmLogin, {
+	init: function(target){
+		target.wch(target.app, 'settings-lfm-scrobbling', 'scrobbling');
+		target.setRequestDesc(localize('lastfm-scrobble-access'));
+		pvUpdate(target, 'active', true);
+	}
+}, {
 	beforeRequest: function() {
 		this.bindAuthCallback();
 	},
