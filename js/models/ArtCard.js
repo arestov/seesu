@@ -6,6 +6,7 @@ var localize = app_serv.localize;
 var SimilarArtists = function() {};//must be here
 
 var ArtCard;
+var pvUpdate = pv.update;
 
 var ArtistAlbumSongs = function() {};
 SongsList.extendTo(ArtistAlbumSongs, {
@@ -28,10 +29,10 @@ SongsList.extendTo(ArtistAlbumSongs, {
 		this.playlist_type = 'album';
 		if (params.lfm_image){
 
-			pv.update(this, 'lfm_image', this.app.art_images.getImageWrap(params.lfm_image.array));
+			pvUpdate(this, 'lfm_image', this.app.art_images.getImageWrap(params.lfm_image.array));
 		}
 		if (params.lfm_img) {
-			pv.update(this, 'lfm_img', params.lfm_img);
+			pvUpdate(this, 'lfm_img', params.lfm_img);
 		}
 
 	},
@@ -569,7 +570,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 
 	initHeavy: pv.getOCF('heavy_oi', function() {
 		this.albums_models = {};
-		pv.update(this, 'init_heavy', true);
+		pvUpdate(this, 'init_heavy', true);
 	}),
 
 	getTagsModel: function() {
@@ -625,7 +626,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 			this.info_loaded = true;
 		}
 		var _this = this;
-		pv.update(this, 'sc_profile_searching', true);
+		pvUpdate(this, 'sc_profile_searching', true);
 		FuncsStack.chain([
 			function() {
 				var stack_atom = this;
@@ -654,7 +655,7 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 						}
 					})
 					.fail(function() {
-						pv.update(_this, 'sc_profile_searching', false);
+						pvUpdate(_this, 'sc_profile_searching', false);
 					})
 				);
 			},
@@ -669,16 +670,16 @@ BrowseMap.Model.extendTo(ArtCardBase, {
 							var matched = r.location.match(/users\/(\d+)/);
 							var artist_scid = matched[1];
 							if (artist_scid){
-								pv.update(_this, 'sc_profile_searching', false);
-								pv.update(_this, 'soundcloud_profile', artist_scid);
+								pvUpdate(_this, 'sc_profile_searching', false);
+								pvUpdate(_this, 'soundcloud_profile', artist_scid);
 								_this.preloadNestings(['soundc_prof', 'soundc_likes']);
 							} else {
-								pv.update(_this, 'no_soundcloud_profile', true);
+								pvUpdate(_this, 'no_soundcloud_profile', true);
 							}
 						}
 					})
 					.always(function() {
-						pv.update(_this, 'sc_profile_searching', false);
+						pvUpdate(_this, 'sc_profile_searching', false);
 					})
 				);
 			}
@@ -819,7 +820,7 @@ ArtCard = function() {};
 ArtCardBase.extendTo(ArtCard, {
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
-		pv.update(this, 'init_ext', true);
+		pvUpdate(this, 'init_ext', true);
 
 		this.wch(this, 'mp_has_focus', function(e) {
 			if (e.value){
