@@ -4,34 +4,32 @@ var localize = app_serv.localize;
 
 var pvUpdate = pv.update;
 
-var LfmTagSong = function(){};
-LfmAuth.LfmLogin.extendTo(LfmTagSong, {
-	//'nest-artist': ['']
-	init: function() {
-		this._super.apply(this, arguments);
-		this.mo = this.map_parent.mo;
+var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
+	init: function(target) {
+		target.mo = target.map_parent.mo;
 
-		pvUpdate(this, 'active', true);
-		this.wch(this.pmd, 'active_view');
-		this.wch(this.app.getArtcard(this.mo.state('artist')).getTagsModel(), 'simple_tags_list', 'artist_tags');
+		pvUpdate(target, 'active', true);
+		target.wch(target.pmd, 'active_view');
+		target.wch(target.app.getArtcard(target.mo.state('artist')).getTagsModel(), 'simple_tags_list', 'artist_tags');
 
 
-		this.on('state_change-canload_personal', function(e) {
+		target.on('state_change-canload_personal', function(e) {
 			if (e.value){
-				this.requestState('personal_tags');
+				target.requestState('personal_tags');
 			}
 
 		});
 
-		this.wch(this, 'petags', function(e) {
+		target.wch(target, 'petags', function(e) {
 			if (e.value) {
-				if (e.value.length && !this.state('user_tags_string')) {
-					pvUpdate(this, 'user_tags_string', e.value.join(', '));
+				if (e.value.length && !target.state('user_tags_string')) {
+					pvUpdate(target, 'user_tags_string', e.value.join(', '));
 				}
 			}
 		});
 
-	},
+	}
+}, {
 	access_desc: localize('lastfm-tagging-access'),
 	comma_regx: /\s*\,\s*/,
 	comma_regx_end: /\s*\,\s*$/,
