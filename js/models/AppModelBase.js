@@ -50,9 +50,9 @@ var AppModelBase = spv.inh(pv.Model, {
 	setDocTitle: function(title) {
 		pv.update(this, 'doc_title', title);
 	},
-	getBMapTravelFunc: function(func, context) {
+	getBMapTravelFunc: function(func) {
 		return function() {
-			return context.collectChanges(func, arguments);
+			return this.collectChanges(func, arguments);
 		};
 	},
 	changeNavTree: function(nav_tree) {

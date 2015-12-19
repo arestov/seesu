@@ -3,17 +3,8 @@ define(['./AppModelBase', 'spv', 'app_serv', './SongsList', 'pv', '../libs/Brows
 
 var localize = app_serv.localize;
 
-var AppModel = function(){};
-AppModelBase.extendTo(AppModel, {
-	init: function(){
-		this._super();
-
-		for (var func_name in this.bmap_travel){
-			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
-		}
-
-		return this;
-	},
+var AppModel = spv.inh(AppModelBase, {}, (function(){
+var props = {
 	checkUserInput: function(opts) {
 		if (opts.ext_search_query) {
 			this.search(opts.ext_search_query);
@@ -251,7 +242,13 @@ AppModelBase.extendTo(AppModel, {
 
 	}
 
-});
+};
+var getBMapTravelFunc = AppModelBase.prototype.getBMapTravelFunc;
+for (var func_name in props.bmap_travel){
+	props[func_name] = getBMapTravelFunc(props.bmap_travel[func_name]);
+}
+return props;
+})());
 
 return AppModel;
 });
