@@ -2,8 +2,8 @@ define(['pv', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(pv, app_serv, sp
 "use strict";
 var pvUpdate = pv.update;
 var localize = app_serv.localize;
-var UserAcquaintance = spv.inh(pv.Model, {}, {
-	init: function(target, opts, params) {
+var UserAcquaintance = spv.inh(pv.Model, {
+		init: function(target, opts, params) {
 		target.sender = params.sender;
 		target.user_photo = params.user_photo;
 		target.receiver = params.sender;
@@ -28,7 +28,8 @@ var UserAcquaintance = spv.inh(pv.Model, {}, {
 
 		//localize('if-one-accept-i') + ' ' + localize('will-get-link')
 		//localize('if-you-accept-one-i') + ' ' + localize('will-get-link')
-	},
+	}
+}, {
 	complex_states: {
 		userlink: {
 			depends_on: ['accepted', 'user_info'],
