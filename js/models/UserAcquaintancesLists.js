@@ -1,5 +1,6 @@
 define(['pv', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(pv, app_serv, spv, BrowseMap){
 "use strict";
+var pvUpdate = pv.update;
 var localize = app_serv.localize;
 var UserAcquaintance = spv.inh(pv.Model, {}, {
 	init: function(target, opts, params) {
@@ -8,15 +9,15 @@ var UserAcquaintance = spv.inh(pv.Model, {}, {
 		target.receiver = params.sender;
 		//target.current_user = params.current_user;
 		target.remainded_date = params.remainded_date;
-		pv.update(target, 'remainded_date', params.remainded_date);
+		pvUpdate(target, 'remainded_date', params.remainded_date);
 		target.accepted = params.accepted;
-		pv.update(target, 'user_info', params.info);
-		pv.update(target, 'user_photo', params.user_photo);
+		pvUpdate(target, 'user_info', params.info);
+		pvUpdate(target, 'user_photo', params.user_photo);
 
 		target.current_user_is_sender = params.current_user_is_sender;
 
-		pv.update(target, 'current_user_is_sender', params.current_user_is_sender);
-		pv.update(target, 'accepted', params.accepted);
+		pvUpdate(target, 'current_user_is_sender', params.current_user_is_sender);
+		pvUpdate(target, 'accepted', params.accepted);
 	//	this.update
 
 		//accept_button
@@ -70,8 +71,8 @@ var UserAcquaintance = spv.inh(pv.Model, {}, {
 		var su = this.app;
 		su.s.api('relations.acceptInvite', {from: this.sender}, function(r){
 			if (r.done){
-				pv.update(_this, 'remainded_date', r.done.est);
-				pv.update(_this, 'accepted', true);
+				pvUpdate(_this, 'remainded_date', r.done.est);
+				pvUpdate(_this, 'accepted', true);
 				su.trackEvent('people likes', 'accepted', false, 5);
 
 				if (new Date(r.done.est) < new Date()){
