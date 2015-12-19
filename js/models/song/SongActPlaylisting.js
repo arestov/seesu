@@ -63,15 +63,13 @@ var PlaylistRowSearch = spv.inh(invstg.Investigation, {
 
 
 
-SongActPlaylisting = function() {};
-comd.BaseCRow.extendTo(SongActPlaylisting, {
-	init: function(){
-		this._super.apply(this, arguments);
-		this.actionsrow = this.map_parent;
-		this.mo = this.map_parent.map_parent;
-
-		this.app.gena.on('child_change-lists_list', this.checkFullMatch, this.getContextOpts());
-	},
+SongActPlaylisting = spv.inh(comd.BaseCRow, {
+	init: function(target){
+		target.actionsrow = target.map_parent;
+		target.mo = target.map_parent.map_parent;
+		target.app.gena.on('child_change-lists_list', target.checkFullMatch, target.getContextOpts());
+	}
+}, {
 	'nest-searcher': [PlaylistRowSearch],
 	model_name: 'row-playlist-add',
 	search: function(q) {
