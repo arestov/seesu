@@ -460,27 +460,6 @@ var VkLoginB = spv.inh(pv.Model, {
 
 		pvUpdate(target, 'target_bits', target_bits);
 
-		// if (target_bits){
-		// 	if (target.auth.checkSettings(target_bits)){
-		// 		target.triggerSession();
-		// 	}
-		// 	target.auth.on('settings-change', function(sts) {
-		// 		if ((sts & target_bits) * 1){
-		// 			target.triggerSession();
-		// 		} else {
-		// 			pvUpdate(target, 'has_session', false);
-		// 		}
-		// 	});
-
-		// }
-
-		// if (target.auth.has_session){
-		// 	target.triggerSession();
-		// }
-		// target.auth.once('full-ready', function(){
-		// 	target.triggerSession();
-		// });
-
 		if (target.auth && target.auth.data_wait){
 			target.waitData();
 		} else {
