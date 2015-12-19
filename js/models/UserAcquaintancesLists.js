@@ -1,24 +1,22 @@
 define(['pv', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(pv, app_serv, spv, BrowseMap){
 "use strict";
 var localize = app_serv.localize;
-var UserAcquaintance = function() {};
-pv.Model.extendTo(UserAcquaintance, {
-	init: function(opts, params) {
-		this._super.apply(this, arguments);
-		this.sender = params.sender;
-		this.user_photo = params.user_photo;
-		this.receiver = params.sender;
-		//this.current_user = params.current_user;
-		this.remainded_date = params.remainded_date;
-		pv.update(this, 'remainded_date', params.remainded_date);
-		this.accepted = params.accepted;
-		pv.update(this, 'user_info', params.info);
-		pv.update(this, 'user_photo', params.user_photo);
+var UserAcquaintance = spv.inh(pv.Model, {}, {
+	init: function(target, opts, params) {
+		target.sender = params.sender;
+		target.user_photo = params.user_photo;
+		target.receiver = params.sender;
+		//target.current_user = params.current_user;
+		target.remainded_date = params.remainded_date;
+		pv.update(target, 'remainded_date', params.remainded_date);
+		target.accepted = params.accepted;
+		pv.update(target, 'user_info', params.info);
+		pv.update(target, 'user_photo', params.user_photo);
 
-		this.current_user_is_sender = params.current_user_is_sender;
+		target.current_user_is_sender = params.current_user_is_sender;
 
-		pv.update(this, 'current_user_is_sender', params.current_user_is_sender);
-		pv.update(this, 'accepted', params.accepted);
+		pv.update(target, 'current_user_is_sender', params.current_user_is_sender);
+		pv.update(target, 'accepted', params.accepted);
 	//	this.update
 
 		//accept_button
