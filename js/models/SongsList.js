@@ -18,8 +18,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 	};
 
-	var PlaylistSettingsRow = function(){};
-	comd.BaseCRow.extendTo(PlaylistSettingsRow, {
+	var PlaylistSettingsRow = spv.inh(comd.BaseCRow, {}, {
 		actionsrow_src: '^',
 		'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
 		setDnRp: function(state) {
@@ -28,8 +27,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		model_name: 'row-pl-settings'
 	});
 
-	var MultiAtcsRow = function(){};
-	comd.BaseCRow.extendTo(MultiAtcsRow, {
+	var MultiAtcsRow = spv.inh(comd.BaseCRow, {}, {
 		actionsrow_src: '^',
 		makePlayable: function() {
 			this.map_parent.map_parent.makePlayable(true);
