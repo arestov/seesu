@@ -8,34 +8,31 @@ var SimilarArtists = function() {};//must be here
 var ArtCard;
 var pvUpdate = pv.update;
 
-var ArtistAlbumSongs = function() {};
-SongsList.extendTo(ArtistAlbumSongs, {
-	init: function(opts, params) {
-		this._super(opts, false);
-		this.playlist_artist = this.album_artist = params.album_artist;
-		this.album_name = params.album_name;
-		this.original_artist = params.original_artist;
+var ArtistAlbumSongs = spv.inh(SongsList, {
+	init: function(target, opts, params) {
+		target.playlist_artist = target.album_artist = params.album_artist;
+		target.album_name = params.album_name;
+		target.original_artist = params.original_artist;
 
-		this.updateManyStates({
-			'album_artist': this.playlist_artist,
-			'album_name': this.album_name,
-			'original_artist': this.original_artist,
+		target.updateManyStates({
+			'album_artist': target.playlist_artist,
+			'album_name': target.album_name,
+			'original_artist': target.original_artist,
 			'nav_title': '(' + params.album_artist + ') ' + params.album_name,
-			'url_part': '/' + this.getAlbumURL()
+			'url_part': '/' + target.getAlbumURL()
 		});
 
-
-
-		this.playlist_type = 'album';
+		target.playlist_type = 'album';
 		if (params.lfm_image){
 
-			pvUpdate(this, 'lfm_image', this.app.art_images.getImageWrap(params.lfm_image.array));
+			pvUpdate(target, 'lfm_image', target.app.art_images.getImageWrap(params.lfm_image.array));
 		}
 		if (params.lfm_img) {
-			pvUpdate(this, 'lfm_img', params.lfm_img);
+			pvUpdate(target, 'lfm_img', params.lfm_img);
 		}
-
-	},
+	}
+}, {
+	network_data_as_states: false,
 	'compx-can_hide_artist_name': {
 		depends_on: ['album_artist', 'original_artist'],
 		fn: function(alb_artist, orgn_artist) {
@@ -844,8 +841,7 @@ ArtCardBase.extendTo(ArtistInArtl, {
 	}
 });
 
-var ArtistsListPlaylist = function() {};
-SongsList.extendTo(ArtistsListPlaylist, {
+var ArtistsListPlaylist = spv.inh(SongsList, {}, {
 	page_limit: null,
 	items_comparing_props: [['artist_name', 'artist_name']],
 	'compx-has_data_loader': [
@@ -869,8 +865,7 @@ SongsList.extendTo(ArtistsListPlaylist, {
 });
 
 
-var ArtistsList = function() {};
-LoadableList.extendTo(ArtistsList, {
+var ArtistsList = spv.inh(LoadableList, {}, {
 	model_name: 'artslist',
 	main_list_name: 'artists_list',
 	createRPlist: function() {
