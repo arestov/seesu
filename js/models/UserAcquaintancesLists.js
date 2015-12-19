@@ -85,26 +85,18 @@ var UserAcquaintance = spv.inh(pv.Model, {
 	}
 });
 
-var UserAcquaintancesLists = function() {};
-BrowseMap.Model.extendTo(UserAcquaintancesLists, {
-	model_name: 'user_acqs_list',
-	init: function() {
-		this._super.apply(this, arguments);
-		var _this = this;
-
-		this.wch(this.app, 'su_userid', 'current_user');
-
-		var su = this.app;
-
-		su.on('state_change-su_server_api', function(e) {
+var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
+	init: function(target) {
+		target.wch(target.app, 'su_userid', 'current_user');
+		target.app.on('state_change-su_server_api', function(e) {
 			if (e.value){
-				_this.bindDataSteams();
+				target.bindDataSteams();
 			}
 		});
+	}
+}, {
+	model_name: 'user_acqs_list',
 
-		this.initStates();
-
-	},
 	'compx-wait_me_desc': {
 		depends_on: ['@every:accepted:acqs_from_someone'],
 		fn: function(not_wait_me) {
