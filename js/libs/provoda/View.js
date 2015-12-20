@@ -71,81 +71,84 @@ var stackEmergency = function(fn, eventor, args) {
 };
 var views_counter = 1;
 var way_points_counter = 0;
+
+var initView = function(view_otps, opts){
+	this._lbr = new ViewLabour();
+
+	this.req_order_field = null;
+	this.tpl = null;
+	this.c = null;
+
+	this.dead = null;
+	this.pv_view_node = null;
+	this.dclrs_fpckgs = this.dclrs_fpckgs;
+	// this.dclrs_selectors = null;
+	this.base_skeleton = null;
+
+	this.nesting_space = view_otps.nesting_space;
+	this.nesting_name = view_otps.nesting_name;
+
+	if (this.base_tree_list) {
+		this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
+	}
+
+	this.view_id = views_counter++;
+	this.parent_view = null;
+	if (view_otps.parent_view){
+		this.parent_view = view_otps.parent_view;
+	}
+	this.root_view = null;
+	if (view_otps.root_view){
+		this.root_view = view_otps.root_view;
+	}
+	this.opts = null;
+	if (opts){
+		this.opts = opts;
+	}
+
+	this._super();
+	this.children = [];
+	this.children_models = {};
+	this.view_parts = null;
+
+	if (this.parent_view && !view_otps.location_name){
+		throw new Error('give me location name!');
+		//используется для идентификации использования одной и тойже view внутри разнородных родительских view или разных пространств внутри одного view
+	}
+	this.location_name = view_otps.location_name;
+	if (!view_otps.mpx){
+		throw new Error('give me model!');
+	}
+
+	this.mpx = view_otps.mpx;
+	this.proxies_space = view_otps.proxies_space || null;
+
+	this.way_points = null;
+
+	this.dom_related_props = null;
+	if (this.dom_rp){
+		this.dom_related_props = [];
+	}
+
+	cloneObj(this._lbr.undetailed_states, this.mpx.states);
+	cloneObj(this._lbr.undetailed_states, this.mpx.vstates);
+	cloneObj(this._lbr.undetailed_children_models, this.mpx.nestings);
+
+	if (this.base_tree_expand_states) {
+		for (var i = 0; i < this.base_tree_expand_states.length; i++) {
+
+			this.on( hp.getSTEVNameDefault(this.base_tree_expand_states[i]) , hndExpandViewTree);
+		}
+	}
+
+	prsStCon.connect.parent(this);
+	prsStCon.connect.root(this);
+	return this;
+};
+
 function View() {}
 StatesEmitter.extendTo(View, {
-	init: function(view_otps, opts){
-		this._lbr = new ViewLabour();
-
-		this.req_order_field = null;
-		this.tpl = null;
-		this.c = null;
-
-		this.dead = null;
-		this.pv_view_node = null;
-		this.dclrs_fpckgs = this.dclrs_fpckgs;
-		// this.dclrs_selectors = null;
-		this.base_skeleton = null;
-
-		this.nesting_space = view_otps.nesting_space;
-		this.nesting_name = view_otps.nesting_name;
-
-		if (this.base_tree_list) {
-			this.base_skeleton = getBaseTreeSkeleton(this.base_tree_list);
-		}
-
-		this.view_id = views_counter++;
-		this.parent_view = null;
-		if (view_otps.parent_view){
-			this.parent_view = view_otps.parent_view;
-		}
-		this.root_view = null;
-		if (view_otps.root_view){
-			this.root_view = view_otps.root_view;
-		}
-		this.opts = null;
-		if (opts){
-			this.opts = opts;
-		}
-
-		this._super();
-		this.children = [];
-		this.children_models = {};
-		this.view_parts = null;
-
-		if (this.parent_view && !view_otps.location_name){
-			throw new Error('give me location name!');
-			//используется для идентификации использования одной и тойже view внутри разнородных родительских view или разных пространств внутри одного view
-		}
-		this.location_name = view_otps.location_name;
-		if (!view_otps.mpx){
-			throw new Error('give me model!');
-		}
-
-		this.mpx = view_otps.mpx;
-		this.proxies_space = view_otps.proxies_space || null;
-
-		this.way_points = null;
-
-		this.dom_related_props = null;
-		if (this.dom_rp){
-			this.dom_related_props = [];
-		}
-
-		cloneObj(this._lbr.undetailed_states, this.mpx.states);
-		cloneObj(this._lbr.undetailed_states, this.mpx.vstates);
-		cloneObj(this._lbr.undetailed_children_models, this.mpx.nestings);
-
-		if (this.base_tree_expand_states) {
-			for (var i = 0; i < this.base_tree_expand_states.length; i++) {
-
-				this.on( hp.getSTEVNameDefault(this.base_tree_expand_states[i]) , hndExpandViewTree);
-			}
-		}
-
-		prsStCon.connect.parent(this);
-		prsStCon.connect.root(this);
-		return this;
-	},
+	init: initView,
 	handleTemplateRPC: function(method) {
 		if (arguments.length === 1) {
 			var bwlev_view = $v.getBwlevView(this);
