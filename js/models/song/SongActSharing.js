@@ -32,6 +32,10 @@ var struserSuggest = spv.inh(invstg.BaseSuggest, {
 
 var VKLoginFSearch = function() {};
 comd.VkLoginB.extendTo(VKLoginFSearch, {
+	config: {
+		desc:  app_env.vkontakte ? localize('to-find-vk-friends') : localize("to-post-and-find-vk"),
+		open_opts: {settings_bits: 2}
+	},
 	init: function(opts) {
 		this._super(opts, {
 			desc: app_env.vkontakte ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
@@ -152,69 +156,61 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 
 
 
-var LFMUserSuggest = function(params) {
+var LFMUserSuggest = spv.inh(invstg.BaseSuggest, {
+	init: function(target, params) {
+		var user = params.user;
+		target.app = params.app;
+		target.mo = params.mo;
+		target.row = params.row;
 
-
-	this.init();
-	var user = params.user;
-	this.app = params.app;
-	this.mo = params.mo;
-	this.row = params.row;
-
-	this.userid = user.state('userid');
-	this.text_title = this.userid;
-	this.updateManyStates({
-		selected_image: user.state('selected_image'),
-		text_title: this.text_title
-	});
-};
-invstg.BaseSuggest.extendTo(LFMUserSuggest, {
+		target.userid = user.state('userid');
+		target.text_title = target.userid;
+		target.updateManyStates({
+			selected_image: user.state('selected_image'),
+			text_title: target.text_title
+		});
+	}
+}, {
 	valueOf: function(){
 		return this.userid;
 	},
 	onView: function(){
-		var _this = this;
 		this.mo.shareWithLFMUser(this.userid);
-		_this.row.hide();
-		/*.done(function() {
-			_this.row.hide();
-		});*/
+		this.row.hide();
 	}
 });
 
 
 
-var LFMFriendsSection = function() {};
-invstg.SearchSection.extendTo(LFMFriendsSection, {
-	//'nest-lfm_friends': ['#/users/me/lfm:friends', 'can_share'],
-	init: function() {
-		this._super.apply(this, arguments);
-		this.mo = this.map_parent.mo;
-		this.rpl = this.map_parent.map_parent;
+var LFMFriendsSection = spv.inh(invstg.SearchSection, {
+		//'nest-lfm_friends': ['#/users/me/lfm:friends', 'can_share'],
+	init: function(target) {
+		target.mo = target.map_parent.mo;
+		target.rpl = target.map_parent.map_parent;
 
 
-		this.lfm_friends = this.app.routePathByModels('/users/me/lfm:friends');
+		target.lfm_friends = target.app.routePathByModels('/users/me/lfm:friends');
 		//su.routePathByModels('/users/me/lfm:neighbours')
 		//preloadStart
 
-		this.lfm_friends.on('child_change-list_items', function(e) {
+		target.lfm_friends.on('child_change-list_items', function(e) {
 			pv.updateNesting(this, 'friends', e.value);
 			this.changeQuery('');
 			this.searchByQuery(this.state('query'));
 
 
-		}, this.getContextOpts());
+		}, target.getContextOpts());
 
-		this.wch(this, 'can_share', function(e) {
+		target.wch(target, 'can_share', function(e) {
 			if (e.value){
 				this.lfm_friends.preloadStart();
 				this.searchLFMFriends();
 			}
 
 		});
-
-
 	},
+}, {
+
 	searchByQuery: function(query) {
 		this.changeQuery(query);
 		this.searchLFMFriends();
@@ -250,23 +246,23 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 
 
 
-var LFMOneUserSuggest = function(params) {
-	this.init();
-	var user = params.user;
-//
-	this.app = params.app;
-	this.mo = params.mo;
-	this.row = params.row;
+var LFMOneUserSuggest = spv.inh(invstg.BaseSuggest, {
+	init: function(target, params) {
+		var user = params.user;
+	//
+		target.app = params.app;
+		target.mo = params.mo;
+		target.row = params.row;
 
 
-	this.userid = user.name;
-	this.text_title = this.userid;
-	this.updateManyStates({
-		selected_image: this.app.art_images.getImageWrap(user.image),
-		text_title: this.text_title
-	});
-};
-invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
+		target.userid = user.name;
+		target.text_title = target.userid;
+		target.updateManyStates({
+			selected_image: target.app.art_images.getImageWrap(user.image),
+			text_title: target.text_title
+		});
+	}
+}, {
 	valueOf: function(){
 		return this.userid;
 	},
@@ -284,20 +280,19 @@ invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
 
 
 
-var LFMOneUserSection = function() {};
-invstg.SearchSection.extendTo(LFMOneUserSection, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.mo = this.map_parent.mo;
-		this.rpl = this.map_parent.map_parent;
+var LFMOneUserSection = spv.inh(invstg.SearchSection, {
+	init: function(target) {
+		target.mo = target.map_parent.mo;
+		target.rpl = target.map_parent.map_parent;
 
-		this.wch(this, 'can_share', function(e) {
+		target.wch(target, 'can_share', function(e) {
 			if (e.value){
 				this.searchLFMFriends();
 			}
 		});
+	}
+}, {
 
-	},
 	searchByQuery: function(query) {
 		this.changeQuery(query);
 		this.searchOneUser();
@@ -375,21 +370,19 @@ LfmAuth.LfmLogin.extendTo(LfmSharingAuth, {
 	access_desc: localize('lastfm-sharing-access')
 });
 
-var StrusersRowSearch = function() {};
-invstg.Investigation.extendTo(StrusersRowSearch, {
+var StrusersRowSearch = spv.inh(invstg.Investigation, {
+	init: function(target) {
+		target.mo = target.map_parent.mo;
+		target.nestings_opts = {
+			auth: target.app.lfm_auth,
+			pmd: target
+		};
+	}
+}, {
 	skip_map_init: true,
 	'nest-lfm_auth': [LfmSharingAuth],
 	'nest-section': [[StrusersRSSection, LFMFriendsSection, LFMOneUserSection]],
-	init: function() {
-		this._super.apply(this, arguments);
-		//this.rpl = rpl;
-		this.mo = this.map_parent.mo;
-		this.nestings_opts = {
-			auth: this.app.lfm_auth,
-			pmd: this
-		};
 
-	},
 
 	searchf: function() {
 		var query = this.q;
@@ -406,25 +399,15 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 });
 
 
-var SongActSharing = function(){};
-comd.BaseCRow.extendTo(SongActSharing, {
-	init: function(){
+var SongActSharing = spv.inh(comd.BaseCRow, {
+	init: function(target){
+		target.actionsrow = target.map_parent;
+		target.mo = target.map_parent.map_parent;
+		target.wch(target.mo, 'url_part', target.hndUpdateShareURL);
+		target.search('');
+	}
+}, {
 
-
-
-		this._super.apply(this, arguments);
-		this.actionsrow = this.map_parent;
-		this.mo = this.map_parent.map_parent;
-
-		this.wch(this.mo, 'url_part', this.hndUpdateShareURL);
-
-
-
-		this.search('');
-
-		//this.share_url = this.mo.getShareUrl();
-
-	},
 	'nest-searcher': [StrusersRowSearch],
 	hndUpdateShareURL: function() {
 		pv.update(this, 'share_url', this.mo.getShareUrl());
