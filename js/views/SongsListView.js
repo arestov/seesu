@@ -1,8 +1,7 @@
-define(['pv', 'jquery', './SongUI', './etc_views', './coct' ],
-function(pv, $, SongUI, etc_views, coct) {
+define(['pv', 'jquery', './SongUI', './etc_views', './coct', 'spv' ],
+function(pv, $, SongUI, etc_views, coct, spv) {
 	"use strict";
-	var PlaylistSettingsRowView = function(){};
-	pv.View.extendTo(PlaylistSettingsRowView, {
+	var PlaylistSettingsRowView = spv.inh(pv.View, {}, {
 		"stch-dont_rept_pl": function(target, state) {
 			target.dont_rept_pl_chbx.prop('checked', !!state);
 		},
@@ -15,8 +14,7 @@ function(pv, $, SongUI, etc_views, coct) {
 		}
 	});
 
-	var PlARowView = function() {};
-	etc_views.ActionsRowUI.extendTo(PlARowView, {
+	var PlARowView = spv.inh(etc_views.ActionsRowUI, {}, {
 
 		canUseWaypoints: function() {
 			return this.parent_view.state('mp_has_focus');
@@ -29,8 +27,7 @@ function(pv, $, SongUI, etc_views, coct) {
 		}
 	});
 
-	var SongsListViewBase = function() {};
-	coct.SPView.extendTo(SongsListViewBase, {
+	var SongsListViewBase = spv.inh(coct.SPView, {}, {
 		'collch-songs-list': {
 			place: 'tpl.ancs.lc',
 			space: 'main'
@@ -75,8 +72,7 @@ function(pv, $, SongUI, etc_views, coct) {
 
 		}
 	});
-	var SongsListView = function(){};
-	SongsListViewBase.extendTo(SongsListView, {
+	var SongsListView = spv.inh(SongsListViewBase, {}, {
 		base_tree: {
 			sample_name: 'playlist-container'
 		},
@@ -88,8 +84,7 @@ function(pv, $, SongUI, etc_views, coct) {
 			this.setVisState('overview', true);
 		}
 	});
-	var SongsListDetailedView = function() {};
-	SongsListViewBase.extendTo(SongsListDetailedView, {
+	var SongsListDetailedView = spv.inh(SongsListViewBase, {}, {
 		base_tree: {
 			sample_name: 'playlist-container'
 		},
