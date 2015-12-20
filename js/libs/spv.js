@@ -690,22 +690,9 @@ separateNum = function(num){
 	return  three_sep;
 };
 
-
-
-var constr_id = 0;
-/* Simple JavaScript Inheritance
-  * By John Resig http://ejohn.org/
-  * http://ejohn.org/blog/simple-javascript-inheritance/
-  * MIT Licensed.
-  * Gleb Arestov mod
-  */
-// Inspired by base2 and Prototype
-
-// var llcount = 0;
-(function(){
-	var
-		fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/,
-		allowParentCall = function(name, fn, _super){
+var copyProps = (function(){
+		var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+		var allowParentCall = function(name, fn, _super){
 			return function() {
 				var tmp = this._super;
 
@@ -724,8 +711,30 @@ var constr_id = 0;
 				return ret;
 			};
 		};
+	return function(prototype, props, _super) {
+		for (var prop_name in props) {
+			// Check if we're overwriting an existing function
+			var needSuper = typeof props[prop_name] == "function" &&
+				typeof _super[prop_name] == "function" && fnTest.test(props[prop_name]);
+			prototype[prop_name] = needSuper ?
+				allowParentCall(prop_name, props[prop_name], _super) :
+				props[prop_name];
+		}
+		return prototype;
+	};
+})();
 
+var constr_id = 0;
+/* Simple JavaScript Inheritance
+  * By John Resig http://ejohn.org/
+  * http://ejohn.org/blog/simple-javascript-inheritance/
+  * MIT Licensed.
+  * Gleb Arestov mod
+  */
+// Inspired by base2 and Prototype
 
+// var llcount = 0;
+(function(){
 	// The base Class implementation (does nothing)
 	Class = function(){};
 
@@ -743,29 +752,8 @@ var constr_id = 0;
 		var prototype = new this();
 		prototype.constr_id = constr_id++;
 
-		var super_init = false;
-
+		prototype = copyProps(prototype, props, _super);
 		// Copy the properties over onto the new prototype
-		for (var prop_name in props) {
-			// Check if we're overwriting an existing function
-			var needSuper = typeof props[prop_name] == "function" &&
-				typeof _super[prop_name] == "function" && fnTest.test(props[prop_name]);
-			prototype[prop_name] = needSuper ?
-				allowParentCall(prop_name, props[prop_name], _super) :
-				props[prop_name];
-
-			super_init = super_init || (needSuper && prop_name == 'init');
-
-			// if (needSuper && prop_name == 'init' && props[prop_name].length > 1) {
-			// 	llcount++
-			// 	// prop_name
-			// 	// props[prop_name]
-			// 	var value = props[prop_name];
-			// 	console.log(llcount, value.length, value.toString());
-			// 	// debugger;
-
-			// }
-		}
 
 		// Populate our constructed prototype object
 		namedClass.prototype = prototype;
