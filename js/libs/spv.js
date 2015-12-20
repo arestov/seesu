@@ -905,7 +905,8 @@ function extend(Class, params, propsArg) {
 	result.prototype.__code_path = codePath();
 
 	if (props) {
-		cloneObj(result.prototype, props);
+		copyProps(result.prototype, props, Class.prototype);
+		// cloneObj(result.prototype, props);
 		if (params.skip_first_extend) {
 			if (parentExtend) {
 				parentExtend(result.prototype, props, Class.prototype, params);
