@@ -1,8 +1,7 @@
 
-define(['pv', 'jquery', './coct'], function(pv, $, coct) {
+define(['pv', 'jquery', './coct', 'spv'], function(pv, $, coct, spv) {
 "use strict";
-var YoutubeVideoView = function() {};
-coct.PageView.extendTo(YoutubeVideoView, {
+var YoutubeVideoView = spv.inh(coct.PageView, {}, {
 	full_page: true,
 	createBase: function() {
 		this.c = $('<div class="youtube-video-page"></div>');

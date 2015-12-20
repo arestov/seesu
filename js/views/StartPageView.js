@@ -3,9 +3,7 @@ function(pv, spv, $, app_serv, UserCardPreview, coct) {
 "use strict";
 var localize = app_serv.localize;
 
-var StartPageView = function(){};
-
-coct.SPView.extendTo(StartPageView, {
+var StartPageView = spv.inh(coct.SPView, {}, {
 	createDetails: function(){
 
 		this.els = this.root_view.els;

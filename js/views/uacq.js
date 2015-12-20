@@ -1,9 +1,8 @@
-define(['pv', 'jquery', 'app_serv', './coct'], function(pv, $, app_serv, coct) {
+define(['pv', 'jquery', 'app_serv', './coct', 'spv'], function(pv, $, app_serv, coct, spv) {
 'use strict';
 var localize = app_serv.localize;
 
-var UserAcquaintanceView = function() {};
-pv.View.extendTo(UserAcquaintanceView, {
+var UserAcquaintanceView = spv.inh(pv.View, {}, {
 	createBase: function() {
 		this.c = $('<li class="people-list-item"></li>');
 		var li = this.c;
@@ -67,8 +66,7 @@ pv.View.extendTo(UserAcquaintanceView, {
 	}
 });
 
-var UserAcquaintancesListView = function() {};
-coct.PageView.extendTo(UserAcquaintancesListView, {
+var UserAcquaintancesListView = spv.inh(coct.PageView, {}, {
 	createBase: function() {
 		this._super();
 
@@ -100,8 +98,7 @@ coct.PageView.extendTo(UserAcquaintancesListView, {
 	'collch-acqs_from_me': 'from_me_c'
 });
 
-var UserAcqPreview = function() {};
-pv.View.extendTo(UserAcqPreview, {
+var UserAcqPreview = spv.inh(pv.View, {}, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = $("<span></span>");
@@ -115,8 +112,7 @@ pv.View.extendTo(UserAcqPreview, {
 		}
 	}
 });
-var UserAcquaintancesListPreview = function() {};
-pv.View.extendTo(UserAcquaintancesListPreview, {
+var UserAcquaintancesListPreview = spv.inh(pv.View, {}, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = $('<div class="user_acqes-preview"></div>');

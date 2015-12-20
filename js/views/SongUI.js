@@ -4,8 +4,7 @@ function(pv, spv, $, app_serv,
 SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 
-var SongViewBase = function() {};
-coct.SPView.extendTo(SongViewBase, {
+var SongViewBase = spv.inh(coct.SPView, {}, {
 	'compx-vmp_show': [
 		['^^vmp_show', 'bmp_show', '^^map_level_num'],
 		function(vmp_show, bmp_show, map_level_num) {
@@ -27,9 +26,7 @@ coct.SPView.extendTo(SongViewBase, {
 	}
 });
 
-var SongUI = function(){};
-
-SongViewBase.extendTo(SongUI, {
+var SongUI = spv.inh(SongViewBase, {}, {
 	canUseDeepWaypoints: function() {
 		return !!this.state('vmp_show');
 	},
@@ -98,9 +95,7 @@ SongViewBase.extendTo(SongUI, {
 		// }]
 	}
 });
-var SongViewLite = function() {};
-
-SongViewBase.extendTo(SongViewLite, {
+var SongViewLite = spv.inh(SongViewBase, {}, {
 	canUseDeepWaypoints: function() {
 		return false;
 	},
