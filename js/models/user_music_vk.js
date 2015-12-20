@@ -81,8 +81,7 @@ var auth_bh = {
 	}
 };
 
-var VkSongList = function() {};
-SongsList.extendTo(VkSongList, cloneObj({}, auth_bh));
+var VkSongList = spv.inh(SongsList, {}, cloneObj({}, auth_bh));
 
 var VkRecommendedTracks = function() {};
 VkSongList.extendTo(VkRecommendedTracks, {
