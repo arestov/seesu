@@ -1006,9 +1006,7 @@ add({
 		this.init_states = false;
 	},
 	network_data_as_states: true,
-	onExtend: (function() {
-		return spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend);
-	})(),
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend),
 	getConstrByPathTemplate: function(app, path_template) {
 		return initDeclaredNestings.getConstrByPath(app, this, path_template);
 	},
