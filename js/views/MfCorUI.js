@@ -4,8 +4,7 @@ var pvUpdate = pv.update;
 
 
 
-var notifyCounterUI = function() {};
-pv.View.extendTo(notifyCounterUI, {
+var notifyCounterUI = spv.inh(pv.View, {}, {
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -17,8 +16,7 @@ pv.View.extendTo(notifyCounterUI, {
 });
 
 var li = document.createElement('li');
-var FileIntorrentPromiseUI = function(){};
-pv.View.extendTo(FileIntorrentPromiseUI, {
+var FileIntorrentPromiseUI = spv.inh(pv.View, {}, {
 	'stch-infoHash': function(target, state) {
 		target.c.text(state);
 	},
@@ -27,8 +25,7 @@ pv.View.extendTo(FileIntorrentPromiseUI, {
 	}
 });
 
-var FileInTorrentUI = function() {};
-pv.View.extendTo(FileInTorrentUI,{
+var FileInTorrentUI = spv.inh(pv.View, {},{
 	state_change: {
 		"download-pressed": function(target, state) {
 			if (state){
@@ -75,8 +72,7 @@ pv.View.extendTo(FileInTorrentUI,{
 
 	}
 });
-var SongFileModelUI = function() {};
-pv.View.extendTo(SongFileModelUI, {
+var SongFileModelUI = spv.inh(pv.View, {}, {
 	dom_rp: true,
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
@@ -251,8 +247,7 @@ pv.View.extendTo(SongFileModelUI, {
 });
 
 
-var FilesSourceTunerView = function(){};
-pv.View.extendTo(FilesSourceTunerView, {
+var FilesSourceTunerView = spv.inh(pv.View, {}, {
 	tpl_events: {
 		changeTune: function(e, node){
 			var tune_name = node.name;
@@ -268,8 +263,7 @@ pv.View.extendTo(FilesSourceTunerView, {
 });
 
 
-var ComplectPionerView = function(){};
-pv.View.extendTo(ComplectPionerView, {
+var ComplectPionerView = spv.inh(pv.View, {}, {
 	children_views: {
 		vis_tuner: FilesSourceTunerView
 	}
@@ -278,8 +272,7 @@ pv.View.extendTo(ComplectPionerView, {
 
 
 
-var mfComplectUI = function() {};
-pv.View.extendTo(mfComplectUI, {
+var mfComplectUI = spv.inh(pv.View, {}, {
 	children_views: {
 		'pioneer': ComplectPionerView
 	},
@@ -306,8 +299,7 @@ pv.View.extendTo(mfComplectUI, {
 });
 
 
-var MfCorUI = function() {};
-pv.View.extendTo(MfCorUI, {
+var MfCorUI = spv.inh(pv.View, {}, {
 	children_views:{
 		notifier: notifyCounterUI,
 		vk_auth: etc_views.VkLoginUI,

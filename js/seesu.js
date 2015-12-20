@@ -49,8 +49,7 @@ lfm.checkMethodResponse = function(method, data, r) {
 
 
 var chrome = window.chrome;
-var ChromeExtensionButtonView = function() {};
-pv.View.extendTo(ChromeExtensionButtonView, {
+var ChromeExtensionButtonView = spv.inh(pv.View, {}, {
 	state_change: {
 		"playing": function(target, state) {
 			if (state){
@@ -64,8 +63,7 @@ pv.View.extendTo(ChromeExtensionButtonView, {
 		}
 	}
 });
-var OperaExtensionButtonView = function() {};
-pv.View.extendTo(OperaExtensionButtonView, {
+var OperaExtensionButtonView = spv.inh(pv.View, {}, {
 	state_change: {
 		"playing": function(target, state) {
 			if (state){
@@ -430,25 +428,15 @@ AppModel.extendTo(SeesuApp, {
 			});
 		}
 
-
-
-
-
-
 		var addBrowserView = function(Constr, name, opts) {
-			var view = new Constr();
-
-
 			var mpx = _this.connectMPX();
 
-
-			mpx.addView(view, name);
-
-			view.init({
+			var view = new Constr({
 				mpx: mpx
 			}, opts);
-			view.requestAll();
 
+			mpx.addView(view, name);
+			view.requestAll();
 		};
 
 		//var ext_view;
@@ -458,8 +446,6 @@ AppModel.extendTo(SeesuApp, {
 			this.opera_ext_b = window.opera_extension_button;
 			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: window.opera_extension_button});
 		}
-
-
 
 		setTimeout(function(){
 			_this.checkStats();

@@ -4,8 +4,7 @@ function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct) {
 var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
-var SongcardPage = function() {};
-coct.SPView.extendTo(SongcardPage, {
+var SongcardPage = spv.inh(coct.SPView, {}, {
 	base_tree: {
 		sample_name: 'songcard_page',
 		children_by_selector: [{
@@ -24,8 +23,7 @@ coct.SPView.extendTo(SongcardPage, {
 	}
 });
 
-var FanPreview = function() {};
-pv.View.extendTo(FanPreview, {
+var FanPreview = spv.inh(pv.View, {}, {
 	'compx-can_use_image':{
 		depends_on: ['vis_image_loaded', 'selected_image'],
 		fn: function(vis_image_loaded, selected_image) {
@@ -54,14 +52,13 @@ pv.View.extendTo(FanPreview, {
 	}
 });
 
-var FansList = function() {};
-pv.View.extendTo(FansList, {
+var FansList = spv.inh(pv.View, {}, {
 	children_views: {
 		list_items: FanPreview
 	}
 });
 
-var selected = pv.View.extendTo(function selectedListening() {}, {
+var selected = spv.inh(pv.View, {}, {
 	children_views: {
 		auth_part: coct.SoftVkLoginUI
 	},
@@ -70,8 +67,7 @@ var selected = pv.View.extendTo(function selectedListening() {}, {
 	},
 });
 
-var SongcardController = function() {};
-pv.View.extendTo(SongcardController, {
+var SongcardController = spv.inh(pv.View, {}, {
 	dom_rp: true,
 	children_views:{
 		artist: ArtcardUI.ArtistInSongConstroller,

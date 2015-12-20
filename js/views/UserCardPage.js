@@ -1,9 +1,8 @@
-define(['pv', 'jquery', './coct', './uacq', 'env'], function(pv, $, coct, uacq, env) {
+define(['pv', 'jquery', './coct', './uacq', 'env', 'spv'], function(pv, $, coct, uacq, env, spv) {
 "use strict";
 var app_env = env;
 
-var UserCardPage = function(){};
-coct.PageView.extendTo(UserCardPage, {
+var UserCardPage = spv.inh(coct.PageView, {}, {
 	base_tree: {
 		sample_name: 'user_page'
 
@@ -23,8 +22,7 @@ coct.PageView.extendTo(UserCardPage, {
 	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
 });
 
-var LfmUsercardPageView = function() {};
-pv.View.extendTo(LfmUsercardPageView, {
+var LfmUsercardPageView = spv.inh(pv.View, {}, {
 	base_tree: {
 		sample_name: 'lfm_user_page'
 	},
@@ -39,8 +37,7 @@ pv.View.extendTo(LfmUsercardPageView, {
 });
 
 
-var VkUsercardPageView = function() {};
-pv.View.extendTo(VkUsercardPageView, {
+var VkUsercardPageView = spv.inh(pv.View, {}, {
 	base_tree: {
 		sample_name: 'vk_user_page'
 	},
@@ -50,8 +47,7 @@ pv.View.extendTo(VkUsercardPageView, {
 	}
 });
 
-var VkFriendPreview = function() {};
-pv.View.extendTo(VkFriendPreview, {
+var VkFriendPreview = spv.inh(pv.View, {}, {
 	tpl_events: {
 		open_link: function(e, node) {
 			e.preventDefault();
@@ -62,8 +58,7 @@ pv.View.extendTo(VkFriendPreview, {
 	}
 });
 
-var VkUsersPageView = function() {};
-pv.View.extendTo(VkUsersPageView, {
+var VkUsersPageView = spv.inh(pv.View, {}, {
 	base_tree: {
 		sample_name: 'vk_users_page'
 	},

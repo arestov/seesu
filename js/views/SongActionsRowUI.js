@@ -1,18 +1,7 @@
 define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
-var localize = app_serv.localize;
 var pvUpdate = pv.update;
-
-var PlaylistAddSearchCtr = function() {};
-pv.View.extendTo(PlaylistAddSearchCtr, {
-	base_tree: {
-		sample_name: 'song_acting_playlist_add'
-	}
-});
-
-
-var ShareSearchSection = function() {};
-pv.View.extendTo(ShareSearchSection, {
+var ShareSearchSection = spv.inh(pv.View, {}, {
 
 	toggleVisState: function(state, boolen) {
 		var new_value;
@@ -38,8 +27,7 @@ pv.View.extendTo(ShareSearchSection, {
 });
 
 
-var VkShareSectionView = function() {};
-ShareSearchSection.extendTo(VkShareSectionView, {
+var VkShareSectionView = spv.inh(ShareSearchSection, {}, {
 	children_views:{
 		vk_auth: etc_views.VkLoginUI
 	},
@@ -51,13 +39,11 @@ ShareSearchSection.extendTo(VkShareSectionView, {
 	},
 });
 
-var LFMShareSectionView = function() {};
-ShareSearchSection.extendTo(LFMShareSectionView, {
+var LFMShareSectionView = spv.inh(ShareSearchSection, {}, {
 
 });
 
-var ShareSearchCtr = function() {};
-pv.View.extendTo(ShareSearchCtr, {
+var ShareSearchCtr = spv.inh(pv.View, {}, {
 	children_views:{
 		'lfm_auth': etc_views.LfmLoginView
 
@@ -75,8 +61,7 @@ pv.View.extendTo(ShareSearchCtr, {
 
 
 
-var ShareRowUI = function(){};
-pv.View.extendTo(ShareRowUI, {
+var ShareRowUI = spv.inh(pv.View, {}, {
 	dom_rp: true,
 	children_views: {
 
@@ -123,8 +108,7 @@ pv.View.extendTo(ShareRowUI, {
 
 });
 
-var SongActPlaylistingUI = function() {};
-pv.View.extendTo(SongActPlaylistingUI, {
+var SongActPlaylistingUI = spv.inh(pv.View, {}, {
 	'compx-need_creation_button':{
 		depends_on: ['query', 'has_full_match'],
 		fn: function(query, has_full_match) {
@@ -145,8 +129,7 @@ pv.View.extendTo(SongActPlaylistingUI, {
 
 
 
-var LoveRowUI = function(){};
-pv.View.extendTo(LoveRowUI, {
+var LoveRowUI = spv.inh(pv.View, {}, {
 	children_views: {
 		lfm_loveit: etc_views.LfmLoveItView
 	},
@@ -156,8 +139,7 @@ pv.View.extendTo(LoveRowUI, {
 	}
 });
 
-var ScrobbleRowUI = function(){};
-pv.View.extendTo(ScrobbleRowUI, {
+var ScrobbleRowUI = spv.inh(pv.View, {}, {
 	children_views: {
 		lfm_scrobble: etc_views.LfmScrobbleView
 	},
@@ -172,8 +154,7 @@ pv.View.extendTo(ScrobbleRowUI, {
 
 
 
-var SongActionsRowUI = function() {};
-etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
+var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
 	dom_rp: true,
 	bindBase: function(){
 		this._super();
