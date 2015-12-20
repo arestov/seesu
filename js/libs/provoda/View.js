@@ -147,6 +147,20 @@ var initView = function(view_otps, opts){
 	return target;
 };
 
+var onPropsExtend = function(props, original) {
+	if (props.tpl_events) {
+		this.tpl_events = {};
+		cloneObj(this.tpl_events, original.tpl_events);
+		cloneObj(this.tpl_events, props.tpl_events);
+	}
+
+	if (props.tpl_r_events) {
+		this.tpl_r_events = {};
+		cloneObj(this.tpl_r_events, original.tpl_r_events);
+		cloneObj(this.tpl_r_events, props.tpl_r_events);
+	}
+};
+
 function View() {}
 StatesEmitter.extendTo(View, {
 	init: initView,
@@ -176,21 +190,7 @@ StatesEmitter.extendTo(View, {
 			bwlev_view.RPCLegacy('followTo', md_id);
 		}
 	},
-	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
-		if (props.tpl_events) {
-			this.tpl_events = {};
-			cloneObj(this.tpl_events, original.tpl_events);
-			cloneObj(this.tpl_events, props.tpl_events);
-		}
-
-		if (props.tpl_r_events) {
-			this.tpl_r_events = {};
-			cloneObj(this.tpl_r_events, original.tpl_r_events);
-			cloneObj(this.tpl_r_events, props.tpl_r_events);
-		}
-
-
-	}),
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend),
 	'stch-map_slice_view_sources': function(target, state) {
 		if (state) {
 			if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {
