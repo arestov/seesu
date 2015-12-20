@@ -72,9 +72,10 @@ var stackEmergency = function(fn, eventor, args) {
 var views_counter = 1;
 var way_points_counter = 0;
 
-var initView = function(view_otps, opts){
-	var target = this;
+var initView = function(target, view_otps, opts){
 	target._lbr = new ViewLabour();
+
+	target.used_data_structure = view_otps.used_data_structure || target.used_data_structure;
 
 	target.req_order_field = null;
 	target.tpl = null;
@@ -107,7 +108,6 @@ var initView = function(view_otps, opts){
 		target.opts = opts;
 	}
 
-	this._super();
 	target.children = [];
 	target.children_models = {};
 	target.view_parts = null;
@@ -144,7 +144,6 @@ var initView = function(view_otps, opts){
 
 	prsStCon.connect.parent(target);
 	prsStCon.connect.root(target);
-	return target;
 };
 
 var onPropsExtend = function(props, original) {
@@ -161,9 +160,18 @@ var onPropsExtend = function(props, original) {
 	}
 };
 
-function View() {}
-StatesEmitter.extendTo(View, {
+var View = spv.inh(StatesEmitter, {
+	naming: function(fn) {
+		return function View(view_otps, opts) {
+			fn(this, view_otps, opts);
+		};
+	},
 	init: initView,
+	skip_first_extend: true,
+	onExtend: function(md, props, original, params) {
+		onPropsExtend.call(md, props, original, params);
+	}
+}, {
 	handleTemplateRPC: function(method) {
 		if (arguments.length === 1) {
 			var bwlev_view = $v.getBwlevView(this);
@@ -618,7 +626,7 @@ StatesEmitter.extendTo(View, {
 				throw new Error('there is no View for ' + address_opts.nesting_name);
 			}
 
-			view = new Constr();
+			var used_data_structure;
 
 			if (this.used_data_structure) {
 
@@ -633,18 +641,24 @@ StatesEmitter.extendTo(View, {
 					//debugger;
 				}
 
-				view.used_data_structure = sub_tree;
+				used_data_structure = sub_tree;
 			}
 
-
-			view.init({
+			var view_otps = {
 				mpx: mpx,
 				parent_view: this,
 				root_view: this.root_view,
 				location_name: child_name + '-' + view_space,
 				nesting_space: view_space,
-				nesting_name: child_name
-			}, opts);
+				nesting_name: child_name,
+				used_data_structure: used_data_structure
+			};
+
+			view = new Constr(view_otps, opts);
+			if (view.init) {
+				view.init(view_otps, opts);
+			}
+
 			mpx.addView(view, location_id);
 			this.addChildView(view, child_name);
 			return view;
