@@ -534,11 +534,30 @@ var modelInit = (function() {
 	};
 })();
 
+var onPropsExtend = (function(){
+	var check = /initStates/gi;
+	return function(props, original, params) {
+		var init = params && params.init || props.init;
+		if (init) {
+			if (!this.hasOwnProperty('network_data_as_states')) {
+				this.network_data_as_states = false;
+			}
+			if (init.toString().search(check) != -1) {
+				this.manual_states_init = true;
+			}
+		}
+	};
+})();
+
 var Model = spv.inh(StatesEmitter, {
 	naming: function(fn) {
 		return function Model(opts, data, params, more, states) {
 			fn(this, opts, data, params, more, states);
 		};
+	},
+	skip_first_extend: true,
+	onExtend: function(md, props, original, params) {
+		onPropsExtend.call(md, props, original, params);
 	},
 	init: modelInit,
 	props: modelProps
@@ -988,18 +1007,7 @@ add({
 	},
 	network_data_as_states: true,
 	onExtend: (function() {
-		var check = /initStates/gi;
-		return spv.precall(StatesEmitter.prototype.onExtend, function(props, original) {
-			if (props.init) {
-				if (!this.hasOwnProperty('network_data_as_states')) {
-					this.network_data_as_states = false;
-				}
-
-				if (props.init.toString().search(check) != -1) {
-					this.manual_states_init = true;
-				}
-			}
-		});
+		return spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend);
 	})(),
 	getConstrByPathTemplate: function(app, path_template) {
 		return initDeclaredNestings.getConstrByPath(app, this, path_template);
