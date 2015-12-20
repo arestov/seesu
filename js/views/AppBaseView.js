@@ -102,10 +102,7 @@ var BrowserAppRootView = spv.inh(pv.BaseRootView, {}, {
 
 var sync_opt = {sync_tpl: true};
 
-var AppBaseView = function() {};
-AppBaseView.BrowserAppRootView = BrowserAppRootView;
-AppBaseView.viewOnLevelP = viewOnLevelP;
-BrowserAppRootView.extendTo(AppBaseView, {
+var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 	location_name: 'root_view',
 	createDetails: function() {
 		this._super();
@@ -595,10 +592,10 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	'collch-$spec_det-map_slice': {
 		is_wrapper_parent: '^',
 		space: 'detailed',
-		place: AppBaseView.viewOnLevelP
+		place: viewOnLevelP
 	},
 	'collch-$spec_common-map_slice': {
-		place: AppBaseView.viewOnLevelP
+		place: viewOnLevelP
 	},
 	'sel-coll-map_slice': '$spec_common-map_slice',
 	'coll-prio-map_slice': function(array) {
@@ -699,7 +696,7 @@ BrowserAppRootView.extendTo(AppBaseView, {
 			target.removePageOverviewMark(old_md.map_level_num-1);
 		}
 
-*/
+		*/
 
 
 
@@ -764,9 +761,10 @@ BrowserAppRootView.extendTo(AppBaseView, {
 	}
 
 });
+AppBaseView.BrowserAppRootView = BrowserAppRootView;
+AppBaseView.viewOnLevelP = viewOnLevelP;
 
-var WebAppView = function() {};
-AppBaseView.extendTo(WebAppView, {
+var WebAppView = spv.inh(AppBaseView, {}, {
 	createDetails: function() {
 		this._super();
 		this.root_view_uid = Date.now();
@@ -902,9 +900,7 @@ AppBaseView.extendTo(WebAppView, {
 });
 AppBaseView.WebAppView = WebAppView;
 
-var WebComplexTreesView = function() {};
-
-AppBaseView.WebAppView.extendTo(WebComplexTreesView, {
+var WebComplexTreesView = spv.inh(WebAppView, {}, {
 	'collch-current_mp_md': function(name, value) {
 		pv.update(this, 'current_mp_md', value._provoda_id);
 	},
