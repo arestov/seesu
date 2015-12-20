@@ -62,7 +62,7 @@ window._gaq = window._gaq || [];
 		}
 	}
 	requirejs(['su'], function() {
-		
+
 		//app thread;
 	});
 	if (need_ui){
@@ -77,7 +77,7 @@ window._gaq = window._gaq || [];
 			views_proxies.addSpaceById(proxies_space, md);
 			var mpx = views_proxies.getMPX(proxies_space, md);
 
-			
+
 			md.updateLVTime();
 
 			(function() {
