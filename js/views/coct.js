@@ -12,8 +12,7 @@ var SoftVkLoginUI = spv.inh(etc_views.VkLoginUI, {}, {
 
 
 
-var ListPreview = function() {};
-pv.View.extendTo(ListPreview, {
+var ListPreview = spv.inh(pv.View, {}, {
 	useBase: function(node) {
 		this.c = node;
 		this.bindBase();
@@ -43,8 +42,7 @@ pv.View.extendTo(ListPreview, {
 	}
 });
 
-var ListPreviewLine = function() {};
-pv.View.extendTo(ListPreviewLine, {
+var ListPreviewLine = spv.inh(pv.View, {}, {
 	base_tree: {
 		sample_name: 'preview_line'
 	},
@@ -60,8 +58,7 @@ pv.View.extendTo(ListPreviewLine, {
 });
 
 
-var LiListsPreview = function() {};
-ListPreview.extendTo(LiListsPreview, {
+var LiListsPreview = spv.inh(ListPreview, {}, {
 	createBase: function() {
 		this._super();
 		this.c.addClass('tag_artists-preview');
@@ -73,8 +70,7 @@ ListPreview.extendTo(LiListsPreview, {
 });
 
 
-var SPView = function() {};
-pv.View.extendTo(SPView, {
+var SPView = spv.inh(pv.View, {}, {
 	'compx-lvmp_show': [
 		['^vmp_show'],
 		function(vmp_show) {
@@ -89,8 +85,7 @@ pv.View.extendTo(SPView, {
 	}
 });
 
-var PageView = function() {};
-SPView.extendTo(PageView, {
+var PageView = spv.inh(SPView, {}, {
 	'stch-vmp_show': function(target, state) {
 		target.c.toggleClass('hidden', !state);
 	},
@@ -104,13 +99,11 @@ SPView.extendTo(PageView, {
 
 
 
-var ArtistsListPreviewLine = function() {};
-ListPreviewLine.extendTo(ArtistsListPreviewLine, {
+var ArtistsListPreviewLine = spv.inh(ListPreviewLine, {}, {
 	extended_viewing: true
 });
 
-var ListSimplePreview = function() {};
-ListPreview.extendTo(ListSimplePreview, {
+var ListSimplePreview = spv.inh(ListPreview, {}, {
 	children_views: {
 		preview_list: ListPreviewLine
 
@@ -138,15 +131,13 @@ ListPreview.extendTo(ListSimplePreview, {
 	}
 });
 
-var ImagedListPreview = function() {};
-ListSimplePreview.extendTo(ImagedListPreview, {
+var ImagedListPreview = spv.inh(ListSimplePreview, {}, {
 	children_views: {
 		preview_list: ArtistsListPreviewLine
 	}
 });
 
-var ItemOfLL = function() {};
-ListPreview.extendTo(ItemOfLL, {
+var ItemOfLL = spv.inh(ListPreview, {}, {
 	children_views: {
 		preview_list: ArtistsListPreviewLine,
 		lists_list: ListPreviewLine
@@ -162,16 +153,14 @@ ListPreview.extendTo(ItemOfLL, {
 });
 
 
-var AuthListPreview = function() {};
-ImagedListPreview.extendTo(AuthListPreview, {
+var AuthListPreview = spv.inh(ImagedListPreview, {}, {
 	base_tree: {
 		sample_name: 'preview_area'
 	}
 });
 
 
-var SimpleListOfListsView = function() {};
-PageView.extendTo(SimpleListOfListsView, {
+var SimpleListOfListsView = spv.inh(PageView, {}, {
 	base_tree: {
 		sample_name: 'lilists'
 	},
@@ -181,8 +170,7 @@ PageView.extendTo(SimpleListOfListsView, {
 	'collch-lists_list': 'tpl.ancs.lilists_con'
 });
 
-var ListOfListsView = function() {};
-PageView.extendTo(ListOfListsView, {
+var ListOfListsView = spv.inh(PageView, {}, {
 	base_tree: {
 		sample_name: 'lilists'
 	},
@@ -195,8 +183,7 @@ PageView.extendTo(ListOfListsView, {
 
 
 
-var AlbumsListPreviewItem = function() {};
-pv.View.extendTo(AlbumsListPreviewItem, {
+var AlbumsListPreviewItem = spv.inh(pv.View, {}, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
@@ -221,7 +208,7 @@ pv.View.extendTo(AlbumsListPreviewItem, {
 	}
 });
 
-var ImageLoader = pv.View.extendTo(function ImageLoader(){}, {
+var ImageLoader = spv.inh(pv.View, {}, {
 	'stch-selected_image': function(target, lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
@@ -248,8 +235,7 @@ var ImageLoader = pv.View.extendTo(function ImageLoader(){}, {
 });
 
 
-var BigAlbumPreview = function() {};
-pv.View.extendTo(BigAlbumPreview, {
+var BigAlbumPreview = spv.inh(pv.View, {}, {
 	base_tree: {
 		sample_name: 'alb_prev_big'
 	},
@@ -275,8 +261,7 @@ pv.View.extendTo(BigAlbumPreview, {
 	}
 });
 
-var AlbumsListView = function() {};
-PageView.extendTo(AlbumsListView, {
+var AlbumsListView = spv.inh(PageView, {}, {
 	base_tree: {
 		sample_name: 'albums_page'
 	},
@@ -287,8 +272,7 @@ PageView.extendTo(AlbumsListView, {
 
 });
 
-var AlbumsListPreview = function() {};
-ItemOfLL.extendTo(AlbumsListPreview, {
+var AlbumsListPreview = spv.inh(ItemOfLL, {}, {
 	createBase: function() {
 		this._super();
 		this.tpl.ancs.listc.addClass('albums_previews');
@@ -312,8 +296,7 @@ var tagListChange = function(target, array) {
 	}
 	target.tpl.ancs.listc.append(df);
 };
-var TagsListPreview = function() {};
-ListPreview.extendTo(TagsListPreview, {
+var TagsListPreview = spv.inh(ListPreview, {}, {
 	'stch-simple_tags_list': tagListChange,
 	createTagLink: function(name) {
 		return $('<span></span>').text(name);
@@ -322,15 +305,13 @@ ListPreview.extendTo(TagsListPreview, {
 
 
 
-var VKPostsView = function() {};
-PageView.extendTo(VKPostsView, {
+var VKPostsView = spv.inh(PageView, {}, {
 	base_tree: {
 		sample_name: 'vk_posts_page'
 	}
 });
 
-var AppNewsView = function() {};
-PageView.extendTo(AppNewsView, {
+var AppNewsView = spv.inh(PageView, {}, {
 	base_tree: {
 		sample_name: 'app-news'
 	}
