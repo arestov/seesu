@@ -1,9 +1,7 @@
-define(['pv'], function(pv) {
+define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 
-var baseNavUI = function() {};
-
-pv.View.extendTo( baseNavUI, {
+var baseNavUI = spv.inh(pv.View, {}, {
 	dom_rp: true,
 	base_tree: {
 		sample_name: 'common-nav'
@@ -24,15 +22,13 @@ pv.View.extendTo( baseNavUI, {
 	}
 });
 
-var StartPageNavView = function() {};
-baseNavUI.extendTo(StartPageNavView, {
+var StartPageNavView = spv.inh(baseNavUI, {}, {
 	base_tree: {
 		sample_name: 'start_page-nav'
 	}
 });
 
-var investgNavUI = function() {};
-baseNavUI.extendTo(investgNavUI, {
+var investgNavUI = spv.inh(baseNavUI, {}, {
 	base_tree: {
 		sample_name: 'search_page-nav'
 	}

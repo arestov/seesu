@@ -59,8 +59,7 @@ LevContainer.prototype = {
 };
 
 
-var BrowserAppRootView = function() {};
-pv.BaseRootView.extendTo(BrowserAppRootView, {
+var BrowserAppRootView = spv.inh(pv.BaseRootView, {}, {
 	dom_rp: true,
 	createDetails: function() {
 		this.root_view = this;

@@ -1,4 +1,4 @@
-define(['pv', 'app_serv', 'jquery'], function(pv, app_serv, $) {
+define(['pv', 'app_serv', 'jquery', 'spv'], function(pv, app_serv, $, spv) {
 "use strict";
 var pvUpdate = pv.update;
 var localize = app_serv.localize;
@@ -96,15 +96,7 @@ contextRow.prototype = {
 	}
 };
 
-
-var AuthBlockView = function() {};
-pv.View.extendTo(AuthBlockView, {
-
-});
-
-var VkLoginUI = function() {};
-
-pv.View.extendTo(VkLoginUI, {
+var VkLoginUI = spv.inh(pv.View, {}, {
 	state_change: {
 		'data_wait': function(target, state) {
 			if (state){
@@ -174,9 +166,7 @@ pv.View.extendTo(VkLoginUI, {
 });
 
 
-var LfmLoginView = function() {};
-
-pv.View.extendTo(LfmLoginView, {
+var LfmLoginView = spv.inh(pv.View, {}, {
 	'stch-has_session': function(target, state){
 		if (!state){
 			target.c.removeClass("hidden");
@@ -221,8 +211,7 @@ pv.View.extendTo(LfmLoginView, {
 	}
 });
 
-var LfmLoveItView = function() {};
-LfmLoginView.extendTo(LfmLoveItView, {
+var LfmLoveItView = spv.inh(LfmLoginView, {}, {
 	createBase: function() {
 		this._super();
 		var _this = this;
@@ -253,8 +242,7 @@ LfmLoginView.extendTo(LfmLoveItView, {
 });
 
 
-var LfmScrobbleView = function(){};
-LfmLoginView.extendTo(LfmScrobbleView, {
+var LfmScrobbleView = spv.inh(LfmLoginView, {}, {
 	createBase: function(){
 		this._super();
 		this.scrobbling_switchers = this.root_view.getSample('lfm_scrobling').appendTo(this.c);
@@ -290,8 +278,7 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 
 
 
-var ActionsRowUI = function(){};
-pv.View.extendTo(ActionsRowUI, {
+var ActionsRowUI = spv.inh(pv.View, {}, {
 	bindBase: function() {
 	},
 	getCurrentButton: function() {

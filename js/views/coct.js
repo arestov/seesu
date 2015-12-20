@@ -3,8 +3,7 @@ define(['spv', 'pv', 'jquery', './etc_views'], function(spv, pv, $, etc_views) {
 
 var pvUpdate = pv.update;
 
-var SoftVkLoginUI = function() {};
-etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
+var SoftVkLoginUI = spv.inh(etc_views.VkLoginUI, {}, {
 	createBase: function() {
 		this._super();
 		this.c.removeClass('attention-focuser');

@@ -1,8 +1,7 @@
-define(['pv', 'jquery'], function(pv) {
+define(['pv', 'spv'], function(pv, spv) {
 "use strict";
 
-var ArtistListView = function() {};
-pv.View.extendTo(ArtistListView, {
+var ArtistListView = spv.inh(pv.View, {}, {
 	base_tree: {
 		sample_name: 'artists_list'
 	}
