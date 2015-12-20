@@ -171,11 +171,12 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 					return result;
 				}
 				for (var i = 0; i < array.length; i++) {
-					result += (array[i].name || '');
-					if (array[i].join){
-						result += (" " + array[i].join + " ");
+					var cur = array[i];
+					var prev = array[i-1];
+					if (prev && prev.join){
+						result += (" " + prev.join + " ");
 					}
-
+					result += (cur.name || '');
 				}
 				return result;
 			};
