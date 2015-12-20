@@ -6,9 +6,7 @@ var localize = app_serv.localize;
 var AlbumsList = ArtCard.AlbumsList;
 var ArtistsList = ArtCard.ArtistsList;
 
-var SimilarTags = function() {};
-
-LoadableList.TagsList.extendTo(SimilarTags, {
+var SimilarTags = spv.inh(LoadableList.TagsList, {}, {
 	'nest_req-tags_list': [
 		[{
 			is_array: true,
@@ -26,9 +24,7 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 	]
 });
 
-var TagAlbums = function() {};
-
-AlbumsList.extendTo(TagAlbums, {
+var TagAlbums = spv.inh(AlbumsList, {}, {
 
 	page_limit: 50,
 	'nest_req-albums_list': [
@@ -55,8 +51,7 @@ function getHypeTagName(tag_name) {
 }
 
 
-var HypemTagPlaylist = function() {};
-SongsList.HypemPlaylist.extendTo(HypemTagPlaylist, {
+var HypemTagPlaylist = spv.inh(SongsList.HypemPlaylist, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
 		['hypem', 'get', function(opts) {
@@ -65,27 +60,23 @@ SongsList.HypemPlaylist.extendTo(HypemTagPlaylist, {
 		}]
 	]
 });
-var Fav25HypemTagSongs = function() {};
-HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
+var Fav25HypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
 	send_params: {
 		fav_from: 25,
 		fav_to: 250
 	}
 });
-var Fav250HypemTagSongs = function() {};
-HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
+var Fav250HypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
 	send_params: {
 		fav_from: 250,
 		fav_to: 100000
 	}
 });
 
-var AllHypemTagSongs = function() {};
-HypemTagPlaylist.extendTo(AllHypemTagSongs, {
+var AllHypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
 });
 
-var FreeTagSongs = function() {};
-SongsList.extendTo(FreeTagSongs, {
+var FreeTagSongs = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		[
 			{
@@ -119,8 +110,7 @@ SongsList.extendTo(FreeTagSongs, {
 
 
 
-var TopTagSongs = function() {};
-SongsList.extendTo(TopTagSongs, {
+var TopTagSongs = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
 		['lfm', 'get', function() {
@@ -133,8 +123,7 @@ SongsList.extendTo(TopTagSongs, {
 });
 
 
-var SongsLists = function() {};
-BrowseMap.Model.extendTo(SongsLists, {
+var SongsLists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list': [['_', 'free', /*'trending_exfm', 'explore_exfm',*/
 			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], true],
 	model_name: 'tag_songs',
@@ -171,8 +160,7 @@ BrowseMap.Model.extendTo(SongsLists, {
 });
 
 
-var WeekTagArtists = function() {};
-ArtistsList.extendTo(WeekTagArtists, {
+var WeekTagArtists = spv.inh(ArtistsList, {}, {
 
 	page_limit: 130,
 	getRqData: function(paging_opts) {
@@ -189,8 +177,7 @@ ArtistsList.extendTo(WeekTagArtists, {
 	]
 });
 
-var TagTopArtists = function() {};
-ArtistsList.extendTo(TagTopArtists, {
+var TagTopArtists = spv.inh(ArtistsList, {}, {
 	page_limit: 130,
 	getRqData: function(paging_opts) {
 		return {
@@ -206,8 +193,7 @@ ArtistsList.extendTo(TagTopArtists, {
 	]
 });
 
-var ArtistsLists = function() {};
-BrowseMap.Model.extendTo(ArtistsLists, {
+var ArtistsLists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list': [['_', 'week'], true],
 	model_name: 'tag_artists',
 	sub_pa: {
@@ -223,8 +209,7 @@ BrowseMap.Model.extendTo(ArtistsLists, {
 });
 
 
-var TagPage = function() {};
-BrowseMap.Model.extendTo(TagPage, {
+var TagPage = spv.inh(BrowseMap.Model, {}, {
 	'nest-artists_lists': ['artists'],
 	'nest-songs_list': ['songs'],
 	'nest-albums_list': ['albums'],
@@ -258,21 +243,17 @@ BrowseMap.Model.extendTo(TagPage, {
 });
 
 
-var TagsList = function() {};
-LoadableList.TagsList.extendTo(TagsList, {
-	init: function() {
-		this._super.apply(this, arguments);
-
+var TagsList = spv.inh(LoadableList.TagsList, {
+	init: function(target) {
 		if (lastfm_data.toptags) {
-			this.setPreview(lastfm_data.toptags.map(function(el) {
+			target.setPreview(lastfm_data.toptags.map(function(el) {
 				return {
 					name: el
 				};
 			}));
-
 		}
-
-	},
+	}
+}, {
 	'nest_req-tags_list': [
 		[{
 			is_array: true,
@@ -293,9 +274,7 @@ LoadableList.TagsList.extendTo(TagsList, {
 		var page_name = sub_path_string;//spv.capitalize(sub_path_string);
 		if (!this.sub_pages[page_name]){
 			var Constr = this.getSPC();
-			var instance = new Constr();
-			this.sub_pages[page_name] = instance;
-			return [instance, {
+			var instance = this.initSi(Constr, {
 				states: {
 					nav_title: localize('Tag') + ' ' + page_name,
 					url_part: '/' + page_name
@@ -305,7 +284,10 @@ LoadableList.TagsList.extendTo(TagsList, {
 				}
 
 
-			}];
+			});
+			// var instance = new Constr();
+			this.sub_pages[page_name] = instance;
+			// return [instance, ];
 		}
 		return this.sub_pages[page_name];
 
