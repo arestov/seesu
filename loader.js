@@ -81,12 +81,11 @@ window._gaq = window._gaq || [];
 			md.updateLVTime();
 
 			(function() {
-				var view = new AppView();
-				mpx.addView(view, 'root');
-				view.init({
+				var view = new AppView({
 					mpx: mpx,
 					proxies_space: proxies_space
 				}, {d: window.document, can_die: can_die});
+				mpx.addView(view, 'root');
 				view.onDie(function() {
 					//views_proxies.removeSpaceById(proxies_space);
 					view = null;
@@ -96,12 +95,11 @@ window._gaq = window._gaq || [];
 
 
 			(function() {
-				var exposed_view = new AppView.AppExposedView();
-				mpx.addView(exposed_view, 'exp_root');
-				exposed_view.init({
+				var exposed_view = new AppView.AppExposedView({
 					mpx: mpx,
 					proxies_space: proxies_space
 				}, {d: window.document, can_die: can_die, usual_flow: true});
+				mpx.addView(exposed_view, 'exp_root');
 				exposed_view.requestAll();
 			})();
 

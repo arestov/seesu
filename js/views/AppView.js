@@ -10,8 +10,7 @@ lul, SongcardPage, AppBaseView, WPBox, view_serv) {
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 
-var AppExposedView = function() {};
-AppBaseView.BrowserAppRootView.extendTo(AppExposedView, {
+var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	location_name: 'exposed_root_view',
 	'stch-doc_title': function(target, title) {
 		target.d.title = title || "";
@@ -106,8 +105,7 @@ var map_slice_by_model = {
 };
 
 
-function BrowseLevView() {}
-pv.View.extendTo(BrowseLevView, {
+var BrowseLevView = spv.inh(pv.View, {}, {
 	children_views_by_mn: {
 		pioneer: map_slice_by_model
 	},
@@ -158,8 +156,7 @@ pv.View.extendTo(BrowseLevView, {
 });
 
 
-function BrowseLevNavView() {}
-pv.View.extendTo(BrowseLevNavView, {
+var BrowseLevNavView = spv.inh(pv.View, {}, {
 	base_tree: {
 		sample_name: 'brow_lev_nav'
 	},
@@ -176,8 +173,7 @@ pv.View.extendTo(BrowseLevNavView, {
 	}
 });
 
-var AppView = function(){};
-AppBaseView.WebComplexTreesView.extendTo(AppView, {
+var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 	/*children_views_by_mn: {
 		navigation: {
 			$default: nav.baseNavUI,
