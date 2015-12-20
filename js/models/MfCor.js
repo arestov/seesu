@@ -3,23 +3,16 @@ function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, Loa
 "use strict";
 var localize = app_serv.localize;
 
-var MFCorVkLogin = function() {};
-comd.VkLoginB.extendTo(MFCorVkLogin, {
-	init: function(opts) {
-		this._super(opts, {
-				desc:
-					(
-						//this.files_investg && this.files_investg.state('has_mp3_files') ?
-						//localize('to-find-better') :
-						localize("to-find-and-play")
-					)  +
-					" " +  localize('music-files-from-vk')
-			}, {
-				open_opts: {settings_bits: 8},
-				auth: opts.map_parent.app.vk_auth,
-				notf: opts.map_parent.sf_notf,
-				notify_readed: opts.map_parent.vk_ntf_readed,
-			});
+var MFCorVkLogin = spv.inh(comd.VkLoginB, {}, {
+	config: {
+		desc: localize("to-find-and-play")  + " " +  localize('music-files-from-vk'),
+		open_opts: {settings_bits: 8},
+		getNotf: function(target) {
+			return {
+				notf: target.map_parent.sf_notf,
+				readed: target.map_parent.vk_ntf_readed
+			};
+		}
 	}
 });
 

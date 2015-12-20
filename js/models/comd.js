@@ -408,51 +408,42 @@ var BaseCRow = spv.inh(pv.Model, {
 
 
 var VkLoginB = spv.inh(pv.Model, {
-	init: function(target, opts, data, params) {
-		target.auth =
-			(params && params.auth) ||
-			(target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.auth) ||
-			opts.auth ||
-			target.app.vk_auth;
-
-		target.pmd = (params && params.pmd) || (target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.pmd) || opts.pmd;
-
+	init: function(target) {
+		target.auth = target.app.auths.vk;
 		target.updateNesting('auth', target.auth);
 
 		var target_bits;
 
-		if (params) {
-			if (params.open_opts){
-				target.open_opts = params.open_opts;
-				if (target.open_opts.settings_bits){
-					target_bits = target.open_opts.settings_bits;
-				}
+		var config = target.config;
+
+		var open_opts = config && config.open_opts;
+		if (open_opts){
+			target.open_opts = open_opts;
+			if (target.open_opts.settings_bits){
+				target_bits = target.open_opts.settings_bits;
 			}
-			if (params.notf){
+		}
 
-				target.notf = params.notf;
-				target.notf.on('read', function(value) {
-					if (value == 'vk_audio_auth '){
-						pvUpdate(target, 'notify_readed', true);
-					}
+		var notf_args = config && config.getNotf && config.getNotf(target);
 
-				});
-
-				if (params.notify_readed){
+		if (notf_args) {
+			target.notf = notf_args.notf;
+			target.notf.on('read', function(value) {
+				if (value == 'vk_audio_auth '){
 					pvUpdate(target, 'notify_readed', true);
 				}
-				pvUpdate(target, 'has_notify_closer', true);
+
+			});
+
+			if (notf_args.readed){
+				pvUpdate(target, 'notify_readed', true);
 			}
+
+			pvUpdate(target, 'has_notify_closer', true);
 		}
 
-		if (data){
-
-			target.setRequestDesc(data.desc);
-
-
-		} else {
-			target.setRequestDesc(target.access_desc);
-		}
+		var desc = (config && config.desc) || target.access_desc;
+		target.setRequestDesc(desc);
 
 		if (target.auth.deep_sanbdox){
 			pvUpdate(target, 'deep_sandbox', true);

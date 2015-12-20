@@ -111,6 +111,11 @@ AppModel.extendTo(SeesuApp, {
 			display_type: app_env.tizen_app && 'mobile'
 		});
 
+		this.auths = {
+			lfm: this.lfm_auth,
+			vk: this.vk_auth
+		};
+
 		this.once("vk-site-api", function() {
 			window.documentScrollSizeChangeHandler = function(height){
 				window.VK.callMethod("resizeWindow", 800, Math.max(700, height));

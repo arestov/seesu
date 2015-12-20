@@ -30,19 +30,10 @@ var struserSuggest = spv.inh(invstg.BaseSuggest, {
 	}
 });
 
-var VKLoginFSearch = function() {};
-comd.VkLoginB.extendTo(VKLoginFSearch, {
+var VKLoginFSearch = spv.inh(comd.VkLoginB, {}, {
 	config: {
 		desc:  app_env.vkontakte ? localize('to-find-vk-friends') : localize("to-post-and-find-vk"),
 		open_opts: {settings_bits: 2}
-	},
-	init: function(opts) {
-		this._super(opts, {
-			desc: app_env.vkontakte ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
-		}, {
-			open_opts: {settings_bits: 2},
-			auth: opts.map_parent.app.vk_auth
-		});
 	}
 });
 

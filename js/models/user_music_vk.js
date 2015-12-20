@@ -5,8 +5,7 @@ var localize = app_serv.localize;
 var pvUpdate = pv.update;
 var cloneObj = spv.cloneObj;
 
-var VkAudioLogin = function() {};
-comd.VkLoginB.extendTo(VkAudioLogin, {
+var VkAudioLogin = spv.inh(comd.VkLoginB, {}, {
 	access_desc: localize('to-play-vk-audio'),
 	beforeRequest: function() {
 		var auth = this.getNesting('auth');
