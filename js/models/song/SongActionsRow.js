@@ -6,14 +6,12 @@ var localize = app_serv.localize;
 
 
 
-var LfmLoveIt = function() {};
-
-LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
-	init: function() {
-		this._super.apply(this, arguments);
-		this.song = this.map_parent.mo;
-		pv.update(this, 'active', true);
-	},
+var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
+	init: function(target) {
+		target.song = target.map_parent.mo;
+		pv.update(target, 'active', true);
+	}
+}, {
 	access_desc: localize('lastfm-loveit-access'),
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -48,11 +46,6 @@ var LoveRow = spv.inh(comd.BaseCRow, {
 	init: function(target){
 		target.actionsrow = target.map_parent;
 		target.mo = target.map_parent.map_parent;
-		target.nestings_opts = {
-			auth: target.app.lfm_auth,
-			pmd: target
-		};
-
 
 		var old_lit = null;
 		var hide_on_love = function() {
@@ -84,10 +77,6 @@ var LoveRow = spv.inh(comd.BaseCRow, {
 
 var ScrobbleRow = spv.inh(comd.BaseCRow, {
 	init: function(target){
-		target.nestings_opts = {
-			auth: target.app.lfm_auth,
-			pmd: target
-		};
 		target.actionsrow = target.map_parent;
 	}
 }, {

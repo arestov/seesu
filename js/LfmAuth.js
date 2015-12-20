@@ -5,18 +5,12 @@ var pvUpdate = pv.update;
 
 
 var LfmLogin = spv.inh(pv.Model, {
-	init: function(target, opts, data, params) {
-		target.auth =
-			(params && params.auth) ||
-			(target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.auth) ||
-			opts.auth ||
-			target.app.lfm_auth;
-
-		target.pmd = (params && params.pmd) || (target.map_parent && target.map_parent.nestings_opts && target.map_parent.nestings_opts.pmd) || opts.pmd;
+	init: function(target) {
+		target.auth = target.app.auths.lfm;
 
 		target.updateNesting('auth', target.auth);
 
-		var access_desc = (data && data.desc) || (target.map_parent && target.map_parent.access_desc) || target.access_desc;
+		var access_desc = target.access_desc;
 		target.setRequestDesc(access_desc);
 
 		if (target.auth.deep_sanbdox){

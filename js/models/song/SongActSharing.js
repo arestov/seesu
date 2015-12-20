@@ -356,18 +356,13 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 });
 
 
-var LfmSharingAuth = function() {};
-LfmAuth.LfmLogin.extendTo(LfmSharingAuth, {
+var LfmSharingAuth = spv.inh(LfmAuth.LfmLogin, {}, {
 	access_desc: localize('lastfm-sharing-access')
 });
 
 var StrusersRowSearch = spv.inh(invstg.Investigation, {
 	init: function(target) {
 		target.mo = target.map_parent.mo;
-		target.nestings_opts = {
-			auth: target.app.lfm_auth,
-			pmd: target
-		};
 	}
 }, {
 	skip_map_init: true,

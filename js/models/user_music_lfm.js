@@ -8,8 +8,7 @@ var localize = app_serv.localize;
 var pvUpdate = pv.update;
 var cloneObj = spv.cloneObj;
 //
-var UserCardLFMLogin = function() {};
-LfmAuth.LfmLogin.extendTo(UserCardLFMLogin, {
+var UserCardLFMLogin = spv.inh(LfmAuth.LfmLogin, {}, {
 	beforeRequest: function() {
 		var auth = this.getNesting('auth');
 		pvUpdate(auth, 'requested_by', this._provoda_id);
