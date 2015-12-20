@@ -256,14 +256,13 @@ var HModel = spv.inh(Model, {
 return HModel;
 }
 
-provoda.BaseRootView = function BaseRootView () {};
-provoda.View.extendTo(provoda.BaseRootView, {
+provoda.BaseRootView = spv.inh(provoda.View, {
+	preinit: function(target, opts, vopts) {
+		target.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
+	}
+}, {
 	_getCallsFlow: function() {
 		return this.calls_flow;
-	},
-	init: function(opts, vopts) {
-		this.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
-		return this._super.apply(this, arguments);
 	},
 	remove: function() {
 		this.calls_flow = null;
