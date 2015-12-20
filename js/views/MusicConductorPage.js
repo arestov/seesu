@@ -1,8 +1,7 @@
-define(['./coct'], function(coct) {
+define(['./coct', 'spv'], function(coct, spv) {
 "use strict";
 
-var MusicConductorPage = function() {};
-coct.PageView.extendTo(MusicConductorPage, {
+var MusicConductorPage = spv.inh(coct.PageView, {}, {
 	base_tree: {
 		sample_name: 'music_conductor_page'
 	}

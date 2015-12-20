@@ -1,7 +1,6 @@
-define(['pv', 'jquery', 'app_serv', './uacq'], function(pv, $, app_serv, uacq) {
+define(['pv', 'jquery', 'app_serv', './uacq', 'spv'], function(pv, $, app_serv, uacq, spv) {
 "use strict";
-var UserCardPreview = function() {};
-pv.View.extendTo(UserCardPreview, {
+var UserCardPreview = spv.inh(pv.View, {}, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;

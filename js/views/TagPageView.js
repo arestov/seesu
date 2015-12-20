@@ -1,8 +1,7 @@
-define(['pv', './coct', 'jquery'], function(pv, coct, $) {
+define(['pv', './coct', 'spv'], function(pv, coct, spv) {
 "use strict";
 
-var TagPageView = function() {};
-coct.PageView.extendTo(TagPageView, {
+var TagPageView = spv.inh(coct.PageView, {}, {
 	base_tree: {
 		sample_name: 'tag_page'
 	},
@@ -15,8 +14,7 @@ coct.PageView.extendTo(TagPageView, {
 });
 
 
-var TagsListPage = function() {};
-coct.PageView.extendTo(TagsListPage, {
+var TagsListPage = spv.inh(coct.PageView, {}, {
 	base_tree: {
 		sample_name: 'tags_list_page'
 	}

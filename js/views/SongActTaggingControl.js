@@ -9,8 +9,7 @@ var addTag = function(e, node, scope) {
 	this.RPCLegacy('addTag', scope.tag.name || scope.tag);
 };
 
-var LfmTagItView = function() {};
-etc_views.LfmLoginView.extendTo(LfmTagItView, {
+var LfmTagItView = spv.inh(etc_views.LfmLoginView, {}, {
 	createBase: function() {
 		this._super();
 	//	var _this = this;
@@ -79,8 +78,7 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 
 
 
-var SongActTaggingControl = function(){};
-pv.View.extendTo(SongActTaggingControl, {
+var SongActTaggingControl = spv.inh(pv.View, {}, {
 	children_views: {
 		lfm_tagsong: LfmTagItView
 	},
