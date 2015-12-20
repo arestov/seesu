@@ -914,6 +914,7 @@ function extend(Class, params, propsArg) {
 	result.prototype = new PrototypeConstr();
 	result.prototype.constr_id = constr_id++;
 	result.prototype.constructor = result;
+	result.prototype.__code_path = codePath();
 
 	if (props) {
 		cloneObj(result.prototype, props);
@@ -939,12 +940,20 @@ function extend(Class, params, propsArg) {
 			result.legacy.prototype.init = makeInit(result.builder);
 			result.legacy.prototype.constr_id = constr_id++;
 			result.legacy.prototype.constructor = result.legacy;
+			result.prototype.__code_path = codePath();
 		}
 
 		return extendTo.call(result.legacy, Class, props);
 	};
 
 	return result;
+}
+
+function codePath() {
+	var err = new Error();
+	var stack = err.stack.split('\n');
+	var path = stack[3];
+	return path.replace('    at ', '').replace(window.location.origin + '/', '');
 }
 
 function makeInit(builder) {
