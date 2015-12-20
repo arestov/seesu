@@ -83,8 +83,7 @@ var auth_bh = {
 
 var VkSongList = spv.inh(SongsList, {}, cloneObj({}, auth_bh));
 
-var VkRecommendedTracks = function() {};
-VkSongList.extendTo(VkRecommendedTracks, {
+var VkRecommendedTracks = spv.inh(VkSongList, {}, {
 	'nest_req-songs-list': [
 		[declr_parsers.vk.getTracksFn('response'), function(r) {
 			return r && r.response && !!r.response.length;
@@ -98,8 +97,7 @@ VkSongList.extendTo(VkRecommendedTracks, {
 	]
 });
 
-var MyVkAudioList = function() {};
-VkSongList.extendTo(MyVkAudioList, {
+var MyVkAudioList = spv.inh(VkSongList, {}, {
 	'nest_req-songs-list': [
 		[declr_parsers.vk.getTracksFn('response.items'), {
 			props_map: {
