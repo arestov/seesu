@@ -75,7 +75,7 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
 		}]
 	]
 });
-var ArtistTagsList = spv.inh(LoadableList, {}, {
+var ArtistTagsList = spv.inh(LoadableList.TagsList, {}, {
 	// init: function(opts, params) {
 	// 	this._super.apply(this, arguments);
 	// 	this.artist_name = params.artist;
