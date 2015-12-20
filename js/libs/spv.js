@@ -833,9 +833,9 @@ var stBuilding = function(parentBuilder) {
 };
 
 var wrapExtend = function(original, fresh) {
-	return function(resultPrototype, props, originalPrototype) {
-		original(resultPrototype, props, originalPrototype);
-		fresh(resultPrototype, props, originalPrototype);
+	return function(resultPrototype, props, originalPrototype, params) {
+		original(resultPrototype, props, originalPrototype, params);
+		fresh(resultPrototype, props, originalPrototype, params);
 	};
 };
 
@@ -917,9 +917,16 @@ function extend(Class, params, propsArg) {
 
 	if (props) {
 		cloneObj(result.prototype, props);
-		if (onExtend) {
-			onExtend(result.prototype, props, Class.prototype);
+		if (params.skip_first_extend) {
+			if (parentExtend) {
+				parentExtend(result.prototype, props, Class.prototype, params);
+			}
+		} else {
+			if (onExtend) {
+				onExtend(result.prototype, props, Class.prototype, params);
+			}
 		}
+
 	}
 
 	result.extendTo = function(Class, props) {
