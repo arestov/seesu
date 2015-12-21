@@ -2122,8 +2122,8 @@ body .surf_nav{
 	.full-page .user_artist{
 		margin-bottom: 2.5rem;
 	}
-	.user_artist-image_con{
-
+	.user_artist-image_con img{
+		max-width: 100%;
 		}
 
 	.user_artist-name{
