@@ -83,12 +83,6 @@ var VKPostSongs = spv.inh(SongsList, {
 			return date && (new Date(date)).toLocaleString();
 		}
 	]
-/*	'nest_req-songs-list': [
-		declr_parsers.lfm.getUsers('topfans', true),
-		['lfm', 'get', function() {
-			return ['track.getTopFans', this.getRqData()];
-		}]
-	]*/
 });
 
 
@@ -307,7 +301,7 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 			}];
 		}]
 	],
-	'nest-fans': ['fans', 'wide_need','wide_need'],
+	'nest-fans': ['fans', false, false],
 	'nest-cloudcasts': ['cloudcasts', false, 'wide_need'],
 	'nest-vk_posts': ['vk_posts', 'nest_need','nest_need'],
 	'nest-artist': ['#catalog/[:artist_name]', false, 'mp_has_focus'],

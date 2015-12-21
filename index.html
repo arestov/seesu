@@ -986,7 +986,7 @@
 		<div class="track-context" >
 			<!--pv-replace sample_name:moplas_block pv-when:must_expand-->
 			<div >
-		
+
 			</div>
 			<div class="song-actions" pv-anchor="song-actions" pv-nest="actionsrow">
 				<div class="track-panel" pv-anchor="buttons_panel">
@@ -1009,7 +1009,7 @@
 							<span class="pc-place">
 								<a class="pc pc-tag "  title="tag song" pv-anchor="btrow-tag" pv-events="click::switchPart:row-tag" pv-type="way-point"></a>
 							</span>
-					
+
 						</div>
 						<ul class="track-buttons">
 							<li class="scrobbling-button"  title="Last.fm scrobbling">
@@ -1028,11 +1028,11 @@
 							</li>
 						</ul>
 
-				
+
 					</div>
-			
+
 				</div>
-				<div 
+				<div
 					pv-anchor="row_context"
 					class="song-row-content row-song-context hidden"
 					pv-class="hidden: !active_part"
@@ -1061,17 +1061,17 @@
 						<div
 							class="shareb-base  users-list"
 							pv-anchor="vk_share_b">
-					
+
 							<div class="shareb-con">
-						
+
 								<div >
-							
+
 									<div class="">
 										<input type="text" pv-anchor="vk_share_search">
 									</div>
-							
+
 									<div pv-nest="searcher">
-								
+
 										<div pv-nest="section for_model:section-vk-users" class="vk_share">
 											<div class="vk_auth" pv-anchor="vk_auth"></div>
 											<div pv-class="hidden: needs_vk_auth">
@@ -1083,14 +1083,14 @@
 															<span class="lang localize-to-own-wall"></span>
 														</div>
 													</div>
-											
+
 													<div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
 												</div>
 												<div class="details_switch_block">
-													<span class="desc">vk.com</span> 
-											
+													<span class="desc">vk.com</span>
+
 													<div class="details_switch" >
-														<div 
+														<div
 															class="min_details"
 															pv-class="active: !vis_full_view_mode"
 															pv-events="click:toggleVisState:full_view_mode::">
@@ -1104,7 +1104,7 @@
 														</div>
 													</div>
 												</div>
-										
+
 												<div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
 													<div class="song_acting_vk_search protect_clicks  details_for_switcher ">
 														<ul>
@@ -1119,10 +1119,10 @@
 													</div>
 												</div>
 											</div>
-									
 
-									
-									
+
+
+
 										</div>
 
 										<div pv-anchor="lfm_auth_con"></div>
@@ -1133,10 +1133,10 @@
 												<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
 													<a>
 														<img src="" alt=""
-													
+
 															pv-props=
 															"src: {{
-															(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
+															(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
 															|| selected_image.url
 															}}">
 														<span pv-text="{{text_title}}" class="text_part"></span>
@@ -1151,9 +1151,9 @@
 										>
 											<div class="details_switch_block">
 												<span class="desc">last.fm</span>
-										
+
 												<div class="details_switch" >
-													<div 
+													<div
 														class="min_details"
 														pv-class="active: !vis_full_view_mode"
 														pv-events="click:toggleVisState:full_view_mode::">
@@ -1167,7 +1167,7 @@
 													</div>
 												</div>
 											</div>
-									
+
 											<div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
 												<div class="song_acting_lfm_search protect_clicks details_for_switcher" >
 													<ul >
@@ -1187,8 +1187,8 @@
 										</div>
 									</div>
 
-							
-							
+
+
 								</div>
 							</div>
 						</div>
@@ -1201,21 +1201,21 @@
 							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
 							<span class="lang localize-rept-song">Repeat playing song</span>
 						</label>
-				
+
 					</div>
 					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-pl-shuffle" pv-class="hidden: !active_view">
 						<label class="song-row-label">
 							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
 							<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
 						</label>
-				
+
 					</div>
 				</div>
 			</div>
 			<div class="photo_and_artinfo">
 				<div class="photo-cont"><div class="photo-cont-lift" pv-anchor="phocoli">
-					<img 
-						src="" alt="" class="artist_image" 
+					<img
+						src="" alt="" class="artist_image"
 						pv-repeat="image in available_images"
 						pv-class="album_insong_image: $first"
 						pv-props="src:{{(image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + image.lfm_id)|| image.url}}">
@@ -1224,7 +1224,7 @@
 					<!--pv-replace sample_name:artist_preview-base-->
 				</div>
 			</div>
-	
+
 			<div pv-nest="songcard">
 
 				<div class="track-listeners" pv-class="hidden: disallow_seesu_listeners">
@@ -1298,14 +1298,14 @@
 					</div>
 				</div>
 
-				<div class="song_fans-b-intrack intrack_page"
+				<!-- <div class="song_fans-b-intrack intrack_page"
 					pv-nest="fans" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h lang localize-lastfm_fans">
 					</div>
 					<div class="song_fans-l-intrack" pv-class="loading_list_items: loading_nesting_list_items">
 						<div
 							pv-nest="list_items | limitTo: 13"
-							class="song_fan-b-tck hidden" 
+							class="song_fan-b-tck hidden"
 							pv-class="hidden: !userid"
 							pv-props="title:{{userid}}"
 							>
@@ -1316,31 +1316,32 @@
 								pv-class="hidden: !can_use_image">
 						</div>
 					</div>
-			
-				</div>
-				<div class="intrack_page" 
+
+				</div> -->
+				<div class="intrack_page"
 					pv-nest="vk_posts" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h"><span class="lang localize-posts-from">Posts form</span><br/>vk.com</div>
 					<div class="song_fans-l-intrack" pv-class="loading_list_items: loading_nesting_lists_list">
 						<div
 							pv-repeat="image in image_previews | limitTo: 13"
 							class="song_fan-b-tck"
-					
+
 							>
 							<img src="" alt=""
 								class=""
-	
+
 								pv-props="src:{{image}}">
 						</div>
 					</div>
-			
+
 				</div>
-				<div class="song_cloudcasts-b-intrack intrack_page" 
+
+				<!-- <div class="song_cloudcasts-b-intrack intrack_page"
 					pv-nest="cloudcasts" pv-events="click:requestPage" pv-type="way-point">
 					<div class="intrack_page-h">Cloudcasts</div>
 					<span pv-nest="lists_list" pv-text="{{nav_title}} "></span>
-				</div>
-		
+				</div> -->
+
 			</div>
 		</div>
 
