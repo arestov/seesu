@@ -17,6 +17,7 @@ requirejs.config({
 		localizer: 'js/libs/localizer',
 		cache_ajax: 'js/libs/cache_ajax',
 		app_serv: "js/app_serv",
+		env: "js/env",
 		hex_md5: 'js/common-libs/md5.min',
 	},
 	shim: {

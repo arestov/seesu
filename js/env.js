@@ -20,6 +20,15 @@ var localize= function(lang){
 	};
 };
 
+if (typeof window === 'undefined' && typeof process !== 'undefined') {
+	return {
+		bro: {},
+		app_type: 'node',
+		node: true,
+		localize: localize()
+	};
+}
+
 var get_url_parameters = function(str, decode_uri_c){
 	var url_vars = str.replace(/^\?/,'').split('&');
 	var full_url = {};
