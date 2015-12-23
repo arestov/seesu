@@ -28,6 +28,6 @@ requirejs.config({
 });
 
 requirejs(['su'], function() {
-	
+
 	//app thread;
 });
