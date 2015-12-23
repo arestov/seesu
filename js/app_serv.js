@@ -3,6 +3,8 @@ function(spv, localizer, w_storage, preloaded_nk, env) {
 "use strict";
 var app_serv = {};
 
+var localize = env.localize;
+
 app_serv.getRemainTimeText = function(time_string, full){
 	var d = new Date(time_string);
 	var remain_desc = '';
@@ -174,27 +176,7 @@ app_serv.getSafeIframe = function() {
 	return iframe;
 };
 
-
-var sviga = {};
-var localize= (function(){
-	var lang = env.lang;
-	return function(string, j){
-		if (localizer[string]){
-			return localizer[string][lang] || localizer[string].original;
-		} else{
-			if (j){
-				sviga[string] ={
-					original:j
-				};
-				return j;
-			}
-
-			return 'no this localization: ' + string;
-		}
-
-	};
-})();
-app_serv.localize = localize;
+app_serv.localize = env.localize;
 
 app_serv.parseArtistInfo = function(r){
 	var ai = {};

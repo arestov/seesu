@@ -1,5 +1,24 @@
-define([], function() {
+define(['localizer'], function(localizer) {
 'use strict';
+
+var sviga = {};
+var localize= function(lang){
+	return function(string, j){
+		if (localizer[string]){
+			return localizer[string][lang] || localizer[string].original;
+		} else{
+			if (j){
+				sviga[string] ={
+					original:j
+				};
+				return j;
+			}
+
+			return 'no this localization: ' + string;
+		}
+
+	};
+};
 
 var get_url_parameters = function(str, decode_uri_c){
 	var url_vars = str.replace(/^\?/,'').split('&');
@@ -346,6 +365,8 @@ if (typeof console != 'object'){
 		});
 
 }());
+
+env.localize = localize(env.lang);
 
 return env;
 });
