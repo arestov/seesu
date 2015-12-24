@@ -1,4 +1,4 @@
-define(['spv', '../StatementsAngularParser.min'], function(spv, angbo){
+define(['spv', 'angbo'], function(spv, angbo){
 'use strict';
 
 var abortFlowStep = function(tpl, w_cache_key) {

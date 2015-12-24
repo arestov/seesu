@@ -1,4 +1,4 @@
-define(['spv', 'jquery', '../StatementsAngularParser.min', './directives_parsers', './getCachedPVData'],
+define(['spv', 'jquery', 'angbo', './directives_parsers', './getCachedPVData'],
 	function(spv, $, angbo, d_parsers, getCachedPVData){
 "use strict";
 var config = d_parsers.config;

@@ -1,4 +1,4 @@
-define('pv', ['spv', './StatementsAngularParser.min', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy'],
+define('pv', ['spv', 'angbo', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy'],
 function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, getEventor, getStatesEmitter, CallbacksFlow, getModel, getView, updateProxy){
 "use strict";
 

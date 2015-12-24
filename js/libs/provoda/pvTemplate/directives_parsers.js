@@ -1,4 +1,4 @@
-define(['spv', 'jquery',  '../StatementsAngularParser.min', './StandartChange'], function(spv, $, angbo, StandartChange) {
+define(['spv', 'jquery',  'angbo', './StandartChange'], function(spv, $, angbo, StandartChange) {
 'use strict';
 
 var capitalize = spv.capitalize;
