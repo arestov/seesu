@@ -1,7 +1,5 @@
-define(['./AppModelBase', 'spv', 'app_serv', './SongsList', 'pv', '../libs/BrowseMap'], function(AppModelBase, spv, app_serv, SongsList, pv, BrowseMap) {
+define(['./AppModelBase', 'spv', './SongsList', 'pv', '../libs/BrowseMap'], function(AppModelBase, spv, SongsList, pv, BrowseMap) {
 "use strict";
-
-var localize = app_serv.localize;
 
 var AppModel = spv.inh(AppModelBase, {}, (function(){
 var props = {
