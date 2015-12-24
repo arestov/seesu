@@ -26,8 +26,8 @@ var patchNode = function(node, struc_store, directives_data, getSample, opts) {
 				}
 				return result;
 			}
-			
-			
+
+
 		}
 	}
 };
@@ -52,7 +52,7 @@ var PvSimpleSampler = (function(){
 			} else if (node_type == 8) {
 				result.push( cur_node );
 			}
-			
+
 		}
 		return result;
 	};
@@ -69,7 +69,7 @@ var PvSimpleSampler = (function(){
 		this.onode = node;
 		this.mod_root_node = null;
 		this.patched_cache = null;
-		
+
 		this.parsed = false;
 		this.structure_data_as_root = null;
 		this.structure_data = null;
@@ -100,7 +100,7 @@ var PvSimpleSampler = (function(){
 							//mainaly for pv-repeat
 							push.apply(states_list, bind_data.instructions[directive_name].sfy_values);
 						}
-						
+
 					}
 				}
 				if (has_scope_gen) {
@@ -156,9 +156,9 @@ var PvSimpleSampler = (function(){
 						}
 						spv.setTargetField(usual, [cur.data.coll_name, cur.data.space || 'main'], cur.item);
 					}
-					
+
 				}
-				
+
 				structure_data.children = usual;
 				structure_data.children_by_mn = by_model_name;
 				/*
@@ -183,10 +183,10 @@ var PvSimpleSampler = (function(){
 				this.pstd_cache[str_d_prop_name] = parseStructureData(this.onode, this.struc_store, is_not_root, this.getSample);
 				//this[str_d_prop_name]._id = this._id;
 				this.parsed = true;
-				
+
 			}
 			return this.pstd_cache[str_d_prop_name];
-			
+
 		};
 
 	})();
@@ -213,7 +213,7 @@ var PvSimpleSampler = (function(){
 			if (patched) {
 				match_stack.unshift(patched);
 			}
-			
+
 
 			// if (directives_data.replacer) {
 			// 	match_stack.unshift(directives_data.node);
@@ -224,7 +224,7 @@ var PvSimpleSampler = (function(){
 					match_stack.push(cur_node.childNodes[i]);
 				}
 			}
-			
+
 		}
 		// return result;
 		return node;
@@ -293,7 +293,7 @@ var PvSimpleSampler = (function(){
 		// 	parser.parse(this.onode, this.struc_store, this.getSample, opts);
 		// }
 
-		
+
 	};
 	PvSimpleSampler.prototype.clone = PvSimpleSampler.prototype.getClone;
 
@@ -340,7 +340,7 @@ var parser = {
 					match_stack.push(cur_node.childNodes[i]);
 				}
 			}
-			
+
 		}
 		return result;
 	},
@@ -362,7 +362,7 @@ var parser = {
 				directives_data = getPVData(cur_node, struc_store, getSample);
 
 				var can_bind_children = (!directives_data.new_scope_generator || is_root_node);
-				
+
 				// if (directives_data.replacer) {
 				// 	match_stack.unshift(directives_data.node);
 				// } else {
@@ -372,13 +372,13 @@ var parser = {
 					}
 					if (can_bind) {
 						list_for_binding.push(is_root_node, cur_node, directives_data);
-					}	
+					}
 				// }
 			} else if (node_type == 8) {
 				directives_data = getCommentPVData(cur_node, struc_store, getSample);
 				// if (directives_data.replacer) {
 					// match_stack.unshift(directives_data.node, can_bind);
-				// } else 
+				// } else
 				if (can_bind) {
 					list_for_binding.push(false, cur_node, directives_data);
 				}

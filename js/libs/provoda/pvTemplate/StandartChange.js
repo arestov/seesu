@@ -74,7 +74,7 @@ StandartChange.prototype = {
 			wwtch.current_value = new_value;
 			this.setValue(wwtch.node, new_value, old_value, wwtch);
 		}
-		
+
 	},
 	checkFunc: function(states, wwtch, async_changes, current_motivator) {
 		abortFlowStep(wwtch.context, wwtch.w_cache_key);
@@ -90,7 +90,7 @@ StandartChange.prototype = {
 			} else {
 				this.changeValue(new_value, wwtch);
 			}
-			
+
 		}
 	},
 	createBinding: (function() {
@@ -98,7 +98,7 @@ StandartChange.prototype = {
 			this.standch.checkFunc(states, this, async_changes, current_motivator);
 		};
 
-		return function(node, context) {				
+		return function(node, context) {
 			var wwtch = {
 				w_cache_key: node.pvprsd + '_' + node.pvprsd_inst + '*' + this.w_cache_subkey,
 				data: this.data,
