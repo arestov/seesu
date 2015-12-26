@@ -3,11 +3,14 @@ define(['./FlowStep', 'spv'], function(FlowStep, spv){
 
 
 var sortFlows = function(item_one, item_two) {
-	if (item_one.aborted && item_two.aborted) {
+	var none_one = !item_one || item_one.aborted;
+	var none_two = !item_two || item_two.aborted;
+
+	if (none_one && none_two) {
 		return;
-	} else if (item_one.aborted) {
+	} else if (none_one) {
 		return -1;
-	} else if (item_two.aborted) {
+	} else if (none_two) {
 		return 1;
 	}
 
@@ -143,25 +146,27 @@ CallbacksFlow.prototype = {
 		var start = Date.now() + this.iteration_time;
 		this.iteration_delayed = false;
 		this.callbacks_busy = true;
-		while (this.flow.length){
+
+		for (var i = 0; i < this.flow.length; i++) {
 			if (Date.now() > start){
 				this.pushIteration(this.hndIterateCallbacksFlow);
 				break;
 			}
-			var cur;
+
 			// if (typeof this.flow_steps_collating_invalidated == 'number'){
-			// 	cur = this.flow[0];
-			// 	if (this.flow_steps_collating_invalidated <= cur.complex_order[0]) {
+			// 	if (this.flow_steps_collating_invalidated <= this.flow[i].complex_order[0]) {
 			// 		this.flow_steps_collating_invalidated = null;
 			// 		this.flow.sort(sortFlows);
-
 			// 	}
 			// }
-			cur = this.flow.shift();
+			var cur = this.flow[i];
+			this.flow[i] = null;
 			if (!cur.aborted) {
 				cur.call();
 			}
 		}
+		this.flow.splice(0, i + 1);
+
 		if (!this.flow.length){
 			this.callbacks_busy = false;
 		}
