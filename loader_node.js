@@ -13,6 +13,7 @@ requirejs.config({
 		//pv: 'js/libs/provoda/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
+		angbo: 'js/libs/provoda/StatementsAngularParser.min',
 		jquery: 'js/common-libs/jquery-2.1.4.min',
 		localizer: 'js/libs/localizer',
 		cache_ajax: 'js/libs/cache_ajax',
