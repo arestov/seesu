@@ -50,6 +50,13 @@ app_serv.complexEach = function(items, callback, start) {
 
 (function(){
 
+if (!env.bro.browser) {
+	app_serv.loadJS = function(){
+		console.log('can`t load js file');
+	};
+	return;
+}
+
 function isFileReady ( readyState ) {
 	// Check to see if any of the ways a file can be ready are available as properties on the file's element
 	return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
