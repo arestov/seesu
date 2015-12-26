@@ -136,7 +136,7 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	}
 
 };
-
+var insertItem = spv.insertItem;
 CallbacksFlow.prototype = {
 
 	iterateCallbacksFlow: function() {
@@ -192,7 +192,7 @@ CallbacksFlow.prototype = {
 					}
 				}
 
-				spv.insertItem(this.flow, flow_step, last_matched + 1);
+				insertItem(this.flow, flow_step, last_matched + 1);
 
 				//this.flow_steps_collating_invalidated = Math.min( flow_step.complex_order[0], this.flow_steps_collating_invalidated || Infinity );
 			} else {
