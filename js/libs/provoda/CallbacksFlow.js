@@ -118,7 +118,7 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	this.iteration_time = iteration_time || 250;
 	this.iteration_delayed = null;
 	this.flow_steps_counter = 1;
-	this.flow_steps_collating_invalidated = null;
+	// this.flow_steps_collating_invalidated = null;
 	var _this = this;
 	this.hndIterateCallbacksFlow = function() {
 		_this.iterateCallbacksFlow();
@@ -149,14 +149,14 @@ CallbacksFlow.prototype = {
 				break;
 			}
 			var cur;
-			if (typeof this.flow_steps_collating_invalidated == 'number'){
-				cur = this.flow[0];
-				if (this.flow_steps_collating_invalidated <= cur.complex_order[0]) {
-					this.flow_steps_collating_invalidated = null;
-					this.flow.sort(sortFlows);
+			// if (typeof this.flow_steps_collating_invalidated == 'number'){
+			// 	cur = this.flow[0];
+			// 	if (this.flow_steps_collating_invalidated <= cur.complex_order[0]) {
+			// 		this.flow_steps_collating_invalidated = null;
+			// 		this.flow.sort(sortFlows);
 
-				}
-			}
+			// 	}
+			// }
 			cur = this.flow.shift();
 			if (!cur.aborted) {
 				cur.call();
