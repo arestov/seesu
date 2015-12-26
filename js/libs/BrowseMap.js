@@ -3,6 +3,10 @@ define(['pv', 'spv'], function(pv, spv) {
 
 var pvState = pv.state;
 var cloneObj = spv.cloneObj;
+var filter = spv.filter;
+var countKeys = spv.countKeys;
+var collapseAll = spv.collapseAll;
+
 /*
 исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 поправить навигацию
@@ -156,12 +160,12 @@ var BrowseMap = spv.inh(pv.Eventor, {
 		if (this.chans_coll.length){
 			this.zipChanges();
 
-			var all_changes = spv.filter(this.chans_coll, 'changes');
+			var all_changes = filter(this.chans_coll, 'changes');
 			var big_line = [];
 			for (var i = 0; i < all_changes.length; i++) {
 				big_line = big_line.concat(all_changes[i]);
 			}
-			var move_view_changes = spv.filter(big_line, 'type', 'move-view');
+			var move_view_changes = filter(big_line, 'type', 'move-view');
 
 			for (var jj = 0; jj < move_view_changes.length; jj++) {
 				var cur = move_view_changes[jj];
@@ -998,7 +1002,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 		obj = obj ? cloneObj({}, obj) : {};
 		obj[target._provoda_id] = state;
 		pv.update(md, 'bmpl_attached', obj);
-		pv.update(md, 'mpl_attached', spv.countKeys(obj, true));
+		pv.update(md, 'mpl_attached', countKeys(obj, true));
 
 	}
 });
@@ -1264,7 +1268,6 @@ var getNestingConstr = function(app, md, nesting_name) {
 };
 BrowseMap.getNestingConstr = getNestingConstr;
 
-
 var getModelSources = function(app, md, cur) {
 	var states_sources = [];
 	var i;
@@ -1274,7 +1277,7 @@ var getModelSources = function(app, md, cur) {
 		unfolded_states[i] = md.getNonComplexStatesList(states_list[i]);
 	}
 
-	unfolded_states = spv.collapseAll.apply(null, unfolded_states);
+	unfolded_states = collapseAll.apply(null, unfolded_states);
 
 	for (i = 0; i < unfolded_states.length; i++) {
 		var state_name = unfolded_states[i];
@@ -1285,7 +1288,7 @@ var getModelSources = function(app, md, cur) {
 
 
 	}
-	states_sources = spv.collapseAll.apply(null, states_sources);
+	states_sources = collapseAll.apply(null, states_sources);
 
 	var nestings_names_list = [];
 
@@ -1297,7 +1300,7 @@ var getModelSources = function(app, md, cur) {
 		nestings_names_list.push(nesting_name);
 	}
 
-	nestings_names_list = spv.collapseAll(nestings_names_list);
+	nestings_names_list = collapseAll(nestings_names_list);
 
 	var nesting_sources = [];
 	for (i = 0; i < nestings_names_list.length; i++) {
@@ -1357,7 +1360,7 @@ var getModelSources = function(app, md, cur) {
 	if (all_nest_sources.length) {
 		full_sources_list = full_sources_list.concat(all_nest_sources);
 	}
-	return  spv.collapseAll(full_sources_list);
+	return  collapseAll(full_sources_list);
 };
 
 
