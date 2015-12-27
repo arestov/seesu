@@ -115,6 +115,7 @@ var AppModelBase = spv.inh(pv.Model, {
 		};
 
 		var complexBrowsing = function(bwlev, md, value) {
+			// map levels. without knowing which map
 			var obj = md.state('bmp_show');
 			obj = obj && spv.cloneObj({}, obj) || {};
 			var num = bwlev.state('map_level_num');
@@ -155,6 +156,64 @@ var AppModelBase = spv.inh(pv.Model, {
 				complexBrowsing(bwlev, md,  false);
 			}
 		};
+
+		var minDistance = function(obj) {
+			if (!obj) {return;}
+			var values = [];
+			for (var key in obj) {
+				if (!obj[key]) {
+					continue;
+				}
+				values.push(obj[key]);
+			}
+
+			if (!values.length) {return;}
+
+			return Math.min.apply(null, values);
+		};
+
+
+		var depthValue = function(obj_raw, key, value) {
+			var obj = obj_raw && spv.cloneObj({}, obj_raw) || {};
+			obj[key] = value;
+			return obj;
+		};
+
+		var goUp = function(bwlev, cb) {
+			if (!bwlev) {return;}
+			var count = 1;
+			var md = bwlev.getNesting('pioneer');
+			var cur = bwlev;
+			while (cur) {
+				cb(cur, md, count);
+				cur = cur.map_parent;
+				md = cur && cur.getNesting('pioneer');
+				count++;
+			}
+		};
+
+		var setDft = function(atom_value) {
+			return function(bwlev, md, count) {
+				var value = depthValue(md.state('bmp_dft'), bwlev._provoda_id, atom_value(count));
+				pv.update(md, 'bmp_dft', value);
+				pv.update(md, 'mp_dft', minDistance(value));
+			};
+		};
+
+		var dftCount = setDft(function(count) {
+			return count;
+		});
+
+		var dftNull = setDft(function() {
+			return null;
+		});
+
+		var depth = function(bwlev, old_bwlev) {
+			goUp(old_bwlev, dftNull);
+			goUp(bwlev, dftCount);
+			return bwlev;
+		};
+
 		return function(changes, models, bwlevs) {
 			var
 				i,
@@ -202,6 +261,9 @@ var AppModelBase = spv.inh(pv.Model, {
 					pv.update(this.current_mp_md, 'mp_has_focus', false);
 				}
 				var target_md = this.current_mp_md = target_item.target.getMD();
+
+				this.current_mp_bwlev = depth(target_item.bwlev.getMD(), this.current_mp_bwlev);
+
 				pv.update(target_md, 'mp_has_focus', true);
 				pv.update(target_item.bwlev.getMD(), 'mp_has_focus', true);
 
