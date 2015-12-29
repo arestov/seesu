@@ -157,27 +157,27 @@ var AppModelBase = spv.inh(pv.Model, {
 			}
 		};
 
-		var minDistance = function(obj) {
-			if (!obj) {return;}
-			var values = [];
-			for (var key in obj) {
-				if (!obj[key]) {
-					continue;
-				}
-				values.push(obj[key]);
-			}
+		// var minDistance = function(obj) {
+		// 	if (!obj) {return;}
+		// 	var values = [];
+		// 	for (var key in obj) {
+		// 		if (!obj[key]) {
+		// 			continue;
+		// 		}
+		// 		values.push(obj[key]);
+		// 	}
 
-			if (!values.length) {return;}
+		// 	if (!values.length) {return;}
 
-			return Math.min.apply(null, values);
-		};
+		// 	return Math.min.apply(null, values);
+		// };
 
 
-		var depthValue = function(obj_raw, key, value) {
-			var obj = obj_raw && spv.cloneObj({}, obj_raw) || {};
-			obj[key] = value;
-			return obj;
-		};
+		// var depthValue = function(obj_raw, key, value) {
+		// 	var obj = obj_raw && spv.cloneObj({}, obj_raw) || {};
+		// 	obj[key] = value;
+		// 	return obj;
+		// };
 
 		var goUp = function(bwlev, cb) {
 			if (!bwlev) {return;}
@@ -192,11 +192,13 @@ var AppModelBase = spv.inh(pv.Model, {
 			}
 		};
 
-		var setDft = function(atom_value) {
+		var setDft = function(get_atom_value) {
 			return function(bwlev, md, count) {
-				var value = depthValue(md.state('bmp_dft'), bwlev._provoda_id, atom_value(count));
-				pv.update(md, 'bmp_dft', value);
-				pv.update(md, 'mp_dft', minDistance(value));
+				var atom_value = get_atom_value(count);
+				// var value = depthValue(md.state('bmp_dft'), bwlev._provoda_id, atom_value);
+				// pv.update(md, 'bmp_dft', value);
+				// pv.update(md, 'mp_dft', minDistance(value));
+				pv.update(bwlev, 'mp_dft', atom_value);
 			};
 		};
 
