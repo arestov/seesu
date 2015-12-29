@@ -17,14 +17,14 @@ var collapseAll = spv.collapseAll;
 
 */
 var BrowseMap = spv.inh(pv.Eventor, {
-	naming: function(constructor) {
+	naming: function(fn) {
 		return function BrowseMap(maleres) {
-			constructor(this, maleres);
+			fn(this, maleres);
 		};
 	},
-	building: function(constructor) {
+	building: function(fn) {
 		return function buildBrowseMap(obj, maleres) {
-			constructor(obj);
+			fn(obj);
 			obj.changes_group = null;
 			obj.grouping_changes = null;
 			obj.collecting_changes = null;
