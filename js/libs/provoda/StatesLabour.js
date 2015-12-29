@@ -31,10 +31,11 @@ StatesLabour.prototype.abortFlowSteps = function(space, index_key, is_one_item) 
 		return;
 	}
 	if (!is_one_item) {
-		while (array.length) {
-			var cur = array.shift();
-			cur.abort();
+		for (var i = 0; i < array.length; i++) {
+			array[i].abort();
+			array[i] = null;
 		}
+		array.length = 0;
 	} else {
 		array.abort();
 		this[full_space][index_key] = null;
