@@ -4,6 +4,44 @@ var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 var getFinupFullname = spv.getPrefixingFunc('finup-');
 
+
+var serv_counter = 1;
+var ServStates = function() {
+	this.num = ++serv_counter;
+	this.collecting_states_changing = false;
+	// this.original_states = {};
+
+	this.states_changing_stack = [];
+	this.all_i_cg = [];
+
+	this.changed_states = [];
+	this.total_ch = [];
+
+	// this.stch_states = {};
+	this.all_ch_compxs = [];
+};
+
+var pool = {
+	free: [],
+	busy: {}
+};
+
+var getFree = function(pool) {
+	if (pool.free.length) {
+		return pool.free.pop();
+	} else {
+		var item = new ServStates();
+		pool.busy[item.num] = true;
+		return item;
+	}
+};
+
+var release = function(pool, item) {
+	pool.busy[item.num] = null;
+	pool.free.push(item);
+};
+
+
 function updateProxy(etr, changes_list, opts) {
 	if (etr._lbr && etr._lbr.undetailed_states){
 		iterateChList(changes_list, etr, _setUndetailedState);
@@ -15,32 +53,35 @@ function updateProxy(etr, changes_list, opts) {
 	if (!etr.zdsv){
 		etr.zdsv = new StatesLabour(!!etr.full_comlxs_index, etr._has_stchs);
 	}
+
 	var zdsv = etr.zdsv;
+	var serv_st = getFree(pool);
 
 
-	zdsv.states_changing_stack.push(changes_list, opts);
+	serv_st.states_changing_stack.push(changes_list, opts);
 
-	if (zdsv.collecting_states_changing){
+	if (serv_st.collecting_states_changing){
 		return etr;
 	}
 
-	zdsv.collecting_states_changing = true;
+	serv_st.collecting_states_changing = true;
 	//etr.zdsv is important for etr!!!
-	//etr.zdsv.collecting_states_changing - must be semi public;
+	//etr.serv_st.collecting_states_changing - must be semi public;
 
 
-	var total_ch = zdsv.total_ch;
 	var original_states = zdsv.original_states;
-	var all_i_cg = zdsv.all_i_cg;
-	var all_ch_compxs = zdsv.all_ch_compxs;
-	var changed_states = zdsv.changed_states;
 
-	while (zdsv.states_changing_stack.length){
+	var total_ch = serv_st.total_ch;
+	var all_i_cg = serv_st.all_i_cg;
+	var all_ch_compxs = serv_st.all_ch_compxs;
+	var changed_states = serv_st.changed_states;
+
+	while (serv_st.states_changing_stack.length){
 
 		//spv.cloneObj(original_states, etr.states);
 
-		var cur_changes_list = zdsv.states_changing_stack.shift();
-		var cur_changes_opts = zdsv.states_changing_stack.shift();
+		var cur_changes_list = serv_st.states_changing_stack.shift();
+		var cur_changes_opts = serv_st.states_changing_stack.shift();
 
 		//получить изменения для состояний, которые изменил пользователь через публичный метод
 		getChanges(etr, original_states, cur_changes_list, cur_changes_opts, changed_states);
@@ -118,7 +159,9 @@ function updateProxy(etr, changes_list, opts) {
 	}
 
 
-	zdsv.collecting_states_changing = false;
+	serv_st.collecting_states_changing = false;
+
+	release(pool, serv_st);
 	//zdsv = null;
 	return etr;
 }

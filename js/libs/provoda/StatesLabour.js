@@ -7,17 +7,17 @@ var StatesLabour = function(has_complex_states, need_stch_storage) {
 	this.flow_steps_stch = null;
 
 
-	this.collecting_states_changing = false;
+	// this.collecting_states_changing = false;
 	this.original_states = {};
 
-	this.states_changing_stack = [];
-	this.all_i_cg = [];
+	// this.states_changing_stack = [];
+	// this.all_i_cg = [];
 
-	this.changed_states = [];
-	this.total_ch = [];
+	// this.changed_states = [];
+	// this.total_ch = [];
 
 	this.stch_states = need_stch_storage ? {} : null;
-	this.all_ch_compxs = has_complex_states ? [] : null;
+	// this.all_ch_compxs = has_complex_states ? [] : null;
 };
 StatesLabour.prototype.abortFlowSteps = function(space, index_key, is_one_item) {
 	var full_space = 'flow_steps_' + space;
