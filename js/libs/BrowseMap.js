@@ -16,14 +16,14 @@ var collapseAll = spv.collapseAll;
 генерируемые плейлисты
 
 */
-var BrowseMap = spv.inh(pv.Eventor, {
+var BrowseMap = spv.inh(pv.Model, {
 	naming: function(fn) {
-		return function BrowseMap(maleres) {
-			fn(this, maleres);
+		return function BrowseMap(opts, params) {
+			fn(this, opts, params);
 		};
 	},
 	building: function(fn) {
-		return function buildBrowseMap(obj, maleres) {
+		return function buildBrowseMap(obj, opts, params) {
 			fn(obj);
 			obj.changes_group = null;
 			obj.grouping_changes = null;
@@ -36,10 +36,10 @@ var BrowseMap = spv.inh(pv.Eventor, {
 
 
 			obj.levels = [];
-			if (!maleres){
+			if (!params.start){
 				throw new Error('give me 0 index level (start screen)');
 			}
-			obj.mainLevelResident = maleres;
+			obj.mainLevelResident = params.start;
 
 
 			obj.cha_counter = 0;

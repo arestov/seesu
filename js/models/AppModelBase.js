@@ -23,7 +23,7 @@ var AppModelBase = spv.inh(pv.Model, {
 
 		pv.updateNesting(this, 'navigation', [start_page]);
 		pv.updateNesting(this, 'start_page', start_page);
-		this.map = new BrowseMap(this.start_page);
+		this.map = new BrowseMap({app: this}, {start: this.start_page});
 		this.map
 			// .init(this.start_page)
 
