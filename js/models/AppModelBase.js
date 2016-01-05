@@ -363,6 +363,7 @@ var AppModelBase = spv.inh(pv.Model, {
 	knowViewingDataStructure: function(constr_id, used_data_structure) {
 		if (!this.used_data_structure) {
 			this.used_data_structure = used_data_structure;
+			pv.update(this.map, 'struc', used_data_structure);
 		}
 
 		for (var i = 0; i < this.map.residents.length; i++) {

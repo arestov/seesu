@@ -1,4 +1,4 @@
-define(['spv', './StatesLabour', './helpers', './MDProxy', './provoda.initDeclaredNestings', './prsStCon', './updateProxy'],
+define(['spv', './StatesLabour', './helpers', './MDProxy', './initDeclaredNestings', './prsStCon', './updateProxy'],
 function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy) {
 'use strict';
 return function(StatesEmitter, big_index, views_proxies, sync_sender) {
@@ -705,7 +705,10 @@ add({
 				}
 
 				this.nestings_declarations = result;
-
+				this.idx_nestings_declarations = {};
+				for (var i = 0; i < result.length; i++) {
+					this.idx_nestings_declarations[result[i].nesting_name] = result[i];
+				}
 			}
 
 

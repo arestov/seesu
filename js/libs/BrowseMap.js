@@ -267,7 +267,7 @@ var BrowseMap = spv.inh(pv.Model, {
 	// 	return this._goDeeper(md, parent_bwlev, bwlev);
 	// },
 	createLevel: function(num, parent_bwlev, md){
-		var bwlev = getBWlev(md, parent_bwlev, num);
+		var bwlev = getBWlev(md, parent_bwlev, num, this);
 		bwlev.map = this;
 		pv.update(bwlev, 'mpl_attached', true);
 		return bwlev;
@@ -1003,11 +1003,49 @@ var BrowseLevel = spv.inh(pv.Model, {
 		obj[target._provoda_id] = state;
 		pv.update(md, 'bmpl_attached', obj);
 		pv.update(md, 'mpl_attached', countKeys(obj, true));
+	},
+	'stch-to_load': function(target, struc) {
+		if (!struc) {return;}
+	},
+	'stch-to_init': function(target, struc) {
+		if (!struc) {return;}
 
-	}
+		var md = target.getNesting('pioneer');
+		var idx = md.idx_nestings_declarations;
+		if (!idx) {return;}
+
+		var obj = struc.main.m_children.children;
+		for (var name in obj) {
+			var nesting_name = pv.hp.getRightNestingName(md, name);
+			var el = idx[nesting_name];
+			if (!el) {continue;}
+			md.updateNesting(el.nesting_name, pv.getSubpages( md, el.subpages_names_list ));
+		}
+	},
+	'compx-struc': [
+		['@one:struc:map'],
+		function(struc) {
+			if (!struc) {return;}
+			return BrowseMap.getStruc(this.getNesting('pioneer'), struc, this.app);
+		}
+	],
+	'compx-to_init': [
+		['mp_dft', 'struc'],
+		function(mp_dft, struc) {
+			if (!mp_dft || mp_dft > 2 || !struc) {return;}
+			return struc;
+		}
+	],
+	'compx-to_load': [
+		['mp_dft', 'struc'],
+		function(mp_dft, struc) {
+			if (!mp_dft || mp_dft > 1 || !struc) {return;}
+			return struc;
+		}
+	]
 });
 
-var getBWlev = function(md, parent_bwlev, map_level_num){
+var getBWlev = function(md, parent_bwlev, map_level_num, map){
 	var cache = parent_bwlev && parent_bwlev.children_bwlevs;
 	var key = md._provoda_id;
 	var bwlev;
@@ -1019,7 +1057,8 @@ var getBWlev = function(md, parent_bwlev, map_level_num){
 			pioneer: md
 		}, {
 			nestings: {
-				pioneer: md
+				pioneer: md,
+				map: map
 			}
 		}, parent_bwlev, md.app);
 

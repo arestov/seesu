@@ -1,5 +1,5 @@
-define('pv', ['spv', 'angbo', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy'],
-function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, getEventor, getStatesEmitter, CallbacksFlow, getModel, getView, updateProxy){
+define('pv', ['spv', 'angbo', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy', './initDeclaredNestings'],
+function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, getEventor, getStatesEmitter, CallbacksFlow, getModel, getView, updateProxy, initDeclaredNestings){
 "use strict";
 
 var provoda, pv;
@@ -97,7 +97,7 @@ pv = provoda = {
 			}
 		};
 	},
-
+	getSubpages: initDeclaredNestings.getSubpages,
 	updateNesting: function(md, nesting_name, nesting_value, opts, spec_data) {
 		md.updateNesting(nesting_name, nesting_value, opts, spec_data);
 	},
