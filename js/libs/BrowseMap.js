@@ -1004,24 +1004,6 @@ var BrowseLevel = spv.inh(pv.Model, {
 		pv.update(md, 'bmpl_attached', obj);
 		pv.update(md, 'mpl_attached', countKeys(obj, true));
 	},
-	'stch-to_load': function(target, struc) {
-		if (!struc) {return;}
-	},
-	'stch-to_init': function(target, struc) {
-		if (!struc) {return;}
-
-		var md = target.getNesting('pioneer');
-		var idx = md.idx_nestings_declarations;
-		if (!idx) {return;}
-
-		var obj = struc.main.m_children.children;
-		for (var name in obj) {
-			var nesting_name = pv.hp.getRightNestingName(md, name);
-			var el = idx[nesting_name];
-			if (!el) {continue;}
-			md.updateNesting(el.nesting_name, pv.getSubpages( md, el.subpages_names_list ));
-		}
-	},
 	'compx-struc': [
 		['@one:struc:map'],
 		function(struc) {
@@ -1036,13 +1018,51 @@ var BrowseLevel = spv.inh(pv.Model, {
 			return struc;
 		}
 	],
+	'stch-to_init': function(target, struc) {
+		if (!struc) {return;}
+
+		var md = target.getNesting('pioneer');
+		var idx = md.idx_nestings_declarations;
+		if (!idx) {return;}
+
+		var obj = struc.main.m_children.children;
+		for (var name in obj) {
+			var nesting_name = pv.hp.getRightNestingName(md, name);
+			var el = idx[nesting_name];
+			if (!el) {continue;}
+			if (el.init_state_name && (el.init_state_name !== 'mp_show' && el.init_state_name !== 'mp_has_focus')) {
+				continue;
+			}
+			md.updateNesting(el.nesting_name, pv.getSubpages( md, el.subpages_names_list ));
+		}
+	},
 	'compx-to_load': [
 		['mp_dft', 'struc'],
 		function(mp_dft, struc) {
 			if (!mp_dft || mp_dft > 1 || !struc) {return;}
 			return struc;
 		}
-	]
+	],
+	'stch-to_load': function(target, struc) {
+		if (!struc) {return;}
+
+		var md = target.getNesting('pioneer');
+		var idx = md.idx_nestings_declarations;
+		if (!idx) {return;}
+
+		var obj = struc.main.m_children.children;
+		for (var name in obj) {
+			var nesting_name = pv.hp.getRightNestingName(md, name);
+			var el = idx[nesting_name];
+			if (!el) {continue;}
+
+			var item = pv.getSubpages( md, el.subpages_names_list );
+			if (Array.isArray(item) || !item.preloadStart) {
+				continue;
+			}
+			item.preloadStart();
+		}
+	},
 });
 
 var getBWlev = function(md, parent_bwlev, map_level_num, map){
