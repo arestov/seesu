@@ -921,6 +921,7 @@ function extend(Class, params, propsArg) {
 
 	result.extendTo = function(Class, props) {
 		console.log('don\'t use extendTo');
+		console.log(codePath());
 
 		if (!result.legacy) {
 			result.legacy = naming(empty);
