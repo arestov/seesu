@@ -539,7 +539,7 @@ var onPropsExtend = (function(){
 	return function(props, original, params) {
 		var init = params && params.init || props.init;
 		if (init) {
-			if (!this.hasOwnProperty('network_data_as_states')) {
+			if (init.length > 2 && !this.hasOwnProperty('network_data_as_states')) {
 				this.network_data_as_states = false;
 			}
 			if (init.toString().search(check) != -1) {
