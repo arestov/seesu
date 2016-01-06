@@ -463,7 +463,11 @@ var FreeArtistTracks = spv.inh(SongsList, {}, {
 	]
 });
 
-var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
+var ArtCardBase = spv.inh(BrowseMap.Model, {
+	init: function(target) {
+		target.albums_models = null;
+	}
+}, {
 	model_name: 'artcard',
 	getURL: function() {
 		return '/catalog/' + this.app.encodeURLPart(this.head.artist_name);
@@ -531,22 +535,14 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 	'nest-tags_list': ['tags', false, 'init_ext'],
 	'nest-similar_artists': ['+similar', false, 'init_ext'],
 
-
-
-	'nest-top_songs': ['_', true, 'init_heavy'],
-	'nest-dgs_albums': ['albums', true, 'init_heavy'],
-	'nest-albums_list': ['albums_lfm', true, 'init_heavy'],
-	'nest-soundc_prof': ['soundcloud', true, 'init_heavy'],
-	'nest-soundc_likes': ['soundcloud_likes', true, 'init_heavy'],
-	'nest-hypem_new': ['fresh', true, 'init_heavy'],
-	'nest-hypem_fav': ['most_favorites', true, 'init_heavy'],
-	'nest-hypem_reblog': ['blogged', true, 'init_heavy'],
-
-
-	initHeavy: pv.getOCF('heavy_oi', function() {
-		this.albums_models = {};
-		pvUpdate(this, 'init_heavy', true);
-	}),
+	'nest-top_songs': ['_', true, 'mp_has_focus'],
+	'nest-dgs_albums': ['albums', true, 'mp_has_focus'],
+	'nest-albums_list': ['albums_lfm', true, 'mp_has_focus'],
+	'nest-soundc_prof': ['soundcloud', true, 'mp_has_focus'],
+	'nest-soundc_likes': ['soundcloud_likes', true, 'mp_has_focus'],
+	'nest-hypem_new': ['fresh', true, 'mp_has_focus'],
+	'nest-hypem_fav': ['most_favorites', true, 'mp_has_focus'],
+	'nest-hypem_reblog': ['blogged', true, 'mp_has_focus'],
 
 	getTagsModel: function() {
 		return this.getSPI('tags', true);
@@ -762,6 +758,9 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 		return pl;
 	},
 	getAlbum: function(params) {
+		if (!this.albums_models) {
+			this.albums_models = {};
+		}
 		var kystring = spv.stringifyParams({artist: params.album_artist, name: params.album_name}, false, '=', '&');
 		if (this.albums_models[kystring]){
 			return this.albums_models[kystring];
@@ -797,7 +796,6 @@ ArtCard = spv.inh(ArtCardBase, {
 
 		target.wch(target, 'mp_has_focus', function(e) {
 			if (e.value){
-				this.initHeavy();
 				this.loadInfo();
 			}
 		}, true);
