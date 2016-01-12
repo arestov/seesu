@@ -1060,6 +1060,9 @@ var BrowseLevel = spv.inh(pv.Model, {
 			if (Array.isArray(item) || !item.preloadStart) {
 				continue;
 			}
+			if (item.state('preview_loading') || item.state('preview_list')) {
+				continue;
+			}
 			item.preloadStart();
 		}
 	},
