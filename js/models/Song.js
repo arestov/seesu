@@ -11,6 +11,9 @@ lfm_share_url_replacers.forEach(function(el, i) {
 var album_placeholder = {
 	url: 'i/album_placeholder.png'
 };
+
+var pvUpdate = pv.update;
+
 	var app_env = app_serv.app_env;
 
 	return spv.inh(SongBase, {
@@ -82,6 +85,7 @@ var album_placeholder = {
 			if (state){
 				var artcard = target.getNesting('artist');
 				if (artcard){
+					pvUpdate(artcard, 'init_ext', true);
 					var req = artcard.requestState('bio');
 					if (req){
 						target.addRequest(req);

@@ -479,9 +479,9 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 			return artist_name && '/catalog/' + this.app.encodeURLPart(artist_name);
 		}],
 		'selected_image': {
-			depends_on: ['lfm_image', 'lfm_img', 'profile_image'],
-			fn: function(lfmi_wrap, lfm_img, pi_wrap) {
-				return pi_wrap || lfm_img || lfmi_wrap;
+			depends_on: ['lfm_image', 'lfm_img', 'profile_image', 'shared_lfm_img'],
+			fn: function(lfmi_wrap, lfm_img, pi_wrap, shared_lfm_img) {
+				return pi_wrap || lfm_img || lfmi_wrap || shared_lfm_img;
 			}
 		}
 	},
@@ -532,8 +532,14 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 			title: localize('Most Reblogged')
 		}
 	},
-	'nest-tags_list': ['tags', false, 'init_ext'],
-	'nest-similar_artists': ['+similar', false, 'init_ext'],
+	'compx-ext_exposed': [
+		['init_ext', 'mp_has_focus'],
+		function(init_ext, mp_has_focus) {
+			return init_ext || mp_has_focus;
+		}
+	],
+	'nest-tags_list': ['tags', false, 'ext_exposed'],
+	'nest-similar_artists': ['+similar', false, 'ext_exposed'],
 
 	'nest-top_songs': ['_', true, 'mp_has_focus'],
 	'nest-dgs_albums': ['albums', true, 'mp_has_focus'],
@@ -792,8 +798,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 
 ArtCard = spv.inh(ArtCardBase, {
 	init: function(target) {
-		pvUpdate(target, 'init_ext', true);
-
 		target.wch(target, 'mp_has_focus', function(e) {
 			if (e.value){
 				this.loadInfo();
@@ -803,13 +807,9 @@ ArtCard = spv.inh(ArtCardBase, {
 }, {
 });
 
-
-
-
 var ArtistInArtl = spv.inh(ArtCardBase, {}, {
 	net_head: ['artist_name'],
 	skip_map_init: true,
-	// extendedInit: function() {},
 	showArtcard: function() {
 		this.app.showArtcardPage(this.head.artist_name);
 	}
@@ -860,12 +860,8 @@ var ArtistsList = spv.inh(LoadableList, {}, {
 	requestRandomPlaylist: function(bwlev_id) {
 		var bwlev = pv.getModelById(bwlev_id);
 		bwlev.followTo(this.createRPlist()._provoda_id);
-		// .showOnMap();
 	},
-	'nest_rqc-artists_list': ArtistInArtl,
-	makeDataItem: function(obj) {
-		return this.initSi(ArtistInArtl, obj);
-	}
+	'nest_rqc-artists_list': '#catalog/[:artist]'
 });
 
 // var SimilarArtists = function() {};//must be here
