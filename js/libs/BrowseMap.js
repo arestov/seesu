@@ -1060,7 +1060,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 			if (Array.isArray(item) || !item.preloadStart) {
 				continue;
 			}
-			if (item.state('preview_loading') || item.state('preview_list')) {
+			if (item.full_comlxs_index['preview_list'] || item.full_comlxs_index['preview_loading']) {
 				continue;
 			}
 			item.preloadStart();
@@ -1275,8 +1275,10 @@ var getInitData = function(md, common_opts) {
 var getDeclrConstr = function(app, md, item) {
 	if (typeof item == 'function') {
 		return item;
-	} else {
+	} else if (typeof item == 'string') {
 		return md.getConstrByPathTemplate(app, item);
+	} else {
+		return item;
 	}
 };
 
@@ -1294,7 +1296,7 @@ var getNestingConstr = function(app, md, nesting_name) {
 					if (!index.hasOwnProperty(prop)) {
 						continue;
 					} else {
-						result.push( index[prop] );
+						result.push( getDeclrConstr(app, md, index[prop]) );
 					}
 
 				}
@@ -1303,7 +1305,7 @@ var getNestingConstr = function(app, md, nesting_name) {
 
 			return target.constrs_array;
 		} else {
-			return target;
+			return getDeclrConstr(app, md, target);
 		}
 
 	} else if (md[ 'nest_posb-' + nesting_name ]) {
@@ -1329,6 +1331,7 @@ var getNestingConstr = function(app, md, nesting_name) {
 
 };
 BrowseMap.getNestingConstr = getNestingConstr;
+BrowseMap.getDeclrConstr = getDeclrConstr;
 
 var getModelSources = function(app, md, cur) {
 	var states_sources = [];

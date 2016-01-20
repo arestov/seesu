@@ -1,4 +1,4 @@
-define([], function() {
+define(['spv'], function(spv) {
 "use strict";
 
 var executePreload = function(md, nesting_name) {
@@ -39,29 +39,32 @@ var bindPreload = function(md, preload_state_name, nesting_name) {
 	});*/
 };
 
+var pathExecutor = function(getChunk) {
+	return function getPath(obj, app, arg1, arg2) {
+		var full_path;
+		if (obj.states) {
+			full_path = '';
+			for (var i = 0; i < obj.clean_string_parts.length; i++) {
+				full_path += obj.clean_string_parts[i];
+				var cur_state = obj.states[i];
+				if (cur_state) {
+					var chunk = getChunk(cur_state, app, arg1, arg2);
+					full_path += (chunk && app.encodeURLPart(chunk || '')) || 'null';
+				}
+			}
+		} else {
+			full_path = obj.full_usable_string;
+		}
+		return full_path;
+	};
+};
 
-
-
-
-
+var getPath = pathExecutor(function(chunkName, app, md) {
+	return md._provoda_id && md.state(chunkName);
+});
 
 var executeStringTemplate = function(app, md, obj, need_constr) {
-	var full_path;
-	if (obj.states) {
-		full_path = '';
-		for (var i = 0; i < obj.clean_string_parts.length; i++) {
-			full_path += obj.clean_string_parts[i];
-			var cur_state = obj.states[i];
-			if (cur_state) {
-				full_path += (md._provoda_id && app.encodeURLPart(md.state(cur_state) || '')) || 'null';
-			}
-
-		}
-
-	} else {
-		full_path = obj.full_usable_string;
-	}
-
+	var full_path = getPath(obj, app, md);
 	return app.routePathByModels(full_path, obj.from_root ? app.start_page : md, need_constr);
 
 };
@@ -71,7 +74,7 @@ var string_state_regexp = /\[\:.+?\]/gi;
 var parsed_strings_templates = {};
 
 
-var getParsedPath = function(string_template) {
+var getParsedPath = spv.memorize(function(string_template) {
 	if (!parsed_strings_templates[string_template]) {
 		//example "#tracks/[:artist],[:track]"
 		var from_root = string_template.charAt(0) == '#';
@@ -94,7 +97,8 @@ var getParsedPath = function(string_template) {
 		};
 	}
 	return parsed_strings_templates[string_template];
-};
+});
+
 var getSPByPathTemplate = function(app, md, string_template, need_constr) {
 
 	var parsed_template = getParsedPath(string_template);
@@ -165,7 +169,9 @@ var initDeclaredNestings = function(md) {
 	}
 };
 
+initDeclaredNestings.getParsedPath = getParsedPath;
 initDeclaredNestings.getSubpages = getSubpages;
+initDeclaredNestings.pathExecutor = pathExecutor;
 
 
 initDeclaredNestings.getConstrByPath = function(app, md, string_template) {

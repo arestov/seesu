@@ -1,6 +1,9 @@
 define(['js/libs/BrowseMap', 'spv', 'pv'], function(BrowseMap, spv, pv) {
 "use strict";
 var pvUpdate = pv.update;
+var getPath = pv.pathExecutor(function(chunkName, app, data) {
+	return data && data[chunkName];
+});
 
 var getRelativeRequestsGroups = BrowseMap.Model.prototype.getRelativeRequestsGroups;
 
@@ -278,7 +281,18 @@ return spv.inh(BrowseMap.Model, {
 	},
 	makeItemByData: function(data, item_params, nesting_name) {
 		var best_constr = this['nest_rqc-' + nesting_name];
+		var md = this;
 		if (best_constr) {
+			if (typeof best_constr == 'string') {
+				var pathObj = pv.getParsedPath(best_constr);
+				var app = this.app;
+				var path = getPath(pathObj, app, data);
+				var result = app.routePathByModels(path, pathObj.from_root ? app.start_page : md);
+				for (var prop in data) {
+					pvUpdate(result, 'shared_' + prop, data[prop]);
+				}
+				return result;
+			}
 			/*
 				['type', {
 					'number': NumberConstr,
