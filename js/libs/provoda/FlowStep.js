@@ -14,6 +14,7 @@ var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, p
 	this.finup = !!finup || null;
 	this.complex_order = ( parent_motivator && parent_motivator.complex_order.slice() ) || [];
 	this.complex_order.push(this.num);
+	this.next = null;
 
 	if (!this.fn && !this.cb_wrapper) {
 		throw new Error('how to handle this step!?');

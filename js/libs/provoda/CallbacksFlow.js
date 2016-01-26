@@ -117,6 +117,8 @@ var getBoxedRAFFunc = function(win) {
 
 var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 	this.flow = [];
+	this.flow_start = null;
+	this.flow_end = null;
 	this.busy = null;
 	this.iteration_time = iteration_time || 250;
 	this.iteration_delayed = null;
@@ -137,7 +139,6 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 			return setImmediate(fn);
 		};
 	}
-
 };
 var insertItem = spv.insertItem;
 CallbacksFlow.prototype = {
@@ -147,29 +148,41 @@ CallbacksFlow.prototype = {
 		this.iteration_delayed = false;
 		this.callbacks_busy = true;
 
-		for (var i = 0; i < this.flow.length; i++) {
+		var stopped;
+		for (var cur = this.flow_start; cur;) {
+			this.flow_start = cur;
+			if (!this.flow_start) {
+				this.flow_end = null;
+			}
 			if (Date.now() > start){
+				stopped = cur;
 				this.pushIteration(this.hndIterateCallbacksFlow);
 				break;
 			}
+			this.flow_start = cur.next;
+			if (!this.flow_start) {
+				this.flow_end = null;
+			}
 
-			// if (typeof this.flow_steps_collating_invalidated == 'number'){
-			// 	if (this.flow_steps_collating_invalidated <= this.flow[i].complex_order[0]) {
-			// 		this.flow_steps_collating_invalidated = null;
-			// 		this.flow.sort(sortFlows);
-			// 	}
-			// }
-			var cur = this.flow[i];
-			this.flow[i] = null;
 			if (!cur.aborted) {
 				cur.call();
 			}
-		}
-		this.flow.splice(0, i + 1);
 
-		if (!this.flow.length){
+			if (this.flow_start == cur) {
+				cur = cur.next;
+			} else {
+				cur = this.flow_start;
+			}
+		}
+		this.flow_start = stopped;
+		if (!stopped) {
+			this.flow_end = null;
+		}
+
+		if (!this.flow_start) {
 			this.callbacks_busy = false;
 		}
+
 	},
 	checkCallbacksFlow: function() {
 		if (!this.iteration_delayed && !this.callbacks_busy){
@@ -181,32 +194,55 @@ CallbacksFlow.prototype = {
 	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup) {
 		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup);
 		if (motivator){
-			var last_item = this.flow[ this.flow.length - 1 ];
+			var last_item = this.flow_end;
 			var result = last_item && sortFlows(last_item, flow_step);
 			if (result === 1) {
 				//очевидно, что новый элемент должен в результате занять другую позицию
 
-				var last_matched = -1;
-				for (var i = 0; i < this.flow.length; i++) {
-					var cur = this.flow[i];
+				var last_matched;
+				for (var cur = this.flow_start; cur; cur = cur.next) {
 					var match_result = sortFlows(cur, flow_step);
 					if (match_result == -1) {
-						last_matched = i;
+						last_matched = cur;
 					} else {
+						if (cur) {
+							// debugger;
+						}
+
 						break;
 					}
 				}
 
-				insertItem(this.flow, flow_step, last_matched + 1);
+				if (!cur) {
+					throw new Error('something wrong');
+				}
 
-				//this.flow_steps_collating_invalidated = Math.min( flow_step.complex_order[0], this.flow_steps_collating_invalidated || Infinity );
+				if (!last_matched) {
+					flow_step.next = this.flow_start;
+					this.flow_start = flow_step;
+				} else {
+					flow_step.next = last_matched.next;
+					last_matched.next = flow_step;
+				}
+
 			} else {
-				this.flow.push(flow_step);
+				if (this.flow_end) {
+					this.flow_end.next = flow_step;
+				}
+				this.flow_end = flow_step;
+				if (!this.flow_start) {
+					this.flow_start = flow_step;
+				}
 			}
 		} else {
-			this.flow.push(flow_step);
+			if (this.flow_end) {
+				this.flow_end.next = flow_step;
+			}
+			this.flow_end = flow_step;
+			if (!this.flow_start) {
+				this.flow_start = flow_step;
+			}
 		}
-
 
 		this.checkCallbacksFlow();
 		return flow_step;
