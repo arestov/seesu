@@ -364,7 +364,8 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 	},
 	getMapSliceChildInParenView: function(bwlev, md) {
 		var parent_bwlev = bwlev.map_parent;
-		var parent_md = md.map_parent;
+		// md of parent view could differ from md.map_parent
+		var parent_md = bwlev.getParentMapModel().getNesting('pioneer');
 
 		var parent_bwlev_view = this.getMapSliceView(parent_bwlev, parent_md);
 		var parent_view = parent_bwlev_view && parent_bwlev_view.findMpxViewInChildren(this.getStoredMpx(parent_md));
@@ -728,8 +729,12 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
 
 		}*/
-		var md = target.getNesting('current_mp_md');
+
 		var bwlev = target.getNesting('current_mp_bwlev');
+		var parent_bwlev = bwlev.getParentMapModel();
+		var md = target.getNesting('current_mp_md');
+
+
 
 		setTimeout(function() {
 			if (!target.isAlive()){
@@ -744,12 +749,13 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 				// var mplev_item_view = target.getStoredMpx(md).getRooConPresentation(target, false, false, true);
 				var mplev_item_view = target.getMapSliceChildInParenView(bwlev, md);
 				var con = mplev_item_view && mplev_item_view.getC();
+				var map_level_num = pv.state(bwlev, 'map_level_num') - 1;
 				if (con && con.height()){
 					target.scrollTo(mplev_item_view.getC(), {
-						node: target.getLevByNum(md.map_level_num - 1).scroll_con
+						node: target.getLevByNum(map_level_num).scroll_con
 					}, {vp_limit: 0.4, animate: 117});
 				} else {
-					target.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
+					target.getLevByNum(map_level_num).scroll_con.scrollTop(0);
 				}
 			}
 		}, 150);
