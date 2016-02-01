@@ -439,6 +439,97 @@ var View = spv.inh(StatesEmitter, {
 			this.bindBase();
 		}
 	},
+		checkExpandableTree: function(state_name) {
+		var i, cur, cur_config, has_changes = true, append_list = [];
+		while (this.base_skeleton && has_changes) {
+			has_changes = false;
+			for (i = 0; i < this.base_skeleton.length; i++) {
+				cur = this.base_skeleton[i];
+				cur_config = this.base_tree_list[ cur.chunk_num ];
+				if (cur.handled) {
+					continue;
+				}
+				if (!cur.parent || cur.parent.handled) {
+					if (!cur_config.needs_expand_state || cur_config.needs_expand_state == state_name){
+						cur.handled = true;
+						if (cur_config.sample_name) {
+							cur.node = this.root_view.getSample( cur_config.sample_name );
+						} else if (cur_config.part_name) {
+							cur.node = this.requirePart( cur_config.part_name );
+						} else {
+							throw new Error('how to get node for this?!');
+						}
+						has_changes = true;
+						append_list.push(cur);
+
+						//sample_name
+						//part_name
+					}
+				}
+
+				//chunk_num
+			}
+			while (append_list.length) {
+				cur = append_list.pop();
+				if (cur.parent && cur.parent.node) {
+					cur_config = this.base_tree_list[ cur.chunk_num ];
+					var target_node = cur_config.selector ? $(cur.parent.node).find(cur_config.selector) : $(cur.parent.node);
+
+					if (!cur_config.prepend) {
+						target_node.append(cur.node);
+					} else {
+						target_node.prepend(cur.node);
+					}
+
+					if (cur_config.needs_expand_state && cur_config.parse_as_tplpart) {
+						this.parseAppendedTPLPart(cur.node);
+					}
+				} else if (cur.parent){
+					console.log('cant append');
+				} else {
+					this.c = cur.node;
+				}
+			}
+
+		}
+		if (!this.c && this.base_skeleton[0].node) {
+			this.c = this.base_skeleton[0].node;
+		}
+
+		if (state_name && this.dclrs_expandable) {
+			if (this.dclrs_expandable[state_name]) {
+				if (!this._lbr.handled_expandable_dclrs) {
+					this._lbr.handled_expandable_dclrs = {};
+				}
+				if (!this._lbr.handled_expandable_dclrs[state_name]) {
+					this._lbr.handled_expandable_dclrs[state_name] = true;
+					for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
+						this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
+					}
+
+					this.checkChildrenModelsRendering();
+					this.requestAll();
+				}
+
+			}
+		}
+
+
+		//если есть прикреплённый родитель и пришло время прикреплять (если оно должно было прийти)
+		//
+
+		/*
+		прикрепление родителя
+		парсинг детей
+		прикрепление детей
+
+		прикрепление детей привязаных к якорю
+
+
+
+		*/
+
+	},
 	createDetails: function() {
 		if (this.pv_view_node){
 			this.useBase(this.pv_view_node);
