@@ -1,5 +1,5 @@
-define(['spv', './helpers', 'jquery', './updateProxy', './StatesLabour', './prsStCon'],
-function(spv, hp, $, updateProxy, StatesLabour, prsStCon) {
+define(['spv', './helpers', './updateProxy', './StatesLabour', './prsStCon'],
+function(spv, hp, updateProxy, StatesLabour, prsStCon) {
 'use strict';
 return function(Eventor) {
 
