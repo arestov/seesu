@@ -58,7 +58,6 @@ pv = provoda = {
 	getModelById: function(id) {
 		return big_index[id];
 	},
-	prototypes: {},
 	setTplFilterGetFn: function(fn) {
 		angbo.getFilterFn = fn;
 	},
@@ -71,20 +70,6 @@ pv = provoda = {
 	HModel: getHModel(),
 	View: getView(StatesEmitter, main_calls_flow, views_proxies),
 	views_proxies: views_proxies,
-	addPrototype: function(name, obj){
-		if (!this.prototypes[name]){
-			this.prototypes[name] = obj;
-		} else{
-			throw new Error('Already has such prototype');
-		}
-	},
-	extendFromTo: function(name, base, fn){
-		if (!this.prototypes[name]){
-			throw new Error('there is no prototype ' + name + ' in my store');
-		}
-		base.extendTo(fn, this.prototypes[name]);
-		return fn;
-	},
 	getOCF: function(propcheck, callback) {
 		//init once
 		return function(){
