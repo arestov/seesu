@@ -926,6 +926,9 @@ pv.sync_s.setRootModel(su);
 
 
 function moreApis(su, resortQueue){
+	spv.domReady(window.document, function() {
+		domPart(su);
+	});
 
 	//su.sc_api = sc_api;
 	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue({
@@ -1015,7 +1018,7 @@ function moreApis(su, resortQueue){
 	}
 }
 
-var createDatastreamIframe = function(url, callback, allow_exec) {
+function createDatastreamIframe(url, callback, allow_exec) {
 	var iframe = window.document.createElement('iframe');
 	spv.addEvent(window, 'message', function(e) {
 		if (e.source == iframe.contentWindow) {
@@ -1036,9 +1039,9 @@ var createDatastreamIframe = function(url, callback, allow_exec) {
 	});
 	iframe.src = url;
 	$(window.document.body).append(iframe);
-};
+}
 
-spv.domReady(window.document, function(){
+function domPart(su){
 	initVk(su);
 	su.checkUpdates();
 	var queue = new FuncsQueue({
@@ -1102,7 +1105,7 @@ spv.domReady(window.document, function(){
 			});
 		}
 	});
-});
+}
 
 function initLfm(su, resortQueue) {
 	var lfm = new LastfmAPIExtended();
