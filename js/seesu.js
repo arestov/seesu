@@ -20,8 +20,11 @@ var addQueue = function() {
 	all_queues.push(this);
 	return this;
 };
-var resortQueue = function(queue) {
-	su.resortQueue(queue);
+
+var resortSuQueue = function(su) {
+	return function resortQueue(queue) {
+		su.resortQueue(queue);
+	};
 };
 
 $.ajaxSetup({
@@ -32,22 +35,6 @@ $.ajaxSetup({
 $.support.cors = true;
 
 var pvUpdate = pv.update;
-var lfm = new LastfmAPIExtended();
-
-lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
-	return app_serv.store(key);
-}, function(key, value){
-	return app_serv.store(key, value, true);
-}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue({
-	time: [700],
-	resortQueue: resortQueue,
-	init: addQueue
-}));
-lfm.checkMethodResponse = function(method, data, r) {
-	su.art_images.checkLfmData(method, r);
-};
-
-
 var chrome = window.chrome;
 var ChromeExtensionButtonView = spv.inh(pv.View, {}, {
 	state_change: {
@@ -81,7 +68,7 @@ var OperaExtensionButtonView = spv.inh(pv.View, {}, {
 
 var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
-	initAPIs: function() {
+	initAPIs: function(resortQueue) {
 		var _this = this;
 
 		this.lfm_auth = this.initSi(LfmAuth, {lfm: this.lfm}, {
@@ -275,6 +262,7 @@ AppModel.extendTo(SeesuApp, {
 			}
 		});
 
+		moreApis(this, resortQueue);
 	},
 	'stch-session@lfm_auth': function(target, state) {
 		if (state) {
@@ -288,6 +276,10 @@ AppModel.extendTo(SeesuApp, {
 		this.app = this;
 		this._super();
 		this.version = version;
+
+		var resortQueue = resortSuQueue(this);
+		var lfm = initLfm(this, resortQueue);
+
 		this.lfm = lfm;
 
 		this._url = app_serv.get_url_parameters(window.location.search, true);
@@ -366,14 +358,7 @@ AppModel.extendTo(SeesuApp, {
 			}
 		);
 
-		this.initAPIs();
-
-
-
-
-
-
-
+		this.initAPIs(resortQueue);
 
 		this.p = new PlayerSeesu(this);
 		this.player = this.p;
@@ -389,8 +374,6 @@ AppModel.extendTo(SeesuApp, {
 		if (app_env.deep_sanbdox){
 			pv.update(this, 'deep_sandbox', true);
 		}
-
-
 
 		this.start_page = new StartPage({app: this});
 
@@ -942,7 +925,7 @@ su.init(seesu_version);
 pv.sync_s.setRootModel(su);
 
 
-(function(){
+function moreApis(su, resortQueue){
 
 	//su.sc_api = sc_api;
 	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue({
@@ -1030,13 +1013,8 @@ pv.sync_s.setRootModel(su);
 			}
 		}
 	}
+}
 
-
-
-
-
-
-})();
 var createDatastreamIframe = function(url, callback, allow_exec) {
 	var iframe = window.document.createElement('iframe');
 	spv.addEvent(window, 'message', function(e) {
@@ -1126,6 +1104,25 @@ spv.domReady(window.document, function(){
 	});
 });
 
+function initLfm(su, resortQueue) {
+	var lfm = new LastfmAPIExtended();
+
+	lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
+		return app_serv.store(key);
+	}, function(key, value){
+		return app_serv.store(key, value, true);
+	}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue({
+		time: [700],
+		resortQueue: resortQueue,
+		init: addQueue
+	}));
+
+	lfm.checkMethodResponse = function(method, data, r) {
+		su.art_images.checkLfmData(method, r);
+	};
+
+	return lfm;
+}
 
 
 return su;
