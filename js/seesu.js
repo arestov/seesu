@@ -84,7 +84,7 @@ AppModel.extendTo(SeesuApp, {
 	initAPIs: function() {
 		var _this = this;
 
-		this.lfm_auth = this.initSi(LfmAuth, {lfm: lfm}, {
+		this.lfm_auth = this.initSi(LfmAuth, {lfm: this.lfm}, {
 			deep_sanbdox: app_env.deep_sanbdox,
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
@@ -269,7 +269,7 @@ AppModel.extendTo(SeesuApp, {
 		});
 		spv.domReady(window.document, function() {
 			_this.lfm_auth.try_to_login();
-			if (!lfm.sk) {
+			if (!_this.lfm.sk) {
 				_this.lfm_auth.get_lfm_token();
 
 			}
@@ -290,7 +290,7 @@ AppModel.extendTo(SeesuApp, {
 		this.version = version;
 		this.lfm = lfm;
 
-		this._url = app_serv.get_url_parameters(location.search, true);
+		this._url = app_serv.get_url_parameters(window.location.search, true);
 		this.settings = {};
 		this.settings_timers = {};
 
@@ -500,7 +500,7 @@ AppModel.extendTo(SeesuApp, {
 				_this.map.finishChangesCollecting();
 			});
 			(function() {
-				var url = window.location && location.hash.replace(/^\#/,'');
+				var url = window.location && window.location.hash.replace(/^\#/,'');
 				if (url){
 					_this.on('handle-location', function() {
 						navi.hashchangeHandler({
@@ -516,7 +516,7 @@ AppModel.extendTo(SeesuApp, {
 		if (app_serv.app_env.nodewebkit) {
 			pv.update(this, 'disallow_seesu_listeners', true);
 		}
-		this.on('child_change-current_mp_md', function(e) {
+		this.on('child_change-current_mp_md', function() {
 			this.closeNavHelper();
 		});
 	},
@@ -624,7 +624,7 @@ AppModel.extendTo(SeesuApp, {
 	//	args.unshift('_trackEvent');
 
 		this.trackStat.call(this, function() {
-			var pageTracker = _gat._getTrackerByName(current_page);
+			var pageTracker = window._gat._getTrackerByName(current_page);
 			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
@@ -654,7 +654,7 @@ AppModel.extendTo(SeesuApp, {
 		var args = Array.prototype.slice.call(arguments);
 		var current_page = this.current_page || '(nonono)';
 		this.trackStat.call(this, function() {
-			var pageTracker = _gat._getTrackerByName(current_page);
+			var pageTracker = window._gat._getTrackerByName(current_page);
 			pageTracker._trackTiming.apply(pageTracker, args);
 		});
 	},
@@ -775,11 +775,10 @@ AppModel.extendTo(SeesuApp, {
 	},
 	vkSessCode: function(vk_t_raw) {
 		if (vk_t_raw){
-			var vk_token = new VkAuth.VkTokenAuth(su.vkappid, vk_t_raw);
-			su.vk_auth.api = su.connectVKApi(vk_token, true);
-			pvUpdate(su.vk_auth, 'has_token', true);
-			su.vk_auth.trigger('full-ready', true);
-
+			var vk_token = new VkAuth.VkTokenAuth(this.vkappid, vk_t_raw);
+			this.vk_auth.api = this.connectVKApi(vk_token, true);
+			pvUpdate(this.vk_auth, 'has_token', true);
+			this.vk_auth.trigger('full-ready', true);
 		}
 	},
 	connectVKApi: function(vk_token, access, not_save) {
@@ -1039,7 +1038,7 @@ pv.sync_s.setRootModel(su);
 
 })();
 var createDatastreamIframe = function(url, callback, allow_exec) {
-	var iframe = document.createElement('iframe');
+	var iframe = window.document.createElement('iframe');
 	spv.addEvent(window, 'message', function(e) {
 		if (e.source == iframe.contentWindow) {
 			callback(e.data);
