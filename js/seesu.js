@@ -1,4 +1,3 @@
-var su, seesu;
 define('su',
 ['require', 'spv', 'app_serv', 'pv', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
@@ -9,7 +8,6 @@ ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, ProspApi) {
 'use strict';
-var seesu_version = 4.8;
 var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
@@ -920,11 +918,6 @@ AppModel.extendTo(SeesuApp, {
 
 });
 
-seesu = su = new SeesuApp();
-su.init(seesu_version);
-pv.sync_s.setRootModel(su);
-
-
 function moreApis(su, resortQueue){
 	spv.domReady(window.document, function() {
 		domPart(su);
@@ -1127,6 +1120,5 @@ function initLfm(su, resortQueue) {
 	return lfm;
 }
 
-
-return su;
+return SeesuApp;
 });

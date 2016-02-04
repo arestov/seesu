@@ -1,3 +1,5 @@
+var su, seesu;
+
 (function(){
 "use strict";
 requirejs.config({
@@ -28,6 +30,7 @@ requirejs.config({
 	},
 	waitSeconds: window.tizen && 0
 });
+var seesu_version = 4.8;
 
 window._gaq = window._gaq || [];
 
@@ -62,7 +65,13 @@ window._gaq = window._gaq || [];
 			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
 	}
-	requirejs(['su'], function(su) {
+	requirejs(['su', 'pv'], function(SeesuApp, pv) {
+
+		su = seesu = new SeesuApp();
+		su.init(seesu_version);
+		pv.sync_s.setRootModel(su);
+
+
 		if (need_ui) {
 			initViews(su);
 		}
