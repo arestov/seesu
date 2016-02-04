@@ -62,14 +62,23 @@ window._gaq = window._gaq || [];
 			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
 	}
-	requirejs(['su'], function() {
+	requirejs(['su'], function(su) {
+		if (need_ui) {
+			initViews(su);
+		}
 
 		//app thread;
 	});
-	if (need_ui){
 
+	if (need_ui) {
+		requirejs(['js/views/AppView', 'pv'], function() {
+			// preload modules
+		});
+	}
+
+	function initViews(su) {
 		//ui thread;
-		requirejs(['su', 'js/views/AppView', 'pv'], function(su, AppView, pv) {
+		requirejs(['js/views/AppView', 'pv'], function(AppView, pv) {
 			var can_die = false;
 			var md = su;
 
