@@ -939,11 +939,13 @@ function extend(Class, params, propsArg) {
 	return result;
 }
 
+var path = typeof window !== 'undefined' ? window.location.origin + '/' : '';
+
 function codePath() {
 	var err = new Error();
 	var stack = err.stack.split('\n');
 	var path = stack[3];
-	return path.replace('    at ', '').replace(window.location.origin + '/', '');
+	return path.replace('    at ', '').replace(path, '');
 }
 
 function makeInit(builder) {
