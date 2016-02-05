@@ -1,5 +1,11 @@
-define(['spv', 'hex_md5', './helpers', 'js/libs/morph_helpers'], function(spv, hex_md5, hp, morph_helpers) {
+define(function(require) {
 'use strict';
+
+var spv = require('spv');
+var hex_md5 = require('hex_md5');
+var hp = require('./helpers');
+var morph_helpers = require('js/libs/morph_helpers');
+
 var isEvNSMatching = (function() {
 	var check = function(listener_name, trigger_name) {
 		var last_char = listener_name.charAt(trigger_name.length);

@@ -1,6 +1,11 @@
-define(['spv', 'jquery', 'angbo', './directives_parsers', './getCachedPVData'],
-	function(spv, $, angbo, d_parsers, getCachedPVData){
-"use strict";
+define(function(require) {
+'use strict';
+
+var spv = require('spv');
+var $ = require('jquery');
+var d_parsers = require('./directives_parsers');
+var getCachedPVData = require('./getCachedPVData');
+
 var config = d_parsers.config;
 var getNodeInstanceCount = getCachedPVData.getNodeInstanceCount;
 

@@ -1,5 +1,8 @@
-define(['spv'], function(spv) {
+define(function(require) {
 'use strict';
+
+var spv = require('spv');
+
 var StatesLabour = function(has_complex_states, need_stch_storage) {
 	this.flow_steps_stev = null;
 	this.flow_steps_vip_stdch_ev = null;

@@ -1,4 +1,4 @@
-define([], function() {
+define(function() {
 'use strict';
 var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, parent_motivator, finup) {
 	this.aborted = false;

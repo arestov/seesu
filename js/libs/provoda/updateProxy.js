@@ -1,5 +1,10 @@
-define(['./StatesLabour', './helpers', 'spv'], function(StatesLabour, hp, spv) {
+define(function(require) {
 'use strict';
+
+var StatesLabour = require('./StatesLabour');
+var hp = require('./helpers');
+var spv = require('spv');
+
 var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 var getFinupFullname = spv.getPrefixingFunc('finup-');

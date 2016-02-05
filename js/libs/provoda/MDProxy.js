@@ -1,5 +1,9 @@
-define(['spv', './helpers'], function(spv, hp) {
-"use strict";
+define(function(require) {
+'use strict';
+
+var spv = require('spv');
+var hp = require('./helpers');
+
 var MDProxy = function(_provoda_id, states, children_models, md) {
 	this._provoda_id = _provoda_id;
 	this.views = null;

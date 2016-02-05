@@ -1,6 +1,13 @@
-define(['spv', './helpers',  'jquery', './updateProxy', './prsStCon', './StatesEmitter'],
-function(spv, hp, $, updateProxy, prsStCon, StatesEmitter) {
+define(function(require) {
 'use strict';
+
+var $ = require('jquery');
+var spv = require('spv');
+var hp = require('./helpers');
+var updateProxy = require('./updateProxy');
+var prsStCon =  require('./prsStCon');
+var StatesEmitter = require('./StatesEmitter');
+
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;

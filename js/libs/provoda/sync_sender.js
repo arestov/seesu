@@ -1,5 +1,8 @@
-define(['spv'], function(spv) {
+define(function(require) {
 "use strict";
+
+var spv = require('spv');
+
 var SyncSender = function() {
 	this.sockets = {};
 	this.streams_list = [];

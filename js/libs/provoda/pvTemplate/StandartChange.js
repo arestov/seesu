@@ -1,5 +1,8 @@
-define(['spv', 'angbo'], function(spv, angbo){
+define(function(require) {
 'use strict';
+
+var spv = require('spv');
+var angbo = require('angbo');
 
 var abortFlowStep = function(tpl, w_cache_key) {
 	var flow_step = tpl.calls_flow_index[w_cache_key];

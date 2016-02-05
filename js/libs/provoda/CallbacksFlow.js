@@ -1,6 +1,8 @@
-define(['./FlowStep', 'spv'], function(FlowStep, spv){
+define(function(require) {
 'use strict';
 
+var FlowStep = require('./FlowStep');
+var spv = require('spv');
 
 var sortFlows = function(item_one, item_two) {
 	var none_one = !item_one || item_one.aborted;

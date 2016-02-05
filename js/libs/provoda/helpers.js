@@ -1,6 +1,7 @@
-define(['spv'], function(spv) {
-'use strict';
+define(function(require) {
+"use strict";
 
+var spv = require('spv');
 
 function itself(item) {return item;}
 

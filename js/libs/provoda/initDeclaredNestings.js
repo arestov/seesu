@@ -1,5 +1,7 @@
-define(['spv'], function(spv) {
+define(function(require) {
 "use strict";
+
+var spv = require('spv');
 
 var executePreload = function(md, nesting_name) {
 	var lists_list = md.getNesting(nesting_name);

@@ -1,6 +1,13 @@
-define(['spv', './helpers', './updateProxy', './StatesLabour', './prsStCon', './Eventor'],
-function(spv, hp, updateProxy, StatesLabour, prsStCon, Eventor) {
+define(function(require) {
 'use strict';
+
+var spv = require('spv');
+var hp = require('./helpers');
+var updateProxy = require('./updateProxy');
+var StatesLabour = require('./StatesLabour');
+var prsStCon = require('./prsStCon');
+var Eventor = require('./Eventor');
+
 var connects_store = {};
 var getConnector = function(state_name) {
 	if (!connects_store[state_name]){

@@ -1,6 +1,21 @@
-define('pv', ['spv', 'angbo', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy', './initDeclaredNestings'],
-function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, Eventor, StatesEmitter, CallbacksFlow, Model, View, updateProxy, initDeclaredNestings){
-"use strict";
+define(function(require) {
+'use strict';
+
+var spv = require('spv');
+var angbo = require('angbo');
+var PvTemplate = require('./PvTemplate');
+var sync_sender = require('./sync_sender');
+var MDProxy = require('./MDProxy');
+var hp = require('./helpers');
+var views_proxies = require('./views_proxies');
+var SyncReceiver = require('./SyncReceiver');
+var Eventor = require('./Eventor');
+var StatesEmitter = require('./StatesEmitter');
+var CallbacksFlow = require('./CallbacksFlow');
+var Model = require('./Model');
+var View = require('./View');
+var updateProxy = require('./updateProxy');
+var initDeclaredNestings = require('./initDeclaredNestings');
 
 var provoda, pv;
 var pvUpdate = updateProxy.update;

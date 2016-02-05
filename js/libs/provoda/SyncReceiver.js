@@ -1,5 +1,8 @@
-define(['./MDProxy'], function(MDProxy) {
+define(function(require) {
 'use strict';
+
+var MDProxy = require('./MDProxy');
+
 var slice = Array.prototype.slice;
 
 var FakeModel = function(model_skeleton, stream) {

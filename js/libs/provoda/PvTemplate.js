@@ -1,6 +1,11 @@
-define(['spv', 'angbo', 'jquery', './pvTemplate/parser'],
-function(spv, angbo, $, parser) {
+define(function(require) {
 "use strict";
+
+var spv = require('spv');
+var angbo = require('angbo');
+var $ = require('jquery');
+var parser = require('./pvTemplate/parser');
+
 var push = Array.prototype.push;
 var addEvent = spv.addEvent;
 var removeEvent = spv.removeEvent;

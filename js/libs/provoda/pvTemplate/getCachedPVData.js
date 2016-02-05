@@ -1,5 +1,9 @@
-define(['spv', './directives_parsers'], function(spv, directives_parsers) {
+define(function(require) {
 'use strict';
+
+var spv = require('spv');
+var directives_parsers = require('./directives_parsers');
+
 var comment_directives_p = directives_parsers.comment_directives_p;
 var directives_p = directives_parsers.directives_p;
 var scope_generators_p = directives_parsers.scope_generators_p;
@@ -52,7 +56,7 @@ var getCommentDirectivesData = function(cur_node, getSample, parser) {
 		// } else {
 			directives_data.instructions[directive_name] = chunk;
 		// }
-		
+
 	}
 
 	return directives_data;
@@ -119,7 +123,7 @@ var getDirectivesData = (function() {
 			directive_name = one_parse_list[i];
 			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
 				value = attrs_by_names[directive_name][0].node.value;
-				
+
 				if (directives_p[directive_name]){
 					value = directives_p[directive_name].call(parser, cur_node, value, directive_name, getSample);
 				}
@@ -135,7 +139,7 @@ var getDirectivesData = (function() {
 				// } else {
 					directives_data.instructions[directive_name] = value;
 				// }
-				
+
 			}
 		}
 
@@ -151,13 +155,13 @@ var getDirectivesData = (function() {
 				if (scope_generators_p[directive_name]){
 					value = scope_generators_p[directive_name].call(parser, cur_node, value);
 				}
-				
+
 				directives_data.instructions[directive_name] = value;
 				if (!one_parse[directive_name]) {
 					directives_data.new_scope_generator = true;
 					new_scope_generator = true;
 				}
-				
+
 			}
 		}
 		for (i = 0; i < directives_names_list.length; i++) {
@@ -165,12 +169,12 @@ var getDirectivesData = (function() {
 			directive_name = directives_names_list[i];
 			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
 				value = attrs_by_names[directive_name][0].node.value;
-				
+
 				if (directives_p[directive_name]){
 					value = directives_p[directive_name].call(parser, cur_node, value, directive_name, getSample);
 				}
 				directives_data.instructions[directive_name] = value;
-				
+
 			}
 		}
 
@@ -183,7 +187,7 @@ var getDirectivesData = (function() {
 		}
 
 
-		
+
 		return directives_data;
 	};
 })();
@@ -201,7 +205,7 @@ var setStrucKey = function(cur_node, struc_store, directives_data) {
 };
 
 var result = (function() {
-	
+
 	return function(cur_node, struc_store, is_comment, getSample, parser) {
 		var directives_data = null;
 		var replacer = null;
@@ -211,12 +215,12 @@ var result = (function() {
 			if (pvprsd){
 				directives_data = _cache_index[pvprsd];
 			}
-			
+
 		} else {
 			if (!_cache_index.struc_counter) {
 				_cache_index.struc_counter = 0;
 			}
-			
+
 			if (is_comment) {
 				directives_data = getCommentDirectivesData(cur_node, getSample, parser);
 			} else {
@@ -231,7 +235,7 @@ var result = (function() {
 			// 	_cache_index[r_pvprsd] = replacer.data;
 			// }
 			setStrucKey(cur_node, struc_store, directives_data);
-			
+
 		}
 		return replacer || directives_data;
 	};

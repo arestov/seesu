@@ -1,6 +1,15 @@
-define(['spv', './StatesLabour', './helpers', './MDProxy', './initDeclaredNestings', './prsStCon', './updateProxy', './StatesEmitter'],
-function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy, StatesEmitter) {
+define(function(require) {
 'use strict';
+
+var spv = require('spv');
+var StatesLabour = require('./StatesLabour');
+var hp = require('./helpers');
+var MDProxy = require('./MDProxy');
+var initDeclaredNestings = require('./initDeclaredNestings');
+var prsStCon = require('./prsStCon');
+var updateProxy = require('./updateProxy');
+var StatesEmitter = require('./StatesEmitter');
+
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
 

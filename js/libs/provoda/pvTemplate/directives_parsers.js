@@ -1,5 +1,10 @@
-define(['spv', 'jquery',  'angbo', './StandartChange'], function(spv, $, angbo, StandartChange) {
+define(function(require) {
 'use strict';
+
+var spv = require('spv');
+var $ = require('jquery');
+var angbo = require('angbo');
+var StandartChange = require('./StandartChange');
 
 var capitalize = spv.capitalize;
 var startsWith = spv.startsWith;
