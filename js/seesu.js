@@ -34,7 +34,8 @@ $.support.cors = true;
 
 var pvUpdate = pv.update;
 var chrome = window.chrome;
-var ChromeExtensionButtonView = spv.inh(pv.View, {}, {
+var View = pv.View;
+var ChromeExtensionButtonView = spv.inh(View, {}, {
 	state_change: {
 		"playing": function(target, state) {
 			if (state){
@@ -48,7 +49,7 @@ var ChromeExtensionButtonView = spv.inh(pv.View, {}, {
 		}
 	}
 });
-var OperaExtensionButtonView = spv.inh(pv.View, {}, {
+var OperaExtensionButtonView = spv.inh(View, {}, {
 	state_change: {
 		"playing": function(target, state) {
 			if (state){

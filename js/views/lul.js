@@ -1,7 +1,8 @@
 define(['pv', './coct', 'env', 'jquery', 'spv'], function(pv, coct, env, $, spv) {
 "use strict";
+var View = pv.View;
 var app_env = env;
-var LULAPageVIew = spv.inh(pv.View, {}, {
+var LULAPageVIew = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'lula_page'
 	},
@@ -11,20 +12,20 @@ var LULAPageVIew = spv.inh(pv.View, {}, {
 
 });
 
-var LULAsPageVIew = spv.inh(pv.View, {}, {
+var LULAsPageVIew = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'lulas_page'
 	}
 });
 
 
-var UserTagsPageView = spv.inh(pv.View, {}, {
+var UserTagsPageView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'user_tags_page'
 	}
 });
 
-var LfmFriendPreview = spv.inh(pv.View, {}, {
+var LfmFriendPreview = spv.inh(View, {}, {
 	tpl_events: {
 		open_link: function(e, node) {
 			e.preventDefault();
@@ -35,7 +36,7 @@ var LfmFriendPreview = spv.inh(pv.View, {}, {
 	}
 });
 
-var LfmUsersPageView = spv.inh(pv.View, {}, {
+var LfmUsersPageView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'lfm_users_page'
 	},

@@ -1,5 +1,6 @@
 define(['pv', 'jquery', './coct', './uacq', 'env', 'spv'], function(pv, $, coct, uacq, env, spv) {
 "use strict";
+var View = pv.View;
 var app_env = env;
 
 var UserCardPage = spv.inh(coct.PageView, {}, {
@@ -22,7 +23,7 @@ var UserCardPage = spv.inh(coct.PageView, {}, {
 	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
 });
 
-var LfmUsercardPageView = spv.inh(pv.View, {}, {
+var LfmUsercardPageView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'lfm_user_page'
 	},
@@ -37,7 +38,7 @@ var LfmUsercardPageView = spv.inh(pv.View, {}, {
 });
 
 
-var VkUsercardPageView = spv.inh(pv.View, {}, {
+var VkUsercardPageView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'vk_user_page'
 	},
@@ -47,7 +48,7 @@ var VkUsercardPageView = spv.inh(pv.View, {}, {
 	}
 });
 
-var VkFriendPreview = spv.inh(pv.View, {}, {
+var VkFriendPreview = spv.inh(View, {}, {
 	tpl_events: {
 		open_link: function(e, node) {
 			e.preventDefault();
@@ -58,7 +59,7 @@ var VkFriendPreview = spv.inh(pv.View, {}, {
 	}
 });
 
-var VkUsersPageView = spv.inh(pv.View, {}, {
+var VkUsersPageView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'vk_users_page'
 	},

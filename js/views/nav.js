@@ -1,7 +1,7 @@
 define(['pv', 'spv'], function(pv, spv) {
 "use strict";
-
-var baseNavUI = spv.inh(pv.View, {}, {
+var View = pv.View;
+var baseNavUI = spv.inh(View, {}, {
 	dom_rp: true,
 	base_tree: {
 		sample_name: 'common-nav'

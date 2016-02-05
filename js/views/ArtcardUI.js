@@ -3,8 +3,8 @@ function(pv, $, coct, app_serv, view_serv, Panoramator, spv) {
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
-
-var ArtcardUI = spv.inh(pv.View, {}, {
+var View = pv.View;
+var ArtcardUI = spv.inh(View, {}, {
 	die: function() {
 		this._super();
 	},
@@ -53,7 +53,7 @@ var ArtcardUI = spv.inh(pv.View, {}, {
 
 var sortByNum = spv.getSortFunc(['num']);
 
-var TagsController = spv.inh(pv.View, {}, {
+var TagsController = spv.inh(View, {}, {
 	bindBase: function() {},
 	tpl_r_events: {
 		'preview_list': {
@@ -66,7 +66,7 @@ var TagsController = spv.inh(pv.View, {}, {
 });
 
 
-var SimilarsController = spv.inh(pv.View, {}, {
+var SimilarsController = spv.inh(View, {}, {
 	tpl_r_events: {
 		'similars': {
 			showArtcardPage: function(e, node, scope) {
@@ -77,7 +77,7 @@ var SimilarsController = spv.inh(pv.View, {}, {
 	}
 });
 
-var ArtistInSongConstroller = spv.inh(pv.View, {}, {
+var ArtistInSongConstroller = spv.inh(View, {}, {
 	dom_rp: true,
 	children_views:{
 		tags_list: TagsController,

@@ -1,7 +1,8 @@
 define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
+var View = pv.View;
 var pvUpdate = pv.update;
-var ShareSearchSection = spv.inh(pv.View, {}, {
+var ShareSearchSection = spv.inh(View, {}, {
 
 	toggleVisState: function(state, boolen) {
 		var new_value;
@@ -43,7 +44,7 @@ var LFMShareSectionView = spv.inh(ShareSearchSection, {}, {
 
 });
 
-var ShareSearchCtr = spv.inh(pv.View, {}, {
+var ShareSearchCtr = spv.inh(View, {}, {
 	children_views:{
 		'lfm_auth': etc_views.LfmLoginView
 
@@ -61,7 +62,7 @@ var ShareSearchCtr = spv.inh(pv.View, {}, {
 
 
 
-var ShareRowUI = spv.inh(pv.View, {}, {
+var ShareRowUI = spv.inh(View, {}, {
 	dom_rp: true,
 	children_views: {
 
@@ -108,7 +109,7 @@ var ShareRowUI = spv.inh(pv.View, {}, {
 
 });
 
-var SongActPlaylistingUI = spv.inh(pv.View, {}, {
+var SongActPlaylistingUI = spv.inh(View, {}, {
 	'compx-need_creation_button':{
 		depends_on: ['query', 'has_full_match'],
 		fn: function(query, has_full_match) {
@@ -129,7 +130,7 @@ var SongActPlaylistingUI = spv.inh(pv.View, {}, {
 
 
 
-var LoveRowUI = spv.inh(pv.View, {}, {
+var LoveRowUI = spv.inh(View, {}, {
 	children_views: {
 		lfm_loveit: etc_views.LfmLoveItView
 	},
@@ -139,7 +140,7 @@ var LoveRowUI = spv.inh(pv.View, {}, {
 	}
 });
 
-var ScrobbleRowUI = spv.inh(pv.View, {}, {
+var ScrobbleRowUI = spv.inh(View, {}, {
 	children_views: {
 		lfm_scrobble: etc_views.LfmScrobbleView
 	},

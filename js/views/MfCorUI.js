@@ -1,10 +1,11 @@
 define(['pv', 'jquery', 'spv', './etc_views'], function(pv, $, spv, etc_views) {
 "use strict";
+var View = pv.View;
 var pvUpdate = pv.update;
 
 
 
-var notifyCounterUI = spv.inh(pv.View, {}, {
+var notifyCounterUI = spv.inh(View, {}, {
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -16,7 +17,7 @@ var notifyCounterUI = spv.inh(pv.View, {}, {
 });
 
 var li = document.createElement('li');
-var FileIntorrentPromiseUI = spv.inh(pv.View, {}, {
+var FileIntorrentPromiseUI = spv.inh(View, {}, {
 	'stch-infoHash': function(target, state) {
 		target.c.text(state);
 	},
@@ -25,7 +26,7 @@ var FileIntorrentPromiseUI = spv.inh(pv.View, {}, {
 	}
 });
 
-var FileInTorrentUI = spv.inh(pv.View, {},{
+var FileInTorrentUI = spv.inh(View, {},{
 	state_change: {
 		"download-pressed": function(target, state) {
 			if (state){
@@ -72,7 +73,7 @@ var FileInTorrentUI = spv.inh(pv.View, {},{
 
 	}
 });
-var SongFileModelUI = spv.inh(pv.View, {}, {
+var SongFileModelUI = spv.inh(View, {}, {
 	dom_rp: true,
 	getProgressWidth: function() {
 		return this.tpl.ancs['progress_c'].width();
@@ -247,7 +248,7 @@ var SongFileModelUI = spv.inh(pv.View, {}, {
 });
 
 
-var FilesSourceTunerView = spv.inh(pv.View, {}, {
+var FilesSourceTunerView = spv.inh(View, {}, {
 	tpl_events: {
 		changeTune: function(e, node){
 			var tune_name = node.name;
@@ -263,7 +264,7 @@ var FilesSourceTunerView = spv.inh(pv.View, {}, {
 });
 
 
-var ComplectPionerView = spv.inh(pv.View, {}, {
+var ComplectPionerView = spv.inh(View, {}, {
 	children_views: {
 		vis_tuner: FilesSourceTunerView
 	}
@@ -272,7 +273,7 @@ var ComplectPionerView = spv.inh(pv.View, {}, {
 
 
 
-var mfComplectUI = spv.inh(pv.View, {}, {
+var mfComplectUI = spv.inh(View, {}, {
 	children_views: {
 		'pioneer': ComplectPionerView
 	},
@@ -299,7 +300,7 @@ var mfComplectUI = spv.inh(pv.View, {}, {
 });
 
 
-var MfCorUI = spv.inh(pv.View, {}, {
+var MfCorUI = spv.inh(View, {}, {
 	children_views:{
 		notifier: notifyCounterUI,
 		vk_auth: etc_views.VkLoginUI,

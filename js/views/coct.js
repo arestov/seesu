@@ -1,6 +1,6 @@
 define(['spv', 'pv', 'jquery', './etc_views'], function(spv, pv, $, etc_views) {
 "use strict";
-
+var View = pv.View;
 var pvUpdate = pv.update;
 
 var SoftVkLoginUI = spv.inh(etc_views.VkLoginUI, {}, {
@@ -12,7 +12,7 @@ var SoftVkLoginUI = spv.inh(etc_views.VkLoginUI, {}, {
 
 
 
-var ListPreview = spv.inh(pv.View, {}, {
+var ListPreview = spv.inh(View, {}, {
 	useBase: function(node) {
 		this.c = node;
 		this.bindBase();
@@ -42,7 +42,7 @@ var ListPreview = spv.inh(pv.View, {}, {
 	}
 });
 
-var ListPreviewLine = spv.inh(pv.View, {}, {
+var ListPreviewLine = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'preview_line'
 	},
@@ -70,7 +70,7 @@ var LiListsPreview = spv.inh(ListPreview, {}, {
 });
 
 
-var SPView = spv.inh(pv.View, {}, {
+var SPView = spv.inh(View, {}, {
 	'compx-lvmp_show': [
 		['^vmp_show'],
 		function(vmp_show) {
@@ -183,7 +183,7 @@ var ListOfListsView = spv.inh(PageView, {}, {
 
 
 
-var AlbumsListPreviewItem = spv.inh(pv.View, {}, {
+var AlbumsListPreviewItem = spv.inh(View, {}, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
@@ -208,7 +208,7 @@ var AlbumsListPreviewItem = spv.inh(pv.View, {}, {
 	}
 });
 
-var ImageLoader = spv.inh(pv.View, {}, {
+var ImageLoader = spv.inh(View, {}, {
 	'stch-selected_image': function(target, lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
@@ -235,7 +235,7 @@ var ImageLoader = spv.inh(pv.View, {}, {
 });
 
 
-var BigAlbumPreview = spv.inh(pv.View, {}, {
+var BigAlbumPreview = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'alb_prev_big'
 	},

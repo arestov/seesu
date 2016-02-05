@@ -1,6 +1,7 @@
 define(['pv', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct'],
 function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct) {
 'use strict';
+var View = pv.View;
 var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
@@ -23,7 +24,7 @@ var SongcardPage = spv.inh(coct.SPView, {}, {
 	}
 });
 
-var FanPreview = spv.inh(pv.View, {}, {
+var FanPreview = spv.inh(View, {}, {
 	'compx-can_use_image':{
 		depends_on: ['vis_image_loaded', 'selected_image'],
 		fn: function(vis_image_loaded, selected_image) {
@@ -52,13 +53,13 @@ var FanPreview = spv.inh(pv.View, {}, {
 	}
 });
 
-var FansList = spv.inh(pv.View, {}, {
+var FansList = spv.inh(View, {}, {
 	children_views: {
 		list_items: FanPreview
 	}
 });
 
-var selected = spv.inh(pv.View, {}, {
+var selected = spv.inh(View, {}, {
 	children_views: {
 		auth_part: coct.SoftVkLoginUI
 	},
@@ -67,7 +68,7 @@ var selected = spv.inh(pv.View, {}, {
 	},
 });
 
-var SongcardController = spv.inh(pv.View, {}, {
+var SongcardController = spv.inh(View, {}, {
 	dom_rp: true,
 	children_views:{
 		artist: ArtcardUI.ArtistInSongConstroller,

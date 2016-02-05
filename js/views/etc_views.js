@@ -1,5 +1,6 @@
 define(['pv', 'app_serv', 'jquery', 'spv'], function(pv, app_serv, $, spv) {
 "use strict";
+var View = pv.View;
 var pvUpdate = pv.update;
 var localize = app_serv.localize;
 var contextRow = function(container){
@@ -96,7 +97,7 @@ contextRow.prototype = {
 	}
 };
 
-var VkLoginUI = spv.inh(pv.View, {}, {
+var VkLoginUI = spv.inh(View, {}, {
 	state_change: {
 		'data_wait': function(target, state) {
 			if (state){
@@ -166,7 +167,7 @@ var VkLoginUI = spv.inh(pv.View, {}, {
 });
 
 
-var LfmLoginView = spv.inh(pv.View, {}, {
+var LfmLoginView = spv.inh(View, {}, {
 	'stch-has_session': function(target, state){
 		if (!state){
 			target.c.removeClass("hidden");
@@ -278,7 +279,7 @@ var LfmScrobbleView = spv.inh(LfmLoginView, {}, {
 
 
 
-var ActionsRowUI = spv.inh(pv.View, {}, {
+var ActionsRowUI = spv.inh(View, {}, {
 	bindBase: function() {
 	},
 	getCurrentButton: function() {

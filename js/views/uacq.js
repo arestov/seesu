@@ -1,8 +1,9 @@
 define(['pv', 'jquery', 'app_serv', './coct', 'spv'], function(pv, $, app_serv, coct, spv) {
 'use strict';
+var View = pv.View;
 var localize = app_serv.localize;
 
-var UserAcquaintanceView = spv.inh(pv.View, {}, {
+var UserAcquaintanceView = spv.inh(View, {}, {
 	createBase: function() {
 		this.c = $('<li class="people-list-item"></li>');
 		var li = this.c;
@@ -98,7 +99,7 @@ var UserAcquaintancesListView = spv.inh(coct.PageView, {}, {
 	'collch-acqs_from_me': 'from_me_c'
 });
 
-var UserAcqPreview = spv.inh(pv.View, {}, {
+var UserAcqPreview = spv.inh(View, {}, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = $("<span></span>");
@@ -112,7 +113,7 @@ var UserAcqPreview = spv.inh(pv.View, {}, {
 		}
 	}
 });
-var UserAcquaintancesListPreview = spv.inh(pv.View, {}, {
+var UserAcquaintancesListPreview = spv.inh(View, {}, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = $('<div class="user_acqes-preview"></div>');

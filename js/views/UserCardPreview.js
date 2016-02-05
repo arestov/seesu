@@ -1,6 +1,7 @@
 define(['pv', 'jquery', 'app_serv', './uacq', 'spv'], function(pv, $, app_serv, uacq, spv) {
 "use strict";
-var UserCardPreview = spv.inh(pv.View, {}, {
+var View = pv.View;
+var UserCardPreview = spv.inh(View, {}, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;

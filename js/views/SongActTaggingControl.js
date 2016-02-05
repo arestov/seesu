@@ -1,6 +1,6 @@
 define(['./etc_views', 'jquery', 'app_serv', 'spv', 'pv'], function(etc_views, $, app_serv, spv, pv){
 "use strict";
-
+var View = pv.View;
 //var localize = app_serv.localize;
 
 
@@ -78,7 +78,7 @@ var LfmTagItView = spv.inh(etc_views.LfmLoginView, {}, {
 
 
 
-var SongActTaggingControl = spv.inh(pv.View, {}, {
+var SongActTaggingControl = spv.inh(View, {}, {
 	children_views: {
 		lfm_tagsong: LfmTagItView
 	},

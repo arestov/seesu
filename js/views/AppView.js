@@ -103,9 +103,9 @@ var map_slice_by_model = {
 	music_blog: coct.ListOfListsView,
 	app_news: coct.AppNewsView
 };
+var View = pv.View;
 
-
-var BrowseLevView = spv.inh(pv.View, {}, {
+var BrowseLevView = spv.inh(View, {}, {
 	children_views_by_mn: {
 		pioneer: map_slice_by_model
 	},
@@ -156,7 +156,7 @@ var BrowseLevView = spv.inh(pv.View, {}, {
 });
 
 
-var BrowseLevNavView = spv.inh(pv.View, {}, {
+var BrowseLevNavView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'brow_lev_nav'
 	},
