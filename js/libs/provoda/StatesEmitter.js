@@ -1,8 +1,6 @@
-define(['spv', './helpers', './updateProxy', './StatesLabour', './prsStCon'],
-function(spv, hp, updateProxy, StatesLabour, prsStCon) {
+define(['spv', './helpers', './updateProxy', './StatesLabour', './prsStCon', './Eventor'],
+function(spv, hp, updateProxy, StatesLabour, prsStCon, Eventor) {
 'use strict';
-return function(Eventor) {
-
 var connects_store = {};
 var getConnector = function(state_name) {
 	if (!connects_store[state_name]){
@@ -681,5 +679,4 @@ var StatesEmitter = spv.inh(Eventor, {
 });
 
 return StatesEmitter;
-};
 });
