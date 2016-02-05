@@ -1,7 +1,6 @@
-define(['spv', './StatesLabour', './helpers', './MDProxy', './initDeclaredNestings', './prsStCon', './updateProxy'],
-function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy) {
+define(['spv', './StatesLabour', './helpers', './MDProxy', './initDeclaredNestings', './prsStCon', './updateProxy', './StatesEmitter'],
+function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy, StatesEmitter) {
 'use strict';
-return function(StatesEmitter) {
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
 
@@ -1458,5 +1457,4 @@ add({
 }
 
 return Model;
-};
 });

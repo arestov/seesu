@@ -1,5 +1,5 @@
 define('pv', ['spv', 'angbo', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy', './initDeclaredNestings'],
-function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, Eventor, StatesEmitter, CallbacksFlow, getModel, getView, updateProxy, initDeclaredNestings){
+function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, Eventor, StatesEmitter, CallbacksFlow, Model, getView, updateProxy, initDeclaredNestings){
 "use strict";
 
 var provoda, pv;
@@ -18,8 +18,6 @@ var hasPrefixedProps = function(props, prefix) {
 	return false;
 };
 */
-
-var Model = getModel(StatesEmitter);
 
 pv = provoda = {
 	CallbacksFlow: CallbacksFlow,
