@@ -251,7 +251,7 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 	},
 	'compx-vswitched_select': [['vswitched']],
 	'stch-vswitched_select': function(target, state) {
-		pv.updateNesting(target, 'selected', state && pv.getModelById(state));
+		pv.updateNesting(target, 'selected', state && pv.getModelById(target, state));
 	},
 	'compx-current_su_user_info': [['#current_su_user_info']],
 	'nest_rqc-listenings': SeesuListening,

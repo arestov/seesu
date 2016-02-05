@@ -91,7 +91,7 @@ function props() {
 		requestPlay: function(bwlev_id) {
 			this.map_parent.selectMopla(this);
 
-			var bwlev = pv.getModelById(bwlev_id);
+			var bwlev = pv.getModelById(this, bwlev_id);
 
 			var play_request = pv.create(PlayRequest, {
 				wanted_file: this

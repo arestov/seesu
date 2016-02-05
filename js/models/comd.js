@@ -5,13 +5,13 @@ var pvUpdate = pv.update;
 
 var CommonMessagesStore = spv.inh(pv.Eventor, {
 	naming: function(constr) {
-		return function CommonMessagesStore(glob_store, store_name){
-			constr(this, glob_store, store_name);
+		return function CommonMessagesStore(app, glob_store, store_name){
+			constr(this, app, glob_store, store_name);
 		};
 	},
 	building: function(pconstr) {
-		return function buildComMS(obj, glob_store, store_name){
-			pconstr(obj);
+		return function buildComMS(obj, app, glob_store, store_name){
+			pconstr(obj, app);
 			obj.glob_store = glob_store;
 			obj.store_name = store_name;
 		};
@@ -29,7 +29,8 @@ var CommonMessagesStore = spv.inh(pv.Eventor, {
 	}
 });
 
-var GMessagesStore = function(set, get) {
+var GMessagesStore = function(app, set, get) {
+	this.app = app;
 	this.sset = set;
 	this.sget = get;
 	this.store = this.sget() || {};
@@ -49,7 +50,7 @@ spv.Class.extendTo(GMessagesStore, {
 		return this.store[space] || [];
 	},
 	getStore: function(name) {
-		return this.cm_store[name] || (this.cm_store[name] = new CommonMessagesStore(this, name));
+		return this.cm_store[name] || (this.cm_store[name] = new CommonMessagesStore(this.app, this, name));
 	}
 });
 

@@ -270,9 +270,9 @@ AppModel.extendTo(SeesuApp, {
 	tickStat: function(data_array) {
 		window._gaq.push(data_array);
 	},
-	init: function(version){
+	init: function(opts, version){
 		this.app = this;
-		this._super();
+		this._super(opts);
 		this.version = version;
 
 		var resortQueue = resortSuQueue(this);
@@ -348,6 +348,7 @@ AppModel.extendTo(SeesuApp, {
 		this.vk = {};
 
 		this.notf = new comd.GMessagesStore(
+			this,
 			function(value) {
 				return app_serv.store('notification', value, true);
 			},

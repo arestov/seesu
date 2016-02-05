@@ -68,6 +68,7 @@ SyncReceiver.prototype = {
 			}
 			//резервируем объекты для моделей
 			//big_index[cur_pvid] = true;
+			//^_highway.models[cur_pvid] = true;
 		}
 
 		for (i = 0; i < array.length; i++) {

@@ -35,13 +35,16 @@ var createMPXesByRawData = function(raw_array, ids_index, mpxes_index) {
 
 };
 
-return {
-	spaces: {},
-	spaces_list: [],
+var Proxies = function() {
+	this.spaces = {};
+	this.spaces_list = [];
 	//инициализация простанства
 	//поддержка простанства в актуальном состоянии
 	//очистка пространства
+};
 
+Proxies.prototype = {
+	Proxies: Proxies,
 	addRootView: function(view, root_md) {
 		return this.addSpaceById(view.view_id, root_md);
 	},
@@ -132,4 +135,6 @@ return {
 		}
 	}
 };
+
+return new Proxies();
 });

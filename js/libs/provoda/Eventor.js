@@ -1,9 +1,7 @@
 define(['spv', './FastEventor', './helpers'], function(spv, getFastEventor, hp) {
 'use strict';
-return function(main_calls_flow) {
-var FastEventor = getFastEventor(main_calls_flow);
-
-
+return function() {
+var FastEventor = getFastEventor();
 
 var Eventor = spv.inh(function() {}, {
 	naming: function(construct) {
@@ -24,7 +22,7 @@ var Eventor = spv.inh(function() {}, {
 		// 	return this;
 		// },
 		_getCallsFlow: function() {
-			return main_calls_flow;
+			return this._local_calls_flow || this._calls_flow;
 		},
 		useMotivator: function(item, fn) {
 			var old_value = item.current_motivator;
@@ -38,7 +36,7 @@ var Eventor = spv.inh(function() {}, {
 			return this._getCallsFlow().pushToFlow(fn, this, args, false, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator, finup);
 		},
 		nextTick: function(fn, args, use_current_motivator) {
-			return main_calls_flow.pushToFlow(fn, this, args, !args && this, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
+			return this._calls_flow.pushToFlow(fn, this, args, !args && this, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 		},
 		once: function(namespace, cb, opts, context) {
 			return this.evcompanion.once(namespace, cb, opts, context);
@@ -80,8 +78,19 @@ var Eventor = spv.inh(function() {}, {
 	}
 });
 
-// function Eventor () {}
-// spv.Class.extendTo(Eventor, );
+
+var PublicEventor = spv.inh(Eventor, {
+	init: function(self, opts) {
+		if (!opts || !opts._highway) {
+			throw new Error('pass _highway option');
+		}
+		self._highway = opts._highway;
+		self._calls_flow = self._highway.calls_flow;
+	}
+});
+
+Eventor.PublicEventor = PublicEventor;
+
 return Eventor;
 };
 });

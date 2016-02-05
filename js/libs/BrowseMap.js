@@ -24,7 +24,7 @@ var BrowseMap = spv.inh(pv.Model, {
 	},
 	building: function(fn) {
 		return function buildBrowseMap(obj, opts, params) {
-			fn(obj);
+			fn(obj, opts);
 			obj.changes_group = null;
 			obj.grouping_changes = null;
 			obj.collecting_changes = null;
@@ -928,7 +928,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 		showMOnMap(this.map, this.getNesting('pioneer'), this);
 	},
 	requestPage: function(id) {
-		var md = pv.getModelById(id);
+		var md = pv.getModelById(this, id);
 		var pioneer = this.getNesting('pioneer');
 
 		var target_is_deep_child;
@@ -988,7 +988,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 		}
 	},
 	followTo: function(id) {
-		var md = pv.getModelById(id);
+		var md = pv.getModelById(this, id);
 		if (md.getRelativeModel) {
 			md = md.getRelativeModel();
 		}

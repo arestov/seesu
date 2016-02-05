@@ -1,6 +1,6 @@
 define(['spv', 'hex_md5', './helpers', 'js/libs/morph_helpers'], function(spv, hex_md5, hp, morph_helpers) {
 'use strict';
-return function(main_calls_flow) {
+return function() {
 
 
 
@@ -437,7 +437,7 @@ FastEventor.prototype = {
 			var callback_context = cur.context || this.sputnik;
 			var wrapper_context = this.sputnik;
 
-			var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
+			var calls_flow = (opts && opts.emergency) ? this.sputnik._calls_flow : this.sputnik._getCallsFlow();
 			return calls_flow.pushToFlow(cur.cb, callback_context, args, arg, cur.wrapper, wrapper_context, this.sputnik.current_motivator);
 			/*
 			setTimeout(function() {

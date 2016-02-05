@@ -66,44 +66,47 @@ window._gaq = window._gaq || [];
 		}
 	}
 	requirejs(['su', 'pv'], function(SeesuApp, pv) {
-
-		su = seesu = new SeesuApp();
-		su.init(seesu_version);
+		//app thread;
+		var proxies = new pv.views_proxies.Proxies();
+		su = seesu  = new SeesuApp();
+		su.init({
+			_highway: {
+				views_proxies: proxies,
+				models: {},
+				calls_flow: new pv.CallbacksFlow(window),
+				proxies: proxies
+			}
+		}, seesu_version);
 		pv.sync_s.setRootModel(su);
 
-
 		if (need_ui) {
-			initViews(su);
+			initViews(su, proxies);
 		}
-
-		//app thread;
 	});
 
 	if (need_ui) {
-		requirejs(['js/views/AppView', 'pv'], function() {
+		requirejs(['js/views/AppView', 'pv', 'spv'], function() {
 			// preload modules
 		});
 	}
 
-	function initViews(su) {
+	function initViews(su, proxies) {
 		//ui thread;
-		requirejs(['js/views/AppView', 'pv'], function(AppView, pv) {
+		requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
 			var can_die = false;
 			var md = su;
 
 			var proxies_space = Date.now();
-			var views_proxies = pv.views_proxies;
-			views_proxies.addSpaceById(proxies_space, md);
-			var mpx = views_proxies.getMPX(proxies_space, md);
+			// var views_proxies = pv.views_proxies;
+			proxies.addSpaceById(proxies_space, md);
+			var mpx = proxies.getMPX(proxies_space, md);
 
+			var doc = window.document;
 
 			md.updateLVTime();
 
 			(function() {
-				var view = new AppView({
-					mpx: mpx,
-					proxies_space: proxies_space
-				}, {d: window.document, can_die: can_die});
+				var view = new AppView(options(), {d: doc, can_die: can_die});
 				mpx.addView(view, 'root');
 				view.onDie(function() {
 					//views_proxies.removeSpaceById(proxies_space);
@@ -114,15 +117,22 @@ window._gaq = window._gaq || [];
 
 
 			(function() {
-				var exposed_view = new AppView.AppExposedView({
-					mpx: mpx,
-					proxies_space: proxies_space
-				}, {d: window.document, can_die: can_die, usual_flow: true});
+				var exposed_view = new AppView.AppExposedView(options(true), {d: doc, can_die: can_die});
 				mpx.addView(exposed_view, 'exp_root');
 				exposed_view.requestAll();
 			})();
 
-
+			function options(usual_flow) {
+				return {
+					mpx: mpx,
+					proxies_space: proxies_space,
+					_highway: {
+						views_proxies: proxies,
+						calls_flow: new pv.CallbacksFlow(window),
+						local_calls_flow: new pv.CallbacksFlow(spv.getDefaultView(doc), !usual_flow, 250)
+					}
+				};
+			}
 		});
 	}
 
@@ -131,3 +141,21 @@ window._gaq = window._gaq || [];
 
 
 })();
+
+
+/*
+
+provoda.BaseRootView = spv.inh(provoda.View, {
+	preinit: function(target, opts, vopts) {
+		target.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
+	}
+}, {
+	_getCallsFlow: function() {
+		return this.calls_flow;
+	},
+	remove: function() {
+		this.calls_flow = null;
+	}
+});
+
+*/

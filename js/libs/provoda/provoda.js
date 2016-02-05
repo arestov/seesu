@@ -8,10 +8,6 @@ var DeathMarker = function() {
 	//helper to find memory leaks; if there is memory leaking DeathMarker will be available in memory heap snapshot;
 };
 
-
-var big_index = {};
-var main_calls_flow = new CallbacksFlow(window);
-
 /*
 var hasPrefixedProps = function(props, prefix) {
 	for (var prop_name in props) {
@@ -23,9 +19,9 @@ var hasPrefixedProps = function(props, prefix) {
 };
 */
 
-var Eventor = getEventor(main_calls_flow);
+var Eventor = getEventor();
 var StatesEmitter = getStatesEmitter(Eventor);
-var Model = getModel(StatesEmitter, big_index, views_proxies, sync_sender);
+var Model = getModel(StatesEmitter, sync_sender);
 
 pv = provoda = {
 	CallbacksFlow: CallbacksFlow,
@@ -38,6 +34,7 @@ pv = provoda = {
 		}
 	},
 	initWebApp: function(root_md, RootViewConstr) {
+		throw new Error('broken');
 
 		var proxies_space = Date.now();
 		var views_proxies = provoda.views_proxies;
@@ -55,8 +52,8 @@ pv = provoda = {
 			view = null;
 		})();
 	},
-	getModelById: function(id) {
-		return big_index[id];
+	getModelById: function(related_md, id) {
+		return related_md._highway.models[id];
 	},
 	setTplFilterGetFn: function(fn) {
 		angbo.getFilterFn = fn;
@@ -64,11 +61,11 @@ pv = provoda = {
 	MDProxy: MDProxy,
 	sync_s: sync_sender,
 	SyncR: SyncReceiver,
-	Eventor: Eventor,
+	Eventor: Eventor.PublicEventor,
 	StatesEmitter: StatesEmitter,
 	Model: Model,
 	HModel: getHModel(),
-	View: getView(StatesEmitter, main_calls_flow, views_proxies),
+	View: getView(StatesEmitter),
 	views_proxies: views_proxies,
 	getOCF: function(propcheck, callback) {
 		//init once
@@ -208,11 +205,11 @@ var HModel = spv.inh(Model, {
 	},
 	'stch-vswitched': function(target, state, old_state) {
 		if (state) {
-			var md = pv.getModelById(state);
+			var md = pv.getModelById(target, state);
 			pvUpdate(md, 'pmd_vswitched', true);
 		}
 		if (old_state) {
-			var old_md = pv.getModelById(old_state);
+			var old_md = pv.getModelById(target, old_state);
 			pvUpdate(old_md, 'pmd_vswitched', false);
 		}
 	},
@@ -242,20 +239,6 @@ var HModel = spv.inh(Model, {
 
 return HModel;
 }
-
-provoda.BaseRootView = spv.inh(provoda.View, {
-	preinit: function(target, opts, vopts) {
-		target.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
-	}
-}, {
-	_getCallsFlow: function() {
-		return this.calls_flow;
-	},
-	remove: function() {
-		this.calls_flow = null;
-	}
-});
-
 
 if ( typeof window === "object" && typeof window.document === "object" ) {
 	window.provoda = provoda;

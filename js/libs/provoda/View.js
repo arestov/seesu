@@ -4,7 +4,7 @@ function(spv, hp, $, updateProxy, prsStCon) {
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;
-return function(StatesEmitter, main_calls_flow, views_proxies) {
+return function(StatesEmitter) {
 var push = Array.prototype.push;
 var appendSpace = function() {
 	//fixme
@@ -67,7 +67,7 @@ var hndExpandViewTree = function(e) {
 
 
 var stackEmergency = function(fn, eventor, args) {
-	return main_calls_flow.pushToFlow(fn, eventor, args);
+	return eventor._calls_flow.pushToFlow(fn, eventor, args);
 };
 var views_counter = 1;
 var way_points_counter = 0;
@@ -103,6 +103,11 @@ var initView = function(target, view_otps, opts){
 	if (view_otps.root_view){
 		target.root_view = view_otps.root_view;
 	}
+
+	target._highway = view_otps._highway || target.root_view._highway;
+	target._calls_flow = target._highway.calls_flow;
+	target._local_calls_flow = target._highway.local_calls_flow;
+
 	target.opts = null;
 	if (opts){
 		target.opts = opts;
@@ -212,9 +217,6 @@ var View = spv.inh(StatesEmitter, {
 
 		}
 	},
-	_getCallsFlow: function() {
-		return this.root_view && (this.root_view._getCallsFlow != this._getCallsFlow) && this.root_view._getCallsFlow() || main_calls_flow;
-	},
 	getStrucRoot: function() {
 		return this.root_view;
 	},
@@ -279,7 +281,7 @@ var View = spv.inh(StatesEmitter, {
 		if (md.stream) {
 			return md.mpx;
 		} else {
-			return views_proxies.getMPX(this.root_view.proxies_space, md);
+			return this._highway.views_proxies.getMPX(this.root_view.proxies_space, md);
 		}
 		//
 
@@ -841,7 +843,7 @@ var View = spv.inh(StatesEmitter, {
 	markAsDead: function(skip_md_call) {
 		var i = 0;
 		if (this.proxies_space) {
-			views_proxies.removeSpaceById(this.proxies_space);
+			this._highway.views_proxies.removeSpaceById(this.proxies_space);
 		}
 		stackEmergency(this.remove, this, [this.getC(), this._lbr._anchor]);
 		this.dead = true; //new DeathMarker();

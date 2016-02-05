@@ -237,7 +237,7 @@ return spv.inh(BrowseMap.Model, {
 		}
 	},
 	requestPlay: function(bwlev_id) {
-		var bwlev = pv.getModelById(bwlev_id);
+		var bwlev = pv.getModelById(this, bwlev_id);
 
 		var play_request = pv.create(PlayRequest, null, {
 			nestings: {

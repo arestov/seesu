@@ -858,7 +858,7 @@ var ArtistsList = spv.inh(LoadableList, {}, {
 		}
 	},
 	requestRandomPlaylist: function(bwlev_id) {
-		var bwlev = pv.getModelById(bwlev_id);
+		var bwlev = pv.getModelById(this, bwlev_id);
 		bwlev.followTo(this.createRPlist()._provoda_id);
 	},
 	'nest_rqc-artists_list': '#catalog/[:artist]'

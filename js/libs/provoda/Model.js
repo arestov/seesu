@@ -1,7 +1,7 @@
 define(['spv', './StatesLabour', './helpers', './MDProxy', './initDeclaredNestings', './prsStCon', './updateProxy'],
 function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy) {
 'use strict';
-return function(StatesEmitter, big_index, views_proxies, sync_sender) {
+return function(StatesEmitter, sync_sender) {
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
 
@@ -432,21 +432,33 @@ var modelInit = (function() {
 		if (opts && opts.app){
 			self.app = opts.app;
 		}
-		if (!self.app) {
-			self.app = null;
+
+		self.app = self.app || null;
+
+		if (opts._highway) {
+			self._highway = opts._highway;
 		}
+
+		if (!self._highway) {
+			self._highway = self.app._highway;
+		}
+
+		self._highway = self._highway || null;
+
+		self._calls_flow = self._highway.calls_flow;
+
+
 		if (opts && opts.map_parent){
 			self.map_parent = opts.map_parent;
 		}
-		if (!self.map_parent) {
-			self.map_parent = null;
-		}
+
+		self.map_parent = self.map_parent || null;
 
 		self.req_order_field = null;
 		self.states_links = null;
 
 		self._provoda_id = models_counters++;
-		big_index[self._provoda_id] = self;
+		self._highway.models[self._provoda_id] = self;
 
 		//self.states = {};
 
@@ -1050,9 +1062,9 @@ add({
 	die: function(){
 		this.stopRequests();
 		//this.mpx.die();
-		views_proxies.killMD(this);
+		this._highway.views_proxies.killMD(this);
 		hp.triggerDestroy(this);
-		big_index[this._provoda_id] = null;
+		this._highway.models[this._provoda_id] = null;
 		return this;
 	}
 });
@@ -1272,7 +1284,7 @@ add({
 	sendCollectionChange: function(collection_name, array, old_value, removed) {
 		//this.removeDeadViews();
 		sync_sender.pushNesting(this, collection_name, array, old_value, removed);
-		views_proxies.pushNesting(this, collection_name, array, old_value, removed);
+		this._highway.views_proxies.pushNesting(this, collection_name, array, old_value, removed);
 		if (this.mpx) {
 			this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
 		}
@@ -1282,7 +1294,7 @@ add({
 		//this.removeDeadViews();
 		var dubl = states_list.slice();
 		sync_sender.pushStates(this, dubl);
-		views_proxies.pushStates(this, dubl);
+		this._highway.views_proxies.pushStates(this, dubl);
 		if (this.mpx) {
 			this.mpx.stackReceivedStates(dubl);
 		}
