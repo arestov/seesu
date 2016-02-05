@@ -3,15 +3,7 @@ var su, seesu;
 (function(){
 "use strict";
 requirejs.config({
-	packages: [
-		{
-			name: 'pv',
-			location: 'js/libs/provoda',
-			main: 'provoda'
-		}
-	],
 	paths: {
-		//pv: 'js/libs/provoda/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
 		angbo: 'js/libs/provoda/StatementsAngularParser.min',
@@ -22,6 +14,11 @@ requirejs.config({
 		view_serv: "js/views/modules/view_serv",
 		env: "js/env",
 		hex_md5: 'js/common-libs/md5.min',
+	},
+	map: {
+		'*': {
+			'pv': 'js/libs/provoda/provoda'
+		}
 	},
 	shim: {
 		hex_md5: {
