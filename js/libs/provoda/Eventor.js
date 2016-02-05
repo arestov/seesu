@@ -1,6 +1,5 @@
 define(['spv', './FastEventor', './helpers'], function(spv, getFastEventor, hp) {
 'use strict';
-return function() {
 var FastEventor = getFastEventor();
 
 var Eventor = spv.inh(function() {}, {
@@ -92,5 +91,4 @@ var PublicEventor = spv.inh(Eventor, {
 Eventor.PublicEventor = PublicEventor;
 
 return Eventor;
-};
 });
