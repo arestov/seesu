@@ -141,21 +141,3 @@ window._gaq = window._gaq || [];
 
 
 })();
-
-
-/*
-
-provoda.BaseRootView = spv.inh(provoda.View, {
-	preinit: function(target, opts, vopts) {
-		target.calls_flow = new provoda.CallbacksFlow(spv.getDefaultView(vopts.d), !vopts.usual_flow, 250);
-	}
-}, {
-	_getCallsFlow: function() {
-		return this.calls_flow;
-	},
-	remove: function() {
-		this.calls_flow = null;
-	}
-});
-
-*/
