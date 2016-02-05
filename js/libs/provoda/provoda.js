@@ -3,7 +3,6 @@ define(function(require) {
 
 var spv = require('spv');
 var angbo = require('angbo');
-var PvTemplate = require('./PvTemplate');
 var sync_sender = require('./sync_sender');
 var MDProxy = require('./MDProxy');
 var hp = require('./helpers');
@@ -113,9 +112,6 @@ pv = provoda = {
 		var func = named || function() {};
 		behaviorFrom.extendTo(func, declr);
 		return func;
-	},
-	dom: {
-		template: PvTemplate
 	},
 	create: function(Constr, states, params, map_parent, app) {
 		var BehaviorContr = Constr || pv.Model;

@@ -7,6 +7,7 @@ var hp = require('./helpers');
 var updateProxy = require('./updateProxy');
 var prsStCon =  require('./prsStCon');
 var StatesEmitter = require('./StatesEmitter');
+var PvTemplate = require('./PvTemplate');
 
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
@@ -2056,6 +2057,8 @@ var View = spv.inh(StatesEmitter, {
 	},
 	parts_builder: {}
 });
+
+View._PvTemplate = PvTemplate;
 
 return View;
 });

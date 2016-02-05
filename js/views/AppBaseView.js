@@ -100,7 +100,7 @@ var BrowserAppRootView = spv.inh(View, {}, {
 });
 
 var sync_opt = {sync_tpl: true};
-
+var PvTemplate = View._PvTemplate;
 var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 	location_name: 'root_view',
 	createDetails: function() {
@@ -112,7 +112,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 			};
 		})(this);
 
-		var templator = pv.dom.template.templator(this._getCallsFlow(), getSampleForTemplate);
+		var templator = PvTemplate.templator(this._getCallsFlow(), getSampleForTemplate);
 		this.pvtemplate = templator.template;
 		this.pvsampler = templator.sampler;
 
