@@ -1,9 +1,9 @@
-define(['pv', 'jquery', './coct', 'app_serv', 'view_serv', './modules/Panoramator', 'spv'],
-function(pv, $, coct, app_serv, view_serv, Panoramator, spv) {
+define(['pv', 'jquery', './coct', 'app_serv', 'view_serv', './modules/Panoramator', 'spv', 'View'],
+function(pv, $, coct, app_serv, view_serv, Panoramator, spv, View) {
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
-var View = pv.View;
+
 var ArtcardUI = spv.inh(View, {}, {
 	die: function() {
 		this._super();

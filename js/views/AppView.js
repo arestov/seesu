@@ -1,11 +1,11 @@
 define(['pv', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
 './StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
 './SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
-'./lul', './SongcardPage', './AppBaseView', './modules/WPBox', 'view_serv'],
+'./lul', './SongcardPage', './AppBaseView', './modules/WPBox', 'view_serv', 'View'],
 function(pv, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
 StartPageView, SearchPageView, ArtcardUI, ArtistListView,
 SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
-lul, SongcardPage, AppBaseView, WPBox, view_serv) {
+lul, SongcardPage, AppBaseView, WPBox, view_serv, View) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -103,7 +103,6 @@ var map_slice_by_model = {
 	music_blog: coct.ListOfListsView,
 	app_news: coct.AppNewsView
 };
-var View = pv.View;
 
 var BrowseLevView = spv.inh(View, {}, {
 	children_views_by_mn: {

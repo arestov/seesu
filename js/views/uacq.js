@@ -1,6 +1,5 @@
-define(['pv', 'jquery', 'app_serv', './coct', 'spv'], function(pv, $, app_serv, coct, spv) {
+define(['pv', 'jquery', 'app_serv', './coct', 'spv', 'View'], function(pv, $, app_serv, coct, spv, View) {
 'use strict';
-var View = pv.View;
 var localize = app_serv.localize;
 
 var UserAcquaintanceView = spv.inh(View, {}, {

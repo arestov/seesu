@@ -1,6 +1,5 @@
-define(['pv', 'spv'], function(pv, spv) {
+define(['pv', 'spv', 'View'], function(pv, spv, View) {
 "use strict";
-var View = pv.View;
 var SearchPageView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'search_results-container'

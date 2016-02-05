@@ -1,6 +1,5 @@
-define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl) {
+define(['pv', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl', 'View'], function(pv, $, spv, app_serv, etc_views, SongActTaggingControl, View) {
 "use strict";
-var View = pv.View;
 var pvUpdate = pv.update;
 var ShareSearchSection = spv.inh(View, {}, {
 

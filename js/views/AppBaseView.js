@@ -1,5 +1,5 @@
-define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', './modules/getUsageTree', 'view_serv'],
-function(pv, spv, $, filters, app_serv, getUsageTree, view_serv){
+define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', './modules/getUsageTree', 'view_serv', 'View'],
+function(pv, spv, $, filters, app_serv, getUsageTree, view_serv, View){
 "use strict";
 var css_transform = view_serv.css.transform;
 var transform_props = css_transform ? [css_transform] : [];
@@ -57,7 +57,6 @@ LevContainer.prototype = {
 		}
 	}
 };
-var View = pv.View;
 
 var BrowserAppRootView = spv.inh(View, {}, {
 	dom_rp: true,

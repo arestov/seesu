@@ -13,7 +13,6 @@ var Eventor = require('./Eventor');
 var StatesEmitter = require('./StatesEmitter');
 var CallbacksFlow = require('./CallbacksFlow');
 var Model = require('./Model');
-var View = require('./View');
 var updateProxy = require('./updateProxy');
 var initDeclaredNestings = require('./initDeclaredNestings');
 
@@ -76,7 +75,6 @@ pv = provoda = {
 	StatesEmitter: StatesEmitter,
 	Model: Model,
 	HModel: getHModel(),
-	View: View,
 	views_proxies: views_proxies,
 	getOCF: function(propcheck, callback) {
 		//init once
@@ -154,7 +152,6 @@ pv = provoda = {
 		return model;
 	}
 };
-provoda.Controller = provoda.View;
 
 function getHModel() {
 var HModel = spv.inh(Model, {

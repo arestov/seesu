@@ -1,6 +1,5 @@
-define(['pv', 'jquery', 'app_serv', './uacq', 'spv'], function(pv, $, app_serv, uacq, spv) {
+define(['pv', 'jquery', 'app_serv', './uacq', 'spv', 'View'], function(pv, $, app_serv, uacq, spv, View) {
 "use strict";
-var View = pv.View;
 var UserCardPreview = spv.inh(View, {}, {
 	dom_rp: true,
 	createBase: function() {

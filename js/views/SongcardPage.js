@@ -1,7 +1,6 @@
-define(['pv', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct'],
-function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct) {
+define(['pv', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct', 'View'],
+function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct, View) {
 'use strict';
-var View = pv.View;
 var localize = app_serv.localize;
 var pvUpdate = pv.update;
 

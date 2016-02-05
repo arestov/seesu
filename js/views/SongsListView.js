@@ -1,7 +1,6 @@
-define(['pv', 'jquery', './SongUI', './etc_views', './coct', 'spv' ],
-function(pv, $, SongUI, etc_views, coct, spv) {
+define(['pv', 'jquery', './SongUI', './etc_views', './coct', 'spv', 'View'],
+function(pv, $, SongUI, etc_views, coct, spv, View) {
 	"use strict";
-	var View = pv.View;
 	var PlaylistSettingsRowView = spv.inh(View, {}, {
 		"stch-dont_rept_pl": function(target, state) {
 			target.dont_rept_pl_chbx.prop('checked', !!state);
@@ -22,7 +21,7 @@ function(pv, $, SongUI, etc_views, coct, spv) {
 		},
 		children_views_by_mn: {
 			context_parts: {
-				"row-multiatcs": pv.View,
+				"row-multiatcs": View,
 				"row-pl-settings": PlaylistSettingsRowView
 			}
 		}

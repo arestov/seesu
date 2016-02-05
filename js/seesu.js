@@ -2,11 +2,11 @@ define('su',
 ['require', 'spv', 'app_serv', 'pv', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
-'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax', 'js/libs/ProspApi'],
+'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax', 'js/libs/ProspApi', 'View'],
 function(require, spv, app_serv, pv, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
-PlayerSeesu, invstg, cache_ajax, ProspApi) {
+PlayerSeesu, invstg, cache_ajax, ProspApi, View) {
 'use strict';
 var
 	localize = app_serv.localize,
@@ -34,7 +34,6 @@ $.support.cors = true;
 
 var pvUpdate = pv.update;
 var chrome = window.chrome;
-var View = pv.View;
 var ChromeExtensionButtonView = spv.inh(View, {}, {
 	state_change: {
 		"playing": function(target, state) {

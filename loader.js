@@ -17,7 +17,8 @@ requirejs.config({
 	},
 	map: {
 		'*': {
-			'pv': 'js/libs/provoda/provoda'
+			'pv': 'js/libs/provoda/provoda',
+			'View': 'js/libs/provoda/View'
 		}
 	},
 	shim: {

@@ -1,6 +1,5 @@
-define(['./etc_views', 'jquery', 'app_serv', 'spv', 'pv'], function(etc_views, $, app_serv, spv, pv){
+define(['./etc_views', 'jquery', 'app_serv', 'spv', 'pv', 'View'], function(etc_views, $, app_serv, spv, pv, View){
 "use strict";
-var View = pv.View;
 //var localize = app_serv.localize;
 
 

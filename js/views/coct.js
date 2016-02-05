@@ -1,6 +1,5 @@
-define(['spv', 'pv', 'jquery', './etc_views'], function(spv, pv, $, etc_views) {
+define(['spv', 'pv', 'jquery', './etc_views', 'View'], function(spv, pv, $, etc_views, View) {
 "use strict";
-var View = pv.View;
 var pvUpdate = pv.update;
 
 var SoftVkLoginUI = spv.inh(etc_views.VkLoginUI, {}, {

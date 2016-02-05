@@ -1,6 +1,5 @@
-define(['pv', 'app_serv', 'jquery', 'spv'], function(pv, app_serv, $, spv) {
+define(['pv', 'app_serv', 'jquery', 'spv', 'View'], function(pv, app_serv, $, spv, View) {
 "use strict";
-var View = pv.View;
 var pvUpdate = pv.update;
 var localize = app_serv.localize;
 var contextRow = function(container){

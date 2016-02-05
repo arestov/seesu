@@ -1,6 +1,5 @@
-define(['pv', 'spv'], function(pv, spv) {
+define(['pv', 'spv', 'View'], function(pv, spv, View) {
 "use strict";
-var View = pv.View;
 var baseNavUI = spv.inh(View, {}, {
 	dom_rp: true,
 	base_tree: {
