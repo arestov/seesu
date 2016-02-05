@@ -21,7 +21,7 @@ var hasPrefixedProps = function(props, prefix) {
 
 var Eventor = getEventor();
 var StatesEmitter = getStatesEmitter(Eventor);
-var Model = getModel(StatesEmitter, sync_sender);
+var Model = getModel(StatesEmitter);
 
 pv = provoda = {
 	CallbacksFlow: CallbacksFlow,
@@ -59,7 +59,7 @@ pv = provoda = {
 		angbo.getFilterFn = fn;
 	},
 	MDProxy: MDProxy,
-	sync_s: sync_sender,
+	SyncSender: sync_sender,
 	SyncR: SyncReceiver,
 	Eventor: Eventor.PublicEventor,
 	StatesEmitter: StatesEmitter,

@@ -71,13 +71,13 @@ window._gaq = window._gaq || [];
 		su = seesu  = new SeesuApp();
 		su.init({
 			_highway: {
+				sync_sender: new pv.SyncSender(),
 				views_proxies: proxies,
 				models: {},
 				calls_flow: new pv.CallbacksFlow(window),
 				proxies: proxies
 			}
 		}, seesu_version);
-		pv.sync_s.setRootModel(su);
 
 		if (need_ui) {
 			initViews(su, proxies);

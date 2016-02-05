@@ -1,13 +1,12 @@
 define(['spv'], function(spv) {
 "use strict";
-return {
-	root_model: null,
-	sockets: {},
-	streams_list: [],
-	sockets_m_index: {},
-	setRootModel: function(md) {
-		this.root_model = md;
-	},
+var SyncSender = function() {
+	this.sockets = {};
+	this.streams_list = [];
+	this.sockets_m_index ={};
+};
+
+SyncSender.prototype = {
 	removeSyncStream: function(stream) {
 		if (!this.sockets[stream.id]) {
 			return;
@@ -90,4 +89,5 @@ return {
 		}
 	}
 };
+return SyncSender;
 });

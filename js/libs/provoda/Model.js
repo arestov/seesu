@@ -1,7 +1,7 @@
 define(['spv', './StatesLabour', './helpers', './MDProxy', './initDeclaredNestings', './prsStCon', './updateProxy'],
 function(spv, StatesLabour, hp, MDProxy, initDeclaredNestings, prsStCon, updateProxy) {
 'use strict';
-return function(StatesEmitter, sync_sender) {
+return function(StatesEmitter) {
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
 
@@ -1283,7 +1283,7 @@ add({
 	},
 	sendCollectionChange: function(collection_name, array, old_value, removed) {
 		//this.removeDeadViews();
-		sync_sender.pushNesting(this, collection_name, array, old_value, removed);
+		this._highway.sync_sender.pushNesting(this, collection_name, array, old_value, removed);
 		this._highway.views_proxies.pushNesting(this, collection_name, array, old_value, removed);
 		if (this.mpx) {
 			this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
@@ -1293,7 +1293,7 @@ add({
 	sendStatesToMPX: function(states_list) {
 		//this.removeDeadViews();
 		var dubl = states_list.slice();
-		sync_sender.pushStates(this, dubl);
+		this._highway.sync_sender.pushStates(this, dubl);
 		this._highway.views_proxies.pushStates(this, dubl);
 		if (this.mpx) {
 			this.mpx.stackReceivedStates(dubl);
