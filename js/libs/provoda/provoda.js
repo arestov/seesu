@@ -1,5 +1,5 @@
 define('pv', ['spv', 'angbo', './PvTemplate', './sync_sender', './MDProxy', './helpers', './views_proxies', './SyncReceiver', './Eventor', './StatesEmitter', './CallbacksFlow', './Model', './View', './updateProxy', './initDeclaredNestings'],
-function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, Eventor, StatesEmitter, CallbacksFlow, Model, getView, updateProxy, initDeclaredNestings){
+function(spv, angbo, PvTemplate, sync_sender, MDProxy, hp, views_proxies, SyncReceiver, Eventor, StatesEmitter, CallbacksFlow, Model, View, updateProxy, initDeclaredNestings){
 "use strict";
 
 var provoda, pv;
@@ -61,7 +61,7 @@ pv = provoda = {
 	StatesEmitter: StatesEmitter,
 	Model: Model,
 	HModel: getHModel(),
-	View: getView(StatesEmitter),
+	View: View,
 	views_proxies: views_proxies,
 	getOCF: function(propcheck, callback) {
 		//init once

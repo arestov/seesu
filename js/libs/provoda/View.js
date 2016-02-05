@@ -1,10 +1,9 @@
-define(['spv', './helpers',  'jquery', './updateProxy', './prsStCon'],
-function(spv, hp, $, updateProxy, prsStCon) {
+define(['spv', './helpers',  'jquery', './updateProxy', './prsStCon', './StatesEmitter'],
+function(spv, hp, $, updateProxy, prsStCon, StatesEmitter) {
 'use strict';
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;
-return function(StatesEmitter) {
 var push = Array.prototype.push;
 var appendSpace = function() {
 	//fixme
@@ -2052,5 +2051,4 @@ var View = spv.inh(StatesEmitter, {
 });
 
 return View;
-};
 });
