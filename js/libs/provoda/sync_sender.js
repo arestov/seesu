@@ -25,7 +25,7 @@ return {
 		stream.buildTree(struc);
 
 	},
-	pushNesting: function(md, nesname, value, oldv, remove){
+	pushNesting: function(md, nesname, value){
 		//var struc;
 		var parsed_value;
 		for (var i = 0; i < this.streams_list.length; i++) {
