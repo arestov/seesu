@@ -1,6 +1,5 @@
-define(['spv', './FastEventor', './helpers'], function(spv, getFastEventor, hp) {
+define(['spv', './FastEventor', './helpers'], function(spv, FastEventor, hp) {
 'use strict';
-var FastEventor = getFastEventor();
 
 var Eventor = spv.inh(function() {}, {
 	naming: function(construct) {
