@@ -4,14 +4,13 @@ var su, seesu;
 "use strict";
 requirejs.config({
 	paths: {
-
-		su: 'js/seesu',
-
 		jquery: 'js/common-libs/jquery-2.1.4.min',
 		angbo: 'js/libs/provoda/StatementsAngularParser.min',
 	},
 	map: {
 		'*': {
+			su: 'js/seesu',
+
 			pv: 'js/libs/provoda/provoda',
 			View: 'js/libs/provoda/View',
 
