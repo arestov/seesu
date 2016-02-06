@@ -4,22 +4,26 @@ var su, seesu;
 "use strict";
 requirejs.config({
 	paths: {
-		spv: 'js/libs/spv',
-		su: 'js/seesu',
-		angbo: 'js/libs/provoda/StatementsAngularParser.min',
-		jquery: 'js/common-libs/jquery-2.1.4.min',
-		localizer: 'js/libs/localizer',
-		cache_ajax: 'js/libs/cache_ajax',
-		app_serv: "js/app_serv",
-		view_serv: "js/views/modules/view_serv",
-		env: "js/env",
 
+		su: 'js/seesu',
+
+		jquery: 'js/common-libs/jquery-2.1.4.min',
+		angbo: 'js/libs/provoda/StatementsAngularParser.min',
 	},
 	map: {
 		'*': {
-			'pv': 'js/libs/provoda/provoda',
-			'View': 'js/libs/provoda/View',
-			'hex_md5': 'js/common-libs/md5',
+			pv: 'js/libs/provoda/provoda',
+			View: 'js/libs/provoda/View',
+
+			spv: 'js/libs/spv',
+			app_serv: "js/app_serv",
+			localizer: 'js/libs/localizer',
+			view_serv: "js/views/modules/view_serv",
+			cache_ajax: 'js/libs/cache_ajax',
+			env: "js/env",
+
+			hex_md5: 'js/common-libs/md5'
+
 		}
 	},
 	waitSeconds: window.tizen && 0

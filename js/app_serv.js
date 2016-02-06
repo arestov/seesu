@@ -1,4 +1,4 @@
-define(['spv', 'localizer', 'js/libs/w_storage', 'js/preloaded_nk', 'env'],
+define(['spv', 'localizer', './libs/w_storage', './preloaded_nk', 'env'],
 function(spv, localizer, w_storage, preloaded_nk, env) {
 "use strict";
 var app_serv = {};
