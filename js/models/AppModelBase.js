@@ -38,16 +38,20 @@ var AppModelBase = spv.inh(pv.Model, {
 			.on('title-change', function(title) {
 				this.setDocTitle(title);
 
-			}, this.getContextOptsI())
-			.on('url-change', function(nu, ou, data, replace) {
-				if (needs_url_history){
-					if (replace){
-						navi.replace(ou, nu, data);
-					} else {
-						navi.set(nu, data);
-					}
-				}
 			}, this.getContextOptsI());
+
+		if (navi) {
+			this.map
+				.on('url-change', function(nu, ou, data, replace) {
+					if (needs_url_history){
+						if (replace){
+							navi.replace(ou, nu, data);
+						} else {
+							navi.set(nu, data);
+						}
+					}
+				}, this.getContextOptsI());
+		}
 
 		return this.map;
 	},
