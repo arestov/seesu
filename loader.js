@@ -13,17 +13,13 @@ requirejs.config({
 		app_serv: "js/app_serv",
 		view_serv: "js/views/modules/view_serv",
 		env: "js/env",
-		hex_md5: 'js/common-libs/md5.min',
+
 	},
 	map: {
 		'*': {
 			'pv': 'js/libs/provoda/provoda',
-			'View': 'js/libs/provoda/View'
-		}
-	},
-	shim: {
-		hex_md5: {
-			exports: 'hex_md5'
+			'View': 'js/libs/provoda/View',
+			'hex_md5': 'js/common-libs/md5',
 		}
 	},
 	waitSeconds: window.tizen && 0
