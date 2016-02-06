@@ -1,12 +1,12 @@
 define(['pv', 'spv', '../libs/BrowseMap'], function(pv, spv, BrowseMap) {
 "use strict";
-var binded_models = {};
 
 var getStruc = BrowseMap.getStruc;
 var getStrucSources = BrowseMap.getStrucSources;
 
 var AppModelBase = spv.inh(pv.Model, {
 	init: function(target) {
+		target.binded_models = {};
 		target.navigation = [];
 		// target.map = ;
 		target.current_mp_md = null;
@@ -84,10 +84,10 @@ var AppModelBase = spv.inh(pv.Model, {
 
 
 		var bindMMapStateChanges = function(app, md) {
-			if (binded_models[md._provoda_id]) {
+			if (app.binded_models[md._provoda_id]) {
 				return;
 			}
-			binded_models[md._provoda_id] = true;
+			app.binded_models[md._provoda_id] = true;
 			app.pushVDS(md);
 		};
 
