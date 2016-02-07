@@ -1191,7 +1191,11 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 		#/ds/vk/25325_2344446
 		http://www.lastfm.ru/music/65daysofstatic/+similar
 		*/
-		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
+		var cleanPath = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ');/*.replace(/^\//,'')*/
+		if (!cleanPath) {
+			return start_md;
+		}
+		var pth = cleanPath.split('/');
 
 		var cur_md = start_md;
 		var result = cur_md;
