@@ -747,15 +747,17 @@ FastEventor.prototype = {
 
 		store.process = true;
 		var _this = this;
-		request
-				.always(function() {
+
+		request.always(function() {
 					store.process = false;
 					_this.sputnik.updateManyStates(_this.makeLoadingMarks(states_list, false));
-				})
-				.fail(function(){
+				});
+
+		request.fail(function(){
 					store.error = true;
-				})
-				.done(function(r){
+				});
+
+		request.done(function(r){
 					var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
 					var i;
 					if (has_error){
@@ -861,18 +863,17 @@ FastEventor.prototype = {
 
 		store.process = true;
 		var _this = this;
-		request
-				.always(function() {
+		request.always(function() {
 					store.process = false;
 					_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
 					if (is_main_list) {
 						_this.sputnik.updateState('main_list_loading', false);
 					}
-				})
-				.fail(function(){
+				});
+		request.fail(function(){
 					store.error = true;
-				})
-				.done(function(r){
+				});
+		request.done(function(r){
 					var sputnik = _this.sputnik;
 					var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
 
