@@ -538,6 +538,8 @@ FastEventor.prototype = {
 	addRequests: function(array, opts) {
 		//opts = opts || {};
 		//space, depend
+		var _highway = this.sputnik._highway;
+
 		var space = (opts && opts.space) || this.default_requests_space;
 		var i = 0, req = null;
 
@@ -564,11 +566,21 @@ FastEventor.prototype = {
 					_this.requests[space] = spv.findAndRemoveItem(_this.requests[space], req);
 				}
 
+				var _highway = _this.sputnik._highway;
+				if (_highway.requests) {
+					_highway.requests = spv.findAndRemoveItem(_highway.requests, req);
+				}
+
 			});
 		};
 		var added = [];
 		for (i = 0; i < array.length; i++) {
 			req = array[i];
+
+			if (_highway.requests && _highway.requests.indexOf(req) != -1) {
+				_highway.requests.push(req);
+			}
+
 			/*if (req.queued){
 				spv.setTargetField(req.queued, 'mdata.' + this._provoda_id, this);
 			}*/
