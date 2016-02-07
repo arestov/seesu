@@ -1169,7 +1169,7 @@ BrowseMap.getUserInterest = function(pth_string, start_md) {
 	return interest.reverse();
 };
 
-BrowseMap.routePathByModels = function(start_md, pth_string, need_constr) {
+BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict) {
 
 		/*
 		catalog
@@ -1226,6 +1226,8 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr) {
 					if (md){
 						cur_md = md;
 						result = md;
+					} else if (strict) {
+						return null;
 					} else {
 						break;
 					}
