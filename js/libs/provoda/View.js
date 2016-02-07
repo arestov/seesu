@@ -76,7 +76,7 @@ var hndExpandViewTree = function(e) {
 var stackEmergency = function(fn, eventor, args) {
 	return eventor._calls_flow.pushToFlow(fn, eventor, args);
 };
-var views_counter = 1;
+
 var way_points_counter = 0;
 
 var initView = function(target, view_otps, opts){
@@ -101,7 +101,6 @@ var initView = function(target, view_otps, opts){
 		target.base_skeleton = getBaseTreeSkeleton(target.base_tree_list);
 	}
 
-	target.view_id = views_counter++;
 	target.parent_view = null;
 	if (view_otps.parent_view){
 		target.parent_view = view_otps.parent_view;
@@ -112,6 +111,7 @@ var initView = function(target, view_otps, opts){
 	}
 
 	target._highway = view_otps._highway || target.root_view._highway;
+	target.view_id = target._highway.views_counter++;
 	target._calls_flow = target._highway.calls_flow;
 	target._local_calls_flow = target._highway.local_calls_flow;
 

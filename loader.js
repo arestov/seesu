@@ -68,6 +68,7 @@ window._gaq = window._gaq || [];
 		su = seesu  = new SeesuApp();
 		su.init({
 			_highway: {
+				models_counters: 1,
 				sync_sender: new pv.SyncSender(),
 				views_proxies: proxies,
 				models: {},
@@ -124,6 +125,7 @@ window._gaq = window._gaq || [];
 					mpx: mpx,
 					proxies_space: proxies_space,
 					_highway: {
+						views_counter: 1,
 						views_proxies: proxies,
 						calls_flow: new pv.CallbacksFlow(window),
 						local_calls_flow: new pv.CallbacksFlow(spv.getDefaultView(doc), !usual_flow, 250)
