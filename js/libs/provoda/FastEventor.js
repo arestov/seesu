@@ -577,7 +577,7 @@ FastEventor.prototype = {
 		for (i = 0; i < array.length; i++) {
 			req = array[i];
 
-			if (_highway.requests && _highway.requests.indexOf(req) != -1) {
+			if (_highway.requests && _highway.requests.indexOf(req) == -1) {
 				_highway.requests.push(req);
 			}
 
