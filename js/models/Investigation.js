@@ -267,7 +267,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 		appendResults: function(arr, render, no_more_results) {
 			var r = [];
 			for (var i = 0; i < arr.length; i++) {
-				var item = new this.resItem(arr[i]);
+				var item = this.initSi(this.resItem, arr[i]);
 				item.invstg = this.invstg;
 				r.push(item);
 			}

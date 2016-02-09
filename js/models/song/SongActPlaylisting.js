@@ -3,7 +3,7 @@ define(['../invstg', '../comd', 'pv', 'spv'], function(invstg, comd, pv, spv) {
 var SongActPlaylisting;
 
 var playlistSuggest = spv.inh(invstg.BaseSuggest, {
-	init: function(self, data) {
+	init: function(self, opts, data) {
 		self.pl = data.playlist;
 		self.mo = data.mo;
 		self.rpl = data.rpl;

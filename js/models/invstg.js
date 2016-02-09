@@ -15,7 +15,7 @@ var suParseTagsResults = lfmhelp.parseTagsResults;
 var suParseAlbumsResults = lfmhelp.parseAlbumsResults;
 
 var artistSuggest = spv.inh(base.BaseSuggest, {
-	init: function(self, data) {
+	init: function(self, opts, data) {
 		self.artist = data.artist;
 		self.image = data.image;
 		self.text_title = self.getTitle();
@@ -36,7 +36,7 @@ var artistSuggest = spv.inh(base.BaseSuggest, {
 });
 
 var playlistSuggest = spv.inh(base.BaseSuggest, {
-	init: function(self, data) {
+	init: function(self, opts, data) {
 		self.pl = data.playlist;
 		self.text_title = self.getTitle();
 		self.updateManyStates({
@@ -55,7 +55,8 @@ var playlistSuggest = spv.inh(base.BaseSuggest, {
 var seesuSection = spv.inh(base.SearchSection, {
 	init: function(self) {
 		if (self.loadMore){
-			self.button = (new base.BaseSectionButton())
+
+			self.button = self.initSi(base.BaseSectionButton)
 				.on('view', function(){
 					this.hide();
 					self.loadMore();
@@ -106,7 +107,7 @@ var ArtistsSection = spv.inh(seesuSection, {
 
 
 var trackSuggest = spv.inh(base.BaseSuggest, {
-	init: function(self, data) {
+	init: function(self, opts, data) {
 		//artist, track, image, duration
 		self.artist = data.artist;
 		self.track = data.track;
@@ -170,7 +171,7 @@ var TracksSection = spv.inh(seesuSection, {
 });
 
 var tagSuggest = spv.inh(base.BaseSuggest, {
-	init: function(self, data) {
+	init: function(self, opts, data) {
 		self.tag = data.tag;
 		self.image = null;
 		if (data.image){
@@ -218,7 +219,7 @@ var TagsSection = spv.inh(seesuSection, {
 });
 
 var albumSuggest = spv.inh(base.BaseSuggest, {
-	init: function(self, data) {
+	init: function(self, opts, data) {
 		//artist, name, image, id
 		self.artist = data.artist;
 		self.name = data.album;

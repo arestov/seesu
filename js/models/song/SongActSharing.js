@@ -6,7 +6,7 @@ var app_env = app_serv.app_env;
 var pvState = pv.state;
 
 var struserSuggest = spv.inh(invstg.BaseSuggest, {
-	init: function(self, wrap) {
+	init: function(self, opts, wrap) {
 		var user = wrap.user;
 		self.mo = wrap.mo;
 		self.row = wrap.row;
@@ -148,7 +148,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 
 
 var LFMUserSuggest = spv.inh(invstg.BaseSuggest, {
-	init: function(target, params) {
+	init: function(target, opts, params) {
 		var user = params.user;
 		target.app = params.app;
 		target.mo = params.mo;
@@ -238,7 +238,7 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
 
 
 var LFMOneUserSuggest = spv.inh(invstg.BaseSuggest, {
-	init: function(target, params) {
+	init: function(target, opts, params) {
 		var user = params.user;
 	//
 		target.app = params.app;
