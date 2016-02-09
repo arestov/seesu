@@ -2,11 +2,11 @@ define(
 ['require', 'spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap', './modules/net_apis', './libs/Mp3Search',
 './libs/ScApi', './modules/torrent_searches', './libs/FuncsQueue', './libs/LastfmAPIExtended',
 './models/AppModel', './models/comd', './LfmAuth', './models/StartPage', './SeesuServerAPI', './libs/VkAuth', './libs/VkApi', './modules/initVk',
-'./modules/PlayerSeesu', './models/invstg', 'cache_ajax', './libs/ProspApi', 'View'],
+'./modules/PlayerSeesu', './models/invstg', 'cache_ajax', './libs/ProspApi', 'View', 'js/libs/localizer'],
 function(require, spv, app_serv, pv, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
-PlayerSeesu, invstg, cache_ajax, ProspApi, View) {
+PlayerSeesu, invstg, cache_ajax, ProspApi, View, localize_dict) {
 'use strict';
 var
 	localize = app_serv.localize,
@@ -66,6 +66,23 @@ var OperaExtensionButtonView = spv.inh(View, {}, {
 
 var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
+	'compx-app_lang': [
+		[], function() {
+			return app_env.lang;
+		}
+	],
+	'compx-localize_dict': [
+		['app_lang'],
+		function(app_lang) {
+			var result = {};
+			for (var string in localize_dict) {
+				if (localize_dict[string]){
+					result[string] = localize_dict[string][app_lang] || localize_dict[string].original;
+				}
+			}
+			return result;
+		}
+	],
 	initAPIs: function(resortQueue) {
 		var _this = this;
 
