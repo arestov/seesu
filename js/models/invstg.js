@@ -30,8 +30,8 @@ var artistSuggest = spv.inh(base.BaseSuggest, {
 		return this.artist;
 	},
 	onView: function(){
-		su.showArtcardPage(this.artist, this.invstg);
-		su.trackEvent('Music search', this.q, "artist: " + this.artist );
+		this.app.showArtcardPage(this.artist, this.invstg);
+		this.app.trackEvent('Music search', this.q, "artist: " + this.artist );
 	}
 });
 
@@ -134,12 +134,12 @@ var trackSuggest = spv.inh(base.BaseSuggest, {
 		return this.artist + ' - ' + this.track;
 	},
 	onView: function(){
-		su.showArtistTopTracks(this.artist, this.invstg, {
+		this.app.showArtistTopTracks(this.artist, this.invstg, {
 			artist: this.artist,
 			track: this.track
 		});
 
-		seesu.trackEvent('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
+		this.app.trackEvent('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
 	}
 });
 
@@ -190,8 +190,8 @@ var tagSuggest = spv.inh(base.BaseSuggest, {
 		return this.tag;
 	},
 	onView: function(){
-		su.show_tag(this.tag, this.invstg);
-		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
+		this.app.show_tag(this.tag, this.invstg);
+		this.app.trackEvent('Music search', this.q, "tag: " + this.tag );
 	}
 });
 
@@ -242,12 +242,12 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
 		return '( ' + this.artist + ' ) ' + this.name;
 	},
 	onView: function(){
-		su.showArtistAlbum({
+		this.app.showArtistAlbum({
 			album_artist: this.artist,
 			album_name: this.name,
 			album_id: this.aid
 		}, this.invstg);
-		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
+		this.app.trackEvent('Music search', this.q, "album: " + this.text_title);
 	}
 });
 
@@ -325,7 +325,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 		return '?q=' + encodeURIComponent(this.q || '');
 	},
 	searchf: function() {
-		var playlists = seesu.gena.playlists,
+		var playlists = this.app.gena.playlists,
 			pl_results = [],
 			pl_sec,
 			i;
@@ -339,7 +339,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 			pl_sec.changeQuery(this.q);
 
 
-			serplr = su.getPlaylists();
+			serplr = this.app.getPlaylists();
 			if (serplr.length){
 				for (i = 0; i < serplr.length; i++) {
 					pl_results.push({
@@ -355,7 +355,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 			//playlist search
 
 
-			serplr = su.getPlaylists(this.q);
+			serplr = this.app.getPlaylists(this.q);
 			if (serplr.length){
 				for (i = 0; i < serplr.length; i++) {
 					pl_results.push({
