@@ -191,7 +191,7 @@ AppModel.extendTo(SeesuApp, {
 		this.s  = new SeesuServerAPI(this, app_serv.store('dg_auth'), this.server_url);
 		pv.update(this, 'su_server_api', true);
 
-		this.s.on('info-change.vk', function(data) {
+		this.s.on('info-change-vk', function(data) {
 			pv.update(_this, 'vk_info', data);
 			pv.update(_this, 'vk_userid', data && data.id);
 		});

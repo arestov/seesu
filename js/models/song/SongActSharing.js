@@ -66,7 +66,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 				pv.update(self, "own_photo", cu_info.photo);
 			}
 		} else {
-			self.app.s.once("info-change.vk", function(cu_info) {
+			self.app.s.once("info-change-vk", function(cu_info) {
 				if (cu_info.photo){
 					pv.update(self, "own_photo", cu_info.photo);
 				}

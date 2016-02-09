@@ -232,7 +232,7 @@ var SeesuServerAPI = spv.inh(pv.Eventor, {
 		},
 		setInfo: function(type, data){
 			this.susd.user_info[type] = data;
-			this.trigger('info-change.' + type, data);
+			this.trigger('info-change-' + type, data);
 		},
 
 
