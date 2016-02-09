@@ -8,8 +8,8 @@ var morph_helpers = require('js/libs/morph_helpers');
 
 var clean_obj = {};
 
-var EventSubscribingOpts = function(short_name, cb, once, context, immediately, wrapper) {
-	this.ev_name = short_name;
+var EventSubscribingOpts = function(ev_name, cb, once, context, immediately, wrapper) {
+	this.ev_name = ev_name;
 	this.cb = cb;
 	this.once = once;
 	this.context = context;
@@ -126,11 +126,11 @@ var resetSubscribesCache = iterateSubsCache(function() {
 	return null;
 });
 
-var getNsName = function(convertEventName, namespace_raw) {
+var getNsName = function(convertEventName, ev_name_raw) {
 	if (!convertEventName) {
-		return namespace_raw;
+		return ev_name_raw;
 	} else {
-		return convertEventName(namespace_raw);
+		return convertEventName(ev_name_raw);
 	}
 };
 
@@ -148,36 +148,36 @@ var FastEventor = function(context) {
 	this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
 };
 FastEventor.prototype = {
-	_pushCallbackToStack: function(short_name, opts) {
+	_pushCallbackToStack: function(ev_name, opts) {
 		if (!this.subscribes) {
 			this.subscribes = {};
 		}
 
-		if (!this.subscribes[short_name]){
-			this.subscribes[short_name] = [];
+		if (!this.subscribes[ev_name]){
+			this.subscribes[ev_name] = [];
 		}
-		this.subscribes[short_name].push(opts);
+		this.subscribes[ev_name].push(opts);
 		// resetSubscribesCache(this, opts.ev_name);
 		addToSubscribesCache(this, opts.ev_name, opts);
 	},
-	getPossibleRegfires: function(namespace) {
+	getPossibleRegfires: function(ev_name) {
 		if (!this.reg_fires){
 			return;
 		}
-		if (this.reg_fires.cache && this.reg_fires.cache[namespace]){
-			return this.reg_fires.cache[namespace];
+		if (this.reg_fires.cache && this.reg_fires.cache[ev_name]){
+			return this.reg_fires.cache[ev_name];
 		}
 
 		var funcs = [];
 		var i = 0;
 		if (this.reg_fires.by_namespace){
-			if (this.reg_fires.by_namespace[namespace]){
-				funcs.push(this.reg_fires.by_namespace[namespace]);
+			if (this.reg_fires.by_namespace[ev_name]){
+				funcs.push(this.reg_fires.by_namespace[ev_name]);
 			}
 		}
 		if (this.reg_fires.by_test){
 			for (i = 0; i < this.reg_fires.by_test.length; i++) {
-				if (this.reg_fires.by_test[i].test.call(this.sputnik, namespace)){
+				if (this.reg_fires.by_test[i].test.call(this.sputnik, ev_name)){
 					funcs.push(this.reg_fires.by_test[i]);
 				}
 			}
@@ -186,7 +186,7 @@ FastEventor.prototype = {
 		if (!this.reg_fires.cache){
 			this.reg_fires.cache = {};
 		}
-		this.reg_fires.cache[namespace] = funcs;
+		this.reg_fires.cache[ev_name] = funcs;
 		return funcs;
 	},
 
@@ -200,27 +200,26 @@ FastEventor.prototype = {
 			fn.call(context, arg);
 		}
 	},
-	_addEventHandler: function(namespace_raw, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
+	_addEventHandler: function(ev_name_raw, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control){
 		//common opts allowed
 
-		var namespace = getNsName(this.sputnik.convertEventName, namespace_raw);
+		var ev_name = getNsName(this.sputnik.convertEventName, ev_name_raw);
 
 		var
 			fired = false,
-			_this = this,
-			short_name = namespace;
+			_this = this;
 
 		if (exlusive){
-			this.off(namespace);
+			this.off(ev_name);
 		}
 
 		var reg_args = null, one_reg_arg = null;
 
 		var callbacks_wrapper = this.hndUsualEvCallbacksWrapper;
 
-		var reg_fires = this.getPossibleRegfires(namespace);
+		var reg_fires = this.getPossibleRegfires(ev_name);
 		if (reg_fires && reg_fires.length){
-			reg_args = reg_fires[0].fn.call(this.sputnik, namespace, short_name);
+			reg_args = reg_fires[0].fn.call(this.sputnik, ev_name);
 			if (typeof reg_args != 'undefined') {
 				fired = true;
 				if (!Array.isArray(reg_args)) {
@@ -247,17 +246,17 @@ FastEventor.prototype = {
 					var flow_step = this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
 					if (reg_fires[0].handleFlowStep) {
 
-						reg_fires[0].handleFlowStep.call(this.sputnik, flow_step, reg_fires[0].getFSNamespace(namespace));
+						reg_fires[0].handleFlowStep.call(this.sputnik, flow_step, reg_fires[0].getFSNamespace(ev_name));
 					}
 				}
 			}
 		}
 
 
-		var subscr_opts = new EventSubscribingOpts(short_name, cb, once, context, immediately, callbacks_wrapper);
+		var subscr_opts = new EventSubscribingOpts(ev_name, cb, once, context, immediately, callbacks_wrapper);
 
 		if (!(once && fired)){
-			this._pushCallbackToStack(short_name, subscr_opts);
+			this._pushCallbackToStack(ev_name, subscr_opts);
 		}
 		if (easy_bind_control){
 			return subscr_opts;
@@ -265,9 +264,9 @@ FastEventor.prototype = {
 			return this.sputnik;
 		}
 	},
-	once: function(namespace, cb, opts, context){
+	once: function(ev_name, cb, opts, context){
 		return this._addEventHandler(
-			namespace,
+			ev_name,
 			cb,
 			opts && opts.context || context,
 			opts && opts.immediately,
@@ -277,9 +276,9 @@ FastEventor.prototype = {
 			true,
 			opts && opts.easy_bind_control);
 	},
-	on: function(namespace, cb, opts, context){
+	on: function(ev_name, cb, opts, context){
 		return this._addEventHandler(
-			namespace,
+			ev_name,
 			cb,
 			opts && opts.context || context,
 			opts && opts.immediately,
@@ -289,19 +288,16 @@ FastEventor.prototype = {
 			false,
 			opts && opts.easy_bind_control);
 	},
-	off: function(namespace, cb, obj, context){
-		if (this.sputnik.convertEventName){
-			namespace = this.sputnik.convertEventName(namespace);
-		}
-		var short_name = namespace;
+	off: function(event_name, cb, obj, context){
+		var ev_name = getNsName(this.sputnik.convertEventName, event_name);
 
-		var items = this.subscribes && this.subscribes[short_name];
+		var items = this.subscribes && this.subscribes[ev_name];
 
 		if (items){
 			if (obj) {
 				var pos = items.indexOf(obj);
 				if (pos != -1) {
-					this.subscribes[short_name] = spv.removeItem(items, pos);
+					this.subscribes[ev_name] = spv.removeItem(items, pos);
 					removeFromSubscribesCache(this, obj.ev_name, obj);
 					// resetSubscribesCache(this, obj.ev_name);
 				}
@@ -310,7 +306,7 @@ FastEventor.prototype = {
 				if (cb){
 					for (var i = 0; i < items.length; i++) {
 						var cur = items[i];
-						if (cur.cb == cb && cur.ev_name == namespace){
+						if (cur.cb == cb && cur.ev_name == ev_name){
 							if (!context || cur.context == context){
 								continue;
 							}
@@ -318,11 +314,9 @@ FastEventor.prototype = {
 						clean.push(items[i]);
 					}
 				} else {
-					// we should remove only `session.click` events, not all `seesion` events
-					// fix me - we should remove session.click and session.click.more-click, but no session
 					for (var i = 0; i < items.length; i++) {
 						var cur = items[i];
-						if (cur.ev_name == namespace){
+						if (cur.ev_name == ev_name){
 							if (!context || cur.context == context){
 								continue;
 							}
@@ -334,9 +328,9 @@ FastEventor.prototype = {
 				// losing `order by subscriging time` here
 				// clean.push.apply(clean, queried.not_matched);
 
-				if (clean.length != this.subscribes[short_name].length){
-					this.subscribes[short_name] = clean;
-					resetSubscribesCache(this, short_name);
+				if (clean.length != this.subscribes[ev_name].length){
+					this.subscribes[ev_name] = clean;
+					resetSubscribesCache(this, ev_name);
 				}
 			}
 
@@ -348,13 +342,10 @@ FastEventor.prototype = {
 
 		var _empty_callbacks_package = [];
 
-		var find = function(namespace, cb_cs) {
+		var find = function(ev_name, cb_cs) {
 			var matched = [];
 			for (var i = 0; i < cb_cs.length; i++) {
-				var curn = cb_cs[i].ev_name;
-				var canbe_matched = curn == namespace;
-
-				if (canbe_matched){
+				if (cb_cs[i].ev_name == ev_name){
 					matched.push(cb_cs[i]);
 				}
 			}
@@ -363,30 +354,29 @@ FastEventor.prototype = {
 
 		var getName = getNsName;
 
-		var setCache = function(self, namespace, value) {
+		var setCache = function(self, ev_name, value) {
 			if (!self.subscribes_cache) {
 				self.subscribes_cache = {};
 			}
-			self.subscribes_cache[namespace] = value;
+			self.subscribes_cache[ev_name] = value;
 			return value;
 		};
 
-		return function(namespace_raw){
-			var namespace = getName(this.sputnik.convertEventName, namespace_raw);
+		return function(ev_name_raw){
+			var ev_name = getName(this.sputnik.convertEventName, ev_name_raw);
 
-			var short_name = namespace;
-			var cb_cs = this.subscribes && this.subscribes[short_name];
+			var cb_cs = this.subscribes && this.subscribes[ev_name];
 
 			if (!cb_cs){
 				return _empty_callbacks_package;
 			} else {
-				var cached_r = this.subscribes_cache && this.subscribes_cache[namespace];
+				var cached_r = this.subscribes_cache && this.subscribes_cache[ev_name];
 				if (cached_r){
 					return cached_r;
 				} else {
-					var value = find(namespace, cb_cs);
+					var value = find(ev_name, cb_cs);
 
-					setCache(this, namespace, value);
+					setCache(this, ev_name, value);
 					return value;
 				}
 			}
@@ -413,14 +403,12 @@ FastEventor.prototype = {
 			},1);*/
 		}
 	},
-	cleanOnceEvents: function(ev_name) {
+	cleanOnceEvents: function(event_name) {
 		// this.off(ev_name, false, cur);
-		//
-		var namespace = getNsName(this.sputnik.convertEventName, ev_name);
 
-		var short_name = namespace;
+		var ev_name = getNsName(this.sputnik.convertEventName, event_name);
 
-		var items = this.subscribes && this.subscribes[short_name];
+		var items = this.subscribes && this.subscribes[ev_name];
 		if (items) {
 			var clean = [];
 
@@ -432,9 +420,9 @@ FastEventor.prototype = {
 				clean.push(items[i]);
 			}
 
-			if (clean.length != this.subscribes[short_name].length){
-				this.subscribes[short_name] = clean;
-				resetSubscribesCache(this, short_name);
+			if (clean.length != this.subscribes[ev_name].length){
+				this.subscribes[ev_name] = clean;
+				resetSubscribesCache(this, ev_name);
 			}
 		}
 
