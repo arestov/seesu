@@ -6,39 +6,10 @@ var hex_md5 = require('hex_md5');
 var hp = require('./helpers');
 var morph_helpers = require('js/libs/morph_helpers');
 
-var isEvNSMatching = (function() {
-	var check = function(listener_name, trigger_name) {
-		var last_char = listener_name.charAt(trigger_name.length);
-		return (!last_char || last_char == '.') && spv.startsWith(listener_name, trigger_name);
-	};
-
-	var ev_na_cache = {};
-
-	return function isEvNSMatching(listener_name, trigger_name) {
-		if (!ev_na_cache.hasOwnProperty(trigger_name)) {
-			ev_na_cache[trigger_name] = {};
-		}
-		var cac_space = ev_na_cache[trigger_name];
-		if (!cac_space.hasOwnProperty(listener_name)) {
-			cac_space[listener_name] = check(listener_name, trigger_name);
-		}
-		return cac_space[listener_name];
-
-	};
-})();
-
 var clean_obj = {};
 
-var cached_parsed_namespace = {};
-var parseNamespace = function(namespace) {
-	if (!cached_parsed_namespace[namespace]){
-		cached_parsed_namespace[namespace] = namespace.split('.');
-	}
-	return cached_parsed_namespace[namespace];
-};
-var EventSubscribingOpts = function(short_name, namespace, cb, once, context, immediately, wrapper) {
-	this.short_name = short_name;
-	this.namespace = namespace;
+var EventSubscribingOpts = function(short_name, cb, once, context, immediately, wrapper) {
+	this.ev_name = short_name;
 	this.cb = cb;
 	this.once = once;
 	this.context = context;
@@ -128,7 +99,7 @@ var iterateSubsCache = function(func) {
 			if (!bhv.subscribes_cache[trigger_name]){
 				continue;
 			}
-			if (isEvNSMatching( listener_name, trigger_name )){
+			if (listener_name == trigger_name){
 				bhv.subscribes_cache[trigger_name] = func(bhv.subscribes_cache[trigger_name], obj, listener_name);
 			}
 		}
@@ -186,8 +157,8 @@ FastEventor.prototype = {
 			this.subscribes[short_name] = [];
 		}
 		this.subscribes[short_name].push(opts);
-		// resetSubscribesCache(this, opts.namespace);
-		addToSubscribesCache(this, opts.namespace, opts);
+		// resetSubscribesCache(this, opts.ev_name);
+		addToSubscribesCache(this, opts.ev_name, opts);
 	},
 	getPossibleRegfires: function(namespace) {
 		if (!this.reg_fires){
@@ -197,15 +168,11 @@ FastEventor.prototype = {
 			return this.reg_fires.cache[namespace];
 		}
 
-		var parts = parseNamespace(namespace);
 		var funcs = [];
 		var i = 0;
 		if (this.reg_fires.by_namespace){
-			for (i = parts.length - 1; i > -1; i--) {
-				var posb_namespace = parts.slice(0, i + 1).join('.');
-				if (this.reg_fires.by_namespace[posb_namespace]){
-					funcs.push(this.reg_fires.by_namespace[posb_namespace]);
-				}
+			if (this.reg_fires.by_namespace[namespace]){
+				funcs.push(this.reg_fires.by_namespace[namespace]);
 			}
 		}
 		if (this.reg_fires.by_test){
@@ -241,8 +208,7 @@ FastEventor.prototype = {
 		var
 			fired = false,
 			_this = this,
-			name_parts = parseNamespace(namespace),
-			short_name = name_parts[0];
+			short_name = namespace;
 
 		if (exlusive){
 			this.off(namespace);
@@ -254,7 +220,7 @@ FastEventor.prototype = {
 
 		var reg_fires = this.getPossibleRegfires(namespace);
 		if (reg_fires && reg_fires.length){
-			reg_args = reg_fires[0].fn.call(this.sputnik, namespace, name_parts);
+			reg_args = reg_fires[0].fn.call(this.sputnik, namespace, short_name);
 			if (typeof reg_args != 'undefined') {
 				fired = true;
 				if (!Array.isArray(reg_args)) {
@@ -288,7 +254,7 @@ FastEventor.prototype = {
 		}
 
 
-		var subscr_opts = new EventSubscribingOpts(short_name, namespace, cb, once, context, immediately, callbacks_wrapper);
+		var subscr_opts = new EventSubscribingOpts(short_name, cb, once, context, immediately, callbacks_wrapper);
 
 		if (!(once && fired)){
 			this._pushCallbackToStack(short_name, subscr_opts);
@@ -327,7 +293,7 @@ FastEventor.prototype = {
 		if (this.sputnik.convertEventName){
 			namespace = this.sputnik.convertEventName(namespace);
 		}
-		var short_name = parseNamespace(namespace)[0];
+		var short_name = namespace;
 
 		var items = this.subscribes && this.subscribes[short_name];
 
@@ -336,15 +302,15 @@ FastEventor.prototype = {
 				var pos = items.indexOf(obj);
 				if (pos != -1) {
 					this.subscribes[short_name] = spv.removeItem(items, pos);
-					removeFromSubscribesCache(this, obj.namespace, obj);
-					// resetSubscribesCache(this, obj.namespace);
+					removeFromSubscribesCache(this, obj.ev_name, obj);
+					// resetSubscribesCache(this, obj.ev_name);
 				}
 			} else {
 				var clean = [];
 				if (cb){
 					for (var i = 0; i < items.length; i++) {
 						var cur = items[i];
-						if (cur.cb == cb && cur.namespace == namespace){
+						if (cur.cb == cb && cur.ev_name == namespace){
 							if (!context || cur.context == context){
 								continue;
 							}
@@ -356,7 +322,7 @@ FastEventor.prototype = {
 					// fix me - we should remove session.click and session.click.more-click, but no session
 					for (var i = 0; i < items.length; i++) {
 						var cur = items[i];
-						if (cur.namespace == namespace){
+						if (cur.ev_name == namespace){
 							if (!context || cur.context == context){
 								continue;
 							}
@@ -385,8 +351,8 @@ FastEventor.prototype = {
 		var find = function(namespace, cb_cs) {
 			var matched = [];
 			for (var i = 0; i < cb_cs.length; i++) {
-				var curn = cb_cs[i].namespace;
-				var canbe_matched = isEvNSMatching(curn, namespace);
+				var curn = cb_cs[i].ev_name;
+				var canbe_matched = curn == namespace;
 
 				if (canbe_matched){
 					matched.push(cb_cs[i]);
@@ -408,7 +374,7 @@ FastEventor.prototype = {
 		return function(namespace_raw){
 			var namespace = getName(this.sputnik.convertEventName, namespace_raw);
 
-			var short_name = parseNamespace(namespace)[0];
+			var short_name = namespace;
 			var cb_cs = this.subscribes && this.subscribes[short_name];
 
 			if (!cb_cs){
@@ -452,7 +418,7 @@ FastEventor.prototype = {
 		//
 		var namespace = getNsName(this.sputnik.convertEventName, ev_name);
 
-		var short_name = parseNamespace(namespace)[0];
+		var short_name = namespace;
 
 		var items = this.subscribes && this.subscribes[short_name];
 		if (items) {

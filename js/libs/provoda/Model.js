@@ -23,7 +23,7 @@ var unsubcribeOld = function(evColr, items_list) {
 			if (items_list.length && items_list.indexOf( cur ) != -1) {
 				index[ cur._provoda_id || cur.view_id ] = opts;
 			} else {
-				cur.evcompanion.off(opts.namespace, opts.cb, opts);
+				cur.evcompanion.off(opts.ev_name, opts.cb, opts);
 			}
 		}
 	}
