@@ -1153,6 +1153,8 @@ add({
 		this.on(hp.getFullChilChEvName(collection_name), passCollectionsChange, null, items_events);
 	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
+		// legacy. can remove!?
+
 		var archiver = new StatesArchiver(collection_state, result_state_name || collection_state, this, statesCalcFunc);
 		this.on(hp.getFullChilChEvName(collection_name), passCollectionsChange, null, archiver);
 	},
