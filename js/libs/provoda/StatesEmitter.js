@@ -525,15 +525,14 @@ add({
 			this.full_comlxs_list = [];
 			this.full_comlxs_index = {};
 
-			collectCompxs1part.call(this, compx_check);
-			collectCompxs2part.call(this, compx_check);
-
 			for (var prop in props.complex_states) {
 				if (props['compx-' + prop]) {
 					throw new Error('can`t be compx in both `complex_states` and "compx-"' + prop);
 				}
 			}
 
+			collectCompxs1part.call(this, compx_check);
+			collectCompxs2part.call(this, compx_check);
 
 			this.compx_check = compx_check;
 			var i, jj, cur, state_name;
