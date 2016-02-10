@@ -715,14 +715,9 @@ function buildSubpageCollector() {
 
 	var getItem = function(self, cur) {
 		var instance;
-		if (!Array.isArray(cur)) {
-			/*
-			'sub_page-similar': SimilarTags
-			*/
-			instance = cur;
-		} else {
+		if (Array.isArray(cur)) {
 			if (!cur[1]) {
-				/*
+				/* EXAMPLE
 				'sub_page-similar': [
 					SimilarTags
 				]
@@ -730,7 +725,7 @@ function buildSubpageCollector() {
 				throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
 				// instance = cur[0];
 			} else {
-				/*
+				/* EXAMPLE
 				'sub_page-similar': [
 					SimilarTags,
 					[
@@ -745,6 +740,27 @@ function buildSubpageCollector() {
 					'compx-nav_title': cur[1]
 				});
 			}
+		} else if (typeof cur == 'object') {
+			// semi compatibility (migration) mode
+
+			/* EXAMPLE
+			'sub_page-similar': {
+				constr: SimilarTags,
+				title: [[...]]
+			}
+			*/
+			if (!cur.title || typeof cur.title != 'object') {
+				// title should be. in array or object presentation
+				throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
+			}
+
+			instance = spv.inh(cur.constr, {}, {
+				'compx-nav_title': cur.title
+			});
+		} else {
+			/* EXAMPLE
+			'sub_page-similar': SimilarTags
+			*/
 		}
 
 		if (!instance.prototype['compx-nav_title']) {
