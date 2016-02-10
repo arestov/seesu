@@ -229,23 +229,25 @@ var TagPage = spv.inh(BrowseMap.Model, {}, {
 					return similar + ' ' + name + ' ' + tags.toLowerCase();
 				}
 			]
-		]
-	},
-	sub_pa: {
+		],
 		'artists': {
 			constr: ArtistsLists,
-			title: localize('Artists')
+			title: [['#locales.Artists']]
 		},
 		'songs': {
 			constr: SongsLists,
-			title: localize('Songs')
+			title: [['#locales.Songs']]
 		},
-		'albums': {
-			constr: TagAlbums,
-			getTitle: function() {
-				return localize('Top') + ' ' + this.head.tag_name + ' ' + localize('Albums');
-			}
-		}
+		'albums': [
+			TagAlbums,
+			[
+				['#locales.Top', '#locales.Albums', 'tag_name'],
+				function(top, albums, tag_name) {
+					if (!top || !albums) {return tag_name;}
+					return top + ' ' + tag_name + ' ' + albums;
+				}
+			]
+		]
 	}
 
 });
