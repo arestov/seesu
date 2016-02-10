@@ -492,44 +492,48 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 		}
 	],
 
-	sub_pa: {
+	sub_page: {
 		'_': {
 			constr: TopArtistSongs,
-			title:  localize('Top-tracks')
+			title:  [['#locales.Top-tracks']]
 		},
 		'tags': {
 			constr: ArtistTagsList,
-			title: localize('Tags')
+			title: [['#locales.Tags']]
 		},
 		'albums': {
 			constr: DiscogsAlbums,
-			title: localize('Albums from Discogs')
+			title: [['#locales.Albums from Discogs']]
 		},
 		'albums_lfm': {
 			constr: ArtistAlbums,
-			getTitle: function() {
-				return localize('Albums of %artist% from last.fm').replace('%artist%', this.head.artist_name);
-			}
+			title: [
+				['#locales.Albums of %artist% from last.fm', 'artist_name'],
+				function(albums, artist_name) {
+					if (!albums) {return artist_name;}
+					return albums.replace('%artist%', artist_name);
+				}
+			]
 		},
 		'soundcloud': {
 			constr: SoundcloudArtistSongs,
-			title: localize('Art-sc-songs')
+			title: [['#locales.Art-sc-songs']]
 		},
 		'soundcloud_likes': {
 			constr: SoundcloudArtistLikes,
-			title: localize('Art-sc-likes')
+			title: [['#locales.Art-sc-likes']]
 		},
 		'fresh': {
 			constr: HypemArtistSeFreshSongs,
-			title: localize('Fresh songs')
+			title: [['#locales.Fresh songs']]
 		},
 		'most_favorites': {
 			constr: HypemArtistSeUFavSongs,
-			title: localize('Most Favorites')
+			title: [['#locales.Most Favorites']]
 		},
 		'blogged': {
 			constr: HypemArtistSeBlogged,
-			title: localize('Most Reblogged')
+			title: [['#locales.Most Reblogged']]
 		}
 	},
 	'compx-ext_exposed': [
@@ -849,13 +853,9 @@ var ArtistsList = spv.inh(LoadableList, {}, {
 		}
 		return this.ran_playlist;
 	},
-	sub_pa: {
-		'~': {
-			constr: ArtistsListPlaylist,
-			getTitle: function() {
-				return this.state('nav_title');
-			}
-		}
+	'sub_page-~': {
+		constr: ArtistsListPlaylist,
+		title: [['^nav_title']]
 	},
 	requestRandomPlaylist: function(bwlev_id) {
 		var bwlev = pv.getModelById(this, bwlev_id);
@@ -922,12 +922,17 @@ var SimilarArtists = spv.inh(ArtistsList, {
 	}
 });
 
-ArtCardBase.prototype['sub_pa']['+similar'] = {
+pv.addSubpage(ArtCardBase.prototype, '+similar', {
 	constr: SimilarArtists,
-	getTitle: function() {
-		return localize("Similar to «%artist%» artists").replace('%artist%', this.head.artist_name);
-	}
-};
+	title: [
+		['#locales.Similar to «%artist%» artists', 'artist_name'],
+		function(similar, artist_name) {
+			if (!similar) { return artist_name; }
+
+			return similar.replace('%artist%', artist_name);
+		}
+	]
+});
 
 ArtCard.AlbumsList = AlbumsList;
 ArtCard.ArtistsList = ArtistsList;
