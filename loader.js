@@ -62,7 +62,7 @@ window._gaq = window._gaq || [];
 			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
 	}
-	requirejs(['su', 'pv'], function(SeesuApp, pv) {
+	requirejs(['su', 'pv', 'env'], function(SeesuApp, pv, env) {
 		//app thread;
 		var proxies = new pv.views_proxies.Proxies();
 		su = seesu  = new SeesuApp();
@@ -73,7 +73,8 @@ window._gaq = window._gaq || [];
 				views_proxies: proxies,
 				models: {},
 				calls_flow: new pv.CallbacksFlow(window),
-				proxies: proxies
+				proxies: proxies,
+				env: env
 			}
 		}, seesu_version);
 
