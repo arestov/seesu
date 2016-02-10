@@ -1245,7 +1245,7 @@ var getSPOpts = function(md, sp_name) {
 	var parts = sp_name.split(':');
 
 	var new_way = md._sub_pages && !!md._sub_pages[sp_name];
-	var target = md[ 'sub_pa-' + sp_name] || md.sub_pa[sp_name];
+	var target = !new_way && (md[ 'sub_pa-' + sp_name] || md.sub_pa[sp_name]);
 	var title = !new_way && (target.title || (target.getTitle && target.getTitle.call(md)));
 
 	var states = {
