@@ -133,18 +133,18 @@ var SongcardCloudcasts = spv.inh(BrowseMap.Model, {}, {
 	// },
 	'nest-lists_list': [song_cloudcasts_sps, true],
 	model_name: 'songcard_cloudcasts',
-	sub_pa: {
+	sub_page: {
 		'new': {
 			constr: TrackCloudcastsNew,
-			title: 'New'
+			title: [null, 'New']
 		},
 		'hot': {
 			constr: TrackCloudcastsHot,
-			title: 'Hot'
+			title: [null, 'Hot']
 		},
 		'popular': {
 			constr: TrackCloudcastsPopular,
-			title: 'Popular'
+			title: [null, 'Popular']
 		},
 	}
 });

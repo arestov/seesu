@@ -306,18 +306,18 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 	'nest-vk_posts': ['vk_posts', 'nest_need','nest_need'],
 	'nest-artist': ['#catalog/[:artist_name]', false, 'mp_has_focus'],
 
-	sub_pa: {
+	sub_page: {
 		'fans':{
 			constr: SongFansList,
-			title: localize('Top fans')
+			title: [['#locales.Top fans']]
 		},
 		'cloudcasts': {
 			constr: Cloudcasts.SongcardCloudcasts,
-			title: 'Cloudcasts'
+			title: [null, 'Cloudcasts']
 		},
 		'vk_posts': {
 			constr: VKPostsList,
-			title: 'Posts from vk.com'
+			title: [null, 'Posts from vk.com']
 		}
 	}
 });
