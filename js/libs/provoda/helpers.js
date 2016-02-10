@@ -9,6 +9,7 @@ function itself(item) {return item;}
 var NestWatch = function(selector, state_name, zin_func, full_name, handler) {
 	this.selector = selector;
 	this.state_name = state_name;
+	this.short_state_name = state_name && getShortStateName(state_name);
 	this.full_name = full_name;
 	this.zin_func = zin_func;
 	this.handler = handler;
@@ -136,6 +137,11 @@ function getEncodedState(state_name) {
 	return encoded_states[state_name];
 }
 
+function getShortStateName(state_path) {
+	var enc = getEncodedState(state_path);
+	return enc ? state_path : spv.getFieldsTree(state_path)[0];
+}
+
 return {
 	NestWatch: NestWatch,
 	getRDep: (function() {
@@ -195,6 +201,7 @@ return {
 		}
 		return nesting_name;
 	},
+	getShortStateName: getShortStateName,
 	stateGetter: stateGetter,
 	getEncodedState: getEncodedState,
 	getReqMapsForState: function(req_map, state_name) {

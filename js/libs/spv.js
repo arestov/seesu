@@ -200,6 +200,8 @@ var getFieldsTree = function(string) {
 		return fields_cache[string];
 	}
 };
+spv.getFieldsTree = getFieldsTree;
+
 getTargetField = function(obj, tree){
 	tree = getFieldsTree(tree);
 	var nothing;

@@ -465,7 +465,8 @@ add({
 			return {
 				depends_on: cur[0],
 				fn: cur[1],
-				name: state_name
+				name: state_name,
+				watch_list: null
 			};
 		};
 
@@ -474,6 +475,10 @@ add({
 			item.name = comlx_name;
 			if (!item.fn) {
 				item.fn = identical;
+			}
+			item.watch_list = new Array(item.depends_on.length || 0);
+			for (var i = 0; i < item.depends_on.length; i++) {
+				item.watch_list[i] = hp.getShortStateName(item.depends_on[i]);
 			}
 			return item;
 		};
@@ -525,8 +530,8 @@ add({
 			var i, jj, cur, state_name;
 			for (i = 0; i < this.full_comlxs_list.length; i++) {
 				cur = this.full_comlxs_list[i];
-				for (jj = 0; jj < cur.depends_on.length; jj++) {
-					state_name = cur.depends_on[jj];
+				for (jj = 0; jj < cur.watch_list.length; jj++) {
+					state_name = cur.watch_list[jj];
 					if (!this.full_comlxs_index[state_name]) {
 						this.full_comlxs_index[state_name] = [];
 					}

@@ -392,6 +392,7 @@ var modelInit = (function() {
 		var full_name = nwatch.full_name;
 		this.md = md;
 		this.state_name = nwatch.state_name;
+		this.short_state_name = nwatch.short_state_name;
 		// this.itemChange = handler;
 		this.items_changed = false;
 		this.items_index = null;
@@ -585,13 +586,16 @@ var Model = spv.inh(StatesEmitter, {
 function modelProps(add) {
 add({
 	getNonComplexStatesList: function(state_name) {
-		if (!this.hasComplexStateFn(state_name)) {
-			return state_name;
+		// get source states
+		var short_name = hp.getShortStateName(state_name);
+
+		if (!this.hasComplexStateFn(short_name)) {
+			return short_name;
 		} else {
 			var result = [];
-			for (var i = 0; i < this.compx_check[state_name].depends_on.length; i++) {
-				var cur = this.compx_check[state_name].depends_on[i];
-				if (cur == state_name) {
+			for (var i = 0; i < this.compx_check[short_name].watch_list.length; i++) {
+				var cur = this.compx_check[short_name].watch_list[i];
+				if (cur == short_name) {
 					continue;
 				} else {
 					result.push(this.getNonComplexStatesList(cur));
@@ -899,8 +903,8 @@ add({
 				nwatch.one_item = null;
 			}
 
-			if (this.states_links && this.states_links[nwatch.state_name]) {
-				this.states_links[nwatch.state_name] = spv.findAndRemoveItem(this.states_links[nwatch.state_name], nwatch);
+			if (this.states_links && this.states_links[nwatch.short_state_name]) {
+				this.states_links[nwatch.short_state_name] = spv.findAndRemoveItem(this.states_links[nwatch.short_state_name], nwatch);
 			}
 			// console.log('full match!', this, nwa);
 		} else {
@@ -941,10 +945,10 @@ add({
 				if (!this.states_links) {
 					this.states_links = {};
 				}
-				if (!this.states_links[nwatch.state_name]) {
-					this.states_links[nwatch.state_name] = [];
+				if (!this.states_links[nwatch.short_state_name]) {
+					this.states_links[nwatch.short_state_name] = [];
 				}
-				this.states_links[nwatch.state_name].push(nwatch);
+				this.states_links[nwatch.short_state_name].push(nwatch);
 
 			} else {
 				if (!this.nes_match_index) {
