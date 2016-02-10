@@ -420,24 +420,27 @@ add({
 				if (!parsing_result) {
 					continue;
 				}
-
-				if (parsing_result.rel_type == 'root') {
-					if (!states_of_root[state_name]) {
-						states_of_root[state_name] = parsing_result;
+				switch (parsing_result.rel_type) {
+					case 'root': {
+						if (!states_of_root[state_name]) {
+							states_of_root[state_name] = parsing_result;
+						}
 					}
-				} else  if (parsing_result.rel_type == 'nesting') {
-					if (!states_of_nesting[state_name]) {
-						states_of_nesting[state_name] = parsing_result;
-						this.compx_nest_matches.push( parsing_result.nwatch );
-
-						// debugger;
+					break;
+					case 'nesting': {
+						if (!states_of_nesting[state_name]) {
+							states_of_nesting[state_name] = parsing_result;
+							this.compx_nest_matches.push( parsing_result.nwatch );
+						}
 					}
-				} else if (parsing_result.rel_type == 'parent') {
-					if (!states_of_parent[state_name]) {
-						states_of_parent[state_name] = parsing_result;
+					break;
+					case 'parent': {
+						if (!states_of_parent[state_name]) {
+							states_of_parent[state_name] = parsing_result;
+						}
 					}
+					break;
 				}
-
 			}
 		}
 
