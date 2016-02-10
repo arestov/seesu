@@ -22,11 +22,11 @@ var UserCard = spv.inh(BrowseMap.Model, {
 	sub_pa: {
 		'vk:tracks': {
 			constr: user_music_vk.VkUserTracks,
-			title: localize('vk.com tracks')
+			title: localize('%site% tracks').replace('%site%', 'vk.com')
 		},
 		'vk:friends': {
 			constr: user_music_vk.VKFriendsList,
-			title: localize('vk.com friends')
+			title: localize('%site% friends').replace('%site%', 'vk.com')
 		},
 		'playlists':{
 			constr: SuUsersPlaylists
@@ -37,7 +37,7 @@ var UserCard = spv.inh(BrowseMap.Model, {
 		},
 		'lfm:friends': {
 			constr: user_music_lfm.LfmFriendsList,
-			title: localize("Last.fm friends")
+			title: localize("%site% friends").replace('%site%', 'last.fm')
 		},
 		'lfm:neighbours':{
 			constr: user_music_lfm.LfmNeighboursList,

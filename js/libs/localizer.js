@@ -716,17 +716,13 @@ define({
 		"original": "Most Reblogged",
 		"ru": "Наиболее упоминаемое в блогах"
 	},
-	"vk.com tracks":{
-		"original": "vk.com tracks",
-		"ru": "композиции с vk.com"
+	"%site% tracks":{
+		"original": "%site% tracks",
+		"ru": "Композиции с vk.com"
 	},
-	"vk.com friends":{
-		"original": "друзья с vk.com",
-		"ru": ""
-	},
-	"Last.fm friends":{
-		"original": "Last.fm friends",
-		"ru": "друзья с last.fm"
+	"%site% friends":{
+		"original": "%site% friends",
+		"ru": "Друзья с %site%"
 	},
 	"Neighbours":{
 		"original": "Neighbours",
