@@ -67,7 +67,7 @@ var OperaExtensionButtonView = spv.inh(View, {}, {
 var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
 	'compx-app_lang': [['env.lang']],
-	'compx-localize_dict': [
+	'compx-locales': [
 		['app_lang'],
 		function(app_lang) {
 			var result = {};
