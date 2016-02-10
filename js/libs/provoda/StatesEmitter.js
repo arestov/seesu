@@ -713,6 +713,48 @@ var StatesEmitter = spv.inh(Eventor, {
 function buildSubpageCollector() {
 	var getUnprefixed = spv.getDeprefixFunc( 'sub_page-' );
 	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
+	var getItem = function(self, cur) {
+		var instance;
+		if (!Array.isArray(cur)) {
+			/*
+			'sub_page-similar': SimilarTags
+			*/
+			instance = cur;
+		} else {
+			if (!cur[1]) {
+				/*
+				'sub_page-similar': [
+					SimilarTags
+				]
+				*/
+				throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
+				// instance = cur[0];
+			} else {
+				/*
+				'sub_page-similar': [
+					SimilarTags,
+					[
+						['locales.Tags', 'locales.Similar-to', 'tag_name'],
+						function (tags, similar, name) {
+							return similar + ' ' + name + ' ' + tags.toLowerCase();
+						}
+					]
+				]
+				*/
+				instance = spv.inh(cur[0], {}, {
+					'compx-nav_title': cur[1]
+				});
+			}
+		}
+
+		if (!instance.prototype['compx-nav_title']) {
+			throw new Error('sub_page shoud have `title`');
+		}
+
+		return instance;
+	};
+
 	return function collectSubpages(self, props) {
 		if (!hasPrefixedProps(props)) {
 			return;
@@ -728,42 +770,7 @@ function buildSubpageCollector() {
 
 			var cur = props[prop];
 
-			var instance;
-			if (!Array.isArray(cur)) {
-				/*
-				'sub_page-similar': SimilarTags
-				*/
-				instance = cur;
-			} else {
-				if (!cur[1]) {
-					/*
-					'sub_page-similar': [
-						SimilarTags
-					]
-					*/
-					throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
-					// instance = cur[0];
-				} else {
-					/*
-					'sub_page-similar': [
-						SimilarTags,
-						[
-							['locales.Tags', 'locales.Similar-to', 'tag_name'],
-							function (tags, similar, name) {
-								return similar + ' ' + name + ' ' + tags.toLowerCase();
-							}
-						]
-					]
-					*/
-					instance = spv.inh(cur[0], {}, {
-						'compx-nav_title': cur[1]
-					});
-				}
-			}
-
-			if (!instance.prototype['compx-nav_title']) {
-				throw new Error('sub_page shoud have `title`');
-			}
+			var instance = getItem(self, cur);
 
 			self._sub_pages[name] = instance;
 		}
