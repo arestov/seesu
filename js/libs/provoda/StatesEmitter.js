@@ -527,7 +527,7 @@ add({
 
 			for (var prop in props.complex_states) {
 				if (props['compx-' + prop]) {
-					throw new Error('can`t be compx in both `complex_states` and "compx-"' + prop);
+					throw new Error('can`t be (in one layer) compx in both `complex_states` and "compx-"' + prop);
 				}
 			}
 
