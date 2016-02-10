@@ -417,22 +417,24 @@ add({
 			for (var jj = 0; jj < cur.depends_on.length; jj++) {
 				var state_name = cur.depends_on[jj];
 				var parsing_result = hp.getEncodedState(state_name);
-				if (parsing_result) {
-					if (parsing_result.rel_type == 'root') {
-						if (!states_of_root[state_name]) {
-							states_of_root[state_name] = parsing_result;
-						}
-					} else  if (parsing_result.rel_type == 'nesting') {
-						if (!states_of_nesting[state_name]) {
-							states_of_nesting[state_name] = parsing_result;
-							this.compx_nest_matches.push( parsing_result.nwatch );
+				if (!parsing_result) {
+					continue;
+				}
 
-							// debugger;
-						}
-					} else if (parsing_result.rel_type == 'parent') {
-						if (!states_of_parent[state_name]) {
-							states_of_parent[state_name] = parsing_result;
-						}
+				if (parsing_result.rel_type == 'root') {
+					if (!states_of_root[state_name]) {
+						states_of_root[state_name] = parsing_result;
+					}
+				} else  if (parsing_result.rel_type == 'nesting') {
+					if (!states_of_nesting[state_name]) {
+						states_of_nesting[state_name] = parsing_result;
+						this.compx_nest_matches.push( parsing_result.nwatch );
+
+						// debugger;
+					}
+				} else if (parsing_result.rel_type == 'parent') {
+					if (!states_of_parent[state_name]) {
+						states_of_parent[state_name] = parsing_result;
 					}
 				}
 
