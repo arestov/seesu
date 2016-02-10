@@ -466,7 +466,7 @@ add({
 
 		var fromArray = function(state_name, cur) {
 			return {
-				depends_on: cur[0],
+				depends_on: cur[0] || [],
 				fn: cur[1],
 				name: state_name,
 				watch_list: null
@@ -476,6 +476,14 @@ add({
 		var declr = function(comlx_name, cur) {
 			var item = cur instanceof Array ? fromArray(comlx_name, cur) : cur;
 			item.name = comlx_name;
+
+			if (!item.depends_on.length && typeof item.fn !== 'function') {
+				var value = item.fn;
+				item.fn = function() {
+					return value;
+				};
+			}
+
 			if (!item.fn) {
 				item.fn = identical;
 			}
