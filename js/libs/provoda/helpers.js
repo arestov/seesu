@@ -16,10 +16,12 @@ var NestWatch = function(selector, state_name, zin_func, full_name, handler) {
 
 var encoded_states = {};
 var enc_states = {
-	parent: (function(){
+	'^': (function(){
+		// parent
+
 		var parent_count_regexp = /^\^+/gi;
 
-		return function(string) {
+		return function parent(string) {
 			//example: '^visible'
 
 			if (!encoded_states[string]){
@@ -36,7 +38,9 @@ var enc_states = {
 			return encoded_states[string];
 		};
 	})(),
-	nesting: function(string) {
+	'@': function nesting(string) {
+		// nesting
+
 		//example:  '@some:complete:list'
 		if (!encoded_states[string]){
 			var nesting_and_state_name = string.slice(1);
@@ -58,7 +62,9 @@ var enc_states = {
 
 		return encoded_states[string];
 	},
-	root: function(string) {
+	'#': function(string) {
+		// root
+
 		//example: '#vk_id'
 		if (!encoded_states[string]){
 			var state_name = string.slice(1);
@@ -97,6 +103,20 @@ function getBwlevView(view) {
 
 function getBwlevId(view) {
 	return getBwlevView(view).mpx._provoda_id;
+}
+
+function getEncodedState(state_name) {
+	if (!encoded_states.hasOwnProperty(state_name)) {
+
+		var start = state_name.charAt(0);
+		if (enc_states[start]) {
+			enc_states[start](state_name);
+		} else {
+			encoded_states[state_name] = null;
+		}
+
+	}
+	return encoded_states[state_name];
 }
 
 return {
@@ -152,22 +172,7 @@ return {
 		}
 		return nesting_name;
 	},
-	getEncodedState: function(state_name) {
-		if (!encoded_states.hasOwnProperty(state_name)) {
-
-			var start = state_name.charAt(0);
-			if (start == '^'){
-				enc_states.parent(state_name);
-			} else if (start == '@') {
-				enc_states.nesting(state_name);
-			} else if (start == '#') {
-				enc_states.root(state_name);
-			} else {
-				encoded_states[state_name] = null;
-			}
-		}
-		return encoded_states[state_name];
-	},
+	getEncodedState: getEncodedState,
 	getReqMapsForState: function(req_map, state_name) {
 		if (!req_map) {
 			return;
