@@ -118,7 +118,7 @@ var LULA = spv.inh(BrowseMap.Model, {}, cloneObj({
 			return lfm_i;
 		}
 	},
-	'sub_pa-all_time': [LULATracks, [null, 'All Time']]
+	'sub_page-all_time': [LULATracks, [null, 'All Time']]
 }, auth_bh));
 
 
@@ -297,9 +297,9 @@ var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
 });
 
 LfmUserArtists.LfmUserArtistsForCU = spv.inh(LfmUserArtists, {}, {
-	'sub_pa-recommended': {
+	'sub_page-recommended': {
 		constr: RecommArtListForCurrentUser,
-		title: localize('reccoms-for-you')
+		title: [['#locales.reccoms-for-you']]
 	}
 });
 
