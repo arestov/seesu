@@ -377,5 +377,14 @@ if (typeof console != 'object'){
 
 env.localize = localize(env.lang);
 
+
+var states = {};
+for (var prop in env) {
+	if (typeof env[prop] != 'function') {
+		states[prop] = env[prop];
+	}
+}
+env.states = states;
+
 return env;
 });

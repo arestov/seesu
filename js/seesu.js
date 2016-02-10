@@ -291,6 +291,7 @@ AppModel.extendTo(SeesuApp, {
 		this.app = this;
 		this._super(opts);
 		this.version = version;
+		pvUpdate(this, 'env', this._highway.env.states);
 
 		var resortQueue = resortSuQueue(this);
 		var lfm = initLfm(this, resortQueue);
