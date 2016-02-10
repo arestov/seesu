@@ -105,6 +105,23 @@ function getBwlevId(view) {
 	return getBwlevView(view).mpx._provoda_id;
 }
 
+var getTargetField = spv.getTargetField;
+
+var stateGetter = spv.memorize(function stateGetter(state_path) {
+	var enc = getEncodedState(state_path);
+	if (enc) {
+		return function(states) {
+			return states[state_path];
+		};
+	} else {
+		return function(states) {
+			return getTargetField(states, state_path);
+		};
+	}
+});
+
+
+
 function getEncodedState(state_name) {
 	if (!encoded_states.hasOwnProperty(state_name)) {
 
@@ -139,12 +156,18 @@ return {
 		};
 
 	})(),
-	state: function(item, state_name) {
-		if (item._lbr && item._lbr.undetailed_states) {
-			return item._lbr.undetailed_states[state_name];
-		}
-		return item.states[state_name];
-	},
+	state: (function(){
+		var getter = stateGetter;
+		return function(item, state_path){
+			var getField = getter(state_path);
+
+			if (item._lbr && item._lbr.undetailed_states) {
+				return getField(item._lbr.undetailed_states);
+			}
+
+			return getField(item.states);
+		};
+	})(),
 	triggerDestroy: function(md) {
 		var array = md.evcompanion.getMatchedCallbacks('die');
 		if (array.length) {
@@ -172,6 +195,7 @@ return {
 		}
 		return nesting_name;
 	},
+	stateGetter: stateGetter,
 	getEncodedState: getEncodedState,
 	getReqMapsForState: function(req_map, state_name) {
 		if (!req_map) {

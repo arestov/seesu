@@ -590,9 +590,14 @@ add({
 			this._interfaces_to_states_index = spv.makeIndexByField(all_states_instrs, 'interface_name', true);
 		};
 	})(),
-	state: function(name){
-		return this.states[name];
-	}
+	state: (function(){
+		var getter = hp.stateGetter;
+
+		return function(state_path){
+			var getField = getter(state_path);
+			return getField(this.states);
+		};
+	})()
 });
 
 add({

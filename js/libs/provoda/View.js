@@ -1153,7 +1153,7 @@ var View = spv.inh(StatesEmitter, {
 				var cur = this.stch_hs[i];
 				if (this.states.hasOwnProperty(cur.name) && typeof cur.item != 'function'){
 					if (this.checkDepVP(cur.item, part_name)){
-						cur.item.fn.call(this, this.states[cur.name]);
+						cur.item.fn.call(this, this.state(cur.name));
 					}
 				}
 
