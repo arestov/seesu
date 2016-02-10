@@ -517,13 +517,9 @@ add({
 			this.full_comlxs_list = [];
 			this.full_comlxs_index = {};
 
-			if (part1) {
-				collectCompxs1part.call(this, compx_check);
-			}
+			collectCompxs1part.call(this, compx_check);
+			collectCompxs2part.call(this, compx_check);
 
-			if (part2) {
-				collectCompxs2part.call(this, compx_check);
-			}
 
 			this.compx_check = compx_check;
 			var i, jj, cur, state_name;
