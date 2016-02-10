@@ -804,7 +804,7 @@ function buildSubpageCollector() {
 			if (!name) {
 				continue;
 			}
-			add(self, prop_name, props[prop_name]);
+			add(self, name, props[prop_name]);
 
 		}
 
