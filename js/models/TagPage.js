@@ -217,18 +217,20 @@ var TagPage = spv.inh(BrowseMap.Model, {}, {
 
 	'nest-pwis': [['albums','similar'], true],
 	model_name: 'tag_page',
-	'sub_page-similar': [
-		SimilarTags,
-		[
-			['#locales.Tags', '#locales.Similar-to', 'tag_name'],
-			function (tags, similar, name) {
-				if (!tags || !similar) {
-					return name;
+	sub_page: {
+		similar: [
+			SimilarTags,
+			[
+				['#locales.Tags', '#locales.Similar-to', 'tag_name'],
+				function (tags, similar, name) {
+					if (!tags || !similar) {
+						return name;
+					}
+					return similar + ' ' + name + ' ' + tags.toLowerCase();
 				}
-				return similar + ' ' + name + ' ' + tags.toLowerCase();
-			}
+			]
 		]
-	],
+	},
 	sub_pa: {
 		'artists': {
 			constr: ArtistsLists,

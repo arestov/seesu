@@ -755,23 +755,32 @@ function buildSubpageCollector() {
 	};
 
 	return function collectSubpages(self, props) {
-		if (!hasPrefixedProps(props)) {
+		if (!hasPrefixedProps(props) && !props.sub_page) {
 			return;
+		}
+
+		for (var prop in props.sub_page) {
+			if (props['sub_page-' + prop]) {
+				throw new Error('can`t be (in one layer) sub_page in both `sub_page` and "sub_page-"' + prop);
+			}
 		}
 
 		self._sub_pages = {};
 
-		for (var prop in self) {
-			var name = getUnprefixed(prop);
+		for (var prop_name in self) {
+			var name = getUnprefixed(prop_name);
 			if (!name) {
 				continue;
 			}
+			self._sub_pages[name] = getItem(self, props[prop_name]);
+		}
 
-			var cur = props[prop];
+		for (var prop_name in self.sub_page) {
+			if (self._sub_pages[prop_name]) {
+				continue;
+			}
 
-			var instance = getItem(self, cur);
-
-			self._sub_pages[name] = instance;
+			self._sub_pages[prop_name] = getItem(self, self.sub_page[prop_name]);
 		}
 	};
 }
