@@ -102,9 +102,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 					artist_name: name
 				}
 			}];
-			// return subPageInitWrap(ArtCard, full_name, {
-			// 	artist: name
-			// });
 		},
 		'tracks': function(complex_string, raw_str) {
 			var full_name = 'tracks/' + raw_str;
@@ -121,9 +118,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 						track_name: parts[1]
 					}
 				}];
-				// return subPageInitWrap(SongCard, full_name, {
-
-				// });
 			}
 
 		},
@@ -139,7 +133,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 						for_current_user: true
 					}
 				}];
-				// return subPageInitWrap(UserCard, full_name);
 			} else {
 				var name_spaced = name.split(':');
 				var namespace = name_spaced[0];
@@ -152,7 +145,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 							lfm_userid: name_spaced[1]
 						}
 					}];
-					// return subPageInitWrap(UserCard.LfmUserCard, full_name, {userid: name_spaced[1]});
 				} else if (namespace == 'vk') {
 					return [UserCard.VkUserCard, {
 						states: {
@@ -162,7 +154,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 							vk_userid: name_spaced[1]
 						}
 					}];
-					// return subPageInitWrap(UserCard.VkUserCard, full_name, {userid: name_spaced[1]});
 				} else if (namespace == 'su') {
 					return [SeesuUser, {
 						states: {
@@ -175,12 +166,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 				}
 			}
 		},
-		// 'blogs': function(blog_url) {
-		// 	var full_name = 'blogs/' +  this.app.encodeURLPart(blog_url);
-		// 	return subPageInitWrap(MusicBlog, full_name, {
-		// 		blog_url: blog_url
-		// 	});
-		// },
 		'cloudcasts': function(mixcloud_urlpiece) {
 			var full_name = 'cloudcasts/' +  this.app.encodeURLPart(mixcloud_urlpiece);
 			return subPageInitWrap(Cloudcasts, full_name, {
