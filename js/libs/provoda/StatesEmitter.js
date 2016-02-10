@@ -765,6 +765,7 @@ var getSubpageItem = function(self, cur) {
 		/* EXAMPLE
 		'sub_page-similar': SimilarTags
 		*/
+		instance = cur;
 	}
 
 	if (!instance.prototype['compx-nav_title']) {
