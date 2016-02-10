@@ -499,12 +499,11 @@ add({
 			}
 		};
 		return function(props) {
-			var need_recalc = false;
-			if (this.hasOwnProperty('complex_states')){
-				need_recalc = true;
-			} else {
-				need_recalc = hasPrefixedProps(props);
-			}
+
+			var part1 = hasPrefixedProps(props);
+			var part2 = this.hasOwnProperty('complex_states');
+			var need_recalc = part1 || part2;
+
 			if (!need_recalc){
 				return;
 			}
@@ -513,8 +512,14 @@ add({
 			this.full_comlxs_list = [];
 			this.full_comlxs_index = {};
 
-			collectCompxs1part.call(this, compx_check);
-			collectCompxs2part.call(this, compx_check);
+			if (part1) {
+				collectCompxs1part.call(this, compx_check);
+			}
+
+			if (part2) {
+				collectCompxs2part.call(this, compx_check);
+			}
+
 			this.compx_check = compx_check;
 			var i, jj, cur, state_name;
 			for (i = 0; i < this.full_comlxs_list.length; i++) {
