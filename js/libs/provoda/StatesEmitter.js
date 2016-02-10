@@ -63,6 +63,8 @@ var getBaseTreeCheckList = function(start) {
 
 };
 
+var collectSubpages = buildSubpageCollector();
+
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
 var onPropsExtend = function (props) {
@@ -78,6 +80,7 @@ var onPropsExtend = function (props) {
 	}
 	this.collectStatesBinders(props);
 	this.collectCompxs(props);
+	collectSubpages(this, props);
 	this.collectRegFires(props);
 
 	if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
@@ -700,6 +703,66 @@ var StatesEmitter = spv.inh(Eventor, {
 	},
 	props: props
 });
+
+function buildSubpageCollector() {
+	var getUnprefixed = spv.getDeprefixFunc( 'sub_page-' );
+	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+	return function collectSubpages(self, props) {
+		if (!hasPrefixedProps(props)) {
+			return;
+		}
+
+		self._sub_pages = {};
+
+		for (var prop in self) {
+			var name = getUnprefixed(prop);
+			if (!name) {
+				continue;
+			}
+
+			var cur = props[prop];
+
+			var instance;
+			if (!Array.isArray(cur)) {
+				/*
+				'sub_page-similar': SimilarTags
+				*/
+				instance = cur;
+			} else {
+				if (!cur[1]) {
+					/*
+					'sub_page-similar': [
+						SimilarTags
+					]
+					*/
+					throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
+					// instance = cur[0];
+				} else {
+					/*
+					'sub_page-similar': [
+						SimilarTags,
+						[
+							['locales.Tags', 'locales.Similar-to', 'tag_name'],
+							function (tags, similar, name) {
+								return similar + ' ' + name + ' ' + tags.toLowerCase();
+							}
+						]
+					]
+					*/
+					instance = spv.inh(cur[0], {}, {
+						'compx-nav_title': cur[1]
+					});
+				}
+			}
+
+			if (!instance.prototype['compx-nav_title']) {
+				throw new Error('sub_page shoud have `title`');
+			}
+
+			self._sub_pages[name] = instance;
+		}
+	};
+}
 
 return StatesEmitter;
 });

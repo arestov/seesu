@@ -1242,15 +1242,22 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 };
 
 var getSPOpts = function(md, sp_name) {
-	var target = md[ 'sub_pa-' + sp_name] || md.sub_pa[sp_name];
 	var parts = sp_name.split(':');
 
+	var new_way = md._sub_pages && !!md._sub_pages[sp_name];
+	var target = md[ 'sub_pa-' + sp_name] || md.sub_pa[sp_name];
+	var title = !new_way && (target.title || (target.getTitle && target.getTitle.call(md)));
+
+	var states = {
+		url_part: '/' + sp_name
+	};
+
+	if (title) {
+		states['nav_title'] = title;
+	}
 
 	return [
-		{
-			url_part: '/' + sp_name,
-			nav_title: target.title || (target.getTitle && target.getTitle.call(md))
-		},
+		states,
 		{
 			simple_name: sp_name,
 			name_spaced: parts[1]
@@ -1533,6 +1540,9 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
 	preview_nesting_source: 'lists_list',
 	getSPIConstr: function(sp_name) {
+		if (this._sub_pages && this._sub_pages[sp_name]) {
+			return this._sub_pages[sp_name];
+		}
 		var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
 		if (target){
 			return target.constr;
@@ -1560,8 +1570,14 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			if (this.sub_pages && this.sub_pages[sp_name]){
 				return this.sub_pages[sp_name];
 			}
-			var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
-			if (target){
+
+			var Constr = this._sub_pages && this._sub_pages[sp_name];
+			if (!Constr) {
+				var target = this['sub_pa-' + sp_name] || (this.sub_pa && this.sub_pa[sp_name]);
+				Constr = target && target.constr;
+			}
+
+			if (Constr){
 				/*
 				hp_bound
 				data_by_urlname
@@ -1571,7 +1587,6 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 				накладываем стандартные данные
 				накладываем данные из урла
 				*/
-				var Constr = target.constr;
 
 				var common_opts = getSPOpts(this, sp_name);
 

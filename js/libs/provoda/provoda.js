@@ -172,7 +172,7 @@ var HModel = spv.inh(Model, {
 		self.pmd_switch = null;
 
 		if (!self.skip_map_init){
-			if (self.sub_pa || self.subPager){
+			if (self.sub_pa || self.subPager || self._sub_pages){
 				self.sub_pages = {};
 			}
 
