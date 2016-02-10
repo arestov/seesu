@@ -1147,7 +1147,8 @@ function checkChangedNestWatchs(md, collection_name) {
 
 add({
 	watchChildrenStates: function(collection_name, state_name, callback) {
-		//
+		// legacy. can remove!?
+
 		var items_events = new ItemsEvents( hp.getSTEVNameDefault(state_name), this, callback);
 		this.on(hp.getFullChilChEvName(collection_name), passCollectionsChange, null, items_events);
 	},
