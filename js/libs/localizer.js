@@ -679,15 +679,15 @@ define({
 		"original": "Top Artists",
 		"ru": "Лучшие артисты"
 	},
-	"Latest Blogged music from hypem.com":{
+	"Latest Blogged music from hypem_com":{
 		"original": "Latest Blogged music from hypem.com",
 		"ru": "Свежаяйшая музыка из блогов, собранная hypem.com"
 	},
-	"Latest Blogged remixes from hypem.com":{
+	"Latest Blogged remixes from hypem_com":{
 		"original": "Latest Blogged remixes from hypem.com",
 		"ru": "Свежайшие ремиксы из блогов, собранные hypem.com"
 	},
-	"Popular Now on hypem.com":{
+	"Popular Now on hypem_com":{
 		"original": "Popular Now on hypem.com",
 		"ru": "Популярное сейчас на hypem.com"
 	},

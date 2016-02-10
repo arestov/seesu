@@ -98,14 +98,14 @@ var UserCard = spv.inh(BrowseMap.Model, {
 });
 var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'vk_usercard',
-	sub_pa: {
+	sub_page: {
 		'tracks': {
 			constr: user_music_vk.VkUserTracks,
-			title: localize('Tracks')
+			title: [['#locales.Tracks']]
 		},
 		'friends': {
 			constr: user_music_vk.VKFriendsList,
-			title: localize('Friends')
+			title: [['#locales.Friends']]
 		}
 	},
 	'compx-big_desc': {
@@ -210,30 +210,30 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
 
 		return result;
 	})(),
-	sub_pa: {
+	sub_page: {
 		'friends': {
 			constr: user_music_lfm.LfmFriendsList,
-			title: localize("Friends")
+			title: [['#locales.Friends']]
 		},
 		'neighbours':{
 			constr: user_music_lfm.LfmNeighboursList,
-			title: localize('Neighbours')
+			title: [['#locales.Neighbours']]
 		},
 		'artists':{
 			constr: user_music_lfm.LfmUserArtists,
-			title: localize('Artists')
+			title: [['#locales.Artists']]
 		},
 		'tracks':{
 			constr: user_music_lfm.LfmUserTracks,
-			title: localize('Tracks')
+			title: [['#locales.Tracks']]
 		},
 		'tags':{
 			constr: user_music_lfm.LfmUserTags,
-			title: localize('Tags')
+			title: [['#locales.Tags']]
 		},
 		'albums':{
 			constr: user_music_lfm.LfmUserAlbums,
-			title: localize('Albums')
+			title: [['#locales.Albums']]
 		}
 	},
 	setProfileData: function(data) {

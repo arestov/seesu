@@ -188,18 +188,20 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			});
 		}
 	},
-	sub_pa: {
+	sub_page: {
 		'tags': {
-			title: localize('Pop-tags'),
-			constr: TagsList
+			constr: TagsList,
+			title: [['#locales.Pop-tags']],
+
 		},
 		'conductor': {
-			title: localize('music-cond'),
-			constr: MusicConductor
+			constr: MusicConductor,
+			title: [['#locales.music-cond']]
+
 		},
 		'news': {
-			title: localize('News'),
-			constr: AppNews
+			constr: AppNews,
+			title: [['#locales.News']]
 		}
 	},
 	getSPC: function(parsed_str, path_string) {

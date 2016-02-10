@@ -127,34 +127,34 @@ var SongsLists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list': [['_', 'free', /*'trending_exfm', 'explore_exfm',*/
 			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], true],
 	model_name: 'tag_songs',
-	sub_pa: {
+	sub_page: {
 		'_': {
 			constr: TopTagSongs,
-			title: localize('Top')
+			title: [['#locales.Top']]
 		},
 		'free': {
 			constr: FreeTagSongs,
-			title: localize('Free-songs')
+			title: [['#locales.Free-songs']]
 		},
 	/*	'trending_exfm': {
 			constr: TrendingTagSongs,
-			title: localize('Trending-songs-exfm')
+			title: [['#locales.Trending-songs-exfm']]
 		},
 		'explore_exfm': {
 			constr: ExplorableTagSongs,
-			title: localize('Explore-songs-exfm')
+			title: [['#locales.Explore-songs-exfm']]
 		},*/
 		'blogged': {
 			constr: AllHypemTagSongs,
-			title: localize('Blogged-all-hypem')
+			title: [['#locales.Blogged-all-hypem']]
 		},
 		'blogged?fav_from=25&fav_to=250': {
 			constr: Fav25HypemTagSongs,
-			title: localize('Blogged-25-hypem')
+			title: [['#locales.Blogged-25-hypem']]
 		},
 		'blogged?fav_from=250&fav_to=100000': {
 			constr: Fav250HypemTagSongs,
-			title: localize('Blogged-250-hypem')
+			title: [['#locales.Blogged-250-hypem']]
 		}
 	}
 });
@@ -196,14 +196,14 @@ var TagTopArtists = spv.inh(ArtistsList, {}, {
 var ArtistsLists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list': [['_', 'week'], true],
 	model_name: 'tag_artists',
-	sub_pa: {
+	sub_page: {
 		'_': {
 			constr: TagTopArtists,
-			title: localize('Top')
+			title: [['#locales.Top']]
 		},
 		'week': {
 			constr: WeekTagArtists,
-			title: localize('Week-chart')
+			title: [['#locales.Week-chart']]
 		}
 	}
 });

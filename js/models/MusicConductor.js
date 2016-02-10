@@ -88,30 +88,30 @@ var AllPSongsLoved = spv.inh(SongsList, {}, {
 
 var AllPlacesSongsLists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list':[['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'], true],
-	sub_pa: {
+	sub_page: {
 		latest: {
 			constr: AllPHypemLatestSongs,
-			title: localize('Latest Blogged music from hypem.com')
+			title: [['#locales.Latest Blogged music from hypem_com']]
 		},
 		'latest:remix': {
 			constr: AllPHypemLatestRemixesSongs,
-			title: localize('Latest Blogged remixes from hypem.com')
+			title: [['#locales.Latest Blogged remixes from hypem_com']]
 		},
 		'topnow_hypem': {
 			constr: AllPHypemNowSongs,
-			title: localize('Popular Now on hypem.com')
+			title: [['#locales.Popular Now on hypem_com']]
 		},
 		'_': {
 			constr: AllPSongsChart,
-			title: localize('Top')
+			title: [['#locales.Top']]
 		},
 		'hyped': {
 			constr: AllPSongsHyped,
-			title: localize('Hyped')
+			title: [['#locales.Hyped']]
 		},
 		'loved': {
 			constr: AllPSongsLoved,
-			title: localize('Most Loved')
+			title: [['#locales.Most Loved']]
 		}
 	},
 	model_name: 'songs_lists'
@@ -140,14 +140,14 @@ var AllPArtistsChart = spv.inh(ArtistsList, {}, {
 var AllPlacesArtistsLists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list':[ ['hyped', '_'], true],
 	model_name: 'artists_lists',
-	sub_pa: {
+	sub_page: {
 		'_': {
 			constr: AllPArtistsChart,
-			title: localize('Top')
+			title: [['#locales.Top']]
 		},
 		'hyped': {
 			constr: AllPArtistsHyped,
-			title: localize('Hyped')
+			title: [['#locales.Hyped']]
 		}
 	}
 
@@ -160,14 +160,14 @@ var AllPlaces = spv.inh(BrowseMap.Model, {}, {
 	'nest-songs_lists': ['songs'],
 	'nest-artists_lists': ['artists'],
 	'nest-lists_list': [['songs', 'artists']],
-	sub_pa: {
+	sub_page: {
 		'songs': {
 			constr: AllPlacesSongsLists,
-			title: localize('Songs')
+			title: [['#locales.Songs']]
 		},
 		'artists': {
 			constr: AllPlacesArtistsLists,
-			title: localize('Artists')
+			title: [['#locales.Artists']]
 		}/*,
 		'blogs': {
 			constr: MusicBlog.BlogsConductor,
@@ -212,18 +212,18 @@ var CityArtistsUnique = spv.inh(ArtistsList, {}, {
 var CityArtistsLists = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'artists_lists',
 	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
-	sub_pa: {
+	sub_page: {
 		'_': {
 			constr: CityAritstsTop,
-			title: localize('Top')
+			title: [['#locales.Top']]
 		},
 		'hyped': {
 			constr: CityArtistsHype,
-			title: localize('Hyped')
+			title: [['#locales.Hyped']]
 		},
 		'unique': {
 			constr: CityArtistsUnique,
-			title: localize('Unique')
+			title: [['#locales.Unique']]
 		}
 	}
 });
@@ -257,18 +257,18 @@ var CitySongsUnique = spv.inh(SongsList, {}, {
 var CitySongsLists = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'songs_lists',
 	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
-	sub_pa: {
+	sub_page: {
 		'_': {
 			constr: CitySongsTop,
-			title: localize('Top')
+			title: [['#locales.Top']]
 		},
 		'hyped': {
 			constr: CitySongsHype,
-			title: localize('Hyped')
+			title: [['#locales.Hyped']]
 		},
 		'unique': {
 			constr: CitySongsUnique,
-			title: localize('Unique')
+			title: [['#locales.Unique']]
 		}
 	}
 });
@@ -281,14 +281,14 @@ var CityPlace = spv.inh(BrowseMap.Model, {}, {
 	},
 	data_by_hp: true,
 	'nest-lists_list': [['artists', 'songs']],
-	sub_pa: {
+	sub_page: {
 		'artists': {
 			constr: CityArtistsLists,
-			title: localize("Artists lists")
+			title: [['#locales.Artists lists']]
 		},
 		'songs': {
 			constr: CitySongsLists,
-			title: localize("Songs lists")
+			title: [['#locales.Songs lists']]
 		}
 	}
 });
@@ -378,20 +378,23 @@ var CountryPlace = spv.inh(BrowseMap.Model, {}, {
 
 	'nest-lists_list':[ ['artists_top', 'songs_top', 'cities'], false, 'mp_alhf' ],
 	'nest-pwis':[ ['artists_top', 'songs_top'], true, 'mp_alhf' ],
-	sub_pa: {
+	sub_page: {
 		'songs_top': {
 			constr: CountryTopSongs,
-			title: localize('Top Songs')
+			title: [['#locales.Top Songs']]
 		},
 		'artists_top': {
 			constr: CountryTopArtists,
-			title: localize('Top Artists')
+			title: [['#locales.Top Artists']]
 		},
 		'cities': {
 			constr: CountryCitiesList,
-			getTitle: function() {
-				return localize('Cities of %country%').replace('%country%', this.head.country_name);
-			}
+			title: [
+				['#locales.Cities of %country%', 'country_name'],
+				function(state, country_name) {
+					return state && state.replace('%country%', country_name);
+				}
+			]
 		}
 	},
 	heavyInit: function() {
@@ -482,14 +485,14 @@ MusicConductor = spv.inh(BrowseMap.Model, {}, {
 		[['world/songs', 'world/songs/topnow_hypem', 'world/songs/_', 'world/artists', 'world']],
 	'nest-allpas': ['world'],
 	'nest-сountries': ['сountries'],
-	sub_pa: {
+	sub_page: {
 		сountries: {
-			title: localize('Countries'),
+			title: [['#locales.Countries']],
 			constr: CountriesList
 		},
 		world: {
 			constr: AllPlaces,
-			title: localize('All-a-world')
+			title: [['#locales.All-a-world']]
 		}
 	}
 });

@@ -121,16 +121,14 @@ var VkUserTracks = spv.inh(BrowseMap.Model, {}, {
 		[vk_user_tracks_sp],
 	'nest-preview_list':
 		[vk_user_tracks_sp, true],
-	sub_pa: {
+	sub_page: {
 		'my': {
 			constr: MyVkAudioList,
-			getTitle: function() {
-				return localize('vk-audio');
-			}
+			title: [['#locales.vk-audio']]
 		},
 		'recommended':{
 			constr: VkRecommendedTracks,
-			title: localize('VK-Recommended')
+			title: [['#locales.VK-Recommended']]
 		}
 	}
 });

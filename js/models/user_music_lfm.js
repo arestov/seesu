@@ -118,12 +118,7 @@ var LULA = spv.inh(BrowseMap.Model, {}, cloneObj({
 			return lfm_i;
 		}
 	},
-	sub_pa: {
-		'all_time': {
-			constr: LULATracks,
-			title: 'All Time'
-		}
-	}
+	'sub_pa-all_time': [LULATracks, [null, 'All Time']]
 }, auth_bh));
 
 
@@ -255,12 +250,15 @@ var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
 		[user_artists_sp],
 	'nest-preview_list':
 		[user_artists_sp, true],
-	sub_pa: {
+	sub_page: {
 		'recommended': {
 			constr: RecommArtList,
-			getTitle: function() {
-				return localize('reccoms-for') + ' ' + this.head.userid;
-			}
+			title: [
+				['#locales.reccoms-for', 'userid'],
+				function(recomms, userid) {
+					return recomms && recomms + ' ' + userid;
+				}
+			]
 		},
 		// 'library': {
 		// 	constr: LULAs,
@@ -268,7 +266,7 @@ var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
 		// },
 		'top:7day': {
 			constr: TopLUArt,
-			title: 'top of 7day'
+			title: [null, 'top of 7day']
 		},
 		/*'top:1month':{
 			constr: TopLUArt,
@@ -276,19 +274,19 @@ var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
 		},*/
 		'top:3month':{
 			constr: TopLUArt,
-			title: 'top of 3 months'
+			title: [null, 'top of 3 months']
 		},
 		'top:6month':{
 			constr: TopLUArt,
-			title: 'top of 6 months'
+			title: [null, 'top of 6 months']
 		},
 		'top:12month':{
 			constr: TopLUArt,
-			title: 'top of 12 months'
+			title: [null, 'top of 12 months']
 		},
 		'top:overall':{
 			constr: TopLUArt,
-			title: ' overall top'
+			title: [null, 'overall top']
 		}
 		//артисты в библиотеке
 		//недельный чарт
@@ -338,20 +336,18 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 		[user_tracks_sp],
 	'nest-preview_list':
 		[user_tracks_sp, true],
-	sub_pa: {
+	sub_page: {
 		'loved': {
 			constr: LfmLovedList,
-			getTitle: function() {
-				return localize('loved-tracks');
-			}
+			title: [['#locales.loved-tracks']]
 		},
 		'recent':{
 			constr: LfmRecentUserTracks,
-			title: "Recently listened"
+			title: [null, "Recently listened"]
 		},
 		'top:7day': {
 			constr: TopUserTracks,
-			title: 'top of 7day'
+			title: [null, 'top of 7day']
 		},
 		/*'top:1month':{
 			constr: TopUserTracks,
@@ -359,19 +355,19 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 		},*/
 		'top:3month':{
 			constr: TopUserTracks,
-			title: 'top of 3 months'
+			title: [null, 'top of 3 months']
 		},
 		'top:6month':{
 			constr: TopUserTracks,
-			title: 'top of 6 months'
+			title: [null, 'top of 6 months']
 		},
 		'top:12month':{
 			constr: TopUserTracks,
-			title: 'top of 12 months'
+			title: [null, 'top of 12 months']
 		},
 		'top:overall':{
 			constr: TopUserTracks,
-			title: 'overall top'
+			title: [null, 'overall top']
 		}
 		//лучшие за последние  7 днея, лучше за 3 месяца, полгода, год
 		//недельные чарты - отрезки по 7 дней
@@ -427,24 +423,30 @@ var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
 	'nest-preview_list':
 		[user_albums_sp, true],
 
-	sub_pa: {
+	sub_page: {
 		'recommended': {
 			constr: RecommNewReleases,
-			getTitle: function() {
-				var base = 'new releases of artists recommended for ';
-				return base + (this.head.for_current_user ? 'you' : this.head.lfm_userid);
-			}
+			title: [
+				['for_current_user', 'lfm_userid'],
+				function(for_current_user, lfm_userid) {
+					var base = 'new releases of artists recommended for ';
+					return base + (for_current_user ? 'you' : lfm_userid);
+				}
+			]
 		},
 		'new_releases': {
 			constr: UserLibNewReleases,
-			getTitle: function() {
-				var base = 'new releases of artists from %user% library';
-				return base.replace('%user%', this.head.for_current_user ? 'your' : this.head.lfm_userid);
-			}
+			title: [
+				['for_current_user', 'lfm_userid'],
+				function(for_current_user, lfm_userid) {
+					var base = 'new releases of artists from %user% library';
+					return base.replace('%user%', for_current_user ? 'your' : lfm_userid);
+				}
+			]
 		},
 		'top:7day':{
 			constr: LfmUserTopAlbums,
-			title: 'Top of 7 days'
+			title: [null, 'Top of 7 days']
 		},
 		/*'top:1month':{
 			constr: LfmUserTopAlbums,
@@ -452,19 +454,19 @@ var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
 		},*/
 		'top:3month':{
 			constr: LfmUserTopAlbums,
-			title: 'Top of 3 months'
+			title: [null, 'Top of 3 months']
 		},
 		'top:6month':{
 			constr: LfmUserTopAlbums,
-			title: 'Top of 6 months'
+			title: [null, 'Top of 6 months']
 		},
 		'top:12month':{
 			constr: LfmUserTopAlbums,
-			title: 'Top of 12 months'
+			title: [null, 'Top of 12 months']
 		},
 		'top:overall':{
 			constr: LfmUserTopAlbums,
-			title: 'Overall top'
+			title: [null, 'Overall top']
 		}
 	}
 });
@@ -520,18 +522,18 @@ var UserTag = spv.inh(BrowseMap.Model, {}, {
 		[user_tag_sp],
 	'nest-preview_list':
 		[user_tag_sp, true],
-	sub_pa: {
+	sub_page: {
 		'tracks': {
 			constr: TaggedSongs,
-			title: 'Tracks'
+			title: [null, 'Tracks']
 		},
 		'artists': {
 			constr: TaggedArtists,
-			title: 'Artists'
+			title: [null, 'Artists']
 		},
 		'albums': {
 			constr: TaggedAlbums,
-			title: "Albums"
+			title: [null, "Albums"]
 		}
 	}
 });

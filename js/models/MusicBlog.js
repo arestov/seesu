@@ -48,11 +48,9 @@ BrowseMap.Model.extendTo(MusicBlog, {
 		[music_blog_sps],
 	'nest-preview_list':
 		[music_blog_sps, true],
-	sub_pa: {
-		songs: {
-			title: 'Song of the blog',
-			constr: MusicBlogSongs
-		}
+	'sub_page-songs': {
+		constr: MusicBlogSongs,
+		title: [null, 'Song of the blog']
 	},
 	addRawData: function(data) {
 		pv.update(this, 'nav_title', data.nav_title);
@@ -120,14 +118,14 @@ BrowseMap.Model.extendTo(BlogsConductor, {
 		[blogs_cond_sps],
 	'nest-preview_list':
 		[blogs_cond_sps, true],
-	sub_pa: {
+	sub_page: {
 		'blogs-of-the-day': {
-			title: 'Blogs of the day',
-			constr: TrendedBlogs
+			constr: TrendedBlogs,
+			title: [null, 'Blogs of the day']
 		},
 		featured: {
 			constr: FeaturedBlogs,
-			title: 'Featured'
+			title: [null, 'Featured']
 		}
 	}
 });
