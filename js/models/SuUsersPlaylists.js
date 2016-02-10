@@ -7,10 +7,7 @@ var SuUsersPlaylists = spv.inh(UserPlaylists, {
 			.on('each-playlist-change', function() {
 				target.app.trackEvent('song actions', 'add to playlist');
 			});
-		target.updateManyStates({
-			'nav_title':  localize('playlists'),
-			'url_part': '/playlists'
-		});
+
 		target.app.gena = target;
 
 		var plsts_str = app_serv.store('user_playlists');

@@ -19,45 +19,58 @@ var UserCard = spv.inh(BrowseMap.Model, {
 	}
 }, {
 	model_name: 'usercard',
-	sub_pa: {
+	sub_page: {
 		'vk:tracks': {
 			constr: user_music_vk.VkUserTracks,
-			title: localize('%site% tracks').replace('%site%', 'vk.com')
+			title: [
+				['#locales.%site% tracks'],
+				function(state) {
+					return state && state.replace('%site%', 'vk.com');
+				}
+			]
 		},
 		'vk:friends': {
 			constr: user_music_vk.VKFriendsList,
-			title: localize('%site% friends').replace('%site%', 'vk.com')
+			title: [
+				['#locales.%site% friends'],
+				function(state) {
+					return state && state.replace('%site%', 'vk.com');
+				}
+			]
 		},
-		'playlists':{
-			constr: SuUsersPlaylists
-		},
+		'playlists': [SuUsersPlaylists, [['#locales.playlists']]],
 		'acquaintances':{
 			constr: UserAcquaintancesLists,
-			title: localize("Acquaintances")
+			title: [['#locales.Acquaintances']]
 		},
 		'lfm:friends': {
 			constr: user_music_lfm.LfmFriendsList,
-			title: localize("%site% friends").replace('%site%', 'last.fm')
+			title: [
+				['#locales.%site% friends'],
+				function(state) {
+					return state && state.replace('%site%', 'last.fm');
+				}
+			]
 		},
 		'lfm:neighbours':{
 			constr: user_music_lfm.LfmNeighboursList,
-			title: localize("Neighbours")
+			title: [['#locales.Neighbours']]
 		},
 		'lfm:artists':{
 			constr: user_music_lfm.LfmUserArtists.LfmUserArtistsForCU,
-			title: localize('Artists')
+			title: [['#locales.Artists']]
 		},
 		'lfm:tracks':{
 			constr: user_music_lfm.LfmUserTracks,
-			title: localize('Tracks')
+			title: [['#locales.Tracks']]
 		},
 		'lfm:tags':{
 			constr: user_music_lfm.LfmUserTags,
-			title: localize('Tags')
+			title: [['#locales.Tags']]
 		},
 		'lfm:albums':{
 			constr: user_music_lfm.LfmUserAlbums,
-			title: localize('Albums')
+			title: [['#locales.Albums']]
 		}
 	},
 	nest: (function() {
