@@ -709,66 +709,73 @@ var StatesEmitter = spv.inh(Eventor, {
 	props: props
 });
 
+var getSubpageItem = function(self, cur) {
+	var instance;
+	if (Array.isArray(cur)) {
+		if (!cur[1]) {
+			/* EXAMPLE
+			'sub_page-similar': [
+				SimilarTags
+			]
+			*/
+			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
+			// instance = cur[0];
+		} else {
+			/* EXAMPLE
+			'sub_page-similar': [
+				SimilarTags,
+				[
+					['locales.Tags', 'locales.Similar-to', 'tag_name'],
+					function (tags, similar, name) {
+						return similar + ' ' + name + ' ' + tags.toLowerCase();
+					}
+				]
+			]
+			*/
+			instance = spv.inh(cur[0], {}, {
+				'compx-nav_title': cur[1]
+			});
+		}
+	} else if (typeof cur == 'object') {
+		// semi compatibility (migration) mode
+
+		/* EXAMPLE
+		'sub_page-similar': {
+			constr: SimilarTags,
+			title: [[...]]
+		}
+		*/
+		if (!cur.title || typeof cur.title != 'object') {
+			// title should be. in array or object presentation
+			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
+		}
+
+		instance = spv.inh(cur.constr, {}, {
+			'compx-nav_title': cur.title
+		});
+	} else {
+		/* EXAMPLE
+		'sub_page-similar': SimilarTags
+		*/
+	}
+
+	if (!instance.prototype['compx-nav_title']) {
+		throw new Error('sub_page shoud have `title`');
+	}
+
+	return instance;
+};
+
+
+function addSubpage(self, name, cur) {
+	self._sub_pages[name] = getSubpageItem(self, cur);
+}
+
 function buildSubpageCollector() {
 	var getUnprefixed = spv.getDeprefixFunc( 'sub_page-' );
 	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
-	var getItem = function(self, cur) {
-		var instance;
-		if (Array.isArray(cur)) {
-			if (!cur[1]) {
-				/* EXAMPLE
-				'sub_page-similar': [
-					SimilarTags
-				]
-				*/
-				throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
-				// instance = cur[0];
-			} else {
-				/* EXAMPLE
-				'sub_page-similar': [
-					SimilarTags,
-					[
-						['locales.Tags', 'locales.Similar-to', 'tag_name'],
-						function (tags, similar, name) {
-							return similar + ' ' + name + ' ' + tags.toLowerCase();
-						}
-					]
-				]
-				*/
-				instance = spv.inh(cur[0], {}, {
-					'compx-nav_title': cur[1]
-				});
-			}
-		} else if (typeof cur == 'object') {
-			// semi compatibility (migration) mode
-
-			/* EXAMPLE
-			'sub_page-similar': {
-				constr: SimilarTags,
-				title: [[...]]
-			}
-			*/
-			if (!cur.title || typeof cur.title != 'object') {
-				// title should be. in array or object presentation
-				throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
-			}
-
-			instance = spv.inh(cur.constr, {}, {
-				'compx-nav_title': cur.title
-			});
-		} else {
-			/* EXAMPLE
-			'sub_page-similar': SimilarTags
-			*/
-		}
-
-		if (!instance.prototype['compx-nav_title']) {
-			throw new Error('sub_page shoud have `title`');
-		}
-
-		return instance;
-	};
+	var add = addSubpage;
 
 	return function collectSubpages(self, props) {
 		if (!hasPrefixedProps(props) && !props.sub_page) {
@@ -788,18 +795,20 @@ function buildSubpageCollector() {
 			if (!name) {
 				continue;
 			}
-			self._sub_pages[name] = getItem(self, props[prop_name]);
+			add(self, prop_name, props[prop_name]);
+
 		}
 
 		for (var prop_name in self.sub_page) {
 			if (self._sub_pages[prop_name]) {
 				continue;
 			}
-
-			self._sub_pages[prop_name] = getItem(self, self.sub_page[prop_name]);
+			add(self, prop_name, self.sub_page[prop_name]);
 		}
 	};
 }
+
+StatesEmitter.addSubpage = addSubpage;
 
 return StatesEmitter;
 });

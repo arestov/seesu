@@ -90,6 +90,7 @@ pv = provoda = {
 	getParsedPath: initDeclaredNestings.getParsedPath,
 	getSubpages: initDeclaredNestings.getSubpages,
 	pathExecutor: initDeclaredNestings.pathExecutor,
+	addSubpage: StatesEmitter.addSubpage,
 	updateNesting: function(md, nesting_name, nesting_value, opts, spec_data) {
 		md.updateNesting(nesting_name, nesting_value, opts, spec_data);
 	},
