@@ -1582,13 +1582,12 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		};
 
 		return function(sp_name) {
-			if (this.sub_pages && this.sub_pages[sp_name]){
-				return this.sub_pages[sp_name];
-			}
-
 			var item = this._sub_pages && this._sub_pages[sp_name];
 
 			if (item){
+				if (this.sub_pages && this.sub_pages[sp_name]){
+					return this.sub_pages[sp_name];
+				}
 				this.sub_pages[sp_name] = pepare(this, item, sp_name);
 				return this.sub_pages[sp_name];
 			}
