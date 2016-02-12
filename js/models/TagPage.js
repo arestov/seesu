@@ -280,27 +280,16 @@ var TagsList = spv.inh(LoadableList.TagsList, {
 	getSPC: function() {
 		return TagPage;
 	},
-	subPager: function(sub_path_string){
-		var page_name = sub_path_string;//spv.capitalize(sub_path_string);
-		if (!this.sub_pages[page_name]){
-			var Constr = this.getSPC();
-			var instance = this.initSi(Constr, {
-				states: {
-					nav_title: localize('Tag') + ' ' + page_name,
-					url_part: '/' + page_name
-				},
-				head: {
-					tag_name: page_name
-				}
-
-
-			});
-			// var instance = new Constr();
-			this.sub_pages[page_name] = instance;
-			// return [instance, ];
-		}
-		return this.sub_pages[page_name];
-
+	sub_pager: {
+		item: [
+			TagPage,
+			[['#locales.Tag', 'tag_name'], function(desc, tag) {
+				return desc && desc + ' ' + tag;
+			}],
+			{
+				tag_name: 'decoded_name'
+			}
+		]
 	},
 	page_limit: 150
 });
