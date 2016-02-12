@@ -414,23 +414,15 @@ var CountriesList = spv.inh(BrowseMap.Model, {
 	getSPC: function() {
 		return CountryPlace;
 	},
-	subPager: function(sub_path_string){
-		var page_name = spv.capitalize(sub_path_string);
-		if (!this.sub_pages[page_name]){
-			var Constr = this.getSPC();
-			var instance = this.initSi(Constr, {
-				states: {
-					nav_title: page_name,
-					url_part: '/' + sub_path_string
-				},
-				head: {
-					country_name: page_name
-				}
-			});
-			this.sub_pages[page_name] = instance;
-		}
-		return this.sub_pages[page_name];
-
+	sub_pager: {
+		item: [
+			CountryPlace,
+			[['country_name']],
+			{
+				country_name: [spv.capitalize.fn, 'decoded_name']
+			}
+		],
+		key: spv.capitalize.fn
 	}
 });
 
