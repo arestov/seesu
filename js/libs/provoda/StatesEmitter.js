@@ -717,8 +717,18 @@ var StatesEmitter = spv.inh(Eventor, {
 	props: props
 });
 
+var subPageHeaded = function(Constr, head) {
+	return {
+		constr: Constr,
+		head: head,
+		getHead: head && spv.mmap({
+			props_map: head
+		})
+	};
+};
+
 var getSubpageItem = function(self, cur) {
-	var instance;
+	var item;
 	if (Array.isArray(cur)) {
 		if (!cur[1]) {
 			/* EXAMPLE
@@ -740,9 +750,9 @@ var getSubpageItem = function(self, cur) {
 				]
 			]
 			*/
-			instance = spv.inh(cur[0], {}, {
+			item = subPageHeaded(spv.inh(cur[0], {}, {
 				'compx-nav_title': cur[1]
-			});
+			}), cur[2]);
 		}
 	} else if (typeof cur == 'object') {
 		// semi compatibility (migration) mode
@@ -758,21 +768,21 @@ var getSubpageItem = function(self, cur) {
 			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
 		}
 
-		instance = spv.inh(cur.constr, {}, {
+		item = subPageHeaded(spv.inh(cur.constr, {}, {
 			'compx-nav_title': cur.title
-		});
+		}), cur.head);
 	} else {
 		/* EXAMPLE
 		'sub_page-similar': SimilarTags
 		*/
-		instance = cur;
+		item = subPageHeaded(cur);
 	}
 
-	if (!instance.prototype['compx-nav_title']) {
+	if (!item.constr.prototype['compx-nav_title']) {
 		throw new Error('sub_page shoud have `title`');
 	}
 
-	return instance;
+	return item;
 };
 
 

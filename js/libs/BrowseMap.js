@@ -1531,7 +1531,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	preview_nesting_source: 'lists_list',
 	getSPIConstr: function(sp_name) {
 		if (this._sub_pages && this._sub_pages[sp_name]) {
-			return this._sub_pages[sp_name];
+			return this._sub_pages[sp_name].constr;
 		}
 
 		if (this.subPager){
@@ -1559,9 +1559,11 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 				return this.sub_pages[sp_name];
 			}
 
-			var Constr = this._sub_pages && this._sub_pages[sp_name];
+			var item = this._sub_pages && this._sub_pages[sp_name];
 
-			if (Constr){
+			if (item){
+
+				var Constr = item.constr;
 				/*
 				hp_bound
 				data_by_urlname
@@ -1576,7 +1578,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
 				var instance_data = getInitData(this, common_opts);
 				var dbu_declr = Constr.prototype.data_by_urlname;
-				var hbu_declr = Constr.prototype.head_by_urlname;
+				var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
 				var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
 				var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
 				if (head_by_urlname) {
