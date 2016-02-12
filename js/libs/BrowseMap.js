@@ -1250,7 +1250,8 @@ var getSPOpts = function(md, sp_name) {
 		},
 		{
 			simple_name: sp_name,
-			name_spaced: parts[1]
+			decoded_name: decodeURIComponent(sp_name),
+			name_spaced: decodeURIComponent(parts[1])
 		}];
 };
 
@@ -1534,6 +1535,23 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			return this._sub_pages[sp_name].constr;
 		}
 
+		var sub_pager = this._sub_pager;
+		if (sub_pager) {
+			if (sub_pager.item) {
+				return sub_pager.item.constr;
+			} else {
+				var getType = sub_pager.type;
+				var types = sub_pager.by_types;
+				var type = getType(decodeURIComponent(sp_name), sp_name);
+				if (type && !types[type]) {
+					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
+				}
+				if (type) {
+					return sub_pager.by_types[type].constr;
+				}
+			}
+		}
+
 		if (this.subPager){
 			var result = this.getSPC(decodeURIComponent(sp_name), sp_name);
 			if (Array.isArray(result)) {
@@ -1590,6 +1608,37 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 				}
 				this.sub_pages[sp_name] = pepare(this, item, sp_name);
 				return this.sub_pages[sp_name];
+			}
+
+			var sub_pager = this._sub_pager;
+			if (sub_pager) {
+				var decoded = decodeURIComponent(sp_name);
+				var getKey = sub_pager.key;
+				var key = getKey ? getKey(decoded, sp_name) : sp_name;
+
+				if (this.sub_pages && this.sub_pages[key]){
+					return this.sub_pages[key];
+				}
+
+				if (sub_pager.item) {
+					item = sub_pager.item;
+				} else {
+					var getType = sub_pager.type;
+					var types = sub_pager.by_types;
+					var type = getType(decoded, sp_name);
+					if (type && !types[type]) {
+						throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
+					}
+
+					item = type && sub_pager.by_types[type];
+				}
+
+				var instance = item && pepare(this, item, sp_name);
+				if (instance) {
+					this.sub_pages[key] = instance;
+					return instance;
+				}
+
 			}
 
 			if (this.subPager){

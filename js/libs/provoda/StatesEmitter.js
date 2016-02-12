@@ -64,6 +64,7 @@ var getBaseTreeCheckList = function(start) {
 };
 
 var collectSubpages = buildSubpageCollector();
+var checkSubpager = buildSubpagerChecker();
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
@@ -81,6 +82,7 @@ var onPropsExtend = function (props) {
 	this.collectStatesBinders(props);
 	this.collectCompxs(props);
 	collectSubpages(this, props);
+	checkSubpager(this, props);
 	this.collectRegFires(props);
 
 	if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
@@ -824,6 +826,40 @@ function buildSubpageCollector() {
 			}
 			add(self, prop_name, self.sub_page[prop_name]);
 		}
+	};
+}
+
+function buildSubpagerChecker() {
+	return function(self, props) {
+		var sub_pager = props.sub_pager;
+
+		if (!sub_pager) {
+			return;
+		}
+
+		if (sub_pager.item && sub_pager.by_type) {
+			throw new Error('can`t be both `item` and `by_type`');
+		}
+
+		self._sub_pager = {
+			key: null,
+			item: null,
+			by_type: null,
+			type: null
+		};
+
+		self._sub_pager.key = sub_pager.key;
+
+		if (sub_pager.item) {
+			self._sub_pager.item = getSubpageItem(self, sub_pager.item);
+		} else {
+			self._sub_pager.type = sub_pager.type;
+			self._sub_pager.by_type = {};
+			for (var type in sub_pager) {
+				self._sub_pager.by_type[type] = getSubpageItem(self, sub_pager[type]);
+			}
+		}
+
 	};
 }
 
