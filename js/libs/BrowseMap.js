@@ -1591,7 +1591,9 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			if (item){
 				this.sub_pages[sp_name] = pepare(this, item, sp_name);
 				return this.sub_pages[sp_name];
-			} else if (this.subPager){
+			}
+
+			if (this.subPager){
 				var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
 				if (Array.isArray(sub_page)) {
 					return init(this, sub_page[0], sub_page[1]);
