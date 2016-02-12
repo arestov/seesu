@@ -1201,7 +1201,8 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 		var result = cur_md;
 		var tree_parts_group = null;
 		for (var i = 0; i < pth.length; i++) {
-			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
+			var types = spv.getTargetField(cur_md, '_sub_pager.by_types');
+			if (types && types[pth[i]] || (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]])){
 				if (!tree_parts_group){
 					tree_parts_group = [];
 				}
