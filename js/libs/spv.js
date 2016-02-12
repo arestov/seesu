@@ -202,10 +202,10 @@ var getFieldsTree = function(string) {
 };
 spv.getFieldsTree = getFieldsTree;
 
-getTargetField = function(obj, tree){
-	if (!tree) {return obj;}
+getTargetField = function(obj, path){
+	if (!path) {return obj;}
 
-	tree = getFieldsTree(tree);
+	var tree = getFieldsTree(path);
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
