@@ -1554,6 +1554,33 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			return target;
 		};
 
+		var pepare = function(self, item, sp_name) {
+			var Constr = item.constr;
+			/*
+			hp_bound
+			data_by_urlname
+			data_by_hp
+
+			берем данные из родителя
+			накладываем стандартные данные
+			накладываем данные из урла
+			*/
+
+			var common_opts = getSPOpts(self, sp_name);
+
+			var instance_data = getInitData(self, common_opts);
+			var dbu_declr = Constr.prototype.data_by_urlname;
+			var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
+			var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
+			var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
+			if (head_by_urlname) {
+				instance_data.head = head_by_urlname;
+			}
+			cloneObj(instance_data, data_by_urlname);
+
+			return self.initSi(Constr, instance_data);
+		};
+
 		return function(sp_name) {
 			if (this.sub_pages && this.sub_pages[sp_name]){
 				return this.sub_pages[sp_name];
@@ -1562,31 +1589,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			var item = this._sub_pages && this._sub_pages[sp_name];
 
 			if (item){
-
-				var Constr = item.constr;
-				/*
-				hp_bound
-				data_by_urlname
-				data_by_hp
-
-				берем данные из родителя
-				накладываем стандартные данные
-				накладываем данные из урла
-				*/
-
-				var common_opts = getSPOpts(this, sp_name);
-
-				var instance_data = getInitData(this, common_opts);
-				var dbu_declr = Constr.prototype.data_by_urlname;
-				var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
-				var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
-				var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
-				if (head_by_urlname) {
-					instance_data.head = head_by_urlname;
-				}
-				cloneObj(instance_data, data_by_urlname);
-
-				this.sub_pages[sp_name] = this.initSi(Constr, instance_data);
+				this.sub_pages[sp_name] = pepare(this, item, sp_name);
 				return this.sub_pages[sp_name];
 			} else if (this.subPager){
 				var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
