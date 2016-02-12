@@ -324,26 +324,18 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
 	},
 	'nest_posb-lists_list': [CityPlace],
 	//'nest-lists_list': [],
-	getSPC: function() {
-		return CityPlace;
-	},
-	subPager: function(sub_path_string){
-		var page_name = spv.capitalize(sub_path_string);
-		if (!this.sub_pages[page_name]) {
-			var Constr = this.getSPC();
-			var instance = this.initSi(Constr, {
-				states: {
-					nav_title: page_name + ', ' + this.head.country_name,
-					url_part: '/' + sub_path_string,
-				},
-				head: {
-					city_name: page_name
+	sub_pager: {
+		item: [
+			CityPlace,
+			[
+				['city_name', 'country_name'],
+				function(city_name, country_name) {
+					return city_name + ', ' + country_name;
 				}
-			});
-			this.sub_pages[page_name] = instance;
-		}
-		return this.sub_pages[page_name];
-
+			], {
+				city_name: 'decoded_name'
+			}
+		]
 	}
 });
 
