@@ -1023,11 +1023,16 @@ throttle = function(fn, timeout, ctx) {
 	};
 
 };
-spv.capitalize = function(string, just_first) {
+spv.capitalize = capitalize;
+function capitalize(string, just_first) {
 	var test = just_first ? (/(^|\s)(.)/) : (/(^|\s)(.)/g);
 	return string.replace(test, function(m, p1, p2){
 		return p1+p2.toUpperCase();
 	});
+}
+
+spv.capitalize.fn = function(string) {
+	return capitalize(string);
 };
 
 (function(){
