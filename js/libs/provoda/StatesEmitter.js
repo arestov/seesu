@@ -732,7 +732,7 @@ var subPageHeaded = function(Constr, head) {
 var getSubpageItem = function(self, cur) {
 	var item;
 	if (Array.isArray(cur)) {
-		if (!cur[1]) {
+		if (!cur[1] && !cur[2]) {
 			/* EXAMPLE
 			'sub_page-similar': [
 				SimilarTags
@@ -752,9 +752,11 @@ var getSubpageItem = function(self, cur) {
 				]
 			]
 			*/
-			item = subPageHeaded(spv.inh(cur[0], {}, {
+
+			var instance = cur[1] ? spv.inh(cur[0], {}, {
 				'compx-nav_title': cur[1]
-			}), cur[2]);
+			}) : cur[0];
+			item = subPageHeaded(instance, cur[2]);
 		}
 	} else if (typeof cur == 'object') {
 		// semi compatibility (migration) mode
@@ -780,7 +782,7 @@ var getSubpageItem = function(self, cur) {
 		item = subPageHeaded(cur);
 	}
 
-	if (!item.constr.prototype['compx-nav_title']) {
+	if (!item.constr.prototype.compx_check['nav_title']) {
 		throw new Error('sub_page shoud have `title`');
 	}
 
@@ -855,8 +857,8 @@ function buildSubpagerChecker() {
 		} else {
 			self._sub_pager.type = sub_pager.type;
 			self._sub_pager.by_type = {};
-			for (var type in sub_pager) {
-				self._sub_pager.by_type[type] = getSubpageItem(self, sub_pager[type]);
+			for (var type in sub_pager.by_type) {
+				self._sub_pager.by_type[type] = getSubpageItem(self, sub_pager.by_type[type]);
 			}
 		}
 

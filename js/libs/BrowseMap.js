@@ -1201,7 +1201,7 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 		var result = cur_md;
 		var tree_parts_group = null;
 		for (var i = 0; i < pth.length; i++) {
-			var types = spv.getTargetField(cur_md, '_sub_pager.by_types');
+			var types = spv.getTargetField(cur_md, '_sub_pager.type');
 			if (types && types[pth[i]] || (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]])){
 				if (!tree_parts_group){
 					tree_parts_group = [];
@@ -1241,6 +1241,16 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 		}
 		return result;
 };
+
+function subPageType(type_obj, str) {
+	var parts = str.split('/');
+	var target = type_obj[decodeURIComponent(parts[0])];
+	if (typeof target !== 'function') {
+		return target || null;
+	}
+
+	return target(parts[1]);
+}
 
 var getSPOpts = function(md, sp_name) {
 	var parts = sp_name.split(':');
@@ -1541,14 +1551,13 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			if (sub_pager.item) {
 				return sub_pager.item.constr;
 			} else {
-				var getType = sub_pager.type;
-				var types = sub_pager.by_types;
-				var type = getType(decodeURIComponent(sp_name), sp_name);
+				var types = sub_pager.by_type;
+				var type = subPageType(sub_pager.type, sp_name);
 				if (type && !types[type]) {
 					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
 				}
 				if (type) {
-					return sub_pager.by_types[type].constr;
+					return sub_pager.by_type[type].constr;
 				}
 			}
 		}
@@ -1624,14 +1633,13 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 				if (sub_pager.item) {
 					item = sub_pager.item;
 				} else {
-					var getType = sub_pager.type;
-					var types = sub_pager.by_types;
-					var type = getType(decoded, sp_name);
+					var types = sub_pager.by_type;
+					var type = subPageType(sub_pager.type, sp_name);
 					if (type && !types[type]) {
 						throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
 					}
 
-					item = type && sub_pager.by_types[type];
+					item = type && sub_pager.by_type[type];
 				}
 
 				var instance = item && pepare(this, item, sp_name);
