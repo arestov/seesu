@@ -207,7 +207,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 		}
 	});
 
-	var searchResults = function(query, prepared, valueOf){
+	var SearchResults = function(query, prepared, valueOf){
 		if (query){
 			this.query = query;
 		}
@@ -215,8 +215,8 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 			this.append(prepared, valueOf);
 		}
 	};
-	searchResults.prototype = [];
-	spv.cloneObj(searchResults.prototype, {
+	SearchResults.prototype = [];
+	spv.cloneObj(SearchResults.prototype, {
 		setQuery: function(q){
 			this.query=q;
 		},
@@ -330,7 +330,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 			pv.update(this, 'no_results_text', false);
 
 
-			this.r = new searchResults(q);
+			this.r = new SearchResults(q);
 			this.rendering_list = [];
 			this.edges_list = [];
 			pv.update(this, 'query', q);
