@@ -1,7 +1,6 @@
 define(['pv', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct', 'View'],
 function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct, View) {
 'use strict';
-var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
 var SongcardPage = spv.inh(coct.SPView, {}, {

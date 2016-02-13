@@ -1,7 +1,6 @@
 define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/libs/Mp3Search', './comd', './YoutubeVideo', './LoadableList'],
 function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, LoadableList) {
 "use strict";
-var localize = app_serv.localize;
 
 var MFCorVkLogin = spv.inh(comd.VkLoginB, {}, {
 	'compx-access_desc': [
@@ -12,7 +11,6 @@ var MFCorVkLogin = spv.inh(comd.VkLoginB, {}, {
 		}
 	],
 	config: {
-		// desc: localize("to-find-and-play")  + " " +  localize('music-files-from-vk'),
 		open_opts: {settings_bits: 8},
 		getNotf: function(target) {
 			return {

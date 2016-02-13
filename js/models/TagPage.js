@@ -1,7 +1,6 @@
 define(['spv', 'app_serv','js/libs/BrowseMap', './ArtCard', './LoadableList', './SongsList', 'js/modules/declr_parsers', 'js/lastfm_data'],
 function(spv, app_serv, BrowseMap, ArtCard, LoadableList, SongsList, declr_parsers, lastfm_data){
 "use strict";
-var localize = app_serv.localize;
 
 var AlbumsList = ArtCard.AlbumsList;
 var ArtistsList = ArtCard.ArtistsList;

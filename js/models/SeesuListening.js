@@ -1,6 +1,5 @@
 define(['pv', './comd', 'app_serv'], function(pv, comd, app_serv) {
 'use strict';
-var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
 var auth = pv.behavior({

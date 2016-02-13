@@ -12,7 +12,6 @@ var MusicConductor;
 //http://hypem.com/latest
 var HypemPlaylist = SongsList.HypemPlaylist;
 var ArtistsList = ArtCard.ArtistsList;
-var localize = app_serv.localize;
 var AllPHypemLatestSongs = spv.inh(HypemPlaylist, {}, {
 
 	'nest_req-songs-list': [

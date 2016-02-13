@@ -1,7 +1,5 @@
 define(['js/LfmAuth', 'app_serv', '../comd', 'spv', 'pv'], function(LfmAuth, app_serv, comd, spv, pv) {
 "use strict";
-var localize = app_serv.localize;
-
 var pvUpdate = pv.update;
 
 var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {

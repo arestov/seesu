@@ -1,6 +1,5 @@
 define(['./UserPlaylists', 'app_serv', 'spv'], function(UserPlaylists, app_serv, spv){
 "use strict";
-var localize = app_serv.localize;
 var SuUsersPlaylists = spv.inh(UserPlaylists, {
 	init: function(target) {
 		target

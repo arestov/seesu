@@ -1,7 +1,6 @@
 define(['pv', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(pv, app_serv, spv, BrowseMap){
 "use strict";
 var pvUpdate = pv.update;
-var localize = app_serv.localize;
 var UserAcquaintance = spv.inh(pv.Model, {
 		init: function(target, opts, params) {
 		target.sender = params.sender;

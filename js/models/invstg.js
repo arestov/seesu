@@ -1,7 +1,6 @@
 define(['pv', 'js/modules/lfmhelp', 'app_serv', 'spv', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
 function(pv, lfmhelp, app_serv, spv, cache_ajax, hex_md5, lastfm_data, BrowseMap, base) {
 "use strict";
-var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
 var suParseArtistsResults = function() {

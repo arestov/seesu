@@ -2,9 +2,6 @@ define(['pv', 'spv', 'app_serv', '../comd', 'js/LfmAuth',
 './SongActPlaylisting', './SongActTaging', './SongActSharing'], function(pv, spv, app_serv, comd, LfmAuth,
 SongActPlaylisting, SongActTaging, SongActSharing){
 "use strict";
-var localize = app_serv.localize;
-
-
 
 var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 	init: function(target) {

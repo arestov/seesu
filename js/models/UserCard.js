@@ -5,7 +5,6 @@ function(pv, spv, app_serv, comd,
 BrowseMap, SongsList, htmlencoding,
 UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, user_music_vk){
 "use strict";
-var localize = app_serv.localize;
 
 var UserCard = spv.inh(BrowseMap.Model, {
 	init: function(target) {

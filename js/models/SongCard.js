@@ -5,7 +5,6 @@ function(pv, spv, app_serv, BrowseMap, morph_helpers,
 user_music_lfm, Cloudcasts, LoadableListBase, SongsList,
 SeesuListening, declr_parsers) {
 'use strict';
-var localize = app_serv.localize;
 var complexEach = app_serv.complexEach;
 
 var pvUpdate = pv.update;

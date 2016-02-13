@@ -1,7 +1,5 @@
 define(['./etc_views', 'jquery', 'app_serv', 'spv', 'pv', 'View'], function(etc_views, $, app_serv, spv, pv, View){
 "use strict";
-//var localize = app_serv.localize;
-
 
 var addTag = function(e, node, scope) {
 	e.preventDefault();
@@ -11,29 +9,12 @@ var addTag = function(e, node, scope) {
 var LfmTagItView = spv.inh(etc_views.LfmLoginView, {}, {
 	createBase: function() {
 		this._super();
-	//	var _this = this;
-		//
 
 		var tpl_con = this.root_view.getSample('song-act-tagging');
 
 		this.tpl = this.createTemplate(tpl_con);
 
 		this.c.append(tpl_con);
-		/*
-		var wrap = $('<div class="add-to-lfmfav"></div>');
-
-		this.nloveb = this.root_view.createNiceButton();
-		this.nloveb.c.appendTo(wrap);
-		this.nloveb.b.click(function(){
-			if (_this.nloveb._enabled){
-				_this.RPCLegacy('makeLove');
-			}
-		});
-		this.addWayPoint(this.nloveb.b);
-		this.nloveb.b.text(localize('addto-lfm-favs'));
-		this.c.append(wrap);
-		*/
-
 	},
 	tpl_r_events: {
 		'petags_result': {
