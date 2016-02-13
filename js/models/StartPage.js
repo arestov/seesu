@@ -2,7 +2,6 @@ define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard
 function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv, spv, route) {
 "use strict";
 var app_env = app_serv.app_env;
-var localize = app_serv.localize;
 var complexEach = app_serv.complexEach;
 
 var pvUpdate = pv.update;
@@ -28,19 +27,6 @@ var AppNews = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'app_news',
 });
 AppNews.converNews = converNews;
-
-
-
-
-var subPageInitWrap = function(Constr, full_name, data) {
-	//var instance = new Constr();
-	if (!data) {
-		data = {};
-	}
-	data['url_part'] = '/' + full_name;
-	return [Constr, data];
-
-};
 
 var StartPage = spv.inh(BrowseMap.Model, {
 	init: function(target, opts) {
