@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv', 'spv'],
-function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv, spv) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv', 'spv', '../modules/route'],
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv, spv, route) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -103,7 +103,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 				}
 				/*
 				url_part: [['artist_name'], function(artist_name) {
-					return artist_name && '/catalog/' + this.app.encodeURLPart(artist_name);
+					return artist_name && '/catalog/' + route.encodeURLPart(artist_name);
 				}],
 				*/
 			],
@@ -152,7 +152,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 	sub_pages_routes: {
 		'tracks': function(complex_string, raw_str) {
 			var full_name = 'tracks/' + raw_str;
-			var parts = this.app.getCommaParts(raw_str);
+			var parts = route.getCommaParts(raw_str);
 			if (!parts[1] || !parts[0]){
 				return;
 			} else {
@@ -169,7 +169,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 
 		},
 		'cloudcasts': function(mixcloud_urlpiece) {
-			var full_name = 'cloudcasts/' +  this.app.encodeURLPart(mixcloud_urlpiece);
+			var full_name = 'cloudcasts/' +  route.encodeURLPart(mixcloud_urlpiece);
 			return subPageInitWrap(Cloudcasts, full_name, {
 				key: mixcloud_urlpiece
 			});
