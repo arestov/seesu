@@ -193,9 +193,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 	});
 
 	var BaseSectionButton = spv.inh(BaseSuggest, {}, {
-		setText: function(text){
-			pv.update(this, 'button_text', text);
-		},
+		'compx-button_text': [['^button_text']],
 		show: function(){
 			pv.update(this, 'disabled', false);
 		},
@@ -310,12 +308,6 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 				this.button.show();
 			}
 		},
-		setButtonText: function(have_results, q){
-			if (this.button && this.getButtonText){
-				this.button.setText(this.getButtonText(have_results, q));
-			}
-
-		},
 		doesNeed: function(q){
 			return q == (this.r && this.r.query);
 		},
@@ -332,7 +324,6 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 			this.rendering_list = [];
 			this.edges_list = [];
 			pv.update(this, 'query', q);
-			this.setButtonText(false, q);
 			this.showButton();
 			this.trigger('items-change');
 			return this;
@@ -383,8 +374,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 			pv.update(this, 'preview', preview);
 			pv.updateNesting(this, 'rendering_list', this.rendering_list);
 			pv.update(this, 'changed', new Date());
-
-			this.setButtonText(!!this.r.length, this.r.query);
+			pv.update(this, 'any_results', !!this.r.length);
 			this.trigger('items-change', this.r.length);
 			return this;
 		}

@@ -64,25 +64,24 @@ var seesuSection = spv.inh(base.SearchSection, {
 				.on('state_change-disabled', function(){
 					self.trigger('items-change');
 				}, {skip_reg: true});
-			self.setButtonText();
 			pv.updateNesting(self, 'button', self.button);
 		}
 
 	}
 }, {
-	getButtonText: function(have_results, q){
-		if (have_results){
-			if (!this.results_desc_yes) {
-				return;
+	'compx-button_text': [
+		['any_results', 'query', '#locales.fine-more', '#locales.to-search', 'results_desc_yes', 'results_desc_no'],
+		function(have_results, q, lo_fine_more, lo_to_search, results_desc_yes, results_desc_no) {
+			if (!lo_fine_more || !lo_to_search) {return;}
+
+			if (have_results) {
+				return (lo_fine_more || 'find more') + ' «' + q + '» ' + results_desc_yes;
+			} else {
+				return (lo_to_search || 'Search ') + ( q ? ('«' + q + '» ') : "" ) + results_desc_no;
 			}
-			return localize('fine-more', 'find more') + ' «' + q + '» ' + this.results_desc_yes;
-		} else{
-			if (!this.results_desc_no) {
-				return;
-			}
-			return localize('to-search', 'Search ') + ( q ? ('«' + q + '» ') : "" ) + this.results_desc_no;
 		}
-	},
+	],
+
 	no_results_text: true,
 	'compx-no_results_text': [
 		['#locales.nothing-found', 'has_no_results'],
@@ -101,8 +100,8 @@ var PlaylistsSection = spv.inh(base.SearchSection, {}, {
 var ArtistsSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Artists']],
 	model_name: 'section-artist',
-	results_desc_yes: localize('oartists', 'artists'),
-	results_desc_no:  localize('in-artists','in artists'),
+	'compx-results_desc_yes': [['#locales.oartists']],
+	'compx-results_desc_no':  [['#locales.in-artists']],
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
@@ -159,8 +158,8 @@ var TracksSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Tracks']],
 	model_name: 'section-track',
 
-	results_desc_yes: localize('otracks', 'tracks'),
-	results_desc_no:  localize('in-tracks','in tracks'),
+	'compx-results_desc_yes': [['#locales.otracks']],
+	'compx-results_desc_no':  [['#locales.in-tracks']],
 
 	loadMore: function() {
 		var q = this.r.query;
@@ -201,8 +200,8 @@ var TagsSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Tags']],
 	model_name: 'section-tag',
 
-	results_desc_yes: localize('otags', 'tags'),
-	results_desc_no:  localize('in-tags' , 'in tags'),
+	'compx-results_desc_yes': [['#locales.otags']] ,
+	'compx-results_desc_no':  [['#locales.in-tags']],
 
 	loadMore: function() {
 		var q = this.r.query;
@@ -250,8 +249,8 @@ var AlbumsSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Albums']],
 	model_name: 'section-album',
 
-	results_desc_yes: localize('oalbums', 'albums'),
-	results_desc_no:  localize('in-albums' , 'in albums'),
+	'compx-results_desc_yes': [['#locales.oalbums']],
+	'compx-results_desc_no':  [['#locales.in-albums']],
 
 	loadMore: function() {
 		var q = this.r.query;
