@@ -109,7 +109,16 @@ var StartPage = spv.inh(BrowseMap.Model, {
 				}],
 				*/
 			],
-			// track: [],
+			track: [
+				SongCard, null, {
+					artist_name: [function(raw_str) {
+						return route.getCommaParts(raw_str)[0];
+					}, 'simple_name'],
+					track_name: [function(raw_str) {
+						return route.getCommaParts(raw_str)[1];
+					}, 'simple_name'],
+				}
+			],
 			user_current: [
 				UserCard, [['#locales.your-pmus-f-aq']], {
 					for_current_user: [true]
@@ -129,12 +138,25 @@ var StartPage = spv.inh(BrowseMap.Model, {
 				UserCard.VkUserCard, null, {
 					vk_userid: 'name_spaced'
 				}
+			],
+			cloudcast: [
+				Cloudcasts, [['key'], function(key) {
+					return 'Cloudcast ' + key;
+				}], {
+					key: 'simple_name'
+				}
 			]
 		},
 		type: {
 			catalog: 'artist',
-			// tracks: 'track',
-			// cloudcasts: 'cloudcast',
+			tracks: function(name) {
+				var parts = route.getCommaParts(name);
+				if (!parts[1] || !parts[0]){
+					return;
+				}
+				return 'track';
+			},
+			cloudcasts: 'cloudcast',
 			users: (function(){
 				var spaces = spv.makeIndexByField(['lfm', 'vk', 'su']);
 				return function(name) {
@@ -149,32 +171,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 					}
 				};
 			})()
-		}
-	},
-	sub_pages_routes: {
-		'tracks': function(complex_string, raw_str) {
-			var full_name = 'tracks/' + raw_str;
-			var parts = route.getCommaParts(raw_str);
-			if (!parts[1] || !parts[0]){
-				return;
-			} else {
-				return [SongCard, {
-					states: {
-						url_part: '/' + full_name
-					},
-					head: {
-						artist_name: parts[0],
-						track_name: parts[1]
-					}
-				}];
-			}
-
-		},
-		'cloudcasts': function(mixcloud_urlpiece) {
-			var full_name = 'cloudcasts/' +  route.encodeURLPart(mixcloud_urlpiece);
-			return subPageInitWrap(Cloudcasts, full_name, {
-				key: mixcloud_urlpiece
-			});
 		}
 	},
 	sub_page: {
