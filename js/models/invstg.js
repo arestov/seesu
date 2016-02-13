@@ -449,7 +449,6 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 return {
 	Investigation: base.Investigation,
 	BaseSuggest: base.BaseSuggest,
-	baseSectionButton: base.BaseSectionButton,
 	SearchSection: base.SearchSection,
 	SearchPage: SearchPage
 };
