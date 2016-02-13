@@ -70,6 +70,19 @@ var seesuSection = spv.inh(base.SearchSection, {
 
 	}
 }, {
+	getButtonText: function(have_results, q){
+		if (have_results){
+			if (!this.results_desc_yes) {
+				return;
+			}
+			return localize('fine-more', 'find more') + ' «' + q + '» ' + this.results_desc_yes;
+		} else{
+			if (!this.results_desc_no) {
+				return;
+			}
+			return localize('to-search', 'Search ') + ( q ? ('«' + q + '» ') : "" ) + this.results_desc_no;
+		}
+	},
 	no_results_text: true,
 	'compx-no_results_text': [
 		['#locales.nothing-found', 'has_no_results'],
@@ -88,13 +101,8 @@ var PlaylistsSection = spv.inh(base.SearchSection, {}, {
 var ArtistsSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Artists']],
 	model_name: 'section-artist',
-	getButtonText: function(have_results, q){
-		if (have_results){
-			return localize('fine-more', 'find more') + ' «' + q + '» ' + localize('oartists', 'artists');
-		} else{
-			return localize('to-search', 'Search ') + ( q ? ('«' + q + '» ') : "" ) + localize('in-artists','in artists');
-		}
-	},
+	results_desc_yes: localize('oartists', 'artists'),
+	results_desc_no:  localize('in-artists','in artists'),
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
@@ -151,13 +159,9 @@ var TracksSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Tracks']],
 	model_name: 'section-track',
 
-	getButtonText: function(have_results, q){
-		if (have_results){
-			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otracks', 'tracks');
-		} else{
-			return localize('to-search', 'Search ') + ( q ? ('«' + q + '» ') : "" ) +localize('in-tracks','in tracks');
-		}
-	},
+	results_desc_yes: localize('otracks', 'tracks'),
+	results_desc_no:  localize('in-tracks','in tracks'),
+
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
@@ -196,13 +200,10 @@ var tagSuggest = spv.inh(base.BaseSuggest, {
 var TagsSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Tags']],
 	model_name: 'section-tag',
-	getButtonText: function(have_results, q){
-		if (have_results){
-			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otags', 'tags');
-		} else{
-			return localize('to-search', 'Search ') + ( q ? ('«' + q + '» ') : "" ) +localize('in-tags' , 'in tags');
-		}
-	},
+
+	results_desc_yes: localize('otags', 'tags'),
+	results_desc_no:  localize('in-tags' , 'in tags'),
+
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
@@ -248,13 +249,10 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
 var AlbumsSection = spv.inh(seesuSection, {}, {
 	'compx-section_title': [['#locales.Albums']],
 	model_name: 'section-album',
-	getButtonText: function(have_results, q){
-		if (have_results){
-			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('oalbums', 'albums');
-		} else{
-			return localize('to-search', 'Search ') + ( q ? ('«' + q + '» ') : "" ) +localize('in-albums' , 'in albums');
-		}
-	},
+
+	results_desc_yes: localize('oalbums', 'albums'),
+	results_desc_no:  localize('in-albums' , 'in albums'),
+
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
