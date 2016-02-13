@@ -357,7 +357,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 
 
 var LfmSharingAuth = spv.inh(LfmAuth.LfmLogin, {}, {
-	access_desc: localize('lastfm-sharing-access')
+	'compx-access_desc': [['#locales.lastfm-sharing-access']]
 });
 
 var StrusersRowSearch = spv.inh(invstg.Investigation, {

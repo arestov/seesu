@@ -12,7 +12,7 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 		pv.update(target, 'active', true);
 	}
 }, {
-	access_desc: localize('lastfm-loveit-access'),
+	'compx-access_desc': [['#locales.lastfm-loveit-access']],
 	beforeRequest: function() {
 		this.bindAuthCallback();
 	},

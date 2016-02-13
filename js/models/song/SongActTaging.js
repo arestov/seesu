@@ -30,7 +30,7 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 
 	}
 }, {
-	access_desc: localize('lastfm-tagging-access'),
+	'compx-access_desc': [['#locales.lastfm-tagging-access']],
 	comma_regx: /\s*\,\s*/,
 	comma_regx_end: /\s*\,\s*$/,
 	'compx-possible_tags':{

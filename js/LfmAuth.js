@@ -10,9 +10,6 @@ var LfmLogin = spv.inh(pv.Model, {
 
 		target.updateNesting('auth', target.auth);
 
-		var access_desc = target.access_desc;
-		target.setRequestDesc(access_desc);
-
 		if (target.auth.deep_sanbdox){
 			pvUpdate(target, 'deep_sandbox', true);
 		}
@@ -28,7 +25,6 @@ var LfmLogin = spv.inh(pv.Model, {
 	}
 }, {
 	model_name: 'auth_block_lfm',
-	access_desc: localize('to-get-access'),
 	'compx-has_session': [[
 		'@one:session:auth'
 	]],
@@ -41,9 +37,13 @@ var LfmLogin = spv.inh(pv.Model, {
 	notWaitData: function() {
 		pvUpdate(this, 'data_wait', false);
 	},
-	setRequestDesc: function(text) {
-		pvUpdate(this, 'request_description', text ? text + " " + localize("lfm-auth-invitation") : "");
-	},
+	'compx-access_desc': [['#locales.to-get-access']],
+	'compx-request_description': [
+		['access_desc', '#locales.lfm-auth-invitation'],
+		function(text, invite) {
+			return text ? text + " " + invite : "";
+		}
+	],
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
 			this.bindAuthCallback();
@@ -69,10 +69,10 @@ var LfmLogin = spv.inh(pv.Model, {
 var LfmScrobble = spv.inh(LfmLogin, {
 	init: function(target){
 		target.wch(target.app, 'settings-lfm-scrobbling', 'scrobbling');
-		target.setRequestDesc(localize('lastfm-scrobble-access'));
 		pvUpdate(target, 'active', true);
 	}
 }, {
+	'compx-access_desc': [['#locales.lastfm-scrobble-access']],
 	beforeRequest: function() {
 		this.bindAuthCallback();
 	},
