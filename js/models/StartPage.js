@@ -99,7 +99,9 @@ var StartPage = spv.inh(BrowseMap.Model, {
 		by_type: {
 			artist: [
 				ArtCard, null, {
-					artist_name: 'name_spaced'
+					artist_name: [function(arg){
+						return route.decodeURLPart(arg.split('/')[1]);
+					},'simple_name']
 				}
 				/*
 				url_part: [['artist_name'], function(artist_name) {
