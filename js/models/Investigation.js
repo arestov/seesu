@@ -327,7 +327,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 			}
 			this.loaded();
 			this.removeOldResults();
-			pv.update(this, 'no_results_text', false);
+			pv.update(this, 'has_no_results', false);
 
 
 			this.r = new SearchResults(q);
@@ -362,7 +362,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 			} else{
 				if (no_more_results){
 					if (this.no_results_text){
-						pv.update(this, 'no_results_text', this.no_results_text);
+						pv.update(this, 'has_no_results', true);
 						this.hideButton();
 					} else{
 						this.setInactive();

@@ -70,7 +70,13 @@ var seesuSection = spv.inh(base.SearchSection, {
 
 	}
 }, {
-	no_results_text: localize('nothing-found')
+	no_results_text: true,
+	'compx-no_results_text': [
+		['#locales.nothing-found', 'has_no_results'],
+		function(desc, no_results) {
+			return no_results && desc;
+		}
+	]
 });
 
 var PlaylistsSection = spv.inh(base.SearchSection, {
