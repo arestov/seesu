@@ -4,11 +4,11 @@ function(app_serv, BrowseMap, LoadableList, spv, SongsList, ArtCard, LfmAuth, de
 var ArtistsList = ArtCard.ArtistsList;
 var AlbumsList = ArtCard.AlbumsList;
 
-var localize = app_serv.localize;
 var pvUpdate = pv.update;
 var cloneObj = spv.cloneObj;
 //
 var UserCardLFMLogin = spv.inh(LfmAuth.LfmLogin, {}, {
+	'compx-access_desc': [['^access_desc']],
 	beforeRequest: function() {
 		var auth = this.getNesting('auth');
 		pvUpdate(auth, 'requested_by', this._provoda_id);
@@ -175,7 +175,7 @@ var TopUserTracks = spv.inh(SongsList, {}, cloneObj({
 
 
 var LfmLovedList = spv.inh(SongsList, {}, cloneObj({
-	access_desc: localize('grant-love-lfm-access'),
+	'compx-access_desc': [['#locales.grant-love-lfm-access']],
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('lovedtracks'),
 		['lfm', 'get', function() {
@@ -188,7 +188,7 @@ var LfmLovedList = spv.inh(SongsList, {}, cloneObj({
 
 var RecommArtList = spv.inh(ArtistsList, {}, cloneObj({
 	page_limit: 30,
-	access_desc: localize('lastfm-reccoms-access'),
+	'compx-access_desc': [['#locales.lastfm-reccoms-access']],
 	'compx-loader_disallowed': [
 		['loader_disallowed'],
 		function() {
@@ -376,7 +376,7 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 
 
 var UserNewReleases = spv.inh(AlbumsList, {}, cloneObj({
-	access_desc: localize('lastfm-reccoms-access'),
+	'compx-access_desc': [['#locales.lastfm-reccoms-access']],
 	page_limit: 50,
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('albums'),

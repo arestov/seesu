@@ -36,10 +36,11 @@ var LfmLogin = spv.inh(pv.Model, {
 	notWaitData: function() {
 		pvUpdate(this, 'data_wait', false);
 	},
-	'compx-access_desc': [['#locales.to-get-access']],
+	'compx-default_access_desc': [['#locales.to-get-access']],
 	'compx-request_description': [
-		['access_desc', '#locales.lfm-auth-invitation'],
-		function(text, invite) {
+		['access_desc', 'default_access_desc', '#locales.lfm-auth-invitation'],
+		function(desc, default_desc, invite) {
+			var text = desc || default_desc;
 			return text ? text + " " + invite : "";
 		}
 	],
