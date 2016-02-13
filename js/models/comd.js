@@ -1,6 +1,5 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(pv, spv, app_serv, morph_helpers){
 "use strict";
-var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
 var CommonMessagesStore = spv.inh(pv.Eventor, {
@@ -491,10 +490,6 @@ var VkLoginB = spv.inh(pv.Model, {
 			return desc ? (desc + ' ' + vk_inv): '';
 		}
 	],
-	setRequestDesc: function(text) {
-		throw new Error();
-		pvUpdate(this, 'request_description', text ? text + " " + localize("vk-auth-invitation") : "");
-	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
 			this.bindAuthCallback();
