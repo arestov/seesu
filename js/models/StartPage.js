@@ -95,14 +95,61 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 		}
 	},
-	sub_pages_routes: {
-		'catalog': function(name) {
-			return [ArtCard, {
-				head: {
-					artist_name: name
+	sub_pager: {
+		by_type: {
+			artist: [
+				ArtCard, null, {
+					artist_name: 'name_spaced'
 				}
-			}];
+				/*
+				url_part: [['artist_name'], function(artist_name) {
+					return artist_name && '/catalog/' + this.app.encodeURLPart(artist_name);
+				}],
+				*/
+			],
+			// track: [],
+			user_current: [
+				UserCard, [['#locales.your-pmus-f-aq']], {
+					for_current_user: [true]
+				}
+			],
+			user_su: [
+				SeesuUser, [['vk_userid']], {
+					vk_userid: 'name_spaced'
+				}
+			],
+			user_lfm: [
+				UserCard.LfmUserCard, null, {
+					lfm_userid: 'name_spaced'
+				}
+			],
+			user_vk: [
+				UserCard.VkUserCard, null, {
+					vk_userid: 'name_spaced'
+				}
+			]
 		},
+		type: {
+			catalog: 'artist',
+			// tracks: 'track',
+			// cloudcasts: 'cloudcast',
+			users: (function(){
+				var spaces = spv.makeIndexByField(['lfm', 'vk', 'su']);
+				return function(name) {
+					if (name == 'me') {
+						return 'user_current';
+					}
+
+					var name_spaced = name.split(':');
+					var namespace = name_spaced[0];
+					if (spaces[namespace]) {
+						return 'user_' + namespace;
+					}
+				};
+			})()
+		}
+	},
+	sub_pages_routes: {
 		'tracks': function(complex_string, raw_str) {
 			var full_name = 'tracks/' + raw_str;
 			var parts = this.app.getCommaParts(raw_str);
@@ -120,51 +167,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 				}];
 			}
 
-		},
-		'users': function(name) {
-			var full_name = 'users/' + name;
-			if (name == 'me'){
-				return [UserCard, {
-					states: {
-						nav_title: localize('your-pmus-f-aq'),
-						url_part: '/' + full_name
-					},
-					head: {
-						for_current_user: true
-					}
-				}];
-			} else {
-				var name_spaced = name.split(':');
-				var namespace = name_spaced[0];
-				if (namespace == 'lfm') {
-					return [UserCard.LfmUserCard, {
-						states: {
-							url_part: '/' + full_name
-						},
-						head: {
-							lfm_userid: name_spaced[1]
-						}
-					}];
-				} else if (namespace == 'vk') {
-					return [UserCard.VkUserCard, {
-						states: {
-							url_part: '/' + full_name
-						},
-						head: {
-							vk_userid: name_spaced[1]
-						}
-					}];
-				} else if (namespace == 'su') {
-					return [SeesuUser, {
-						states: {
-							url_part: '/' + full_name
-						},
-						head: {
-							vk_userid: name_spaced[1]
-						}
-					}];
-				}
-			}
 		},
 		'cloudcasts': function(mixcloud_urlpiece) {
 			var full_name = 'cloudcasts/' +  this.app.encodeURLPart(mixcloud_urlpiece);

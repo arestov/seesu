@@ -475,9 +475,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 	complex_states: {
 
 		nav_title: [['artist_name']],
-		url_part: [['artist_name'], function(artist_name) {
-			return artist_name && '/catalog/' + this.app.encodeURLPart(artist_name);
-		}],
+
 		'selected_image': {
 			depends_on: ['lfm_image', 'lfm_img', 'profile_image', 'shared_lfm_img'],
 			fn: function(lfmi_wrap, lfm_img, pi_wrap, shared_lfm_img) {
