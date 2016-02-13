@@ -79,20 +79,14 @@ var seesuSection = spv.inh(base.SearchSection, {
 	]
 });
 
-var PlaylistsSection = spv.inh(base.SearchSection, {
-	init: function(self) {
-		pvUpdate(self, 'section_title', localize('playlists'));
-	}
-}, {
+var PlaylistsSection = spv.inh(base.SearchSection, {}, {
+	'compx-section_title': [['#locales.playlists']],
 	model_name: 'section-playlist',
 	resItem: playlistSuggest
 });
 
-var ArtistsSection = spv.inh(seesuSection, {
-	init: function(self) {
-		pvUpdate(self, 'section_title', localize('Artists','Artists'));
-	}
-}, {
+var ArtistsSection = spv.inh(seesuSection, {}, {
+	'compx-section_title': [['#locales.Artists']],
 	model_name: 'section-artist',
 	getButtonText: function(have_results, q){
 		if (have_results){
@@ -153,11 +147,8 @@ var trackSuggest = spv.inh(base.BaseSuggest, {
 
 
 
-var TracksSection = spv.inh(seesuSection, {
-	init: function(target) {
-		pvUpdate(target, 'section_title', localize('Tracks','Tracks'));
-	},
-}, {
+var TracksSection = spv.inh(seesuSection, {}, {
+	'compx-section_title': [['#locales.Tracks']],
 	model_name: 'section-track',
 
 	getButtonText: function(have_results, q){
@@ -202,11 +193,8 @@ var tagSuggest = spv.inh(base.BaseSuggest, {
 });
 
 
-var TagsSection = spv.inh(seesuSection, {
-	init: function(self) {
-		pvUpdate(self, 'section_title',  localize('Tags'));
-	}
-}, {
+var TagsSection = spv.inh(seesuSection, {}, {
+	'compx-section_title': [['#locales.Tags']],
 	model_name: 'section-tag',
 	getButtonText: function(have_results, q){
 		if (have_results){
@@ -257,11 +245,8 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
 	}
 });
 
-var AlbumsSection = spv.inh(seesuSection, {
-	init: function(self) {
-		pvUpdate(self, 'section_title', localize('Albums', 'Albums'));
-	}
-}, {
+var AlbumsSection = spv.inh(seesuSection, {}, {
+	'compx-section_title': [['#locales.Albums']],
 	model_name: 'section-album',
 	getButtonText: function(have_results, q){
 		if (have_results){
@@ -443,17 +428,21 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 			lfmhelp.getLastfmSuggests('tag.search', {tag: q}, q, this.g('section-tag'), suParseTagsResults);
 			lfmhelp.getLastfmSuggests('album.search', {album: q}, q, this.g('section-album'), suParseAlbumsResults);
 		}, 400),
-	getTitleString: function(text){
-		var original = localize('Search-resuls');
-
-		if (text){
-			return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
-		} else{
-			var usual_text = original.replace(this.query_regexp, '');
-			var cap = usual_text.charAt(0).toLocaleUpperCase();
-			return cap + usual_text.slice(1);
+	'compx-nav_title': [
+		['query', '#locales.Search-resuls'],
+		function(text, original) {
+			if (!original) {
+				return;
+			}
+			if (text){
+				return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
+			} else{
+				var usual_text = original.replace(this.query_regexp, '');
+				var cap = usual_text.charAt(0).toLocaleUpperCase();
+				return cap + usual_text.slice(1);
+			}
 		}
-	}
+	]
 });
 
 

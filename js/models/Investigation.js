@@ -153,9 +153,7 @@ define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
 		changeQuery: function(q, force){
 			if (this.q != q || force){
 				this.stopRequests();
-				if (this.getTitleString){
-					pv.update(this, 'nav_title', this.getTitleString(q));
-				}
+
 				this.loaded();
 				this.setItemForEnter();
 				var sections_array = this.getNesting('section') || [];
