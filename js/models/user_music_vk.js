@@ -6,7 +6,7 @@ var pvUpdate = pv.update;
 var cloneObj = spv.cloneObj;
 
 var VkAudioLogin = spv.inh(comd.VkLoginB, {}, {
-	access_desc: localize('to-play-vk-audio'),
+	'compx-access_desc': [['#locales.to-play-vk-audio']],
 	beforeRequest: function() {
 		var auth = this.getNesting('auth');
 		pvUpdate(auth, 'requested_by', this._provoda_id);

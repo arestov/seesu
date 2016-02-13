@@ -443,9 +443,6 @@ var VkLoginB = spv.inh(pv.Model, {
 			pvUpdate(target, 'has_notify_closer', true);
 		}
 
-		var desc = (config && config.desc) || target.access_desc;
-		target.setRequestDesc(desc);
-
 		if (target.auth.deep_sanbdox){
 			pvUpdate(target, 'deep_sandbox', true);
 		}
@@ -488,7 +485,14 @@ var VkLoginB = spv.inh(pv.Model, {
 	notWaitData: function() {
 		pvUpdate(this, 'data_wait', false);
 	},
+	'compx-request_description': [
+		['access_desc', '#locales.vk-auth-invitation'],
+		function(desc, vk_inv) {
+			return desc ? (desc + ' ' + vk_inv): '';
+		}
+	],
 	setRequestDesc: function(text) {
+		throw new Error();
 		pvUpdate(this, 'request_description', text ? text + " " + localize("vk-auth-invitation") : "");
 	},
 	useCode: function(auth_code){

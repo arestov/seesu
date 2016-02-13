@@ -4,7 +4,7 @@ var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
 var auth = pv.behavior({
-	access_desc: localize('to-meet-man-vk-short'),
+	'compx-access_desc': [['#locales.to-meet-man-vk-short']],
 	beforeRequest: function() {
 		var auth = this.getNesting('auth');
 		pvUpdate(auth, 'requested_by', this._provoda_id);

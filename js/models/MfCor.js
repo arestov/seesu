@@ -4,8 +4,15 @@ function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, Loa
 var localize = app_serv.localize;
 
 var MFCorVkLogin = spv.inh(comd.VkLoginB, {}, {
+	'compx-access_desc': [
+		['#locales.to-find-and-play', '#locales.music-files-from-vk'],
+		function(to_find, files) {
+			if (!to_find || !files) {return;}
+			return to_find + ' ' + files;
+		}
+	],
 	config: {
-		desc: localize("to-find-and-play")  + " " +  localize('music-files-from-vk'),
+		// desc: localize("to-find-and-play")  + " " +  localize('music-files-from-vk'),
 		open_opts: {settings_bits: 8},
 		getNotf: function(target) {
 			return {

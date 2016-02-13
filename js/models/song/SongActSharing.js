@@ -1,7 +1,6 @@
 define(['pv', 'spv', 'app_serv', '../invstg', '../comd', 'js/LfmAuth'],
 function(pv, spv, app_serv,  invstg, comd, LfmAuth) {
 "use strict";
-var localize = app_serv.localize;
 var app_env = app_serv.app_env;
 var pvState = pv.state;
 
@@ -31,8 +30,13 @@ var struserSuggest = spv.inh(invstg.BaseSuggest, {
 });
 
 var VKLoginFSearch = spv.inh(comd.VkLoginB, {}, {
+	'compx-access_desc': [
+		['#locales.to-find-vk-friends', '#locales.to-post-and-find-vk', '#env.vkontakte'],
+		function(friends, to_post, is_vk) {
+			return is_vk ? friends: to_post;
+		}
+	],
 	config: {
-		desc:  app_env.vkontakte ? localize('to-find-vk-friends') : localize("to-post-and-find-vk"),
 		open_opts: {settings_bits: 2}
 	}
 });
