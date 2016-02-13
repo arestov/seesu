@@ -2,11 +2,11 @@ define(
 ['require', 'spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap', './modules/net_apis', './libs/Mp3Search',
 './libs/ScApi', './modules/torrent_searches', './libs/FuncsQueue', './libs/LastfmAPIExtended',
 './models/AppModel', './models/comd', './LfmAuth', './models/StartPage', './SeesuServerAPI', './libs/VkAuth', './libs/VkApi', './modules/initVk',
-'./modules/PlayerSeesu', './models/invstg', 'cache_ajax', './libs/ProspApi', 'View', 'js/libs/localizer'],
+'./modules/PlayerSeesu', './models/invstg', 'cache_ajax', './libs/ProspApi', 'View', 'js/libs/localizer', './modules/route'],
 function(require, spv, app_serv, pv, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
-PlayerSeesu, invstg, cache_ajax, ProspApi, View, localize_dict) {
+PlayerSeesu, invstg, cache_ajax, ProspApi, View, localize_dict, route) {
 'use strict';
 var
 	localize = app_serv.localize,
@@ -580,32 +580,10 @@ AppModel.extendTo(SeesuApp, {
 	fs: {},//fast search
 	env: app_env,
 	server_url: 'http://seesu.me/',
-	encodeURLPart: function(part){
-		var spaced = part.split(" ");
-		$.each(spaced, function(i, el){
-			spaced[i] = encodeURIComponent(el);
-		});
-		return spaced.join("+");
-	},
-	decodeURLPart: function(part) {
-		var spaced = part.split("+");
-		$.each(spaced, function(i, el){
-			spaced[i] = decodeURIComponent(el);
-		});
-		return spaced.join(" ");
-	},
-	joinCommaParts: function(array) {
-		return array.map(function(item) {
-			return this.encodeURLPart(item);
-		}, this).join(',');
-	},
-	getCommaParts: function(string) {
-		var parts = string.split(',');
-		for (var i = 0; i < parts.length; i++) {
-			parts[i] = this.decodeURLPart(parts[i]);
-		}
-		return parts;
-	},
+	encodeURLPart: route.encodeURLPart,
+	decodeURLPart: route.decodeURLPart,
+	joinCommaParts: route.joinCommaParts,
+	getCommaParts: route.getCommaParts,
 	app_pages: {
 		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi/reviews",
 		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko/reviews",
