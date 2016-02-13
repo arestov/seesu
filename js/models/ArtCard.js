@@ -1,8 +1,6 @@
 define(['spv', 'pv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'js/modules/declr_parsers'],
 function(spv, pv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers){
 "use strict";
-var localize = app_serv.localize;
-
 var ArtCard;
 var pvUpdate = pv.update;
 
@@ -239,10 +237,7 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
 			return artist_id && (mp_show || pfocus);
 		}
 	],
-	'compx-possible_loader_disallowing': [['possible_loader_disallowing'],
-	function() {
-		return localize('no-dgs-id');
-	}],
+	'compx-possible_loader_disallowing': [['#locales.no-dgs-id']],
 	'compx-profile_searching': [['^discogs_id_searching']],
 	'compx-artist_id':[['^discogs_id']],
 	'compx-loader_disallowing_desc': {
@@ -359,13 +354,13 @@ var SoundcloudArtcardSongs = spv.inh(SongsList, {
 		}
 	],
 	'compx-possible_loader_disallowing': [
-		['^no_soundcloud_profile', 'artist_id', '^soundcloud_profile'],
-		function(no_soundcloud_profile, artist_id) {
+		['^no_soundcloud_profile', 'artist_id', '^soundcloud_profile', '#locales.no-soundcloud-profile', '#locales.Sc-profile-not-found'],
+		function(no_soundcloud_profile, artist_id, profile, desc_no_preofile, desc_not_found) {
 			if (no_soundcloud_profile) {
-				return localize('no-soundcloud-profile');
+				return desc_no_preofile;
 			}
 			if (!artist_id) {
-				return localize('Sc-profile-not-found');
+				return desc_not_found;
 			}
 		}
 	],

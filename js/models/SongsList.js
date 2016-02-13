@@ -1,6 +1,5 @@
 define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase', 'spv'], function(pv, app_serv, LoadableList, comd, Song, SongsListBase, spv){
 	"use strict";
-	var localize = app_serv.localize;
 	var app_env = app_serv.app_env;
 	var escape = window.escape;
 
@@ -115,9 +114,9 @@ var HypemPlaylist = spv.inh(SongsList, {
 	init: function(target) {
 		target.can_use = target.app.hypem.can_send;
 		pvUpdate(target, 'browser_can_load', target.can_use);
-		pvUpdate(target, 'possible_loader_disallowing', localize('Hypem-cant-load'));
 	}
 }, {
+	'compx-possible_loader_disallowing': [['#locales.Hypem-cant-load']],
 	page_limit: 20,
 	'compx-loader_disallowing_desc': {
 		depends_on: ['loader_disallowed', 'possible_loader_disallowing'],
