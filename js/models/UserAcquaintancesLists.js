@@ -52,11 +52,7 @@ var UserAcquaintance = spv.inh(pv.Model, {
 			}
 		}
 	},
-	/*
-	return ;
-} else {
-	return localize('if-you-accept-one-i') + ' ' + localize('will-get-link');
-	*/
+
 	acceptInvite: function() {
 		var _this = this;
 		var su = this.app;
