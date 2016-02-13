@@ -18,16 +18,6 @@ var UserAcquaintance = spv.inh(pv.Model, {
 
 		pvUpdate(target, 'current_user_is_sender', params.current_user_is_sender);
 		pvUpdate(target, 'accepted', params.accepted);
-	//	this.update
-
-		//accept_button
-
-		//need_accept b
-		//after_request_desc
-		//after_accept_desc
-
-		//localize('if-one-accept-i') + ' ' + localize('will-get-link')
-		//localize('if-you-accept-one-i') + ' ' + localize('will-get-link')
 	}
 }, {
 	complex_states: {

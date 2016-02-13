@@ -1,6 +1,5 @@
 define(['pv', 'spv', 'app_serv', 'hex_md5'], function(pv, spv, app_serv, hex_md5) {
 "use strict";
-var localize = app_serv.localize;
 var pvUpdate = pv.update;
 
 

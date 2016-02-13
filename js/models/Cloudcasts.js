@@ -1,7 +1,6 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './SongsList', './LoadableList'],
 function(pv, spv, app_serv, BrowseMap, SongsList, LoadableList) {
 "use strict";
-var localize = app_serv.localize;
 
 //http://api.mixcloud.com/track/michael-jackson/smooth-criminal-acapella/?metadata=1
 //Cloudcast
