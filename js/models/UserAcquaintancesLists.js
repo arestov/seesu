@@ -84,18 +84,18 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
 	model_name: 'user_acqs_list',
 
 	'compx-wait_me_desc': {
-		depends_on: ['@every:accepted:acqs_from_someone'],
-		fn: function(not_wait_me) {
-			if (!not_wait_me){
-				return localize('if-you-accept-one-i') + ' ' + localize('will-get-link');
+		depends_on: ['@every:accepted:acqs_from_someone', '#locales.if-you-accept-one-i', '#locales.will-get-link'],
+		fn: function(not_wait_me, accept_desc, get_desc) {
+			if (!not_wait_me && accept_desc && get_desc){
+				return accept_desc + ' ' + get_desc;
 			}
 		}
 	},
 	'compx-wait_someone_desc': {
 		depends_on: ['@every:accepted:acqs_from_me'],
-		fn: function(not_wait_someone) {
-			if (!not_wait_someone){
-				return localize('if-one-accept-i') + ' ' + localize('will-get-link');
+		fn: function(not_wait_someone, accept_desc, get_desc) {
+			if (!not_wait_someone && accept_desc && get_desc){
+				return accept_desc + ' ' + get_desc;
 			}
 
 		}
