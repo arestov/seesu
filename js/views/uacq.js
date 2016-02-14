@@ -1,44 +1,20 @@
 define(['pv', 'jquery', 'app_serv', './coct', 'spv', 'View'], function(pv, $, app_serv, coct, spv, View) {
 'use strict';
-var localize = app_serv.localize;
 
 var UserAcquaintanceView = spv.inh(View, {}, {
-	'compx-lo_accept_inv': [['#locales.accept-inv']],
-	base_tree: {
-		sample_name: 'people-list-item'
-	}
+	'compx-lo_accept_inv': [['#locales.accept-inv']]
 });
 
 var UserAcquaintancesListView = spv.inh(coct.PageView, {}, {
-	createBase: function() {
-		this._super();
-
-		var fr_so_wrap = $('<div class="relations-invites-wrap"></div>').appendTo(this.c);
-
-		$('<h3></h3>')
-			.text(localize('rels-people-you'))
-			.appendTo(fr_so_wrap);
-
-		this.from_someone_c = $('<ul class="people-list people-l-wide"></ul>').appendTo(fr_so_wrap);
-
-		var fr_me_wrap = $('<div class="relations-likes-wrap"></div>').appendTo(this.c);
-
-		$('<h3></h3>')
-			.text(localize('rels-you-people'))
-			.appendTo(fr_me_wrap);
-
-		this.from_me_c = $('<ul class="people-list people-l-wide"></ul>').appendTo(fr_me_wrap);
+	'compx-lo_from_people': [['#locales.rels-people-you']],
+	'compx-lo_from_you': [['#locales.rels-you-people']],
+	base_tree: {
+		sample_name: 'relations_page'
 	},
 	children_views: {
-		acqs_from_someone: {
-			main: UserAcquaintanceView
-		},
-		acqs_from_me: {
-			main: UserAcquaintanceView
-		}
-	},
-	'collch-acqs_from_someone': 'from_someone_c',
-	'collch-acqs_from_me': 'from_me_c'
+		acqs_from_someone: UserAcquaintanceView,
+		acqs_from_me: UserAcquaintanceView
+	}
 });
 
 var UserAcqPreview = spv.inh(View, {}, {

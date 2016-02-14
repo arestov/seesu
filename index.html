@@ -503,24 +503,40 @@
 			<!--pv-replace sample_name:lastfm_pthgs-->
 			<!--pv-replace sample_name:view_sources-->
 		</div>
-		<ul>
-			<li class="people-list-item">
-				<div class="people-image">
-					<img
-						src="https://vk.com/images/camera_b.gif"
-						pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
-				</div>
-				<div class="button-place-people-el" pv-anchor="button_place" pv-when="needs_accept_b">
-					<span class="button-hole"><a class="nicebutton" pv-text="{{lo_accept_inv}}" pv-events="click::acceptInvite"></a></span>
-					<!-- needs_accept_b -->
-				</div>
-				<div class="p-link-place" pv-when="userlink" pv-anchor="link_place">
-					<a href="" pv-props="href: {{userlink.href}}" pv-text="{{userlink.text}}"></a>
-				</div>
-				<span class="desc" pv-when="after_accept_desc" pv-text="{{after_accept_desc}}"></span>
+		<div class="relations_page usual_page">
+			<div class="relations-invites-wrap">
+				<h3 pv-text="{{lo_from_people}}"></h3>
+				<ul class="people-list people-l-wide">
+					<li pv-nest='acqs_from_someone' class="people-list-item">
+						<!--pv-replace sample_name:people-list-item-inner-->
+					</li>
+				</ul>
+			</div>
+			<div class="relations-likes-wrap">
+				<h3 pv-text="{{lo_from_you}}"></h3>
+				<ul class="people-list people-l-wide">
+					<li pv-nest='acqs_from_me' class="people-list-item">
+						<!--pv-replace sample_name:people-list-item-inner-->
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="people-list-item-inner">
+			<div class="people-image">
+				<img
+					src="https://vk.com/images/camera_b.gif"
+					pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+			</div>
+			<div class="button-place-people-el" pv-anchor="button_place" pv-when="needs_accept_b">
+				<span class="button-hole"><a class="nicebutton" pv-text="{{lo_accept_inv}}" pv-events="click::acceptInvite"></a></span>
+				<!-- needs_accept_b -->
+			</div>
+			<div class="p-link-place" pv-when="userlink" pv-anchor="link_place">
+				<a href="" pv-props="href: {{userlink.href}}" pv-text="{{userlink.text}}"></a>
+			</div>
+			<span class="desc" pv-when="after_accept_desc" pv-text="{{after_accept_desc}}"></span>
 
-			</li>
-		</ul>
+		</div>
 
 		<div class="lfm_user_page usual_page">
 			<div class="lfm_user_page-header">
