@@ -18,17 +18,8 @@ var UserAcquaintancesListView = spv.inh(coct.PageView, {}, {
 });
 
 var UserAcqPreview = spv.inh(View, {}, {
-	dom_rp: true,
-	createBase: function() {
-		this.c = $("<span></span>");
-		this.userimg = $('<img/>').attr('src', 'https://vk.com/images/camera_b.gif').appendTo(this.c);
-		this.dom_related_props.push('userimg');
-
-	},
-	'stch-user_photo': function(target, state) {
-		if (state){
-			target.userimg.attr('src', state);
-		}
+	base_tree: {
+		sample_name: 'user_acq_preview_item'
 	}
 });
 var UserAcquaintancesListPreview = spv.inh(View, {}, {
