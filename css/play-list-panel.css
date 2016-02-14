@@ -20,7 +20,7 @@
 			.pla-panel .pla-button:hover{
 				color:#666;
 				}
-				
+
 			.playlist_panel .playlist-actions .pla-button{
 				float:left;
 				}
@@ -38,7 +38,7 @@
 					margin:0 6px 0 0;
 				}
 	.playlist_panel .pla-row-content{
-		
+
 		position:relative;
 		margin:1rem -1rem 0;
 		padding: 1rem;
@@ -52,7 +52,7 @@
 
 		}
 		.playlist_panel .pla-row-content .rc-s-arrow{
-			border-bottom-color:#444; 
+			border-bottom-color:#444;
 			}
 			.playlist_panel .pla-row-content .rc-s-arrow-bg{
 				border-bottom-color:#4D4D4D;
@@ -117,10 +117,10 @@
 
 .scrobbling-button .trackbutton{
 	background-image: url(../i/lfm-icon.png);
-	
+
 	}
 	.scrobbling-button .trackbutton:hover{
-		
+
 	}
 	.scrobbling-button .trackbutton:active{
 	}
@@ -170,9 +170,9 @@
 	position:relative;
 	float:right;
 	margin-top:2px;
-	
+
 	margin-left:1rem;
-	
+
 	width:50px;
 	height:6px;
 	border: 1px solid #4A4A4A;

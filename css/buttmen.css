@@ -2,7 +2,7 @@
 	position:relative;
 	width:25px;
 	height:1.72rem;
-	
+
 	}
 	.buttmen a{
 		border:0;
@@ -23,7 +23,7 @@
 		height:1.72rem;
 		}
 .buttmen-highlighting{
-	
+
 	}
 	.buttmen-highlighting .buttmen-mask{
 		display:none;
@@ -31,21 +31,21 @@
 	.buttmen-highlighting .buttmen-hlts{
 		display:block;
 	}
-	
+
 .buttmen-butting{
-	
+
 	}
 	.buttmen-butting .buttmen-mask{
 		display:none;
 	}
 	.buttmen-butting .buttmen-butts{
 		display:block;
-		}	
-		
-		
+		}
+
+
 .buttmen-butts{
 	display:none;
-	
+
 	}
 	.buttmen-butts li{
 		position:absolute;
@@ -56,7 +56,7 @@
 	}
 	.buttmen-butts .buttmen-butt-top{
 		top:-28px;
-		
+
 		}
 	.buttmen-butts .buttmen-butt-right{
 		right:-28px;
@@ -85,7 +85,7 @@
 	}
 	.buttmen-hlts .buttmen-hlt-top{
 		top:-1.72rem;
-		
+
 		}
 	.buttmen-hlts .buttmen-hlt-right{
 		right:-1.72rem;
@@ -105,7 +105,7 @@
 	<dt class="main-button">
 		<a class="pc pc-add "  title="add to playlist">
 		</a>
-		
+
 		<span class="buttmen-mask"></span>
 	</dt>
 	<dd class="buttmen-hlts">
@@ -122,7 +122,7 @@
 				<a class="pc pc-prev" ></a>
 			</li>
 			<li class="buttmen-butt-right">
-				<a class="pc pc-stop"></a>	
+				<a class="pc pc-stop"></a>
 			</li>
 			<li class="buttmen-butt-bottom">
 				<a class="pc pc-next"></a>
@@ -136,7 +136,7 @@
 
 .play-controls{
 	display:none;
-	
+
 }
 
 	.play-control{
@@ -171,13 +171,13 @@
 	position:absolute;
 	top:0;
 	right:115px;
-	
+
 	z-index:7;
 	margin-top:5px;
 }
 
 li.playing-song .play-controls{
-	
+
 }
 
 .show-zoom-to-track ul.tracks-for-play .play-controls{

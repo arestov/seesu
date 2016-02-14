@@ -30,15 +30,15 @@
 		padding-bottom: 0rem;
 		min-height: 1.5rem;
 		}
-	
+
 	.page-scheme .area_for_button .area-button{
 		padding-bottom: 0.5rem;
 		}
 	.area_for_button .area-description {
-		
+
 		display: block;
 		font-size: 0.8em;
-		
+
 		color: hsl(0, 0%, 55%);
 		}
 	.access-request .area_for_button .area-description {
@@ -52,7 +52,7 @@
 		}
 
 		.desc_prevw_list .desc_item{
-			
+
 			margin-right: 1rem;
 			}
 			.preview_line-wrap{
@@ -103,16 +103,16 @@
 	display: block;
 	margin-bottom:1rem;
 	padding: 0.5rem 1rem;
-	
+
 	border-radius: 0.6rem;
-	
+
 
 	border: 1px dashed #616161;
 
 
-	
+
 	color: hsl(0, 0%, 70%);
-	
+
 	}
 
 	.no_arfb .area-button{
@@ -126,7 +126,7 @@
 		background: #4f4f4f;
 		border-color: transparent;
 		border-top: 1px solid #5E5E5E;
-		/* 
+		/*
 		#5E5E5E;
 		#545454), to(#4D4D4D));
 		#474747;
@@ -136,7 +136,7 @@
 		}
 	.area_for_button:active,
 	.no_arfb .area-button:active{
-		
+
 		border-color:transparent;
 		background-image: none;
 		box-shadow: inset 0 0 10px 1px #454545;

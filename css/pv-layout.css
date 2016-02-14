@@ -17,15 +17,15 @@
 }
 
 .page-scheme{
-	
+
 	float:left;
-	
+
 
 	}
 .complex-page.page-scheme .complex-page-scroll_con{
 	overflow-x: hidden;
 	overflow-y: auto;
-	
+
 	margin-right: -30px;
 	height: 100%;
 	}
@@ -92,7 +92,7 @@
 
 	.page-scheme{
 		display: block;
-		
+
 		width: 200px;
 		}
 }
@@ -112,7 +112,7 @@
 		top: 0;
 		bottom: 0;
 		overflow: hidden;
-		
+
 		}
 	.app-loaded .can_be_animated.complex-page{
 		transition: left 0.12s ease-out, transform 0.12s ease-out;
