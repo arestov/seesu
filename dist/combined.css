@@ -432,6 +432,7 @@ a.desc{
 			height: 0.8rem;
 			width: 1.2rem;
 			}
+
 .preview_area{
 	1background: #545454;
 	border-radius: 0.5rem;
@@ -612,6 +613,7 @@ a.desc{
 	border-bottom: 1px solid #555;
 	cursor: default;
 	}
+
 html{
 	font-size:14px;
 }
@@ -2063,27 +2065,6 @@ body .surf_nav{
 	margin-bottom: 1rem;
 	margin-top: 0;
 	padding: 0 0.5rem;
-	}
-.user_acqes-preview{
-	cursor: pointer;
-	opacity: 0.5;
-	margin-top: 0.2rem;
-	}
-	.user_acqes-preview img{
-		width:25px;
-		height:25px;
-		}
-	.user_acqes-preview:hover{
-		opacity: 0.8;
-		}
-	.user_acqes-preview:active{
-		opacity: 1;
-		}
-	.page-scheme .user_acqes-preview{
-		display: none;
-		}
-	.user_acq_preview_item {
-		float:left;
 	}
 
 .album_preview{
@@ -3664,6 +3645,7 @@ li.playing-song .play-controls{
 }
 */
 
+
 .playlist_panel{
 	margin-bottom:10px;
 	padding-top:8px;
@@ -4000,6 +3982,7 @@ html.opera-extension{
 	min-height: 100%;
 	margin:0 1rem 0;
 }
+
 .complex-page{
 	position: relative;
 
@@ -4423,7 +4406,29 @@ html.opera-extension{
 			.full_album_name .album_name{
 				color: #999;
 				}
-
+		
+		.user_acqes-preview{
+			cursor: pointer;
+			opacity: 0.5;
+			margin-top: 0.2rem;
+			}
+			.user_acqes-preview img{
+				width:25px;
+				height:25px;
+				}
+			.user_acqes-preview:hover{
+				opacity: 0.8;
+				}
+			.user_acqes-preview:active{
+				opacity: 1;
+				}
+			.page-scheme .user_acqes-preview{
+				display: none;
+				}
+			.user_acq_preview_item {
+				float:left;
+			}
+		
 		.artist-info{
 			position:relative;
 			overflow:hidden;
@@ -4638,7 +4643,7 @@ html.opera-extension{
 		.desc-text{
 			padding-bottom:2px;
 		}
-
+		
 		.vk-needs-login .vk-login-context{
 			display:block;
 		}
@@ -4764,7 +4769,7 @@ html.opera-extension{
 		.vk-login-context input{
 			margin-left:0;
 		}
-
+		
 		.view_sources {
 			margin-top:1rem;
 			margin-bottom: 1rem;
@@ -4780,7 +4785,7 @@ html.opera-extension{
 		.page-scheme .view_sources {
 			font-size: 0.8rem;
 		}
-
+		
 
 		.track-video{
 		float:right;
@@ -4843,4 +4848,4 @@ html.opera-extension{
 			.video-preview:hover, .you-tube-video-link.active .video-preview{
 				border-color:#9C9C9C;
 				}
-
+		
