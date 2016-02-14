@@ -2082,6 +2082,10 @@ body .surf_nav{
 	.page-scheme .user_acqes-preview{
 		display: none;
 		}
+	.user_acq_preview_item {
+		float:left;
+	}
+
 .album_preview{
 	height: 4.58rem;
 	width: 4.58rem;

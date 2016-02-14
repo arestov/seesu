@@ -17,45 +17,16 @@ var UserAcquaintancesListView = spv.inh(coct.PageView, {}, {
 	}
 });
 
-var UserAcqPreview = spv.inh(View, {}, {
-	base_tree: {
-		sample_name: 'user_acq_preview_item'
-	}
-});
 var UserAcquaintancesListPreview = spv.inh(View, {}, {
-	dom_rp: true,
-	createBase: function() {
-		this.c = $('<div class="user_acqes-preview"></div>');
-		this.sended_tome_c = $('<span></span>').appendTo(this.c);
-
-		var _this = this;
-
-		this.c.click(function() {
-			_this.requestPage();
-		});
-
-		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);
-		this.acqs_frme_c = $('<span></span>').appendTo(this.c);
-		this.dom_related_props.push('sended_tome_c', 'acqs_frsmone_c', 'acqs_frme_c');
-	},
-	children_views: {
-		acqs_from_someone: {
-			main: UserAcqPreview
-		},
-		acqs_from_me: {
-			main: UserAcqPreview
-		}
-	},
-	'collch-acqs_from_someone': 'acqs_frsmone_c',
-	'collch-acqs_from_me': 'acqs_frme_c'
-
+	base_tree: {
+		sample_name: 'user_acqes-preview'
+	}
 });
 
 
 return {
 	UserAcquaintanceView:UserAcquaintanceView,
 	UserAcquaintancesListView:UserAcquaintancesListView,
-	UserAcqPreview:UserAcqPreview,
 	UserAcquaintancesListPreview:UserAcquaintancesListPreview
 };
 
