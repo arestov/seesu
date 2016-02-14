@@ -1,21 +1,18 @@
-define(['spv', 'localizer', './libs/w_storage', './preloaded_nk', 'env'],
-function(spv, localizer, w_storage, preloaded_nk, env) {
+define(['spv', './libs/w_storage', './preloaded_nk', 'env'],
+function(spv, w_storage, preloaded_nk, env) {
 "use strict";
 var app_serv = {};
 
-var localize = env.localize;
-
-app_serv.getRemainTimeText = function(time_string, full){
-	var d = new Date(time_string);
+app_serv.getRemainTimeText = function(d, full, lo_will_get, lo_month, lo_time){
 	var remain_desc = '';
 
 	if (full){
-		remain_desc += localize('wget-link') + ' ';
+		remain_desc += lo_will_get + ' ';
 	}
 
 	remain_desc += d.getDate() +
-	" " + localize('m'+(d.getMonth()+1)) +
-	" " + localize('attime') + ' ' + d.getHours() + ":" + d.getMinutes();
+	" " + lo_month +
+	" " + lo_time + ' ' + d.getHours() + ":" + d.getMinutes();
 
 	return remain_desc;
 };

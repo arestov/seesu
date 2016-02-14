@@ -34,10 +34,16 @@ var UserAcquaintance = spv.inh(pv.Model, {
 			}
 		},
 		after_accept_desc: {
-			depends_on: ['accepted', 'remainded_date', 'userlink'],
-			fn: function(accepted, remainded_date, userlink) {
+			depends_on: [
+				'accepted', 'remainded_date', 'userlink',
+				'#locales.wget-link', '#locales.attime', '#locales'
+			],
+			fn: function(accepted, remainded_date, userlink, lo_will_get, lo_time, locales) {
+				if (!lo_will_get || !lo_time || !locales) {return;}
 				if (accepted && !userlink){
-					return app_serv.getRemainTimeText(remainded_date, true);
+					var d = new Date(remainded_date);
+					var lo_month = locales['m'+(d.getMonth()+1)];
+					return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
 				}
 
 			}

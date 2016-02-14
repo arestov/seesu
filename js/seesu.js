@@ -8,9 +8,7 @@ ScApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, ProspApi, View, localize_dict, route) {
 'use strict';
-var
-	localize = app_serv.localize,
-	app_env = app_serv.app_env;
+var app_env = app_serv.app_env;
 
 var all_queues = [];
 var addQueue = function() {
@@ -43,8 +41,8 @@ var ChromeExtensionButtonView = spv.inh(View, {}, {
 				chrome.browserAction.setIcon({path:"/icons/icon19.png"});
 			}
 		},
-		'now_playing': function(target, text) {
-			chrome.browserAction.setTitle({title: localize('now_playing','Now Playing') + ': ' + text});
+		'now_playing_text': function(target, text) {
+			chrome.browserAction.setTitle({title: text});
 		}
 	}
 });
@@ -57,8 +55,8 @@ var OperaExtensionButtonView = spv.inh(View, {}, {
 				target.opts.opera_ext_b.icon = "/icons/icon18.png";
 			}
 		},
-		'now_playing': function(target, text) {
-			target.opts.opera_ext_b.title = localize('now_playing','Now Playing') + ': ' + text;
+		'now_playing_text': function(target, text) {
+			target.opts.opera_ext_b.title = text;
 		}
 	}
 });

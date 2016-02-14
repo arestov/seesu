@@ -208,12 +208,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		}
 
 	},
-	'compx-now_playing_text': {
-		depends_on: ['now_playing'],
-		fn: function(text) {
-			return localize('now_playing','Now Playing') + ': ' + text;
-		}
-	},
 
 	createDetails: function(){
 		this._super();

@@ -35,6 +35,14 @@ var props = {
 			}
 		}
 	},
+	'compx-now_playing_text': [
+		['locales.now_playing', 'now_playing'],
+		function(lo_now_playing, now_playing) {
+			if (!lo_now_playing || !now_playing) {return '';}
+
+			return lo_now_playing + ': ' + now_playing;
+		}
+	],
 	nowPlaying: function(mo) {
 		pv.update(this, 'now_playing', mo.getTitle());
 		this.current_playing = mo;
