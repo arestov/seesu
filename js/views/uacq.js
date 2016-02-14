@@ -3,66 +3,9 @@ define(['pv', 'jquery', 'app_serv', './coct', 'spv', 'View'], function(pv, $, ap
 var localize = app_serv.localize;
 
 var UserAcquaintanceView = spv.inh(View, {}, {
-	createBase: function() {
-		this.c = $('<li class="people-list-item"></li>');
-		var li = this.c;
-
-		this.userphoto_c = $('<div class="people-image"></div>').appendTo(li);
-		this.userphoto_img = $('<img/>').attr('src', 'https://vk.com/images/camera_b.gif').appendTo(this.userphoto_c);
-		this.button_place = $('<div class="button-place-people-el"></div>').appendTo(li);
-		this.link_place = $('<div class="p-link-place"></div>').appendTo(li);
-	},
-	'stch-user_photo': function(target, state) {
-		if (state){
-			target.userphoto_img.attr('src', state);
-		}
-	},
-	'stch-needs_accept_b': function(target, state) {
-		if (state){
-			if (!target.button_c){
-				var nb = target.root_view.createNiceButton();
-					nb.b.text( localize('accept-inv', 'Accept invite'));
-					nb.enable();
-				nb.b.click(function() {
-					target.RPCLegacy('acceptInvite');
-				});
-				target.button_c = nb.c;
-				nb.c.appendTo(target.button_place);
-			}
-
-		} else {
-			if (target.button_c){
-				target.button_c.remove();
-			}
-		}
-	},
-
-	'stch-userlink': function(target, state) {
-		if (state){
-			if (!target.ulink){
-				target.ulink = $('<a class=""></a>').appendTo(target.link_place);
-			}
-			target.ulink
-				.attr('href', state.href)
-				.text(state.text);
-		} else {
-			if (target.ulink){
-				target.ulink.remove();
-			}
-		}
-	},
-	'stch-after_accept_desc': function(target, state) {
-		if (state){
-			if (!target.af_ac_desc){
-				target.af_ac_desc = $('<span class="desc"></span>').appendTo(target.link_place);
-			}
-			target.af_ac_desc.text(state);
-		} else {
-			if (target.af_ac_desc){
-				target.af_ac_desc.remove();
-			}
-		}
-
+	'compx-lo_accept_inv': [['#locales.accept-inv']],
+	base_tree: {
+		sample_name: 'people-list-item'
 	}
 });
 

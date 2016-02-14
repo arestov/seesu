@@ -503,6 +503,25 @@
 			<!--pv-replace sample_name:lastfm_pthgs-->
 			<!--pv-replace sample_name:view_sources-->
 		</div>
+		<ul>
+			<li class="people-list-item">
+				<div class="people-image">
+					<img
+						src="https://vk.com/images/camera_b.gif"
+						pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+				</div>
+				<div class="button-place-people-el" pv-anchor="button_place" pv-when="needs_accept_b">
+					<span class="button-hole"><a class="nicebutton" pv-text="{{lo_accept_inv}}" pv-events="click::acceptInvite"></a></span>
+					<!-- needs_accept_b -->
+				</div>
+				<div class="p-link-place" pv-when="userlink" pv-anchor="link_place">
+					<a href="" pv-props="href: {{userlink.href}}" pv-text="{{userlink.text}}"></a>
+				</div>
+				<span class="desc" pv-when="after_accept_desc" pv-text="{{after_accept_desc}}"></span>
+
+			</li>
+		</ul>
+
 		<div class="lfm_user_page usual_page">
 			<div class="lfm_user_page-header">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="

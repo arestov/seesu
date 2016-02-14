@@ -301,6 +301,9 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		alb_prev_big: function() {
 			return this.els.ui_samples.children('.album_preview-big');
 		},
+		'people-list-item': function() {
+			return this.els.ui_samples.children('ul').children('.people-list-item');
+		},
 		'song-view': function() {
 			return this.els.ui_samples.children('ul').children('.song-view');
 		},
