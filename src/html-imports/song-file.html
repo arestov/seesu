@@ -9,17 +9,17 @@
 		selected-mf: selected
 		overstocked: overstock
 	">
-	<span 
+	<span
 		class="play-button-place"
 		pv-type="{{selected && 'way-point'}}"
 		pv-events="click:switchPlay">
 		<span class="pc-indicator big-indicator play-indicator pc-place">
 			<span class="pc pc-play big-control"></span>
 		</span>
-		
+
 	</span>
 	<div class="mf-progress" pv-anchor="progress_c">
-		<div 
+		<div
 			class="mf-load-progress"
 			pv-props="style.width:{{vis_loading_p}}"
 			></div>
@@ -31,7 +31,7 @@
 			<span class="mf-duration" pv-text="{{visible_duration_text}}"></span>
 			<span class="mf-source" pv-text="{{source_name}}"></span>
 			<span class="main-mf-text" pv-text="{{title}}" pv-props="title:{{description}}"></span>
-			
+
 		</div>
 	</div>
 </li>

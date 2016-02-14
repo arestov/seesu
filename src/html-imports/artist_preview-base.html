@@ -41,7 +41,7 @@
 .artist_preview-base .artist-tags{
 	margin:0;
 	padding:0.25rem 0 0;
-	
+
 	}
 .want-more-info .artist-tags{
 	clear:both;
@@ -59,22 +59,22 @@
 	overflow:hidden;
 	height:1.55rem;
 	line-height:1.5rem;
-	
+
 	}
-	
+
 	@media (min-height:600px) {
 		.artist-bio{
 			height:4.7rem;
 		}
 	}
-	
-	
+
+
 	.artist-similar a.artist{
 		margin-right:8px;
 		display: inline-block;
 		line-height: 1.2;
 		}
-	
+
 	.artist-tags a.music-tag{
 		margin-right:0.5rem;
 		white-space: nowrap;
@@ -82,7 +82,7 @@
 		line-height: 1.2;
 		}
 .artist-stat-in-song span{
-	
+
 }
 .artist-meta-info{
 	position:relative;
@@ -91,11 +91,11 @@
 	overflow:hidden;
 	}
 	.artist-meta-info .desc-name{
-		
+
 		}
 		.artist-meta-info .desc-name em {
 			font-style:normal;
-			
+
 		}
 
 
@@ -108,7 +108,7 @@
 	.artist_preview-base > .vk-login-context, .track-context > .vk-login-context{
 		margin:5px -13px 1.72rem;
 		border-radius:0;
-		}	
+		}
 	.artist_preview-base .dominator-head{
 			overflow:hidden;
 			padding:0;
@@ -147,12 +147,12 @@
 			border-bottom: 1px dotted #696969;
 		}
 
-		
+
 		.artist_preview-base .extend-switcher:hover{
 			background-color:#555;
 			}
 			.artist_preview-base .extend-switcher:hover .big-space{
-				border-bottom-color:transparent; 
+				border-bottom-color:transparent;
 				}
 		.track-context .want-more-info .extend-switcher{
 			text-shadow:0;
@@ -160,14 +160,14 @@
 		.track-context .want-more-info .extend-switcher:hover{
 			background-color:#585858;
 		}
-	
+
 
 	.artist_preview-base.want-more-info{
 		padding-bottom:1rem;
 	}
 	.artist_preview-base .artist-info {
 		display: none;
-		}	
+		}
 
 		.want-more-info .artist-info{
 			display: block;
@@ -177,11 +177,11 @@
 		display:none;
 		}
 
-	
-	
+
+
 	.want-more-info .extending-info{
 		display:block;
-		}	
+		}
 	.want-more-info .artist-bio,
 	.want-more-info .artist-tags,
 	.want-more-info .artist-similar{
@@ -193,11 +193,11 @@
 		position:static;
 	}
 
-	
+
 
 .artist-similar,.artist-tags{
 	overflow: hidden;
-	
+
 }
 .artist-info .artist-similar{
 	margin: 0.5rem 0;
@@ -212,45 +212,45 @@
 }
 .desc-text{
 	padding-bottom:2px;
-}	
+}
 </style>
-<div 
+<div
 	class="artist_preview-base"
 	pv-class="want-more-info: vis_wamo_info"
 	>
 	<div class="possible_images_con"></div>
-	
+
 	<div class="artist_preview-texcon">
 		<div class="dominator-head">
-			<div 
+			<div
 				class="closer-to-track"
 				pv-class="one-artist-playlist: one_artist_playlist ">
-				<a 
+				<a
 					class="js-serv lang localize-artcard"
-					
+
 					pv-type="way-point"
 					pv-events="click:requestPage"
 					>artcard</a>
 			</div>
-			<a 
+			<a
 				class="extend-switcher"
 				pv-events="click:showMoreInfo"
 				pv-type="way-point"
 				pv-class="hidden: !infb_text ">
 				<span class="big-space" pv-text="{{infb_text}}"></span>
 			</a>
-			<p 
+			<p
 			pv-nest="tags_list"
-			class="artist-tags hidden" 
+			class="artist-tags hidden"
 			pv-class="hidden: {{ (!preview_list || !preview_list.length) }}" >
 				<span class="simple-header">
 					<em class="lang localize-Tags">Tags</em>
 				</span>
-				<span pv-anchor="tags-c"><a 
-					class="music-tag js-serv" 
-					pv-repeat="tag in preview_list" 
-					pv-type="hard-way-point" 
-					pv-events="click:showTag" 
+				<span pv-anchor="tags-c"><a
+					class="music-tag js-serv"
+					pv-repeat="tag in preview_list"
+					pv-type="hard-way-point"
+					pv-events="click:showTag"
 					pv-text="{{tag.name}}"></a></span>
 			</p>
 		</div>
@@ -259,7 +259,7 @@
 				<span pv-class="hidden: !listeners" class="playcount">
 					<span class="desc">Listeners:</span>
 					<span pv-text="{{listeners}}"></span>
-				</span> 
+				</span>
 				<span pv-class="hidden: !playcount" class="hidden">
 					<span class="desc">Playcount:</span>
 					<span pv-text="{{playcount}}"></span>
@@ -267,28 +267,28 @@
 			</p>
 			<div class="artist-bio" pv-anchor="artbio">...</div>
 			<div class="artist-meta-info">
-				<p 
+				<p
 					pv-nest="similar_artists"
 					class="artist-similar">
 					<span class="desc-name">
 						<em>
-							<a 
+							<a
 								class="similar-artists js-serv lang localize-similar-arts"
 								pv-type="hard-way-point"
 								pv-events="click:requestPage"
 								>Similar artists:</a>
 						</em>
 					</span>
-					<span class="desc-text" pv-anchor="similars-c"><a 
+					<span class="desc-text" pv-anchor="similars-c"><a
 						pv-nest="preview_list"
 
-						class="artist js-serv" 
-						pv-events="click::showArtcard" 
+						class="artist js-serv"
+						pv-events="click::showArtcard"
 						pv-type="hard-way-point"
 						pv-text="{{artist_name}}"></a></span>
 				</p>
 			</div>
 		</div>
 	</div>
-	
+
 </div>

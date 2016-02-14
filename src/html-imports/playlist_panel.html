@@ -4,7 +4,7 @@
 			<span class="pla-button" pv-anchor="btrow-multiatcs" pv-events="click::switchPart:row-multiatcs" pv-type="way-point">● ● ●</span>
 			<span class="pl-settings-button" title="Playlists settings" pv-anchor="btrow-pl-settings" pv-events="click::switchPart:row-pl-settings" pv-type="way-point"></span>
 		</div>
-		<div 
+		<div
 			pv-anchor="row_context"
 			class="pla-row-content has-dark-buttons hidden"
 			pv-class="hidden: !active_part"
@@ -15,7 +15,7 @@
 			<div class="pla-row hidden" pv-nest="context_parts for_model:row-multiatcs" pv-class="hidden: !active_view">
 				<div class="left-buttons-group">
 					<span class="button-hole">
-						<a 
+						<a
 							pv-events="click::makePlayable"
 							pv-type="way-point"
 							class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a>
@@ -30,7 +30,7 @@
 					</span>
 
 				</div>
-				
+
 			</div>
 			<div class="pla-settings hidden" pv-nest="context_parts for_model:row-pl-settings" pv-class="hidden: !active_view">
 				<label class="dont-rept-pl">
@@ -40,11 +40,11 @@
 			</div>
 		</div>
 	</div>
-	<div 
+	<div
 		class="loader_disallowing_desc hidden"
 		pv-class="hidden: !loader_disallowing_desc"
 		pv-text="{{loader_disallowing_desc}}"
 	></div>
-	
-	
+
+
 </div>

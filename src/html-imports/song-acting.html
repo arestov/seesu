@@ -5,7 +5,7 @@
 			<span class="nicebutton" pv-events="click::saveTagsChanges" pv-type="way-point">save</span>
 		</span>
 	</div>
-	
+
 	<div class="possible_tags">
 		<div class="tagging_help">
 			<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
@@ -20,10 +20,10 @@
 			<div class="tagging_help">
 				<span pv-repeat="tag in petags_result | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag" pv-type="way-point"></span>
 			</div>
-			
+
 		</div>
 
-		
+
 		<div class="top_tags">
 			<h4 class="tagging_header" pv-class="has_tags: toptags.length  ">
 				<span class="lang localize-top_track_tags">Top tags of track</span>
@@ -31,21 +31,21 @@
 			<div class="tagging_help">
 				<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag" pv-type="way-point"></span>
 			</div>
-			
+
 		</div>
-		
+
 		<div class="artist_tags">
 			<h4 class="tagging_header" pv-class="has_tags: artist_tags.length ">
 				<span class="lang localize-artist_tags">Artist tags</span>
-				
+
 			</h4>
 			<div class="tagging_help">
 				<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag" pv-type="way-point"></span>
 			</div>
 		</div>
 	</div>
-	
-	
+
+
 </div>
 
 <form class="scrobbling-switches">
@@ -53,10 +53,10 @@
 		scrobbling to last.fm
 	</p>
 
-	<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" /> 
+	<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" />
 		<span class="lang localize-enabled">enabled</span>
-	</label></p>	
-	<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> 
+	</label></p>
+	<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" />
 		<span class="lang localize-disabled">disabled</span>
 	</label></p>
 </form>

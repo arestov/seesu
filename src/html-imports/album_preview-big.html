@@ -8,7 +8,7 @@
 .full-page .album_preview-big{
 	float:left;
 	}
-	
+
 	.album_preview-big img{
 		display: block;
 		height: 9rem;
@@ -16,7 +16,7 @@
 		background-color: #666;
 		}
 	.album_preview-big .full_album_name{
-		
+
 		padding:0.5rem 0;
 		overflow: hidden;
 		bottom:0;
@@ -36,7 +36,7 @@
 		color: #999;
 		}
 </style>
-<div class="album_preview-big" 
+<div class="album_preview-big"
 	pv-events="click:requestPage"
 	pv-type="way-point"
 	pv-props="title: {{album_name}}"
@@ -44,8 +44,8 @@
 	<img src="" alt="" pv-anchor="imgc"/>
 	<div class="full_album_name">
 		<div class="desc hidden" pv-class="hidden: !album_year" pv-text="{{album_year}}"></div>
-		<div 
-			class="artist_name_alb" 
+		<div
+			class="artist_name_alb"
 			pv-class="hidden: can_hide_artist_name"
 			pv-anchor="artist_name_c" pv-text="{{album_artist}}"></div>
 		<div class="album_name" pv-anchor="album_name_c" pv-text="{{album_name}}"></div>
