@@ -1,7 +1,6 @@
 define(['pv', 'jquery', './coct', 'app_serv', 'view_serv', './modules/Panoramator', 'spv', 'View'],
 function(pv, $, coct, app_serv, view_serv, Panoramator, spv, View) {
 "use strict";
-var localize = app_serv.localize;
 var app_env = app_serv.app_env;
 
 var ArtcardUI = spv.inh(View, {}, {
@@ -100,13 +99,16 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
 		}
 	},
 	'compx-infb_text': {
-		depends_on: ['artist_name', 'playcount', 'listeners', 'bio'],
-		fn: function(artist, playcount, listeners, bio) {
+		depends_on: ['artist_name', 'playcount', 'listeners', 'bio', '#locales.more-ab-info'],
+		fn: function(artist, playcount, listeners, bio, lo_more) {
+			if (!lo_more) {
+				return;
+			}
 			if (!artist){
 				return;
 			}
 			if (playcount || listeners || bio){
-				return localize("more-ab-info").replace('%s', artist);
+				return lo_more.replace('%s', artist);
 			}
 		}
 	},

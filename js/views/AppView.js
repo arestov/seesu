@@ -8,7 +8,6 @@ SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
 lul, SongcardPage, AppBaseView, WPBox, view_serv, View) {
 "use strict";
 var app_env = app_serv.app_env;
-var localize = app_serv.localize;
 
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	location_name: 'exposed_root_view',
