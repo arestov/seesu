@@ -3,6 +3,12 @@ function(pv, spv, $, app_serv, UserCardPreview, coct) {
 "use strict";
 var localize = app_serv.localize;
 
+var finup = function(callback) {
+	callback.finup = true;
+	return callback;
+};
+
+
 var StartPageView = spv.inh(coct.SPView, {}, {
 	createDetails: function(){
 
@@ -48,46 +54,32 @@ var StartPageView = spv.inh(coct.SPView, {}, {
 			return focus && shw_end;
 		}
 	},
+	'compx-lo_at_page': [[]],
+	'compx-ask_rating_help': [['ask-rating-help', '#locales.at-this-page', '#locales.ask-rating-help'], function(link, lo_at_page, text) {
+		return link && lo_at_page && {
+			link: link,
+			link_text: lo_at_page,
+			text: text
+		};
+	}],
 	state_change: {
-
 		"can_expand": function(target, state) {
 			if (state){
 				target.requirePart('start-page-blocks');
 			}
 		},
-		"ask-rating-help": function(target, link){
-
-			if (link){
-				var spm_c = target.tpl.ancs['start-page-messages'];
-				target.message_arh_c = $('<div class="attention-message"></div>');
-
-				$("<a class='close-message'>×</a>").appendTo(target.message_arh_c).click(function() {
-					target.RPCLegacy('closeMessage', 'rating-help');
-				});
-				$('<img class="message-image"/>').attr({
-					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
-					width: 100,
-					height: 126,
-					alt: "Gleb Arestov"
-				}).appendTo(target.message_arh_c);
-
-
-				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
-				target.message_arh_c.append(spv.createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
-				spm_c.append(target.message_arh_c);
-
-				/*
-
-
-				Поддержи сису — поставь оценку
-
-				*/
+		"ask_rating_help": finup(function(target, obj){
+			var anchor = target.tpl.ancs.help_text;
+			if (!obj) {
+				// anchor.empty();
 			} else {
-				if (target.message_arh_c){
-					target.message_arh_c.remove();
-				}
+				var url = $("<a class='external'></a>")
+					.attr('href', obj.link)
+					.text(obj.link_text);
+
+				anchor.append(spv.createComlexText(obj.text).setVar("app_url", url[0]));
 			}
-		}
+		})
 	},
 	parts_builder: {
 		'start-page-blocks': function() {
