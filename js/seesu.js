@@ -430,7 +430,7 @@ AppModel.extendTo(SeesuApp, {
 			}, opts);
 
 			mpx.addView(view, name);
-			view.requestAll();
+			view.requestView();
 		};
 
 		//var ext_view;

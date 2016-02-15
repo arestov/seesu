@@ -16,6 +16,46 @@ var removeFlowStep = function(tpl, w_cache_key) {
 	tpl.calls_flow_index[w_cache_key] = null;
 };
 
+var setMotive = function(context, fn, motivator, args, arg) {
+	//устанавливаем мотиватор конечному пользователю события
+	var ov_c = context.current_motivator;
+	context.current_motivator = motivator;
+
+	var ov_t;
+
+	if (this != context) {
+		debugger
+		//устанавливаем мотиватор реальному владельцу события, чтобы его могли взять вручную
+		//что-то вроде api
+		ov_t = this.current_motivator;
+		this.current_motivator = motivator;
+	}
+
+	if (args){
+		fn.apply(context, args);
+	} else {
+		fn.call(context, arg);
+	}
+
+	if (context.current_motivator != motivator){
+		throw new Error('wrong motivator'); //тот кто поменял current_motivator должен был вернуть его обратно
+	}
+	context.current_motivator = ov_c;
+
+	if (this != context) {
+		if (this.current_motivator != motivator){
+			throw new Error('wrong motivator'); //тот кто поменял current_motivator должен был вернуть его обратно
+		}
+		this.current_motivator = ov_t;
+	}
+};
+
+var wrapChange = function(motivator, fn, context, args, arg) {
+
+	setMotive.call(context, context, fn, motivator, args, arg);
+	// debugger;
+}
+
 var getFieldsTreesBases = function(all_vs) {
 	var sfy_values = new Array(all_vs.length);
 	for (var i = 0; i < all_vs.length; i++) {
@@ -46,6 +86,7 @@ var StandartChange = function(node, opts, w_cache_subkey) {
 		throw new Error('w_cache_subkey (usualy just directive_name) must be provided');
 	}
 
+	this.current_motivator = null;
 	this.w_cache_subkey = w_cache_subkey;
 	this.data = opts.data;
 	this.calculator = calculator;
@@ -87,7 +128,8 @@ StandartChange.prototype = {
 		}
 		if (wwtch.current_value != new_value){
 			if (async_changes) {
-				var flow_step = wwtch.context.calls_flow.pushToFlow(this.changeValue, this, [new_value, wwtch], false, false, false, current_motivator);
+				// fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup
+				var flow_step = wwtch.context.calls_flow.pushToFlow(this.changeValue, this, [new_value, wwtch], false, wrapChange, false, current_motivator);
 				wwtch.context.calls_flow_index[wwtch.w_cache_key] = flow_step;
 				//).pushToFlow(cb, mo_context, reg_args, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
 			} else {

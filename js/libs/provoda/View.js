@@ -429,12 +429,12 @@ var View = spv.inh(StatesEmitter, {
 			//console.log(add);
 		}
 	},
-	connectChildrenModels: function() {
+	connectChildrenModels: hp._groupMotive(function() {
 		var udchm = this._lbr.undetailed_children_models;
 		this._lbr.undetailed_children_models = null;
 		this.setMdChildren(udchm);
 
-	},
+	}),
 	connectStates: function() {
 		var states = this._lbr.undetailed_states;
 		this._lbr.undetailed_states = null;
@@ -944,9 +944,12 @@ var View = spv.inh(StatesEmitter, {
 
 		//document.createTextNode('')
 	},
-	requestAll: function(){
-		return this.requestDeepDetLevels();
+	requestView: function() {
+		this.requestAll();
 	},
+	requestAll: hp._groupMotive(function(){
+		return this.requestDeepDetLevels();
+	}),
 	__tickDetRequest: function() {
 		if (!this.isAlive()){
 			return;
@@ -958,6 +961,9 @@ var View = spv.inh(StatesEmitter, {
 		}
 	},
 	requestDeepDetLevels: function(){
+		if (!this.current_motivator) {
+			// throw new Error('should be current_motivator');
+		}
 		if (this._lbr._states_set_processing || this._lbr._collections_set_processing){
 			return this;
 		}
@@ -983,7 +989,10 @@ var View = spv.inh(StatesEmitter, {
 			return true;
 		} else {
 			for (var i = 0; i < this.children.length; i++) {
-				var cur_incomplete = this.children[i].requestDetalizationLevel(rel_depth);
+				var cur = this.children[i];
+				cur.current_motivator = this.current_motivator;
+				var cur_incomplete = cur.requestDetalizationLevel(rel_depth);
+				cur.current_motivator = null;
 				incomplete = incomplete || cur_incomplete;
 			}
 			return incomplete;
@@ -1018,7 +1027,7 @@ var View = spv.inh(StatesEmitter, {
 			}
 		}
 	},
-	_setStates: function(states){
+	_setStates: hp._groupMotive(function(states){
 		this._lbr._states_set_processing = true;
 		//disallow chilren request untill all states will be setted
 
@@ -1038,7 +1047,7 @@ var View = spv.inh(StatesEmitter, {
 		this._updateProxy(states_list);
 		this._lbr._states_set_processing = null;
 		return this;
-	},
+	}),
 	updateTemplatesStates: function(total_ch, sync_tpl) {
 		var i = 0;
 		//var states = this.states;
@@ -1192,12 +1201,12 @@ var View = spv.inh(StatesEmitter, {
 			this.nextTick(updateProxy, args);
 		};
 	})(),
-	receiveStatesChanges: function(changes_list, opts) {
+	receiveStatesChanges: hp._groupMotive(function(changes_list, opts) {
 		if (!this.isAlive()){
 			return;
 		}
 		updateProxy(this, changes_list, opts);
-	},
+	}),
 	overrideStateSilently: function(name, value) {
 		updateProxy(this, [true, name, value], {skip_handler: true});
 	},
@@ -1395,7 +1404,9 @@ var View = spv.inh(StatesEmitter, {
 
 		this.nextTick(this.collectionChange, args);
 	},
-	checkTplTreeChange: function() {
+	checkTplTreeChange: function(current_motivator) {
+		var old_mt = this.current_motivator;
+		this.current_motivator = current_motivator;
 		var total_ch = [];
 
 		for (var state_name in this.states) {
@@ -1408,6 +1419,7 @@ var View = spv.inh(StatesEmitter, {
 
 			this.pvCollectionChange(nesname, this.children_models[nesname]);
 		}
+		this.current_motivator = old_mt;
 	},
 	pvCollectionChange: function(nesname, items, removed) {
 		var pv_views_complex_index = spv.getTargetField(this, this.tpl_children_prefix + nesname);
@@ -1850,10 +1862,14 @@ var View = spv.inh(StatesEmitter, {
 				var $first = counter === 0;
 				var $last = counter === (array.length - 1);
 
+				view.current_motivator = this.current_motivator;
+
 				pvUpdate(view, '$index', counter);
 				pvUpdate(view, '$first', $first);
 				pvUpdate(view, '$last', $last);
 				pvUpdate(view, '$middle', !($first || $last));
+
+				view.current_motivator = null;
 
 				counter++;
 			}

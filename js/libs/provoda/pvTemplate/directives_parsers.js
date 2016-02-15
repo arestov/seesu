@@ -106,7 +106,7 @@ function makePvWhen(anchor, expression, getSample, sample_node, parser) {
 					wwtch.context.checkChunks();
 				};
 
-				wwtch.context.pvTreeChange();
+				wwtch.context.pvTreeChange(this.current_motivator);
 
 				// debugger
 			} else if (!new_value && node.pvwhen_content) {

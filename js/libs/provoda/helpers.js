@@ -238,6 +238,20 @@ return {
 			}
 		};
 	},
+	_groupMotive: function(fn) {
+		return function() {
+			var self = this;
+			var need = !self.current_motivator;
+			if (!need) {
+				return fn.apply(self, arguments);
+			}
+
+			self.current_motivator = self._highway.calls_flow.startGroup();
+			var result = fn.apply(self, arguments);
+			self.current_motivator = null;
+			return result;
+		};
+	},
 	getSTEVNameVIP: spv.getPrefixingFunc('vip_state_change-'),
 	getSTEVNameDefault: spv.getPrefixingFunc('state_change-'),
 	getSTEVNameLight: spv.getPrefixingFunc('lgh_sch-'),
@@ -391,8 +405,8 @@ return {
 			}
 
 			if (!view._lbr.hndPvTreeChange) {
-				view._lbr.hndPvTreeChange = function() {
-					view.checkTplTreeChange();
+				view._lbr.hndPvTreeChange = function(current_motivator) {
+					view.checkTplTreeChange(current_motivator);
 				};
 			}
 

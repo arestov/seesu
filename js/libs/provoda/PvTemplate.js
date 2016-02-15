@@ -579,6 +579,9 @@ spv.Class.extendTo(PvTemplate, {
 	},
 	checkChanges: function(changes, full_states, async_changes, current_motivator) {
 		if (this.dead) {return;}
+		if (async_changes && !current_motivator) {
+			// throw new Error('should be current_motivator');
+		}
 		//вместо того что бы собирать новый хэш на основе массива изменений используются объект всеъ состояний
 		var matched = [], i = 0;
 		for (i = 0; i < changes.length; i+= 3 ) { //ищем подходящие директивы

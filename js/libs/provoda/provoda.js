@@ -57,7 +57,7 @@ pv = provoda = {
 				mpx: mpx,
 				proxies_space: proxies_space
 			}, {d: window.document});
-			view.requestAll();
+			view.requestView();
 			view = null;
 		})();
 	},

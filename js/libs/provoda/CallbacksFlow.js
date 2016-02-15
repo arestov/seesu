@@ -4,6 +4,11 @@ define(function(require) {
 var FlowStep = require('./FlowStep');
 var spv = require('spv');
 
+var Group = function(num) {
+	this.num = num;
+	this.complex_order = [num];
+};
+
 var sortFlows = function(item_one, item_two) {
 	var none_one = !item_one || item_one.aborted;
 	var none_two = !item_two || item_two.aborted;
@@ -144,7 +149,9 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 };
 var insertItem = spv.insertItem;
 CallbacksFlow.prototype = {
-
+	startGroup: function() {
+		return new Group(++this.flow_steps_counter);
+	},
 	iterateCallbacksFlow: function() {
 		var start = Date.now() + this.iteration_time;
 		this.iteration_delayed = false;

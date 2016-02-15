@@ -129,7 +129,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 	completeDomBuilding: function() {
 		this.connectStates();
 		this.connectChildrenModels();
-		this.requestAll();
+		this.requestView();
 	},
 	getLevelContainer: function(num) {
 		if (this.lev_containers[num]){
