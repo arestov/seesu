@@ -214,7 +214,7 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
 
 	// 	this.initStates({
 	// 		'artist_id': false,
-	// 		'possible_loader_disallowing': localize('no-dgs-id')
+	// 		'possible_loader_disallowing': //#locales.no-dgs-id
 	// 	});
 
 	// 	// this.wch(this.map_parent, 'discogs_id_searching', 'profile_searching', true);

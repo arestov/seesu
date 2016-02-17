@@ -1,7 +1,6 @@
 define(['pv', 'app_serv', 'jquery', 'spv', 'View'], function(pv, app_serv, $, spv, View) {
 "use strict";
 var pvUpdate = pv.update;
-var localize = app_serv.localize;
 var contextRow = function(container){
 	this.m = {
 		c: container.addClass('hidden'),
@@ -225,10 +224,14 @@ var LfmLoveItView = spv.inh(LfmLoginView, {}, {
 			}
 		});
 		this.addWayPoint(this.nloveb.b);
-		this.nloveb.b.text(localize('addto-lfm-favs'));
+
 		this.c.append(wrap);
 
 
+	},
+	'compx-lo_button_text': [['#locales.addto-lfm-favs']],
+	'stch-lo_button_text': function(target, state) {
+		target.nloveb.b.text(state);
 	},
 	"stch-has_session": function(target, state) {
 		state = !!state;

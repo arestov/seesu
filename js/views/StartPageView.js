@@ -1,7 +1,6 @@
 define(['pv', 'spv', 'jquery', 'app_serv', './UserCardPreview', './coct'],
 function(pv, spv, $, app_serv, UserCardPreview, coct) {
 "use strict";
-var localize = app_serv.localize;
 
 var finup = function(callback) {
 	callback.finup = true;
