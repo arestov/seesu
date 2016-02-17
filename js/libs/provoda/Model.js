@@ -947,6 +947,10 @@ function checkChangedNestWatchs(md, collection_name) {
 }
 
 
+var hasDot = spv.memorize(function(nesting_name) {
+	return nesting_name.indexOf('.') != -1;
+});
+
 add({
 	watchChildrenStates: function(collection_name, state_name, callback) {
 		// legacy. can remove!?
@@ -995,7 +999,7 @@ add({
 	},
 
 	updateNesting: function(collection_name, array, opts, spec_data) {
-		if (collection_name.indexOf('.') != -1){
+		if (hasDot(collection_name)){
 			throw new Error('remove "." (dot) from name');
 		}
 
