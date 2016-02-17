@@ -6,12 +6,12 @@ var spv = require('spv');
 function itself(item) {return item;}
 
 
-var NestWatch = function(selector, state_name, zin_func, full_name, handler) {
+var NestWatch = function(selector, state_name, zip_func, full_name, handler) {
 	this.selector = selector;
 	this.state_name = state_name;
 	this.short_state_name = state_name && getShortStateName(state_name);
 	this.full_name = full_name;
-	this.zin_func = zin_func;
+	this.zip_func = zip_func;
 	this.handler = handler;
 };
 
@@ -49,15 +49,15 @@ var enc_states = {
 
 			var nesting_name = parts.pop();
 			var state_name = parts.pop();
-			var zin_func = parts.pop();
+			var zip_func = parts.pop();
 
 			encoded_states[string] = {
 				rel_type: 'nesting',
 				full_name: string,
 				nesting_name: nesting_name,
 				state_name: state_name,
-				zin_func: zin_func || itself,
-				nwatch: new NestWatch(nesting_name.split('.'), state_name, zin_func, string)
+				zip_func: zip_func || itself,
+				nwatch: new NestWatch(nesting_name.split('.'), state_name, zip_func, string)
 			};
 		}
 

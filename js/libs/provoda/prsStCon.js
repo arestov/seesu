@@ -43,7 +43,7 @@ define(function() {
 					var cur = list[i];
 
 					if (cur.state_name) {
-						// md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
+						// md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zip_func, cur.full_name);
 					} else {
 						// watchNestingAsState(md, cur.nesting_name, cur.full_name);
 					}

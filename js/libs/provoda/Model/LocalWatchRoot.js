@@ -170,7 +170,7 @@ return function LocalWatchRoot(md, nwatch) {
 		this.one_item_mode = false;
 
 		this.state_handler = nwatch.state_handler;
-		this.zip_name = nwatch.zin_func;
+		this.zip_name = nwatch.zip_func;
 		this.distance = 0;
 		this.callback = nwatch.handler;
 
@@ -196,7 +196,7 @@ return function LocalWatchRoot(md, nwatch) {
 
 
 		// if (cur.state_name) {
-		// 			md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zin_func, cur.full_name);
+		// 			md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zip_func, cur.full_name);
 		// 		} else {
 		// 			watchNestingAsState(md, cur.nesting_name, cur.full_name);
 		// 		}
