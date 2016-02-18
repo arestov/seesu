@@ -742,8 +742,7 @@ add({
 
 	},
 	addNestWatch: (function() {
-		var SublWtch = function SublWtch(nwatch, skip, id) {
-			this.holder_id = id;
+		var SublWtch = function SublWtch(nwatch, skip) {
 			this.nwatch = nwatch;
 			this.skip = skip;
 		};
