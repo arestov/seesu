@@ -204,20 +204,6 @@ return {
 	getShortStateName: getShortStateName,
 	stateGetter: stateGetter,
 	getEncodedState: getEncodedState,
-	getReqMapsForState: function(req_map, state_name) {
-		if (!req_map) {
-			return;
-		}
-		var maps_for_state= [];
-		for (var i = 0; i < req_map.length; i++) {
-			var states_list = req_map[i][0];
-			if (states_list.indexOf(state_name) != -1) {
-				maps_for_state.push(i, req_map[i]);
-			}
-		}
-		return maps_for_state;
-	},
-
 	getNetApiByDeclr: function(send_declr, sputnik, app) {
 		var network_api;
 		var api_name = send_declr[0];

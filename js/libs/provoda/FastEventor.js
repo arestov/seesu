@@ -652,7 +652,8 @@ FastEventor.prototype = {
 			return;
 		}
 
-		var i, cur, states_list, maps_for_state = hp.getReqMapsForState(this.sputnik.req_map, state_name);
+		var i, cur, states_list;
+		var maps_for_state = this.sputnik._states_reqs_index && this.sputnik._states_reqs_index[state_name];
 
 		var cant_request;
 		if (this.mapped_reqs) {

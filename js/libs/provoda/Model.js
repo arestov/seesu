@@ -416,7 +416,7 @@ add({
 		if (parsed_state && parsed_state.rel_type == 'nesting') {
 			return this.getNestingSource(parsed_state.nesting_name, app);
 		} else {
-			var maps_for_state = hp.getReqMapsForState(this.req_map, state_name);
+			var maps_for_state = this._states_reqs_index && this._states_reqs_index[state_name];
 			if (maps_for_state) {
 				var result = new Array(maps_for_state.length/2);
 				for (var i = 0; i < maps_for_state.length; i+=2) {
@@ -539,6 +539,20 @@ add({
 	changeDataMorphDeclarations: (function() {
 		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-', true );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
+		var doIndex = function(list, value) {
+			var result = [];
+
+			for (var i = 0; i < list.length; i++) {
+				var values = list[i][0];
+				if (values.indexOf(value) != -1) {
+					result.push(i, list[i]);
+				}
+			}
+
+			return result;
+		};
+
 		return function(props) {
 			var i, cur;
 
@@ -561,6 +575,19 @@ add({
 
 				}
 
+
+				this._states_reqs_index = {};
+				var req_map = this.req_map;
+				var states_index = {};
+				for (var i = 0; i < req_map.length; i++) {
+					var states_list = req_map[i][0];
+					for (var jj = 0; jj < states_list.length; jj++) {
+						states_index[states_list[jj]] = true;
+					}
+				}
+				for (var state_name in states_index) {
+					this._states_reqs_index[state_name] = doIndex(req_map, state_name);
+				}
 			}
 
 			var has_reqnest_decls = hasPrefixedProps(props);
