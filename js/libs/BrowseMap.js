@@ -189,9 +189,7 @@ var BrowseMap = spv.inh(pv.Model, {
 
 	},
 	makeMainLevel: function(){
-		this.startChangesGrouping('zoom-in');
-		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident));
-		this.finishChangesGrouping('zoom-in');
+		this.getFreeLevel(-1, false, this.mainLevelResident);
 		return this;
 	},
 	getCurrentLevel: function() {
@@ -757,7 +755,9 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 
 var showMOnMap = function(map, model, bwlev, skip_detach) {
 
-	if (model.map_level_num == -1) {
+	var is_start = model.map_level_num == -1;
+
+	if (is_start) {
 		bwlev = map.getLevel(-1);
 	}
 
@@ -766,9 +766,10 @@ var showMOnMap = function(map, model, bwlev, skip_detach) {
 		map.startChangesCollecting();
 	}
 
+
 	var bwlev_parent = false;
 
-	if (!bwlev || !ba_inUse(bwlev)){
+	if (!is_start && (!bwlev || !ba_inUse(bwlev))){
 		// если модель не прикреплена к карте,
 		// то прежде чем что-то делать - находим и отображаем "родительску" модель
 		var parent_md;
@@ -797,7 +798,7 @@ var showMOnMap = function(map, model, bwlev, skip_detach) {
 
 		if (model.state('has_no_access')) {
 			model.switchPmd();
-		} else if (ba_canReuse(bwlev)){//если модель прикреплена к карте
+		} else if (ba_canReuse(bwlev) || is_start){//если модель прикреплена к карте
 
 			if (!skip_detach) {
 				// отсекаем всё более глубокое

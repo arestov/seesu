@@ -400,9 +400,7 @@ AppModel.extendTo(SeesuApp, {
 			}, {immediately: true})*/
 			.on('nav-change', function(nv){
 				this.trackPage(nv.md.model_name);
-			}, this.getContextOptsI())
-			.makeMainLevel();
-
+			}, this.getContextOptsI());
 
 
 		if (app_env.tizen_app){
@@ -476,8 +474,10 @@ AppModel.extendTo(SeesuApp, {
 
 
 
+		_this.map.makeMainLevel();
 
 		if (app_env.needs_url_history){
+			// _this.map.makeMainLevel();
 			navi.init(function(e){
 				var url = e.newURL;
 				_this.map.startChangesCollecting({
@@ -504,7 +504,12 @@ AppModel.extendTo(SeesuApp, {
 					});
 				}
 			})();
-
+		} else {
+			_this.map.startChangesGrouping('zoom-in');
+			_this.map.setLevelPartActive(this.getLevel(-1));
+			_this.map.finishChangesGrouping('zoom-in');
+			// var interest = BrowseMap.getUserInterest('', _this.start_page);
+			// BrowseMap.showInterest(_this.map, interest);
 		}
 
 		if (app_serv.app_env.nodewebkit) {
