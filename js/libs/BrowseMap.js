@@ -1117,11 +1117,17 @@ var getDistantModel = function(md, distance){
 };
 
 BrowseMap.showInterest = function(map, interest) {
-	var first = interest.shift();
+	if (!interest.length) {
+		showMOnMap(map, map.mainLevelResident);
+		return;
+	}
+
 	var aycocha = map.isCollectingChanges();
 	if (!aycocha){
 		map.startChangesCollecting();
 	}
+
+	var first = interest.shift();
 	// first.md.lev fixme
 
 	var parent_bwlev = showMOnMap(first.md.app.map, first.md);

@@ -502,14 +502,12 @@ AppModel.extendTo(SeesuApp, {
 						}, true);
 
 					});
+				} else {
+					BrowseMap.showInterest(_this.map, []);
 				}
 			})();
 		} else {
-			_this.map.startChangesGrouping('zoom-in');
-			_this.map.setLevelPartActive(this.getLevel(-1));
-			_this.map.finishChangesGrouping('zoom-in');
-			// var interest = BrowseMap.getUserInterest('', _this.start_page);
-			// BrowseMap.showInterest(_this.map, interest);
+			BrowseMap.showInterest(_this.map, []);
 		}
 
 		if (app_serv.app_env.nodewebkit) {
