@@ -1,4 +1,4 @@
-define(['pv', 'spv'], function(pv, spv) {
+define(['pv', 'spv', './provoda/structure/get_constr'], function(pv, spv, get_constr) {
 "use strict";
 
 var pvState = pv.state;
@@ -6,6 +6,9 @@ var cloneObj = spv.cloneObj;
 var filter = spv.filter;
 var countKeys = spv.countKeys;
 var collapseAll = spv.collapseAll;
+
+var getNestingConstr = get_constr.getNestingConstr;
+var getDeclrConstr = get_constr.getDeclrConstr;
 
 /*
 исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
@@ -1294,64 +1297,6 @@ var getInitData = function(md, common_opts) {
 	return pre_instance_data;
 };
 
-var getDeclrConstr = function(app, md, item) {
-	if (typeof item == 'function') {
-		return item;
-	} else if (typeof item == 'string') {
-		return md.getConstrByPathTemplate(app, item);
-	} else {
-		return item;
-	}
-};
-
-var getNestingConstr = function(app, md, nesting_name) {
-	nesting_name = pv.hp.getRightNestingName(md, nesting_name);
-
-
-	if (md[ 'nest_rqc-' + nesting_name ]) {
-		var target = md[ 'nest_rqc-' + nesting_name ];
-		if (Array.isArray(target)) {
-			if (!target.constrs_array) {
-				var result = [];
-				var index = target[1];
-				for (var prop in index) {
-					if (!index.hasOwnProperty(prop)) {
-						continue;
-					} else {
-						result.push( getDeclrConstr(app, md, index[prop]) );
-					}
-
-				}
-				target.constrs_array = result;
-			}
-
-			return target.constrs_array;
-		} else {
-			return getDeclrConstr(app, md, target);
-		}
-
-	} else if (md[ 'nest_posb-' + nesting_name ]) {
-		return md[ 'nest_posb-' + nesting_name ];
-	} else if (md[ 'nest-' + nesting_name]) {
-
-		var declr = md[ 'nest-' + nesting_name];
-		var items = declr[0];
-
-		if (Array.isArray(items)) {
-			var result = [];
-			for (var i = 0; i < items.length; i++) {
-				result.push(getDeclrConstr(app, md, items[i]));
-			}
-			return result;
-		} else {
-			return getDeclrConstr(app, md, items);
-		}
-
-	}
-
-
-
-};
 BrowseMap.getNestingConstr = getNestingConstr;
 BrowseMap.getDeclrConstr = getDeclrConstr;
 
