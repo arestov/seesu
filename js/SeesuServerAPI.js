@@ -269,9 +269,7 @@ var SeesuServerAPI = spv.inh(pv.Eventor, {
 									secret: r.response,
 									sid: su_sess.sid
 								});
-								//su.s.setInfo('vk', su.vk.user_info);
 
-								//su.s.api('user.update', su.vk.user_info);
 								_this.app.trigger('dg-auth');
 
 								if (callback){callback();}
