@@ -1,4 +1,4 @@
-define(['pv', 'spv', './provoda/structure/get_constr'], function(pv, spv, get_constr) {
+define(['pv', 'spv', './provoda/structure/get_constr', './provoda/structure/flatStruc'], function(pv, spv, get_constr, flatStruc) {
 "use strict";
 
 var pvState = pv.state;
@@ -1073,6 +1073,57 @@ var BrowseLevel = spv.inh(pv.Model, {
 			item.preloadStart();
 		}
 	},
+	'compx-struc_list': [['struc'], function(struc) {
+		if (!this.getNesting('pioneer') || !struc) {return;}
+		return flatStruc(this.getNesting('pioneer'), struc);
+	}],
+	'compx-supervision': [
+		[], function () {
+			return {
+				needy: this,
+				store: {},
+				reqs: {},
+				is_active: {}
+			};
+		}
+	],
+	'compx-to_load_all': [
+		['mp_dft', 'struc_list', 'supervision'],
+		function(mp_dft, struc, supervision) {
+			return {
+				inactive: !mp_dft || mp_dft > 1 || !struc,
+				list: struc,
+				supervision: supervision
+			};
+		}
+	],
+	'stch-to_load_all': function(target, obj, prev) {
+		if (!obj.list) {
+			return;
+		}
+
+		if (obj.inactive == (prev && prev.inactive)) {
+			return;
+		}
+
+		var md = target.getNesting('pioneer');
+
+		if (!obj.inactive) {
+			for (var i = 0; i < obj.list.length; i++) {
+				var cur = obj.list[i];
+				if (!cur) {continue;}
+				md.addReqDependence(obj.supervision, cur);
+			}
+
+		} else if (prev && prev.list){
+			for (var i = 0; i < prev.list.length; i++) {
+				var cur = prev.list[i];
+				if (!cur) {continue;}
+				md.removeReqDependence(obj.supervision, cur);
+			}
+		}
+
+	}
 });
 
 var getBWlev = function(md, parent_bwlev, map_level_num, map){

@@ -2,7 +2,7 @@ define(function(require) {
 'use strict';
 var spv = require('spv');
 
-function mark(Constr) {
+function mark(Constr, RootConstr) {
 	var self = Constr.prototype;
 
 	self._all_chi = {};
@@ -21,10 +21,11 @@ function mark(Constr) {
 			skip_code_path: true
 		}, {
 			pconstr_id: self.constr_id,
-			_parent_constr: Constr
+			_parent_constr: Constr,
+			_root_constr: RootConstr
 		});
 
-		self._all_chi[prop] = item && mark(item);
+		self._all_chi[prop] = item && mark(item, RootConstr);
 	}
 
 	return Constr;

@@ -6,13 +6,15 @@ var spv = require('spv');
 function itself(item) {return item;}
 
 
-var NestWatch = function(selector, state_name, zip_func, full_name, handler) {
+var NestWatch = function(selector, state_name, zip_func, full_name, handler, addHandler, removeHandler) {
 	this.selector = selector;
 	this.state_name = state_name;
 	this.short_state_name = state_name && getShortStateName(state_name);
 	this.full_name = full_name;
 	this.zip_func = zip_func;
 	this.handler = handler;
+	this.addHandler = addHandler;
+	this.removeHandler = removeHandler;
 };
 
 var encoded_states = {};

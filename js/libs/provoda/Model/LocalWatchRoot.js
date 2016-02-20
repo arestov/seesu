@@ -154,7 +154,7 @@ var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) 
 });
 
 
-return function LocalWatchRoot(md, nwatch) {
+return function LocalWatchRoot(md, nwatch, data) {
 		this.num = ++lw_count;
 		this.selector = nwatch.selector;
 
@@ -181,6 +181,7 @@ return function LocalWatchRoot(md, nwatch) {
 		this.state_handler = this.state_name ? ( full_name ? full_name_handler : stateHandler) : null;
 
 		this.handler = full_name ? full_name_handler : wrapper;
+		this.addHandler = nwatch.addHandler;
 
 		if (!full_name) {
 			// debugger;
@@ -190,7 +191,7 @@ return function LocalWatchRoot(md, nwatch) {
 			// debugger;
 		}
 
-
+		this.data = data;
 		// если есть state_name значит массив будет состоять не из моделей
 		// а из состояния этих моделей с соостветствующим названим
 

@@ -713,5 +713,5 @@ AppModel.extendTo(SeesuApp, {
 
 });
 
-return pv.markStrucure(SeesuApp);
+return pv.markStrucure(SeesuApp, SeesuApp);
 });

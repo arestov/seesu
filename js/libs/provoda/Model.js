@@ -11,6 +11,7 @@ var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
 var LocalWatchRoot = require('./Model/LocalWatchRoot');
 var constr_mention = require('./structure/constr_mention');
+var _requestsDeps = require('./Model/_requestsDeps');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -340,7 +341,7 @@ var modelInit = (function() {
 			});
 		}
 
-
+		self._requests_deps = null;
 		self.nes_match_index = null;
 
 		if (self.nest_match) {
@@ -388,6 +389,7 @@ var Model = spv.inh(StatesEmitter, {
 });
 
 function modelProps(add) {
+add(_requestsDeps);
 add({
 	getNonComplexStatesList: function(state_name) {
 		// get source states
@@ -800,6 +802,11 @@ add({
 			}
 		}
 
+		var removeHandler = nwatch.removeHandler;
+		if (removeHandler) {
+			removeHandler(this, nwatch, skip);
+		}
+
 	},
 	addNestWatch: (function() {
 		var SublWtch = function SublWtch(nwatch, skip) {
@@ -843,7 +850,9 @@ add({
 				if (!this.nes_match_index[nesting_name]) {
 					this.nes_match_index[nesting_name] = [];
 				}
-				this.nes_match_index[nesting_name].push(new SublWtch(nwatch, skip));
+				var subl_wtch = new SublWtch(nwatch, skip);
+
+				this.nes_match_index[nesting_name].push(subl_wtch);
 
 
 				if (this.children_models) {
@@ -852,6 +861,13 @@ add({
 					}
 				}
 			}
+
+			var addHandler = nwatch.addHandler;
+			if (addHandler) {
+				addHandler(this, nwatch, skip);
+			}
+
+
 
 		};
 	})(),
