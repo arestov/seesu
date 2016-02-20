@@ -288,9 +288,7 @@ AppModel.extendTo(SeesuApp, {
 		pvUpdate(this, 'env', this._highway.env.states);
 
 		var resortQueue = resortSuQueue(this);
-		var lfm = initLfm(this, resortQueue);
 
-		this.lfm = lfm;
 
 		this._url = app_serv.get_url_parameters(window.location.search, true);
 		this.settings = {};
@@ -357,7 +355,7 @@ AppModel.extendTo(SeesuApp, {
 			torrents: -15
 		});
 
-		this.vk = {};
+
 
 		this.notf = new comd.GMessagesStore(
 			this,
@@ -369,6 +367,9 @@ AppModel.extendTo(SeesuApp, {
 			}
 		);
 
+		this.vk = {};
+		var lfm = initLfm(this, resortQueue);
+		this.lfm = lfm;
 		this.initAPIs(resortQueue);
 
 		this.p = new PlayerSeesu(this);
