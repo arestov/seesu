@@ -768,7 +768,7 @@ var subPageHeaded = function(Constr, head) {
 	};
 };
 
-var getSubpageItem = function(self, cur) {
+var getSubpageItem = function(cur) {
 	var item;
 	if (Array.isArray(cur)) {
 		if (!cur[1] && !cur[2]) {
@@ -830,17 +830,56 @@ var getSubpageItem = function(self, cur) {
 
 
 function addSubpage(self, name, cur) {
-	self._sub_pages[name] = getSubpageItem(self, cur);
+	self._sub_pages[name] = getSubpageItem(cur);
 }
 
 function buildSubpageCollector() {
 	var getUnprefixed = spv.getDeprefixFunc( 'sub_page-' );
 	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
-	var add = addSubpage;
+	// var add = addSubpage;
+
+	var buildOne = function(self, props) {
+		var build_index = self._build_cache_subpage_one;
+
+		self._build_cache_subpage_one = {};
+
+		for (var prop_name in self) {
+			var name = getUnprefixed(prop_name);
+			if (!name) {
+				continue;
+			}
+
+			var item;
+			if (props.hasOwnProperty(prop_name)) {
+				item = props[prop_name] && getSubpageItem(props[prop_name]);
+			} else {
+				item = build_index[name];
+			}
+			self._build_cache_subpage_one[name] = item;
+
+			// self._build_cache_subpage_one
+			// add(self, name, props[prop_name]);
+		}
+
+
+	};
+
+	var buildMany = function(self) {
+		self._build_cache_subpage_many = {};
+		for (var prop_name in self.sub_page) {
+			// if (self._sub_pages[prop_name]) {
+			// 	continue;
+			// }
+			self._build_cache_subpage_many[prop_name] = getSubpageItem(self.sub_page[prop_name]);
+			// add(self, prop_name, self.sub_page[prop_name]);
+		}
+	};
 
 	return function collectSubpages(self, props) {
-		if (!hasPrefixedProps(props) && !props.sub_page) {
+		var changed_singled = hasPrefixedProps(props);
+		var changed_pack =!!props.sub_page;
+		if (!changed_singled && !changed_pack) {
 			return;
 		}
 
@@ -850,23 +889,34 @@ function buildSubpageCollector() {
 			}
 		}
 
-		self._sub_pages = {};
-
-		for (var prop_name in self) {
-			var name = getUnprefixed(prop_name);
-			if (!name) {
-				continue;
-			}
-			add(self, name, props[prop_name]);
-
+		if (changed_singled) {
+			buildOne(self, props);
 		}
 
-		for (var prop_name in self.sub_page) {
-			if (self._sub_pages[prop_name]) {
+		if (changed_pack) {
+			buildMany(self);
+		}
+
+		var check = {};
+
+		for (var key_sep in self._build_cache_subpage_one) {
+			var sep = self._build_cache_subpage_one[key_sep];
+			if (!sep) {
 				continue;
 			}
-			add(self, prop_name, self.sub_page[prop_name]);
+			check[key_sep] = sep;
 		}
+
+		for (var key_many in self._build_cache_subpage_many) {
+			if (check[key_many]) {
+				continue;
+			}
+			check[key_many] = self._build_cache_subpage_many[key_many];
+		}
+
+		self._sub_pages = check;
+
+
 	};
 }
 
@@ -892,12 +942,12 @@ function buildSubpagerChecker() {
 		self._sub_pager.key = sub_pager.key;
 
 		if (sub_pager.item) {
-			self._sub_pager.item = getSubpageItem(self, sub_pager.item);
+			self._sub_pager.item = getSubpageItem(sub_pager.item);
 		} else {
 			self._sub_pager.type = sub_pager.type;
 			self._sub_pager.by_type = {};
 			for (var type in sub_pager.by_type) {
-				self._sub_pager.by_type[type] = getSubpageItem(self, sub_pager.by_type[type]);
+				self._sub_pager.by_type[type] = getSubpageItem(sub_pager.by_type[type]);
 			}
 		}
 
