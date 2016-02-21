@@ -65,6 +65,7 @@ var getBaseTreeCheckList = function(start) {
 
 var collectSubpages = buildSubpageCollector();
 var checkSubpager = buildSubpagerChecker();
+var checkChi = chiChecker();
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
@@ -83,6 +84,7 @@ var onPropsExtend = function (props) {
 	this.collectCompxs(props);
 	collectSubpages(this, props);
 	checkSubpager(this, props);
+	checkChi(this, props);
 	this.collectRegFires(props);
 
 	if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
@@ -951,6 +953,37 @@ function buildSubpagerChecker() {
 			}
 		}
 
+	};
+}
+
+
+function chiChecker() {
+	var getUnprefixed = spv.getDeprefixFunc( 'chi-' );
+	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
+	var cloneObj = spv.cloneObj;
+	return function checkChildrenConstuctors(self, props) {
+		if (!hasPrefixedProps(props)) {
+			return;
+		}
+
+		var build_index = self._build_cache_chi;
+		self._build_cache_chi = build_index ? cloneObj(build_index) : {};
+
+		for (var prop_name in props) {
+			var chi_name = getUnprefixed(prop_name);
+			if (!chi_name) {continue;}
+
+			self._build_cache_chi[chi_name] = props[prop_name];
+		}
+
+		self._chi = {};
+
+		for (var chi_name in self._build_cache_chi) {
+			self._chi[chi_name] = spv.inh(self._build_cache_chi[chi_name], {}, {
+				pconstr_id: self.constr_id
+			});
+		}
 	};
 }
 

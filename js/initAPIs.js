@@ -10,10 +10,8 @@ var ScApi = require('./libs/ScApi');
 var ProspApi = require('./libs/ProspApi');
 var torrent_searches = require('./modules/torrent_searches');
 
-var LfmAuth = require('./LfmAuth');
 var LastfmAPIExtended = require('./libs/LastfmAPIExtended');
 
-var VkAuth = require('./libs/VkAuth');
 var VkApi = require('./libs/VkApi');
 var initVk = require('./modules/initVk');
 
@@ -39,7 +37,7 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 
 function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
-	self.lfm_auth = self.initSi(LfmAuth, {lfm: self.lfm}, {
+	self.lfm_auth = self.initChi('lfm_auth', {lfm: self.lfm}, {
 		deep_sanbdox: app_env.deep_sanbdox,
 		callback_url: 'http://seesu.me/lastfm/callbacker.html',
 		bridge_url: 'http://seesu.me/lastfm/bridge.html'
@@ -50,7 +48,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 		//self.auth.setScrobbling(true);
 	});
 
-	self.vk_auth = self.initSi(VkAuth, false, {
+	self.vk_auth = self.initChi('vk_auth', false, {
 		app_id: self.vkappid,
 		urls: {
 			bridge: 'http://seesu.me/vk/bridge.html',

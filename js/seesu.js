@@ -1,10 +1,10 @@
 define(
 ['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap', './libs/Mp3Search',
-'./libs/FuncsQueue',
+'./libs/FuncsQueue', './LfmAuth',
 './models/AppModel', './models/comd', './models/StartPage', './libs/VkAuth', './libs/VkApi', './modules/initVk',
 './modules/PlayerSeesu', './models/invstg', 'cache_ajax', 'View', 'js/libs/localizer', './modules/route', './initAPIs'],
 function(spv, app_serv, pv, $, navi, BrowseMap, Mp3Search,
-FuncsQueue,
+FuncsQueue, LfmAuth ,
 AppModel, comd, StartPage, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, View, localize_dict, route, initAPIs) {
 'use strict';
@@ -75,6 +75,13 @@ AppModel.extendTo(SeesuApp, {
 			pvUpdate(target, 'lfm_userid', target.lfm.username);
 		}
 	},
+	'chi-vk_users': pv.Model,
+	'chi-vk_groups': pv.Model,
+	'chi-art_images': comd.LastFMArtistImagesSelector,
+	'chi-invstg': invstg.SearchPage,
+	'chi-mp3_search': Mp3Search,
+	'chi-vk_auth': VkAuth,
+	'chi-lfm_auth': LfmAuth,
 	tickStat: function(data_array) {
 		window._gaq.push(data_array);
 	},
@@ -141,7 +148,7 @@ AppModel.extendTo(SeesuApp, {
 		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
-		this.mp3_search = this.initSi(Mp3Search, false, {
+		this.mp3_search = this.initChi('mp3_search', false, {
 			vk: 5,
 			'pleer.com': 4,
 			nigma: 1,
@@ -168,10 +175,10 @@ AppModel.extendTo(SeesuApp, {
 		this.p = new PlayerSeesu(this);
 		this.player = this.p;
 		this.app_md = this;
-		this.art_images = this.initSi(comd.LastFMArtistImagesSelector);
+		this.art_images = this.initChi('art_images');
 
-		this.vk_users = this.initSi(pv.Model);
-		this.vk_groups = this.initSi(pv.Model);
+		this.vk_users = this.initChi('vk_users');
+		this.vk_groups = this.initChi('vk_groups');
 
 		if (app_env.check_resize){
 			pv.update(this, 'slice-for-height', true);
@@ -443,7 +450,7 @@ AppModel.extendTo(SeesuApp, {
 		// 	app: this,
 		// 	map_parent: this.start_page
 		// });
-		return this.start_page.initSi(invstg.SearchPage);
+		return this.start_page.initChi('invstg');
 	},
 
 	getPlaylists: function(query) {

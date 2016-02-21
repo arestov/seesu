@@ -688,6 +688,10 @@ add({
 	getSiOpts: function() {
 		return getSiOpts(this);
 	},
+	initChi: function(name, data, params) {
+		var Constr = this._chi[name];
+		return this.initSi(Constr, data, params);
+	},
 	initSi: function(Constr, data, params) {
 		if (Constr.prototype.init) {
 			var instance = new Constr();
