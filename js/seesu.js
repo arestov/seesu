@@ -78,7 +78,6 @@ AppModel.extendTo(SeesuApp, {
 	'chi-vk_users': pv.Model,
 	'chi-vk_groups': pv.Model,
 	'chi-art_images': comd.LastFMArtistImagesSelector,
-	'chi-invstg': invstg.SearchPage,
 	'chi-mp3_search': Mp3Search,
 	'chi-vk_auth': VkAuth,
 	'chi-lfm_auth': LfmAuth,

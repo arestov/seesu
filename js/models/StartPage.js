@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv', 'spv', '../modules/route'],
-function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv, spv, route) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv', 'spv', '../modules/route', '../models/invstg'],
+function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv, spv, route, invstg) {
 "use strict";
 var app_env = app_serv.app_env;
 var complexEach = app_serv.complexEach;
@@ -60,6 +60,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 }, {
 	model_name: 'start_page',
 	zero_map_level: true,
+	'chi-invstg': invstg.SearchPage,
 	showPlaylists: function(){
 		this.app.search(':playlists');
 	},
