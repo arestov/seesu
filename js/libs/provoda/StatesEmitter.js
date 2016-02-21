@@ -921,7 +921,7 @@ function buildSubpageCollector() {
 }
 
 function buildSubpagerChecker() {
-	return function(self, props) {
+	return function checkSubpager(self, props) {
 		var sub_pager = props.sub_pager;
 
 		if (!sub_pager) {
