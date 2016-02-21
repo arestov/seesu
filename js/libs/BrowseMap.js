@@ -1493,36 +1493,47 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	network_data_as_states: true,
 
 	preview_nesting_source: 'lists_list',
-	getSPIConstr: function(sp_name) {
-		if (this._sub_pages && this._sub_pages[sp_name]) {
-			return this._sub_pages[sp_name].constr;
-		}
+	/*
 
-		var sub_pager = this._sub_pager;
-		if (sub_pager) {
-			if (sub_pager.item) {
-				return sub_pager.item.constr;
-			} else {
-				var types = sub_pager.by_type;
-				var type = subPageType(sub_pager.type, sp_name);
-				if (type && !types[type]) {
-					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
-				}
-				if (type) {
-					return sub_pager.by_type[type].constr;
+	*/
+	getSPIConstr: (function(){
+		var select = function(self, sp_name) {
+			if (self._sub_pages && self._sub_pages[sp_name]) {
+				return self._sub_pages[sp_name];
+			}
+
+			var sub_pager = self._sub_pager;
+			if (sub_pager) {
+				if (sub_pager.item) {
+					return sub_pager.item;
+				} else {
+					var types = sub_pager.by_type;
+					var type = subPageType(sub_pager.type, sp_name);
+					if (type && !types[type]) {
+						throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
+					}
+					if (type) {
+						return sub_pager.by_type[type];
+					}
 				}
 			}
-		}
-
-		if (this.subPager){
-			var result = this.getSPC(decodeURIComponent(sp_name), sp_name);
-			if (Array.isArray(result)) {
-				return result[0];
-			} else {
-				return result;
+		};
+		return function(sp_name) {
+			var item = select(this, sp_name);
+			if (item) {
+				return this._all_chi[item.key];
 			}
-		}
-	},
+
+			if (this.subPager){
+				var result = this.getSPC(decodeURIComponent(sp_name), sp_name);
+				if (Array.isArray(result)) {
+					return result[0];
+				} else {
+					return result;
+				}
+			}
+		};
+	})(),
 	getSPI: (function(){
 		var init = function(parent, target, data) {
 			if (target.hasOwnProperty('_provoda_id')) {
@@ -1535,7 +1546,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		};
 
 		var pepare = function(self, item, sp_name) {
-			var Constr = item.constr;
+			var Constr = self._all_chi[item.key];
 			/*
 			hp_bound
 			data_by_urlname
