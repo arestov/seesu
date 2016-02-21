@@ -867,7 +867,6 @@ function buildSubpageCollector() {
 		self._build_cache_subpage_many = {};
 		for (var prop_name in self.sub_page) {
 			self._build_cache_subpage_many[prop_name] = getSubpageItem(self.sub_page[prop_name]);
-			// add(self, prop_name, self.sub_page[prop_name]);
 		}
 	};
 
