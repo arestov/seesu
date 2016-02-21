@@ -839,8 +839,6 @@ function buildSubpageCollector() {
 	var getUnprefixed = spv.getDeprefixFunc( 'sub_page-' );
 	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
-	// var add = addSubpage;
-
 	var buildOne = function(self, props) {
 		var build_index = self._build_cache_subpage_one;
 
@@ -860,8 +858,6 @@ function buildSubpageCollector() {
 			}
 			self._build_cache_subpage_one[name] = item;
 
-			// self._build_cache_subpage_one
-			// add(self, name, props[prop_name]);
 		}
 
 
@@ -870,9 +866,6 @@ function buildSubpageCollector() {
 	var buildMany = function(self) {
 		self._build_cache_subpage_many = {};
 		for (var prop_name in self.sub_page) {
-			// if (self._sub_pages[prop_name]) {
-			// 	continue;
-			// }
 			self._build_cache_subpage_many[prop_name] = getSubpageItem(self.sub_page[prop_name]);
 			// add(self, prop_name, self.sub_page[prop_name]);
 		}
