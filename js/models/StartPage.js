@@ -175,46 +175,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			title: [['#locales.News']]
 		}
 	},
-	getSPC: function(parsed_str, path_string) {
-		var parts = path_string.split('/');
-		var first_part = parts[0];
-		//var full_name = first_part;
-
-		var handler = this.sub_pages_routes[first_part];
-		return handler && handler.call(this, decodeURIComponent(parts[1]), parts[1]);
-	},
-	subPager: function(parsed_str, path_string) {
-		var parts = path_string.split('/');
-		var first_part = parts[0];
-
-		var full_name = first_part;
-		if (parts[1]){
-			full_name += '/' + parts[1];
-		}
-		if (!this.sub_pages[full_name]){
-			if (!parts[1]){
-				return;
-			}
-
-			var instance_data = this.getSPC(parsed_str, path_string);
-			var instance;
-			if (instance_data) {
-				if (Array.isArray(instance_data)) {
-					instance = this.initSi(instance_data[0], instance_data[1]);
-
-				} else {
-					instance = instance_data;
-				}
-			}
-			if (instance){
-				this.sub_pages[full_name] = instance;
-			}
-
-			instance_data.splice( 0, 1, instance );
-			return instance_data;
-		}
-		return this.sub_pages[full_name];
-	},
 	short_title: 'Seesu',
 	getTitle: function() {
 		return this.short_title;
