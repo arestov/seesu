@@ -603,18 +603,31 @@ add({
 				return;
 			}
 			var prop;
+
+			var build_index = this._build_cache_interfaces;
+			this._build_cache_interfaces = {};
+
 			this._interfaces_to_states_index = {};
 
 			var all_states_instrs = [];
 			for (prop in this) {
 				var state_name = getUnprefixed(prop);
 				if (!state_name) {continue;}
-				var cur = this[prop];
-				all_states_instrs.push({
-					state_name: state_name,
-					interface_name: cur[0],
-					fn: cur[1]
-				});
+				var item;
+				if (props.hasOwnProperty(prop)) {
+					var cur = this[prop];
+					item = cur && {
+						state_name: state_name,
+						interface_name: cur[0],
+						fn: cur[1]
+					};
+
+				} else {
+					item = build_index[state_name];
+				}
+				this._build_cache_interfaces[state_name] = item;
+				all_states_instrs.push(item);
+
 			}
 			this._interfaces_to_states_index = spv.makeIndexByField(all_states_instrs, 'interface_name', true);
 		};
