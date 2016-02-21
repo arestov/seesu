@@ -496,29 +496,35 @@ add({
 			return item;
 		};
 
-		var collectCompxs1part = function(compx_check) {
+		var collectCompxs1part = function(props) {
+			var build_index = this._build_cache_compx_one;
+			this._build_cache_compx_one = {};
+
 			for (var prefixed_name in this){
 				var comlx_name = getUnprefixed(prefixed_name);
 				if (comlx_name){
 					var cur = this[prefixed_name];
 					if (!cur) {continue;}
 
-					var item = declr(comlx_name, cur);
-					compx_check[comlx_name] = item;
-					this.full_comlxs_list.push(item);
+					var item;
+					if (props.hasOwnProperty(prefixed_name)) {
+						item = declr(comlx_name, cur);
+					} else {
+						item = build_index[comlx_name];
+					}
+
+					this._build_cache_compx_one[comlx_name] = item;
 				}
 			}
 		};
-		var collectCompxs2part = function(compx_check) {
+		var collectCompxs2part = function() {
+			this._build_cache_compx_many = {};
 			for (var comlx_name in this.complex_states){
-				if (!compx_check[comlx_name]){
-					var cur = this.complex_states[comlx_name];
-					if (!cur) {continue;}
+				var cur = this.complex_states[comlx_name];
+				if (!cur) {continue;}
 
-					var item = declr(comlx_name, cur);
-					compx_check[comlx_name] = item;
-					this.full_comlxs_list.push(item);
-				}
+				var item = declr(comlx_name, cur);
+				this._build_cache_compx_many[comlx_name] = item;
 			}
 		};
 		return function(props) {
@@ -541,8 +547,26 @@ add({
 				}
 			}
 
-			collectCompxs1part.call(this, compx_check);
-			collectCompxs2part.call(this, compx_check);
+			if (part1) {
+				collectCompxs1part.call(this, props);
+			}
+
+			if (part2) {
+				collectCompxs2part.call(this);
+			}
+
+			for (var key_name_one in this._build_cache_compx_one) {
+				compx_check[key_name_one] = this._build_cache_compx_one[key_name_one];
+				this.full_comlxs_list.push(compx_check[key_name_one]);
+			}
+
+			for (var key_name_many in this._build_cache_compx_many) {
+				if (compx_check[key_name_many]) {continue;}
+
+				compx_check[key_name_many] = this._build_cache_compx_many[key_name_many];
+				this.full_comlxs_list.push(compx_check[key_name_many]);
+			}
+
 
 			this.compx_check = compx_check;
 			var i, jj, cur, state_name;
@@ -557,6 +581,8 @@ add({
 				}
 			}
 			this.collectStatesConnectionsProps();
+
+			return true;
 		};
 	})(),
 	collectRegFires: (function() {
