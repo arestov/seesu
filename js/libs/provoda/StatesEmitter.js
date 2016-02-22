@@ -1014,9 +1014,7 @@ function chiChecker() {
 		self._chi = {};
 
 		for (var chi_name in self._build_cache_chi) {
-			self._chi[chi_name] = spv.inh(self._build_cache_chi[chi_name], {}, {
-				pconstr_id: self.constr_id
-			});
+			self._chi['chi-' + chi_name] = self._build_cache_chi[chi_name];
 		}
 	};
 }
@@ -1027,7 +1025,7 @@ function allChiMarker() {
 
 		var all = {};
 
-		spv.cloneObj(all, self._build_cache_chi);
+		spv.cloneObj(all, self._chi);
 		spv.cloneObj(all, self._chi_sub_pager);
 		spv.cloneObj(all, self._chi_sub_pages);
 		spv.cloneObj(all, self._chi_sub_pages_side);

@@ -48,9 +48,9 @@ var UserPlaylists = spv.inh(BrowseMap.Model, {
 		matched = matched || this.createUserPlaylist(title);
 		matched.add(mo);
 	},
-
+	'chi-playlist': ManualPlaylist,
 	createUserPlaylist: function(title){
-		var pl_r = this.initSi(ManualPlaylist, {
+		var pl_r = this.initChi('playlist', {
 			nav_title: title,
 			url_part: '/' + title
 		});
@@ -87,7 +87,7 @@ var UserPlaylists = spv.inh(BrowseMap.Model, {
 			data: {name: saved_pl.playlist_title}
 		});*/
 
-		var pl_r = this.initSi(ManualPlaylist, {
+		var pl_r = this.initChi('playlist', {
 			nav_title: saved_pl.playlist_title,
 			url_part: '/' + saved_pl.playlist_title
 		}, {
