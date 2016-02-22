@@ -118,7 +118,8 @@ var getSubPByDeclr = function(md, cur) {
 
 };
 
-var getSubpages = function(md, array) {
+var getSubpages = function(md, el) {
+	var array = el.subpages_names_list;
 	var result;
 	if (Array.isArray( array )) {
 		result = new Array(array);
@@ -144,7 +145,7 @@ var initOneDeclaredNesting = function(md, el) {
 		var init_func = function(state) {
 
 			if (state) {
-				this.updateNesting(el.nesting_name, getSubpages( this, el.subpages_names_list ));
+				this.updateNesting(el.nesting_name, getSubpages( this, el ));
 				if (preload_state_name && this.state(preload_state_name)) {
 					executePreload(this, el.nesting_name);
 				}
@@ -156,7 +157,7 @@ var initOneDeclaredNesting = function(md, el) {
 		md.on('lgh_sch-' + el.init_state_name, init_func);
 
 	} else {
-		md.updateNesting(el.nesting_name, getSubpages( md, el.subpages_names_list ));
+		md.updateNesting(el.nesting_name, getSubpages( md, el ));
 	}
 
 	if (el.preload) {

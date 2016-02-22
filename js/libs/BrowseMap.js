@@ -1037,7 +1037,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 			if (el.init_state_name && (el.init_state_name !== 'mp_show' && el.init_state_name !== 'mp_has_focus')) {
 				continue;
 			}
-			md.updateNesting(el.nesting_name, pv.getSubpages( md, el.subpages_names_list ));
+			md.updateNesting(el.nesting_name, pv.getSubpages( md, el ));
 		}
 	},
 	'compx-to_load': [
@@ -1060,7 +1060,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 			var el = idx[nesting_name];
 			if (!el) {continue;}
 
-			var item = pv.getSubpages( md, el.subpages_names_list );
+			var item = pv.getSubpages( md, el );
 			if (Array.isArray(item) || !item.preloadStart) {
 				continue;
 			}
