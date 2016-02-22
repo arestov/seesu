@@ -480,6 +480,34 @@ add({
 	collectNestingsDeclarations: (function() {
 		var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
+		var nestConstructor = function(item, key) {
+			if (typeof item == 'string') {
+				return {
+					type: 'route',
+					value: item
+				};
+			} else {
+				return {
+					type: 'constr',
+					value: item,
+					key: key
+				};
+			}
+		};
+
+		var declarationConstructor = function(cur, nesting_name) {
+			if (Array.isArray(cur)) {
+				var result = [];
+				for (var i = 0; i < cur.length; i++) {
+					result[i] = nestConstructor(cur[i], nesting_name + '-' + i);
+				}
+				return result;
+			} else {
+				return nestConstructor(cur, nesting_name);
+			}
+		};
+
 		return function(props) {
 			var
 				has_props = hasPrefixedProps(props),
@@ -501,7 +529,7 @@ add({
 							used_props[real_name] = true;
 							result.push({
 								nesting_name: real_name,
-								subpages_names_list: cur[0],
+								subpages_names_list: declarationConstructor(cur[0], real_name),
 								preload: cur[1],
 								init_state_name: cur[2]
 							});
@@ -518,7 +546,7 @@ add({
 						used_props[real_name] = true;
 						result.push({
 							nesting_name: real_name,
-							subpages_names_list: cur[0],
+							subpages_names_list: declarationConstructor(cur[0], real_name),
 							preload: cur[1],
 							init_state_name: cur[2]
 						});

@@ -110,12 +110,11 @@ var getSPByPathTemplate = function(app, md, string_template, need_constr) {
 };
 
 var getSubPByDeclr = function(md, cur) {
-	if (typeof cur == 'function') {
-		return md.initSi(cur);
+	if (cur.type == 'route') {
+		return getSPByPathTemplate(md.app, md, cur.value);
 	} else {
-		return getSPByPathTemplate(md.app, md, cur);
+		return md.initSi(cur.value);
 	}
-
 };
 
 var getSubpages = function(md, el) {
