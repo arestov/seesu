@@ -87,7 +87,7 @@ var onPropsExtend = function (props) {
 	checkSubpager(this, props);
 	checkChi(this, props);
 
-	markAllChi(this);
+
 
 
 	this.collectRegFires(props);
@@ -117,6 +117,7 @@ var onPropsExtend = function (props) {
 		this.changeChildrenViewsDeclarations(props);
 	}
 
+	markAllChi(this);
 
 	for (var i = 0; i < xxxx_morph_props.length; i++) {
 		// если есть декларации - парсим, делаем функции
@@ -1029,6 +1030,7 @@ function allChiMarker() {
 		spv.cloneObj(all, self._chi_sub_pager);
 		spv.cloneObj(all, self._chi_sub_pages);
 		spv.cloneObj(all, self._chi_sub_pages_side);
+		spv.cloneObj(all, self._chi_nest);
 
 		for (var prop in all) {
 			self._all_chi[prop] = all[prop] && spv.inh(all[prop], {}, {

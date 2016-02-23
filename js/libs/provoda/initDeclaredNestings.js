@@ -113,7 +113,8 @@ var getSubPByDeclr = function(md, cur) {
 	if (cur.type == 'route') {
 		return getSPByPathTemplate(md.app, md, cur.value);
 	} else {
-		return md.initSi(cur.value);
+		var constr = md._all_chi[cur.key];
+		return md.initSi(constr);
 	}
 };
 

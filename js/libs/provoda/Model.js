@@ -555,9 +555,26 @@ add({
 
 				this.nestings_declarations = result;
 				this.idx_nestings_declarations = {};
+				this._chi_nest = {};
 				for (var i = 0; i < result.length; i++) {
 					this.idx_nestings_declarations[result[i].nesting_name] = result[i];
+
+					var item = result[i].subpages_names_list;
+					if (Array.isArray(item)) {
+						for (var kk = 0; kk < item.length; kk++) {
+							if (item[kk].type == 'constr') {
+								this._chi_nest[item[kk].key] = item[kk].value;
+							}
+						}
+					} else {
+						if (item.type == 'constr') {
+							this._chi_nest[item.key] = item.value;
+						}
+					}
+
 				}
+
+
 			}
 
 
