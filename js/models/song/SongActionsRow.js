@@ -131,6 +131,9 @@ constrs.forEach(function(el) {
 	parts_storage[el.prototype.model_name] = el;
 });
 
+var constrs_names= constrs.map(function(el) {
+	return el.prototype.model_name;
+});
 
 
 var SongActionsRow = spv.inh(comd.PartsSwitcher, {
@@ -145,7 +148,8 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
 		target.wch(target.map_parent, 'mp_show', target.hndSongHide);
 	}
 }, {
-	'nest_posb-context_parts': constrs,
+	sub_page: parts_storage,
+	'nest_posb-context_parts': constrs_names,
 
 	hndSongHide: function(e) {
 		if (!e.value) {
@@ -160,21 +164,6 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
 			}
 			target.setVolumeState(e.value);
 		});
-	},
-	switchPart: function(part_name) {
-		this.initPart(part_name);
-		//this.realyHeavyPart();
-		comd.PartsSwitcher.prototype.switchPart.call(this, part_name)
-		// this._super(part_name);
-	},
-	initPart: function(part_name) {
-		if (part_name){
-			if (!this.inited_parts[part_name]){
-				var part = this.initSi(parts_storage[part_name]);
-				this.inited_parts[part_name] = true;
-				this.addPart(part);
-			}
-		}
 	},
 	setVolumeState: function(fac) {
 		if (!fac){
