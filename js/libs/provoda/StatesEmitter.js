@@ -833,7 +833,9 @@ var getSubpageItem = function(cur, key) {
 		item = subPageHeaded(cur, null, key);
 	}
 
-	if (!item.constr.prototype.compx_check['nav_title']) {
+	var prototype = item.constr.prototype;
+
+	if (prototype['__required-nav_title'] && !prototype.compx_check['nav_title']) {
 		throw new Error('sub_page shoud have `title`');
 	}
 

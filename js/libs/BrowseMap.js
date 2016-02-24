@@ -1494,7 +1494,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	}
 }, {
 	network_data_as_states: true,
-
+	'__required-nav_title': true,
 	preview_nesting_source: 'lists_list',
 	/*
 
