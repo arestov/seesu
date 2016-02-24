@@ -1,4 +1,4 @@
-define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers'], function(pv, spv, app_serv, morph_helpers){
+define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers', '../libs/BrowseMap'], function(pv, spv, app_serv, morph_helpers, BrowseMap){
 "use strict";
 var pvUpdate = pv.update;
 
@@ -342,7 +342,7 @@ var PartsSwitcher = spv.inh(pv.Model, {
 		}
 	},
 	hide: function(name){
-		var target = this.context_parts[name];
+		var target = this.context_parts[name] || BrowseMap.routePathByModels(this, name);
 		if (target === this.active_part){
 			this.hideAll();
 		}
@@ -361,12 +361,12 @@ var PartsSwitcher = spv.inh(pv.Model, {
 		return this.context_parts;
 	},
 	switchPart: function(name) {
-		var target = this.context_parts[name];
+		var target = this.context_parts[name] || BrowseMap.routePathByModels(this, name);
 		if (target && target != this.active_part){
 			if (this.active_part){
 				this.active_part.deacivate();
 			}
-			this.active_part = this.context_parts[name];
+			this.active_part = target;
 			pvUpdate(this, 'active_part', name);
 			this.active_part.acivate();
 
