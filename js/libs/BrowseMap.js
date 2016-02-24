@@ -1228,7 +1228,7 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 				tree_parts_group = null;
 
 				if (need_constr) {
-					var Constr = cur_md.getSPIConstr(path_full_string);
+					var Constr = getSPIConstr(cur_md, path_full_string);
 					if (!Constr) {
 						throw new Error('you must use supported path');
 					} else {
@@ -1237,7 +1237,7 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 					}
 
 				} else {
-					var md = cur_md.getSPI(path_full_string);
+					var md = getSPI(cur_md, path_full_string);
 					if (md){
 						cur_md = md;
 						result = md;
@@ -1407,6 +1407,9 @@ BrowseMap.getStrucSources = function(md, struc) {
 	//console.log(md.model_name, md.constr_id, result);
 };
 
+var getSPI = getterSPI();
+var getSPIConstr = getterSPIConstr();
+
 BrowseMap.Model = spv.inh(pv.HModel, {
 	strict: true,
 	naming: function(fn) {
@@ -1496,134 +1499,12 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	/*
 
 	*/
-	getSPIConstr: (function(){
-		var select = function(self, sp_name) {
-			if (self._sub_pages && self._sub_pages[sp_name]) {
-				return self._sub_pages[sp_name];
-			}
-
-			var sub_pager = self._sub_pager;
-			if (sub_pager) {
-				if (sub_pager.item) {
-					return sub_pager.item;
-				} else {
-					var types = sub_pager.by_type;
-					var type = subPageType(sub_pager.type, sp_name);
-					if (type && !types[type]) {
-						throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
-					}
-					if (type) {
-						return sub_pager.by_type[type];
-					}
-				}
-			}
-		};
-		return function(sp_name) {
-			var item = select(this, sp_name);
-			if (item) {
-				return this._all_chi[item.key];
-			}
-
-			if (this.subPager){
-				var result = this.getSPC(decodeURIComponent(sp_name), sp_name);
-				if (Array.isArray(result)) {
-					return result[0];
-				} else {
-					return result;
-				}
-			}
-		};
-	})(),
-	getSPI: (function(){
-		var init = function(parent, target, data) {
-			if (target.hasOwnProperty('_provoda_id')) {
-				return target;
-			}
-			parent.useMotivator(target, function(instance) {
-				instance.init(parent.getSiOpts(), data);
-			});
-			return target;
-		};
-
-		var pepare = function(self, item, sp_name) {
-			var Constr = self._all_chi[item.key];
-			/*
-			hp_bound
-			data_by_urlname
-			data_by_hp
-
-			берем данные из родителя
-			накладываем стандартные данные
-			накладываем данные из урла
-			*/
-
-			var common_opts = getSPOpts(self, sp_name);
-
-			var instance_data = getInitData(self, common_opts);
-			var dbu_declr = Constr.prototype.data_by_urlname;
-			var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
-			var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
-			var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
-			if (head_by_urlname) {
-				instance_data.head = head_by_urlname;
-			}
-			cloneObj(instance_data, data_by_urlname);
-
-			return self.initSi(Constr, instance_data);
-		};
-
-		return function(sp_name) {
-			var self = this;
-			var item = self._sub_pages && self._sub_pages[sp_name];
-
-			if (item){
-				if (self.sub_pages && self.sub_pages[sp_name]){
-					return self.sub_pages[sp_name];
-				}
-				self.sub_pages[sp_name] = pepare(self, item, sp_name);
-				return self.sub_pages[sp_name];
-			}
-
-			var sub_pager = self._sub_pager;
-			if (sub_pager) {
-				var decoded = decodeURIComponent(sp_name);
-				var getKey = sub_pager.key;
-				var key = getKey ? getKey(decoded, sp_name) : sp_name;
-
-				if (self.sub_pages && self.sub_pages[key]){
-					return self.sub_pages[key];
-				}
-
-				if (sub_pager.item) {
-					item = sub_pager.item;
-				} else {
-					var types = sub_pager.by_type;
-					var type = subPageType(sub_pager.type, sp_name);
-					if (type && !types[type]) {
-						throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
-					}
-
-					item = type && sub_pager.by_type[type];
-				}
-
-				var instance = item && pepare(self, item, sp_name);
-				if (instance) {
-					self.sub_pages[key] = instance;
-					return instance;
-				}
-
-			}
-
-			if (self.subPager){
-				var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);
-				if (Array.isArray(sub_page)) {
-					return init(self, sub_page[0], sub_page[1]);
-				} else {
-					return sub_page;
-				}
-			}
-		};
-	})(),
+	getSPIConstr: function(sp_name) {
+		return getSPIConstr(this, sp_name);
+	},
+	getSPI: function(sp_name) {
+		return getSPI(this, sp_name);
+	},
 	preloadNestings: function(array) {
 		//var full_list = [];
 		for (var i = 0; i < array.length; i++) {
@@ -1665,6 +1546,135 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		return '';
 	}
 });
+
+function getterSPI(){
+	var init = function(parent, target, data) {
+		if (target.hasOwnProperty('_provoda_id')) {
+			return target;
+		}
+		parent.useMotivator(target, function(instance) {
+			instance.init(parent.getSiOpts(), data);
+		});
+		return target;
+	};
+
+	var pepare = function(self, item, sp_name) {
+		var Constr = self._all_chi[item.key];
+		/*
+		hp_bound
+		data_by_urlname
+		data_by_hp
+
+		берем данные из родителя
+		накладываем стандартные данные
+		накладываем данные из урла
+		*/
+
+		var common_opts = getSPOpts(self, sp_name);
+
+		var instance_data = getInitData(self, common_opts);
+		var dbu_declr = Constr.prototype.data_by_urlname;
+		var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
+		var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
+		var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
+		if (head_by_urlname) {
+			instance_data.head = head_by_urlname;
+		}
+		cloneObj(instance_data, data_by_urlname);
+
+		return self.initSi(Constr, instance_data);
+	};
+
+	return function getSPI(self, sp_name) {
+		var item = self._sub_pages && self._sub_pages[sp_name];
+
+		if (item){
+			if (self.sub_pages && self.sub_pages[sp_name]){
+				return self.sub_pages[sp_name];
+			}
+			self.sub_pages[sp_name] = pepare(self, item, sp_name);
+			return self.sub_pages[sp_name];
+		}
+
+		var sub_pager = self._sub_pager;
+		if (sub_pager) {
+			var decoded = decodeURIComponent(sp_name);
+			var getKey = sub_pager.key;
+			var key = getKey ? getKey(decoded, sp_name) : sp_name;
+
+			if (self.sub_pages && self.sub_pages[key]){
+				return self.sub_pages[key];
+			}
+
+			if (sub_pager.item) {
+				item = sub_pager.item;
+			} else {
+				var types = sub_pager.by_type;
+				var type = subPageType(sub_pager.type, sp_name);
+				if (type && !types[type]) {
+					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
+				}
+
+				item = type && sub_pager.by_type[type];
+			}
+
+			var instance = item && pepare(self, item, sp_name);
+			if (instance) {
+				self.sub_pages[key] = instance;
+				return instance;
+			}
+
+		}
+
+		if (self.subPager){
+			var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);
+			if (Array.isArray(sub_page)) {
+				return init(self, sub_page[0], sub_page[1]);
+			} else {
+				return sub_page;
+			}
+		}
+	};
+}
+
+function getterSPIConstr(){
+	var select = function(self, sp_name) {
+		if (self._sub_pages && self._sub_pages[sp_name]) {
+			return self._sub_pages[sp_name];
+		}
+
+		var sub_pager = self._sub_pager;
+		if (sub_pager) {
+			if (sub_pager.item) {
+				return sub_pager.item;
+			} else {
+				var types = sub_pager.by_type;
+				var type = subPageType(sub_pager.type, sp_name);
+				if (type && !types[type]) {
+					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
+				}
+				if (type) {
+					return sub_pager.by_type[type];
+				}
+			}
+		}
+	};
+	return function(self, sp_name) {
+		var item = select(self, sp_name);
+		if (item) {
+			return self._all_chi[item.key];
+		}
+
+		if (self.subPager){
+			var result = self.getSPC(decodeURIComponent(sp_name), sp_name);
+			if (Array.isArray(result)) {
+				return result[0];
+			} else {
+				return result;
+			}
+		}
+	};
+}
 
 function ba_show(bwlev){
 	var md = bwlev.getNesting('pioneer');
