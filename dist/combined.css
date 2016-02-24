@@ -4411,6 +4411,7 @@ html.opera-extension{
 			cursor: pointer;
 			opacity: 0.5;
 			margin-top: 0.2rem;
+			overflow: hidden;
 			}
 			.user_acqes-preview img{
 				width:25px;

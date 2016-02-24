@@ -3,6 +3,7 @@
 	cursor: pointer;
 	opacity: 0.5;
 	margin-top: 0.2rem;
+	overflow: hidden;
 	}
 	.user_acqes-preview img{
 		width:25px;
@@ -21,7 +22,7 @@
 		float:left;
 	}
 </style>
-<div class="user_acqes-preview">
+<div class="user_acqes-preview" pv-events="click:requestPage">
 	<span pv-nest="acqs_from_someone" class="user_acq_preview_item">
 		<img
 			src="https://vk.com/images/camera_b.gif"
