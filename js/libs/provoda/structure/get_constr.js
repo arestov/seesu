@@ -43,22 +43,22 @@ var getNestingConstr = function(app, md, nesting_name) {
 	} else if (md[ 'nest_posb-' + nesting_name ]) {
 		return md[ 'nest_posb-' + nesting_name ];
 	} else if (md[ 'nest-' + nesting_name]) {
-
 		var declr = md[ 'nest-' + nesting_name];
-		var items = declr[0];
-
-		if (Array.isArray(items)) {
-			var result = [];
-			for (var i = 0; i < items.length; i++) {
-				result.push(getDeclrConstr(app, md, items[i]));
-			}
-			return result;
-		} else {
-			return getDeclrConstr(app, md, items);
-		}
-
+		return constrsList(app, md, declr[0]);
 	}
 };
+
+function constrsList(app, md, items) {
+	if (Array.isArray(items)) {
+		var result = [];
+		for (var i = 0; i < items.length; i++) {
+			result.push(getDeclrConstr(app, md, items[i]));
+		}
+		return result;
+	} else {
+		return getDeclrConstr(app, md, items);
+	}
+}
 
 return {
 	getDeclrConstr: getDeclrConstr,
