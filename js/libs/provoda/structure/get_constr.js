@@ -40,11 +40,11 @@ var getNestingConstr = function(app, md, nesting_name) {
 			return getDeclrConstr(app, md, target);
 		}
 
-	} else if (md[ 'nest_posb-' + nesting_name ]) {
-		return constrsList(app, md, md[ 'nest_posb-' + nesting_name ]);
 	} else if (md[ 'nest-' + nesting_name]) {
 		var declr = md[ 'nest-' + nesting_name];
 		return constrsList(app, md, declr[0]);
+	} else if (md[ 'nest_posb-' + nesting_name ]) {
+		return constrsList(app, md, md[ 'nest_posb-' + nesting_name ]);
 	}
 };
 
