@@ -18,6 +18,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 	};
 
 	var PlaylistSettingsRow = spv.inh(comd.BaseCRow, {}, {
+		'compx-nav_title': [['#locales.playlist-settings']],
 		actionsrow_src: '^',
 		'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
 		setDnRp: function(state) {
@@ -27,6 +28,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 	});
 
 	var MultiAtcsRow = spv.inh(comd.BaseCRow, {}, {
+		'compx-nav_title': [['#locales.playlist-actions']],
 		actionsrow_src: '^',
 		makePlayable: function() {
 			this.map_parent.map_parent.makePlayable(true);
@@ -44,10 +46,13 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 			target.pl = target.map_parent;
 
 			pv.update(target, 'active_part', false);
-			target.addPart(target.initSi(MultiAtcsRow));
-			target.addPart(target.initSi(PlaylistSettingsRow));
 		}
 	}, {
+		'nest-context_parts': [['row-multiatcs', 'row-pl-settings']],
+		'sub_page': {
+			'row-pl-settings': PlaylistSettingsRow,
+			'row-multiatcs': MultiAtcsRow
+		},
 		'nest_posb-context_parts': [MultiAtcsRow, PlaylistSettingsRow],
 		'compx-loader_disallowing_desc': [
 			['^loader_disallowing_desc'],
