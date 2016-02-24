@@ -342,6 +342,7 @@ var PartsSwitcher = spv.inh(pv.Model, {
 		}
 	},
 	hide: function(name){
+		ensurePart(this, name);
 		var target = this.context_parts[name] || BrowseMap.routePathByModels(this, name);
 		if (target === this.active_part){
 			this.hideAll();
@@ -361,6 +362,7 @@ var PartsSwitcher = spv.inh(pv.Model, {
 		return this.context_parts;
 	},
 	switchPart: function(name) {
+		ensurePart(this, name);
 		var target = this.context_parts[name] || BrowseMap.routePathByModels(this, name);
 		if (target && target != this.active_part){
 			if (this.active_part){
@@ -376,6 +378,22 @@ var PartsSwitcher = spv.inh(pv.Model, {
 		}
 	}
 });
+
+function ensurePart(self, name) {
+	if (self.context_parts[name]) {
+		return;
+	}
+
+	var part = self.context_parts[name] || BrowseMap.routePathByModels(self, name);
+	var array = self.getNesting('context_parts') || [];
+	if (array.indexOf(part) != -1) {
+		return;
+	}
+	array.push(part);
+
+	self.updateNesting('context_parts', array);
+
+}
 
 
 var BaseCRow = spv.inh(pv.Model, {
