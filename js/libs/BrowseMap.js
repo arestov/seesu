@@ -1573,24 +1573,25 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		};
 
 		return function(sp_name) {
-			var item = this._sub_pages && this._sub_pages[sp_name];
+			var self = this;
+			var item = self._sub_pages && self._sub_pages[sp_name];
 
 			if (item){
-				if (this.sub_pages && this.sub_pages[sp_name]){
-					return this.sub_pages[sp_name];
+				if (self.sub_pages && self.sub_pages[sp_name]){
+					return self.sub_pages[sp_name];
 				}
-				this.sub_pages[sp_name] = pepare(this, item, sp_name);
-				return this.sub_pages[sp_name];
+				self.sub_pages[sp_name] = pepare(self, item, sp_name);
+				return self.sub_pages[sp_name];
 			}
 
-			var sub_pager = this._sub_pager;
+			var sub_pager = self._sub_pager;
 			if (sub_pager) {
 				var decoded = decodeURIComponent(sp_name);
 				var getKey = sub_pager.key;
 				var key = getKey ? getKey(decoded, sp_name) : sp_name;
 
-				if (this.sub_pages && this.sub_pages[key]){
-					return this.sub_pages[key];
+				if (self.sub_pages && self.sub_pages[key]){
+					return self.sub_pages[key];
 				}
 
 				if (sub_pager.item) {
@@ -1605,18 +1606,18 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 					item = type && sub_pager.by_type[type];
 				}
 
-				var instance = item && pepare(this, item, sp_name);
+				var instance = item && pepare(self, item, sp_name);
 				if (instance) {
-					this.sub_pages[key] = instance;
+					self.sub_pages[key] = instance;
 					return instance;
 				}
 
 			}
 
-			if (this.subPager){
-				var sub_page = this.subPager(decodeURIComponent(sp_name), sp_name);
+			if (self.subPager){
+				var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);
 				if (Array.isArray(sub_page)) {
-					return init(this, sub_page[0], sub_page[1]);
+					return init(self, sub_page[0], sub_page[1]);
 				} else {
 					return sub_page;
 				}
