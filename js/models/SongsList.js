@@ -48,11 +48,11 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 			pv.update(target, 'active_part', false);
 		}
 	}, {
-		'nest-context_parts': [['row-multiatcs', 'row-pl-settings']],
 		'sub_page': {
 			'row-pl-settings': PlaylistSettingsRow,
 			'row-multiatcs': MultiAtcsRow
 		},
+		'nest_posb-context_parts': ['row-multiatcs', 'row-pl-settings'],
 		'compx-loader_disallowing_desc': [
 			['^loader_disallowing_desc'],
 			function(loader_disallowing_desc) {
