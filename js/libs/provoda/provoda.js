@@ -165,7 +165,6 @@ var HModel = spv.inh(Model, {
 			self.app = null;
 		}
 
-		self.sub_pages = null;
 		if (!self.map_parent){
 			self.map_parent = null;
 		}
@@ -173,9 +172,6 @@ var HModel = spv.inh(Model, {
 		self.pmd_switch = null;
 
 		if (!self.skip_map_init){
-			if (self.sub_pa || self.subPager || self._sub_pages || self._sub_pager){
-				self.sub_pages = {};
-			}
 
 			if (!opts || !opts.map_parent) {
 				if (!self.zero_map_level){

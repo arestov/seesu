@@ -253,6 +253,11 @@ var modelInit = (function() {
 
 		self._calls_flow = self._highway.calls_flow;
 
+		self.sub_pages = null;
+
+		if (self._sub_pages || self._sub_pager){
+			self.sub_pages = {};
+		}
 
 		if (opts && opts.map_parent){
 			self.map_parent = opts.map_parent;
@@ -738,6 +743,9 @@ add({
 		return this.initSi(Constr, data, params);
 	},
 	initSi: function(Constr, data, params) {
+		// if (Constr.prototype.pconstr_id !== true && this.constr_id !== Constr.prototype.pconstr_id) {
+		// 	throw new Error('pconstr_id should match constr_id');
+		// }
 		if (Constr.prototype.init) {
 			var instance = new Constr();
 			var initsbi_opts = this.getSiOpts();
