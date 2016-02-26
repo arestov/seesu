@@ -1035,7 +1035,9 @@ function allChiMarker() {
 		spv.cloneObj(all, self._chi_nest_rqc);
 
 		for (var prop in all) {
-			self._all_chi[prop] = all[prop] && spv.inh(all[prop], {}, {
+			self._all_chi[prop] = all[prop] && spv.inh(all[prop], {
+				skip_code_path: true
+			}, {
 				pconstr_id: self.constr_id
 			});
 		}
