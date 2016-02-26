@@ -14,6 +14,30 @@ var getDeclrConstr = function(app, md, item) {
 	}
 };
 
+var nestConstrDeclaration = function(cur, md, app) {
+	if (cur.type == 'route') {
+		return md.getConstrByPathTemplate(app, cur.value);
+	} else {
+		return md._all_chi[cur.key];
+	}
+};
+
+var specMap = function(func) {
+	return function(list, arg1, arg2) {
+		if (Array.isArray(list)) {
+			var result = new Array(list.length);
+			for (var i = 0; i < list.length; i++) {
+				result[i] = func(list[i], arg1, arg2);
+			}
+			return result;
+		} else {
+			return func(list, arg1, arg2);
+		}
+	};
+};
+
+var nestList = specMap(nestConstrDeclaration);
+
 var getNestingConstr = function(app, md, nesting_name) {
 	nesting_name = getRightNestingName(md, nesting_name);
 
@@ -40,9 +64,9 @@ var getNestingConstr = function(app, md, nesting_name) {
 			return getDeclrConstr(app, md, target);
 		}
 
-	} else if (md[ 'nest-' + nesting_name]) {
-		var declr = md[ 'nest-' + nesting_name];
-		return constrsList(app, md, declr[0]);
+	} else if (md.idx_nestings_declarations && md.idx_nestings_declarations[nesting_name]) {
+		return nestList(md.idx_nestings_declarations[nesting_name].subpages_names_list, md, app);
+
 	} else if (md[ 'nest_posb-' + nesting_name ]) {
 		return constrsList(app, md, md[ 'nest_posb-' + nesting_name ]);
 	}
