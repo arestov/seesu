@@ -66,6 +66,7 @@ var getBaseTreeCheckList = function(start) {
 var collectSubpages = buildSubpageCollector();
 var checkSubpager = buildSubpagerChecker();
 var checkChi = chiChecker();
+var checkNestRqC = nestRqCchecker();
 var markAllChi = allChiMarker();
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
@@ -86,9 +87,7 @@ var onPropsExtend = function (props) {
 	collectSubpages(this, props);
 	checkSubpager(this, props);
 	checkChi(this, props);
-
-
-
+	checkNestRqC(this, props);
 
 	this.collectRegFires(props);
 
@@ -1033,6 +1032,7 @@ function allChiMarker() {
 		spv.cloneObj(all, self._chi_sub_pages);
 		spv.cloneObj(all, self._chi_sub_pages_side);
 		spv.cloneObj(all, self._chi_nest);
+		spv.cloneObj(all, self._chi_nest_rqc);
 
 		for (var prop in all) {
 			self._all_chi[prop] = all[prop] && spv.inh(all[prop], {}, {
@@ -1040,6 +1040,37 @@ function allChiMarker() {
 			});
 		}
 
+	};
+}
+
+function nestRqCchecker() {
+	var getUnprefixed = spv.getDeprefixFunc( 'nest_rqc-' );
+	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
+	return function checkNestRqC(self, props) {
+		if (!hasPrefixedProps(props)) {
+			return;
+		}
+
+		self._chi_nest_rqc = spv.cloneObj({}, self.__chi_nest_rqc);
+		self._nest_rqc = spv.cloneObj({}, self._nest_rqc);
+
+		for (var name in props) {
+			var clean_name = getUnprefixed(name);
+			if (!clean_name) {
+				continue;
+			}
+			var key = 'nest_rqc-' + clean_name;
+			var cur = props[name];
+			if (cur) {
+				self._chi_nest_rqc[key] = cur;
+				self._nest_rqc[clean_name] = key;
+			} else {
+				self._chi_nest_rqc[key] = null;
+				self._nest_rqc[clean_name] = null;
+			}
+
+		}
 	};
 }
 

@@ -43,7 +43,8 @@ var getNestingConstr = function(app, md, nesting_name) {
 
 
 	if (md[ 'nest_rqc-' + nesting_name ]) {
-		var target = md[ 'nest_rqc-' + nesting_name ];
+		var key = md._nest_rqc && md._nest_rqc[nesting_name];
+		var target = md._all_chi[key];
 		if (Array.isArray(target)) {
 			if (!target.constrs_array) {
 				var result = [];

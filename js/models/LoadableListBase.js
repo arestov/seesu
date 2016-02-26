@@ -280,7 +280,8 @@ return spv.inh(BrowseMap.Model, {
 		return this.loadable_lists[ this.main_list_name ];
 	},
 	makeItemByData: function(data, item_params, nesting_name) {
-		var best_constr = this['nest_rqc-' + nesting_name];
+		var constr_key = this._nest_rqc[nesting_name];
+		var best_constr = this._all_chi[constr_key];
 		var md = this;
 		if (best_constr) {
 			if (typeof best_constr == 'string') {
