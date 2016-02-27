@@ -760,9 +760,8 @@ add({
 
 			var opts = {
 				_motivator: motivator,
-				map_parent: this,
-				app: this.app,
-
+				map_parent: this != this.app && this,
+				app: this.app
 			};
 
 			var instancePure = new Constr(opts, data, params);
