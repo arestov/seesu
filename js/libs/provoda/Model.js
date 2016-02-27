@@ -743,9 +743,12 @@ add({
 		return this.initSi(Constr, data, params);
 	},
 	initSi: function(Constr, data, params) {
-		// if (Constr.prototype.pconstr_id !== true && this.constr_id !== Constr.prototype.pconstr_id) {
-		// 	throw new Error('pconstr_id should match constr_id');
-		// }
+		if (Constr.prototype.conndst_parent && Constr.prototype.conndst_parent.length) {
+			if (Constr.prototype.pconstr_id !== true && this.constr_id !== Constr.prototype.pconstr_id) {
+				console.log( (new Error('pconstr_id should match constr_id')).stack );
+			}
+		}
+
 		if (Constr.prototype.init) {
 			var instance = new Constr();
 			var initsbi_opts = this.getSiOpts();
