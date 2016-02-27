@@ -822,7 +822,9 @@ var getSubpageItem = function(cur, key) {
 			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
 		}
 
-		item = subPageHeaded(spv.inh(cur.constr, {}, {
+		item = subPageHeaded(spv.inh(cur.constr, {
+			skip_code_path: true
+		}, {
 			'compx-nav_title': cur.title
 		}), cur.head, key);
 	} else {
