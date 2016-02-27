@@ -200,7 +200,7 @@ var MfCor = spv.inh(LoadableList, {
 		if (omo.file){
 			self.file = omo.file;
 
-			var complect = self.initSi(MfComplect, null, {
+			var complect = self.initChi('mf_complect', null, {
 					mf_cor: self,
 					mo: self.mo,
 					file: self.file,
@@ -223,6 +223,7 @@ var MfCor = spv.inh(LoadableList, {
 		self.intMessages();
 	}
 }, {
+	'chi-mf_complect': MfComplect,
 	// hndMoImportant: function(e) {
 
 	// 	if (e.value){
@@ -518,8 +519,9 @@ var MfCor = spv.inh(LoadableList, {
 	isSearchAllowed: function() {
 		return !this.file;
 	},
+	'chi-notifier': NotifyCounter,
 	initNotifier: function() {
-		this.notifier = this.initSi(NotifyCounter);
+		this.notifier = this.initChi('notifier');
 		pv.updateNesting(this, 'notifier', this.notifier);
 		this.sf_notf = this.app.notf.getStore('song-files');
 		var rd_msgs = this.sf_notf.getReadedMessages();
@@ -617,7 +619,7 @@ var MfCor = spv.inh(LoadableList, {
 	bindSource: function(f_investg_s) {
 		var source_name = f_investg_s.search_name;
 		if (!this.complects[source_name]){
-			var complect = this.initSi(MfComplect, null, {
+			var complect = this.initChi('mf_complect', null, {
 				mf_cor: this,
 				mo: this.mo,
 				search_source: f_investg_s,

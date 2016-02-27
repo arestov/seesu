@@ -87,7 +87,7 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
 	}
 }, {
 	model_name: 'user_acqs_list',
-
+	'chi-item': UserAcquaintance,
 	'compx-wait_me_desc': {
 		depends_on: ['@every:accepted:acqs_from_someone', '#locales.if-you-accept-one-i', '#locales.will-get-link'],
 		fn: function(not_wait_me, accept_desc, get_desc) {
@@ -123,18 +123,15 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
 			throw new Error('there is no current_user!');
 		}
 
-
 		var filtered = spv.filter(new_array, 'item.accepted', function(v){
 			return !!v;
 		});
 
 		var concated = [].concat(filtered, filtered.not);
 
-
-
 		for (var i = 0; i < concated.length; i++) {
 			var cur = concated[i];
-			var user_acq = this.initSi(UserAcquaintance, {
+			var user_acq = this.initChi('item', {
 				current_user_is_sender: this.state('current_user') == cur.item.from,
 				sender: cur.item.from,
 				receiver: cur.item.to,

@@ -670,8 +670,9 @@ var getMatchedSongs = function(music_list, msq) {
 			}
 
 		},
+		'chi-files_by_source': FilesBySource,
 		bindSource: function(name, data, mp3_search) {
-			var files_by_source = this.initSi(FilesBySource, data, name);
+			var files_by_source = this.initChi('files_by_source', data, name);
 			var _this = this;
 			files_by_source.on('requests', function(requests) {
 				_this.addRequests(requests);
@@ -859,9 +860,10 @@ var getAverageDurations = function(mu_array, time_limit){
 				}
 			}
 		},
+		'chi-tuner': FilesSourceTuner,
 		getSourceTuner: function(search_name) {
 			if (!this.tuners[search_name]) {
-				var tuner = this.initSi(FilesSourceTuner, {search_name: search_name});
+				var tuner = this.initChi('tuner', {search_name: search_name});
 				this.tuners[search_name] = tuner;
 			}
 			return this.tuners[search_name];
@@ -915,11 +917,12 @@ var getAverageDurations = function(mu_array, time_limit){
 		},
 		getFileQMI: getFileQMI,
 		setFileQMI: setFileQMI,
+		'chi-files_investg': FilesInvestg,
 		getFilesInvestg: function(msq, motivator) {
 			var query_string = msq.q || getQueryString(msq);
 			var investg = this.investgs[ query_string ];
 			if (!investg){
-				investg = this.initSi(FilesInvestg, null, {
+				investg = this.initChi('files_investg', null, {
 						mp3_search: this,
 						msq: msq,
 						query_string: query_string

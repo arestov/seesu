@@ -199,6 +199,7 @@ var pvUpdate = pv.update;
 			this.initHeavyPart();
 			return this.mf_cor;
 		},
+		'chi-mf__cor': MfCor,
 		initHeavyPart: pv.getOCF('izheavy', function() {
 			var omo = this.omo;
 
@@ -213,7 +214,7 @@ var pvUpdate = pv.update;
 				omo.file = null;
 			}
 
-			this.mf_cor = this.initSi(MfCor, null, omo);
+			this.mf_cor = this.initChi('mf__cor', null, omo);
 
 			this.mf_cor
 				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())

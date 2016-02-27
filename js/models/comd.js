@@ -164,7 +164,7 @@ var LastFMArtistImagesSelector = spv.inh(pv.Model, {
 
 		var model_id = info.artist + ' - ' + info.track;
 		if (!this.track_models[model_id]) {
-			var md = this.initSi(TrackImages, false, {
+			var md = this.initChi('track', false, {
 				artmd: this.getArtistImagesModel(info.artist),
 				info: info
 			});
@@ -173,6 +173,8 @@ var LastFMArtistImagesSelector = spv.inh(pv.Model, {
 		}
 		return this.track_models[model_id];
 	},
+	'chi-track': TrackImages,
+	'chi-artist': ArtistImages,
 	getArtistImagesModel: function(artist_name) {
 		if (!artist_name){
 			throw new Error('give me artist name');
@@ -180,7 +182,7 @@ var LastFMArtistImagesSelector = spv.inh(pv.Model, {
 		artist_name = this.convertEventName(artist_name);
 
 		if (!this.art_models[artist_name]){
-			var md = this.initSi(ArtistImages, false, {
+			var md = this.initChi('artist', false, {
 				artist_name: artist_name
 			});
 			this.art_models[artist_name] = md;
