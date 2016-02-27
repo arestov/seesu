@@ -7,6 +7,8 @@ var updateProxy = require('./updateProxy');
 var StatesLabour = require('./StatesLabour');
 var prsStCon = require('./prsStCon');
 var Eventor = require('./Eventor');
+var constr_mention = require('./structure/constr_mention');
+
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -1034,6 +1036,8 @@ function nestRqCchecker() {
 	var getUnprefixed = spv.getDeprefixFunc( 'nest_rqc-' );
 	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
+	var nestConstructor = constr_mention.nestConstructor;
+
 	return function checkNestRqC(self, props) {
 		if (!hasPrefixedProps(props)) {
 			return;
@@ -1050,8 +1054,11 @@ function nestRqCchecker() {
 			var key = 'nest_rqc-' + clean_name;
 			var cur = props[name];
 			if (cur) {
-				self._chi_nest_rqc[key] = cur;
-				self._nest_rqc[clean_name] = key;
+				var item = nestConstructor(cur, key);
+				self._nest_rqc[clean_name] = item;
+				if (item.type == 'constr') {
+					self._chi_nest_rqc[key] = item.value;
+				}
 			} else {
 				self._chi_nest_rqc[key] = null;
 				self._nest_rqc[clean_name] = null;

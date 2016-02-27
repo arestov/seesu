@@ -10,6 +10,7 @@ var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
 var LocalWatchRoot = require('./Model/LocalWatchRoot');
+var constr_mention = require('./structure/constr_mention');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -486,32 +487,7 @@ add({
 		var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
-		var nestConstructor = function(item, key) {
-			if (typeof item == 'string') {
-				return {
-					type: 'route',
-					value: item
-				};
-			} else {
-				return {
-					type: 'constr',
-					value: item,
-					key: key
-				};
-			}
-		};
-
-		var declarationConstructor = function(cur, nesting_name) {
-			if (Array.isArray(cur)) {
-				var result = [];
-				for (var i = 0; i < cur.length; i++) {
-					result[i] = nestConstructor(cur[i], nesting_name + '-' + i);
-				}
-				return result;
-			} else {
-				return nestConstructor(cur, nesting_name);
-			}
-		};
+		var declarationConstructor = constr_mention.declarationConstructor;
 
 		return function(props) {
 			var
@@ -534,7 +510,7 @@ add({
 							used_props[real_name] = true;
 							result.push({
 								nesting_name: real_name,
-								subpages_names_list: declarationConstructor(cur[0], real_name),
+								subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
 								preload: cur[1],
 								init_state_name: cur[2]
 							});
@@ -551,7 +527,7 @@ add({
 						used_props[real_name] = true;
 						result.push({
 							nesting_name: real_name,
-							subpages_names_list: declarationConstructor(cur[0], real_name),
+							subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
 							preload: cur[1],
 							init_state_name: cur[2]
 						});

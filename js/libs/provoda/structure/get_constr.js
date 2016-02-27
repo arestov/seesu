@@ -41,35 +41,18 @@ var nestList = specMap(nestConstrDeclaration);
 var getNestingConstr = function(app, md, nesting_name) {
 	nesting_name = getRightNestingName(md, nesting_name);
 
+	if (md._nest_rqc && md._nest_rqc[nesting_name ]) {
 
-	if (md[ 'nest_rqc-' + nesting_name ]) {
-		var key = md._nest_rqc && md._nest_rqc[nesting_name];
-		var target = md._all_chi[key];
-		if (Array.isArray(target)) {
-			if (!target.constrs_array) {
-				var result = [];
-				var index = target[1];
-				for (var prop in index) {
-					if (!index.hasOwnProperty(prop)) {
-						continue;
-					} else {
-						result.push( getDeclrConstr(app, md, index[prop]) );
-					}
-
-				}
-				target.constrs_array = result;
-			}
-
-			return target.constrs_array;
-		} else {
-			return getDeclrConstr(app, md, target);
-		}
+		return nestConstrDeclaration(md._nest_rqc[nesting_name ], md, app);
 
 	} else if (md.idx_nestings_declarations && md.idx_nestings_declarations[nesting_name]) {
+
 		return nestList(md.idx_nestings_declarations[nesting_name].subpages_names_list, md, app);
 
 	} else if (md[ 'nest_posb-' + nesting_name ]) {
+
 		return constrsList(app, md, md[ 'nest_posb-' + nesting_name ]);
+
 	}
 };
 

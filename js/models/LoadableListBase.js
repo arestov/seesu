@@ -280,12 +280,11 @@ return spv.inh(BrowseMap.Model, {
 		return this.loadable_lists[ this.main_list_name ];
 	},
 	makeItemByData: function(data, item_params, nesting_name) {
-		var constr_key = this._nest_rqc[nesting_name];
-		var best_constr = this._all_chi[constr_key];
+		var mentioned = this._nest_rqc[nesting_name];
 		var md = this;
-		if (best_constr) {
-			if (typeof best_constr == 'string') {
-				var pathObj = pv.getParsedPath(best_constr);
+		if (mentioned) {
+			if (mentioned.type == 'route') {
+				var pathObj = pv.getParsedPath(mentioned.value);
 				var app = this.app;
 				var path = getPath(pathObj, app, data);
 				var result = app.routePathByModels(path, pathObj.from_root ? app.start_page : md);
@@ -294,18 +293,10 @@ return spv.inh(BrowseMap.Model, {
 				}
 				return result;
 			}
-			/*
-				['type', {
-					'number': NumberConstr,
-					'text': TextConstr
-				}]
-			*/
 
-			if (Array.isArray(best_constr)) {
-				var field = best_constr[0];
-				var field_value = spv.getTargetField( data, field );
-				best_constr = best_constr[1][field_value];
-			}
+			var best_constr = this._all_chi[mentioned.key];
+
+
 			var netdata_as_states = best_constr.prototype.netdata_as_states;
 			var network_data_as_states = best_constr.prototype.network_data_as_states;
 
