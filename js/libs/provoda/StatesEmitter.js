@@ -1023,24 +1023,7 @@ function chiChecker() {
 
 function allChiMarker() {
 	return function markAllChi(self) {
-		self._all_chi = {};
 
-		var all = {};
-
-		spv.cloneObj(all, self._chi);
-		spv.cloneObj(all, self._chi_sub_pager);
-		spv.cloneObj(all, self._chi_sub_pages);
-		spv.cloneObj(all, self._chi_sub_pages_side);
-		spv.cloneObj(all, self._chi_nest);
-		spv.cloneObj(all, self._chi_nest_rqc);
-
-		for (var prop in all) {
-			self._all_chi[prop] = all[prop] && spv.inh(all[prop], {
-				skip_code_path: true
-			}, {
-				pconstr_id: self.constr_id
-			});
-		}
 
 	};
 }

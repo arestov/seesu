@@ -81,6 +81,7 @@ AppModel.extendTo(SeesuApp, {
 	'chi-mp3_search': Mp3Search,
 	'chi-vk_auth': VkAuth,
 	'chi-lfm_auth': LfmAuth,
+	'chi-start__page': StartPage,
 	tickStat: function(data_array) {
 		window._gaq.push(data_array);
 	},
@@ -186,7 +187,7 @@ AppModel.extendTo(SeesuApp, {
 			pv.update(this, 'deep_sandbox', true);
 		}
 
-		this.start_page = new StartPage({app: this});
+		this.start_page = this.initChi('start__page');
 
 		this.initMapTree(this.start_page, app_env.needs_url_history, navi)
 			/*
@@ -712,5 +713,5 @@ AppModel.extendTo(SeesuApp, {
 
 });
 
-return SeesuApp;
+return pv.markStrucure(SeesuApp);
 });

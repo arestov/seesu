@@ -14,6 +14,7 @@ var CallbacksFlow = require('./CallbacksFlow');
 var Model = require('./Model');
 var updateProxy = require('./updateProxy');
 var initDeclaredNestings = require('./initDeclaredNestings');
+var markStrucure = require('./structure/mark');
 
 var provoda, pv;
 var pvUpdate = updateProxy.update;
@@ -147,7 +148,8 @@ pv = provoda = {
 		}
 
 		return model;
-	}
+	},
+	markStrucure: markStrucure
 };
 
 function getHModel() {
