@@ -906,7 +906,10 @@ function extend(Class, params, propsArg) {
 	result.prototype = new PrototypeConstr();
 	result.prototype.constr_id = constr_id++;
 	result.prototype.constructor = result;
-	result.prototype.__code_path = !params.skip_code_path && codePath();
+	if (!params.skip_code_path) {
+		result.prototype.__code_path = codePath();
+	}
+
 
 	if (props) {
 		copyProps(result.prototype, props, Class.prototype);
@@ -934,7 +937,10 @@ function extend(Class, params, propsArg) {
 			result.legacy.prototype.init = makeInit(result.builder);
 			result.legacy.prototype.constr_id = constr_id++;
 			result.legacy.prototype.constructor = result.legacy;
-			result.prototype.__code_path = !params.skip_code_path && codePath();
+			if (!params.skip_code_path) {
+				result.prototype.__code_path = codePath();
+			}
+
 		}
 
 		return extendTo.call(result.legacy, Class, props);
