@@ -69,7 +69,6 @@ var collectSubpages = buildSubpageCollector();
 var checkSubpager = buildSubpagerChecker();
 var checkChi = chiChecker();
 var checkNestRqC = nestRqCchecker();
-var markAllChi = allChiMarker();
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
@@ -118,7 +117,6 @@ var onPropsExtend = function (props) {
 		this.changeChildrenViewsDeclarations(props);
 	}
 
-	markAllChi(this);
 
 	for (var i = 0; i < xxxx_morph_props.length; i++) {
 		// если есть декларации - парсим, делаем функции
@@ -1025,12 +1023,6 @@ function chiChecker() {
 	};
 }
 
-function allChiMarker() {
-	return function markAllChi(self) {
-
-
-	};
-}
 
 function nestRqCchecker() {
 	var getUnprefixed = spv.getDeprefixFunc( 'nest_rqc-' );
