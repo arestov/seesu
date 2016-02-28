@@ -20,7 +20,8 @@ function mark(Constr) {
 		var item = all[prop] && spv.inh(all[prop], {
 			skip_code_path: true
 		}, {
-			pconstr_id: self.constr_id
+			pconstr_id: self.constr_id,
+			_parent_constr: Constr
 		});
 
 		self._all_chi[prop] = item && mark(item);
