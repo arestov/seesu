@@ -657,7 +657,7 @@ FastEventor.prototype = {
 
 		var cant_request;
 		if (this.mapped_reqs) {
-			for (i = 0; i < maps_for_state.length; i+=2) {
+			for (i = 0; i < maps_for_state.length; i++) {
 				cur = this.mapped_reqs[maps_for_state[i]];
 				if (cur && (cur.done || cur.process)) {
 					cant_request = true;
@@ -670,8 +670,8 @@ FastEventor.prototype = {
 			return;
 		}
 
-		var selected_map = maps_for_state[1];
-		var selected_map_num = maps_for_state[0];
+		var selected_map = maps_for_state[0]; //take first
+		var selected_map_num = selected_map.num;
 		if (!this.mapped_reqs) {
 			this.mapped_reqs = {};
 		}
@@ -688,9 +688,9 @@ FastEventor.prototype = {
 		var store = this.mapped_reqs[selected_map_num];
 
 
-		states_list = selected_map[0];
+		states_list = selected_map.states_list;
 		this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
-		var parse = selected_map[1], send_declr = selected_map[2];
+		var parse = selected_map.parse, send_declr = selected_map.send_declr;
 
 
 

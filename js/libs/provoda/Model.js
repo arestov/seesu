@@ -424,11 +424,11 @@ add({
 		} else {
 			var maps_for_state = this._states_reqs_index && this._states_reqs_index[state_name];
 			if (maps_for_state) {
-				var result = new Array(maps_for_state.length/2);
-				for (var i = 0; i < maps_for_state.length; i+=2) {
-					var selected_map = maps_for_state[ i + 1 ];
-					var network_api = hp.getNetApiByDeclr(selected_map[2], this, app);
-					result[i/2] = network_api.source_name;
+				var result = new Array(maps_for_state.length);
+				for (var i = 0; i < maps_for_state.length; i++) {
+					var selected_map = maps_for_state[i];
+					var network_api = hp.getNetApiByDeclr(selected_map.send_declr, this, app);
+					result[i] = network_api.source_name;
 				}
 				return result;
 			}
@@ -566,13 +566,27 @@ add({
 		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-', true );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
+		function ReqMap(req_item, num) {
+			this.num = num;
+			this.states_list = req_item[0];
+
+			var parse;
+			if (typeof req_item[1] != 'function') {
+				parse = spv.mmap( req_item[1] );
+			} else {
+				parse = req_item[1];
+			}
+			this.parse = parse;
+			this.send_declr = req_item[2];
+		}
+
 		var doIndex = function(list, value) {
 			var result = [];
 
 			for (var i = 0; i < list.length; i++) {
-				var values = list[i][0];
-				if (values.indexOf(value) != -1) {
-					result.push(i, list[i]);
+				var states_list = list[i].states_list;
+				if (states_list.indexOf(value) != -1) {
+					result.push(list[i]);
 				}
 			}
 
@@ -592,27 +606,26 @@ add({
 					sources_names: []
 				};
 				has_changes = true;
-				for (i = 0; i < props.req_map.length; i++) {
-					cur = props.req_map[i][1];
-					if (typeof cur != 'function') {
-						props.req_map[i][1] = spv.mmap( cur );
-					}
-					changeSources(this.netsources_of_states, props.req_map[i][2]);
 
+				var list = new Array(props.req_map);
+				for (var i = 0; i < props.req_map.length; i++) {
+					list[i] = new ReqMap(props.req_map[i], i);
+				}
+				for (var i = 0; i < list.length; i++) {
+					changeSources(this.netsources_of_states, list[i].states_list);
 				}
 
-
 				this._states_reqs_index = {};
-				var req_map = this.req_map;
 				var states_index = {};
-				for (var i = 0; i < req_map.length; i++) {
-					var states_list = req_map[i][0];
+
+				for (var i = 0; i < list.length; i++) {
+					var states_list = list[i].states_list;
 					for (var jj = 0; jj < states_list.length; jj++) {
 						states_index[states_list[jj]] = true;
 					}
 				}
 				for (var state_name in states_index) {
-					this._states_reqs_index[state_name] = doIndex(req_map, state_name);
+					this._states_reqs_index[state_name] = doIndex(list, state_name);
 				}
 			}
 
