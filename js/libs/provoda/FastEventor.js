@@ -709,6 +709,11 @@ FastEventor.prototype = {
 					}
 					result_states = result;
 				}
+
+				for (var i = 0; i < states_list.length; i++) {
+					result_states[states_list[i] + '__$complete'] = true;
+				}
+
 				self.sputnik.updateManyStates( result_states );
 
 
