@@ -610,7 +610,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 						var sresults = spv.toRealArray(spv.getTargetField(r, 'responseData.results'));
 						for (var i = 0; i < sresults.length; i++) {
 							var url = sresults[i].url;
-							var link_node = document.createElement('a');
+							var link_node = window.document.createElement('a');
 							link_node.href = url;
 							var url_parts = link_node.pathname.replace(/^\//,'').split('/');
 							if (url_parts.length == 1){
