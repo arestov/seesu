@@ -646,7 +646,8 @@ FastEventor.prototype = {
 	},
 
 
-	requestState: function(state_name) {
+	requestState: (function(){
+		return function(state_name) {
 		var current_value = this.sputnik.state(state_name);
 		if (current_value) {
 			return;
@@ -755,7 +756,8 @@ FastEventor.prototype = {
 		this.addRequest(request);
 		return request;
 
-	},
+	}
+	})(),
 	makeLoadingMarks: function(states_list, value) {
 		var loading_marks = {};
 		for (var i = 0; i < states_list.length; i++) {
