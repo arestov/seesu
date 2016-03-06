@@ -7,6 +7,9 @@ spv.Class.extendTo(GoogleSoundcloud, {
 		this.queue = opts.queue;
 		this.crossdomain = opts.crossdomain;
 	},
+	checkResponse: function() {
+		return;
+	},
 	thisOriginAllowed: true,
 	source_name: 'google.com',
 	cache_namespace: 'goog_sc',
