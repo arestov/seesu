@@ -1418,6 +1418,9 @@ var executeMap = function(map, data, spec_data, converters) {
 
 
 var MorphMap = function(config, converters) {
+	if (config && typeof config != 'object') {
+		throw new Error('map should be `object`');
+	}
 	this.config = config;
 	this.converters = converters;
 	this.pconfig = null;
