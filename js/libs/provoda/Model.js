@@ -568,7 +568,19 @@ add({
 
 		function ReqMap(req_item, num) {
 			this.num = num;
-			this.states_list = req_item[0];
+
+			var relations = req_item[0];
+			var dependencies = null;
+			var dependents = null;
+			if (Array.isArray(relations[0])) {
+				dependents = relations[0];
+				dependencies = relations[1];
+			} else {
+				dependents = relations;
+			}
+
+			this.dependencies = dependencies;
+			this.states_list = dependents;
 
 			var parse;
 			if (typeof req_item[1] != 'function') {

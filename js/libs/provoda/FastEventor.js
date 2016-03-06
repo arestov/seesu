@@ -5,6 +5,7 @@ var spv = require('spv');
 var hex_md5 = require('hex_md5');
 var hp = require('./helpers');
 var morph_helpers = require('js/libs/morph_helpers');
+var jQuery = require('jquery');
 
 var clean_obj = {};
 
@@ -648,17 +649,24 @@ FastEventor.prototype = {
 
 	requestState: (function(){
 
-		function sendRequest(selected_map, store, self) {
+		function failed(err) {
+			var deferred = jQuery.Deferred();
+			deferred.reject(err);
+			return deferred;
+		}
+
+		function resolved(data) {
+			var deferred = jQuery.Deferred();
+			deferred.resolve(data);
+			return deferred;
+		}
+
+		function bindRequest(request, selected_map, store, self) {
+			var network_api = hp.getNetApiByDeclr(selected_map.send_declr, self.sputnik);
+
+
 			var states_list = selected_map.states_list;
 			var parse = selected_map.parse;
-			var send_declr = selected_map.send_declr;
-
-			var request = getRequestByDeclr(send_declr, self.sputnik,
-				{has_error: store.error},
-				{nocache: store.error});
-			var network_api = request.network_api;
-
-			store.process = true;
 
 			request.always(function() {
 				store.process = false;
@@ -669,49 +677,70 @@ FastEventor.prototype = {
 				store.error = true;
 			});
 
-			request.done(function(r){
+			return request.then(function(r) {
 				var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
-				var i;
-				if (has_error){
-					store.error = true;
-				} else {
+				if (!has_error) {
 					var result = parse.call(self.sputnik, r, null, morph_helpers);
 					if (result) {
-						var result_states;
+						return result;
+					}
+				}
 
-						if (Array.isArray(result)) {
-							if (result.length != states_list.length) {
-								throw new Error('values array does not match states array');
-							}
+				return failed(new Error(has_error || 'no Result'));
+			}).done(function(result){
+				var i;
+				var result_states;
 
-							result_states = {};
-							for (i = 0; i < states_list.length; i++) {
-								result_states[ states_list[i] ] = result[ i ];
-							}
-
-						} else if (typeof result == 'object') {
-							for (i = 0; i < states_list.length; i++) {
-								if (!result.hasOwnProperty(states_list[i])) {
-									throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
-								}
-							}
-							result_states = result;
-						}
-						self.sputnik.updateManyStates( result_states );
-
-
-						store.error = false;
-						store.done = true;
-					} else {
-						store.error = true;
+				if (Array.isArray(result)) {
+					if (result.length != states_list.length) {
+						throw new Error('values array does not match states array');
 					}
 
+					result_states = {};
+					for (i = 0; i < states_list.length; i++) {
+						result_states[ states_list[i] ] = result[ i ];
+					}
+
+				} else if (typeof result == 'object') {
+					for (i = 0; i < states_list.length; i++) {
+						if (!result.hasOwnProperty(states_list[i])) {
+							throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
+						}
+					}
+					result_states = result;
 				}
+				self.sputnik.updateManyStates( result_states );
+
+
+				store.error = false;
+				store.done = true;
 			});
+		}
+
+		function sendRequest(selected_map, store, self) {
+			var request = getRequestByDeclr(selected_map.send_declr, self.sputnik,
+				{has_error: store.error},
+				{nocache: store.error});
 
 			self.addRequest(request);
 			return request;
 
+		}
+
+		function checkDependencies(selected_map, store, self) {
+			var not_ok;
+			for (var i = 0; i < selected_map.dependencies.length; i++) {
+				if (!self.sputnik.state(selected_map.dependencies[i])) {
+					not_ok = selected_map.dependencies[i];
+					break;
+				}
+			}
+
+			if (not_ok) {
+				return failed(new Error('missing ' + not_ok));
+			}
+
+			return sendRequest(selected_map, store, self);
 		}
 
 		return function(state_name) {
@@ -755,14 +784,33 @@ FastEventor.prototype = {
 
 			var store = this.mapped_reqs[selected_map_num];
 
+			store.process = true;
 
 			states_list = selected_map.states_list;
 			this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
 
-			return sendRequest(selected_map, store, this);
+			if (!selected_map.dependencies) {
+				return bindRequest(sendRequest(selected_map, store, this), selected_map, store, this);
+			}
 
+			var reqs_list = [];
+			for (var i = 0; i < selected_map.dependencies.length; i++) {
+				var dep_req = this.requestState(selected_map.dependencies[i]);
+				if (dep_req) {
+					reqs_list.push(dep_req);
+				}
+			}
 
+			var self = this;
 
+			var req = !reqs_list.length ?
+				checkDependencies(selected_map, store, self)
+				:
+				jQuery.when.apply(jQuery, reqs_list).then(function() {
+					return checkDependencies(selected_map, store, self);
+				});
+
+			return bindRequest(req, selected_map, store, self);
 
 		};
 	})(),
