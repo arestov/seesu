@@ -647,6 +647,73 @@ FastEventor.prototype = {
 
 
 	requestState: (function(){
+
+		function sendRequest(selected_map, store, self) {
+			var states_list = selected_map.states_list;
+			var parse = selected_map.parse;
+			var send_declr = selected_map.send_declr;
+
+			var request = getRequestByDeclr(send_declr, self.sputnik,
+				{has_error: store.error},
+				{nocache: store.error});
+			var network_api = request.network_api;
+
+			store.process = true;
+
+			request.always(function() {
+				store.process = false;
+				self.sputnik.updateManyStates(self.makeLoadingMarks(states_list, false));
+			});
+
+			request.fail(function(){
+				store.error = true;
+			});
+
+			request.done(function(r){
+				var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
+				var i;
+				if (has_error){
+					store.error = true;
+				} else {
+					var result = parse.call(self.sputnik, r, null, morph_helpers);
+					if (result) {
+						var result_states;
+
+						if (Array.isArray(result)) {
+							if (result.length != states_list.length) {
+								throw new Error('values array does not match states array');
+							}
+
+							result_states = {};
+							for (i = 0; i < states_list.length; i++) {
+								result_states[ states_list[i] ] = result[ i ];
+							}
+
+						} else if (typeof result == 'object') {
+							for (i = 0; i < states_list.length; i++) {
+								if (!result.hasOwnProperty(states_list[i])) {
+									throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
+								}
+							}
+							result_states = result;
+						}
+						self.sputnik.updateManyStates( result_states );
+
+
+						store.error = false;
+						store.done = true;
+					} else {
+						store.error = true;
+					}
+
+				}
+			});
+
+			self.addRequest(request);
+			return request;
+
+		}
+
 		return function(state_name) {
 			var current_value = this.sputnik.state(state_name);
 			if (current_value) {
@@ -691,70 +758,12 @@ FastEventor.prototype = {
 
 			states_list = selected_map.states_list;
 			this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
-			var parse = selected_map.parse, send_declr = selected_map.send_declr;
+
+			return sendRequest(selected_map, store, this);
 
 
 
 
-			var request = getRequestByDeclr(send_declr, this.sputnik,
-				{has_error: store.error},
-				{nocache: store.error});
-			var network_api = request.network_api;
-
-			store.process = true;
-			var _this = this;
-
-			request.always(function() {
-						store.process = false;
-						_this.sputnik.updateManyStates(_this.makeLoadingMarks(states_list, false));
-					});
-
-			request.fail(function(){
-						store.error = true;
-					});
-
-			request.done(function(r){
-						var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
-						var i;
-						if (has_error){
-							store.error = true;
-						} else {
-							var result = parse.call(_this.sputnik, r, null, morph_helpers);
-							if (result) {
-								var result_states;
-
-								if (Array.isArray(result)) {
-									if (result.length != states_list.length) {
-										throw new Error('values array does not match states array');
-									}
-
-									result_states = {};
-									for (i = 0; i < states_list.length; i++) {
-										result_states[ states_list[i] ] = result[ i ];
-									}
-
-								} else if (typeof result == 'object') {
-									for (i = 0; i < states_list.length; i++) {
-										if (!result.hasOwnProperty(states_list[i])) {
-											throw new Error('object must have all props:' + states_list + ', but does not have ' + states_list[i]);
-										}
-									}
-									result_states = result;
-								}
-								_this.sputnik.updateManyStates( result_states );
-
-
-								store.error = false;
-								store.done = true;
-							} else {
-								store.error = true;
-							}
-
-						}
-					});
-
-			this.addRequest(request);
-			return request;
 		};
 	})(),
 	makeLoadingMarks: function(states_list, value) {
