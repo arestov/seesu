@@ -276,9 +276,6 @@ var TagsList = spv.inh(LoadableList.TagsList, {
 			return ['tag.getTopTags', {limit: opts.paging.page_limit}];
 		}]
 	],
-	getSPC: function() {
-		return TagPage;
-	},
 	sub_pager: {
 		item: [
 			TagPage,

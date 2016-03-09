@@ -321,7 +321,7 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
 
 		pv.updateNesting(this, 'lists_list', lists_list);
 	},
-	'nest_posb-lists_list': [CityPlace],
+	'nest_posb-lists_list': ['{city_name},{country_name}'],
 	//'nest-lists_list': [],
 	sub_pager: {
 		item: [
@@ -409,10 +409,7 @@ var CountriesList = spv.inh(BrowseMap.Model, {
 	}
 }, {
 	model_name: 'сountries_list',
-	'nest_posb-lists_list': [CountryPlace],
-	getSPC: function() {
-		return CountryPlace;
-	},
+	'nest_posb-lists_list': ['{country_name}'],
 	sub_pager: {
 		item: [
 			CountryPlace,
