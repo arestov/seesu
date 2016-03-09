@@ -496,7 +496,12 @@ add({
 			if (!item.fn) {
 				item.fn = identical;
 			}
+			if (!Array.isArray(item.depends_on)) {
+				throw new Error('should be list');
+			}
+
 			item.watch_list = new Array(item.depends_on.length || 0);
+
 			for (var i = 0; i < item.depends_on.length; i++) {
 				item.watch_list[i] = hp.getShortStateName(item.depends_on[i]);
 			}
