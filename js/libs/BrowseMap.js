@@ -1037,6 +1037,9 @@ var BrowseLevel = spv.inh(pv.Model, {
 			if (el.init_state_name && (el.init_state_name !== 'mp_show' && el.init_state_name !== 'mp_has_focus')) {
 				continue;
 			}
+			if (md.getNesting(el.nesting_name)) {
+				continue;
+			}
 			md.updateNesting(el.nesting_name, pv.getSubpages( md, el ));
 		}
 	},
