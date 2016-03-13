@@ -109,9 +109,7 @@ spv.Class.extendTo(LastfmAPI, {
 			cache_key: options.cache_key,
 			cache_timeout: options.cache_timeout,
 			cache_namespace: this.cache_namespace,
-			requestFn: function() {
-				return aReq.apply(this, arguments);
-			},
+			requestFn: aReq,
 			not_save_cache: post,
 			responseFn: function(r) {
 				if (!post && _this.checkMethodResponse){

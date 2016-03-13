@@ -66,9 +66,7 @@ spv.Class.extendTo(vkCoreApi, {
 				cache_key: options.cache_key,
 				cache_timeout: options.cache_timeout,
 				cache_namespace: this.cache_namespace,
-				requestFn: function() {
-					return aReq.apply(this, arguments);
-				},
+				requestFn: aReq,
 				responseFn: function(r) {
 					if (r && r.error && r.error.error_code == 5){
 						if (_this.onAuthLost){
