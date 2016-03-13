@@ -3,7 +3,11 @@ define(['jquery', 'spv', 'app_serv', 'js/modules/aReq', 'js/modules/wrapRequest'
 
 var LastfmAPI = function(){};
 spv.Class.extendTo(LastfmAPI, {
-	errors_fields: ['error'],
+	checkResponse: function(r) {
+		if (r.error) {
+			return r.message || r.error;
+		}
+	},
 	source_name: 'last.fm',
 	init: function(apikey, s, stGet, stSet, cache_ajax, crossdomain, queue){
 		this.apikey = apikey;
