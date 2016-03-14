@@ -148,7 +148,9 @@ var FastEventor = function(context) {
 	this.mapped_reqs = null;//this.sputnik.req_map ? {} : null;
 	this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
 };
-FastEventor.prototype = {
+FastEventor.prototype = spv.coe(function(add) {
+
+add({
 	_pushCallbackToStack: function(ev_name, opts) {
 		if (!this.subscribes) {
 			this.subscribes = {};
@@ -475,7 +477,10 @@ FastEventor.prototype = {
 			this.cleanOnceEvents(ev_name);
 		}
 		return this;
-	},
+	}
+});
+
+add({
 	default_requests_space: 'nav',
 	getRequests: function(space) {
 		space = space || this.default_requests_space;
@@ -644,9 +649,10 @@ FastEventor.prototype = {
 			groups[i].forEach(setPrio);
 		}
 		return this.sputnik;
-	},
+	}
+});
 
-
+add({
 	requestState: (function(){
 
 		function failed(err) {
@@ -987,6 +993,9 @@ FastEventor.prototype = {
 		*/
 	}
 
-};
+});
+
+});
+
 return FastEventor;
 });
