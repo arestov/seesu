@@ -456,7 +456,7 @@ var getMatchedSongs = function(music_list, msq) {
 			var
 				_this = this,
 				used_successful,
-				complex_response = new spv.Depdc(true);
+				complex_response = {};
 
 			complex_response.abort = function() {
 				if (used_successful){
