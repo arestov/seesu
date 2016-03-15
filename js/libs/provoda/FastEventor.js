@@ -567,8 +567,11 @@ add({
 
 	},
 	_getRequestsSortFunc: function() {
+		// used to sort localy, in model
 		if (!this._requestsSortFunc) {
 			var field_name = this.sputnik.getReqsOrderField();
+			// if it has view/model mark that it should be first in view/model
+			// that sort by mark value
 			this._requestsSortFunc = spv.getSortFunc([
 				function(el){
 					if (typeof spv.getTargetField(el, field_name) == 'number'){
