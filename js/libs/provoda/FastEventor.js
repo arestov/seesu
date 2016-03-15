@@ -480,6 +480,41 @@ add({
 	}
 });
 
+var ReqExt = function() {
+	this.xhr = null;
+	this.deps = null;
+
+};
+
+function addDependence(req, md) {
+	if (!req.pv_ext) {
+		req.pv_ext = new ReqExt();
+	}
+	if (!req.pv_ext.deps) {
+		req.pv_ext.deps = {};
+	}
+
+	var store = req.pv_ext.deps;
+	var key = md._provoda_id;
+	store[key] = true;
+
+}
+
+function softAbort(req, md) {
+	if (!req.pv_ext || !req.pv_ext.deps) {
+		return null;
+	}
+
+	var store = req.pv_ext.deps;
+	var key = md._provoda_id;
+	store[key] = false;
+
+	if (!spv.countKeys(store, true)) {
+		req.abort(md);
+		// req.pv_ext.xhr.abort();
+	}
+}
+
 add({
 	default_requests_space: 'nav',
 	getRequests: function(space) {
@@ -549,7 +584,7 @@ add({
 			}
 			if (opts && opts.depend){
 				if (req){
-					req.addDepend(this.sputnik);
+					addDependence(req, this.sputnik);
 				}
 			}
 			target_arr.push(req);
@@ -616,9 +651,7 @@ add({
 		while (all_requests && all_requests.length) {
 			var rq = all_requests.pop();
 			if (rq) {
-				if (rq.softAbort){
-					rq.softAbort(this.sputnik);
-				} else if (rq.abort){
+				if (softAbort(rq, this.sputnik) === null) {
 					rq.abort(this.sputnik);
 				}
 			}
