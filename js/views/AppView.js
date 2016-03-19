@@ -404,12 +404,11 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			}
 		};
 
-		self.on('vip_state_change-current_mp_md.resize-check', function() {
 		self.rsd_rz = setInterval(recheckFunc, 100);
 
+		self.on('vip_state_change-current_mp_md', function() {
 			recheckFunc();
 		}, {
-			exlusive: true,
 			immediately: true
 		});
 	},
