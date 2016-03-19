@@ -313,7 +313,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 		this.addRequest(
 			this.app.lfm
 				.get('user.getInfo', {user: q})
-					.done(function(r){
+					.then(function(r){
 						if (!_this.doesNeed(q)){return;}
 						_this.loaded();
 
@@ -332,9 +332,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 						//r = r && parser(r, this.resItem, method);
 						_this.appendResults(result, true);
 
-
-					})
-					.fail(function(){
+					}, function(){
 						if (!_this.doesNeed(q)){return;}
 						_this.loaded();
 					}));

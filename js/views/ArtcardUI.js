@@ -278,7 +278,9 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
 					timeout: 40000,
 					queue: queue,
 					cache_allowed: true
-				}).done(function(){
+				});
+
+				req.then(function(){
 					if (!canUse()){
 						return;
 					}
@@ -293,7 +295,7 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
 					});
 
 					updatePanorama();
-				}).fail(function(){
+				}, function(){
 					image_jnode.remove();
 				});
 

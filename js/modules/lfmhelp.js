@@ -67,7 +67,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 	section.addRequest(
 		su.lfm
 			.get(method, spv.cloneObj({limit: 15 }, lfmquery))
-				.done(function(r){
+				.then(function(r){
 					if (!section.doesNeed(q)){return;}
 					section.loaded();
 					r = r && parser(r, section.resItem, method);
@@ -78,8 +78,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 						section.renderSuggests(true, !no_preview);
 					}
 
-				})
-				.fail(function(){
+				}, function(){
 					if (!section.doesNeed(q)){return;}
 					section.loaded();
 				})

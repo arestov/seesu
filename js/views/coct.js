@@ -193,10 +193,11 @@ var AlbumsListPreviewItem = spv.inh(View, {}, {
 			var req = target.root_view.loadImage({
 					url: url,
 					cache_allowed: true
-				}).done(function(){
-					node.src = url;
-				}).fail(function(){
 				});
+			req.then(function(){
+				node.src = url;
+			}, function(){
+			});
 			target.addRequest(req);
 			target.on('die', function() {
 				req.abort();
@@ -213,16 +214,22 @@ var ImageLoader = spv.inh(View, {}, {
 		if (url){
 			pvUpdate(target, 'queued_image$loading', true);
 			var req = target.root_view.loadImage({
-					url: url,
-					cache_allowed: true
-				}).done(function(){
-					pvUpdate(target, 'queued_image', lfm_wrap);
-				}).fail(function(){
+				url: url,
+				cache_allowed: true
+			});
 
-				})
-				.always(function(){
-					pvUpdate(target, 'queued_image$loading', false);
+			req.then(function(){
+					pvUpdate(target, 'queued_image', lfm_wrap);
+				}, function(){
+
 				});
+
+			req.then(anyway, anyway)
+
+			function anyway(){
+				pvUpdate(target, 'queued_image$loading', false);
+			}
+
 			target.addRequest(req);
 			target.on('die', function() {
 				req.abort();
@@ -246,10 +253,10 @@ var BigAlbumPreview = spv.inh(View, {}, {
 			var req = target.root_view.loadImage({
 					url: url,
 					cache_allowed: true
-				}).done(function(){
-					node.src = url;
-				}).fail(function(){
 				});
+			req.then(function(){
+				node.src = url;
+			});
 			target.addRequest(req);
 			target.on('die', function() {
 				req.abort();

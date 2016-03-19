@@ -262,7 +262,7 @@ var SeesuServerAPI = spv.inh(pv.Eventor, {
 			}, function(su_sess){
 				if (su_sess.secret_container && su_sess.sid){
 					_this.app.vk_api.get('storage.get', {key:su_sess.secret_container})
-						.done(function(r){
+						.then(function(r){
 							if (r && r.response){
 								_this.setAuth({
 									userid: su_sess.userid,

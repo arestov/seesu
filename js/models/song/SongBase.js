@@ -457,7 +457,7 @@ return spv.inh(BrowseMap.Model, {
 
 			all_requests.push(def_top_tracks);
 			this.addRequest(this.app.lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
-				.done(function(r){
+				.then(function(r){
 					var tracks_list = spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
 					var tracks_list_clean = [];
 					for (var i = 0; i < tracks_list.length; i++) {
@@ -470,8 +470,7 @@ return spv.inh(BrowseMap.Model, {
 
 					def_top_tracks.resolve(tracks_list_clean);
 
-				})
-				.fail(function() {
+				}, function() {
 					def_top_tracks.resolve();
 				}), {space: 'acting'});
 
@@ -531,16 +530,15 @@ return spv.inh(BrowseMap.Model, {
 				if (!sc_search){
 					def_soundcloud.resolve();
 				} else {
-					this.addRequest( sc_search.findAudio({artist: this.artist})
-						.done(function(music_list) {
-							pushMusicList(music_list, def_soundcloud);
-							//var music_list_filtered =
-						})
-						.fail(function() {
-							def_soundcloud.resolve();
-						}),
-					{space: 'acting'}
-					);
+					var req = sc_search.findAudio({artist: this.artist});
+					req.then(function(music_list) {
+						pushMusicList(music_list, def_soundcloud);
+						//var music_list_filtered =
+					}, function() {
+						def_soundcloud.resolve();
+					});
+					this.addRequest(req, {space: 'acting'});
+
 				}
 
 

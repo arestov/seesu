@@ -180,7 +180,7 @@ var LfmAuth = spv.inh(pv.Model, {
 	get_lfm_token: function(){
 		var _this = this;
 		this.api.get('auth.getToken', false, {nocache: true})
-			.done(function(r){
+			.then(function(r){
 				_this.newtoken = r.token;
 			});
 	},
@@ -188,7 +188,7 @@ var LfmAuth = spv.inh(pv.Model, {
 		var _this = this;
 		if (_this.newtoken ){
 			_this.api.get('auth.getSession', {'token':_this.newtoken })
-				.done(function(r){
+				.then(function(r){
 					if (!r.error) {
 						_this.login(r,callback);
 						pvUpdate(_this, 'session', true);
