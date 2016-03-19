@@ -361,6 +361,19 @@ AppModel.extendTo(SeesuApp, {
 	'stch-settings-volume': function(target, state) {
 		target.p.volume_fac = state;
 	},
+	'compx-lfm_auth_action': [
+		['@one:session:lfm_auth', 'lfm_auth_request'],
+		function (sess, action) {
+			return sess && action;
+		}
+	],
+	'stch-lfm_auth_action': function (target, state) {
+		if (state) {
+			debugger;
+			state.act();
+			pvUpdate(target, 'lfm_auth_request', null)
+		}
+	},
 	storeSetting: function(name, value){
 		clearTimeout(this.settings_timers[name]);
 
