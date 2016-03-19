@@ -155,7 +155,6 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 					row: this.rpl
 				};
 			}
-			debugger;
 		}
 		this.appendResults(r, true);
 	},
