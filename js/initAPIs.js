@@ -181,7 +181,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 	}
 
 
-	self.lfm_auth.on('session.ga_tracking', function(){
+	self.lfm_auth.on('session', function(){
 		self.trackEvent('Auth to lfm', 'end');
 	});
 	self.lfm_auth.on('want-open-url', function(wurl){
