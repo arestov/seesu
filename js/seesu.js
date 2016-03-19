@@ -358,6 +358,9 @@ AppModel.extendTo(SeesuApp, {
 		pv.update(this, 'settings-' + name, value);
 		//this.trigger('settings-' + name, value);
 	},
+	'stch-settings-volume': function(target, state) {
+		target.p.volume_fac = state;
+	},
 	storeSetting: function(name, value){
 		clearTimeout(this.settings_timers[name]);
 

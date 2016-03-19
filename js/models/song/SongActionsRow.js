@@ -180,6 +180,7 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
 		}
 		pv.update(this, 'volume', fac[0]/fac[1]);
 		this.sendVolume(fac);
+		this.map_parent.setVolume(fac);
 
 	}
 });
