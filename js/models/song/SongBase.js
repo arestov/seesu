@@ -262,10 +262,7 @@ return spv.inh(BrowseMap.Model, {
 		this.makeSongPlayalbe(true);
 	},
 	prepareForPlaying: function() {
-
 		this.makeSongPlayalbe(true);
-
-		// this.mp3_search.on("new-search.viewing-song", this.findFiles, {exlusive: true, context: this});
 	},
 	simplify: function() {
 		return spv.cloneObj({}, this, false, ['track', 'artist']);
