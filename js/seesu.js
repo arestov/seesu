@@ -629,7 +629,7 @@ AppModel.extendTo(SeesuApp, {
 				ver: this.version,
 				app_type: app_env.app_type
 			}
-		}).done(function(r){
+		}).then(function(r){
 			if (!r){return;}
 
 
