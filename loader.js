@@ -21,8 +21,8 @@ requirejs.config({
 			cache_ajax: 'js/libs/cache_ajax',
 			env: "js/env",
 
-			hex_md5: 'js/common-libs/md5'
-
+			hex_md5: 'js/common-libs/md5',
+			'Promise': 'js/common-libs/Promise-3.1.0.mod'
 		}
 	},
 	waitSeconds: window.tizen && 0

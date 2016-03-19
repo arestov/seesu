@@ -371,7 +371,9 @@ var pvUpdate = pv.update;
 					artist: this.artist,
 					track: this.track,
 					album: this.state('album_name')
-				}, duration);
+				}, duration).then(function(){}, function(){
+					console.log('problem with scrobbling');
+				});
 			}
 			if (this.app.s.loggedIn()){
 				this.app.s.api('track.scrobble', {

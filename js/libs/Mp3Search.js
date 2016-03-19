@@ -453,25 +453,19 @@ var getMatchedSongs = function(music_list, msq) {
 			}
 
 
-			var
-				_this = this,
-				used_successful,
-				complex_response = {};
-
-			complex_response.abort = function() {
-				if (used_successful){
-					used_successful.abort();
-				}
-			};
+			var _this = this;
+			var used_successful;
 
 			used_successful = this.search_eng.findAudio(msq, {
 				nocache: opts.nocache,
 				bindRelation: this.map_parent.bindRelation
-			})
-				.progress(function(){
-					pv.update(_this, 'search_progress', true);
-				})
-				.done(function(music_list){
+			});
+
+			used_successful.queued_promise.then(function(){
+				pv.update(_this, 'search_progress', true);
+			});
+
+			used_successful.then(function(music_list){
 					if (music_list instanceof Error) {
 						_this.updateManyStates({
 							search_result: null,
@@ -511,8 +505,7 @@ var getMatchedSongs = function(music_list, msq) {
 					}
 
 
-				})
-				.fail(function(){
+				}, function(){
 					_this.updateManyStates({
 						search_fail: true,
 
@@ -524,10 +517,8 @@ var getMatchedSongs = function(music_list, msq) {
 
 			var req;
 			if (used_successful){
-				complex_response.queued = used_successful.queued;
-				used_successful.promise( complex_response );
-				req = complex_response;
-				this.addRequest(complex_response);
+				req = used_successful;
+				this.addRequest(req);
 			}
 			pv.update(this, 'has_request', true);
 			return req;

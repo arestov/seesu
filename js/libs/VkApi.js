@@ -1,7 +1,8 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'jquery'],
-function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search, $) {
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'js/modules/extendPromise', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'jquery'],
+function(spv, aReq, wrapRequest, extendPromise, hex_md5, htmlencoding, Mp3Search, $) {
 "use strict";
 
+var toBigPromise = extendPromise.toBigPromise;
 
 var vkCoreApi = function(){};
 spv.Class.extendTo(vkCoreApi, {
@@ -140,31 +141,22 @@ VkSearch.prototype = {
 		return music_list;
 	},
 	findAudio: function(msq, opts) {
-		var _this		= this,
-			deferred	= $.Deferred(),
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					deferred.reject('abort');
-					if (async_ans){
-						async_ans.abort();
-					}
-				}
-			},
-			query		= msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+		var _this = this;
+		var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;
-
-
-		deferred.promise( complex_response );
 
 		var params_u = {};
 			params_u.q = query;
 			params_u.count = 30;
 
-		var async_ans = this.api.get('audio.search', params_u, opts)
-			.done(function(r) {
+		var async_ans = this.api.get('audio.search', params_u, opts);
+
+		var deferred = extendPromise($.Deferred(), async_ans);
+
+		async_ans
+			.then(function(r) {
 				if (r.error){
 					deferred.reject.apply(deferred, arguments);
 				} else{
@@ -176,19 +168,14 @@ VkSearch.prototype = {
 						deferred.resolve.call(deferred);
 					}
 				}
-			})
-			.fail(function() {
+			}, function() {
 				deferred.reject.apply(deferred, arguments);
 			});
 
-		if (async_ans.queued){
-			complex_response.queued = async_ans.queued;
-		}
-		if (async_ans.cache_used){
-			complex_response.cache_used = async_ans.cache_used;
-		}
+		var promise = toBigPromise(deferred);
+		promise.cache_used = async_ans.cache_used;
 
-		return complex_response;
+		return promise;
 	}
 };
 
