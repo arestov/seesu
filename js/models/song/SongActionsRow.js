@@ -28,11 +28,13 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 				sk: this.app.lfm.sk,
 				artist: this.song.artist,
 				track: this.song.track
-			})
-				.always(function(){
-					pv.update(_this, 'wait_love_done', false);
-					_this.trigger('love-success');
-				});
+			}).then(anyway, anyway);
+
+			function anyway(){
+				pv.update(_this, 'wait_love_done', false);
+				_this.trigger('love-success');
+			}
+
 			this.app.trackEvent('song actions', 'love');
 		}
 
