@@ -363,7 +363,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		});
 	},
 	checkSizeDetector: function() {
-		var _this = this;
+		var self = this;
 		if (!app_env.check_resize) {
 			return;
 		}
@@ -378,13 +378,13 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
 		};
 		var getCurrentNode = function() {
-			var current_md = _this.getNesting('current_mp_md');
-			return current_md && _this.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
+			var current_md = self.getNesting('current_mp_md');
+			return current_md && self.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
 		};
 
 		var readySteadyResize = function(){
-			if (_this.rsd_rz){
-				clearInterval(_this.rsd_rz);
+			if (self.rsd_rz){
+				clearInterval(self.rsd_rz);
 			}
 
 			var oldsize = detectSize(getCurrentNode());
@@ -406,8 +406,8 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 				}
 			};
 
-			_this.rsd_rz = setInterval(recheckFunc,100);
-			_this.on('vip_state_change-current_mp_md.resize-check', function() {
+			self.rsd_rz = setInterval(recheckFunc,100);
+			self.on('vip_state_change-current_mp_md.resize-check', function() {
 				recheckFunc();
 			}, {
 				exlusive: true,
