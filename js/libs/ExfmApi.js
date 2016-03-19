@@ -58,9 +58,7 @@ ExfmApi.prototype = {
 				cache_timeout: options.cache_timeout,
 				cache_namespace: this.cache_namespace,
 				checkResponse: this.checkResponse,
-				requestFn: function() {
-					return aReq.apply(this, arguments);
-				},
+				requestFn: aReq,
 				queue: this.queue
 			});
 

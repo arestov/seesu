@@ -1,19 +1,12 @@
-define(['jquery'], function($) {
+define(['jquery', 'Promise', './extendPromise'], function($, Promise, extendPromise) {
 "use strict";
-return function(request_params, options, complex_response){
-	complex_response = complex_response || {};
+
+var toBigPromise = extendPromise.toBigPromise;
+
+function wrapRequest(request_params, options){
 	var deferred = $.Deferred();
 
-	complex_response.abort = function(){
-		this.aborted = true;
-		deferred.reject('abort');
-		if (this.queued){
-			this.queued.abort();
-		}
-		if (this.xhr){
-			this.xhr.abort();
-		}
-	};
+	var complex_response = toBigPromise(deferred);
 
 	/*
 		var options = {
@@ -30,8 +23,6 @@ return function(request_params, options, complex_response){
 
 	*/
 
-	deferred.promise( complex_response );
-
 	options.nocache = options.nocache || !options.cache_ajax;
 
 	var cache_used;
@@ -40,10 +31,11 @@ return function(request_params, options, complex_response){
 			deferred.resolve(r);
 		});
 		if (cache_used) {
-			complex_response.cache_used = true;
+			var promise = toBigPromise(deferred);
+			promise.cache_used = true;
 			return {
 				defer: deferred,
-				complex: complex_response
+				complex: promise
 			};
 		}
 	}
@@ -63,12 +55,31 @@ return function(request_params, options, complex_response){
 
 			}
 		};
-		var sendRequest = function(){
-			if (complex_response.aborted){
+
+		if (options.queue){
+			var asSend;
+			var asAbort;
+			var queued_promise = new Promise(function(resolve, reject) {
+				asSend = resolve;
+				asAbort = reject;
+			});
+			queued_promise.asAbort = asAbort;
+			complex_response.queued_promise = queued_promise;
+			deferred.queued = options.queue.add(sendRequest, options.not_init_queue);
+		} else{
+			sendRequest();
+		}
+
+		function sendRequest(){
+			if (deferred.aborted){
 				return;
 			}
 
-			if (!options.manualSend){
+			complex_response.sended = true;
+
+			asSend();
+
+			if (!options.manualSend) {
 				var cache_used;
 				if (!options.nocache){
 					cache_used = options.cache_ajax.get(options.cache_namespace, options.cache_key, function(r){
@@ -83,7 +94,7 @@ return function(request_params, options, complex_response){
 					} else {
 						request = $.ajax(request_params);
 					}
-					complex_response.xhr = request;
+					deferred.xhr = request;
 					request
 						.fail(function(){
 							deferred.reject.apply(deferred, arguments);
@@ -102,13 +113,6 @@ return function(request_params, options, complex_response){
 					deferred.resolve(r);
 				});
 			}
-
-		};
-
-		if (options.queue){
-			complex_response.queued = options.queue.add(sendRequest, options.not_init_queue);
-		} else{
-			sendRequest();
 		}
 	}
 	return {
@@ -116,5 +120,7 @@ return function(request_params, options, complex_response){
 		complex: complex_response
 	};
 
-};
+}
+
+return wrapRequest;
 });

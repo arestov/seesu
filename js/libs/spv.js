@@ -1096,35 +1096,6 @@ spv.capitalize.fn = function(string) {
 
 })();
 
-
-
-spv.Depdc = function(init) {
-	if (init){
-		this.init();
-	}
-};
-spv.Depdc.prototype = {
-	constructor: spv.Depdc,
-	init: function() {
-		this.dep_list = [];
-	},
-	addDepend: function(de) {
-		if (this.dep_list.indexOf(de) == -1){
-			this.dep_list.push(de);
-		}
-	},
-	removeDepend: function(de) {
-		this.dep_list = arrayExclude(this.dep_list, de);
-	},
-	softAbort: function(de) {
-		if (de){
-			this.removeDepend(de);
-		}
-		if (!this.dep_list.length){
-			this.abort();
-		}
-	}
-};
 spv.makeIndexByField = makeIndexByField;
 spv.getTargetField = getTargetField;
 spv.throttle = throttle;

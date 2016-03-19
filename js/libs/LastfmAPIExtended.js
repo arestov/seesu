@@ -11,7 +11,7 @@ LastfmAPI.extendTo(LastfmAPIExtended, {
 	nowplay: function(omo, duration){
 		var _this = this;
 		if (!_this.sk){return false;}
-		_this.post('track.updateNowPlaying', {
+		return _this.post('track.updateNowPlaying', {
 			sk: _this.sk,
 			artist: omo.artist,
 			track: omo.track,

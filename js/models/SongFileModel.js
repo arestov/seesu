@@ -63,6 +63,9 @@ var getNiceSeconds = function(state) {
 			var file = params.file;
 			for (var a in file){
 				if (typeof file[a] != 'function' && typeof file[a] != 'object'){
+					if (self.hasComplexStateFn(a)) {
+						continue;
+					}
 					// self[a] = file[a];
 					pvUpdate(self, a, file[a]);
 				}

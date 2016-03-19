@@ -1,4 +1,5 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search) {
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'js/modules/extendPromise', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'],
+function(spv, aReq, wrapRequest, extendPromise, hex_md5, htmlencoding, Mp3Search) {
 'use strict';
 var ScApi = function(key, queue, crossdomain, cache_ajax) {
 	this.queue = queue;
@@ -24,17 +25,9 @@ ScApi.prototype = {
 				params.offset = options.paging.page_limit * (options.paging.next_page -1);
 			}
 
-
-
-
 			params.consumer_key = this.key;
 
 			options.cache_key = options.cache_key || hex_md5("http://api.soundcloud.com/" + method + spv.stringifyParams(params));
-
-
-
-
-			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
 			var wrap_def = wrapRequest({
 				url: "http://api.soundcloud.com/" + method + ".json",
@@ -47,7 +40,6 @@ ScApi.prototype = {
 					if (opts.dataType == 'json'){
 						opts.headers = null;
 					}
-
 				},
 				thisOriginAllowed: this.thisOriginAllowed,
 				context: options.context
@@ -57,9 +49,7 @@ ScApi.prototype = {
 				cache_key: options.cache_key,
 				cache_timeout: options.cache_timeout,
 				cache_namespace: this.cache_namespace,
-				requestFn: function() {
-					return aReq.apply(this, arguments);
-				},
+				requestFn: aReq,
 				queue: this.queue
 			});
 
@@ -126,32 +116,23 @@ ScMusicSearch.prototype = {
 
 		var async_ans = this.sc_api.get('tracks', params_u, opts);
 
-		var olddone = async_ans.done,
-			result;
-
-		async_ans.done = function(cb) {
-			olddone.call(this, function(r) {
-				if (!result){
-					var music_list = [];
-					if (r && r.length){
-						for (var i=0; i < r.length; i++) {
-							if (!r[i]) {continue;}
-							var ent = _this.makeSong(r[i], msq);
-							if (ent){
-								if (!Mp3Search.hasMusicCopy(music_list,ent)){
-									music_list.push(ent);
-								}
-							}
+		var result = async_ans.then(function(r) {
+			var music_list = [];
+			if (r && r.length){
+				for (var i=0; i < r.length; i++) {
+					if (!r[i]) {continue;}
+					var ent = _this.makeSong(r[i], msq);
+					if (ent){
+						if (!Mp3Search.hasMusicCopy(music_list,ent)){
+							music_list.push(ent);
 						}
 					}
-					result = music_list;
 				}
-				cb(result, 'mp3');
+			}
+			return music_list;
+		});
 
-			});
-			return this;
-		};
-		return async_ans;
+		return extendPromise(result, async_ans);
 	}
 };
 

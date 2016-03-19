@@ -65,8 +65,7 @@ spv.Class.extendTo(LastfmAPI, {
 		return this.send(method, data, options, true);
 	},
 	send: function(method, params, options, post) {
-		var _this = this,
-			complex_response = new spv.Depdc(true);
+		var _this = this;
 
 
 		if (!method){
@@ -109,9 +108,7 @@ spv.Class.extendTo(LastfmAPI, {
 			cache_key: options.cache_key,
 			cache_timeout: options.cache_timeout,
 			cache_namespace: this.cache_namespace,
-			requestFn: function() {
-				return aReq.apply(this, arguments);
-			},
+			requestFn: aReq,
 			not_save_cache: post,
 			responseFn: function(r) {
 				if (!post && _this.checkMethodResponse){
@@ -137,7 +134,7 @@ spv.Class.extendTo(LastfmAPI, {
 			resourceCachingAvailable: true,
 			thisOriginAllowed: this.thisOriginAllowed,
 			context: options.context
-		}, wraprq_opts, complex_response);
+		}, wraprq_opts);
 
 		return wrap_def.complex;
 

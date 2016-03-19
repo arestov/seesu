@@ -497,7 +497,7 @@ AppModel.extendTo(SeesuApp, {
 			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
 
 		},{nocache: true})
-			.done(function(info) {
+			.then(function(info) {
 				info = info.response && info.response[0];
 				if (info){
 					_this.s.vk_id = user_id;
@@ -518,9 +518,6 @@ AppModel.extendTo(SeesuApp, {
 				} else {
 
 				}
-			})
-			.fail(function() {
-
 			});
 	},
 	getPhotoFromVK: function() {
@@ -533,16 +530,13 @@ AppModel.extendTo(SeesuApp, {
 		}
 		if (!this.vk_fr_req){
 			this.vk_fr_req = this.vk_api.get("friends.get", {fields: "uid, photo"}, {cache_timeout: 1000*60*5})
-				.done(function(){
+				.then(function(){
 					delete _this.vk_fr_req;
 				});
 		}
 		this.vk_fr_req
-			.done(function(r){
+			.then(function(r){
 				_this.trigger("vk-friends", r && r.response.items);
-			})
-			.fail(function(){
-
 			});
 
 	},

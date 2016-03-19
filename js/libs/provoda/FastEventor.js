@@ -5,7 +5,8 @@ var spv = require('spv');
 var hex_md5 = require('hex_md5');
 var hp = require('./helpers');
 var morph_helpers = require('js/libs/morph_helpers');
-var jQuery = require('jquery');
+var Promise = require('Promise');
+var toBigPromise = require('js/modules/extendPromise').toBigPromise;
 
 var clean_obj = {};
 
@@ -79,16 +80,32 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 
 
 	var request = network_api[ api_method ].apply(network_api, api_args);
-	request.network_api = network_api;
+
+	var result_request = checkRequest(request);
+	result_request.network_api = network_api;
 	if (cache_key) {
-		requests_by_declarations[cache_key] = request;
-		request.always(function() {
-			delete requests_by_declarations[cache_key];
-		});
+		requests_by_declarations[cache_key] = result_request;
+
+
+		result_request.then(anyway, anyway);
 	}
 
-	return request;
+	return result_request;
+
+	function anyway() {
+		delete requests_by_declarations[cache_key];
+	}
 };
+
+function checkRequest(request) {
+	if (!request.catch) {
+		if (!request.abort) {
+			throw new Error('request must have `abort` method');
+		}
+		return toBigPromise(request);
+	}
+	return request;
+}
 
 
 var iterateSubsCache = function(func) {
@@ -148,7 +165,9 @@ var FastEventor = function(context) {
 	this.mapped_reqs = null;//this.sputnik.req_map ? {} : null;
 	this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
 };
-FastEventor.prototype = {
+FastEventor.prototype = spv.coe(function(add) {
+
+add({
 	_pushCallbackToStack: function(ev_name, opts) {
 		if (!this.subscribes) {
 			this.subscribes = {};
@@ -475,7 +494,45 @@ FastEventor.prototype = {
 			this.cleanOnceEvents(ev_name);
 		}
 		return this;
-	},
+	}
+});
+
+var ReqExt = function() {
+	this.xhr = null;
+	this.deps = null;
+
+};
+
+function addDependence(req, md) {
+	if (!req.pv_ext) {
+		req.pv_ext = new ReqExt();
+	}
+	if (!req.pv_ext.deps) {
+		req.pv_ext.deps = {};
+	}
+
+	var store = req.pv_ext.deps;
+	var key = md._provoda_id;
+	store[key] = true;
+
+}
+
+function softAbort(req, md) {
+	if (!req.pv_ext || !req.pv_ext.deps) {
+		return null;
+	}
+
+	var store = req.pv_ext.deps;
+	var key = md._provoda_id;
+	store[key] = false;
+
+	if (!spv.countKeys(store, true)) {
+		req.abort(md);
+		// req.pv_ext.xhr.abort();
+	}
+}
+
+add({
 	default_requests_space: 'nav',
 	getRequests: function(space) {
 		space = space || this.default_requests_space;
@@ -516,7 +573,9 @@ FastEventor.prototype = {
 		var target_arr = this.requests[space];
 
 		var bindRemove = function(_this, req) {
-			req.always(function() {
+			req.then(anyway, anyway);
+
+			function anyway() {
 				if (_this.requests && _this.requests[space]){
 					_this.requests[space] = spv.findAndRemoveItem(_this.requests[space], req);
 				}
@@ -526,7 +585,7 @@ FastEventor.prototype = {
 					_highway.requests = spv.findAndRemoveItem(_highway.requests, req);
 				}
 
-			});
+			}
 		};
 		var added = [];
 		for (i = 0; i < array.length; i++) {
@@ -544,7 +603,7 @@ FastEventor.prototype = {
 			}
 			if (opts && opts.depend){
 				if (req){
-					req.addDepend(this.sputnik);
+					addDependence(req, this.sputnik);
 				}
 			}
 			target_arr.push(req);
@@ -562,8 +621,11 @@ FastEventor.prototype = {
 
 	},
 	_getRequestsSortFunc: function() {
+		// used to sort localy, in model
 		if (!this._requestsSortFunc) {
 			var field_name = this.sputnik.getReqsOrderField();
+			// if it has view/model mark that it should be first in view/model
+			// that sort by mark value
 			this._requestsSortFunc = spv.getSortFunc([
 				function(el){
 					if (typeof spv.getTargetField(el, field_name) == 'number'){
@@ -608,9 +670,7 @@ FastEventor.prototype = {
 		while (all_requests && all_requests.length) {
 			var rq = all_requests.pop();
 			if (rq) {
-				if (rq.softAbort){
-					rq.softAbort(this.sputnik);
-				} else if (rq.abort){
+				if (softAbort(rq, this.sputnik) === null) {
 					rq.abort(this.sputnik);
 				}
 			}
@@ -619,7 +679,11 @@ FastEventor.prototype = {
 		return this;
 	},
 	getModelImmediateRequests: function(space) {
-		var queued = this.getQueued(space);
+		var reqs = this.getRequests(space);
+		if (!reqs) {
+			return [];
+		}
+		var queued = reqs.slice();
 		if (queued){
 			queued.reverse();
 		}
@@ -637,28 +701,28 @@ FastEventor.prototype = {
 			groups.push.apply(groups, relative);
 		}
 		var setPrio = function(el) {
-			el.setPrio();
+			if (el.queued) {
+				el.queued.setPrio();
+				return;
+			}
+			if (el.setPrio) {
+				el.setPrio();
+			}
+
 		};
 		groups.reverse();
 		for (var i = 0; i < groups.length; i++) {
 			groups[i].forEach(setPrio);
 		}
 		return this.sputnik;
-	},
+	}
+});
 
-
+add({
 	requestState: (function(){
 
 		function failed(err) {
-			var deferred = jQuery.Deferred();
-			deferred.reject(err);
-			return deferred;
-		}
-
-		function resolved(data) {
-			var deferred = jQuery.Deferred();
-			deferred.resolve(data);
-			return deferred;
+			return Promise.reject(err);
 		}
 
 		function bindRequest(request, selected_map, store, self) {
@@ -668,12 +732,14 @@ FastEventor.prototype = {
 			var states_list = selected_map.states_list;
 			var parse = selected_map.parse;
 
-			request.always(function() {
+			function anyway() {
 				store.process = false;
 				self.sputnik.updateManyStates(self.makeLoadingMarks(states_list, false));
-			});
+			}
 
-			request.fail(function(){
+			request.then(anyway, anyway);
+
+			onPromiseFail(request, function(){
 				store.error = true;
 			});
 
@@ -687,7 +753,7 @@ FastEventor.prototype = {
 				}
 
 				return failed(new Error(has_error || 'no Result'));
-			}).done(function(result){
+			}).then(function(result){
 				var i;
 				var result_states;
 
@@ -808,10 +874,9 @@ FastEventor.prototype = {
 
 			var self = this;
 
-			var req = !reqs_list.length ?
-				checkDependencies(selected_map, store, self)
-				:
-				jQuery.when.apply(jQuery, reqs_list).then(function() {
+			var req = !reqs_list.length
+				? checkDependencies(selected_map, store, self)
+				: Promise.all(reqs_list).then(function() {
 					return checkDependencies(selected_map, store, self);
 				});
 
@@ -881,17 +946,22 @@ FastEventor.prototype = {
 
 		store.process = true;
 		var _this = this;
-		request.always(function() {
-					store.process = false;
-					_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
-					if (is_main_list) {
-						_this.sputnik.updateState('main_list_loading', false);
-					}
-				});
-		request.fail(function(){
-					store.error = true;
-				});
-		request.done(function(r){
+
+		function anyway() {
+			store.process = false;
+			_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
+			if (is_main_list) {
+				_this.sputnik.updateState('main_list_loading', false);
+			}
+		}
+
+		request.then(anyway, anyway);
+
+		onPromiseFail(request, function(){
+			store.error = true;
+		});
+
+		request.then(function(r){
 					var sputnik = _this.sputnik;
 					var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
 
@@ -987,6 +1057,19 @@ FastEventor.prototype = {
 		*/
 	}
 
-};
+
+});
+
+});
+
+
+function onPromiseFail(promise, cb) {
+	if (promise.fail) {
+		return promise.fail(cb);
+	} else {
+		return promise.catch(cb);
+	}
+}
+
 return FastEventor;
 });
