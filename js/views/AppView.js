@@ -382,39 +382,35 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			return current_md && self.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
 		};
 
-		var readySteadyResize = function(){
-			if (self.rsd_rz){
-				clearInterval(self.rsd_rz);
-			}
+		if (self.rsd_rz){
+			clearInterval(self.rsd_rz);
+		}
 
-			var oldsize = detectSize(getCurrentNode());
-			var offset_top;
+		var oldsize = detectSize(getCurrentNode());
+		var offset_top;
 
+		var recheckFunc = function(){
+			if (typeof documentScrollSizeChangeHandler == 'function'){
+				var newsize = detectSize(getCurrentNode());
 
-			var recheckFunc = function(){
-				if (typeof documentScrollSizeChangeHandler == 'function'){
-					var newsize = detectSize(getCurrentNode());
-
-					if (oldsize != newsize){
-						if (typeof offset_top == 'undefined'){
-							var offset = $(getCurrentNode()).offset();
-							offset_top = (offset && offset.top) || 0;
-						}
-						documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+				if (oldsize != newsize){
+					if (typeof offset_top == 'undefined'){
+						var offset = $(getCurrentNode()).offset();
+						offset_top = (offset && offset.top) || 0;
 					}
-
+					documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
 				}
-			};
 
-			self.rsd_rz = setInterval(recheckFunc,100);
-			self.on('vip_state_change-current_mp_md.resize-check', function() {
-				recheckFunc();
-			}, {
-				exlusive: true,
-				immediately: true
-			});
+			}
 		};
-		readySteadyResize();
+
+		self.rsd_rz = setInterval(recheckFunc,100);
+		self.on('vip_state_change-current_mp_md.resize-check', function() {
+			recheckFunc();
+		}, {
+			exlusive: true,
+			immediately: true
+		});
 	},
 	calculateScrollingViewport: function(screens_block) {
 		var scrolling_viewport;
