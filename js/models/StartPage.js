@@ -99,10 +99,12 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			track: [
 				SongCard, null, {
 					artist_name: [function(raw_str) {
-						return route.getCommaParts(raw_str)[0];
+						var last = route.decodeURLPart(raw_str.split('/')[1]);
+						return route.getCommaParts(last)[0];
 					}, 'simple_name'],
 					track_name: [function(raw_str) {
-						return route.getCommaParts(raw_str)[1];
+						var last = route.decodeURLPart(raw_str.split('/')[1]);
+						return route.getCommaParts(last)[1];
 					}, 'simple_name'],
 				}
 			],
