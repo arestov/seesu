@@ -1,4 +1,4 @@
-var requirejs = require('./nodejs/require-r-2.1.19.min.js');
+var requirejs = require('./nodejs/require-r-2.2.0.min.js');
 
 requirejs.config({
 	nodeRequire: typeof require !== 'undefined' && require,
