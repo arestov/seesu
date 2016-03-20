@@ -1,11 +1,11 @@
 define(['pv', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
 './StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
 './SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
-'./lul', './SongcardPage', './AppBaseView', './modules/WPBox', 'view_serv', 'View'],
+'./lul', './SongcardPage', './AppBaseView', './modules/WPBox', 'view_serv', 'View', './etc_views'],
 function(pv, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
 StartPageView, SearchPageView, ArtcardUI, ArtistListView,
 SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
-lul, SongcardPage, AppBaseView, WPBox, view_serv, View) {
+lul, SongcardPage, AppBaseView, WPBox, view_serv, View, etc_views) {
 "use strict";
 var app_env = app_serv.app_env;
 
@@ -107,9 +107,6 @@ var BrowseLevView = spv.inh(View, {}, {
 	children_views_by_mn: {
 		pioneer: map_slice_by_model
 	},
-	controllers: {
-		image_loader: coct.ImageLoader
-	},
 	base_tree: {
 		sample_name: 'browse_lev_con'
 	},
@@ -186,6 +183,11 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			detailed: BrowseLevView
 		},
 		navigation: BrowseLevNavView
+	},
+	controllers: {
+		auth_vk: etc_views.VkLoginUI,
+		auth_lfm: etc_views.LfmLoginView,
+		image_loader: coct.ImageLoader
 	},
 
 	state_change: {
@@ -356,7 +358,8 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		})(target);
 	},
 	buildVKSamples: function() {
-		var vklc = this.els.ui_samples.children('.vk-login-context');
+		var vklc = this.els.ui_samples.children('.vk_login_common');
+		vklc.addClass('vk-login-context attention-focuser');
 		var _this = this;
 		spv.cloneObj(_this.samples, {
 			vklc: vklc

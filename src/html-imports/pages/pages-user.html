@@ -54,37 +54,39 @@
 	<div pv-nest='vk__tracks'>
 		<!--pv-replace sample_name:imp-area_for_button-simple-->
 	</div>
-	<div class="preview_area" pv-nest="vk__friends">
+	<div pv-nest="vk__friends" class="preview_area" pv-class="access-request:pmd_vswitched">
 		<!--pv-replace sample_name:imp-area_for_button-->
-		<div class="pl-auth-con" pv-anchor="auth_con"></div>
+		<div pv-when="pmd_vswitched" class="pl-auth-con" pv-nest="auth_part controller:auth_vk">
+			<!--pv-replace sample_name:vk_login-->
+		</div>
 	</div>
+</div>
 
+<div class="lfm_preview_block preview_area" pv-class="access-request:pmd_vswitched">
+	<!--pv-replace sample_name:imp-area_for_button-->
+	<div pv-when="pmd_vswitched" class="pl-auth-con" pv-nest="auth_part controller:auth_lfm">
+		<!--pv-replace sample_name:lfm_authsampl-->
+	</div>
 </div>
 
 <div class="lastfm_pthgs">
-	<div class="preview_area" pv-nest="lfm__friends">
-		<!--pv-replace sample_name:imp-area_for_button-->
-		<div class="pl-auth-con" pv-anchor="auth_con"></div>
+	<div pv-nest="lfm__friends">
+		<!--pv-replace sample_name:lfm_preview_block-->
 	</div>
-	<div class="preview_area" pv-nest="lfm__neighbours">
-		<!--pv-replace sample_name:imp-area_for_button-->
-		<div class="pl-auth-con" pv-anchor="auth_con"></div>
+	<div pv-nest="lfm__neighbours">
+		<!--pv-replace sample_name:lfm_preview_block-->
 	</div>
 	<div class="preview_area" pv-nest="lfm__tracks">
 		<!--pv-replace sample_name:imp-area_for_button-simple-->
-		<div class="pl-auth-con" pv-anchor="auth_con"></div>
 	</div>
 	<div class="preview_area" pv-nest="lfm__tags">
 		<!--pv-replace sample_name:imp-area_for_button-simple-->
-		<div class="pl-auth-con" pv-anchor="auth_con"></div>
 	</div>
 	<div class="preview_area" pv-nest="lfm__artists">
 		<!--pv-replace sample_name:imp-area_for_button-simple-->
-		<div class="pl-auth-con" pv-anchor="auth_con"></div>
 	</div>
 	<div class="preview_area" pv-nest="lfm__albums">
 		<!--pv-replace sample_name:imp-area_for_button-simple-->
-		<div class="pl-auth-con" pv-anchor="auth_con"></div>
 	</div>
 </div>
 

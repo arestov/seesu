@@ -127,6 +127,9 @@ var VkLoginUI = spv.inh(View, {}, {
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('vklc');
+		this.bindBase();
+	},
+	bindBase: function() {
 		var _this = this;
 		var sign_link = this.c.find('.sign-in-to-vk').click(function(e){
 			_this.RPCLegacy('requestAuth');
@@ -186,9 +189,12 @@ var LfmLoginView = spv.inh(View, {}, {
 	'stch-request_description': function(target, state) {
 		target.c.find('.lfm-auth-request-desc').text(state || "");
 	},
-	createBase: function() {
+	createBase: function () {
 		this.c = this.root_view.getSample('lfm_authsampl');
-		this.auth_block = this.c.children(".auth-block");
+		this.bindBase();
+	},
+	bindBase: function() {
+		this.auth_block = this.c.find(".auth-block");
 		var _this = this;
 		var auth_link = this.auth_block.find('.lastfm-auth-bp a').click(function(e){
 			_this.RPCLegacy('requestAuth');
@@ -204,9 +210,6 @@ var LfmLoginView = spv.inh(View, {}, {
 			return false;
 		});
 		this.addWayPoint(use_code_button);
-
-
-
 	}
 });
 
