@@ -128,7 +128,8 @@ var PvSimpleSampler = (function(){
 				node_id: null,
 				states: [],
 				children: null,
-				children_by_mn: null
+				children_by_mn: null,
+				controller_name: null
 			};
 			var children_list = [];
 
@@ -139,6 +140,10 @@ var PvSimpleSampler = (function(){
 					is_root_node = bind_data_list[ i ],
 					cur_node = bind_data_list[ i + 1 ],
 					bind_data = bind_data_list[ i + 2 ];
+
+					if (is_root_node && bind_data.instructions['pv-nest']) {
+						structure_data.controller_name = bind_data.instructions['pv-nest'].controller_name;
+					}
 
 				setStructureData(struc_store, is_root_node, cur_node, bind_data, structure_data.states, children_list, getSample);
 			}

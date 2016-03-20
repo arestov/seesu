@@ -160,6 +160,14 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 	tree.basetree = (function() {
 
 		if (this.base_tree_list) {
+			var merged_tree = {
+				node_id: null,
+				children: null,
+				children_by_mn: null,
+				states: null,
+				controller_name: null
+			};
+
 			var i, cur;
 			var arr = [];
 
@@ -179,16 +187,15 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 
 				var structure_data = sampler.getStructure(cur.parse_as_tplpart);
 
+				if (!merged_tree.controller_name) {
+					merged_tree.controller_name = structure_data.controller_name;
+				}
+
 				arr.push(structure_data);
 				//this.structure_data
 
 			}
-			var merged_tree = {
-				node_id: null,
-				children: null,
-				children_by_mn: null,
-				states: null
-			};
+
 
 			var setUndefinedField = function(store, field_path, value) {
 				var current_value = spv.getTargetField(store, field_path);
@@ -297,7 +304,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 
 	for (var i = 0; i < children_list.length; i++) {
 		var cur = children_list[i];
-		var constr = spv.getTargetField(own_children, cur);
+
 		//var basetree = tree.basetree &&  spv.getTargetField(tree.basetree, cur);
 		var parent_basetree_chi;
 		var chi_constr_id;
@@ -311,8 +318,9 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 			chi_constr_id = base_root_constr_id;
 		}
 
-
-
+		var constr = (parent_basetree_chi && parent_basetree_chi.controller_name)
+			? root_view.controllers[parent_basetree_chi.controller_name]
+			: spv.getTargetField(own_children, cur);
 
 		if (constr) {
 			var struc = getUsageTree.call(constr.prototype, getUsageTree, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
