@@ -45,7 +45,7 @@ return pv.behavior({
 			var est = just_accepted_est || (rel && rel.item.est);
 			if (!est) {return;}
 
-			return app_serv.getRemainTimeText(est, true);
+			return app_serv.getRemainTimeText(new Date(est), true);
 		}
 	],
 
