@@ -42,7 +42,8 @@ var FanPreview = spv.inh(View, {}, {
 			var req = target.root_view.loadImage({
 				url: url,
 				cache_allowed: true
-			}).done(function() {
+			});
+			req.then(function() {
 				image_node[0].src = url;
 				target.setVisState('image_loaded', true);
 			});
@@ -90,4 +91,3 @@ SongcardPage.SongcardController = SongcardController;
 
 return SongcardPage;
 });
-

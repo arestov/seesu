@@ -5,17 +5,20 @@ var app_env = app_serv.app_env;
 var pvState = pv.state;
 
 var struserSuggest = spv.inh(invstg.BaseSuggest, {
-	init: function(self, opts, wrap) {
-		var user = wrap.user;
-		self.mo = wrap.mo;
-		self.row = wrap.row;
-		self.user_id = user.id;
-		self.photo = user.photo;
-		self.online = self.online;
+	init: function(self, opts, params) {
+		self.app = params.app;
+		self.mo = params.mo;
+		self.row = params.row;
+
+		var user = params.user;
+
+		self.user_id = user.state('userid');
+		self.photo = user.state('photo');
+		// self.online = self.online;
 		//self.name = user.name;
-		self.text_title = user.first_name + " " + user.last_name;
+		self.text_title = user.state('first_name') + " " + user.state('last_name');
 		self.updateManyStates({
-			photo: user.photo,
+			photo: user.state('photo'),
 			text_title: self.text_title
 		});
 	}
@@ -76,6 +79,22 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 				}
 			});
 		}
+
+
+		self.friends_page = self.app.routePathByModels('/users/me/vk:friends');
+
+		self.friends_page.on('child_change-list_items', function(e) {
+			pv.updateNesting(this, 'friends', e.value);
+			this.changeQuery('');
+			this.searchByQuery(this.state('query'));
+		}, self.getContextOpts());
+
+		self.lwch(self, 'can_search', function(state) {
+			if (!state){return;}
+
+			this.friends_page.preloadStart();
+			this.searchFriends();
+		});
 	}
 }, {
 	resItem: struserSuggest,
@@ -92,6 +111,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 			return vk_env || has_vk_api;
 		}
 	],
+	'compx-can_search': [['can_search_friends']],
 	'compx-can_search_friends': [
 		['vk_env', 'has_vk_api', 'can_searchf_vkopt'],
 		function(vk_env, has_vk_api, can_searchf_vkopt) {
@@ -117,18 +137,17 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 	},
 	searchByQuery: function(query) {
 		this.changeQuery(query);
-		var _this = this;
-		this.app
-			.once("vk-friends.share-row", function(list){
-				_this.handleVKFriendsSearch(list);
-			}, {exlusive: true})
-			.getVKFriends();
+		this.searchFriends();
 	},
-	handleVKFriendsSearch: function(list){
+	searchFriends: function(){
+		var list = this.getNesting('friends') || [];
 		var query = this.state('query');
-		var r = (query ? spv.searchInArray(list, query, ["first_name", "last_name"]) : list);
+		if (!this.state('can_search')){
+			return;
+		}
+		var r = (query ? spv.searchInArray(list, query, ["states.first_name", "states.last_name"]) : list);
 		if (r.length){
-			r = r.concat();
+			r = r.slice();
 			for (var i = 0; i < r.length; i++) {
 				r[i] = {
 					mo: this.mo,
@@ -137,7 +156,6 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 				};
 			}
 		}
-
 		this.appendResults(r, true);
 	},
 	postToVKWall: function() {
@@ -178,53 +196,47 @@ var LFMUserSuggest = spv.inh(invstg.BaseSuggest, {
 
 
 var LFMFriendsSection = spv.inh(invstg.SearchSection, {
-		//'nest-lfm_friends': ['#/users/me/lfm:friends', 'can_share'],
+	'nest-friends': ['#/users/me/lfm:friends', 'can_share', 'can_share'],
 	init: function(target) {
 		target.mo = target.map_parent.mo;
 		target.rpl = target.map_parent.map_parent;
 
+		target.friends_page = target.app.routePathByModels('/users/me/lfm:friends');
 
-		target.lfm_friends = target.app.routePathByModels('/users/me/lfm:friends');
-		//su.routePathByModels('/users/me/lfm:neighbours')
-		//preloadStart
-
-		target.lfm_friends.on('child_change-list_items', function(e) {
+		target.friends_page.on('child_change-list_items', function(e) {
 			pv.updateNesting(this, 'friends', e.value);
 			this.changeQuery('');
 			this.searchByQuery(this.state('query'));
-
-
 		}, target.getContextOpts());
 
-		target.wch(target, 'can_share', function(e) {
-			if (e.value){
-				this.lfm_friends.preloadStart();
-				this.searchLFMFriends();
-			}
+		target.lwch(target, 'can_search', function(state) {
+			if (!state){return;}
 
+			this.friends_page.preloadStart();
+			this.searchFriends();
 		});
 	},
 }, {
-
 	searchByQuery: function(query) {
 		this.changeQuery(query);
-		this.searchLFMFriends();
+		this.searchFriends();
 	},
+	'compx-can_search': [['can_share']],
 	'compx-can_share':{
 		depends_on: ['^^active_view', '#lfm_userid'],
 		fn: function(active_view, lfm_userid) {
 			return lfm_userid && active_view;
 		}
 	},
-	searchLFMFriends: function(){
+	searchFriends: function(){
 		var list = this.getNesting('friends') || [];
 		var query = this.state('query');
-		if (!this.state('can_share')){
+		if (!this.state('can_search')){
 			return;
 		}
 		var r = (query ? spv.searchInArray(list, query, ["states.userid", "states.realname"]) : list);
 		if (r.length){
-			r = r.concat();
+			r = r.slice();
 			for (var i = 0; i < r.length; i++) {
 				r[i] = {
 					mo: this.mo,
@@ -282,7 +294,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 
 		target.wch(target, 'can_share', function(e) {
 			if (e.value){
-				this.searchLFMFriends();
+				this.searchFriends();
 			}
 		});
 	}
@@ -313,7 +325,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 		this.addRequest(
 			this.app.lfm
 				.get('user.getInfo', {user: q})
-					.done(function(r){
+					.then(function(r){
 						if (!_this.doesNeed(q)){return;}
 						_this.loaded();
 
@@ -332,14 +344,12 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 						//r = r && parser(r, this.resItem, method);
 						_this.appendResults(result, true);
 
-
-					})
-					.fail(function(){
+					}, function(){
 						if (!_this.doesNeed(q)){return;}
 						_this.loaded();
 					}));
 	}, 200),
-	searchLFMFriends: function(){
+	searchFriends: function(){
 		var list = this.getNesting('friends') || [];
 		var query = this.state('query');
 		var r = (query ? spv.searchInArray(list, query, ["states.userid", "states.realname"]) : list);

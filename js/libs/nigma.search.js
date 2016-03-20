@@ -76,7 +76,7 @@ NigmaAPI.prototype = {
 							dataType: "text",
 							data: params_full,
 							timeout: 20000
-						}).done(success).fail(function(xhr){
+						}).then(success, function(xhr){
 							deferred.reject.apply(deferred, arguments);
 						});
 
@@ -240,5 +240,3 @@ NigmaMusicSearch.prototype = {
 	}
 
 };
-
-

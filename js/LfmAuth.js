@@ -63,9 +63,6 @@ var LfmLogin = spv.inh(pv.Model, {
 });
 
 
-
-
-
 var LfmScrobble = spv.inh(LfmLogin, {
 	init: function(target){
 		target.wch(target.app, 'settings-lfm-scrobbling', 'scrobbling');
@@ -76,12 +73,11 @@ var LfmScrobble = spv.inh(LfmLogin, {
 	beforeRequest: function() {
 		this.bindAuthCallback();
 	},
+	act: function () {
+		this.app.setSetting('lfm-scrobbling', true);
+	},
 	bindAuthCallback: function(){
-		var _this = this;
-		this.auth.once("session.input_click", function() {
-			_this.app.setSetting('lfm-scrobbling', true);
-			//_this.auth.setScrobbling(true);
-		}, {exlusive: true});
+		pvUpdate(this.app, 'lfm_auth_request', this);
 	},
 	setScrobbling: function(state) {
 		pvUpdate(this, 'scrobbling', state);
@@ -184,7 +180,7 @@ var LfmAuth = spv.inh(pv.Model, {
 	get_lfm_token: function(){
 		var _this = this;
 		this.api.get('auth.getToken', false, {nocache: true})
-			.done(function(r){
+			.then(function(r){
 				_this.newtoken = r.token;
 			});
 	},
@@ -192,7 +188,7 @@ var LfmAuth = spv.inh(pv.Model, {
 		var _this = this;
 		if (_this.newtoken ){
 			_this.api.get('auth.getSession', {'token':_this.newtoken })
-				.done(function(r){
+				.then(function(r){
 					if (!r.error) {
 						_this.login(r,callback);
 						pvUpdate(_this, 'session', true);

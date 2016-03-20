@@ -3,6 +3,8 @@ define(['pv', 'spv', 'app_serv', '../comd', 'js/LfmAuth',
 SongActPlaylisting, SongActTaging, SongActSharing){
 "use strict";
 
+var pvUpdate = pv.update;
+
 var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 	init: function(target) {
 		target.song = target.map_parent.mo;
@@ -13,11 +15,11 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 	beforeRequest: function() {
 		this.bindAuthCallback();
 	},
+	act: function () {
+		this.makeLove();
+	},
 	bindAuthCallback: function(){
-		var _this = this;
-		this.auth.once("session.input_click", function() {
-			_this.makeLove();
-		}, {exlusive: true});
+		pvUpdate(this.app, 'lfm_auth_request', this);
 	},
 	makeLove: function() {
 
@@ -28,11 +30,13 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 				sk: this.app.lfm.sk,
 				artist: this.song.artist,
 				track: this.song.track
-			})
-				.always(function(){
-					pv.update(_this, 'wait_love_done', false);
-					_this.trigger('love-success');
-				});
+			}).then(anyway, anyway);
+
+			function anyway(){
+				pv.update(_this, 'wait_love_done', false);
+				_this.trigger('love-success');
+			}
+
 			this.app.trackEvent('song actions', 'love');
 		}
 

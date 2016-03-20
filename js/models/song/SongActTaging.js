@@ -84,13 +84,13 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 					track: _this.mo.state('track'),
 
 					tag: tag
-				})
-					.done(function() {
-						var petags_result = _this.state('petags_result') || [];
-						petags_result = spv.arrayExclude(petags_result, tag);
+				});
+				req.then(function() {
+					var petags_result = _this.state('petags_result') || [];
+					petags_result = spv.arrayExclude(petags_result, tag);
 
-						pvUpdate(_this, 'petags_fixed', petags_result);
-					});
+					pvUpdate(_this, 'petags_fixed', petags_result);
+				});
 				_this.addRequest(req);
 					/*
 					.always(function(){
@@ -109,20 +109,20 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 				track: _this.mo.state('track'),
 
 				tags: tags_toadd.join(',')
-			})
+			});
 
-				.done(function() {
-					var petags_result = _this.state('petags_result');
-					if (petags_result){
-						petags_result = petags_result.slice();
-					} else {
-						petags_result = [];
-					}
-					petags_result.push.apply(petags_result, tags_toadd);
+			req.then(function() {
+				var petags_result = _this.state('petags_result');
+				if (petags_result){
+					petags_result = petags_result.slice();
+				} else {
+					petags_result = [];
+				}
+				petags_result.push.apply(petags_result, tags_toadd);
 
 
-					pvUpdate(_this, 'petags_fixed', petags_result);
-				});
+				pvUpdate(_this, 'petags_fixed', petags_result);
+			});
 			_this.addRequest(req);
 				/*.always(function(){
 					//pvUpdate(_this, 'wait_love_done', false);

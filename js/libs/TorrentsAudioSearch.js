@@ -380,14 +380,14 @@ TorqueSearch.prototype = {
 		FuncsStack.chain([
 			function() {
 				var chain_link = this;
-				core.torrent_search
-				.findAudio(msq)
-					.done(function(r) {
-						chain_link.completePart(r);
-					})
-					.fail(function() {
-						deferred.reject();
-					});
+				var req = core.torrent_search
+				.findAudio(msq);
+
+				req.then(function(r) {
+					chain_link.completePart(r);
+				}, function() {
+					deferred.reject();
+				});
 				//find torrents
 			},
 			function(links_list) {

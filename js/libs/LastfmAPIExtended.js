@@ -47,7 +47,7 @@ LastfmAPI.extendTo(LastfmAPIExtended, {
 			}
 
 			_this.post('track.scrobble', post_m_obj)
-				.done(function(){
+				.then(function(){
 					_this.music = [];
 					_this.stSet('lfm_scrobble_music', '');
 				});

@@ -1,4 +1,4 @@
-define(['pv', 'spv', 'jquery', 'js/libs/BrowseMap', './../PlayRequest'], function(pv, spv, $, BrowseMap, PlayRequest) {
+define(['pv', 'spv', 'jquery', 'js/libs/BrowseMap', './../PlayRequest', 'Promise'], function(pv, spv, $, BrowseMap, PlayRequest, Promise) {
 "use strict";
 var isDepend = pv.utils.isDepend;
 
@@ -262,10 +262,7 @@ return spv.inh(BrowseMap.Model, {
 		this.makeSongPlayalbe(true);
 	},
 	prepareForPlaying: function() {
-
 		this.makeSongPlayalbe(true);
-
-		// this.mp3_search.on("new-search.viewing-song", this.findFiles, {exlusive: true, context: this});
 	},
 	simplify: function() {
 		return spv.cloneObj({}, this, false, ['track', 'artist']);
@@ -460,7 +457,7 @@ return spv.inh(BrowseMap.Model, {
 
 			all_requests.push(def_top_tracks);
 			this.addRequest(this.app.lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
-				.done(function(r){
+				.then(function(r){
 					var tracks_list = spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
 					var tracks_list_clean = [];
 					for (var i = 0; i < tracks_list.length; i++) {
@@ -473,8 +470,7 @@ return spv.inh(BrowseMap.Model, {
 
 					def_top_tracks.resolve(tracks_list_clean);
 
-				})
-				.fail(function() {
+				}, function() {
 					def_top_tracks.resolve();
 				}), {space: 'acting'});
 
@@ -485,8 +481,9 @@ return spv.inh(BrowseMap.Model, {
 				def_exfm = $.Deferred();
 
 				all_requests.push(def_podcast);
-				this.addRequest(this.app.lfm.get('artist.getPodcast', {artist: this.artist})
-					.done(function(r) {
+				var req = this.app.lfm.get('artist.getPodcast', {artist: this.artist});
+
+				req.then(function(r) {
 						var tracks_list = spv.toRealArray(spv.getTargetField(r, 'rss.channel.item'));
 						var tracks_list_clean = [];
 						var files_list = [];
@@ -505,10 +502,10 @@ return spv.inh(BrowseMap.Model, {
 						}
 						_this.mp3_search.pushSomeResults(files_list);
 						def_podcast.resolve(tracks_list_clean);
-					})
-					.fail(function() {
+					}, function() {
 						def_podcast.resolve();
-					}), {space: 'acting'});
+					});
+				this.addRequest(req, {space: 'acting'});
 
 				var pushMusicList = function(music_list, deferred_obj) {
 					var filtered = [];
@@ -534,16 +531,15 @@ return spv.inh(BrowseMap.Model, {
 				if (!sc_search){
 					def_soundcloud.resolve();
 				} else {
-					this.addRequest( sc_search.findAudio({artist: this.artist})
-						.done(function(music_list) {
-							pushMusicList(music_list, def_soundcloud);
-							//var music_list_filtered =
-						})
-						.fail(function() {
-							def_soundcloud.resolve();
-						}),
-					{space: 'acting'}
-					);
+					var req = sc_search.findAudio({artist: this.artist});
+					req.then(function(music_list) {
+						pushMusicList(music_list, def_soundcloud);
+						//var music_list_filtered =
+					}, function() {
+						def_soundcloud.resolve();
+					});
+					this.addRequest(req, {space: 'acting'});
+
 				}
 
 
@@ -552,23 +548,23 @@ return spv.inh(BrowseMap.Model, {
 				if (!exfm_search){
 					def_exfm.resolve();
 				} else {
-					this.addRequest(   exfm_search.findAudio({artist: this.artist})
-						.done(function(music_list) {
-							pushMusicList(music_list, def_exfm);
-						})
-						.fail(function() {
-							def_exfm.resolve();
-						}),
-					{space: 'acting'}
-					);
+					var req = exfm_search.findAudio({artist: this.artist});
+
+					req.then(function(music_list) {
+						pushMusicList(music_list, def_exfm);
+					}, function() {
+						def_exfm.resolve();
+					});
+					this.addRequest({space: 'acting'});
 				}
 			}
 
 			var any_track_with_file = Math.round(Math.random());
 
 
-			var big_request = this.rtn_request = $.when.apply($.when, all_requests)
-				.done(function(top_tracks, podcast, sc_list, exfm_list) {
+			var big_request = this.rtn_request = Promise.all(all_requests);
+
+			big_request.then(function(top_tracks, podcast, sc_list, exfm_list) {
 					if (_this.track){
 						return;
 					}
@@ -638,14 +634,17 @@ return spv.inh(BrowseMap.Model, {
 						selectRandomTrack(top_tracks);
 					}
 
-				})
-				.always(function() {
-					pv.update(_this, 'track_name_loading', false);
-					if (_this.rtn_request == big_request){
-						delete _this.rtn_request;
-					}
-					_this.checkChangesSinceFS();
 				});
+
+			var anyway = function() {
+				pv.update(_this, 'track_name_loading', false);
+				if (_this.rtn_request == big_request){
+					delete _this.rtn_request;
+				}
+				_this.checkChangesSinceFS();
+			};
+
+			big_request.then(anyway, anyway);
 		}
 
 	},

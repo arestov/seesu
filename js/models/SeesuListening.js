@@ -64,29 +64,35 @@ return pv.behavior({
 
 		pvUpdate(target, 'sending_like', true);
 
-		this.api('relations.setLike', {to: this.state('user')})
-			.done(function(resp) {
-				if (!resp.done) {return;}
-				pvUpdate(target, 'like_just_sended', true);
-			})
-			.always(function() {
-				pvUpdate(target, 'sending_like', false);
-			});
+		var req = this.api('relations.setLike', {to: this.state('user')});
+
+		req.then(function(resp) {
+			if (!resp.done) {return;}
+			pvUpdate(target, 'like_just_sended', true);
+		});
+
+		var anyway = function() {
+			pvUpdate(target, 'sending_like', false);
+		};
+		req.then(anyway, anyway);
+		return req;
 	},
 	acceptInvite: function() {
 		var target = this;
 
 		pvUpdate(target, 'sending_accept', true);
 
-		this.api('relations.acceptInvite', {from: this.state('user')})
-			.done(function(resp) {
-				if (!resp.done) {return;}
-				pvUpdate(target, 'invite_accepted', true);
-				pvUpdate(target, 'just_accepted_est', resp.done.est);
-			})
-			.always(function() {
-				pvUpdate(target, 'sending_accept', false);
-			});
+		var req = this.api('relations.acceptInvite', {from: this.state('user')});
+		req.then(function(resp) {
+			if (!resp.done) {return;}
+			pvUpdate(target, 'invite_accepted', true);
+			pvUpdate(target, 'just_accepted_est', resp.done.est);
+		});
+		var anyway = function() {
+			pvUpdate(target, 'sending_accept', false);
+		};
+		req.then(anyway, anyway);
+		return req;
 	}
 }, pv.HModel, function SeesuListening(){});
 });

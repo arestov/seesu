@@ -363,57 +363,54 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		});
 	},
 	checkSizeDetector: function() {
-		var _this = this;
-		if (app_env.check_resize){
-			var detectSize = function(D){
-				if (!D){
-					return 0;
-				} else {
-					return $(D).outerHeight();
-				}
-
-				//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
-			};
-			var getCurrentNode = function() {
-				var current_md = _this.getNesting('current_mp_md');
-				return current_md && _this.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
-			};
-
-			var readySteadyResize = function(){
-				if (_this.rsd_rz){
-					clearInterval(_this.rsd_rz);
-				}
-
-				var oldsize = detectSize(getCurrentNode());
-				var offset_top;
-
-
-				var recheckFunc = function(){
-					if (typeof documentScrollSizeChangeHandler == 'function'){
-						var newsize = detectSize(getCurrentNode());
-
-						if (oldsize != newsize){
-							if (typeof offset_top == 'undefined'){
-								var offset = $(getCurrentNode()).offset();
-								offset_top = (offset && offset.top) || 0;
-							}
-							documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
-						}
-
-					}
-				};
-
-				_this.rsd_rz = setInterval(recheckFunc,100);
-				_this.on('vip_state_change-current_mp_md.resize-check', function() {
-					recheckFunc();
-				}, {
-					exlusive: true,
-					immediately: true
-				});
-			};
-			readySteadyResize();
-
+		var self = this;
+		if (!app_env.check_resize) {
+			return;
 		}
+
+		var detectSize = function(D){
+			if (!D){
+				return 0;
+			} else {
+				return $(D).outerHeight();
+			}
+
+			//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
+		};
+		var getCurrentNode = function() {
+			var current_md = self.getNesting('current_mp_md');
+			return current_md && self.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
+		};
+
+		if (self.rsd_rz){
+			clearInterval(self.rsd_rz);
+		}
+
+		var oldsize = detectSize(getCurrentNode());
+		var offset_top;
+
+		var recheckFunc = function(){
+			if (typeof documentScrollSizeChangeHandler == 'function'){
+				var newsize = detectSize(getCurrentNode());
+
+				if (oldsize != newsize){
+					if (typeof offset_top == 'undefined'){
+						var offset = $(getCurrentNode()).offset();
+						offset_top = (offset && offset.top) || 0;
+					}
+					documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+				}
+
+			}
+		};
+
+		self.rsd_rz = setInterval(recheckFunc, 100);
+
+		self.on('vip_state_change-current_mp_md', function() {
+			recheckFunc();
+		}, {
+			immediately: true
+		});
 	},
 	calculateScrollingViewport: function(screens_block) {
 		var scrolling_viewport;

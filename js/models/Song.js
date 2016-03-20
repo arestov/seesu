@@ -366,7 +366,7 @@ var pvUpdate = pv.update;
 				return;
 			}
 			var duration = Math.round(mopla.getDuration()/1000) || '';
-			if (this.app.settings['lfm-scrobbling']){
+			if (this.app.settings['lfm-scrobbling'] && this.app.lfm.sk){
 				this.app.lfm.nowplay({
 					artist: this.artist,
 					track: this.track,
