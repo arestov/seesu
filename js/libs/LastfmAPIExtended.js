@@ -11,13 +11,16 @@ LastfmAPI.extendTo(LastfmAPIExtended, {
 	nowplay: function(omo, duration){
 		var _this = this;
 		if (!_this.sk){return false;}
-		return _this.post('track.updateNowPlaying', {
+		var obj = {
 			sk: _this.sk,
 			artist: omo.artist,
 			track: omo.track,
-			album: omo.album,
 			duration: duration || ""
-		});
+		};
+		if (omo.album) {
+			obj.album = omo.album;
+		}
+		return _this.post('track.updateNowPlaying', obj);
 	},
 	submit: function(omo, duration, timestamp){
 		var _this = this;
