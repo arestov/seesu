@@ -250,7 +250,7 @@ var BrowseMap = spv.inh(pv.Model, {
 			var parent_lev = parent_bwlev;
 			if (!parent_lev && parent_md) {
 				throw new Error('`md.lev` prop dissalowed');
-				parent_lev = parent_md.lev;
+				// parent_lev = parent_md.lev;
 			}
 
 			target_lev = this.getFreeLevel(map_level_num, parent_lev, md);
@@ -383,9 +383,8 @@ var BrowseMap = spv.inh(pv.Model, {
 
 		this.nav_tree = tree;
 
-		var
-			url_changed = this.setCurrentURL(tree, old_tree, urlop),
-			title_changed = this.setCurrentNav(tree[0].rtree, old_tree && old_tree[0].rtree, urlop);
+		var url_changed = this.setCurrentURL(tree, old_tree, urlop);
+		this.setCurrentNav(tree[0].rtree, old_tree && old_tree[0].rtree, urlop);
 
 		// !!urlop.skip_url_change
 

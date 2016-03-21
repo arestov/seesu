@@ -1,4 +1,4 @@
-define(['./LastfmAPI', 'spv', 'app_serv'], function(LastfmAPI, spv, app_serv) {
+define(['./LastfmAPI', 'spv', 'app_serv'], function(LastfmAPI) {
 "use strict";
 var LastfmAPIExtended = function() {};
 LastfmAPI.extendTo(LastfmAPIExtended, {
@@ -6,7 +6,6 @@ LastfmAPI.extendTo(LastfmAPIExtended, {
 		this._super.apply(this, arguments);
 
 		this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
-		var _this = this;
 	},
 	nowplay: function(omo, duration){
 		var _this = this;
