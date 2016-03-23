@@ -588,11 +588,11 @@ add({
 			}
 			this.parse = parse;
 			var send_declr = req_item[2];
-			if (Array.isArray(send_declr[0])) {
+			if (!Array.isArray(send_declr[0])) {
+				this.send_declr = send_declr;
+			} else {
 				this.dependencies = send_declr[0];
 				this.send_declr = send_declr[1];
-			} else {
-				this.send_declr = send_declr;
 			}
 		}
 
