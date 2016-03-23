@@ -416,7 +416,7 @@ add({
 	getNestingSource: function(nesting_name, app) {
 		nesting_name = hp.getRightNestingName(this, nesting_name);
 		var dclt = this['nest_req-' + nesting_name];
-		var network_api = dclt && hp.getNetApiByDeclr(dclt[1], this, app);
+		var network_api = dclt && hp.getNetApiByDeclr(dclt.send_declr, this, app);
 		return network_api && network_api.source_name;
 	},
 	getStateSources: function(state_name, app) {
@@ -596,6 +596,31 @@ add({
 			}
 		}
 
+		function NestReqMap(dclt) {
+
+			if (typeof dclt[0][0] != 'function') {
+				dclt[0][0] = spv.mmap(dclt[0][0]);
+			}
+			if (dclt[0][1] && dclt[0][1] !== true && typeof dclt[0][1] != 'function') {
+				dclt[0][1] = spv.mmap(dclt[0][1]);
+			}
+			var array = dclt[0][2];
+			if (array) {
+				for (var i = 0; i < array.length; i++) {
+					var spec_cur = array[i];
+					if (typeof spec_cur[1] != 'function') {
+						spec_cur[1] = spv.mmap(spec_cur[1]);
+					}
+				}
+			}
+
+
+			this.parse_items = dclt[0][0];
+			this.parse_serv = dclt[0][1];
+			this.side_data_parsers = dclt[0][2];
+			this.send_declr = dclt[1];
+		}
+
 		var doIndex = function(list, value) {
 			var result = [];
 
@@ -657,24 +682,9 @@ add({
 				has_changes = true;
 				for (var prop_name in props) {
 					if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
-						cur = props[ prop_name ];
-						if (typeof cur[0][0] != 'function') {
-							cur[0][0] = spv.mmap(cur[0][0]);
-						}
-						if (cur[0][1] && cur[0][1] !== true && typeof cur[0][1] != 'function') {
-							cur[0][1] = spv.mmap(cur[0][1]);
-						}
-						var array = cur[0][2];
-						if (array) {
-							for (i = 0; i < array.length; i++) {
-								var spec_cur = array[i];
-								if (typeof spec_cur[1] != 'function') {
-									spec_cur[1] = spv.mmap(spec_cur[1]);
-								}
-							}
-						}
-						changeSources(this.netsources_of_nestings, cur[1]);
-
+						this[prop_name] = new NestReqMap(props[ prop_name ]);
+						var nest_declr = this[prop_name];
+						changeSources(this.netsources_of_nestings, nest_declr.send_declr);
 					}
 				}
 			}
