@@ -922,8 +922,11 @@ add({
 		if (is_main_list) {
 			this.sputnik.updateState('main_list_loading', true);
 		}
+
+		var parse_items = dclt[0][0];
+		var parse_serv = dclt[0][1];
 		var side_data_parsers = dclt[0][2];
-		var parse_items = dclt[0][0], parse_serv = dclt[0][1], send_declr = dclt[1];
+		var send_declr = dclt[1];
 		var supports_paging = !!parse_serv;
 		var paging_opts = this.sputnik.getPagingInfo(nesting_name);
 
