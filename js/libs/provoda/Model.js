@@ -570,19 +570,15 @@ add({
 
 		function ReqMap(req_item, num) {
 			this.num = num;
-
+			this.dependencies = null;
+			this.send_declr = null;
 			var relations = req_item[0];
-			var dependencies = null;
-			var dependents = null;
 			if (Array.isArray(relations[0])) {
-				dependents = relations[0];
-				dependencies = relations[1];
+				throw new Error('wrong');
 			} else {
-				dependents = relations;
 			}
 
-			this.dependencies = dependencies;
-			this.states_list = dependents;
+			this.states_list = relations;
 
 			var parse;
 			if (typeof req_item[1] != 'function') {
@@ -591,7 +587,13 @@ add({
 				parse = req_item[1];
 			}
 			this.parse = parse;
-			this.send_declr = req_item[2];
+			var send_declr = req_item[2];
+			if (Array.isArray(send_declr[0])) {
+				this.dependencies = send_declr[0];
+				this.send_declr = send_declr[1];
+			} else {
+				this.send_declr = send_declr;
+			}
 		}
 
 		var doIndex = function(list, value) {

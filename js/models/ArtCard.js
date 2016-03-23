@@ -629,7 +629,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 			}]
 		],
 		[
-			[['soundcloud_profile'], ['googled_sc_name']],
+			['soundcloud_profile'],
 			function(r) {
 				var soundcloud_profile;
 				if (r.location){
@@ -645,13 +645,16 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 				};
 
 			},
-			['sc_api', 'get', function() {
-				return ['resolve', {
-					'_status_code_map[302]': 200,
-					'_status_format': 'json',
-					url: 'http://soundcloud.com/' + this.state('googled_sc_name')
-				}];
-			}]
+			[
+				['googled_sc_name'],
+				['sc_api', 'get', function() {
+					return ['resolve', {
+						'_status_code_map[302]': 200,
+						'_status_format': 'json',
+						url: 'http://soundcloud.com/' + this.state('googled_sc_name')
+					}];
+				}]
+			]
 		],
 		[
 			['images'],
