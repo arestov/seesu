@@ -73,6 +73,10 @@ var checkNestRqC = nestRqCchecker();
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
 var onPropsExtend = function (props) {
+	if (this.changeDataMorphDeclarations) {
+		this.changeDataMorphDeclarations(props);
+	}
+	
 	if (this.collectStateChangeHandlers){
 		this.collectStateChangeHandlers(props);
 	}
@@ -107,10 +111,6 @@ var onPropsExtend = function (props) {
 
 	if (this.collectNestingsDeclarations) {
 		this.collectNestingsDeclarations(props);
-	}
-
-	if (this.changeDataMorphDeclarations) {
-		this.changeDataMorphDeclarations(props);
 	}
 
 	if (this.changeChildrenViewsDeclarations) {
