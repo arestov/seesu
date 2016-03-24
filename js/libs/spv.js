@@ -865,10 +865,13 @@ function extend(Class, params, propsArg) {
 		spv.coe(passedProps) :
 		passedProps;
 
-	var parentExtend = Class.onExtend;
-	var onExtend = params.onExtend ?
-			wrapExtend((parentExtend || empty), params.onExtend) :
-			parentExtend;
+	var asParentExtend = Class.onExtend || empty;
+	var firstExtend = params.onPreExtend
+		? wrapExtend(params.onPreExtend, asParentExtend)
+		: asParentExtend;
+	var onExtend = params.onExtend
+		? wrapExtend(firstExtend, params.onExtend)
+		: firstExtend;
 
 
 	// building нужен что бы к родительской инициализации добавить какую-то конкретную новую
@@ -915,8 +918,8 @@ function extend(Class, params, propsArg) {
 		copyProps(result.prototype, props, Class.prototype);
 		// cloneObj(result.prototype, props);
 		if (params.skip_first_extend) {
-			if (parentExtend) {
-				parentExtend(result.prototype, props, Class.prototype, params);
+			if (firstExtend) {
+				firstExtend(result.prototype, props, Class.prototype, params);
 			}
 		} else {
 			if (onExtend) {
