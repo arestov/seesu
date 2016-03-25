@@ -565,7 +565,7 @@ add({
 		};
 	})(),
 	changeDataMorphDeclarations: (function() {
-		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-', true );
+		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 		function ReqMap(req_item, num) {
@@ -596,7 +596,11 @@ add({
 			}
 		}
 
-		function NestReqMap(dclt) {
+		function stateName(name) {
+			return '$__can_load_' + name;
+		}
+
+		function NestReqMap(dclt, name) {
 
 			if (typeof dclt[0][0] != 'function') {
 				dclt[0][0] = spv.mmap(dclt[0][0]);
@@ -613,12 +617,52 @@ add({
 					}
 				}
 			}
-
-
+			this.original = this;
+			this.nest_name = name;
 			this.parse_items = dclt[0][0];
 			this.parse_serv = dclt[0][1];
 			this.side_data_parsers = dclt[0][2];
-			this.send_declr = dclt[1];
+			this.send_declr = null;
+			this.dependencies = null;
+			this.state_dep = null;
+
+			var send_declr = dclt[1];
+			if (!Array.isArray(send_declr[0])) {
+				this.send_declr = send_declr;
+			} else {
+				this.dependencies = send_declr[0];
+				this.send_declr = send_declr[1];
+			}
+
+
+			if (this.dependencies) {
+				this.state_dep = stateName(this.nest_name);
+			}
+
+		}
+
+		function NestReqMapCopy(nest_declr, is_main) {
+			this.original = nest_declr;
+
+			this.nest_name = nest_declr.nest_name;
+			this.parse_items = nest_declr.parse_items;
+			this.parse_serv = nest_declr.parse_serv;
+			this.side_data_parsers = nest_declr.side_data_parsers;
+			this.send_declr = nest_declr.send_declr;
+			this.dependencies = nest_declr.dependencies;
+			this.state_dep = nest_declr.state_dep;
+
+			if (!is_main) {
+				return;
+			}
+
+			var more = ['can_load_data'];
+			this.dependencies = !this.dependencies
+				? more
+				: this.dependencies.concat(more);
+
+			this.state_dep = stateName(this.nest_name);
+
 		}
 
 		var doIndex = function(list, value) {
@@ -632,6 +676,11 @@ add({
 			}
 
 			return result;
+		};
+
+		var assign = function(md, props, nest_declr) {
+			var key = 'compx-' + nest_declr.state_dep;
+			md[key] = props[key] = [nest_declr.dependencies, spv.hasEveryArgs];
 		};
 
 		return function(props) {
@@ -672,6 +721,8 @@ add({
 
 			var has_reqnest_decls = hasPrefixedProps(props);
 
+			var main_list_nest_req = this.main_list_nest_req;
+
 			if (has_reqnest_decls) {
 				this.has_reqnest_decls = true;
 				this.netsources_of_nestings = {
@@ -682,12 +733,38 @@ add({
 				has_changes = true;
 				for (var prop_name in props) {
 					if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
-						this[prop_name] = new NestReqMap(props[ prop_name ]);
-						var nest_declr = this[prop_name];
+						var nest_name = getUnprefixed(prop_name);
+						var nest_declr = new NestReqMap(props[ prop_name ], nest_name);
+
 						changeSources(this.netsources_of_nestings, nest_declr.send_declr);
+
+						var is_main = nest_name == this.main_list_name;
+						// if (is_main) {
+						// 	debugger;
+						// }
+						var cur_nest = !is_main ? nest_declr : new NestReqMapCopy(nest_declr, is_main);
+						this[prop_name] = cur_nest;
+
+						if (!cur_nest.state_dep) {
+							continue;
+						}
+
+						assign(this, props, cur_nest);
+
+						if (!is_main) {
+							continue;
+						}
+
+						this.main_list_nest_req = cur_nest;
 					}
 				}
 			}
+
+			if (props.hasOwnProperty('main_list_nest_req') && main_list_nest_req && main_list_nest_req.nest_name !== props.main_list_name) {
+				assign(this, props, main_list_nest_req.original);
+				this['nest_req-' + main_list_nest_req.nest_name] = main_list_nest_req.original;
+			}
+
 			if (has_changes) {
 				this.netsources_of_all = {
 					nestings: this.netsources_of_nestings,

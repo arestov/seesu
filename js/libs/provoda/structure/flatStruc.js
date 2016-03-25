@@ -42,8 +42,8 @@ var checkNestingPath = function(app, md, dep, path, original_need) {
 		}
 
 		var type;
-
-		if (cur._nest_rqc && cur._nest_rqc[right_nesting_name]) {
+		var declr = cur['nest_req-' + right_nesting_name];
+		if (declr || (cur._nest_rqc && cur._nest_rqc[right_nesting_name])) {
 			type = 'countless';
 		} else if (Array.isArray(constr)){
 			// `posbl_` could lead to incorrect type
@@ -67,18 +67,21 @@ var checkNestingPath = function(app, md, dep, path, original_need) {
 				state: null,
 				related: null
 			};
-			if (right_nesting_name == cur.main_list_name) {
+
+			if (declr.state_dep) {
+
 				var state_dep = chechTreeStructure(app, cur, {
 					dep_id: dep_counter++,
 					type: 'state',
-					value: 'can_load_data'
+					value: declr.state_dep
 				});
 
 				if (state_dep.related && state_dep.related.length) {
-					countless_nesting_dep.state = 'can_load_data';
+					countless_nesting_dep.state = declr.state_dep;
 					countless_nesting_dep.related = state_dep;
 				}
 			}
+
 			item.related = countless_nesting_dep;
 		}
 
