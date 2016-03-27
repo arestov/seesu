@@ -68,7 +68,7 @@ var checkNestingPath = function(app, md, dep, path, original_need) {
 				related: null
 			};
 
-			if (declr.state_dep) {
+			if (declr && declr.state_dep) {
 
 				var state_dep = chechTreeStructure(app, cur, {
 					dep_id: dep_counter++,
