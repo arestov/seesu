@@ -702,7 +702,7 @@ add({
 					list[i] = new ReqMap(props.req_map[i], i);
 				}
 				for (var i = 0; i < list.length; i++) {
-					changeSources(this.netsources_of_states, list[i].states_list);
+					changeSources(this.netsources_of_states, list[i].send_declr);
 				}
 
 				this._states_reqs_index = {};
