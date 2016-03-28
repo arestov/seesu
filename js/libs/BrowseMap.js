@@ -1611,7 +1611,7 @@ function getterSPI(){
 		return target;
 	};
 
-	var pepare = function(self, item, sp_name) {
+	var prepare = function(self, item, sp_name) {
 		var Constr = self._all_chi[item.key];
 		/*
 		hp_bound
@@ -1645,7 +1645,7 @@ function getterSPI(){
 			if (self.sub_pages && self.sub_pages[sp_name]){
 				return self.sub_pages[sp_name];
 			}
-			self.sub_pages[sp_name] = pepare(self, item, sp_name);
+			self.sub_pages[sp_name] = prepare(self, item, sp_name);
 			return self.sub_pages[sp_name];
 		}
 
@@ -1671,7 +1671,7 @@ function getterSPI(){
 				item = type && sub_pager.by_type[type];
 			}
 
-			var instance = item && pepare(self, item, sp_name);
+			var instance = item && prepare(self, item, sp_name);
 			if (instance) {
 				self.sub_pages[key] = instance;
 				return instance;

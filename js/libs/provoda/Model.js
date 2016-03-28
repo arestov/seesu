@@ -347,7 +347,6 @@ var modelInit = (function() {
 
 		if (self.nest_match) {
 			for (var i = 0; i < self.nest_match.length; i++) {
-
 				self.addNestWatch(new LocalWatchRoot(self, self.nest_match[i]), 0);
 			}
 		}
@@ -711,6 +710,7 @@ add({
 				}
 				for (var i = 0; i < list.length; i++) {
 					changeSources(this.netsources_of_states, list[i].send_declr);
+
 				}
 
 				this._states_reqs_index = {};
