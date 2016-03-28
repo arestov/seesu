@@ -208,7 +208,7 @@ return {
 	getEncodedState: getEncodedState,
 	getNetApiByDeclr: function(send_declr, sputnik, app) {
 		var network_api;
-		var api_name = send_declr[0];
+		var api_name = send_declr.api_name;
 		if (typeof api_name == 'string') {
 			network_api = spv.getTargetField(app || sputnik.app, api_name);
 		} else if (typeof api_name == 'function') {

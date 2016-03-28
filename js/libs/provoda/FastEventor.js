@@ -35,8 +35,10 @@ var findErrorByList = function(data, errors_selectors) {
 var requests_by_declarations = {};
 var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 
-	var api_name = send_declr[0], api_method = send_declr[1], api_args = send_declr[2].call(sputnik, opts),
-		non_standart_api_opts = send_declr[3];
+	var api_name = send_declr.api_name;
+	var api_method = send_declr.api_method_name;
+	var api_args = send_declr.getArgs.call(sputnik, opts);
+	var non_standart_api_opts = send_declr.non_standart_api_opts;
 
 	var network_api = hp.getNetApiByDeclr(send_declr, sputnik);
 

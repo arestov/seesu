@@ -189,11 +189,12 @@ var getSiOpts = function(md) {
 	return si_opts_cache[provoda_id];
 };
 
-var changeSources = function(store, netapi_declr) {
-	if (typeof netapi_declr[0] == 'string') {
-		store.api_names.push(netapi_declr[0]);
+var changeSources = function(store, send_declr) {
+	var api_name = send_declr.api_name;
+	if (typeof api_name == 'string') {
+		store.api_names.push(api_name);
 	} else {
-		var network_api = netapi_declr[0].call();
+		var network_api = api_name.call();
 		if (!network_api.source_name) {
 			throw new Error('no source_name');
 		}
@@ -568,6 +569,13 @@ add({
 		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
+		function SendDeclaration(declr) {
+			this.api_name = declr[0];
+			this.api_method_name = declr[1];
+			this.getArgs = declr[2];
+			this.non_standart_api_opts = declr[3];
+		}
+
 		function ReqMap(req_item, num) {
 			this.num = num;
 			this.dependencies = null;
@@ -589,10 +597,10 @@ add({
 			this.parse = parse;
 			var send_declr = req_item[2];
 			if (!Array.isArray(send_declr[0])) {
-				this.send_declr = send_declr;
+				this.send_declr = new SendDeclaration(send_declr);
 			} else {
 				this.dependencies = send_declr[0];
-				this.send_declr = send_declr[1];
+				this.send_declr = new SendDeclaration(send_declr[1]);
 			}
 		}
 
@@ -628,10 +636,10 @@ add({
 
 			var send_declr = dclt[1];
 			if (!Array.isArray(send_declr[0])) {
-				this.send_declr = send_declr;
+				this.send_declr = new SendDeclaration(send_declr);
 			} else {
 				this.dependencies = send_declr[0];
-				this.send_declr = send_declr[1];
+				this.send_declr = new SendDeclaration(send_declr[1]);
 			}
 
 
