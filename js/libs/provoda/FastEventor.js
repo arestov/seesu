@@ -75,7 +75,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 
 	var cache_key;
 	if (!non_standart_api_opts && !manual_nocache) {
-		var big_string = JSON.stringify([api_name, api_method, api_args]);
+		var big_string = JSON.stringify([api_name, send_declr.api_resource_path, api_method, api_args]);
 		cache_key = hex_md5(big_string);
 		if (requests_by_declarations[cache_key]) {
 			return requests_by_declarations[cache_key];
@@ -83,9 +83,11 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 
 	}
 
+	var api_part = !send_declr.api_resource_path
+		? network_api
+		: spv.getTargetField(network_api, send_declr.api_resource_path);
 
-
-	var request = network_api[ api_method ].apply(network_api, api_args);
+	var request = api_part[ api_method ].apply(network_api, api_args);
 
 	var result_request = checkRequest(request);
 	result_request.network_api = network_api;

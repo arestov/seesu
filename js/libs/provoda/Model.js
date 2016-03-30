@@ -568,8 +568,27 @@ add({
 		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
+		var apiDeclr = spv.memorize(function(name) {
+			var parts = name.split('.');
+			return {
+				name: parts[0],
+				resource_path: parts.length > 1 ? parts.slice(1) : null
+			};
+		});
+
 		function SendDeclaration(declr) {
-			this.api_name = declr[0];
+			this.api_name = null;
+			this.api_resource_path = null;
+
+			if (typeof declr[0] == 'function') {
+				this.api_name = declr[0];
+			} else {
+				var api_declr = apiDeclr(declr[0]);
+				this.api_name = api_declr.name;
+				this.api_resource_path = api_declr.resource_path;
+			}
+
+
 			this.api_method_name = declr[1];
 			this.getArgs = declr[2];
 			this.non_standart_api_opts = declr[3];
