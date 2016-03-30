@@ -32,8 +32,12 @@ var findErrorByList = function(data, errors_selectors) {
 	return has_error;
 };
 
-var requests_by_declarations = {};
+
 var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
+	if (!sputnik._highway.requests_by_declarations) {
+		sputnik._highway.requests_by_declarations = {};
+	}
+	var requests_by_declarations = sputnik._highway.requests_by_declarations;
 
 	var api_name = send_declr.api_name;
 	var api_method = send_declr.api_method_name;
