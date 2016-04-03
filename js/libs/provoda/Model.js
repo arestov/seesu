@@ -588,8 +588,24 @@ add({
 				this.api_resource_path = api_declr.resource_path;
 			}
 
+			this.api_method_name = null;
+			this.manual = null;
+			this.ids_declr = null;
 
-			this.api_method_name = declr[1];
+			if (typeof declr[1] =='string') {
+				this.api_method_name = declr[1];
+			} else if (Array.isArray(declr[1])) {
+				var manual = declr[1];
+				this.manual = {
+					dependencies: manual[0],
+					fn: manual[1],
+					fn_body: manual[1].toString()
+				};
+			} else if (declr[1].arrayof) {
+				this.ids_declr = declr[1];
+				this.ids_declr.fn_body = this.ids_declr.req.toString();
+			}
+
 			this.getArgs = declr[2];
 			this.non_standart_api_opts = declr[3];
 		}
