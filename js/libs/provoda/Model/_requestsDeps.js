@@ -25,16 +25,21 @@ var NestWatch = hp.NestWatch;
 var noop = function() {};
 
 
-var getNestWatch = spv.memorize(function(dep) {
+var getNestWatch = spv.memorize(function(dep, supervision) {
 	var requesting_limit;
-	for (var i = 0; i < dep.nesting_path.length; i++) {
-		var cur = dep.nesting_path[i];
-		if (cur.type == 'countless') {
-			break;
+	if (supervision.greedy) {
+		requesting_limit = Infinity;
+	} else {
+		for (var i = 0; i < dep.nesting_path.length; i++) {
+			var cur = dep.nesting_path[i];
+			if (cur.type == 'countless') {
+				break;
+			}
+			cur = null;
 		}
-		cur = null;
+		requesting_limit = i;
 	}
-	requesting_limit = i;
+
 
 
 	var complete = dep.related ? function(target, req_dep) {
@@ -103,7 +108,7 @@ var handleNesting = function(dep, req_dep, self) {
 		if (!dep.nesting_path) {
 			return;
 		}
-		var ne_wa = getNestWatch(dep);
+		var ne_wa = getNestWatch(dep, req_dep.supervision);
 
 		var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
 
