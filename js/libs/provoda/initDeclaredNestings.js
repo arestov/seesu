@@ -138,6 +138,11 @@ var initOneDeclaredNesting = function(md, el) {
 	subpages_names_list
 	preload
 	init_state_name
+
+
+	subpages_names_list: ...cur[0]...,
+	preload: cur[1],
+	init_state_name: cur[2]
 	*/
 	var preload_state_name = el.preload && (typeof el.preload == 'string' ? el.preload : 'mp_has_focus');
 
