@@ -1,4 +1,4 @@
-define(['./LoadableListBase', 'spv', 'js/libs/Mp3Search', 'pv'], function(LoadableListBase, spv, Mp3Search, pv){
+define(['./LoadableListBase', 'spv', 'pv'], function(LoadableListBase, spv, pv){
 "use strict";
 
 var LoadableList = spv.inh(LoadableListBase, {
