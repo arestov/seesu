@@ -64,7 +64,7 @@ return pv.behavior({
 
 		pvUpdate(target, 'sending_like', true);
 
-		var req = this.api('relations.setLike', {to: this.state('user')});
+		var req = this.app.s.api('relations.setLike', {to: this.state('user')});
 
 		req.then(function(resp) {
 			if (!resp.done) {return;}
@@ -82,7 +82,7 @@ return pv.behavior({
 
 		pvUpdate(target, 'sending_accept', true);
 
-		var req = this.api('relations.acceptInvite', {from: this.state('user')});
+		var req = this.app.s.api('relations.acceptInvite', {from: this.state('user')});
 		req.then(function(resp) {
 			if (!resp.done) {return;}
 			pvUpdate(target, 'invite_accepted', true);
