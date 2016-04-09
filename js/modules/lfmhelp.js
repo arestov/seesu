@@ -1,7 +1,7 @@
 define(['spv', 'jquery', 'cache_ajax'], function(spv, $, cache_ajax){
 "use strict";
 
-var parseArtistsResults = function(r, sectionItem){
+var parseArtistsResults = function(r){
 	var artists_results = [];
 
 	var artists = r.results.artistmatches.artist || false;
@@ -18,7 +18,7 @@ var parseArtistsResults = function(r, sectionItem){
 };
 
 
-var parseTracksResults = function(r, sectionItem){
+var parseTracksResults = function(r){
 	var tracks_results = [];
 	var tracks = r.results.trackmatches.track || false;
 	tracks = tracks && spv.toRealArray(tracks, 'name');
@@ -36,7 +36,7 @@ var parseTracksResults = function(r, sectionItem){
 };
 
 
-var parseTagsResults = function(r, sectionItem){
+var parseTagsResults = function(r){
 	var tags_results = [];
 
 	var tags = r.results.tagmatches.tag || false;
@@ -48,7 +48,7 @@ var parseTagsResults = function(r, sectionItem){
 	}
 	return tags_results;
 };
-var parseAlbumsResults = function(r, sectionItem){
+var parseAlbumsResults = function(r){
 	var pdr= [];
 	var albums =  r.results.albummatches.album || false;
 	albums = albums && spv.toRealArray(albums, 'name');
@@ -67,7 +67,7 @@ var getLastfmSuggests = function(app, method, lfmquery, q, section, parser, no_p
 	var req = app.lfm.get(method, spv.cloneObj({limit: 15 }, lfmquery));
 	section.addRequest(req);
 
-	return req.then(function(r){
+	req.then(function(r){
 		if (!section.doesNeed(q)){return;}
 		section.loaded();
 		r = r && parser(r, section.resItem, method);
@@ -81,13 +81,12 @@ var getLastfmSuggests = function(app, method, lfmquery, q, section, parser, no_p
 	}, function(){
 		if (!section.doesNeed(q)){return;}
 		section.loaded();
-	})
+	});
+
+	return req;
 };
 
 var parseFastSuggests = function(r){
-
-
-
 	var sugg_arts = spv.filter(r.response.docs, 'restype', 6);
 	$.each(sugg_arts, function(i, el){
 		sugg_arts[i] = {
@@ -157,7 +156,7 @@ var fast_suggestion = function(r, q, invstg){
 };
 
 var get_fast_suggests = spv.debounce(function(q, callback, hash, invstg){
-	var xhr = $.ajax({
+	return $.ajax({
 		url: 'http://www.last.fm/search/autocomplete',
 		global: false,
 		type: "GET",
@@ -177,16 +176,11 @@ var get_fast_suggests = spv.debounce(function(q, callback, hash, invstg){
 			cache_ajax.set('lfm_fs', hash, r);
 			if (callback){callback(r);}
 		}	,
-		complete: function(xhr){
+		complete: function(){
 			invstg.loaded(q);
 		}
 	});
-
-
-
 },400);
-
-
 
 return {
 	parseArtistsResults:parseArtistsResults,
