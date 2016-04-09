@@ -104,7 +104,7 @@ var ArtistsSection = spv.inh(seesuSection, {}, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			lfmhelp.getLastfmSuggests('artist.search', {artist: q}, q, this, suParseArtistsResults, true);
+			lfmhelp.getLastfmSuggests(this.app, 'artist.search', {artist: q}, q, this, suParseArtistsResults, true);
 		}
 	},
 	resItem: artistSuggest
@@ -163,7 +163,7 @@ var TracksSection = spv.inh(seesuSection, {}, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			lfmhelp.getLastfmSuggests('track.search', {track: q}, q, this, suParseTracksResults, true);
+			lfmhelp.getLastfmSuggests(this.app, 'track.search', {track: q}, q, this, suParseTracksResults, true);
 		}
 	},
 	resItem: trackSuggest
@@ -205,7 +205,7 @@ var TagsSection = spv.inh(seesuSection, {}, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			lfmhelp.getLastfmSuggests('tag.search', {tag: q}, q, this, suParseTagsResults, true);
+			lfmhelp.getLastfmSuggests(this.app, 'tag.search', {tag: q}, q, this, suParseTagsResults, true);
 		}
 	},
 	resItem: tagSuggest
@@ -254,7 +254,7 @@ var AlbumsSection = spv.inh(seesuSection, {}, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			lfmhelp.getLastfmSuggests('album.search', {'album': q}, q, this, suParseAlbumsResults, true);
+			lfmhelp.getLastfmSuggests(this.app, 'album.search', {'album': q}, q, this, suParseAlbumsResults, true);
 		}
 	},
 	resItem: albumSuggest
@@ -419,10 +419,10 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 		}
 		:
 		spv.debounce(function(q){
-			lfmhelp.getLastfmSuggests('artist.search', {artist: q}, q, this.g('section-artist'), suParseArtistsResults);
-			lfmhelp.getLastfmSuggests('track.search', {track: q}, q, this.g('section-track'), suParseTracksResults);
-			lfmhelp.getLastfmSuggests('tag.search', {tag: q}, q, this.g('section-tag'), suParseTagsResults);
-			lfmhelp.getLastfmSuggests('album.search', {album: q}, q, this.g('section-album'), suParseAlbumsResults);
+			lfmhelp.getLastfmSuggests(this.app, 'artist.search', {artist: q}, q, this.g('section-artist'), suParseArtistsResults);
+			lfmhelp.getLastfmSuggests(this.app, 'track.search', {track: q}, q, this.g('section-track'), suParseTracksResults);
+			lfmhelp.getLastfmSuggests(this.app, 'tag.search', {tag: q}, q, this.g('section-tag'), suParseTagsResults);
+			lfmhelp.getLastfmSuggests(this.app, 'album.search', {album: q}, q, this.g('section-album'), suParseAlbumsResults);
 		}, 400),
 	'compx-nav_title': [
 		['query', '#locales.Search-resuls'],

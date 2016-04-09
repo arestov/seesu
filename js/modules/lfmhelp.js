@@ -62,28 +62,26 @@ var parseAlbumsResults = function(r, sectionItem){
 	return pdr;
 };
 
-var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_preview){
+var getLastfmSuggests = function(app, method, lfmquery, q, section, parser, no_preview){
 	section.loading();
-	section.addRequest(
-		su.lfm
-			.get(method, spv.cloneObj({limit: 15 }, lfmquery))
-				.then(function(r){
-					if (!section.doesNeed(q)){return;}
-					section.loaded();
-					r = r && parser(r, section.resItem, method);
-					if (r.length){
-						section.appendResults(r);
-						section.renderSuggests(true, !no_preview);
-					} else{
-						section.renderSuggests(true, !no_preview);
-					}
+	var req = app.lfm.get(method, spv.cloneObj({limit: 15 }, lfmquery));
+	section.addRequest(req);
 
-				}, function(){
-					if (!section.doesNeed(q)){return;}
-					section.loaded();
-				})
+	return req.then(function(r){
+		if (!section.doesNeed(q)){return;}
+		section.loaded();
+		r = r && parser(r, section.resItem, method);
+		if (r.length){
+			section.appendResults(r);
+			section.renderSuggests(true, !no_preview);
+		} else{
+			section.renderSuggests(true, !no_preview);
+		}
 
-	);
+	}, function(){
+		if (!section.doesNeed(q)){return;}
+		section.loaded();
+	})
 };
 
 var parseFastSuggests = function(r){
