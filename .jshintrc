@@ -1,4 +1,6 @@
 {
+	"laxcomma": false,
+	"laxbreak": true,
 	"indent": 1,
 	"curly": true,
 	"latedef": "nofunc",
