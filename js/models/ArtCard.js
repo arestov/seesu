@@ -565,13 +565,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 		}
 		return pl;
 	},
-
-
-	showSimilarArtists: function(opts) {
-		var artl = this.getSimilarArtists();
-		artl.showOnMap();
-		return artl;
-	},
 	showAlbum: function(params) {
 
 		if (!params.album_artist){
@@ -767,18 +760,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 
 		this.albums_models[kystring] = pl;
 		return pl;
-	},
-	getSimilarArtists: function() {
-
-
-		/*if (this.similar_artists){
-			return this.similar_artists;
-		}
-
-		var artl =
-		pv.updateNesting(this, 'similar_artists', artl);
-		this.similar_artists = artl;*/
-		return this.getSPI('+similar', true);
 	}
 });
 

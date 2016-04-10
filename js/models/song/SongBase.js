@@ -784,10 +784,6 @@ return spv.inh(BrowseMap.Model, {
 	showArtcardPage: function(artist_name) {
 		this.app.showArtcardPage(artist_name || this.artist);
 		this.app.trackEvent('Artist navigation', 'art card', artist_name || this.artist);
-	},
-	showArtistSimilarArtists: function() {
-		this.app.showArtistSimilarArtists(this.artist);
-		this.app.trackEvent('Artist navigation', 'similar artists to', this.artist);
 	}
 
 });

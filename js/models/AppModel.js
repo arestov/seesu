@@ -161,10 +161,6 @@ var props = {
 			var pl = artcard.showTopTacks(track_name);
 
 			return pl;
-		},
-		showArtistSimilarArtists: function(artist){
-			var artcard = this.showArtcardPage(artist, this.start_page);
-			return artcard.showSimilarArtists();
 		}
 	},
 	getVkUser: function(userid) {
