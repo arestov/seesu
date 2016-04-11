@@ -369,9 +369,8 @@ AppModel.extendTo(SeesuApp, {
 	],
 	'stch-lfm_auth_action': function (target, state) {
 		if (state) {
-			debugger;
 			state.act();
-			pvUpdate(target, 'lfm_auth_request', null)
+			pvUpdate(target, 'lfm_auth_request', null);
 		}
 	},
 	storeSetting: function(name, value){
