@@ -57,34 +57,6 @@ var OperaExtensionButtonView = spv.inh(View, {}, {
 
 var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
-	'compx-app_lang': [['env.lang']],
-	'compx-locales': [
-		['app_lang'],
-		function(app_lang) {
-			var result = {};
-			for (var string in localize_dict) {
-				if (localize_dict[string]){
-					result[string] = localize_dict[string][app_lang] || localize_dict[string].original;
-				}
-			}
-			return result;
-		}
-	],
-	'stch-session@lfm_auth': function(target, state) {
-		if (state) {
-			pvUpdate(target, 'lfm_userid', target.lfm.username);
-		}
-	},
-	'chi-vk_users': pv.Model,
-	'chi-vk_groups': pv.Model,
-	'chi-art_images': comd.LastFMArtistImagesSelector,
-	'chi-mp3_search': Mp3Search,
-	'chi-vk_auth': VkAuth,
-	'chi-lfm_auth': LfmAuth,
-	'chi-start__page': StartPage,
-	tickStat: function(data_array) {
-		window._gaq.push(data_array);
-	},
 	init: function(opts, version) {
 		var self = this;
 		self.app = self;
@@ -317,6 +289,34 @@ AppModel.extendTo(SeesuApp, {
 		self.on('child_change-current_mp_md', function() {
 			this.closeNavHelper();
 		});
+	},
+	'compx-app_lang': [['env.lang']],
+	'compx-locales': [
+		['app_lang'],
+		function(app_lang) {
+			var result = {};
+			for (var string in localize_dict) {
+				if (localize_dict[string]){
+					result[string] = localize_dict[string][app_lang] || localize_dict[string].original;
+				}
+			}
+			return result;
+		}
+	],
+	'stch-session@lfm_auth': function(target, state) {
+		if (state) {
+			pvUpdate(target, 'lfm_userid', target.lfm.username);
+		}
+	},
+	'chi-vk_users': pv.Model,
+	'chi-vk_groups': pv.Model,
+	'chi-art_images': comd.LastFMArtistImagesSelector,
+	'chi-mp3_search': Mp3Search,
+	'chi-vk_auth': VkAuth,
+	'chi-lfm_auth': LfmAuth,
+	'chi-start__page': StartPage,
+	tickStat: function(data_array) {
+		window._gaq.push(data_array);
 	},
 	watchVKCharacter: function(md, key, result_state) {
 		var store, character_id;
