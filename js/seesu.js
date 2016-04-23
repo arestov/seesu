@@ -54,13 +54,14 @@ var OperaExtensionButtonView = spv.inh(View, {}, {
 	}
 });
 
-
-var SeesuApp = function() {};
-AppModel.extendTo(SeesuApp, {
-	init: function(opts, version) {
-		var self = this;
+var SeesuApp = spv.inh(AppModel, {
+	naming: function(fn) {
+		return function SeesuApp(opts, version) {
+			fn(this, opts, version);
+		};
+	},
+	init: function(self, opts, version) {
 		self.app = self;
-		self._super(opts);
 		self.version = version;
 		pvUpdate(self, 'env', self._highway.env.states);
 
@@ -290,6 +291,8 @@ AppModel.extendTo(SeesuApp, {
 			this.closeNavHelper();
 		});
 	},
+
+}, {
 	'compx-app_lang': [['env.lang']],
 	'compx-locales': [
 		['app_lang'],

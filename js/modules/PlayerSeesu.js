@@ -95,7 +95,7 @@ var navigator = window.navigator;
 
 
 
-	var addFeature = function(feature){
+	var addFeature = function(feature, su){
 		//features[feature];
 		switch (feature){
 			case "html5mp3":

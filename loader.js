@@ -65,8 +65,7 @@ window._gaq = window._gaq || [];
 	requirejs(['su', 'pv', 'env'], function(SeesuApp, pv, env) {
 		//app thread;
 		var proxies = new pv.views_proxies.Proxies();
-		su = seesu  = new SeesuApp();
-		su.init({
+		su = seesu  = new SeesuApp({
 			_highway: {
 				models_counters: 1,
 				sync_sender: new pv.SyncSender(),
