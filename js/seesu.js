@@ -85,21 +85,21 @@ AppModel.extendTo(SeesuApp, {
 	tickStat: function(data_array) {
 		window._gaq.push(data_array);
 	},
-	init: function(opts, version){
-		this.app = this;
-		this._super(opts);
-		this.version = version;
-		pvUpdate(this, 'env', this._highway.env.states);
+	init: function(opts, version) {
+		var self = this;
+		self.app = self;
+		self._super(opts);
+		self.version = version;
+		pvUpdate(self, 'env', self._highway.env.states);
 
-		var resortQueue = resortSuQueue(this);
+		var resortQueue = resortSuQueue(self);
 
 
-		this._url = app_serv.get_url_parameters(window.location.search, true);
-		this.settings = {};
-		this.settings_timers = {};
+		self._url = app_serv.get_url_parameters(window.location.search, true);
+		self.settings = {};
+		self.settings_timers = {};
 
-		var _this = this;
-		this.trackStat = (function(){
+		self.trackStat = (function(){
 			window._gaq = window._gaq || [];
 			//var _gaq = window._gaq;
 			window._gaq.sV = spv.debounce(function(v){
@@ -117,38 +117,38 @@ AppModel.extendTo(SeesuApp, {
 				});
 			});
 			return function(data_array){
-				_this.nextTick(_this.tickStat, [data_array]);
+				self.nextTick(self.tickStat, [data_array]);
 			};
 		})();
 
 		var lu = app_serv.store('su-usage-last');
 
-		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
-		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
+		self.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
+		self.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
 
 		setInterval(function(){
 
 			var now = new Date();
 
-			if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
-				_this.checkStats();
-				app_serv.store('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
-				app_serv.store('su-usage-counter', ++_this.usage_counter, true);
+			if ((now - self.last_usage)/ (1000 * 60 * 60) > 4){
+				self.checkStats();
+				app_serv.store('su-usage-last', (self.last_usage = new Date()).toUTCString(), true);
+				app_serv.store('su-usage-counter', ++self.usage_counter, true);
 			}
 
 
 		}, 1000 * 60 * 20);
 		setInterval(function(){
 			return;
-			/*var rootvs = _this.mpx.getViews('root');
+			/*var rootvs = self.mpx.getViews('root');
 			if (rootvs && rootvs.length){
-				_this.updateLVTime();
+				self.updateLVTime();
 			}*/
 		}, 1000 * 60 * 2);
 
-		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
-		this.mp3_search = this.initChi('mp3_search', false, {
+		self.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
+		self.mp3_search = self.initChi('mp3_search', false, {
 			vk: 5,
 			'pleer.com': 4,
 			nigma: 1,
@@ -160,8 +160,8 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		this.notf = new comd.GMessagesStore(
-			this,
+		self.notf = new comd.GMessagesStore(
+			self,
 			function(value) {
 				return app_serv.store('notification', value, true);
 			},
@@ -170,38 +170,38 @@ AppModel.extendTo(SeesuApp, {
 			}
 		);
 
-		initAPIs(this, app_serv, app_env, cache_ajax, resortQueue);
+		initAPIs(self, app_serv, app_env, cache_ajax, resortQueue);
 
-		this.p = new PlayerSeesu(this);
-		this.player = this.p;
-		this.app_md = this;
-		this.art_images = this.initChi('art_images');
+		self.p = new PlayerSeesu(self);
+		self.player = self.p;
+		self.app_md = self;
+		self.art_images = self.initChi('art_images');
 
-		this.vk_users = this.initChi('vk_users');
-		this.vk_groups = this.initChi('vk_groups');
+		self.vk_users = self.initChi('vk_users');
+		self.vk_groups = self.initChi('vk_groups');
 
 		if (app_env.check_resize){
-			pv.update(this, 'slice-for-height', true);
+			pv.update(self, 'slice-for-height', true);
 		}
 		if (app_env.deep_sanbdox){
-			pv.update(this, 'deep_sandbox', true);
+			pv.update(self, 'deep_sandbox', true);
 		}
 
-		this.start_page = this.initChi('start__page');
+		self.start_page = self.initChi('start__page');
 
-		this.initMapTree(this.start_page, app_env.needs_url_history, navi)
+		self.initMapTree(self.start_page, app_env.needs_url_history, navi)
 			/*
 			.on('residents-tree', function() {
 
-			}, this.getContextOptsI())
+			}, self.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
 				}
 
 			}, {immediately: true})*/
 			.on('nav-change', function(nv){
-				this.trackPage(nv.md.model_name);
-			}, this.getContextOptsI());
+				self.trackPage(nv.md.model_name);
+			}, self.getContextOptsI());
 
 
 		if (app_env.tizen_app){
@@ -222,7 +222,7 @@ AppModel.extendTo(SeesuApp, {
 		}
 
 		var addBrowserView = function(Constr, name, opts) {
-			var mpx = _this.connectMPX();
+			var mpx = self.connectMPX();
 
 			var view = new Constr({
 				mpx: mpx
@@ -236,18 +236,18 @@ AppModel.extendTo(SeesuApp, {
 		if (app_env.chrome_like_ext){
 			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
 		} else if (app_env.opera_extension && window.opera_extension_button){
-			this.opera_ext_b = window.opera_extension_button;
+			self.opera_ext_b = window.opera_extension_button;
 			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: window.opera_extension_button});
 		}
 
 		setTimeout(function(){
-			_this.checkStats();
+			self.checkStats();
 		},100);
 
 
 		setTimeout(function() {
-			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
-				var cur = _this.supported_settings[i];
+			for (var i = self.supported_settings.length - 1; i >= 0; i--) {
+				var cur = self.supported_settings[i];
 				var value = app_serv.store('settings.' + cur);
 				if (value){
 					try {
@@ -263,10 +263,10 @@ AppModel.extendTo(SeesuApp, {
 				}
 
 
-				_this.letAppKnowSetting(cur, value);
+				self.letAppKnowSetting(cur, value);
 			}
 			var last_ver = app_serv.store('last-su-ver');
-			_this.migrateStorage(last_ver);
+			self.migrateStorage(last_ver);
 			app_serv.store('last-su-ver', version, true);
 
 		}, 200);
@@ -275,13 +275,13 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		_this.map.makeMainLevel();
+		self.map.makeMainLevel();
 
 		if (app_env.needs_url_history){
-			// _this.map.makeMainLevel();
+			// self.map.makeMainLevel();
 			navi.init(function(e){
 				var url = e.newURL;
-				_this.map.startChangesCollecting({
+				self.map.startChangesCollecting({
 					skip_url_change: true
 				});
 
@@ -289,32 +289,32 @@ AppModel.extendTo(SeesuApp, {
 				if (state_from_history){
 					state_from_history.data.showOnMap();
 				} else{
-					var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), _this.start_page);
-					BrowseMap.showInterest(_this.map, interest);
+					var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), self.start_page);
+					BrowseMap.showInterest(self.map, interest);
 				}
-				_this.map.finishChangesCollecting();
+				self.map.finishChangesCollecting();
 			});
 			(function() {
 				var url = window.location && window.location.hash.replace(/^\#/,'');
 				if (url){
-					_this.on('handle-location', function() {
+					self.on('handle-location', function() {
 						navi.hashchangeHandler({
 							newURL: url
 						}, true);
 
 					});
 				} else {
-					BrowseMap.showInterest(_this.map, []);
+					BrowseMap.showInterest(self.map, []);
 				}
 			})();
 		} else {
-			BrowseMap.showInterest(_this.map, []);
+			BrowseMap.showInterest(self.map, []);
 		}
 
 		if (app_serv.app_env.nodewebkit) {
-			pv.update(this, 'disallow_seesu_listeners', true);
+			pv.update(self, 'disallow_seesu_listeners', true);
 		}
-		this.on('child_change-current_mp_md', function() {
+		self.on('child_change-current_mp_md', function() {
 			this.closeNavHelper();
 		});
 	},
