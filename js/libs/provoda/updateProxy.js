@@ -285,8 +285,8 @@ function checkComplexStates(etr, changes_list) {
 }
 
 function getTargetComplexStates(etr, changes_list) {
+	var uniq = {};
 	var matched_compxs = [];
-	var result_array = [];
 
 	var i, cur;
 
@@ -296,18 +296,28 @@ function getTargetComplexStates(etr, changes_list) {
 			continue;
 		}
 		for (var jj = 0; jj < cur.length; jj++) {
-			if (matched_compxs.indexOf(cur[jj]) == -1){
-				matched_compxs.push(cur[jj]);
+			var name = cur[jj].name;
+			if (uniq.hasOwnProperty(name)) {
+				continue;
 			}
+			uniq[name] = true;
+			matched_compxs.push(cur[jj]);
 		}
 	}
 
-	for ( i = 0; i < matched_compxs.length; i++) {
+	var length = matched_compxs.length;
+	matched_compxs.length = matched_compxs.length * 3;
+
+
+	for (i = length - 1; i >= 0; i--) {
 		cur = matched_compxs[i];
-		result_array.push(true, cur.name, compoundComplexState(etr, cur));
+		var ti = i * 3;
+		matched_compxs[ti] = true;
+		matched_compxs[ti + 1] = cur.name;
+		matched_compxs[ti + 2] = compoundComplexState(etr, cur);
 	}
 
-	return result_array;
+	return matched_compxs;
 }
 
 function compoundComplexState(etr, temp_comx) {
