@@ -421,21 +421,22 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 	var default_cb_cs = etr.evcompanion.getMatchedCallbacks(default_name);
 	var light_cb_cs = etr.evcompanion.getMatchedCallbacks(light_name);
 
-	if (light_cb_cs.length || default_cb_cs.length) {
-		var flow_steps = zdsv.createFlowStepsArray('stev', state_name);
+	if (!light_cb_cs.length && !default_cb_cs.length) {
+		return;
+	}
 
-		if (light_cb_cs.length) {
-			etr.evcompanion.triggerCallbacks(light_cb_cs, false, false, light_name, value, flow_steps);
-		}
+	var flow_steps = zdsv.createFlowStepsArray('stev', state_name);
 
-		if (default_cb_cs.length) {
-			triggerLegacySChEv(etr, state_name, value, zdsv.original_states[state_name], default_cb_cs, default_name, flow_steps);
-		}
+	if (light_cb_cs.length) {
+		etr.evcompanion.triggerCallbacks(light_cb_cs, false, false, light_name, value, flow_steps);
+	}
 
-		if (flow_steps) {
-			hp.markFlowSteps(flow_steps, 'stev', state_name);
-		}
+	if (default_cb_cs.length) {
+		triggerLegacySChEv(etr, state_name, value, zdsv.original_states[state_name], default_cb_cs, default_name, flow_steps);
+	}
 
+	if (flow_steps) {
+		hp.markFlowSteps(flow_steps, 'stev', state_name);
 	}
 
 	// states_links
