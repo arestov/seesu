@@ -194,38 +194,41 @@ function proxyStch(target, value, state_name) {
 
 function _handleStch(etr, original_states, state_name, value, skip_handler, sync_tpl) {
 	var stateChanger = !skip_handler && (etr[ getSTCHfullname( state_name ) ] || (etr.state_change && etr.state_change[state_name]));
-	if (stateChanger) {
-		etr.zdsv.abortFlowSteps('stch', state_name, true);
-	} else {
+	if (!stateChanger) {
 		return;
 	}
+
+	etr.zdsv.abortFlowSteps('stch', state_name, true);
+
 	var old_value = etr.zdsv.stch_states[state_name];
-	if (old_value !== value) {
-		var method;
+	if (old_value === value) {
+		return;
+	}
 
-		if (stateChanger){
-			if (typeof stateChanger == 'function'){
-				method = stateChanger;
-			} else if (etr.checkDepVP){
-				if (etr.checkDepVP(stateChanger)){
-					method = stateChanger.fn;
-				}
+	var method;
+
+	if (stateChanger){
+		if (typeof stateChanger == 'function'){
+			method = stateChanger;
+		} else if (etr.checkDepVP){
+			if (etr.checkDepVP(stateChanger)){
+				method = stateChanger.fn;
 			}
 		}
+	}
 
-		if (method){
-			if (!sync_tpl) {
-				var flow_step = etr.nextLocalTick(proxyStch, [etr, value, state_name], true, method.finup);
-				flow_step.p_space = 'stch';
-				flow_step.p_index_key = state_name;
-				etr.zdsv.createFlowStepsArray('stch', state_name, flow_step);
-			} else {
-				proxyStch(etr, value, state_name);
-			}
-
-
-			//method.call(this, value, old_value);
+	if (method){
+		if (!sync_tpl) {
+			var flow_step = etr.nextLocalTick(proxyStch, [etr, value, state_name], true, method.finup);
+			flow_step.p_space = 'stch';
+			flow_step.p_index_key = state_name;
+			etr.zdsv.createFlowStepsArray('stch', state_name, flow_step);
+		} else {
+			proxyStch(etr, value, state_name);
 		}
+
+
+		//method.call(this, value, old_value);
 	}
 }
 
