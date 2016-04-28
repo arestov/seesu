@@ -331,14 +331,16 @@ function compoundComplexState(etr, temp_comx) {
 }
 
 function compressChangesList(result_changes, changes_list, i, prop_name, value, counter) {
-	if (result_changes[prop_name] !== true){
-		var num = (changes_list.length - 1) - counter * 3;
-		changes_list[ num - 1 ] = prop_name;
-		changes_list[ num ] = value;
-
-		result_changes[prop_name] = true;
-		return true;
+	if (result_changes[prop_name] === true){
+		return;
 	}
+
+	var num = (changes_list.length - 1) - counter * 3;
+	changes_list[ num - 1 ] = prop_name;
+	changes_list[ num ] = value;
+
+	result_changes[prop_name] = true;
+	return true;
 }
 
 function reversedIterateChList(changes_list, context, cb) {
