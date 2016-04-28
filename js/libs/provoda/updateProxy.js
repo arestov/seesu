@@ -205,17 +205,11 @@ function _handleStch(etr, original_states, state_name, value, skip_handler, sync
 		return;
 	}
 
-	var method;
-
-	if (stateChanger){
-		if (typeof stateChanger == 'function'){
-			method = stateChanger;
-		} else if (etr.checkDepVP){
-			if (etr.checkDepVP(stateChanger)){
-				method = stateChanger.fn;
-			}
-		}
-	}
+	var method = stateChanger && (
+		typeof stateChanger == 'function'
+			? stateChanger
+			: (etr.checkDepVP && etr.checkDepVP(stateChanger) && stateChanger.fn)
+	);
 
 	if (method){
 		if (!sync_tpl) {
