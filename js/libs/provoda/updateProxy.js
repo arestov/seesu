@@ -381,14 +381,16 @@ function _triggerVipChanges(etr, i, state_name, value, zdsv) {
 
 
 	var vip_cb_cs = etr.evcompanion.getMatchedCallbacks(vip_name);
-	if (vip_cb_cs.length) {
-		var flow_steps = zdsv.createFlowStepsArray('vip_stdch_ev', state_name);
-		var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], etr);
-
-		//вызов внутреннего для самого объекта события
-		etr.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg, flow_steps);
-		hp.markFlowSteps(flow_steps, 'vip_stdch_ev', state_name);
+	if (!vip_cb_cs.length) {
+		return;
 	}
+
+	var flow_steps = zdsv.createFlowStepsArray('vip_stdch_ev', state_name);
+	var event_arg = new PVStateChangeEvent(state_name, value, zdsv.original_states[state_name], etr);
+
+	//вызов внутреннего для самого объекта события
+	etr.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg, flow_steps);
+	hp.markFlowSteps(flow_steps, 'vip_stdch_ev', state_name);
 }
 
 function triggerLegacySChEv(etr, state_name, value, old_value, default_cb_cs, default_name, flow_steps) {
