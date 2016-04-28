@@ -250,19 +250,23 @@ function getComplexChanges(etr, original_states, changes_list) {
 
 
 function _replaceState(etr, original_states, state_name, value, stack) {
-	if (state_name){
-		var old_value = etr.states[state_name];
-		if (old_value !== value){
-			//value = value || false;
-			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
-
-			if (!original_states.hasOwnProperty(state_name)) {
-				original_states[state_name] = old_value;
-			}
-			etr.states[state_name] = value;
-			stack.push(true, state_name, value);
-		}
+	if (!state_name) {
+		return;
 	}
+
+	var old_value = etr.states[state_name];
+	if (old_value === value){
+		return;
+	}
+
+	//value = value || false;
+	//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
+
+	if (!original_states.hasOwnProperty(state_name)) {
+		original_states[state_name] = old_value;
+	}
+	etr.states[state_name] = value;
+	stack.push(true, state_name, value);
 }
 
 function getComplexInitList(etr) {
