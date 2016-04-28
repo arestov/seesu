@@ -220,9 +220,6 @@ function _handleStch(etr, original_states, state_name, value, skip_handler, sync
 		} else {
 			proxyStch(etr, value, state_name);
 		}
-
-
-		//method.call(this, value, old_value);
 	}
 }
 
