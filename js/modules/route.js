@@ -10,6 +10,10 @@ return {
 };
 
 function encodeURLPart(part){
+	if (typeof part == 'number') {
+		return part;
+	}
+
 	var spaced = part.split(" ");
 	for (var i = 0; i < spaced.length; i++) {
 		spaced[i] = encodeURIComponent(spaced[i]);
