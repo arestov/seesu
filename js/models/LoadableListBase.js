@@ -288,9 +288,7 @@ return spv.inh(BrowseMap.Model, {
 				var app = this.app;
 				var path = getPath(pathObj, app, data);
 				var result = app.routePathByModels(path, pathObj.from_root ? app.start_page : md);
-				for (var prop in data) {
-					pvUpdate(result, 'shared_' + prop, data[prop]);
-				}
+				result.updateManyStates(data);
 				return result;
 			}
 
