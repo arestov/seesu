@@ -121,21 +121,8 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 	'compx-nav_title': {
 		depends_on: ['big_desc', 'p_nav_title'],
 		fn: function(big_desc, p_nav_title){
-			return (big_desc && 'Vk.com user: ' + big_desc) || p_nav_title;
+			return big_desc || p_nav_title;
 		}
-	},
-	setProfileData: function(data) {
-		/*if (data.lfm_image){
-			data.lfm_image = this.app.art_images.getImageRewrap(data.lfm_image);
-		}*/
-		var result = {};
-		for (var state in data){
-			if (!this.state(state)){
-				result[state] = data[state];
-			}
-		}
-
-		this.updateManyStates(result);
 	},
 	nest: (function() {
 		var result = {};

@@ -132,57 +132,26 @@ var VkUserTracks = spv.inh(BrowseMap.Model, {}, {
 	}
 });
 
-
-var VkUserPreview = spv.inh(BrowseMap.Model, {
-	init: function(target, opts, data) {
-		target.mapStates(target.init_stmp, data, true);
-		target.initStates();
-		target.rawdata = data;
-	}
-}, {
-	manual_states_init: true,
-	network_data_as_states: false,
-	init_stmp: {
-		userid: 'id',
-		first_name: 'first_name',
-		last_name: 'last_name',
-		photo: 'photo',
-		'ava_image.url': 'photo_medium',
-		'selected_image.url': 'photo'
-	},
-	'compx-nav_title': {
-		depends_on: ['big_desc'],
-		fn: function(big_desc){
-			return big_desc;
-		}
-	},
-	'compx-big_desc': {
-		depends_on: ['first_name', 'last_name'],
-		fn: function(first_name, last_name){
-			return [first_name, last_name].join(' ');
-		}
-	},
-	getRelativeModel: function() {
-		var md = this.app.getVkUser(this.state('userid'));
-		md.setProfileData(this.mapStates(this.init_stmp, this.rawdata, {}));
-		return md;
-	},
-	showOnMap: function() {
-		var md = this.getRelativeModel();
-		md.showOnMap();
-	}
-});
-
-
 var VKFriendsList = spv.inh(LoadableList, {}, cloneObj({
 	main_list_name: 'list_items',
 	model_name: 'vk_users',
 	page_limit: 200,
-	'nest_rqc-list_items': VkUserPreview,
+	'nest_rqc-list_items': '#users/vk:[:userid]',
 	'nest_req-list_items': [
-		[function(r) {
-			return spv.getTargetField(r, 'response.items');
-		}, {
+		[
+			{
+				is_array: true,
+				source: 'response.items',
+				props_map: {
+					userid: 'id',
+					first_name: 'first_name',
+					last_name: 'last_name',
+					photo: 'photo',
+					'ava_image.url': 'photo_medium',
+					'selected_image.url': 'photo'
+				},
+			},
+		 {
 			props_map: {
 				total: ['num', 'response.count']
 			}
