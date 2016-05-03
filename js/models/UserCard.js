@@ -182,9 +182,6 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'lfm_usercard',
 	'compx-nav_title': [
 		['lfm_userid'],
-		function(lfm_userid) {
-			return 'Last.fm user: ' + lfm_userid;
-		}
 	],
 	nest: (function() {
 		var result = {};
@@ -221,19 +218,6 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
 			constr: user_music_lfm.LfmUserAlbums,
 			title: [['#locales.Albums']]
 		}
-	},
-	setProfileData: function(data) {
-		if (data.lfm_image){
-			data.lfm_image = this.app.art_images.getImageRewrap(data.lfm_image);
-		}
-		var result = {};
-		for (var state in data){
-			if (!this.state(state)){
-				result[state] = data[state];
-			}
-		}
-
-		this.updateManyStates(result);
 	},
 	'compx-big_desc': [
 		['realname', 'age', 'gender', 'country'],

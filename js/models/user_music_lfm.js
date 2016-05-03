@@ -578,76 +578,9 @@ var LfmUserTags = spv.inh(LoadableList, {}, cloneObj({
 	}
 }, auth_bh));
 
-var LfmUserPreview = spv.inh(BrowseMap.Model, {
-	init: function(target, opts, data) {
-		// this._super.apply(this, arguments);
-
-		var song, song_time;
-		var artist = spv.getTargetField(data, 'recenttrack.artist.name');
-		if (artist){
-			song = artist + ' - ' + spv.getTargetField(data, 'recenttrack.name');
-			song_time = spv.getTargetField(data, 'recenttrack.@attr.uts');
-			if (song_time){
-				song_time = new Date(song_time * 1000);
-			}
-		}
-		var image = data.lfm_img || data.lfm_image && target.app.art_images.getImageRewrap(data.lfm_image);
-
-		target.initStates({
-			selected_image: image,
-			nav_title: data.userid,
-			userid: data.userid,
-			registered: data.registered,
-			realname: data.realname,
-			age: data.age,
-			gender: data.gender,
-			country: data.country,
-			lfm_img: image,
-			song: song,
-			song_time: song_time && song_time.toLocaleString(),
-			song_time_raw: song_time,
-			scrobbler: data.scrobblesource
-		});
-		target.rawdata = data;
-	}
-}, {
-	manual_states_init: true,
-	network_data_as_states: false,
-	// init: function(opts, data) {
-
-	// },
-
-	'compx-big_desc': [
-		['realname', 'age', 'gender', 'country'],
-		function(realname, age, gender, country)  {
-			var big_desc = [];
-			var bide_items = [realname, age, gender, country];
-			for (var i = 0; i < bide_items.length; i++) {
-				if (bide_items[i]){
-					big_desc.push(bide_items[i]);
-				}
-			}
-			return big_desc.join(', ');
-		}
-	],
-	getRelativeModel: function() {
-		var md = this.app.getLastfmUser(this.state('userid'));
-		md.setProfileData(this.rawdata);
-		return md;
-	},
-	showOnMap: function() {
-		var md = this.getRelativeModel();
-		md.showOnMap();
-		//this.app.showLastfmUser(this.state('userid'));
-		//this.app.
-	}
-});
-
-
-
 
 var LfmUsersList = spv.inh(LoadableList, {}, {
-	'nest_rqc-list_items': LfmUserPreview,
+	'nest_rqc-list_items': '#users/lfm:[:userid]',
 
 	main_list_name: 'list_items',
 	model_name: 'lfm_users',
