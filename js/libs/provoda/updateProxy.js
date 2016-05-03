@@ -241,11 +241,19 @@ function getChanges(etr, original_states, changes_list, opts, result_arr) {
 	for (i = 0; i < changes_list.length; i+=3) {
 		_handleStch(etr, original_states, changes_list[i+1], changes_list[i+2], opts && opts.skip_handler, opts && opts.sync_tpl);
 	}
+
+	handleSignal();
+
 	return changed_states;
 }
 
 function getComplexChanges(etr, original_states, changes_list) {
 	return getChanges(etr, original_states, checkComplexStates(etr, changes_list));
+}
+
+
+function handleSignal() {
+
 }
 
 

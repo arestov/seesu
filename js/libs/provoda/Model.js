@@ -359,6 +359,47 @@ var modelInit = (function() {
 	};
 })();
 
+
+var collectSignals = (function () {
+	var getUnprefixed = spv.getDeprefixFunc( 'receive_to-' );
+	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
+	var getDeclration = function (data, target_name) {
+		return {
+			target_state_name: target_name,
+			signal_name: data[0],
+			depends_on: data[1]
+		};
+	};
+
+	/*
+		example:
+		'receive_to-requested_auth:auth_box': ['requested_auth', ['_provoda_id']]
+	*/
+
+	return function collectSignals(props) {
+		if (!hasPrefixedProps(props)){
+			return;
+		}
+
+		var result = {};
+
+		for (var prop in props) {
+			var target_name = getUnprefixed(prop);
+			if (!target_name) {
+				continue;
+			}
+
+			var declr = getDeclration(props[prop], target_name);
+			result[declr.signal_name] = declr;
+		}
+
+		return result;
+	};
+})();
+
+
+
 var onPropsExtend = (function(){
 	var check = /initStates/gi;
 	return function(props, original, params) {
@@ -371,6 +412,14 @@ var onPropsExtend = (function(){
 				this.manual_states_init = true;
 			}
 		}
+
+		var ctd_sigs = collectSignals(props, original);
+		if (ctd_sigs) {
+			var _ctd_sigs = cloneObj({}, this._ctd_sigs);
+			_ctd_sigs = cloneObj(_ctd_sigs, ctd_sigs);
+			this._ctd_sigs = _ctd_sigs;
+		}
+
 	};
 })();
 
