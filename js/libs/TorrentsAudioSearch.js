@@ -127,7 +127,7 @@ pv.Model.extendTo(Torrent, {
 	],
 	'state-progress_info': [
 		'troxent',
-		function(troxent, update) {
+		function(update, troxent) {
 			var swarm;
 
 			var progresInfo = function() {
@@ -162,7 +162,7 @@ pv.Model.extendTo(Torrent, {
 	],
 	/*'state-progress_info': [
 		'troxent',
-		function(troxent, update) {
+		function(update, troxent) {
 
 			this.onProgress = function(data) {
 				pv.update(_this, 'progress_info', data);
@@ -174,7 +174,7 @@ pv.Model.extendTo(Torrent, {
 	],*/
 	'state-invalid': [
 		'troxent',
-		function (troxent, update) {
+		function (update, troxent) {
 			var validateError = function(error){
 				update(error);
 			};
@@ -191,7 +191,7 @@ pv.Model.extendTo(Torrent, {
 	},
 	'state-files_list_raw': [
 		'troxent',
-		function (troxent, update) {
+		function (update, troxent) {
 			var hndList = function(list) {
 
 				update(list);
@@ -222,7 +222,7 @@ pv.Model.extendTo(Torrent, {
 	],
 	'state-list_loaded': [
 		'troxent',
-		function (troxent, update) {
+		function (update, troxent) {
 			var hndList = function(list) {
 				update(!!list && true);
 			};
@@ -280,7 +280,7 @@ pv.Model.extendTo(QueriedFileInTorrent, {
 	},
 	'state-all_files': [
 		'torrent',
-		function(torrent, update) {
+		function(update, torrent) {
 			var listen = function(e) {
 				if (!e.value) {return;}
 				update(e.value);

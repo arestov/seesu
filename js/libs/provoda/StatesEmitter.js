@@ -76,7 +76,7 @@ var onPropsExtend = function (props) {
 	if (this.changeDataMorphDeclarations) {
 		this.changeDataMorphDeclarations(props);
 	}
-	
+
 	if (this.collectStateChangeHandlers){
 		this.collectStateChangeHandlers(props);
 	}
@@ -271,7 +271,7 @@ add({
 						var unuse_instrs = this._unuse_interface_instr[interface_name];
 						for (var i = 0; i < use_list.length; i++) {
 							var cur = use_list[i];
-							var unuse_cur = cur.fn.call(null, obj, getStateUpdater(this, cur.state_name));
+							var unuse_cur = cur.fn.call(null, getStateUpdater(this, cur.state_name), obj);
 							if (typeof unuse_cur !== 'function') {
 								throw new Error('you must provide event unbind func');
 							}
