@@ -89,6 +89,13 @@ if (typeof window !== 'undefined') {
 		}
 		elem.detachEvent('on' + evType, fn);
 	};
+
+	spv.listenEvent = function (elem, evType, fn) {
+		addEvent(elem, evType, fn);
+		return function () {
+			removeEvent(elem, evType, fn);
+		};
+	};
 }
 
 getDefaultView = spv.getDefaultView = function(d) {
