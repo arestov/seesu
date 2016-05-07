@@ -129,7 +129,7 @@ var LfmAuth = spv.inh(pv.Model, {
 			return false;
 		}
 		var _this = this;
-		var i = this.auth_frame = document.createElement('iframe');
+		var i = this.auth_frame = window.document.createElement('iframe');
 		spv.addEvent(window, 'message', function(e){
 			var iframe_win = _this.auth_frame && _this.auth_frame.contentWindow;
 			if (e.source != iframe_win) {
@@ -145,7 +145,7 @@ var LfmAuth = spv.inh(pv.Model, {
 		});
 		i.className = 'serv-container';
 		i.src = this.opts.bridge_url;
-		document.body.appendChild(i);
+		window.document.body.appendChild(i);
 		this.lfm_auth_inited = true;
 	},
 	setAuthBridgeKey: function(key){
@@ -156,22 +156,16 @@ var LfmAuth = spv.inh(pv.Model, {
 		}
 	},
 	authInit: function(p){
-
-
-		//init_auth_data.bridgekey
-
 		var init_auth_data = this.getInitAuthData();
+
 		if (init_auth_data.bridgekey){
 			this.setAuthBridgeKey(init_auth_data.bridgekey);
 		}
+
 		if (!p.not_open){
 			this.trigger('want-open-url', init_auth_data.link, init_auth_data);
 			this.waitData();
 		}
-
-
-		return;
-
 	},
 	setToken: function(token){
 		this.newtoken = token;
