@@ -8,7 +8,8 @@ var StatesLabour = require('./StatesLabour');
 var prsStCon = require('./prsStCon');
 var Eventor = require('./Eventor');
 var constr_mention = require('./structure/constr_mention');
-
+var addSubpage = require('./StatesEmitter/addSubpage');
+var getSubpageItem = require('./StatesEmitter/getSubpageItem');
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -769,104 +770,6 @@ var StatesEmitter = spv.inh(Eventor, {
 	},
 	props: props
 });
-
-var subPageHeaded = function(Constr, head, key) {
-	if (!key) {
-		throw new Error('should be key');
-	}
-	return {
-		key: key,
-		constr: Constr,
-		head: head,
-		getHead: head && spv.mmap({
-			props_map: head
-		})
-	};
-};
-
-var getSubpageItem = function(cur, key) {
-	var item;
-	if (Array.isArray(cur)) {
-		if (!cur[1] && !cur[2]) {
-			/* EXAMPLE
-			'sub_page-similar': [
-				SimilarTags
-			]
-			*/
-			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
-			// instance = cur[0];
-		} else {
-			/* EXAMPLE
-			'sub_page-similar': [
-				SimilarTags,
-				[
-					['locales.Tags', 'locales.Similar-to', 'tag_name'],
-					function (tags, similar, name) {
-						return similar + ' ' + name + ' ' + tags.toLowerCase();
-					}
-				]
-			]
-			*/
-
-			var instance = cur[1] ? spv.inh(cur[0], {}, {
-				'compx-nav_title': cur[1]
-			}) : cur[0];
-			item = subPageHeaded(instance, cur[2], key);
-		}
-	} else if (typeof cur == 'object') {
-		// semi compatibility (migration) mode
-
-		/* EXAMPLE
-		'sub_page-similar': {
-			constr: SimilarTags,
-			title: [[...]]
-		}
-		*/
-		if (!cur.title || typeof cur.title != 'object') {
-			// title should be. in array or object presentation
-			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
-		}
-
-		item = subPageHeaded(spv.inh(cur.constr, {
-			skip_code_path: true
-		}, {
-			'compx-nav_title': cur.title
-		}), cur.head, key);
-	} else {
-		/* EXAMPLE
-		'sub_page-similar': SimilarTags
-		*/
-		item = subPageHeaded(cur, null, key);
-	}
-
-	var prototype = item.constr.prototype;
-
-	if (prototype['__required-nav_title'] && !prototype.compx_check['nav_title']) {
-		throw new Error('sub_page shoud have `title`');
-	}
-
-	return item;
-};
-
-
-function addSubpage(self, name, cur) {
-	if (self._sub_pages[name]) {
-		throw new Error('already have ' + name);
-	}
-	var item = getSubpageItem(cur, 'sub-page-' + name);
-	self._sub_pages[name] = item;
-
-	if (!self.hasOwnProperty('_chi_sub_pages_side')) {
-		self._chi_sub_pages_side = self._chi_sub_pages_side ? spv.cloneObj(self._chi_sub_pages_side) : {};
-	}
-	self._chi_sub_pages_side[item.key] = item.constr;
-
-	if (!self.hasOwnProperty('_build_cache_sub_pages_side')) {
-		self._build_cache_sub_pages_side = self._build_cache_sub_pages_side ? spv.cloneObj(self._build_cache_sub_pages_side) : {};
-	}
-	self._build_cache_sub_pages_side[name] = item;
-
-}
 
 function buildSubpageCollector() {
 	var getUnprefixed = spv.getDeprefixFunc( 'sub_page-' );
