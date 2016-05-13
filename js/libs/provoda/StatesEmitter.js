@@ -11,6 +11,7 @@ var addSubpage = require('./StatesEmitter/addSubpage');
 var checkSubpager = require('./StatesEmitter/checkSubpager');
 var collectSubpages = require('./StatesEmitter/collectSubpages');
 var collectCompxs = require('./StatesEmitter/collectCompxs');
+var collectStatesBinders = require('./StatesEmitter/collectStatesBinders');
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -87,7 +88,7 @@ var onPropsExtend = function (props) {
 	if (this.collectSelectorsOfCollchs) {
 		this.collectSelectorsOfCollchs(props);
 	}
-	this.collectStatesBinders(this, props);
+	collectStatesBinders(this, props);
 	collectCompxs(this, props);
 	collectSubpages(this, props);
 	checkSubpager(this, props);
@@ -433,44 +434,6 @@ add({
 					self.reg_fires.by_test.push(cur);
 				}
 			}
-		};
-	})(),
-	collectStatesBinders: (function(){
-		var getUnprefixed = spv.getDeprefixFunc( 'state-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-		return function(self, props) {
-			if (!hasPrefixedProps(props)){
-				return;
-			}
-			var prop;
-
-			var build_index = self._build_cache_interfaces;
-			self._build_cache_interfaces = {};
-
-			self._interfaces_to_states_index = {};
-
-			var all_states_instrs = [];
-			for (prop in self) {
-				var state_name = getUnprefixed(prop);
-				if (!state_name) {continue;}
-				var item;
-				if (props.hasOwnProperty(prop)) {
-					var cur = self[prop];
-					item = cur && {
-						state_name: state_name,
-						interface_name: cur[0],
-						fn: cur[1]
-					};
-
-				} else {
-					item = build_index[state_name];
-				}
-				self._build_cache_interfaces[state_name] = item;
-				all_states_instrs.push(item);
-
-			}
-			self._interfaces_to_states_index = spv.makeIndexByField(all_states_instrs, 'interface_name', true);
 		};
 	})(),
 	state: (function(){
