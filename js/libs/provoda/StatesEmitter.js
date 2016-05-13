@@ -393,17 +393,6 @@ add({
 	})()
 });
 
-var nes_as_state_cache = {};
-var watchNestingAsState = function(md, nesting_name, state_name) {
-	if (!nes_as_state_cache[state_name]) {
-		nes_as_state_cache[state_name] = function(e) {
-			this.updateState(state_name, e && e.value);
-		};
-	}
-
-	md.on( hp.getFullChilChEvName(nesting_name), nes_as_state_cache[state_name]);
-};
-
 add({
 	collectStatesConnectionsProps: function(self) {
 		/*
