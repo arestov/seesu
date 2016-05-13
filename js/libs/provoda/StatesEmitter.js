@@ -6,13 +6,13 @@ var hp = require('./helpers');
 var updateProxy = require('./updateProxy');
 var StatesLabour = require('./StatesLabour');
 var Eventor = require('./Eventor');
-var constr_mention = require('./structure/constr_mention');
 var addSubpage = require('./StatesEmitter/addSubpage');
 var checkSubpager = require('./StatesEmitter/checkSubpager');
 var collectSubpages = require('./StatesEmitter/collectSubpages');
 var collectCompxs = require('./StatesEmitter/collectCompxs');
 var collectStatesBinders = require('./StatesEmitter/collectStatesBinders');
 var checkChi = require('./StatesEmitter/checkChi');
+var checkNestRqC = require('./StatesEmitter/checkNestRqC');
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -68,8 +68,6 @@ var getBaseTreeCheckList = function(start) {
 	return result;
 
 };
-
-var checkNestRqC = nestRqCchecker();
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
@@ -535,42 +533,6 @@ var StatesEmitter = spv.inh(Eventor, {
 	},
 	props: props
 });
-
-function nestRqCchecker() {
-	var getUnprefixed = spv.getDeprefixFunc( 'nest_rqc-' );
-	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-	var nestConstructor = constr_mention.nestConstructor;
-
-	return function checkNestRqC(self, props) {
-		if (!hasPrefixedProps(props)) {
-			return;
-		}
-
-		self._chi_nest_rqc = spv.cloneObj({}, self.__chi_nest_rqc);
-		self._nest_rqc = spv.cloneObj({}, self._nest_rqc);
-
-		for (var name in props) {
-			var clean_name = getUnprefixed(name);
-			if (!clean_name) {
-				continue;
-			}
-			var key = 'nest_rqc-' + clean_name;
-			var cur = props[name];
-			if (cur) {
-				var item = nestConstructor(cur, key);
-				self._nest_rqc[clean_name] = item;
-				if (item.type == 'constr') {
-					self._chi_nest_rqc[key] = item.value;
-				}
-			} else {
-				self._chi_nest_rqc[key] = null;
-				self._nest_rqc[clean_name] = null;
-			}
-
-		}
-	};
-}
 
 StatesEmitter.addSubpage = addSubpage;
 
