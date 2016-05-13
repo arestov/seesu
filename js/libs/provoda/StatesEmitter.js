@@ -87,7 +87,7 @@ var onPropsExtend = function (props) {
 	if (this.collectSelectorsOfCollchs) {
 		this.collectSelectorsOfCollchs(props);
 	}
-	this.collectStatesBinders(props);
+	this.collectStatesBinders(this, props);
 	this.collectCompxs(props);
 	collectSubpages(this, props);
 	checkSubpager(this, props);
@@ -636,24 +636,24 @@ add({
 		var getUnprefixed = spv.getDeprefixFunc( 'state-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
-		return function(props) {
+		return function(self, props) {
 			if (!hasPrefixedProps(props)){
 				return;
 			}
 			var prop;
 
-			var build_index = this._build_cache_interfaces;
-			this._build_cache_interfaces = {};
+			var build_index = self._build_cache_interfaces;
+			self._build_cache_interfaces = {};
 
-			this._interfaces_to_states_index = {};
+			self._interfaces_to_states_index = {};
 
 			var all_states_instrs = [];
-			for (prop in this) {
+			for (prop in self) {
 				var state_name = getUnprefixed(prop);
 				if (!state_name) {continue;}
 				var item;
 				if (props.hasOwnProperty(prop)) {
-					var cur = this[prop];
+					var cur = self[prop];
 					item = cur && {
 						state_name: state_name,
 						interface_name: cur[0],
@@ -663,11 +663,11 @@ add({
 				} else {
 					item = build_index[state_name];
 				}
-				this._build_cache_interfaces[state_name] = item;
+				self._build_cache_interfaces[state_name] = item;
 				all_states_instrs.push(item);
 
 			}
-			this._interfaces_to_states_index = spv.makeIndexByField(all_states_instrs, 'interface_name', true);
+			self._interfaces_to_states_index = spv.makeIndexByField(all_states_instrs, 'interface_name', true);
 		};
 	})(),
 	state: (function(){
