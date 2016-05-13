@@ -12,6 +12,7 @@ var checkSubpager = require('./StatesEmitter/checkSubpager');
 var collectSubpages = require('./StatesEmitter/collectSubpages');
 var collectCompxs = require('./StatesEmitter/collectCompxs');
 var collectStatesBinders = require('./StatesEmitter/collectStatesBinders');
+var checkChi = require('./StatesEmitter/checkChi');
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -68,7 +69,6 @@ var getBaseTreeCheckList = function(start) {
 
 };
 
-var checkChi = chiChecker();
 var checkNestRqC = nestRqCchecker();
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
@@ -535,35 +535,6 @@ var StatesEmitter = spv.inh(Eventor, {
 	},
 	props: props
 });
-
-function chiChecker() {
-	var getUnprefixed = spv.getDeprefixFunc( 'chi-' );
-	var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-	var cloneObj = spv.cloneObj;
-	return function checkChildrenConstuctors(self, props) {
-		if (!hasPrefixedProps(props)) {
-			return;
-		}
-
-		var build_index = self._build_cache_chi;
-		self._build_cache_chi = build_index ? cloneObj(build_index) : {};
-
-		for (var prop_name in props) {
-			var chi_name = getUnprefixed(prop_name);
-			if (!chi_name) {continue;}
-
-			self._build_cache_chi[chi_name] = props[prop_name];
-		}
-
-		self._chi = {};
-
-		for (var chi_name in self._build_cache_chi) {
-			self._chi['chi-' + chi_name] = self._build_cache_chi[chi_name];
-		}
-	};
-}
-
 
 function nestRqCchecker() {
 	var getUnprefixed = spv.getDeprefixFunc( 'nest_rqc-' );
