@@ -88,7 +88,7 @@ var onPropsExtend = function (props) {
 		this.collectSelectorsOfCollchs(props);
 	}
 	this.collectStatesBinders(this, props);
-	this.collectCompxs(props);
+	this.collectCompxs(this, props);
 	collectSubpages(this, props);
 	checkSubpager(this, props);
 	checkChi(this, props);
@@ -405,7 +405,7 @@ var watchNestingAsState = function(md, nesting_name, state_name) {
 };
 
 add({
-	collectStatesConnectionsProps: function() {
+	collectStatesConnectionsProps: function(self) {
 		/*
 		'compx-some_state': [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
 
@@ -417,14 +417,14 @@ add({
 		]
 		*/
 
-		this.compx_nest_matches = [];
+		self.compx_nest_matches = [];
 
 		var states_of_parent = {};
 		var states_of_nesting = {};
 		var states_of_root = {};
 
-		for (var i = 0; i < this.full_comlxs_list.length; i++) {
-			var cur = this.full_comlxs_list[i];
+		for (var i = 0; i < self.full_comlxs_list.length; i++) {
+			var cur = self.full_comlxs_list[i];
 
 			for (var jj = 0; jj < cur.depends_on.length; jj++) {
 				var state_name = cur.depends_on[jj];
@@ -442,7 +442,7 @@ add({
 					case 'nesting': {
 						if (!states_of_nesting[state_name]) {
 							states_of_nesting[state_name] = parsing_result;
-							this.compx_nest_matches.push( parsing_result.nwatch );
+							self.compx_nest_matches.push( parsing_result.nwatch );
 						}
 					}
 					break;
@@ -456,9 +456,9 @@ add({
 			}
 		}
 
-		this.conndst_parent = prsStCon.toList(states_of_parent);
-		this.conndst_nesting = prsStCon.toList(states_of_nesting);
-		this.conndst_root = prsStCon.toList(states_of_root);
+		self.conndst_parent = prsStCon.toList(states_of_parent);
+		self.conndst_nesting = prsStCon.toList(states_of_nesting);
+		self.conndst_root = prsStCon.toList(states_of_root);
 
 	},
 //	full_comlxs_list: [],
@@ -508,14 +508,14 @@ add({
 			return item;
 		};
 
-		var collectCompxs1part = function(props) {
-			var build_index = this._build_cache_compx_one;
-			this._build_cache_compx_one = {};
+		var collectCompxs1part = function(self, props) {
+			var build_index = self._build_cache_compx_one;
+			self._build_cache_compx_one = {};
 
-			for (var prefixed_name in this){
+			for (var prefixed_name in self){
 				var comlx_name = getUnprefixed(prefixed_name);
 				if (comlx_name){
-					var cur = this[prefixed_name];
+					var cur = self[prefixed_name];
 					if (!cur) {continue;}
 
 					var item;
@@ -525,24 +525,24 @@ add({
 						item = build_index[comlx_name];
 					}
 
-					this._build_cache_compx_one[comlx_name] = item;
+					self._build_cache_compx_one[comlx_name] = item;
 				}
 			}
 		};
-		var collectCompxs2part = function() {
-			this._build_cache_compx_many = {};
-			for (var comlx_name in this.complex_states){
-				var cur = this.complex_states[comlx_name];
+		var collectCompxs2part = function(self) {
+			self._build_cache_compx_many = {};
+			for (var comlx_name in self.complex_states){
+				var cur = self.complex_states[comlx_name];
 				if (!cur) {continue;}
 
 				var item = declr(comlx_name, cur);
-				this._build_cache_compx_many[comlx_name] = item;
+				self._build_cache_compx_many[comlx_name] = item;
 			}
 		};
-		return function(props) {
+		return function(self, props) {
 
 			var part1 = hasPrefixedProps(props);
-			var part2 = this.hasOwnProperty('complex_states');
+			var part2 = self.hasOwnProperty('complex_states');
 			var need_recalc = part1 || part2;
 
 			if (!need_recalc){
@@ -550,8 +550,8 @@ add({
 			}
 
 			var compx_check = {};
-			this.full_comlxs_list = [];
-			this.full_comlxs_index = {};
+			self.full_comlxs_list = [];
+			self.full_comlxs_index = {};
 
 			for (var prop in props.complex_states) {
 				if (props['compx-' + prop]) {
@@ -560,39 +560,39 @@ add({
 			}
 
 			if (part1) {
-				collectCompxs1part.call(this, props);
+				collectCompxs1part(self, props);
 			}
 
 			if (part2) {
-				collectCompxs2part.call(this);
+				collectCompxs2part(self);
 			}
 
-			for (var key_name_one in this._build_cache_compx_one) {
-				compx_check[key_name_one] = this._build_cache_compx_one[key_name_one];
-				this.full_comlxs_list.push(compx_check[key_name_one]);
+			for (var key_name_one in self._build_cache_compx_one) {
+				compx_check[key_name_one] = self._build_cache_compx_one[key_name_one];
+				self.full_comlxs_list.push(compx_check[key_name_one]);
 			}
 
-			for (var key_name_many in this._build_cache_compx_many) {
+			for (var key_name_many in self._build_cache_compx_many) {
 				if (compx_check[key_name_many]) {continue;}
 
-				compx_check[key_name_many] = this._build_cache_compx_many[key_name_many];
-				this.full_comlxs_list.push(compx_check[key_name_many]);
+				compx_check[key_name_many] = self._build_cache_compx_many[key_name_many];
+				self.full_comlxs_list.push(compx_check[key_name_many]);
 			}
 
 
-			this.compx_check = compx_check;
+			self.compx_check = compx_check;
 			var i, jj, cur, state_name;
-			for (i = 0; i < this.full_comlxs_list.length; i++) {
-				cur = this.full_comlxs_list[i];
+			for (i = 0; i < self.full_comlxs_list.length; i++) {
+				cur = self.full_comlxs_list[i];
 				for (jj = 0; jj < cur.watch_list.length; jj++) {
 					state_name = cur.watch_list[jj];
-					if (!this.full_comlxs_index[state_name]) {
-						this.full_comlxs_index[state_name] = [];
+					if (!self.full_comlxs_index[state_name]) {
+						self.full_comlxs_index[state_name] = [];
 					}
-					this.full_comlxs_index[state_name].push(cur);
+					self.full_comlxs_index[state_name].push(cur);
 				}
 			}
-			this.collectStatesConnectionsProps();
+			self.collectStatesConnectionsProps(self);
 
 			return true;
 		};
