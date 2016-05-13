@@ -94,7 +94,7 @@ var onPropsExtend = function (props) {
 	checkChi(this, props);
 	checkNestRqC(this, props);
 
-	this.collectRegFires(props);
+	this.collectRegFires(this, props);
 
 	if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
 		this.nest_match = (this.st_nest_matches || []).concat(this.compx_nest_matches || []);
@@ -602,31 +602,31 @@ add({
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 
-		return function(props) {
+		return function(self, props) {
 			if (!hasPrefixedProps(props)){
 				return;
 			}
 			var prop;
 
-			this.reg_fires = {
+			self.reg_fires = {
 				by_namespace: null,
 				by_test: null,
 				cache: null
 			};
-			for (prop in this){
+			for (prop in self){
 
 				if (getUnprefixed(prop)){
-					var cur = this[prop];
+					var cur = self[prop];
 					if (cur.event_name){
-						if (!this.reg_fires.by_namespace){
-							this.reg_fires.by_namespace = {};
+						if (!self.reg_fires.by_namespace){
+							self.reg_fires.by_namespace = {};
 						}
-						this.reg_fires.by_namespace[cur.event_name] = cur;
+						self.reg_fires.by_namespace[cur.event_name] = cur;
 					} else if (cur.test){
-						if (!this.reg_fires.by_test){
-							this.reg_fires.by_test = [];
+						if (!self.reg_fires.by_test){
+							self.reg_fires.by_test = [];
 						}
-						this.reg_fires.by_test.push(cur);
+						self.reg_fires.by_test.push(cur);
 					}
 				}
 			}
