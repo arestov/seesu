@@ -739,7 +739,7 @@ add({
 				};
 				has_changes = true;
 
-				var list = new Array(props.req_map);
+				var list = new Array(props.req_map.length);
 				for (var i = 0; i < props.req_map.length; i++) {
 					list[i] = new ReqMap(props.req_map[i], i);
 				}
