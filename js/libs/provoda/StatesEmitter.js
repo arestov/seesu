@@ -99,9 +99,8 @@ var onPropsExtend = function (props) {
 		this.nest_match = (this.st_nest_matches || []).concat(this.compx_nest_matches || []);
 	}
 
-	var base_tree_mofified;
-	if (props.hasOwnProperty('base_tree')) {
-		base_tree_mofified = true;
+	var base_tree_mofified = props.hasOwnProperty('base_tree');
+	if (base_tree_mofified) {
 		this.base_tree_list = getBaseTreeCheckList(props.base_tree);
 	}
 	if (collches_modified || base_tree_mofified) {
