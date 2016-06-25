@@ -7,6 +7,13 @@ var hp = require('../helpers');
 var getUnprefixed = spv.getDeprefixFunc( 'state-' );
 var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
+
+var StateBindDeclr = function (data, state_name) {
+  this.state_name = state_name;
+  this.apis = spv.toRealArray(data[0]);
+  this.fn = data[1];
+};
+
 return function(self, props) {
   if (!hasPrefixedProps(props)){
     return;
@@ -25,12 +32,7 @@ return function(self, props) {
     var item;
     if (props.hasOwnProperty(prop)) {
       var cur = self[prop];
-      item = cur && {
-        state_name: state_name,
-        interface_name: cur[0],
-        fn: cur[1]
-      };
-
+      item = cur && new StateBindDeclr(cur, state_name);
     } else {
       item = build_index[state_name];
     }
@@ -38,6 +40,17 @@ return function(self, props) {
     all_states_instrs.push(item);
 
   }
-  self._interfaces_to_states_index = spv.makeIndexByField(all_states_instrs, 'interface_name', true);
+  var index = {};
+  for (var i = 0; i < all_states_instrs.length; i++) {
+    var apis = all_states_instrs[i].apis;
+    for (var b = 0; b < apis.length; b++) {
+      var name = apis[b];
+      if (!index[name]) {
+        index[name] = [];
+      }
+      index[name].push(all_states_instrs[i]);
+    }
+  }
+  self._interfaces_to_states_index = index;
 };
 });

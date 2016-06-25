@@ -6,13 +6,14 @@ var hp = require('./helpers');
 var updateProxy = require('./updateProxy');
 var StatesLabour = require('./StatesLabour');
 var Eventor = require('./Eventor');
+var checkApis = require('./StatesEmitter/checkApis');
 var addSubpage = require('./StatesEmitter/addSubpage');
 var checkSubpager = require('./StatesEmitter/checkSubpager');
 var collectSubpages = require('./StatesEmitter/collectSubpages');
 var collectCompxs = require('./StatesEmitter/collectCompxs');
-var collectStatesBinders = require('./StatesEmitter/collectStatesBinders');
 var checkChi = require('./StatesEmitter/checkChi');
 var checkNestRqC = require('./StatesEmitter/checkNestRqC');
+var useInterface = require('./StatesEmitter/useInterface');
 
 var connects_store = {};
 var getConnector = function(state_name) {
@@ -72,6 +73,8 @@ var getBaseTreeCheckList = function(start) {
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
 var onPropsExtend = function (props) {
+	checkApis(this, props);
+
 	if (this.changeDataMorphDeclarations) {
 		this.changeDataMorphDeclarations(props);
 	}
@@ -86,7 +89,6 @@ var onPropsExtend = function (props) {
 	if (this.collectSelectorsOfCollchs) {
 		this.collectSelectorsOfCollchs(props);
 	}
-	collectStatesBinders(this, props);
 	collectCompxs(this, props);
 	collectSubpages(this, props);
 	checkSubpager(this, props);
@@ -223,18 +225,6 @@ var EvConxOpts = function(context, immediately) {
 	this.immediately = immediately;
 };
 
-var getStateUpdater = function(em, state_name) {
-	if (!em._state_updaters) {
-		em._state_updaters = {};
-	}
-	if (!em._state_updaters.hasOwnProperty(state_name)) {
-		em._state_updaters[state_name] = function(value) {
-			em.updateState(state_name, value);
-		};
-	}
-	return em._state_updaters[state_name];
-};
-
 add({
 	onDie: function(cb) {
 		this.on('die', cb);
@@ -246,45 +236,7 @@ add({
 	// 	return this;
 	// },
 	useInterface: function(interface_name, obj) {
-		var old_interface = this._used_interfaces && this._used_interfaces[interface_name];
-		if (obj !== old_interface) {
-			var unuse = this._unuse_interface_instr && this._unuse_interface_instr[interface_name];
-			while (unuse && unuse.length) {
-				unuse.shift()();
-			}
-			if (this._used_interfaces) {
-				this._used_interfaces[interface_name] = null;
-			}
-
-			if (obj) {
-				if (this._interfaces_to_states_index) {
-					var use_list = this._interfaces_to_states_index[interface_name];
-					if (use_list) {
-						if (!this._unuse_interface_instr) {
-							this._unuse_interface_instr = {};
-						}
-						if (!this._unuse_interface_instr[interface_name]) {
-							this._unuse_interface_instr[interface_name] = [];
-						}
-						var unuse_instrs = this._unuse_interface_instr[interface_name];
-						for (var i = 0; i < use_list.length; i++) {
-							var cur = use_list[i];
-							var unuse_cur = cur.fn.call(null, getStateUpdater(this, cur.state_name), obj);
-							if (typeof unuse_cur !== 'function') {
-								throw new Error('you must provide event unbind func');
-							}
-							unuse_instrs[i] = unuse_cur;
-							//unuse_instrs[i]
-							//interface_name[i]
-						}
-					}
-				}
-				if (!this._used_interfaces) {
-					this._used_interfaces = {};
-				}
-				this._used_interfaces[interface_name] = obj;
-			}
-		}
+		useInterface(this, interface_name, obj);
 	},
 
 	'regfr-vipstev': regfr_vipstev,
@@ -525,6 +477,13 @@ var StatesEmitter = spv.inh(Eventor, {
 			obj._unuse_interface_instr = null;
 
 			obj.states = {};
+
+			if (obj.__apis_$_usual && obj.__apis_$_usual.length) {
+				for (var i = 0; i < obj.__apis_$_usual.length; i++) {
+					var cur = obj.__apis_$_usual[i];
+					obj.useInterface(cur.name, cur.fn());
+				}
+			}
 		};
 	},
 	onExtend: function(md, props, original) {
