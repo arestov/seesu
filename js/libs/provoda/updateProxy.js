@@ -4,7 +4,7 @@ define(function(require) {
 var StatesLabour = require('./StatesLabour');
 var hp = require('./helpers');
 var spv = require('spv');
-
+var produceEffects = require('./StatesEmitter/produceEffects');
 var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 var getFinupFullname = spv.getPrefixingFunc('finup-');
@@ -151,7 +151,7 @@ function updateProxy(etr, changes_list, opts) {
 	//устраняем измененное дважды и более
 	compressStatesChanges(total_ch);
 	iterateChList(total_ch, etr, _triggerStChanges, zdsv);
-
+	produceEffects(total_ch, etr);
 
 	//hp.wipeObj(original_states);
 	//all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
