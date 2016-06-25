@@ -206,27 +206,25 @@ var LfmAuth = spv.inh(pv.Model, {
 	},
 	try_to_login: function(callback){
 		var _this = this;
-		if (_this.newtoken ){
-			_this.api.get('auth.getSession', {'token':_this.newtoken })
-				.then(function(r){
-					if (!r.error) {
-						_this.login(r,callback);
-						pvUpdate(_this, 'session', true);
-						_this.trigger("session");
-
-						_this.has_session = true;
-						_this.trigger('api-full-ready');
-
-
-
-
-						console.log('lfm scrobble access granted');
-					} else{
-						console.log('error while granting lfm scrobble access');
-					}
-
-				});
+		if (!_this.newtoken) {
+			return;
 		}
+
+		_this.api.get('auth.getSession', {'token':_this.newtoken }).then(function(r) {
+			if (r.error) {
+				console.log('error while granting lfm scrobble access');
+				return;
+			}
+
+			_this.login(r,callback);
+			pvUpdate(_this, 'session', true);
+			_this.trigger("session");
+
+			_this.has_session = true;
+			_this.trigger('api-full-ready');
+
+			console.log('lfm scrobble access granted');
+		});
 	}
 });
 
