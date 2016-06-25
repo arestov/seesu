@@ -221,7 +221,6 @@ var LfmAuth = spv.inh(pv.Model, {
 			_this.trigger("session");
 
 			_this.has_session = true;
-			_this.trigger('api-full-ready');
 
 			console.log('lfm scrobble access granted');
 		});
