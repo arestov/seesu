@@ -145,7 +145,7 @@ return {
 	soundcloud: {
 		tracksFn: function(tracks) {
 			var track_list = [];
-			var artcard_artist = this.artcard_artist;
+			var artcard_artist = this.head.artist_name;
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
 				var song_data = Mp3Search.guessArtist(cur.title, artcard_artist);
