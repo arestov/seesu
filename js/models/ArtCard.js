@@ -591,64 +591,59 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 		}
 	},
 	'compx-no_soundcloud_profile': [
-		['googled_sc_name__$complete', 'googled_sc_name', 'soundcloud_profile__$complete', 'soundcloud_profile'],
-		function(one_complete, one, two_complete, two) {
-			return (one_complete && !one) || (two_complete && !two);
+		['soundcloud_profile__$complete', 'soundcloud_profile'],
+		function(two_complete, two) {
+			return two_complete && !two;
 		}
 	],
 	req_map: [
 		[
-			['googled_sc_name'],
-			function(r) {
-				var artist_nickname;
-				var sresults = spv.toRealArray(spv.getTargetField(r, 'responseData.results'));
-				for (var i = 0; i < sresults.length; i++) {
-					var url = sresults[i].url;
-					var link_node = window.document.createElement('a');
-					link_node.href = url;
-					var url_parts = link_node.pathname.replace(/^\//,'').split('/');
-					if (url_parts.length == 1){
-						artist_nickname = url_parts[0];
-						break;
-					}
-					break;
-				}
+			['soundcloud_matched', 'soundcloud_profile'],
+			function (r) {
+				var sorted = r && r.sort(function (a, b) {
+					return spv.sortByRules(a, b, [{field: 'followers_count', reverse: true}]);
+				});
+
+				var matched = sorted && sorted[0];
 				return {
-					googled_sc_name: artist_nickname
+					soundcloud_matched: matched && matched.permalink,
+					soundcloud_profile: matched && matched.id
 				};
 			},
-			['goog_sc', 'get', function() {
-				return ['soundcloud ' + this.head.artist_name];
+			['sc_api', 'get', function() {
+				return ['users', {
+					q: this.head.artist_name
+				}];
 			}]
 		],
-		[
-			['soundcloud_profile'],
-			function(r) {
-				var soundcloud_profile;
-				if (r.location){
-					var matched = r.location.match(/users\/(\d+)/);
-					var artist_scid = matched[1];
-					if (artist_scid){
-						soundcloud_profile = artist_scid;
-					} else {
-					}
-				}
-				return {
-					soundcloud_profile: soundcloud_profile
-				};
 
-			},
-			[
-				['googled_sc_name'],
-				['sc_api', 'get', function() {
-					return ['resolve', {
-						'_status_code_map[302]': 200,
-						'_status_format': 'json',
-						url: 'http://soundcloud.com/' + this.state('googled_sc_name')
-					}];
-				}]
-			]
-		],
+		// 	['soundcloud_profile'],
+		// 	function(r) {
+		// 		var soundcloud_profile;
+		// 		if (r.location){
+		// 			var matched = r.location.match(/users\/(\d+)/);
+		// 			var artist_scid = matched[1];
+		// 			if (artist_scid){
+		// 				soundcloud_profile = artist_scid;
+		// 			} else {
+		// 			}
+		// 		}
+		// 		return {
+		// 			soundcloud_profile: soundcloud_profile
+		// 		};
+		//
+		// 	},
+		// 	[
+		// 		['soundcloud_matched'],
+		// 		['sc_api', 'get', function() {
+		// 			return ['resolve', {
+		// 				'_status_code_map[302]': 200,
+		// 				'_status_format': 'json',
+		// 				url: 'http://soundcloud.com/' + this.state('googled_sc_name')
+		// 			}];
+		// 		}]
+		// 	]
+		// ],
 		[
 			['images'],
 			function(r) {
