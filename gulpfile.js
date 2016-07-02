@@ -24,7 +24,7 @@ gulp.task('index', function() {
 });
 
 // gulp.task('css-deinline', function() {
-	
+
 // 	return gulp.src('./index.html')
 // 		;
 // });
@@ -130,12 +130,12 @@ combo('opera_popup', extend(chromeExtension('opera_popup'), {
 		'dist-envs/' + 'opera_popup'
 	),
 	'background': copy(
-		'./src/opera_popup/bg.html', 
+		'./src/opera_popup/bg.html',
 		'dist-envs/' + 'opera_popup'
 	),
 	'js': copy('js/**/*', 'dist-envs/' + 'opera_popup' + '/js'),
 	'js-loader': copy(
-		'./loader.js', 
+		'./loader.js',
 		'dist-envs/' + 'opera_popup'
 	),
 }));
@@ -199,7 +199,7 @@ function common(env) {
 		index: [['index']],
 		css: [['css'],
 			copy('dist/combined.css', 'dist-envs/' + env + '/dist')],
-		js: [['js'], 
+		js: [['js'],
 			copy('dist/loader.js', 'dist-envs/' + env + '/dist')],
 		images: copy('i/**/*', 'dist-envs/' + env + '/i'),
 		'js-sep': copy('js-sep/**/*', 'dist-envs/' + env + '/js-sep')
