@@ -4786,6 +4786,10 @@ html.opera-extension{
 		.page-scheme .view_sources {
 			font-size: 0.8rem;
 		}
+
+		.browse_lev_con .view_sources {
+			padding: 0 1rem;
+		}
 		
 
 		.track-video{

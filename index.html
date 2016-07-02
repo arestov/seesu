@@ -98,12 +98,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="browse_lev_con" pv-class="hidden: !vmp_show"></div>
+		<div class="browse_lev_con" pv-class="hidden: !vmp_show">
+			<div pv-anchor="con"></div>
+			<!--pv-replace sample_name:view_sources-->
+		</div>
 
 
 		<div class="usual_page lilists">
 			<div pv-anchor="lilists_con"></div>
-			<!--pv-replace sample_name:view_sources-->
 
 		</div>
 		<div class="list-of-playlists list_of_playlists">
@@ -247,7 +249,6 @@
 					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
 				</li>
 			</ul>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<div class="lula_page usual_page">
@@ -262,7 +263,6 @@
 				</div>
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<div class="lulas_page usual_page">
@@ -288,7 +288,6 @@
 
 				</li>
 			</ul>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -360,10 +359,6 @@
 				"
 				></ul>
 			<div class="lang localize-nothing-found" pv-class="hidden: !error"></div>
-			<div class="hidden "  pv-class="hidden: vis_overview">
-				<!--pv-replace sample_name:view_sources-->
-			</div>
-
 
 			<a
 				class='load-more-list-data lang localize-load-more'
@@ -380,7 +375,6 @@
 			<div pv-nest='сountries'>
 				<!--pv-replace sample_name:imp-area_for_button-simple-->
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -460,7 +454,6 @@
 					<span pv-text="{{big_desc}}"></span>
 				</div>
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<!-- userslist -->
@@ -500,7 +493,6 @@
 				</div>
 
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<div class="vk_pthgs">
@@ -552,7 +544,6 @@
 			</div>
 			<!--pv-replace sample_name:vk_pthgs-->
 			<!--pv-replace sample_name:lastfm_pthgs-->
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 		<div class="lfm_user_page usual_page">
 			<div class="lfm_user_page-header">
@@ -567,7 +558,6 @@
 				</div>
 			</div>
 			<!--pv-replace sample_name:lastfm_pthgs-->
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<div class="vk_user_page usual_page">
@@ -582,7 +572,6 @@
 				</div>
 			</div>
 			<!--pv-replace sample_name:vk_pthgs-->
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -595,7 +584,6 @@
 				pv-class="hidden: !more_load_available"
 				pv-events="click::requestMoreData:albums_list"
 				pv-type="{{more_load_available && 'way-point'}}">Load more</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -627,7 +615,6 @@
 					</span>
 				</li>
 			</ul>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -643,7 +630,6 @@
 				</span>
 
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 		<div class="tag_page usual_page">
@@ -671,7 +657,6 @@
 					</script>
 				</div>
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 
 		</div>
 
@@ -729,7 +714,6 @@
 				<div class="rightcol art_card-bio " pv-anchor="bio" pv-class="loading: bio__loading"></div>
 			</div>
 
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -750,7 +734,6 @@
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
@@ -1751,12 +1734,10 @@
 					</ul>
 				</div>
 			</div>
-			<!--pv-replace sample_name:view_sources-->
 		</div>
 
 
 		<div class="vk_posts_page usual_page">
-			<!--pv-replace sample_name:view_sources-->
 			<div pv-nest="lists_list" class="vk_post" pv-events="click:requestPage">
 				<div class="vk_post_header">
 					<div class="leftcol">

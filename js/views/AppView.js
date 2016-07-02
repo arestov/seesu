@@ -8,6 +8,7 @@ SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
 lul, SongcardPage, AppBaseView, WPBox, view_serv, View, etc_views) {
 "use strict";
 var app_env = app_serv.app_env;
+var pvUpdate = pv.update;
 
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	location_name: 'exposed_root_view',
@@ -103,6 +104,8 @@ var map_slice_by_model = {
 	app_news: coct.AppNewsView
 };
 
+var push = Array.prototype.push;
+
 var BrowseLevView = spv.inh(View, {}, {
 	children_views_by_mn: {
 		pioneer: map_slice_by_model
@@ -110,14 +113,27 @@ var BrowseLevView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'browse_lev_con'
 	},
+	'stch-map_slice_view_sources': function(target, state) {
+		if (state) {
+			if (target.parent_view == target.root_view && target.nesting_name == 'map_slice') {
+				var arr = [];
+				if (state[0]) {
+					arr.push(state[0]);
+				}
+				push.apply(arr, state[1][target.nesting_space]);
+				pvUpdate(target, 'view_sources', arr);
+			}
+
+		}
+	},
 	'collch-$spec_common-pioneer': {
 		by_model_name: true,
-		place: 'c'
+		place: 'tpl.ancs.con'
 	},
 	'collch-$spec_det-pioneer': {
 		space: 'all-sufficient-details',
 		by_model_name: true,
-		place: 'c'
+		place: 'tpl.ancs.con'
 	},
 
 	'collch-$spec_noplace-pioneer': {
@@ -127,7 +143,7 @@ var BrowseLevView = spv.inh(View, {}, {
 	// 	is_wrapper_parent: '^',
 	// 	space: 'all-sufficient-details',
 	// 	by_model_name: true,
-	// 	place: 'c'
+	// 	place: 'tpl.ancs.con'
 	// },
 	'sel-coll-pioneer//detailed':'$spec_det-pioneer',
 	'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',

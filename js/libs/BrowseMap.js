@@ -1007,6 +1007,9 @@ var BrowseLevel = spv.inh(pv.Model, {
 		pv.update(md, 'bmpl_attached', obj);
 		pv.update(md, 'mpl_attached', countKeys(obj, true));
 	},
+	'compx-map_slice_view_sources': [
+		['@one:map_slice_view_sources:pioneer'],
+	],
 	'compx-struc': [
 		['@one:struc:map'],
 		function(struc) {
