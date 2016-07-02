@@ -71,27 +71,26 @@ gulp.task('js', function() {
 	// var sourcemaps = require('gulp-sourcemaps');
 
 	var optimizerOptions = {
-		packages: [
-			{
-				name: 'pv',
-				location: 'js/libs/provoda',
-				main: 'provoda'
-			}
-		],
 		paths: {
-			spv: 'js/libs/spv',
-			su: 'js/seesu',
 			jquery: 'js/common-libs/jquery-2.1.4.min',
-			localizer: 'js/libs/localizer',
-			cache_ajax: 'js/libs/cache_ajax',
-			app_serv: "js/app_serv",
-			view_serv: "js/views/modules/view_serv",
-			env: "js/env",
-			hex_md5: 'js/common-libs/md5.min',
+			angbo: 'js/libs/provoda/StatementsAngularParser.min',
 		},
-		shim: {
-			hex_md5: {
-				exports: 'hex_md5'
+		map: {
+			'*': {
+				su: 'js/seesu',
+
+				pv: 'js/libs/provoda/provoda',
+				View: 'js/libs/provoda/View',
+
+				spv: 'js/libs/spv',
+				app_serv: "js/app_serv",
+				localizer: 'js/libs/localizer',
+				view_serv: "js/views/modules/view_serv",
+				cache_ajax: 'js/libs/cache_ajax',
+				env: "js/env",
+
+				hex_md5: 'js/common-libs/md5',
+				'Promise': 'js/common-libs/Promise-3.1.0.mod'
 			}
 		}
 	};
