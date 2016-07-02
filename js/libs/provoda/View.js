@@ -172,6 +172,17 @@ var onPropsExtend = function(props, original) {
 	}
 };
 
+
+var sources = function (item_source, sources_list) {
+	var arr = [];
+	if (item_source) {
+		arr.push(item_source);
+	}
+	push.apply(arr, sources_list);
+
+	return arr;
+};
+
 var View = spv.inh(StatesEmitter, {
 	naming: function(fn) {
 		return function View(view_otps, opts) {
@@ -212,16 +223,16 @@ var View = spv.inh(StatesEmitter, {
 	},
 	onExtend: spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend),
 	'stch-map_slice_view_sources': function(target, state) {
-		if (state) {
-			if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {
-				var arr = [];
-				if (state[0]) {
-					arr.push(state[0]);
-				}
-				push.apply(arr, state[1][target.nesting_space]);
-				pvUpdate(target, 'view_sources', arr);
-			}
+		if (!state) {
+			return;
+		}
 
+		var wrap_parent = target.parent_view;
+		var bwlev_parent = wrap_parent && wrap_parent.parent_view;
+		if (bwlev_parent && bwlev_parent.parent_view == target.root_view && target.parent_view.location_name == 'pioneer-all-sufficient-details') {
+			pvUpdate(target, 'view_sources', sources(state[0], state[1][target.nesting_space]));
+		} else if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {
+			pvUpdate(target, 'view_sources', sources(state[0], state[1][target.nesting_space]));
 		}
 	},
 	getStrucRoot: function() {

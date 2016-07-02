@@ -4645,6 +4645,12 @@ html.opera-extension{
 			padding-bottom:2px;
 		}
 		
+		.track-context .view_sources {
+			position: absolute;
+			left: 0;
+			margin-top: 30px;
+		}
+		
 		.vk-needs-login .vk-login-context{
 			display:block;
 		}
