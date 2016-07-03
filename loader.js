@@ -109,19 +109,6 @@ window._gaq = window._gaq || [];
 			initExposedView();
 			return;
 
-			function options(usual_flow) {
-				return {
-					mpx: mpx,
-					proxies_space: proxies_space,
-					_highway: {
-						views_counter: 1,
-						views_proxies: proxies,
-						calls_flow: new pv.CallbacksFlow(win),
-						local_calls_flow: new pv.CallbacksFlow(spv.getDefaultView(doc), !usual_flow, 250)
-					}
-				};
-			}
-
 			function initMainView() {
 				var view = new AppView(options(), {d: doc, can_die: can_die});
 				mpx.addView(view, 'root');
@@ -136,6 +123,19 @@ window._gaq = window._gaq || [];
 				var exposed_view = new AppView.AppExposedView(options(true), {d: doc, can_die: can_die});
 				mpx.addView(exposed_view, 'exp_root');
 				exposed_view.requestAll();
+			}
+
+			function options(usual_flow) {
+				return {
+					mpx: mpx,
+					proxies_space: proxies_space,
+					_highway: {
+						views_counter: 1,
+						views_proxies: proxies,
+						calls_flow: new pv.CallbacksFlow(win),
+						local_calls_flow: new pv.CallbacksFlow(spv.getDefaultView(doc), !usual_flow, 250)
+					}
+				};
 			}
 		});
 
