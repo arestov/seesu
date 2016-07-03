@@ -91,14 +91,12 @@ window._gaq = window._gaq || [];
 	function initViews(appModel, proxies, win, can_die, need_exposed) {
 		//ui thread;
 		requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
+			appModel.updateLVTime(); // useless?
+
 			var proxies_space = Date.now();
-			// var views_proxies = pv.views_proxies;
 			proxies.addSpaceById(proxies_space, appModel);
 			var mpx = proxies.getMPX(proxies_space, appModel);
-
 			var doc = win.document;
-
-			appModel.updateLVTime();
 
 			initMainView();
 
