@@ -198,6 +198,7 @@ var SeesuApp = spv.inh(AppModel, {
 			var mpx = self.connectMPX();
 
 			var view = new Constr({
+				_highway: self._highway,
 				mpx: mpx
 			}, opts);
 

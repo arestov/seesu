@@ -1,5 +1,4 @@
-var su, seesu, appModel;
-
+var su, seesu;
 (function(){
 "use strict";
 requirejs.config({
@@ -64,21 +63,22 @@ window._gaq = window._gaq || [];
 	}
 	requirejs(['su', 'pv', 'env'], function(SeesuApp, pv, env) {
 		//app thread;
-		var proxies = new pv.views_proxies.Proxies();
-		appModel = su = seesu  = new SeesuApp({
+		var views_proxies = new pv.views_proxies.Proxies();
+		window.views_proxies = views_proxies;
+		window.appModel = su = seesu  = new SeesuApp({
 			_highway: {
 				models_counters: 1,
 				sync_sender: new pv.SyncSender(),
-				views_proxies: proxies,
+				views_proxies: views_proxies,
 				models: {},
 				calls_flow: new pv.CallbacksFlow(window),
-				proxies: proxies,
+				proxies: views_proxies,
 				env: env
 			}
 		}, seesu_version);
 
 		if (need_ui) {
-			initViews(appModel, proxies, window, false, true);
+			initViews(window.appModel, views_proxies, window, false, true);
 		}
 	});
 

@@ -20,40 +20,59 @@ if (need_ui){
 	});
 }
 console.log(need_ui);
-if (need_ui){
-	cbp.require(['su', 'js/views/AppView', 'pv'], function(su, AppView, pv) {
-		if (!window){
+if (!need_ui) {
+	return;
+}
+
+initViews(cbp.requirejs, cbp.appModel, cbp.views_proxies, window, true);
+
+function initViews(requirejs, appModel, proxies, win, can_die, need_exposed) {
+	//ui thread;
+	requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
+		appModel.updateLVTime(); // useless?
+
+		var proxies_space = Date.now();
+		proxies.addSpaceById(proxies_space, appModel);
+		var mpx = proxies.getMPX(proxies_space, appModel);
+		var doc = win.document;
+
+		initMainView();
+
+		if (!need_exposed) {
 			return;
 		}
-		var can_die = true;
-		var md = su;
 
-		var views_proxies = pv.views_proxies;
-		var proxies_space = Date.now();
-		views_proxies.addSpaceById(proxies_space, md);
-		var mpx = views_proxies.getMPX(proxies_space, md);
+		initExposedView();
+		return;
 
-
-
-		md.updateLVTime();
-
-
-		(function() {
-			var view = new AppView();
+		function initMainView() {
+			var view = new AppView(options(), {d: doc, can_die: can_die});
 			mpx.addView(view, 'root');
-
-			view.init({
-				mpx: mpx,
-				proxies_space: proxies_space
-			}, {d: window.document, allow_url_history: true, can_die: can_die});
 			view.onDie(function() {
 				//views_proxies.removeSpaceById(proxies_space);
 				view = null;
 			});
 			view.requestAll();
-		})();
+		}
 
-		//provoda.sync_r.connectAppRoot();
+		function initExposedView() {
+			var exposed_view = new AppView.AppExposedView(options(true), {d: doc, can_die: can_die});
+			mpx.addView(exposed_view, 'exp_root');
+			exposed_view.requestAll();
+		}
+
+		function options(usual_flow) {
+			return {
+				mpx: mpx,
+				proxies_space: proxies_space,
+				_highway: {
+					views_counter: 1,
+					views_proxies: proxies,
+					calls_flow: new pv.CallbacksFlow(win),
+					local_calls_flow: new pv.CallbacksFlow(spv.getDefaultView(doc), !usual_flow, 250)
+				}
+			};
+		}
 	});
 }
 
