@@ -78,7 +78,7 @@ window._gaq = window._gaq || [];
 		}, seesu_version);
 
 		if (need_ui) {
-			initViews(appModel, proxies, window, false);
+			initViews(appModel, proxies, window, false, true);
 		}
 	});
 
@@ -88,7 +88,7 @@ window._gaq = window._gaq || [];
 		});
 	}
 
-	function initViews(appModel, proxies, win, can_die) {
+	function initViews(appModel, proxies, win, can_die, need_exposed) {
 		//ui thread;
 		requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
 			var proxies_space = Date.now();
@@ -110,12 +110,12 @@ window._gaq = window._gaq || [];
 				view.requestAll();
 			})();
 
+			if (!need_exposed) {
+				return;
+			}
 
-			(function() {
-				var exposed_view = new AppView.AppExposedView(options(true), {d: doc, can_die: can_die});
-				mpx.addView(exposed_view, 'exp_root');
-				exposed_view.requestAll();
-			})();
+			initExposedView();
+			return;
 
 			function options(usual_flow) {
 				return {
@@ -129,7 +129,16 @@ window._gaq = window._gaq || [];
 					}
 				};
 			}
+
+			function initExposedView() {
+				var exposed_view = new AppView.AppExposedView(options(true), {d: doc, can_die: can_die});
+				mpx.addView(exposed_view, 'exp_root');
+				exposed_view.requestAll();
+			}
 		});
+
+
+
 	}
 
 })();
