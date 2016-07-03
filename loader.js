@@ -100,15 +100,7 @@ window._gaq = window._gaq || [];
 
 			appModel.updateLVTime();
 
-			(function() {
-				var view = new AppView(options(), {d: doc, can_die: can_die});
-				mpx.addView(view, 'root');
-				view.onDie(function() {
-					//views_proxies.removeSpaceById(proxies_space);
-					view = null;
-				});
-				view.requestAll();
-			})();
+			initMainView();
 
 			if (!need_exposed) {
 				return;
@@ -128,6 +120,16 @@ window._gaq = window._gaq || [];
 						local_calls_flow: new pv.CallbacksFlow(spv.getDefaultView(doc), !usual_flow, 250)
 					}
 				};
+			}
+
+			function initMainView() {
+				var view = new AppView(options(), {d: doc, can_die: can_die});
+				mpx.addView(view, 'root');
+				view.onDie(function() {
+					//views_proxies.removeSpaceById(proxies_space);
+					view = null;
+				});
+				view.requestAll();
 			}
 
 			function initExposedView() {
