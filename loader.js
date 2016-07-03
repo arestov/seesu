@@ -1,4 +1,4 @@
-var su, seesu;
+var su, seesu, appModel;
 
 (function(){
 "use strict";
@@ -65,7 +65,7 @@ window._gaq = window._gaq || [];
 	requirejs(['su', 'pv', 'env'], function(SeesuApp, pv, env) {
 		//app thread;
 		var proxies = new pv.views_proxies.Proxies();
-		su = seesu  = new SeesuApp({
+		appModel = su = seesu  = new SeesuApp({
 			_highway: {
 				models_counters: 1,
 				sync_sender: new pv.SyncSender(),
@@ -78,7 +78,7 @@ window._gaq = window._gaq || [];
 		}, seesu_version);
 
 		if (need_ui) {
-			initViews(su, proxies);
+			initViews(appModel, proxies);
 		}
 	});
 
@@ -88,20 +88,19 @@ window._gaq = window._gaq || [];
 		});
 	}
 
-	function initViews(su, proxies) {
+	function initViews(appModel, proxies) {
 		//ui thread;
 		requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
 			var can_die = false;
-			var md = su;
 
 			var proxies_space = Date.now();
 			// var views_proxies = pv.views_proxies;
-			proxies.addSpaceById(proxies_space, md);
-			var mpx = proxies.getMPX(proxies_space, md);
+			proxies.addSpaceById(proxies_space, appModel);
+			var mpx = proxies.getMPX(proxies_space, appModel);
 
 			var doc = window.document;
 
-			md.updateLVTime();
+			appModel.updateLVTime();
 
 			(function() {
 				var view = new AppView(options(), {d: doc, can_die: can_die});
