@@ -78,7 +78,7 @@ window._gaq = window._gaq || [];
 		}, seesu_version);
 
 		if (need_ui) {
-			initViews(appModel, proxies);
+			initViews(appModel, proxies, false);
 		}
 	});
 
@@ -88,11 +88,9 @@ window._gaq = window._gaq || [];
 		});
 	}
 
-	function initViews(appModel, proxies) {
+	function initViews(appModel, proxies, can_die) {
 		//ui thread;
 		requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
-			var can_die = false;
-
 			var proxies_space = Date.now();
 			// var views_proxies = pv.views_proxies;
 			proxies.addSpaceById(proxies_space, appModel);
