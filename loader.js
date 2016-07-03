@@ -78,7 +78,7 @@ window._gaq = window._gaq || [];
 		}, seesu_version);
 
 		if (need_ui) {
-			initViews(appModel, proxies, false);
+			initViews(appModel, proxies, window, false);
 		}
 	});
 
@@ -88,7 +88,7 @@ window._gaq = window._gaq || [];
 		});
 	}
 
-	function initViews(appModel, proxies, can_die) {
+	function initViews(appModel, proxies, win, can_die) {
 		//ui thread;
 		requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
 			var proxies_space = Date.now();
@@ -96,7 +96,7 @@ window._gaq = window._gaq || [];
 			proxies.addSpaceById(proxies_space, appModel);
 			var mpx = proxies.getMPX(proxies_space, appModel);
 
-			var doc = window.document;
+			var doc = win.document;
 
 			appModel.updateLVTime();
 
@@ -124,7 +124,7 @@ window._gaq = window._gaq || [];
 					_highway: {
 						views_counter: 1,
 						views_proxies: proxies,
-						calls_flow: new pv.CallbacksFlow(window),
+						calls_flow: new pv.CallbacksFlow(win),
 						local_calls_flow: new pv.CallbacksFlow(spv.getDefaultView(doc), !usual_flow, 250)
 					}
 				};
