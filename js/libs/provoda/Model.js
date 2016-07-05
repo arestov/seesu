@@ -630,6 +630,7 @@ add({
 			}
 			this.parse = parse;
 			var send_declr = req_item[2];
+
 			if (!Array.isArray(send_declr[0])) {
 				this.send_declr = new SendDeclaration(send_declr);
 			} else {
