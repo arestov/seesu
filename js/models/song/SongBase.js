@@ -422,12 +422,19 @@ return spv.inh(BrowseMap.Model, {
 					}
 				}
 			},
-			['lfm', 'get', function() {
-				return ['track.getInfo', {
-					artist: this.state('artist'),
-					track: this.state('track')
-				}];
-			}]
+			[
+				['artist', 'track'],
+				['lfm', [
+					['artist', 'track'],
+					function(api, opts, artist_name, track_name) {
+						return api
+							.get('track.getInfo', {
+								artist: artist_name,
+								track: track_name
+							});
+					}
+				]]
+			]
 		]
 	],
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
