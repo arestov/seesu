@@ -250,16 +250,22 @@ var pvUpdate = pv.update;
 		mlmDie: function() {
 			this.hideOnMap();
 		},
-		getURL: function(){
-			var url = '';
-			if (this.map_parent.playlist_artist && this.map_parent.playlist_artist == this.artist){
-				url += '/' + this.app.encodeURLPart(this.track);
-			} else {
-				url += '/' + this.app.encodeURLPart(this.artist) + ',' + this.app.encodeURLPart(this.track || '');
-			}
+		'compx-url_part': [
+			['^playlist_artist', 'artist', 'track'],
+			function (playlist_artist, artist, track) {
+				if (!artist) {
+					return;
+				}
+				var url = '';
+				if (playlist_artist && playlist_artist == artist){
+					url += '/' + this.app.encodeURLPart(track);
+				} else {
+					url += '/' + this.app.encodeURLPart(artist) + ',' + this.app.encodeURLPart(track || '');
+				}
 
-			return url;
-		},
+				return url;
+			}
+		],
 		shareWithLFMUser: function(userid) {
 			var artist = this.state('artist');
 			var track = this.state('track');

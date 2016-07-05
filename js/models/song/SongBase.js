@@ -48,7 +48,6 @@ return spv.inh(BrowseMap.Model, {
 			self.initState('track', omo.track);
 		}
 		self.initState('playlist_type', self.map_parent.playlist_type);
-		self.initState('url_part', self.getURL());
 		//self.updateManyStates(states);
 
 		self.on('requests', self.hndRequestsPrio, self.getContextOptsI());
@@ -393,7 +392,6 @@ return spv.inh(BrowseMap.Model, {
 		this.track = song_name;
 		this.updateManyStates({
 			'track': song_name,
-			'url_part': this.getURL()
 		});
 
 		// this.findFiles({
