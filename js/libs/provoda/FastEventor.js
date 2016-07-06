@@ -898,6 +898,24 @@ add({
 			return sendRequest(selected_map, store, self);
 		}
 
+		var resolved = Promise.resolve();
+
+		function requestDependencies(self, dependencies) {
+			var reqs_list = [];
+			for (var i = 0; i < dependencies.length; i++) {
+				var dep_req = self.requestState(dependencies[i]);
+				if (dep_req) {
+					reqs_list.push(dep_req);
+				}
+			}
+
+			var req = !reqs_list.length
+				? resolved
+				: Promise.all(reqs_list);
+
+			return req;
+		}
+
 		return function(state_name) {
 			var current_value = this.sputnik.state(state_name);
 			if (current_value) {
@@ -948,21 +966,11 @@ add({
 				return bindRequest(sendRequest(selected_map, store, this), selected_map, store, this);
 			}
 
-			var reqs_list = [];
-			for (var i = 0; i < selected_map.dependencies.length; i++) {
-				var dep_req = this.requestState(selected_map.dependencies[i]);
-				if (dep_req) {
-					reqs_list.push(dep_req);
-				}
-			}
-
 			var self = this;
 
-			var req = !reqs_list.length
-				? checkDependencies(selected_map, store, self)
-				: Promise.all(reqs_list).then(function() {
-					return checkDependencies(selected_map, store, self);
-				});
+			var req = requestDependencies(self, selected_map.dependencies).then(function () {
+				return checkDependencies(selected_map, store, self);
+			});
 
 			return bindRequest(req, selected_map, store, self);
 
