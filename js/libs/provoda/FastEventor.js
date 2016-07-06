@@ -900,9 +900,26 @@ add({
 
 		var resolved = Promise.resolve();
 
-		function requestDependencies(self, dependencies) {
+		function requestDependencies(self, dependencies, soft) {
 			var reqs_list = [];
 			for (var i = 0; i < dependencies.length; i++) {
+				var cur = dependencies[i];
+				var compx = self.sputnik.compx_check[cur];
+				if (compx) {
+					if (self.sputnik.state(cur)) {
+						continue;
+					}
+					reqs_list.push(requestDependencies(self, compx.depends_on, true));
+					continue;
+				}
+
+				if (soft) {
+					var maps_for_state = self.sputnik._states_reqs_index && self.sputnik._states_reqs_index[cur];
+					if (!maps_for_state) {
+						continue;
+					}
+				}
+
 				var dep_req = self.requestState(dependencies[i]);
 				if (dep_req) {
 					reqs_list.push(dep_req);
