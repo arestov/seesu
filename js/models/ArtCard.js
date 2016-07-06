@@ -1,5 +1,5 @@
-define(['spv', 'pv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'js/modules/declr_parsers'],
-function(spv, pv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers){
+define(['spv', 'pv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'js/modules/declr_parsers', './Song'],
+function(spv, pv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers, Song){
 "use strict";
 var ArtCard;
 var pvUpdate = pv.update;
@@ -778,7 +778,12 @@ var ArtistInArtl = spv.inh(ArtCardBase, {}, {
 	}
 });
 
+var RandomSong = spv.inh(Song, {}, {
+	'compx-track': [['random_lfm_track_name']]
+});
+
 var ArtistsListPlaylist = spv.inh(SongsList, {}, {
+	'nest_rqc-songs-list': RandomSong,
 	page_limit: null,
 	items_comparing_props: [['artist_name', 'artist_name']],
 	'compx-has_data_loader': [
@@ -787,6 +792,7 @@ var ArtistsListPlaylist = spv.inh(SongsList, {}, {
 			return state;
 		}
 	],
+
 
 	requestMoreData: function() {
 		var declr = this.map_parent[ 'nest_req-' + this.map_parent.main_list_name ];
