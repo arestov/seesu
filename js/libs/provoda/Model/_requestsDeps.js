@@ -24,6 +24,11 @@ var NestWatch = hp.NestWatch;
 
 var noop = function() {};
 
+/*
+loading random tracks based on artists list
+vs
+loading of soundcloud art songslist
+*/
 
 var getNestWatch = spv.memorize(function(dep, supervision) {
 	var requesting_limit;
@@ -40,7 +45,9 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
 		requesting_limit = i;
 	}
 
-
+	if (!requesting_limit) {
+		return;
+	}
 
 	var complete = dep.related ? function(target, req_dep) {
 		for (var i = 0; i < dep.related.length; i++) {
@@ -53,14 +60,15 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
 		if (local_nest_watch.nwatch.selector.length == skip) {
 			complete(target, req_dep);
 		} else {
+			if (skip > requesting_limit) {
+			  return;
+			}
+
 			var cur = dep.nesting_path[skip];
 
 			if (cur && cur.type == 'countless' && cur.related) {
 				watchDependence(req_dep.supervision, target, cur.related, sourceKey(req_dep, skip));
  			}
-			if (skip >= requesting_limit) {
-				return;
-			}
 		}
 	};
 
@@ -71,18 +79,19 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
 	} : noop;
 
 	var removeHandler = function removeHandler(target, local_nest_watch, skip) {
+
 		var req_dep = local_nest_watch.data;
 		if (local_nest_watch.nwatch.selector.length == skip) {
 			uncomplete(target, req_dep);
 		} else {
+			if (skip > requesting_limit) {
+				return;
+			}
 			var cur = dep.nesting_path[skip];
 
 			if (cur && cur.type == 'countless' && cur.related) {
 				unwatchDependence(req_dep.supervision, target, cur.related, sourceKey(req_dep, skip));
  			}
-			if (skip >= requesting_limit) {
-				return;
-			}
 		}
 	};
 
@@ -105,10 +114,15 @@ var unwatchRelated = function(self, dep, req_dep) {
 
 var handleNesting = function(dep, req_dep, self) {
 	if (dep.value.length) {
-		if (!dep.nesting_path) {
+		if (!dep.nesting_path || !dep.nesting_path.length) {
 			return;
 		}
 		var ne_wa = getNestWatch(dep, req_dep.supervision);
+		if (!ne_wa) {
+			// see:
+			// !requesting_limit
+			return;
+		}
 
 		var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
 
@@ -121,7 +135,14 @@ var handleNesting = function(dep, req_dep, self) {
 
 var unhandleNesting = function(dep, req_dep, self) {
 	if (dep.value.length) {
-		if (!dep.nesting_path) {
+		if (!dep.nesting_path || !dep.nesting_path.length) {
+			return;
+		}
+
+		if (!req_dep.anchor) {
+			// see:
+			// !ne_wa
+			// !requesting_limit
 			return;
 		}
 
