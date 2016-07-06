@@ -241,8 +241,8 @@ var pvUpdate = pv.update;
 			this.player.trigger("song-play-error", this, can_play);
 		},
 		getShareUrl: function() {
-			if (this.artist && this.track){
-				return "http://seesu.me/o#/catalog/" + (this.app.encodeURLPart(this.artist) + "/_/" + this.app.encodeURLPart(this.track)).replace(/\'/gi, '%27');
+			if (this.state('artist') && this.state('track')){
+				return "http://seesu.me/o#/catalog/" + (this.app.encodeURLPart(this.state('artist')) + "/_/" + this.app.encodeURLPart(this.state('track'))).replace(/\'/gi, '%27');
 			} else {
 				return "";
 			}
@@ -348,8 +348,8 @@ var pvUpdate = pv.update;
 
 				if (this.app.settings['lfm-scrobbling']){
 					this.app.lfm.submit({
-						artist: this.artist,
-						track: this.track,
+						artist: this.state('artist'),
+						track: this.state('track'),
 						album: this.state('album_name')
 					}, duration, timestamp);
 				}
@@ -358,8 +358,8 @@ var pvUpdate = pv.update;
 						client: this.app.env.app_type,
 						status: 'finished',
 						duration: duration,
-						artist: this.artist,
-						title: this.track,
+						artist: this.state('artist'),
+						title: this.state('track'),
 						timestamp: timestamp
 					});
 				}
@@ -374,8 +374,8 @@ var pvUpdate = pv.update;
 			var duration = Math.round(mopla.getDuration()/1000) || '';
 			if (this.app.settings['lfm-scrobbling'] && this.app.lfm.sk){
 				this.app.lfm.nowplay({
-					artist: this.artist,
-					track: this.track,
+					artist: this.state('artist'),
+					track: this.state('track'),
 					album: this.state('album_name')
 				}, duration).then(function(){}, function(){
 					console.log('problem with scrobbling');
@@ -386,8 +386,8 @@ var pvUpdate = pv.update;
 					client: this.app.env.app_type,
 					status: 'playing',
 					duration: duration,
-					artist: this.artist,
-					title: this.track,
+					artist: this.state('artist'),
+					title: this.state('track'),
 					timestamp: (Date.now()/1000).toFixed(0)
 				});
 			}

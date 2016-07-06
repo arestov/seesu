@@ -272,18 +272,18 @@ return spv.inh(BrowseMap.Model, {
 	},
 	getFullName: function(artist, track, allow_short){
 		var n = '';
-		if (this.artist){
-			if (this.track){
+		if (this.state('artist')){
+			if (this.state('track')){
 				if (allow_short && this.map_parent && (this.map_parent.info && this.map_parent.info.artist == this.artist)){
-					n = this.track;
+					n = this.state('track');
 				} else {
-					n = this.artist + " - " + this.track;
+					n = this.state('artist') + " - " + this.state('track');
 				}
 			} else {
-				n = this.artist;
+				n = this.state('artist');
 			}
-		} else if (this.track){
-			n = this.track;
+		} else if (this.state('track')){
+			n = this.state('track');
 		}
 		return n || 'no title';
 	},
@@ -537,7 +537,7 @@ return spv.inh(BrowseMap.Model, {
 	// 	}
 	// },
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
-		if (!this.track && full_allowing){
+		if (!this.state('track') && full_allowing){
 			if (this.getRandomTrackName){
 				this.getRandomTrackName(full_allowing, from_collection, last_in_collection);
 			}
@@ -568,7 +568,7 @@ return spv.inh(BrowseMap.Model, {
 		}
 	},
 	valueOf:function(){
-		return (this.artist ? this.artist + ' - ' : '') + this.track;
+		return (this.state('artist') ? this.state('artist') + ' - ' : '') + this.state('track');
 	},
 	isPossibleNeighbour: function(mo) {
 		return this.isNeighbour(mo) || mo == this.next_preload_song;

@@ -149,10 +149,10 @@ var props = {
 			md.showOnMap();
 			return md;
 		},
-		showArtistTopTracks: function(artist, page_md, start_song) {
+		showArtistTopTracks: function(artist, page_md, omo) {
 			var artcard = this.showArtcardPage(artist, page_md);
 
-			var track_name = start_song && start_song.track;
+			var track_name = omo && omo.track;
 			var pl = artcard.showTopTacks(track_name);
 
 			return pl;

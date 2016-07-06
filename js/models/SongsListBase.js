@@ -334,7 +334,7 @@ return spv.inh(LoadableList, {
 
 		if (viewing){
 			target_song.addMarksToNeighbours();
-			if (target_song.prev_song && !target_song.prev_song.track){
+			if (target_song.prev_song && !target_song.prev_song.state('track')){
 				target_song.prev_song.getRandomTrackName();
 			}
 		}

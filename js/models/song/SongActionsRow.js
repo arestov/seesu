@@ -28,8 +28,8 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 			pv.update(this, 'wait_love_done', true);
 			this.app.lfm.post('Track.love', {
 				sk: this.app.lfm.sk,
-				artist: this.song.artist,
-				track: this.song.track
+				artist: this.song.state('artist'),
+				track: this.song.state('track')
 			}).then(anyway, anyway);
 
 			function anyway(){

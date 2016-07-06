@@ -140,4 +140,3 @@ var HypemPlaylist = spv.inh(SongsList, {
 SongsList.HypemPlaylist = HypemPlaylist;
 return SongsList;
 });
-

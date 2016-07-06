@@ -235,7 +235,7 @@ var MfCor = spv.inh(LoadableList, {
 	// },
 	hndTrackNameCh: function(e) {
 		if (e.value){
-			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track}, this.current_motivator);
+			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.state('artist'), track: this.mo.state('track')}, this.current_motivator);
 			this.bindInvestgChanges();
 			this.mo.bindFilesSearchChanges(this.files_investg);
 			if (this.last_search_opts){
@@ -393,7 +393,7 @@ var MfCor = spv.inh(LoadableList, {
 				errors_fields: []
 			};
 		}, 'get', function() {
-			return [this.mo.artist + " - " + this.mo.track];
+			return [this.mo.state('artist') + " - " + this.mo.state('track')];
 		}]
 	],
 
