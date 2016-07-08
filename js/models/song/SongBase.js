@@ -44,7 +44,7 @@ return spv.inh(BrowseMap.Model, {
 			self.initState('artist', artist_name && artist_name.trim());
 		}
 		if (omo.track){
-			self.initState('track', omo.track);
+			self.initState('track_name_provided', omo.track);
 		}
 		self.initState('playlist_type', self.map_parent.playlist_type);
 		//self.updateManyStates(states);
@@ -54,6 +54,7 @@ return spv.inh(BrowseMap.Model, {
 
 	}
 }, {
+	'compx-track': [['track_name_provided']],
 	model_name: "song",
 	network_data_as_states: false,
 	manual_states_init: true,
@@ -386,10 +387,16 @@ return spv.inh(BrowseMap.Model, {
 	hasNextSong: function(){
 		return !!this.next_song;
 	},
+	'compx-can_load_random_lfm_track_name': [
+		['track_name_provided'],
+		function (track_name_provided) {
+			return !track_name_provided;
+		}
+	],
 	'compx-track_name_not_found': [
-		['random_lfm_track_name', 'random_lfm_track_name__$complete'],
-		function (trackname, complete) {
-			return complete && !trackname;
+		['track', 'random_lfm_track_name', 'random_lfm_track_name__$complete'],
+		function (track_name, random_trackname, complete) {
+			return !track_name && complete && !random_trackname;
 		}
 	],
 	req_map: [
@@ -412,15 +419,18 @@ return spv.inh(BrowseMap.Model, {
 			},
 
 			[
-				'lfm', [
-					['artist'],
-					function(api, opts, artist_name) {
-						return api.get('artist.getTopTracks', {
-							artist: artist_name,
-							limit: 30,
-							page: 1
-						});
-					}
+				['can_load_random_lfm_track_name'],
+				[
+					'lfm', [
+						['artist', 'can_load_random_lfm_track_name'],
+						function(api, opts, artist_name) {
+							return api.get('artist.getTopTracks', {
+								artist: artist_name,
+								limit: 30,
+								page: 1
+							});
+						}
+					]
 				]
 			]
 		],
