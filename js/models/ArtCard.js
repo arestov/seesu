@@ -797,6 +797,7 @@ var ArtistsListPlaylist = spv.inh(SongsList, {}, {
 			return state;
 		}
 	],
+	items_comparing_props: [['artist', 'artist']],
 
 
 	requestMoreData: function() {
