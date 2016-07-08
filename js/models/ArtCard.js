@@ -779,7 +779,12 @@ var ArtistInArtl = spv.inh(ArtCardBase, {}, {
 });
 
 var RandomSong = spv.inh(Song, {}, {
-	'compx-track': [['random_lfm_track_name']]
+	'compx-track': [
+		['track_name_provided', 'random_lfm_track_name'],
+		function (provied, random) {
+			return provied || random
+		}
+	]
 });
 
 var ArtistsListPlaylist = spv.inh(SongsList, {}, {

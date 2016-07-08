@@ -143,8 +143,8 @@ return spv.inh(BrowseMap.Model, {
 			}
 		},
 		'has_none_files_to_play': {
-			depends_on: ['mf_cor', 'search_complete', 'track', 'mf_cor_has_available_tracks'],
-			fn: function(mf_cor, scomt, track_name, mf_cor_tracks) {
+			depends_on: ['mf_cor', 'search_complete', 'track_name_not_found', 'mf_cor_has_available_tracks'],
+			fn: function(mf_cor, scomt, track_name_not_found, mf_cor_tracks) {
 				if (mf_cor && !mf_cor_tracks){
 					if (!mf_cor.isSearchAllowed()){
 						return true;
@@ -153,7 +153,7 @@ return spv.inh(BrowseMap.Model, {
 					}
 				}
 
-				if (!track_name){
+				if (track_name_not_found){
 					return true;
 				}
 				return false;
