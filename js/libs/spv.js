@@ -514,6 +514,37 @@ sortByRules = spv.sortByRules = function(a, b, rules){
 	}
 };
 
+spv.indexBy = function (array, field) {
+	var index = {};
+	if (!array || !array.length) {
+		return index;
+	}
+
+	for (var i = 0; i < array.length; i++) {
+		var value  = getTargetField(array[i], field);
+		index[value] = array[i];
+	}
+
+	return index;
+}
+
+spv.groupBy = function (array, field) {
+	var index = {};
+	if (!array || !array.length) {
+		return index;
+	}
+
+	for (var i = 0; i < array.length; i++) {
+		var value  = getTargetField(array[i], field);
+		if (!index[value]) {
+			index[value] = [];
+		}
+		index[value].push(array[i]);
+	}
+
+	return index;
+}
+
 spv.getSortFunc = function(rules) {
 	return function(a, b) {
 		return sortByRules(a, b, rules);
