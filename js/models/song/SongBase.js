@@ -40,7 +40,6 @@ return spv.inh(BrowseMap.Model, {
 
 		self.omo = omo;
 
-		self.initState('no_track_title', false);
 		if (artist_name){
 			self.initState('artist', artist_name && artist_name.trim());
 		}
