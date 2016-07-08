@@ -386,6 +386,12 @@ return spv.inh(BrowseMap.Model, {
 	hasNextSong: function(){
 		return !!this.next_song;
 	},
+	'compx-track_name_not_found': [
+		['random_lfm_track_name', 'random_lfm_track_name__$complete'],
+		function (trackname, complete) {
+			return complete && !trackname;
+		}
+	],
 	req_map: [
 		[
 			['random_lfm_track_name'],
