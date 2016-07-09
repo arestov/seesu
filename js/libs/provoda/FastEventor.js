@@ -945,7 +945,7 @@ add({
 			var cant_request;
 			if (this.mapped_reqs) {
 				for (i = 0; i < maps_for_state.length; i++) {
-					cur = this.mapped_reqs[maps_for_state[i]];
+					cur = this.mapped_reqs[maps_for_state[i].num];
 					if (cur && (cur.done || cur.process)) {
 						cant_request = true;
 						break;
