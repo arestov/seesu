@@ -139,7 +139,27 @@ combo('opera_popup', extend(chromeExtension('opera_popup'), {
 	),
 }));
 
-gulp.task('envs', ['chrome_app', 'chrome_popup', 'opera_popup']);
+gulp.task('chrome_app-zipped', ['chrome_app'], function () {
+	var zip = require('gulp-zip');
+	return gulp.src('dist-envs/' + 'chrome_app/**')
+		.pipe(zip('chrome_app.zip'))
+		.pipe(gulp.dest('dist-envs'));
+});
+gulp.task('chrome_popup-zipped', ['chrome_popup'], function () {
+	var zip = require('gulp-zip');
+	return gulp.src('dist-envs/' + 'chrome_popup/**')
+		.pipe(zip('chrome_popup.zip'))
+		.pipe(gulp.dest('dist-envs'));
+});
+gulp.task('opera_popup-zipped', ['opera_popup'], function () {
+	var zip = require('gulp-zip');
+	return gulp.src('dist-envs/' + 'opera_popup/**')
+		.pipe(zip('opera_popup.zip'))
+		.pipe(gulp.dest('dist-envs'));
+});
+
+gulp.task('envs', ['chrome_app-zipped', 'chrome_popup-zipped', 'opera_popup-zipped']);
+
 
 function chromeExtension(dest_env) {
 	var dest_folder = 'dist-envs/' + dest_env;
