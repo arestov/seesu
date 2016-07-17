@@ -181,7 +181,7 @@ var sources = function (item_source, sources_list) {
 	push.apply(arr, sources_list);
 
 	var index = spv.indexBy(arr);
-	return Object.keys(index)
+	return Object.keys(index);
 };
 
 var View = spv.inh(StatesEmitter, {

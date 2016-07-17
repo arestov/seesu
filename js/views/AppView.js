@@ -115,6 +115,9 @@ var BrowseLevView = spv.inh(View, {}, {
 	},
 	'stch-map_slice_view_sources': function(target, state) {
 		if (state) {
+			if (target.location_name == 'map_slice-detailed') {
+				return;
+			}
 			if (target.parent_view == target.root_view && target.nesting_name == 'map_slice') {
 				var arr = [];
 				if (state[0]) {
