@@ -17,7 +17,7 @@ function copyFile(src, data, name) {
 module.exports = plugin('gulp-extract-html-style', function (options, file, enc, done) {
 	var stream = this;
 	parse(file.contents.toString(), {}, function(err, root) {
-		
+
 		if (err) {return done(err);}
 		var styles = parse.select('style', root);
 
@@ -64,14 +64,14 @@ function remove(node) {
 
 	if (node.prev) {
 		node.prev.next = next || null;
-		node.prev = null;	
+		node.prev = null;
 	}
 
 	if (node.next) {
 		node.next.prev = prev || null;
 		node.next = null;
 	}
-	
+
 	node.parent = null;
 }
 
