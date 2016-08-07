@@ -24,15 +24,17 @@ var patchNode = function(node, struc_store, directives_data, getSample, opts) {
 		// debugger;
 		// node, params, getSample, opts
 		var result = patching_directives[cur].call(parser, node, directives_data.instructions[cur], getSample, opts);
-		if (result) {
-			if (!result.directives_data && !result.pvprsd) {
-				throw new Error('should be directives_data');
-			}
-			if (result.directives_data) {
-				setStrucKey(result, struc_store, result.directives_data);
-			}
-			return result;
+		if (!result) {
+			return;
 		}
+
+		if (!result.directives_data && !result.pvprsd) {
+			throw new Error('should be directives_data');
+		}
+		if (result.directives_data) {
+			setStrucKey(result, struc_store, result.directives_data);
+		}
+		return result;
 	}
 };
 
