@@ -122,7 +122,7 @@ var PvSimpleSampler = (function(){
 		};
 
 
-		var parseStructureData = function(node, struc_store, is_not_root, getSample) {
+		function parseStructureData(node, struc_store, is_not_root, getSample) {
 			var structure_data = {
 				node_id: null,
 				states: [],
@@ -309,13 +309,13 @@ var PvSimpleSampler = (function(){
 	return PvSimpleSampler;
 })();
 
-var getCommentPVData = function(cur_node, struc_store, getSample) {
+function getCommentPVData(cur_node, struc_store, getSample) {
 	return getCachedPVData(cur_node, struc_store, true, getSample, parser);
-};
+}
 
-var getPVData = function(cur_node, struc_store, getSample) {
+function getPVData(cur_node, struc_store, getSample) {
 	return getCachedPVData(cur_node, struc_store, false, getSample, parser);
-};
+}
 
 var parser = {
 	config: config,
