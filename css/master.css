@@ -994,27 +994,6 @@ iframe.you-tube-video,embed.you-tube-video{
 	min-height: 48px;
 }
 
-.people-l-wide .people-list-item{
-	width:238px;
-
-}
-.full-page .people-list{
-	overflow:hidden;
-	}
-	.full-page .people-list>li{
-		float:left;
-		margin-bottom:1rem;
-		padding-right:1rem;
-	}
-.people-list-desc{
-	margin-top:-1rem;
-	font-size:1rem;
-	}
-	.button-place-people-el .button-hole{
-		margin-top:7px;
-	}
-
-
 .minimize-button{
 	position: absolute;
 	top: 0;
@@ -1894,21 +1873,3 @@ body .surf_nav{
 	pointer-events: none;
 	z-index: 10;
 	}
-
-
-.people-list-item{
-	overflow: hidden;
-	}
-	.people-list-item .desc{
-		display:block;
-		font-size:0.8rem;
-		line-height:1.4;
-	}
-	.people-image{
-		float:left;
-		margin-right:1rem;
-	}
-	.people-image img{
-		width: 50px;
-		height: 50px;
-		}
