@@ -18,6 +18,9 @@ var removeEvent = spv.removeEvent;
 <div pv-import="imp-area_for_button">
 	<script type="pv-import-map">
 		[
+			{
+				"imp-desc_item": "imp-desc_item-tag"
+			},
 		  {
 		    "nav_title": "nav_title"
 		  },
@@ -28,9 +31,6 @@ var removeEvent = spv.removeEvent;
 		      }],
 		      "songs"
 		    ]
-		  },
-		  {
-			"imp-desc_item": "imp-desc_item-tag"
 		  }
 		]
 	</script>
