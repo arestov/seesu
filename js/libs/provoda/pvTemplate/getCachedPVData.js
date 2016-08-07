@@ -3,7 +3,7 @@ define(function(require) {
 
 var spv = require('spv');
 var directives_parsers = require('./directives_parsers');
-var parsePVImport = require('./parsePVImport');
+var parsePVImport = require('./pv-import/parse');
 
 var comment_directives_p = directives_parsers.comment_directives_p;
 var directives_p = directives_parsers.directives_p;

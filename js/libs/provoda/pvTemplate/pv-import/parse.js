@@ -9,6 +9,7 @@ return function parsePVImport(node, sample_name) {
   if (possible === node) {
     script = node;
   }
+
   if (possible.parentNode === node) {
     script = node;
     node.removeChild(script);
