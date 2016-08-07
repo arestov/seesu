@@ -2,8 +2,9 @@ define(function() {
 'use strict';
 return function parsePVImport(node, sample_name) {
 
-  var possible = node.nodeName === 'SCRIPT' ?
-    node : node.querySelector('script[type="pv-import-map"]');
+  var possible = node.nodeName === 'SCRIPT'
+    ? node
+    : node.querySelector('script[type="pv-import-map"]');
 
   var script;
   if (possible === node) {
