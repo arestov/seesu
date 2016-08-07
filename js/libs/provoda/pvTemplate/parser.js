@@ -12,7 +12,7 @@ var getNodeInstanceCount = getCachedPVData.getNodeInstanceCount;
 var patching_directives = d_parsers.patching_directives;
 var getIndexList = d_parsers.getIndexList;
 var patching_directives_list = getIndexList(patching_directives);
-
+var setStrucKey = getCachedPVData.setStrucKey;
 
 var patchNode = function(node, struc_store, directives_data, getSample, opts) {
 	for (var i = 0; i < patching_directives_list.length; i++) {
@@ -36,8 +36,6 @@ var patchNode = function(node, struc_store, directives_data, getSample, opts) {
 		}
 	}
 };
-
-var setStrucKey = getCachedPVData.setStrucKey;
 
 var PvSimpleSampler = (function(){
 	var push = Array.prototype.push;
