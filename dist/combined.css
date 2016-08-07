@@ -1334,64 +1334,6 @@ a.track_name_loading .song-track-name,
 	     -o-transform: translateY(-50%) translateX(-50%);
 	        transform: translateY(-50%) translateX(-50%);
 }
-.song-listeners-list{
-	position: relative;
-	overflow: hidden;
-	padding-top: 0.5rem;
-	height: 56px;
-	padding-bottom: 15px;
-	}
-	.song-listener{
-		position:relative;
-		float:left;
-		margin-bottom:20px;
-		margin-right:11px;
-		padding: 3px;
-		width:50px;
-		border-radius: 3px;
-		background: #4A4A4A;
-	}
-	.song-listener .rc-arrow {
-		top:auto;
-		bottom: -15px;
-		left:50%;
-	}
-	.current-user-listen{
-		margin-left:0;
-	}
-	.many-users .current-user-listen{
-		background: #555;
-	}
-
-	.song-listeners-list li.song-listener{
-
-
-		cursor:pointer;
-
-		}
-		.song-listeners-list li.song-listener:hover{
-			background-color:#555;
-		}
-		.song-listeners-list li.song-listener:active{
-			background-color:#5a5a5a;
-		}
-		.track-listeners li.song-listener:first-of-type{
-			margin-left:0;
-		}
-		.song-listener .image-cropper{
-			overflow:hidden;
-			height:50px;
-
-		}
-
-		.song-listener img{
-			width:50px;
-			border-radius:1px;
-		}
-		.image-cropper img{
-			width:50px;
-			height:50px;
-			}
 
 iframe.you-tube-video,embed.you-tube-video{
 	display: block;
@@ -4378,6 +4320,66 @@ html.opera-extension{
 			padding: 0 1rem 1rem;
 			color: #7d7d7d;
 		}
+		
+
+		.song-listeners-list{
+			position: relative;
+			overflow: hidden;
+			padding-top: 0.5rem;
+			height: 56px;
+			padding-bottom: 15px;
+			}
+			.song-listener{
+				position:relative;
+				float:left;
+				margin-bottom:20px;
+				margin-right:11px;
+				padding: 3px;
+				width:50px;
+				border-radius: 3px;
+				background: #4A4A4A;
+			}
+			.song-listener .rc-arrow {
+				top:auto;
+				bottom: -15px;
+				left:50%;
+			}
+			.current-user-listen{
+				margin-left:0;
+			}
+			.many-users .current-user-listen{
+				background: #555;
+			}
+
+			.song-listeners-list li.song-listener{
+
+
+				cursor:pointer;
+
+				}
+				.song-listeners-list li.song-listener:hover{
+					background-color:#555;
+				}
+				.song-listeners-list li.song-listener:active{
+					background-color:#5a5a5a;
+				}
+				.track-listeners li.song-listener:first-of-type{
+					margin-left:0;
+				}
+				.song-listener .image-cropper{
+					overflow:hidden;
+					height:50px;
+
+				}
+
+				.song-listener img{
+					width:50px;
+					border-radius:1px;
+				}
+				.image-cropper img{
+					width:50px;
+					height:50px;
+					}
 		
 		.vk-needs-login .vk-login-context{
 			display:block;
