@@ -192,13 +192,25 @@ return {
 	patching_directives: {
 		'pv-import': (function(){
 			var counter = 1;
-			return function(node, params, getSample, opts) {
-				var templateOptions = params.map[2] ? {
-					key: counter,
-					samples: params.map[2]
-				} : null;
 
-				var instance = getSample(params.sample_name, true, templateOptions);
+			var templateOptions = function(params) {
+				this.key = counter++;
+				this.samples = params.map[2];
+				this.pv_nest = params.pv_nest;
+			};
+
+			function getTO(params) {
+				if (!params.map[2] || !params.pv_nest) {
+					return null;
+				}
+
+				return new templateOptions(params);
+			}
+
+			return function(node, params, getSample, opts) {
+				var template_options = getTO(params);
+				debugger;
+				var instance = getSample(params.sample_name, true, template_options);
 
 				var parent_node = node.parentNode;
 				parent_node.replaceChild(instance, node);

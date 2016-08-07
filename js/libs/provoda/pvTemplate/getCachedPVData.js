@@ -80,7 +80,8 @@ var getDirectivesData = (function() {
 
 		return {
 			sample_name: sample_name,
-			map: map
+			map: map,
+			pv_nest: script.getAttribute('pv-nest') || null
 		};
 	};
 
