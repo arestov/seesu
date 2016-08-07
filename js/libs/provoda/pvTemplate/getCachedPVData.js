@@ -212,14 +212,11 @@ var result = (function() {
 		var replacer = null;
 		var pvprsd = cur_node.pvprsd;
 		var _cache_index = struc_store || template_struc_store;
-		if (typeof pvprsd != 'undefined'){
-			if (pvprsd){
-				directives_data = _cache_index[pvprsd];
-			}
-
+		if (pvprsd){
+			directives_data = _cache_index[pvprsd];
 		} else {
 			if (!_cache_index.struc_counter) {
-				_cache_index.struc_counter = 0;
+				_cache_index.struc_counter = 1;
 			}
 
 			if (is_comment) {
