@@ -4,6 +4,7 @@ var $ = require('jquery');
 var d_parsers = require('./directives_parsers');
 var getCachedPVData = require('./getCachedPVData');
 var StandartChange = require('./StandartChange');
+var getTemplateOptions = require('./pv-import/getTemplateOptions');
 // var PvSimpleSampler = require('./PvSimpleSampler');
 // var patching_directives = d_parsers.patching_directives;
 var getIndexList = d_parsers.getIndexList;
@@ -14,22 +15,12 @@ var patching_directives = {
   'pv-import': (function(){
     var counter = 1;
 
-    var templateOptions = function(params) {
-      this.key = counter++;
-      this.samples = params.map[2];
-      this.pv_nest = params.pv_nest;
-    };
-
-    function getTO(params) {
-      if (!params.map[2] || !params.pv_nest) {
-        return null;
-      }
-
-      return new templateOptions(params);
+    function createKey() {
+      return counter++;
     }
 
     return function(node, params, getSample, opts) {
-      var template_options = getTO(params);
+      var template_options = getTemplateOptions(params, createKey);
       var instance = getSample(params.sample_name, true, template_options);
 
       var parent_node = node.parentNode;
