@@ -25,12 +25,13 @@ var getMarkedPvNest = function (node, pv_nest, struc_store, getSample) {
     return node;
   }
 
-  if (node.getAttribute('pv-nest')) {
+  var directives_data = cloneObj({}, getPVData(node, struc_store, getSample));
+
+  if (directives_data.instructions['pv-nest']) {
     throw new Error('pv-import and sample itself could not be both marked as pv-nest');
   }
 
 
-  var directives_data = cloneObj({}, getPVData(node, struc_store, getSample));
   directives_data.instructions = cloneObj({}, directives_data.instructions);
   directives_data.instructions['pv-nest'] = createPvNest(node, pv_nest);
   directives_data.new_scope_generator = true;
