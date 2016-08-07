@@ -205,6 +205,12 @@ var setStrucKey = function(cur_node, struc_store, directives_data) {
 	_cache_index[asignId(cur_node, _cache_index)] = directives_data;
 };
 
+var unsetStrucKey = function (cur_node) {
+	cur_node.pvprsd = null;
+	cur_node.pvprsd_inst = null;
+	return cur_node;
+};
+
 var result = (function() {
 
 	return function(cur_node, struc_store, is_comment, getSample) {
@@ -239,6 +245,7 @@ var result = (function() {
 	};
 })();
 result.setStrucKey = setStrucKey;
+result.unsetStrucKey = unsetStrucKey;
 result.getNodeInstanceCount = getNodeInstanceCount;
 return result;
 
