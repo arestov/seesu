@@ -787,228 +787,7 @@ a.track_name_loading .song-track-name,
 	 }
 
 }
-.moplas-block .show-all-songs{
-	position: relative;
-	z-index: 2;
-	float:right;
-	}
-	.moplas-block .show-all-songs .notifier{
-		position: absolute;
-		top: -0.75rem;
-		left: 0;
-		width: 1.5rem;
-		height: 1.5rem;
-		border-radius: 0.75rem;
-		background: red;
-		text-align: center;
-		line-height: 1.5rem;
-		opacity: 0.8;
-		color:#fff;
-		-webkit-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
-		     -o-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
-		        animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
-		}
-	.moplas-block .show-all-songs a{
-		display: inline-block;
-		padding:5px 10px;
-		color: hsl(0, 0%, 60%);
-		text-shadow: 0 1px 0 #4A4A4A;
-		cursor: pointer;
-		}
-		.moplas-block .show-all-songs a:hover{
-			background:#555;
-			color:#ccc;
-			}
-		.moplas-block .show-all-songs a:active{
-			box-shadow: inset 0 0 0.8rem 0 #444;
-			color:#aaa;
-			}
-		.moplas-block .show-all-songs a span{
-			border-bottom: 1px dotted;
-			}
-	.moplas-block .messages-c{
-		clear:both;
-		display: none;
-		}
-		.moplas-block.want_more_songs .messages-c{
-			display: block;
-			}
-	.moplas-block.want_more_songs .show-all-songs a{
-		border-bottom-left-radius: 0.5rem;
-		}
-.moplas-block{
-	padding:0;
-	min-height:81px;
-	}
-	.music-files-lists{
-		-webkit-transform: translateZ(0);
-		min-height: 33px;
-	}
-	.moplas-block-shift {
-		padding-left: 3.2rem;
-	}
-	.moplas-block .files-list-pioneer{
-		position: relative;
-		padding:0.5rem 0;
-		font-weight: 400;
-		color:#d5d5d5;
-		overflow: hidden;
-		}
-		.files-list-pioneer .disabled_search {
-			text-decoration: line-through;
-		}
-	.moplas-block ul {
 
-		}
-		.moplas-block .moplas-list li{
-			padding:0.5rem 0.4rem 0.5rem 3.1rem;
-			border-top: 1px solid transparent;
-			border-bottom: 1px solid transparent;
-			color:#999;
-			cursor: pointer;
-			position: relative;
-			}
-		.moplas-block .moplas-list li.mf-unavailable{
-			color:#666;
-			}
-			.moplas-block .moplas-list li .play-button-place{
-				position: absolute;
-				left:0.4rem;
-				width: 32px;
-				height: 32px;
-				top: -0.1rem;
-			}
-			.moplas-block .moplas-list li .play-button-place .pc-place{
-				display: none;
-				}
-			.moplas-block .moplas-list li.selected-mf .play-button-place .pc-place{
-				display:block;
-				}
-			.moplas-block .moplas-list li .mf-progress{
-				overflow: hidden;
-				padding:1px 0;
-				min-height: 15px;
-				max-height:15px;
-				}
-				.moplas-block.want_more_songs .moplas-list li{
-					border-top-color:#5D5D5D;
-					border-bottom-color:#555555;
-					}
-				.moplas-block.want_more_songs ul li .mf-progress{
-					max-height:none;
-					}
-			.moplas-block .moplas-list li .mf-duration{
-				float:right;
-				margin-bottom: 2px;
-				margin-left: 5px;
-				}
-			.moplas-block .moplas-list li .mf-source{
-				margin-right:5px;
-				margin-left: 2px;
-				color: hsl(0, 0%, 47%);
-				}
-				.moplas-block.want_more_songs ul .mf-source{
-					display: none;
-					}
-
-			.moplas-block .moplas-list li a{
-				color:inherit;
-			}
-	.moplas-block .full_mb_part {
-		display: none;
-	}
-	.moplas-block .full_list_switch {
-		margin: 0.2rem 0;
-		padding-left: 3.2rem;
-	}
-	.moplas-block.want_more_songs .full_mb_part {
-		display: block;
-	}
-	.moplas_source-tuner {
-		background: #535353;
-		border-top: 1px solid #4f4f4f;
-		border-bottom: 1px solid #646464;
-		padding-top: 0.5rem;
-		padding-bottom: 0.5rem;
-	}
-
-	.moplas_source-unavailable {
-		color: #666;
-	}
-	.moplas_source-icon {
-		background: transparent no-repeat url(../i/icon-gear.svg);
-		height: 1.14rem;
-		width: 1.14rem;
-		display: block;
-
-		cursor: pointer;
-		border-radius: 0.3rem;
-
-		}
-		.moplas_source-icon:hover {
-			background-color: #666;
-			}
-		.moplas_source-icon:active {
-			background-color: #444;
-			}
-	.moplas-block .moplas_source-icon{
-		float: left;
-		margin-right: 0.2rem;
-		position: relative;
-		top: 0.15rem;
-	}
-
-	.moplas-block .moplas-list li{
-		display: none;
-		}
-
-
-
-		.want_more_songs.moplas-block .moplas-list{
-			margin-bottom:42px;
-			}
-		.want_more_songs.moplas-block .moplas-list li{
-
-			display: block;
-			}
-
-
-
-
-		.selected-mf .mf-text{
-			font-size: 0.86rem;
-			}
-			.want_more_songs .selected-mf .mf-text{
-				font-size: inherit;
-				}
-		.selected-mf.buffering-progress .mf-progress{
-			position: relative;
-			}
-		.selected-mf.buffering-progress .mf-progress:after{
-			right: 5%;
-			top:50%;
-			left:auto;
-			}
-	.moplas-block .moplas-list li.overstocked{
-		display: none;
-		}
-
-		.want_more_songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
-			display: block;
-		}
-
-	.moplas-block .moplas-list li.selected-mf{
-		display: block;
-		overflow: hidden;
-		}
-		.moplas-list .selected-mf .mf-progress{
-
-			}
-.cant_play_music_message{
-	background: #D12E2E;
-	text-shadow: 1px 1px 1px #000;
-	padding: 0.5rem 1rem;
-	}
 
 
 #close-widget{
@@ -4370,6 +4149,223 @@ html.opera-extension{
 		.desc-text{
 			padding-bottom:2px;
 		}
+		
+		.moplas-block .show-all-songs{
+			position: relative;
+			z-index: 2;
+			float:right;
+			}
+			.moplas-block .show-all-songs .notifier{
+				position: absolute;
+				top: -0.75rem;
+				left: 0;
+				width: 1.5rem;
+				height: 1.5rem;
+				border-radius: 0.75rem;
+				background: red;
+				text-align: center;
+				line-height: 1.5rem;
+				opacity: 0.8;
+				color:#fff;
+				-webkit-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+				     -o-animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+				        animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+				}
+			.moplas-block .show-all-songs a{
+				display: inline-block;
+				padding:5px 10px;
+				color: hsl(0, 0%, 60%);
+				text-shadow: 0 1px 0 #4A4A4A;
+				cursor: pointer;
+				}
+				.moplas-block .show-all-songs a:hover{
+					background:#555;
+					color:#ccc;
+					}
+				.moplas-block .show-all-songs a:active{
+					box-shadow: inset 0 0 0.8rem 0 #444;
+					color:#aaa;
+					}
+				.moplas-block .show-all-songs a span{
+					border-bottom: 1px dotted;
+					}
+			.moplas-block .messages-c{
+				clear:both;
+				display: none;
+				}
+				.moplas-block.want_more_songs .messages-c{
+					display: block;
+					}
+			.moplas-block.want_more_songs .show-all-songs a{
+				border-bottom-left-radius: 0.5rem;
+				}
+		.moplas-block{
+			padding:0;
+			min-height:81px;
+			}
+			.music-files-lists{
+				-webkit-transform: translateZ(0);
+				min-height: 33px;
+			}
+			.moplas-block-shift {
+				padding-left: 3.2rem;
+			}
+			.moplas-block .files-list-pioneer{
+				position: relative;
+				padding:0.5rem 0;
+				font-weight: 400;
+				color:#d5d5d5;
+				overflow: hidden;
+				}
+				.files-list-pioneer .disabled_search {
+					text-decoration: line-through;
+				}
+			.moplas-block ul {
+
+				}
+				.moplas-block .moplas-list li{
+					padding:0.5rem 0.4rem 0.5rem 3.1rem;
+					border-top: 1px solid transparent;
+					border-bottom: 1px solid transparent;
+					color:#999;
+					cursor: pointer;
+					position: relative;
+					}
+				.moplas-block .moplas-list li.mf-unavailable{
+					color:#666;
+					}
+					.moplas-block .moplas-list li .play-button-place{
+						position: absolute;
+						left:0.4rem;
+						width: 32px;
+						height: 32px;
+						top: -0.1rem;
+					}
+					.moplas-block .moplas-list li .play-button-place .pc-place{
+						display: none;
+						}
+					.moplas-block .moplas-list li.selected-mf .play-button-place .pc-place{
+						display:block;
+						}
+					.moplas-block .moplas-list li .mf-progress{
+						overflow: hidden;
+						padding:1px 0;
+						min-height: 15px;
+						max-height:15px;
+						}
+						.moplas-block.want_more_songs .moplas-list li{
+							border-top-color:#5D5D5D;
+							border-bottom-color:#555555;
+							}
+						.moplas-block.want_more_songs ul li .mf-progress{
+							max-height:none;
+							}
+					.moplas-block .moplas-list li .mf-duration{
+						float:right;
+						margin-bottom: 2px;
+						margin-left: 5px;
+						}
+					.moplas-block .moplas-list li .mf-source{
+						margin-right:5px;
+						margin-left: 2px;
+						color: hsl(0, 0%, 47%);
+						}
+						.moplas-block.want_more_songs ul .mf-source{
+							display: none;
+							}
+
+					.moplas-block .moplas-list li a{
+						color:inherit;
+					}
+			.moplas-block .full_mb_part {
+				display: none;
+			}
+			.moplas-block .full_list_switch {
+				margin: 0.2rem 0;
+				padding-left: 3.2rem;
+			}
+			.moplas-block.want_more_songs .full_mb_part {
+				display: block;
+			}
+			.moplas_source-tuner {
+				background: #535353;
+				border-top: 1px solid #4f4f4f;
+				border-bottom: 1px solid #646464;
+				padding-top: 0.5rem;
+				padding-bottom: 0.5rem;
+			}
+
+			.moplas_source-unavailable {
+				color: #666;
+			}
+			.moplas_source-icon {
+				background: transparent no-repeat url(../i/icon-gear.svg);
+				height: 1.14rem;
+				width: 1.14rem;
+				display: block;
+
+				cursor: pointer;
+				border-radius: 0.3rem;
+				}
+				.moplas_source-icon:hover {
+					background-color: #666;
+					}
+				.moplas_source-icon:active {
+					background-color: #444;
+					}
+			.moplas-block .moplas_source-icon{
+				float: left;
+				margin-right: 0.2rem;
+				position: relative;
+				top: 0.15rem;
+			}
+
+			.moplas-block .moplas-list li{
+				display: none;
+				}
+
+				.want_more_songs.moplas-block .moplas-list{
+					margin-bottom:42px;
+					}
+				.want_more_songs.moplas-block .moplas-list li{
+
+					display: block;
+					}
+
+				.selected-mf .mf-text{
+					font-size: 0.86rem;
+					}
+					.want_more_songs .selected-mf .mf-text{
+						font-size: inherit;
+						}
+				.selected-mf.buffering-progress .mf-progress{
+					position: relative;
+					}
+				.selected-mf.buffering-progress .mf-progress:after{
+					right: 5%;
+					top:50%;
+					left:auto;
+					}
+			.moplas-block .moplas-list li.overstocked{
+				display: none;
+				}
+
+				.want_more_songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
+					display: block;
+				}
+
+			.moplas-block .moplas-list li.selected-mf{
+				display: block;
+				overflow: hidden;
+				}
+				.moplas-list .selected-mf .mf-progress{
+
+					}
+		.cant_play_music_message{
+			background: #D12E2E;
+			text-shadow: 1px 1px 1px #000;
+			padding: 0.5rem 1rem;
+			}
 		
 		.track-context .track-aside-info {
 			position: absolute;
