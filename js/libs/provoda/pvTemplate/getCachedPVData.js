@@ -3,6 +3,7 @@ define(function(require) {
 
 var spv = require('spv');
 var directives_parsers = require('./directives_parsers');
+var parsePVImport = require('./parsePVImport');
 
 var comment_directives_p = directives_parsers.comment_directives_p;
 var directives_p = directives_parsers.directives_p;
@@ -62,29 +63,6 @@ var getCommentDirectivesData = function(cur_node, getSample) {
 	return directives_data;
 };
 var getDirectivesData = (function() {
-	var parsePVImport = function(node, sample_name) {
-
-		var possible = node.nodeName === 'SCRIPT' ?
-			node : node.querySelector('script[type="pv-import-map"]');
-
-		var script;
-		if (possible === node) {
-			script = node;
-		}
-		if (possible.parentNode === node) {
-			script = node;
-			node.removeChild(script);
-		}
-
-		var map = script && JSON.parse(script.textContent);
-
-		return {
-			sample_name: sample_name,
-			map: map,
-			pv_nest: script.getAttribute('pv-nest') || null
-		};
-	};
-
 	var one_parse_list = config.one_parse_list;
 	var scope_g_list = config.scope_g_list;
 	var directives_names_list = config.directives_names_list;
