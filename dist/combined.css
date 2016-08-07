@@ -2314,59 +2314,6 @@ body .surf_nav{
 		display: block;
 	}
 
-
-
-.compact_song {
-	overflow: hidden;
-	height: 2rem;
-	font-size: 0.9rem;
-	color: #ccc;
-	padding: 0.4rem;
-	margin: 0 -0.4rem;
-}
-	.compact_song-image_con {
-		float:left;
-		width: 2rem;
-		height: 2rem;
-		margin-right: 0.4rem;
-		border-radius: 50%;
-		background: #595959;
-	}
-		.compact_song-image_con img{
-			height: 100%;
-			width: 100%;
-			border-radius: 50%;
-		}
-	.compact_song-artist_name, .compact_song-track_name{
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
-	}
-	.compact_song-artist_name {
-		height: 1em;
-		line-height: 1em;
-		color: #AAA;
-	}
-	.compact_song-track_name{
-		margin-top: 0.2rem;
-		height: 1.4em;
-		line-height: 1.4em;
-	}
-.compact_playlist .compact_song-artist_name, .compact_playlist .compact_song-track_name{
-	width: 10rem;
-}
-.compact_playlist .compact_song{
-	background: #505050;
-	}
-.compact_playlist .compact_song:nth-of-type(even) {
-	background: #555;
-	}
-	.compact_playlist-header {
-		margin: 0.2rem 0;
-		}
-
-
 .vk_post {
 	margin-bottom:2rem;
 	overflow:hidden;
@@ -4597,6 +4544,57 @@ html.opera-extension{
 		.vk-login-context input{
 			margin-left:0;
 		}
+		
+		.compact_song {
+			overflow: hidden;
+			height: 2rem;
+			font-size: 0.9rem;
+			color: #ccc;
+			padding: 0.4rem;
+			margin: 0 -0.4rem;
+		}
+			.compact_song-image_con {
+				float:left;
+				width: 2rem;
+				height: 2rem;
+				margin-right: 0.4rem;
+				border-radius: 50%;
+				background: #595959;
+			}
+				.compact_song-image_con img{
+					height: 100%;
+					width: 100%;
+					border-radius: 50%;
+				}
+			.compact_song-artist_name, .compact_song-track_name{
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+
+			}
+			.compact_song-artist_name {
+				height: 1em;
+				line-height: 1em;
+				color: #AAA;
+			}
+			.compact_song-track_name{
+				margin-top: 0.2rem;
+				height: 1.4em;
+				line-height: 1.4em;
+			}
+		.compact_playlist .compact_song-artist_name, .compact_playlist .compact_song-track_name{
+			width: 10rem;
+		}
+		.compact_playlist .compact_song{
+			background: #505050;
+			}
+		.compact_playlist .compact_song:nth-of-type(even) {
+			background: #555;
+			}
+			.compact_playlist-header {
+				margin: 0.2rem 0;
+				}
+
 		
 		.view_sources {
 			margin-top:1rem;
