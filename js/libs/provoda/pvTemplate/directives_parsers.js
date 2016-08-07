@@ -224,7 +224,7 @@ return {
 			var parent_node = node.parentNode;
 			var full_declaration = params;
 
-			var comment_anchor = document.createComment('anchor for pv-when');
+			var comment_anchor = window.document.createComment('anchor for pv-when');
 			parent_node.replaceChild(comment_anchor, node);
 			var directives_data = {
 				new_scope_generator: true,
@@ -250,7 +250,7 @@ return {
 				parent_node.replaceChild(tnode, node);
 				return tnode;
 			} else {
-				var comment_anchor = document.createComment('anchor for pv-when');
+				var comment_anchor = window.document.createComment('anchor for pv-when');
 				parent_node.replaceChild(comment_anchor, node);
 				var directives_data = {
 					new_scope_generator: true,
