@@ -5,12 +5,12 @@ var spv = require('spv');
 var angbo = require('angbo');
 var $ = require('jquery');
 var parser = require('./pvTemplate/parser');
+var PvSimpleSampler = require('./pvTemplate/PvSimpleSampler');
+var parseEasy = require('./pvTemplate/parseEasy');
 
 var push = Array.prototype.push;
 var addEvent = spv.addEvent;
 var removeEvent = spv.removeEvent;
-
-var PvSimpleSampler = parser.PvSimpleSampler;
 
 /*
 
@@ -843,7 +843,7 @@ spv.Class.extendTo(PvTemplate, {
 
 		var vroot_node = this.root_node_raw;
 
-		var list_for_binding = parser.parseEasy(start_node, vroot_node, struc_store, this.getSample);
+		var list_for_binding = parseEasy(start_node, vroot_node, struc_store, this.getSample);
 
 		var all_chunks = [];
 		for (var i = 0; i < list_for_binding.length; i+=3) {

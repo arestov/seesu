@@ -4,9 +4,11 @@ var $ = require('jquery');
 var d_parsers = require('./directives_parsers');
 var getCachedPVData = require('./getCachedPVData');
 var StandartChange = require('./StandartChange');
+// var PvSimpleSampler = require('./PvSimpleSampler');
 // var patching_directives = d_parsers.patching_directives;
 var getIndexList = d_parsers.getIndexList;
 var setStrucKey = getCachedPVData.setStrucKey;
+
 
 var patching_directives = {
   'pv-import': (function(){
@@ -37,8 +39,6 @@ var patching_directives = {
     };
   })(),
   'pv-when': function(node, params, getSample, opts) {
-    var parser = this;
-
     var parent_node = node.parentNode;
     var full_declaration = params;
 
@@ -47,7 +47,7 @@ var patching_directives = {
     var directives_data = {
       new_scope_generator: true,
       instructions: {
-        'pv-when-condition': makePvWhen(comment_anchor, full_declaration, false, node, parser)
+        'pv-when-condition': makePvWhen(comment_anchor, full_declaration, false, node)
       }
     };
     comment_anchor.directives_data = directives_data;
@@ -55,9 +55,6 @@ var patching_directives = {
   },
   'pv-replace': function(node, params, getSample, opts) {
     params.done = true;
-
-    var parser = this;
-
     var map = opts && opts.samples;
 
     var sample_name = (map && map[params.sample_name]) || params.sample_name;
@@ -75,7 +72,7 @@ var patching_directives = {
         instructions: {
           'pv-when-condition': makePvWhen(comment_anchor, params['pv-when'], function() {
             return getSample(sample_name, true);
-          }, null, parser)
+          }, null)
         }
       };
       comment_anchor.directives_data = directives_data;
@@ -86,7 +83,7 @@ var patching_directives = {
 
 var patching_directives_list = getIndexList(patching_directives);
 
-var patchNode = function(parser, node, struc_store, directives_data, getSample, opts) {
+var patchNode = function(node, struc_store, directives_data, getSample, opts) {
 	for (var i = 0; i < patching_directives_list.length; i++) {
 		var cur = patching_directives_list[i];
 		if (!directives_data || !directives_data.instructions[cur]) {
@@ -94,7 +91,7 @@ var patchNode = function(parser, node, struc_store, directives_data, getSample, 
 		}
 		// cur
 		// node, params, getSample, opts
-		var result = patching_directives[cur].call(parser, node, directives_data.instructions[cur], getSample, opts);
+		var result = patching_directives[cur].call(null, node, directives_data.instructions[cur], getSample, opts);
 		if (!result) {
 			return;
 		}
@@ -109,9 +106,7 @@ var patchNode = function(parser, node, struc_store, directives_data, getSample, 
 	}
 };
 
-function makePvWhen(anchor, expression, getSample, sample_node, parser) {
-
-	var PvSimpleSampler = parser.PvSimpleSampler;
+function makePvWhen(anchor, expression, getSample, sample_node) {
 	// debugger;
 	return new StandartChange(anchor, {
 		data: {
@@ -135,6 +130,7 @@ function makePvWhen(anchor, expression, getSample, sample_node, parser) {
 					root_node = wwtch.data.getSample();
 				} else {
 					if (!wwtch.data.sampler) {
+            var PvSimpleSampler = require('./PvSimpleSampler');
 						wwtch.data.sampler = new PvSimpleSampler(wwtch.data.sample_node, tpl.struc_store, tpl.getSample);
 					}
 					root_node = wwtch.data.sampler.getClone();

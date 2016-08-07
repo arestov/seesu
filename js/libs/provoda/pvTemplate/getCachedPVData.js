@@ -29,7 +29,7 @@ var getNodeInstanceCount = function(pvprsd, struc_store) {
 	return instances_ci[pvprsd];
 };
 
-var getCommentDirectivesData = function(cur_node, getSample, parser) {
+var getCommentDirectivesData = function(cur_node, getSample) {
 	//возвращает объект с индексом одной инструкции, основанной на тексте коммента
 	var directives_data = {
 		new_scope_generator: null,
@@ -43,7 +43,7 @@ var getCommentDirectivesData = function(cur_node, getSample, parser) {
 
 	if (comment_directives.hasOwnProperty(directive_name)) {
 		var full_declaration = text_content.replace(comment_pvdiv_regexp, '');
-		var chunk = comment_directives_p[directive_name].call(parser, cur_node, full_declaration, directive_name, getSample);
+		var chunk = comment_directives_p[directive_name].call(null, cur_node, full_declaration, directive_name, getSample);
 		// if (Array.isArray(chunk) && chunk[0] === 'replaced') {
 		// 	if (directives_data.replacing_data) {
 		// 		throw new Error('cant be 2 replacers');
@@ -90,7 +90,7 @@ var getDirectivesData = (function() {
 	var directives_names_list = config.directives_names_list;
 	var one_parse = config.one_parse;
 
-	return function(cur_node, getSample, parser) {
+	return function(cur_node, getSample) {
 
 		//возвращает объект с индексом инструкций нода, основанный на аттрибутах элемента
 		var
@@ -126,7 +126,7 @@ var getDirectivesData = (function() {
 				value = attrs_by_names[directive_name][0].node.value;
 
 				if (directives_p[directive_name]){
-					value = directives_p[directive_name].call(parser, cur_node, value, directive_name, getSample);
+					value = directives_p[directive_name].call(null, cur_node, value, directive_name, getSample);
 				}
 				// if (Array.isArray(value) && value[0] === 'replaced') {
 				// 	if (directives_data.replacing_data) {
@@ -154,7 +154,7 @@ var getDirectivesData = (function() {
 				value = attrs_by_names[directive_name][0].node.value;
 
 				if (scope_generators_p[directive_name]){
-					value = scope_generators_p[directive_name].call(parser, cur_node, value);
+					value = scope_generators_p[directive_name].call(null, cur_node, value);
 				}
 
 				directives_data.instructions[directive_name] = value;
@@ -172,7 +172,7 @@ var getDirectivesData = (function() {
 				value = attrs_by_names[directive_name][0].node.value;
 
 				if (directives_p[directive_name]){
-					value = directives_p[directive_name].call(parser, cur_node, value, directive_name, getSample);
+					value = directives_p[directive_name].call(null, cur_node, value, directive_name, getSample);
 				}
 				directives_data.instructions[directive_name] = value;
 
@@ -207,7 +207,7 @@ var setStrucKey = function(cur_node, struc_store, directives_data) {
 
 var result = (function() {
 
-	return function(cur_node, struc_store, is_comment, getSample, parser) {
+	return function(cur_node, struc_store, is_comment, getSample) {
 		var directives_data = null;
 		var replacer = null;
 		var pvprsd = cur_node.pvprsd;
@@ -223,9 +223,9 @@ var result = (function() {
 			}
 
 			if (is_comment) {
-				directives_data = getCommentDirectivesData(cur_node, getSample, parser);
+				directives_data = getCommentDirectivesData(cur_node, getSample);
 			} else {
-				directives_data = getDirectivesData(cur_node, getSample, parser);
+				directives_data = getDirectivesData(cur_node, getSample);
 			}
 
 
