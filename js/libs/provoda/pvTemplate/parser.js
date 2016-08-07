@@ -5,38 +5,10 @@ var spv = require('spv');
 var $ = require('jquery');
 var d_parsers = require('./directives_parsers');
 var getCachedPVData = require('./getCachedPVData');
+var patchNode = require('./patchNode');
 
 var config = d_parsers.config;
 var getNodeInstanceCount = getCachedPVData.getNodeInstanceCount;
-
-var patching_directives = d_parsers.patching_directives;
-var getIndexList = d_parsers.getIndexList;
-var patching_directives_list = getIndexList(patching_directives);
-var setStrucKey = getCachedPVData.setStrucKey;
-
-var patchNode = function(node, struc_store, directives_data, getSample, opts) {
-	for (var i = 0; i < patching_directives_list.length; i++) {
-		var cur = patching_directives_list[i];
-		if (!directives_data || !directives_data.instructions[cur]) {
-			continue;
-		}
-		// cur
-		// debugger;
-		// node, params, getSample, opts
-		var result = patching_directives[cur].call(parser, node, directives_data.instructions[cur], getSample, opts);
-		if (!result) {
-			return;
-		}
-
-		if (!result.directives_data && !result.pvprsd) {
-			throw new Error('should be directives_data');
-		}
-		if (result.directives_data) {
-			setStrucKey(result, struc_store, result.directives_data);
-		}
-		return result;
-	}
-};
 
 var PvSimpleSampler = (function(){
 	var push = Array.prototype.push;
@@ -218,7 +190,7 @@ var PvSimpleSampler = (function(){
 				// result.push(cur_node, directives_data);
 			}
 
-			var patched = !is_start_node && patchNode(cur_node, struc_store, directives_data, getSample, opts);
+			var patched = !is_start_node && patchNode(parser, cur_node, struc_store, directives_data, getSample, opts);
 			if (patched) {
 				match_stack.unshift(patched);
 			}
@@ -392,7 +364,7 @@ var parser = {
 					list_for_binding.push(false, cur_node, directives_data);
 				}
 			}
-			var patched = !is_start_node && patchNode(cur_node, struc_store, directives_data, getSample, null);
+			var patched = !is_start_node && patchNode(parser, cur_node, struc_store, directives_data, getSample, null);
 			if (patched) {
 				match_stack.unshift(patched, can_bind);
 			}
