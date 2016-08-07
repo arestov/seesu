@@ -1,8 +1,14 @@
 define(function(require) {
 'use strict';
+var cloneObj = require('spv').cloneObj;
 var getCachedPVData = require('./getCachedPVData');
 var patchNode = require('./patchNode');
 var buildClone = require('./buildClone');
+var unsetStrucKey = getCachedPVData.unsetStrucKey;
+var setStrucKey = getCachedPVData.setStrucKey;
+var directives_parsers = require('./directives_parsers');
+var scope_generators_p = directives_parsers.scope_generators_p;
+
 
 function getCommentPVData(cur_node, struc_store, getSample) {
 	return getCachedPVData(cur_node, struc_store, true, getSample);
@@ -12,8 +18,37 @@ function getPVData(cur_node, struc_store, getSample) {
 	return getCachedPVData(cur_node, struc_store, false, getSample);
 }
 
+var createPvNest = scope_generators_p['pv-nest'];
+
+var getMarkedPvNest = function (node, pv_nest, struc_store, getSample) {
+  if (!pv_nest) {
+    return node;
+  }
+
+  if (node.getAttribute('pv-nest')) {
+    throw new Error('pv-import and sample itself could not be both marked as pv-nest');
+  }
+
+
+  var directives_data = cloneObj({}, getPVData(node, struc_store, getSample));
+  directives_data.instructions = cloneObj({}, directives_data.instructions);
+  directives_data.instructions['pv-nest'] = createPvNest(node, pv_nest);
+  directives_data.new_scope_generator = true;
+
+  var result = unsetStrucKey(node);
+  setStrucKey(node, struc_store, directives_data);
+
+  return result;
+};
+
 return function getPatchedTree(original_node, struc_store, getSample, opts, sample_id) {
-  var node = buildClone(original_node, struc_store, sample_id);
+  var node = getMarkedPvNest(
+    buildClone(original_node, struc_store, sample_id),
+    opts && opts.pv_nest,
+    struc_store,
+    getSample
+  );
+
   // var result = [];
 
   var match_stack = [ node ], i = 0;
