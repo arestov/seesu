@@ -174,8 +174,7 @@ var PvSimpleSampler = (function(){
 			}
 			if (!this.patched_cache[opts.key]) {
 				this.patched_cache[opts.key] = getPatchedTree(
-					buildClone(this.onode, this.struc_store, this._id),
-					this.struc_store, this.getSample, opts);
+					this.onode, this.struc_store, this.getSample, opts, this._id);
 			}
 
 			return buildClone(this.patched_cache[opts.key], this.struc_store, this._id);
@@ -183,8 +182,7 @@ var PvSimpleSampler = (function(){
 		} else {
 			if (!this.mod_root_node) {
 				this.mod_root_node = getPatchedTree(
-					buildClone(this.onode, this.struc_store, this._id),
-					this.struc_store, this.getSample, opts);
+					this.onode, this.struc_store, this.getSample, opts, this._id);
 			}
 
 			return buildClone(this.mod_root_node, this.struc_store, this._id);

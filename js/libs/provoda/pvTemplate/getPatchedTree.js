@@ -2,6 +2,7 @@ define(function(require) {
 'use strict';
 var getCachedPVData = require('./getCachedPVData');
 var patchNode = require('./patchNode');
+var buildClone = require('./buildClone');
 
 function getCommentPVData(cur_node, struc_store, getSample) {
 	return getCachedPVData(cur_node, struc_store, true, getSample);
@@ -11,7 +12,8 @@ function getPVData(cur_node, struc_store, getSample) {
 	return getCachedPVData(cur_node, struc_store, false, getSample);
 }
 
-return function getPatchedTree(node, struc_store, getSample, opts) {
+return function getPatchedTree(original_node, struc_store, getSample, opts, sample_id) {
+  var node = buildClone(original_node, struc_store, sample_id);
   // var result = [];
 
   var match_stack = [ node ], i = 0;
