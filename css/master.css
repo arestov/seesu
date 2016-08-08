@@ -752,35 +752,6 @@ iframe.you-tube-video,embed.you-tube-video{
 	color: #757575;
 	}
 
-.shareb-base.sharebopened .share-user-suggest{
-
-
-
-	}
-	.shareb-base .share-user-suggest a{
-		min-width:200px;
-	}
-	.shareb-base .share-user-suggest a, .post-to-my-vk-wall{
-		display: block;
-		overflow: hidden;
-		padding: 3px 6px 3px 3px;
-		border-radius:3px;
-		cursor: pointer;
-		}
-	.share-user-suggest img{
-		width:25px;
-		height:25px;
-		float: left;
-	}
-	.shareb-base .share-user-suggest img, .post-to-my-vk-wall img{
-		float:left;
-		margin-right:7px;
-		width:1.8rem;
-		height:1.8rem;
-		}
-	.shareb-base .share-user-suggest:hover a,.post-to-my-vk-wall:hover{
-		background-color: #494949;
-		}
 .protect_clicks{
 	position: relative;
 
