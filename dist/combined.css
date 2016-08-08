@@ -1533,11 +1533,6 @@ body .surf_nav{
 	cursor: pointer;
 	}
 
-
-.lulas_page{
-	overflow: hidden;
-	}
-
 .vk_friend-base-preview{
 	overflow: hidden;
 	margin-bottom: 1rem;
@@ -3491,6 +3486,10 @@ html.opera-extension{
 			.user_artist-counter{
 				font-size: 0.8em;
 				}
+
+		.lulas_page{
+			overflow: hidden;
+			}
 		
 		.album_preview-big{
 			cursor: pointer;
