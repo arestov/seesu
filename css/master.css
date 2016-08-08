@@ -928,36 +928,7 @@ body .surf_nav{
 		display: inline-block;
 		width: 50px;
 	}
-.lfm_friend-base-preview{
-	overflow: hidden;
-	margin-bottom: 1rem;
-	padding: 0.5rem;
-	border-radius: 0.2rem;
-	cursor: pointer;
-	}
-	.lfm_friend-base-preview:hover{
-		background-color:#555;
-	}
-	.lfm_friend-ava{
-		float:left;
-		height: 4.58rem;
-		width: 4.58rem;
-		margin-right:1rem;
-		}
-	.lfm_friend-desc{
-		font-size: 0.8em;
-		color:#8C8C8C;
-	}
-	.lfm_friend-scrobbler{
-		float:right;
-		font-size:0.8em;
-		}
-		.lfm_friend-scrobbler img{
-			height: 1.143rem;
-			width: 1.143rem;
-			position: relative;
-			top: 0.2rem;
-		}
+
 .vk_friend-base-preview{
 	overflow: hidden;
 	margin-bottom: 1rem;
