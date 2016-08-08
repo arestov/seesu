@@ -1386,13 +1386,6 @@ iframe.you-tube-video,embed.you-tube-video{
 		.attention-message .close-message:hover{
 			color:#ccc;
 			}
-.moplas-block .moplas-list li .download-song-link{
-	float:right;
-	margin-right:5px;
-	}
-.moplas-block .moplas-list li .download-pressed{
-	color: #757575;
-	}
 
 .row-song-context input{
 	margin:0;
@@ -4088,6 +4081,15 @@ html.opera-extension{
 			text-shadow: 1px 1px 1px #000;
 			padding: 0.5rem 1rem;
 			}
+		
+		.moplas-block .moplas-list li .download-song-link{
+			float:right;
+			margin-right:5px;
+			}
+		.moplas-block .moplas-list li .download-pressed{
+			color: #757575;
+			}
+
 		
 		.track-context .track-aside-info {
 			position: absolute;
