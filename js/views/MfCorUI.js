@@ -15,13 +15,12 @@ var notifyCounterUI = spv.inh(View, {}, {
 	}
 });
 
-var li = document.createElement('li');
 var FileIntorrentPromiseUI = spv.inh(View, {}, {
 	'stch-infoHash': function(target, state) {
 		target.c.text(state);
 	},
 	createBase: function(){
-		this.c = $(li.cloneNode());
+		this.c = $('<li class="mopla-item"></li>');
 	}
 });
 
@@ -49,7 +48,7 @@ var FileInTorrentUI = spv.inh(View, {},{
 	},
 	createBase: function() {
 		var _this = this;
-		this.c = $('<li></li>');
+		this.c = $('<li class="mopla-item"></li>');
 
 
 		$('<span class="play-button-place"></span>').appendTo(this.c);
