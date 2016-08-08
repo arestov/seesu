@@ -1550,25 +1550,6 @@ body .surf_nav{
 	.full-page .songcard_page-header{
 		font-size: 1.5rem;
 		}
-.intrack_page{
-	margin: 1rem -13px 0;
-	border-top: 1px solid #555555;
-	border-bottom: 1px solid #6e6e6e;
-	background: #5a5a5a;
-	padding:0.2rem 0 0.3rem;
-	min-height: 3rem;
-	cursor: pointer;
-	}
-	.intrack_page:hover {
-		background-color: #555;
-		border-top-color: #505050;
-		}
-.intrack_page-h{
-	margin-left: 1rem;
-	margin-right: 0.5rem;
-	float: left;
-	white-space: pre-line;
-}
 
 .dmca_notice{
 	font-size: 0.8rem;
@@ -4316,6 +4297,26 @@ html.opera-extension{
 				    margin-bottom: 1rem;
 				    margin-left:1rem;
 				    }
+				
+				.intrack_page{
+				  margin: 1rem -13px 0;
+				  border-top: 1px solid #555555;
+				  border-bottom: 1px solid #6e6e6e;
+				  background: #5a5a5a;
+				  padding:0.2rem 0 0.3rem;
+				  min-height: 3rem;
+				  cursor: pointer;
+				  }
+				  .intrack_page:hover {
+				    background-color: #555;
+				    border-top-color: #505050;
+				    }
+				.intrack_page-h{
+				  margin-left: 1rem;
+				  margin-right: 0.5rem;
+				  float: left;
+				  white-space: pre-line;
+				}
 				
 		.vk-needs-login .vk-login-context{
 			display:block;
