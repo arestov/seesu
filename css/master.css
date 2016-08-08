@@ -895,32 +895,7 @@ body .surf_nav{
 .lulas_page{
 	overflow: hidden;
 	}
-.user_artist{
-	display: inline-block;
-	width: 8rem;
-	border: 2px dotted #777;
-	margin-bottom: 0.5rem;
-	border-radius: 0.5rem;
-	padding: 0.2rem;
-	margin-right: 0.5rem;
-	cursor: pointer;
-	}
-	.full-page .user_artist{
-		margin-bottom: 2.5rem;
-	}
-	.user_artist-image_con img{
-		max-width: 100%;
-		}
 
-	.user_artist-name{
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow:ellipsis;
-		}
-
-	.user_artist-counter{
-		font-size: 0.8em;
-		}
 .user_tag{
 
 	}
