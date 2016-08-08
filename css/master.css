@@ -126,15 +126,7 @@ a.track_name_loading .song-track-name,
 .row-listeners-context{
 	margin-top:14px;
 }
-.big-listener-info{
-	overflow:hidden;
-	padding-top:1rem;
-	}
-	.big-listener-info .get-vk-photo-request-b{
-		float:right;
-		margin-bottom: 1rem;
-		margin-left:1rem;
-		}
+
 @keyframes "pulse1" {
 	 0% {
 	    background-color: red;
@@ -655,38 +647,6 @@ a.track_name_loading .song-track-name,
 }
 .serv-container{
 	display:none;
-}
-.nodewebkit .track-listeners{
-	display: none;
-}
-.track-listeners{
-	margin:0.5rem 0 -15px;
-	position: relative;
-	z-index: 2;
-}
-.big-user-avatar {
-	float:left;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	margin-right:1.72rem;
-	width: 196px;
-	height: 252px;
-	border-radius: 0.5rem;
-	background: #545454;
-	text-align: center;
-	position: relative;
-}
-.big-user-avatar img.big-user-avatar--img {
-  max-width: 196px;
-  max-height: 252px;
-}
-.yes-transform_support .big-user-avatar img.big-user-avatar--img {
-	max-height: none;
-	position: absolute;
-	top:50%;
-	left:50%;
- transform-origin: translateY(-50%) translateX(-50%);
-	transform: translateY(-50%) translateX(-50%);
 }
 
 iframe.you-tube-video,embed.you-tube-video{
