@@ -1396,36 +1396,6 @@ iframe.you-tube-video,embed.you-tube-video{
 
 }
 
-.addsong-to-playlist{
-	padding:1rem 0 0;
-	}
-	.addsong-to-playlist h4{
-
-		margin: 0 0 0.5rem 0.2rem;
-		padding: 0;
-		font-weight:400;
-		}
-	.addsong-to-playlist .playlist-query{
-
-		margin-bottom: 1rem;
-		}
-		.addsong-to-playlist .create-named-playlist{
-			color:#757575;
-			}
-			.addsong-to-playlist .create-named-playlist em{
-				color: #ccc;
-				}
-		.addsong-to-playlist .suggest{
-			padding:0.3rem;
-			border-radius:0.3rem;
-			cursor: pointer;
-			}
-			.addsong-to-playlist .suggest:hover{
-				background-color: #494949;
-				}
-		.addsong-to-playlist .list-of-playlists{
-			width:200px;
-			}
 .song-by-user{
 	display: block;
 	overflow: hidden;
@@ -4103,6 +4073,37 @@ html.opera-extension{
 			color: #7d7d7d;
 		}
 		
+					.addsong-to-playlist{
+						padding:1rem 0 0;
+						}
+						.addsong-to-playlist h4{
+
+							margin: 0 0 0.5rem 0.2rem;
+							padding: 0;
+							font-weight:400;
+							}
+						.addsong-to-playlist .playlist-query{
+
+							margin-bottom: 1rem;
+							}
+							.addsong-to-playlist .create-named-playlist{
+								color:#757575;
+								}
+								.addsong-to-playlist .create-named-playlist em{
+									color: #ccc;
+									}
+							.addsong-to-playlist .suggest{
+								padding:0.3rem;
+								border-radius:0.3rem;
+								cursor: pointer;
+								}
+								.addsong-to-playlist .suggest:hover{
+									background-color: #494949;
+									}
+							.addsong-to-playlist .list-of-playlists{
+								width:200px;
+								}
+					
 					.share-song{
 						padding-top:1rem;
 						}
