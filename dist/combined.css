@@ -1533,14 +1533,6 @@ body .surf_nav{
 	cursor: pointer;
 	}
 
-.lfm_user_page-header{
-	overflow: hidden;
-	margin-bottom: 1rem;
-}
-.vk_user_page-header{
-	overflow: hidden;
-	margin-bottom: 1rem;
-}
 .songcard_page .nested_artist{
 	background: #4D4D4D;
 	border-top: 1px solid #464646;
@@ -3623,6 +3615,16 @@ html.opera-extension{
 					position: relative;
 					top: 0.2rem;
 				}
+		
+		.lfm_user_page-header{
+			overflow: hidden;
+			margin-bottom: 1rem;
+		}
+		
+		.vk_user_page-header{
+			overflow: hidden;
+			margin-bottom: 1rem;
+		}
 		
 		.artist-info{
 			position:relative;
