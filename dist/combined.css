@@ -1537,32 +1537,7 @@ body .surf_nav{
 .lulas_page{
 	overflow: hidden;
 	}
-.user_artist{
-	display: inline-block;
-	width: 8rem;
-	border: 2px dotted #777;
-	margin-bottom: 0.5rem;
-	border-radius: 0.5rem;
-	padding: 0.2rem;
-	margin-right: 0.5rem;
-	cursor: pointer;
-	}
-	.full-page .user_artist{
-		margin-bottom: 2.5rem;
-	}
-	.user_artist-image_con img{
-		max-width: 100%;
-		}
 
-	.user_artist-name{
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow:ellipsis;
-		}
-
-	.user_artist-counter{
-		font-size: 0.8em;
-		}
 .user_tag{
 
 	}
@@ -1570,36 +1545,7 @@ body .surf_nav{
 		display: inline-block;
 		width: 50px;
 	}
-.lfm_friend-base-preview{
-	overflow: hidden;
-	margin-bottom: 1rem;
-	padding: 0.5rem;
-	border-radius: 0.2rem;
-	cursor: pointer;
-	}
-	.lfm_friend-base-preview:hover{
-		background-color:#555;
-	}
-	.lfm_friend-ava{
-		float:left;
-		height: 4.58rem;
-		width: 4.58rem;
-		margin-right:1rem;
-		}
-	.lfm_friend-desc{
-		font-size: 0.8em;
-		color:#8C8C8C;
-	}
-	.lfm_friend-scrobbler{
-		float:right;
-		font-size:0.8em;
-		}
-		.lfm_friend-scrobbler img{
-			height: 1.143rem;
-			width: 1.143rem;
-			position: relative;
-			top: 0.2rem;
-		}
+
 .vk_friend-base-preview{
 	overflow: hidden;
 	margin-bottom: 1rem;
@@ -3519,6 +3465,33 @@ html.opera-extension{
 }
 
 
+		.user_artist{
+			display: inline-block;
+			width: 8rem;
+			border: 2px dotted #777;
+			margin-bottom: 0.5rem;
+			border-radius: 0.5rem;
+			padding: 0.2rem;
+			margin-right: 0.5rem;
+			cursor: pointer;
+			}
+			.full-page .user_artist{
+				margin-bottom: 2.5rem;
+			}
+			.user_artist-image_con img{
+				max-width: 100%;
+				}
+
+			.user_artist-name{
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow:ellipsis;
+				}
+
+			.user_artist-counter{
+				font-size: 0.8em;
+				}
+		
 		.album_preview-big{
 			cursor: pointer;
 			}
@@ -3619,6 +3592,37 @@ html.opera-extension{
 				margin-top:7px;
 			}
 
+		
+		.lfm_friend-base-preview{
+			overflow: hidden;
+			margin-bottom: 1rem;
+			padding: 0.5rem;
+			border-radius: 0.2rem;
+			cursor: pointer;
+			}
+			.lfm_friend-base-preview:hover{
+				background-color:#555;
+			}
+			.lfm_friend-ava{
+				float:left;
+				height: 4.58rem;
+				width: 4.58rem;
+				margin-right:1rem;
+				}
+			.lfm_friend-desc{
+				font-size: 0.8em;
+				color:#8C8C8C;
+			}
+			.lfm_friend-scrobbler{
+				float:right;
+				font-size:0.8em;
+				}
+				.lfm_friend-scrobbler img{
+					height: 1.143rem;
+					width: 1.143rem;
+					position: relative;
+					top: 0.2rem;
+				}
 		
 		.artist-info{
 			position:relative;
