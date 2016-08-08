@@ -1533,19 +1533,6 @@ body .surf_nav{
 	cursor: pointer;
 	}
 
-
-.lulas_page{
-	overflow: hidden;
-	}
-
-.user_tag{
-
-	}
-	.user_tag-count{
-		display: inline-block;
-		width: 50px;
-	}
-
 .vk_friend-base-preview{
 	overflow: hidden;
 	margin-bottom: 1rem;
@@ -3465,6 +3452,14 @@ html.opera-extension{
 }
 
 
+		.user_tag{
+
+			}
+			.user_tag-count{
+				display: inline-block;
+				width: 50px;
+			}
+		
 		.user_artist{
 			display: inline-block;
 			width: 8rem;
@@ -3491,6 +3486,10 @@ html.opera-extension{
 			.user_artist-counter{
 				font-size: 0.8em;
 				}
+
+		.lulas_page{
+			overflow: hidden;
+			}
 		
 		.album_preview-big{
 			cursor: pointer;
