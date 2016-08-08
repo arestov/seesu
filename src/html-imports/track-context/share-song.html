@@ -119,6 +119,58 @@
 		}
 
 </style>
+<style>
+.protect_clicks{
+	position: relative;
+
+	}
+.clicks_protecter{
+	position: absolute;
+	display: none;
+	left:0;
+	top:0;
+	bottom: 0;
+	right: 0;
+	background: #333;
+	opacity: 0.5;
+	}
+	.clicks_protecter:hover{
+		cursor: pointer;
+		border-bottom: 0.2rem solid #fff;
+		}
+.compact_share {
+
+	}
+	.compact_share .clicks_protecter{
+		display: block;
+	}
+	.share-song .compact_share .protect_clicks{
+		height: 4.5rem;
+		}
+	.compact_share .share-user-suggest{
+		width: auto;
+		margin-bottom:0;
+	}
+	.compact_share .share-user-suggest a{
+		padding: 0;
+		border-radius: 0;
+		cursor: default;
+		min-width: 0;
+		}
+	.compact_share .share-user-suggest img{
+		margin-right:0;
+		}
+	.compact_share .text_part{
+		display: none;
+		}
+
+.friends-search-desc{
+	clear: both;
+	float: left;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
+	}
+</style>
 <div class="share-song hidden" pv-nest="context_parts for_model:row-share" pv-class="hidden: !active_view">
   <input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
   <div
