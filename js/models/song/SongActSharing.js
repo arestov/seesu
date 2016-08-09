@@ -179,7 +179,7 @@ var LFMUserSuggest = spv.inh(invstg.BaseSuggest, {
 		target.userid = user.state('userid');
 		target.text_title = target.userid;
 		target.updateManyStates({
-			selected_image: user.state('selected_image'),
+			selected_image: user.state('lfm_img'),
 			text_title: target.text_title
 		});
 	}
