@@ -70,7 +70,7 @@
 	.moplas-block ul {
 
 		}
-		.moplas-block .moplas-list li{
+		.mopla-item{
 			padding:0.5rem 0.4rem 0.5rem 3.1rem;
 			border-top: 1px solid transparent;
 			border-bottom: 1px solid transparent;
@@ -78,23 +78,23 @@
 			cursor: pointer;
 			position: relative;
 			}
-		.moplas-block .moplas-list li.mf-unavailable{
+		.mopla-item.mf-unavailable{
 			color:#666;
 			}
-			.moplas-block .moplas-list li .play-button-place{
+			.mopla-item .play-button-place{
 				position: absolute;
 				left:0.4rem;
 				width: 32px;
 				height: 32px;
 				top: -0.1rem;
 			}
-			.moplas-block .moplas-list li .play-button-place .pc-place{
+			.mopla-item .play-button-place .pc-place{
 				display: none;
 				}
-			.moplas-block .moplas-list li.selected-mf .play-button-place .pc-place{
+			.mopla-item.selected-mf .play-button-place .pc-place{
 				display:block;
 				}
-			.moplas-block .moplas-list li .mf-progress{
+			.mopla-item .mf-progress{
 				overflow: hidden;
 				padding:1px 0;
 				min-height: 15px;
@@ -107,12 +107,12 @@
 				.moplas-block.want_more_songs ul li .mf-progress{
 					max-height:none;
 					}
-			.moplas-block .moplas-list li .mf-duration{
+			.mopla-item .mf-duration{
 				float:right;
 				margin-bottom: 2px;
 				margin-left: 5px;
 				}
-			.moplas-block .moplas-list li .mf-source{
+			.mopla-item .mf-source{
 				margin-right:5px;
 				margin-left: 2px;
 				color: hsl(0, 0%, 47%);
@@ -121,7 +121,7 @@
 					display: none;
 					}
 
-			.moplas-block .moplas-list li a{
+			.mopla-item a{
 				color:inherit;
 			}
 	.moplas-block .full_mb_part {
@@ -167,14 +167,14 @@
 		top: 0.15rem;
 	}
 
-	.moplas-block .moplas-list li{
+	.mopla-item{
 		display: none;
 		}
 
 		.want_more_songs.moplas-block .moplas-list{
 			margin-bottom:42px;
 			}
-		.want_more_songs.moplas-block .moplas-list li{
+		.want_more_songs .mopla-item{
 
 			display: block;
 			}
@@ -193,7 +193,7 @@
 			top:50%;
 			left:auto;
 			}
-	.moplas-block .moplas-list li.overstocked{
+	.mopla-item.overstocked{
 		display: none;
 		}
 
@@ -201,7 +201,7 @@
 			display: block;
 		}
 
-	.moplas-block .moplas-list li.selected-mf{
+	.mopla-item.selected-mf{
 		display: block;
 		overflow: hidden;
 		}
@@ -215,11 +215,11 @@
 	}
 </style>
 <style>
-.moplas-block .moplas-list li .download-song-link{
+.mopla-item .download-song-link{
 	float:right;
 	margin-right:5px;
 	}
-.moplas-block .moplas-list li .download-pressed{
+.mopla-item .download-pressed{
 	color: #757575;
 	}
 

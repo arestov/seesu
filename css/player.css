@@ -97,10 +97,10 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		margin:0 4px;
 		color: hsl(0, 0%, 55%);
 		}
-.moplas-block .moplas-list li .mf-progress{
+.mopla-item .mf-progress{
 	line-height:1.2;
 	}
-.moplas-block .moplas-list li.selected-mf .mf-progress{
+.mopla-item.selected-mf .mf-progress{
 	position:relative;
 	right:0;
 	left:0;
@@ -504,9 +504,3 @@ a.track_name_loading .song-track-name{
 .playlist-container ul.tracks-for-play > li.selected_song a.track-node {
 	background: #444;
 	}
-
-
-
-
-
-

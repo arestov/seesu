@@ -2173,10 +2173,10 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		margin:0 4px;
 		color: hsl(0, 0%, 55%);
 		}
-.moplas-block .moplas-list li .mf-progress{
+.mopla-item .mf-progress{
 	line-height:1.2;
 	}
-.moplas-block .moplas-list li.selected-mf .mf-progress{
+.mopla-item.selected-mf .mf-progress{
 	position:relative;
 	right:0;
 	left:0;
@@ -2580,12 +2580,6 @@ a.track_name_loading .song-track-name{
 .playlist-container ul.tracks-for-play > li.selected_song a.track-node {
 	background: #444;
 	}
-
-
-
-
-
-
 
 
 .playlist_panel{
@@ -3802,7 +3796,7 @@ html.opera-extension{
 			.moplas-block ul {
 
 				}
-				.moplas-block .moplas-list li{
+				.mopla-item{
 					padding:0.5rem 0.4rem 0.5rem 3.1rem;
 					border-top: 1px solid transparent;
 					border-bottom: 1px solid transparent;
@@ -3810,23 +3804,23 @@ html.opera-extension{
 					cursor: pointer;
 					position: relative;
 					}
-				.moplas-block .moplas-list li.mf-unavailable{
+				.mopla-item.mf-unavailable{
 					color:#666;
 					}
-					.moplas-block .moplas-list li .play-button-place{
+					.mopla-item .play-button-place{
 						position: absolute;
 						left:0.4rem;
 						width: 32px;
 						height: 32px;
 						top: -0.1rem;
 					}
-					.moplas-block .moplas-list li .play-button-place .pc-place{
+					.mopla-item .play-button-place .pc-place{
 						display: none;
 						}
-					.moplas-block .moplas-list li.selected-mf .play-button-place .pc-place{
+					.mopla-item.selected-mf .play-button-place .pc-place{
 						display:block;
 						}
-					.moplas-block .moplas-list li .mf-progress{
+					.mopla-item .mf-progress{
 						overflow: hidden;
 						padding:1px 0;
 						min-height: 15px;
@@ -3839,12 +3833,12 @@ html.opera-extension{
 						.moplas-block.want_more_songs ul li .mf-progress{
 							max-height:none;
 							}
-					.moplas-block .moplas-list li .mf-duration{
+					.mopla-item .mf-duration{
 						float:right;
 						margin-bottom: 2px;
 						margin-left: 5px;
 						}
-					.moplas-block .moplas-list li .mf-source{
+					.mopla-item .mf-source{
 						margin-right:5px;
 						margin-left: 2px;
 						color: hsl(0, 0%, 47%);
@@ -3853,7 +3847,7 @@ html.opera-extension{
 							display: none;
 							}
 
-					.moplas-block .moplas-list li a{
+					.mopla-item a{
 						color:inherit;
 					}
 			.moplas-block .full_mb_part {
@@ -3899,14 +3893,14 @@ html.opera-extension{
 				top: 0.15rem;
 			}
 
-			.moplas-block .moplas-list li{
+			.mopla-item{
 				display: none;
 				}
 
 				.want_more_songs.moplas-block .moplas-list{
 					margin-bottom:42px;
 					}
-				.want_more_songs.moplas-block .moplas-list li{
+				.want_more_songs .mopla-item{
 
 					display: block;
 					}
@@ -3925,7 +3919,7 @@ html.opera-extension{
 					top:50%;
 					left:auto;
 					}
-			.moplas-block .moplas-list li.overstocked{
+			.mopla-item.overstocked{
 				display: none;
 				}
 
@@ -3933,7 +3927,7 @@ html.opera-extension{
 					display: block;
 				}
 
-			.moplas-block .moplas-list li.selected-mf{
+			.mopla-item.selected-mf{
 				display: block;
 				overflow: hidden;
 				}
@@ -3946,11 +3940,11 @@ html.opera-extension{
 			padding: 0.5rem 1rem;
 			}
 		
-		.moplas-block .moplas-list li .download-song-link{
+		.mopla-item .download-song-link{
 			float:right;
 			margin-right:5px;
 			}
-		.moplas-block .moplas-list li .download-pressed{
+		.mopla-item .download-pressed{
 			color: #757575;
 			}
 
