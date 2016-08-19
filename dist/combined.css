@@ -1825,8 +1825,7 @@ body .surf_nav{
 .full_wide_col{
 	clear:both;
 	}
-	.full_wide_col .area_for_button .albums_previews,
-	.full_wide_col .albums_previews-con .area_for_button .desc_prevw_list{
+	.full_wide_col .area_for_button .albums_previews{
 		height: 4.6rem;
 		}
 
@@ -1868,8 +1867,7 @@ body .surf_nav{
 		padding-top:1rem;
 		overflow: hidden;
 		}
-		.area_for_button .albums_previews,
-		.albums_previews-con .area_for_button .desc_prevw_list{
+		.area_for_button .albums_previews{
 			height: 9.4rem;
 			}
 
