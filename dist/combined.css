@@ -1493,11 +1493,6 @@ body .surf_nav{
 }
 
 
-.track-panel .pc-place{
-	float:left;
-	margin-right:6px;
-}
-
 .search-mp3-failed{
 	color:#5E5E5E;
 }
@@ -3088,7 +3083,7 @@ html.opera-extension{
 			.moplas-block.want_more_songs .show-all-songs a{
 				border-bottom-left-radius: 0.5rem;
 				}
-		.moplas-block{
+		.song-row-content.moplas-block{
 			padding:0;
 			min-height:81px;
 			}
@@ -3248,6 +3243,11 @@ html.opera-extension{
 			position:relative;
 			top:1px;
 			height:26px;
+			}
+
+			.track-panel .pc-place{
+				float:left;
+				margin-right:6px;
 			}
 
 		.song-row-content{
