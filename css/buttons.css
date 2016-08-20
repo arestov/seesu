@@ -8,45 +8,11 @@
 	cursor:pointer;
 }
 
-.pc-indicator{
-	display:inline-block;
-	width:25px;
-	height:1.72rem;
-	background: transparent no-repeat;
-}
-.big-indicator{
-	width:32px;
-	height:32px;
-}
-.playing-file .big-indicator.play-indicator{
-	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"highlight-state","part":"button-highlight"}');
-}
-
-.pc.big-control{
-	width:32px;
-	height:32px;
-	display: block;
-}
 .pc.surf_nav{
 	background-color: transparent;
 	}
 
 
-.pc-play{
-	background-image:url(../i/buttons/pc-m-play-l.png);
-	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"link-icon-state","part":"play-button"}');
-	}
-	.pc-play:hover{
-		background-image:url(../i/buttons/pc-m-play-h.png);
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"play-button"}');
-		}
-	.pc-play:active{
-		background-image:url(../i/buttons/pc-m-play-a.png);
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"play-button"}');
-		}
-	.pc-play.surf_nav{
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"play-button"}');
-		}
 .pc-add{
 	background-image:url(../i/buttons/pc-m-add-l.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"link-icon-state","part":"add-button"}');
@@ -145,21 +111,7 @@
 	.pc-prev:active{
 		background-image:url(../i/buttons/pc-m-prev-a.png);
 		}
-.pc-play.big-control{
-	background-image:url(../i/buttons/pc-b-play-l.png);
-	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"link-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
-	}
-	.pc-play.big-control:hover{
-		background-image:url(../i/buttons/pc-b-play-h.png);
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
-		}
-	.pc-play.big-control:active{
-		background-image:url(../i/buttons/pc-b-play-a.png);
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
-		}
-	.surf_nav .pc-play.big-control{
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
-		}
+
 .play-button-place.surf_nav{
 	background-color: transparent;
 	}
