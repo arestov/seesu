@@ -1781,10 +1781,6 @@ body .surf_nav{
 	display: none;
 	}
 
-	.show-zoom-to-track .load-more-list-data{
-		display: none;
-	}
-
 	.show-zoom-to-track .to-play-next{
 
 		}
@@ -2553,6 +2549,11 @@ html.opera-extension{
 		.show-zoom-to-track .tracks-for-play{
 			padding-top:40px;
 		}
+
+		.show-zoom-to-track .load-more-list-data{
+			display: none;
+		}
+
 		
 		.album_preview-big{
 			cursor: pointer;
