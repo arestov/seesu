@@ -243,10 +243,6 @@ a.track_name_loading .song-track-name,
 		background-color: #595959;
 		}
 
-	.song-view{
-		position:relative;
-		margin: 0 0 0 0;
-		}
 .photo-cont{
 	position: relative;
 	overflow: hidden;
