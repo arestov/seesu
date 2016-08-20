@@ -1,11 +1,32 @@
 <style>
 .track-context{
+	margin-top:0.5rem;
+	padding:0 8px 10px;
+	min-height: 389px;
+	}
+	.track-context .song-row-content{
+		margin-bottom: 0;
+		}
+	@media (min-height:600px) {
+		.track-context{
+			min-height: 422px;
+			}
+		}
+
+.track-context{
 	display:none;
 }
 
 .show-zoom-to-track .viewing-song .track-context{
-		display:block;
-	}
+	display:block;
+}
+
+.track-context .photo_and_artinfo{
+	border-top:1px solid #555555;
+	border-bottom:1px solid #6e6e6e;
+	background:#5a5a5a;
+	margin:0 -13px;
+}
 </style>
 <style type="text/css">
 .track-context .track-aside-info {

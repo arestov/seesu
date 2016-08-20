@@ -247,19 +247,6 @@ a.track_name_loading .song-track-name,
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
-.track-context{
-	margin-top:0.5rem;
-	padding:0 8px 10px;
-	min-height: 389px;
-	}
-	.track-context .song-row-content{
-		margin-bottom: 0;
-		}
-	@media (min-height:600px) {
-		.track-context{
-			min-height: 422px;
-			}
-		}
 
 .playlist-container{
 	padding-top: 4px;
@@ -332,13 +319,6 @@ a.track_name_loading .song-track-name,
 		display: inline-block;
 		}
 
-
-.track-context .photo_and_artinfo{
-	border-top:1px solid #555555;
-	border-bottom:1px solid #6e6e6e;
-	background:#5a5a5a;
-	margin:0 -13px;
-}
 .photo_and_artinfo{
 	clear: both;
 
