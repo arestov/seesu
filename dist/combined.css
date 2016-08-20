@@ -1151,15 +1151,6 @@ iframe.you-tube-video,embed.you-tube-video{
 	display: none;
 }
 
-.row-song-context input{
-	margin:0;
-	border-color:#919191;
-	border-radius:4px;
-	background: #777;
-	color:#eee;
-
-}
-
 .song-by-user{
 	display: block;
 	overflow: hidden;
@@ -3326,6 +3317,15 @@ html.opera-extension{
 				height: 100%;
 				width: 100%;
 				}
+		
+		.row-song-context input{
+			margin:0;
+			border-color:#919191;
+			border-radius:4px;
+			background: #777;
+			color:#eee;
+
+		}
 		
 					.nice-buttons-place{
 						float:left;
