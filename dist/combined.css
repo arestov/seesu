@@ -736,9 +736,7 @@ a.track_name_loading .song-track-name,
 	overflow: hidden;
 	height:135px;
 	}
-	.album_insong_image {
-		width: 135px;
-	}
+
 	.photo-cont.loading-images:after{
 		left:auto;
 		right:0;
@@ -748,9 +746,6 @@ a.track_name_loading .song-track-name,
 		.photo-cont{
 			/*237-48+16*/
 			height: 172px;
-		}
-		.album_insong_image {
-			width: 172px;
 		}
 	}
 
@@ -3230,6 +3225,16 @@ html.opera-extension{
 			border-bottom:1px solid #6e6e6e;
 			background:#5a5a5a;
 			margin:0 -13px;
+		}
+
+		.album_insong_image {
+			width: 135px;
+		}
+
+		@media (min-height:600px) {
+			.album_insong_image {
+				width: 172px;
+			}
 		}
 
 		.song-actions{
