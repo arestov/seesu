@@ -1687,10 +1687,6 @@ body .surf_nav{
 		border-radius: 50%;
 		}
 
-	.track-context{
-		display:none;
-	}
-
 	.song-view{
 		background-color: #505050;
 	}
@@ -1847,10 +1843,6 @@ body .surf_nav{
 		}
 .show-zoom-to-track .viewing-song .playing-song-mark{
 	display: none;
-	}
-
-.show-zoom-to-track .viewing-song .track-context{
-		display:block;
 	}
 
 	.show-zoom-to-track .load-more-list-data{
@@ -3292,6 +3284,14 @@ html.opera-extension{
 				display: block;
 			}
 
+		
+		.track-context{
+			display:none;
+		}
+
+		.show-zoom-to-track .viewing-song .track-context{
+				display:block;
+			}
 		
 		.track-context .track-aside-info {
 			position: absolute;

@@ -128,10 +128,6 @@
 		border-radius: 50%;
 		}
 
-	.track-context{
-		display:none;
-	}
-
 	.song-view{
 		background-color: #505050;
 	}
@@ -288,10 +284,6 @@
 		}
 .show-zoom-to-track .viewing-song .playing-song-mark{
 	display: none;
-	}
-
-.show-zoom-to-track .viewing-song .track-context{
-		display:block;
 	}
 
 	.show-zoom-to-track .load-more-list-data{
