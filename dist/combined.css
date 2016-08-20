@@ -507,10 +507,7 @@ html.not-as-application, .not-as-application  body{
 	width: 1.72rem;
 	pointer-events: none;
 }
-.loading_list_items {
-	position: relative;
-	min-height: 1.143rem;
-}
+
 .small_spiner:after,
 .selected-mf.buffering-progress .mf-progress:after,
 .block-for-startpage.loading:after,
@@ -3833,6 +3830,11 @@ html.opera-extension{
 				  margin-right: 0.5rem;
 				  float: left;
 				  white-space: pre-line;
+				}
+				
+				.loading_list_items {
+					position: relative;
+					min-height: 1.143rem;
 				}
 				
 		.pc-indicator{
