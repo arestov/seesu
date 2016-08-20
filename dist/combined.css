@@ -739,9 +739,6 @@ a.track_name_loading .song-track-name,
 	.song-row-content{
 
 	}
-.row-listeners-context{
-	margin-top:14px;
-}
 
 @-webkit-keyframes "pulse1" {
 	 0% {
@@ -1423,15 +1420,6 @@ body .surf_nav{
 	}
 	.playlist_preview-c .area-button{
 		margin-bottom: 0;
-		}
-
-.soft_auth_con {
-	color:#999;
-	padding: 0.5rem 1rem 0;
-	}
-	.soft_auth_con .vk-login-context{
-		padding: 0;
-		margin: 0;
 		}
 
 .pl-auth-con{
@@ -4108,6 +4096,18 @@ html.opera-extension{
 				    margin-bottom: 1rem;
 				    margin-left:1rem;
 				    }
+				
+				.row-listeners-context{
+					margin-top:14px;
+				}
+				.soft_auth_con {
+					color:#999;
+					padding: 0.5rem 1rem 0;
+					}
+					.soft_auth_con .vk-login-context{
+						padding: 0;
+						margin: 0;
+						}
 				
 				.intrack_page{
 				  margin: 1rem -13px 0;
