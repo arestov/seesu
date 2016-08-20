@@ -1604,19 +1604,6 @@ body .surf_nav{
 	color: #8C8C8C;
 	font-size: 1rem;
 	}
-.song-image-con {
-	float: left;
-	width: 38px;
-	height: 38px;
-
-	border-radius: 50%;
-	background: #595959;
-	}
-	.song-image-con img{
-		width: 100%;
-		height: 100%;
-		border-radius: 50%;
-		}
 
 	.song-view{
 		background-color: #505050;
@@ -1885,6 +1872,20 @@ body .surf_nav{
 .playlist-container .song-view.selected_song .track-node {
 	background: #444;
 	}
+
+.song-image-con {
+	float: left;
+	width: 38px;
+	height: 38px;
+
+	border-radius: 50%;
+	background: #595959;
+	}
+	.song-image-con img{
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		}
 
 .as-application:not(.chrome-extension) body{
 	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */

@@ -48,6 +48,7 @@ gulp.task('css', ['index'], function() {
 		'css/vkontakte_switcher.css',
 		'css/search_results.css',
 		'css/player.css',
+		'css/song-image-con.css',
 		'css/play-list-panel.css',
 		'css/abs_layout.css',
 		'css/pv-layout.css',
