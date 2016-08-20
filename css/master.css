@@ -33,7 +33,7 @@ html.not-as-application, .not-as-application  body{
 .not-as-application .slider-materail{
 	padding-bottom:15px;
 }
-.big_spinner:after, .app-loading-mark:after, .wait_love_done .add-to-lfmfav:after, .artists_list.list_loading_state:after, ul.tracks-for-play.loading:after, .photo-cont.loading-images:after{
+.big_spinner:after, .app-loading-mark:after, .wait_love_done .add-to-lfmfav:after, .artists_list.list_loading_state:after, .tracks-for-play.loading:after, .photo-cont.loading-images:after{
 	position: absolute;
 	top:0;
 	left:0;
@@ -288,12 +288,12 @@ a.track_name_loading .song-track-name,
 .tracks-for-play{
 	clear:both;
 	}
-	ul.tracks-for-play.loading{
+	.tracks-for-play.loading{
 		position: relative;
 		padding-bottom: 30px;
 		margin-bottom: -30px;
 	}
-	ul.tracks-for-play.loading:after{
+	.tracks-for-play.loading:after{
 		left: auto;
 		top: auto;
 		bottom: 0;

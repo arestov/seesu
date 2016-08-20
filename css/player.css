@@ -53,13 +53,13 @@ a.track_name_loading .nothing-toy{
 	}
 
 
-ul.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node,
+.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node,
 .page-scheme .song-view:nth-of-type(even) > .track-node{
 	background-color: #4D4D4D;
 	}
 
 
-ul.tracks-for-play.list-overview > li > a.track-node:hover,
+.tracks-for-play.list-overview > li > a.track-node:hover,
 .page-scheme .song-view > a.track-node:hover{
 	background-color:#535353;
 	}
@@ -386,7 +386,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:none;
 	}
 
-	.show-zoom-to-track ul.tracks-for-play{
+	.show-zoom-to-track .tracks-for-play{
 
 		padding-top:40px;
 	}
