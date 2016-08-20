@@ -98,23 +98,6 @@ a.track_name_loading .song-track-name,
 .sm2proxy.long-appearance{
 	z-index:10;
 }
-.song-row-content{
-	position:relative;
-	margin: 0 -13px 11px;
-	padding: 0 13px 1rem;
-	border-top: 1px solid #555555;
-	border-bottom: 1px solid #6e6e6e;
-	background: #5a5a5a;
-	}
-	.song-row-content .simple_row_setting{
-		padding-top:1rem;
-		}
-		.song-row-label{
-			padding: 0.3rem 0.5rem;
-			}
-	.song-row-content{
-
-	}
 
 @keyframes "pulse1" {
 	 0% {

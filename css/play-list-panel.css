@@ -17,16 +17,3 @@
 	margin: 0 0 18px;
 	height: 18px;
 }
-
-.song-actions{
-	clear:both;
-	padding:0.5rem 0 0.65rem;
-	}
-	.song-actions .song-row-content{
-		margin-top: 1rem;
-		}
-.track-panel{
-	position:relative;
-	top:1px;
-	height:26px;
-	}
