@@ -70,60 +70,6 @@
 	.moplas-block ul {
 
 		}
-		.mopla-item{
-			padding:0.5rem 0.4rem 0.5rem 3.1rem;
-			border-top: 1px solid transparent;
-			border-bottom: 1px solid transparent;
-			color:#999;
-			cursor: pointer;
-			position: relative;
-			}
-		.mopla-item.mf-unavailable{
-			color:#666;
-			}
-			.mopla-item .play-button-place{
-				position: absolute;
-				left:0.4rem;
-				width: 32px;
-				height: 32px;
-				top: -0.1rem;
-			}
-			.mopla-item .play-button-place .pc-place{
-				display: none;
-				}
-			.mopla-item.selected-mf .play-button-place .pc-place{
-				display:block;
-				}
-			.mopla-item .mf-progress{
-				overflow: hidden;
-				padding:1px 0;
-				min-height: 15px;
-				max-height:15px;
-				}
-				.moplas-block.want_more_songs .moplas-list li{
-					border-top-color:#5D5D5D;
-					border-bottom-color:#555555;
-					}
-				.moplas-block.want_more_songs ul li .mf-progress{
-					max-height:none;
-					}
-			.mopla-item .mf-duration{
-				float:right;
-				margin-bottom: 2px;
-				margin-left: 5px;
-				}
-			.mopla-item .mf-source{
-				margin-right:5px;
-				margin-left: 2px;
-				color: hsl(0, 0%, 47%);
-				}
-				.moplas-block.want_more_songs ul .mf-source{
-					display: none;
-					}
-
-			.mopla-item a{
-				color:inherit;
-			}
 	.moplas-block .full_mb_part {
 		display: none;
 	}
@@ -167,62 +113,16 @@
 		top: 0.15rem;
 	}
 
-	.mopla-item{
-		display: none;
-		}
-
 		.want_more_songs.moplas-block .moplas-list{
 			margin-bottom:42px;
 			}
-		.want_more_songs .mopla-item{
 
-			display: block;
-			}
 
-		.selected-mf .mf-text{
-			font-size: 0.86rem;
-			}
-			.want_more_songs .selected-mf .mf-text{
-				font-size: inherit;
-				}
-		.selected-mf.buffering-progress .mf-progress{
-			position: relative;
-			}
-		.selected-mf.buffering-progress .mf-progress:after{
-			right: 5%;
-			top:50%;
-			left:auto;
-			}
-	.mopla-item.overstocked{
-		display: none;
-		}
-
-		.want_more_songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
-			display: block;
-		}
-
-	.mopla-item.selected-mf{
-		display: block;
-		overflow: hidden;
-		}
-		.moplas-list .selected-mf .mf-progress{
-
-			}
 .cant_play_music_message{
 	background: #D12E2E;
 	text-shadow: 1px 1px 1px #000;
 	padding: 0.5rem 1rem;
 	}
-</style>
-<style>
-.mopla-item .download-song-link{
-	float:right;
-	margin-right:5px;
-	}
-.mopla-item .download-pressed{
-	color: #757575;
-	}
-
 </style>
 <div class="song-row-content moplas-block moplas_block" pv-nest="mf_cor" pv-class="want_more_songs: want_more_songs">
 	<div class="show-all-songs hidden" pv-class="hidden: !must_be_expandable">

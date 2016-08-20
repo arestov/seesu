@@ -54,6 +54,110 @@
 		}
 
 </style>
+<style>
+.mopla-item{
+	padding:0.5rem 0.4rem 0.5rem 3.1rem;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	color:#999;
+	cursor: pointer;
+	position: relative;
+	}
+.mopla-item.mf-unavailable{
+	color:#666;
+	}
+	.mopla-item .play-button-place{
+		position: absolute;
+		left:0.4rem;
+		width: 32px;
+		height: 32px;
+		top: -0.1rem;
+	}
+	.mopla-item .play-button-place .pc-place{
+		display: none;
+		}
+	.mopla-item.selected-mf .play-button-place .pc-place{
+		display:block;
+		}
+	.mopla-item .mf-progress{
+		overflow: hidden;
+		padding:1px 0;
+		min-height: 15px;
+		max-height:15px;
+		}
+		.moplas-block.want_more_songs .mopla-item{
+			border-top-color:#5D5D5D;
+			border-bottom-color:#555555;
+			}
+		.moplas-block.want_more_songs .mopla-item .mf-progress{
+			max-height:none;
+			}
+	.mopla-item .mf-duration{
+		float:right;
+		margin-bottom: 2px;
+		margin-left: 5px;
+		}
+	.mopla-item .mf-source{
+		margin-right:5px;
+		margin-left: 2px;
+		color: hsl(0, 0%, 47%);
+		}
+		.moplas-block.want_more_songs ul .mf-source{
+			display: none;
+			}
+
+	.mopla-item a{
+		color:inherit;
+	}
+</style>
+<style>
+.mopla-item{
+	display: none;
+	}
+.want_more_songs .mopla-item{
+	display: block;
+	}
+
+.mopla-item.overstocked{
+	display: none;
+	}
+
+	.want_more_songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
+		display: block;
+	}
+
+.mopla-item.selected-mf{
+	display: block;
+	overflow: hidden;
+	}
+	.moplas-list .selected-mf .mf-progress{
+
+		}
+
+		.selected-mf.buffering-progress .mf-progress{
+			position: relative;
+			}
+		.selected-mf.buffering-progress .mf-progress:after{
+			right: 5%;
+			top:50%;
+			left:auto;
+			}
+
+.selected-mf .mf-text{
+	font-size: 0.86rem;
+	}
+	.want_more_songs .selected-mf .mf-text{
+		font-size: inherit;
+		}
+
+.mopla-item .download-song-link{
+	float:right;
+	margin-right:5px;
+	}
+.mopla-item .download-pressed{
+	color: #757575;
+	}
+</style>
 <li
 	class="song-file mopla-item"
 	pv-type="{{!selected && vis_wp_usable && 'way-point'}}"
