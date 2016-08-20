@@ -635,14 +635,6 @@ a.track_name_loading .song-track-name,
 	pointer-events: none;
 }
 
-.moplas-block-shift {
-	position: relative;
-}
-.moplas-block-shift.list_loading:after {
-	margin-left: 1rem;
-	margin-top: 0.1rem;
-}
-
 .keys-navigation-focus{
 	box-shadow: 0 0 3pt 2pt orange;
 	}
@@ -1238,18 +1230,6 @@ iframe.you-tube-video,embed.you-tube-video{
 		bottom:0;
 		min-height: 320px;
 		}
-.file_source {
-	padding-left:  3.1rem;
-	padding-bottom: 0.3rem;
-}
-.want_more_songs .file_source_cont{
-	display: none;
-}
-.files_appendix {
-	-webkit-transform: translateZ(0);
-	overflow: hidden;
-	min-height: 48px;
-}
 
 .minimize-button{
 	position: absolute;
@@ -1397,26 +1377,6 @@ body .surf_nav{
 	font-size: 1.2rem;
 	border-radius: 0 40% 40% 0;
 	cursor: pointer;
-	}
-
-.dmca_notice{
-	font-size: 0.8rem;
-	color:#999;
-	display: none;
-	padding: 0.5rem 1rem 1rem;
-	padding-left: 3.2rem;
-	}
-	.want_more_songs .dmca_notice{
-		display: block;
-	}
-.dmca_url{
-	float: right;
-	margin-right: 1rem;
-	display: none;
-	font-size: 0.8rem;
-	}
-	.want_more_songs .dmca_url{
-		display: block;
 	}
 
 .fast-code-input-access {
@@ -3427,6 +3387,13 @@ html.opera-extension{
 			.moplas-block-shift {
 				padding-left: 3.2rem;
 			}
+			.moplas-block-shift {
+				position: relative;
+			}
+			.moplas-block-shift.list_loading:after {
+				margin-left: 1rem;
+				margin-top: 0.1rem;
+			}
 			.moplas-block .files-list-pioneer{
 				position: relative;
 				padding:0.5rem 0;
@@ -3493,6 +3460,41 @@ html.opera-extension{
 			text-shadow: 1px 1px 1px #000;
 			padding: 0.5rem 1rem;
 			}
+
+		.file_source {
+			padding-left:  3.1rem;
+			padding-bottom: 0.3rem;
+		}
+		.want_more_songs .file_source_cont{
+			display: none;
+		}
+
+		.files_appendix {
+			-webkit-transform: translateZ(0);
+			overflow: hidden;
+			min-height: 48px;
+		}
+
+		.dmca_notice{
+			font-size: 0.8rem;
+			color:#999;
+			display: none;
+			padding: 0.5rem 1rem 1rem;
+			padding-left: 3.2rem;
+			}
+			.want_more_songs .dmca_notice{
+				display: block;
+			}
+		.dmca_url{
+			float: right;
+			margin-right: 1rem;
+			display: none;
+			font-size: 0.8rem;
+			}
+			.want_more_songs .dmca_url{
+				display: block;
+			}
+
 		
 		.track-context .track-aside-info {
 			position: absolute;
