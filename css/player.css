@@ -7,19 +7,19 @@
 	margin-top:-4px;
 }
 
-a.search-mp3-failed{
+.search-mp3-failed{
 	color:#5E5E5E;
 }
-a.waiting-full-render{
+.waiting-full-render{
 	cursor:pointer;
 }
-a.song{
+.song{
 	padding:3px 1px 0;
 
 	border:0  !important;
 
 	}
-a.track-node{
+.track-node{
 	display:block;
 	overflow:hidden;
 	padding:6px 6px 6px 28px;
@@ -29,7 +29,7 @@ a.track-node{
 	border-top-right-radius: inherit;
 	border-top-left-radius: inherit;
 	}
-	a.track-node:hover{
+	.track-node:hover{
 		color:#aaa;
 		}
 	#slider .track-node.surf_nav{
@@ -38,17 +38,17 @@ a.track-node{
 		.track-node.surf_nav .full-song_title, .track-node.surf_nav .song-artist_name {
 			color:#fff;
 			}
-.playing-song a.track-node {
+.playing-song .track-node {
 	color:#ccc;
 }
 
-a.waiting-full-render.marked-for-play{
+.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
 }
-a.song .nothing-toy,
-a.search-mp3-failed .nothing-toy,
-a.search-mp3 .nothing-toy,
-a.track_name_loading .nothing-toy{
+.song .nothing-toy,
+.search-mp3-failed .nothing-toy,
+.search-mp3 .nothing-toy,
+.track_name_loading .nothing-toy{
 	display: none;
 	}
 
@@ -59,8 +59,8 @@ a.track_name_loading .nothing-toy{
 	}
 
 
-.tracks-for-play.list-overview > li > a.track-node:hover,
-.page-scheme .song-view > a.track-node:hover{
+.tracks-for-play.list-overview > li > .track-node:hover,
+.page-scheme .song-view > .track-node:hover{
 	background-color:#535353;
 	}
 
@@ -262,12 +262,12 @@ a.track_name_loading .nothing-toy{
 	border-radius: 6px;
 	background: #555;
 	}
-	a.track-node:hover .nothing-toy{
+	.track-node:hover .nothing-toy{
 		border-top-color:#6e6e6e;
 		border-bottom-color: #4e4e4e;
 		background-color: #5e5e5e;
 		}
-	a.track-node:active .nothing-toy{
+	.track-node:active .nothing-toy{
 		border-top-color:#444;
 		border-bottom-color: #666;
 		background-color: #555;
@@ -319,17 +319,17 @@ a.track_name_loading .nothing-toy{
 
 
 
-.show-zoom-to-track a.track-node:hover{
+.show-zoom-to-track .track-node:hover{
 	background-color:#535353;
 	}
-.show-zoom-to-track .song-view.viewing-song > a.track-node{
+.show-zoom-to-track .song-view.viewing-song > .track-node{
 	padding-top: 2px;
 	padding-bottom: 2px;
 	background-color: transparent;
 	}
 
 
-.show-zoom-to-track .viewing-song a.song{
+.show-zoom-to-track .viewing-song .song{
 	background-color:transparent;
 	color: #fff;
 }
@@ -437,7 +437,7 @@ a.track_name_loading .nothing-toy{
 		border-top: 1px solid #6E6E6E;
 		background-color: #545454;
 		}
-	.show-zoom-to-track .v-song-sibling:hover a.track-node{
+	.show-zoom-to-track .v-song-sibling:hover .track-node{
 		background-color: transparent;
 		}
 		.show-zoom-to-track .v-song-sibling:hover{
@@ -491,13 +491,13 @@ a.track_name_loading .nothing-toy{
 		left: 10px;
 		}
 
-a.track_name_loading .song-track-name{
+.track_name_loading .song-track-name{
 	position: relative;
 	}
 
 .show-zoom-to-track .player_song.v-song-sibling .full-song_title{
 	padding-right: 22px;
 }
-.playlist-container .song-view.selected_song a.track-node {
+.playlist-container .song-view.selected_song .track-node {
 	background: #444;
 	}
