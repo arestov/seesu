@@ -53,22 +53,15 @@
 	}
 
 
-.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node,
+.tracks-for-play.list-overview .song-view:nth-of-type(even) > .track-node,
 .page-scheme .song-view:nth-of-type(even) > .track-node{
 	background-color: #4D4D4D;
 	}
 
-
-.tracks-for-play.list-overview > li > .track-node:hover,
+.tracks-for-play.list-overview .song-view > .track-node:hover,
 .page-scheme .song-view > .track-node:hover{
 	background-color:#535353;
 	}
-
-
-
-
-
-
 
 #i_f_sm2{
 	position:absolute;
