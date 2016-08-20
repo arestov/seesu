@@ -448,18 +448,18 @@ a.track_name_loading .nothing-toy{
 
 	}
 	.show-zoom-to-track .v-song-sibling .track-node .full-song_title,
-	.page-scheme .tracks-for-play .track-node .full-song_title{
+	.page-scheme .track-node .full-song_title{
 		min-height: 28px;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-image-con,
-	.page-scheme .tracks-for-play .track-node .song-image-con{
+	.page-scheme .track-node .song-image-con{
 		width: 1.72rem;
 		height: 1.72rem;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-track-name,
 	.show-zoom-to-track .v-song-sibling .track-node .song-artist_name,
-	.page-scheme .tracks-for-play .track-node .song-track-name,
-	.page-scheme .tracks-for-play .track-node .song-artist_name{
+	.page-scheme .track-node .song-track-name,
+	.page-scheme .track-node .song-artist_name{
 
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -468,14 +468,14 @@ a.track_name_loading .nothing-toy{
 		font-size: 0.75rem;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-track-name,
-	.page-scheme .tracks-for-play .track-node .song-track-name{
+	.page-scheme .track-node .song-track-name{
 		margin-top: 0.2rem;
 		height: 1.4em;
 		line-height: 1.4em;
 
 	}
 	.show-zoom-to-track .v-song-sibling .track-node .song-artist_name,
-	.page-scheme .tracks-for-play .track-node .song-artist_name{
+	.page-scheme .track-node .song-artist_name{
 		height: 1em;
 		line-height: 1em;
 
