@@ -1514,9 +1514,6 @@ body .surf_nav{
 	height: 4.58rem;
 	width: 4.58rem;
 	}
-.albums_list_con{
-	overflow: hidden;
-	}
 
 .notify-closer{
 	display: none;
@@ -3260,6 +3257,10 @@ html.opera-extension{
 			overflow: hidden;
 			margin-bottom: 1rem;
 		}
+		
+		.albums_list_con{
+			overflow: hidden;
+			}
 		
 		.art_card{
 			overflow:hidden;
