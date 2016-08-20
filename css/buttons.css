@@ -94,9 +94,6 @@
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"tag-button"}');
 		}
 
-.play-button-place.surf_nav{
-	background-color: transparent;
-	}
 .nicebutton:active,.nicebutton:focus{
 	outline:0;
 }
