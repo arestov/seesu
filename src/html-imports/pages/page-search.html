@@ -1,3 +1,168 @@
+<style>
+.does-not-need-search-from{
+	padding-top:2rem;
+	}
+.full-page .search_results-container{
+
+	}
+	.search_results_sections {
+		position:relative;
+		padding-left:4.3rem;
+		}
+	.search_results-container h4{
+		margin:0;
+
+		font-weight:400;
+
+		}
+	.full-page .search_results-container h4{
+		position:absolute;
+		left:0;
+		z-index:2;
+		padding:0.3rem 0 0;
+		width:4.3rem;
+		height:1.4rem;
+		}
+	.search_results-container h4.loading{
+
+		}
+		.search_results-container h4.loading:after{
+			left:auto;
+			right:0;
+			top:50%;
+			margin-top: -0.6rem;
+			}
+	.search_results-container ul.sugg-section{
+		position:relative;
+		overflow:hidden;
+		margin:0;
+		min-height:1.7rem;
+
+		border-bottom:1px solid #5d5d5d;
+		zoom:1;
+		}
+	.full-page .search_results-container ul.sugg-section{
+		border-left:1px solid #5d5d5d;
+		}
+		.search_results-container ul li{
+			position:relative;
+			}
+		.search_results-container ul li.searched-bordered{
+			border-top: 1px dashed #5d5d5d;
+			}
+		.search_results-container ul li:first-child{
+			border-top:0 !important;
+			}
+		.search_results-container a,
+		.search_results-container button{
+			position:relative;
+			display:block;
+			overflow: hidden;
+			margin: 0;
+			padding:0.4rem;
+			cursor:pointer;
+			zoom:1;
+			}
+			.search_results-container
+			ul
+			.sugg-track-dur{
+				float:right;
+				margin:0;
+			}
+		.search_results-container button{
+			position:relative;
+			width:100%;
+			border:0;
+			background: transparent;
+			color:#aaa;
+			text-align:left;
+		}
+
+		.search_results-container a.active,
+		.search_results-container button.active{
+			padding-right:1.7rem;
+			background-color:#555  !important;
+		}
+		.search_results-container a.active:after,
+		.search_results-container button.active:after{
+			position:absolute;
+			top:1rem;
+			right:5px;
+			margin-top:-10px;
+			height:20px;
+			color:#fff;
+			content: '\21A9';
+			vertical-align:middle;
+			line-height:20px;
+		}
+		.search_results-container a:hover,
+		.search_results-container button:hover
+		{
+			background-color:#666  !important;
+			color:#f6f0e1;
+			}
+
+			.search_results-container	ul.results-suggests img{
+				float:left;
+				margin-right:0.5rem;
+				width:34px;
+				height:34px;
+				border:1px solid #eee;
+				}
+			.search_results-container	ul.results-suggests	span{
+				overflow:hidden;
+				margin-top:1px;
+				margin-bottom:0;
+				zoom:1;
+
+				}
+
+			ul.results-suggests .suggest{
+
+				}
+				ul.results-suggests .suggest .suggest-track_name{
+					display: block;
+					line-height: 1.2rem;
+					}
+				ul.results-suggests .suggest .suggest-artist_name{
+					display: block;
+					color: #777;
+					line-height: 1.2rem;
+					}
+	.search_results-container > ul.sugg-section:last-child, .search_results-container > div:last-of-type > ul.sugg-section{
+		border-bottom:0;
+	}
+
+	.search_results-container ul{
+		display:none;
+	}
+	.search_results-container ul.active-section{
+		display: block;
+	}
+	.search_results-container ul.sugg-section.odd_section{
+		background-color:#4d4d4d;
+	}
+	.search_results-container ul.playlist-results a{padding-left:47px;}
+	.search_results-container	ul.recommend-tags a{
+		padding-left:47px;
+		background: url(../i/tag-icon.png) no-repeat 26px 50%;
+	}
+
+	.search_results-container .nothing-found{
+		padding-left:47px  !important;
+		background:inherit  !important;
+		}
+		.search_results-container .nothing-found:hover{
+			background:inherit  !important;
+			color:inherit  !important;
+			cursor:default  !important;
+		}
+	.search_results-container button span{
+		border-bottom:1px dashed #5c5c5c;
+	}
+
+
+</style>
 <div class="search_results-container" pv-class="does-not-need-search-from: !needs_search_from">
 	<p class="search-desc">
 		<span class="desc lang localize-search-control-hint"></span>
