@@ -231,10 +231,6 @@ a.track_name_loading .song-track-name,
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
 
-.playlist-container{
-	padding-top: 4px;
-	}
-
 .load-more-list-data{
 	display:block;
 	padding:0.5rem;
@@ -247,20 +243,6 @@ a.track_name_loading .song-track-name,
 		background-color: #595959;
 		}
 
-.tracks-for-play{
-	clear:both;
-	}
-	.tracks-for-play.loading{
-		position: relative;
-		padding-bottom: 30px;
-		margin-bottom: -30px;
-	}
-	.tracks-for-play.loading:after{
-		left: auto;
-		top: auto;
-		bottom: 0;
-		right: 0.3rem;
-		}
 	.song-view{
 		position:relative;
 		margin: 0 0 0 0;
