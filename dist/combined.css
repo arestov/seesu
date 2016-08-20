@@ -1560,18 +1560,6 @@ body .surf_nav{
 	display: none;
 	}
 
-.playing-song-mark{
-	position: absolute;
-	top:3px;
-	right:5px;
-	display: none;
-	width: 20px;
-	height: 20px;
-	background: url(../i/equalaizer_stoped.gif) no-repeat;
-	}
-	.playing-process.playing-song-mark{
-		background-image: url(../i/equalaizer.gif);
-	}
 .player_song .playing-song-mark{
 	display: block;
 	}
@@ -3199,6 +3187,19 @@ html.opera-extension{
 			}
 
 		
+					.playing-song-mark{
+						position: absolute;
+						top:3px;
+						right:5px;
+						display: none;
+						width: 20px;
+						height: 20px;
+						background: url(../i/equalaizer_stoped.gif) no-repeat;
+						}
+						.playing-process.playing-song-mark{
+							background-image: url(../i/equalaizer.gif);
+						}
+					
 		.track-context{
 			margin-top:0.5rem;
 			padding:0 8px 10px;
@@ -4617,3 +4618,16 @@ html.opera-extension{
 					color:#ccc;
 					}
 		
+						.playing-song-mark{
+							position: absolute;
+							top:3px;
+							right:5px;
+							display: none;
+							width: 20px;
+							height: 20px;
+							background: url(../i/equalaizer_stoped.gif) no-repeat;
+							}
+							.playing-process.playing-song-mark{
+								background-image: url(../i/equalaizer.gif);
+							}
+						

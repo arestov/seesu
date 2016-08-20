@@ -993,11 +993,13 @@
 					pv-events="click:showSong"
 					pv-props="title: {{song_title}}"
 					>
+					
 					<span
-						class="playing-song-mark"
-						pv-class="playing-process: {{ play == 'play' }} "
-						>
+					  class="playing-song-mark"
+					  pv-class="playing-process: {{ play == 'play' }} "
+					  >
 					</span>
+
 					<span class="files-load-states">
 						<span
 							class="song-files-search-status"
@@ -1973,7 +1975,13 @@
 					<span pv-text="{{nav_title}}"></span>
 					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" player_song: player_song">
 						<span pv-text="{{nav_title}}"></span>
-						<div class="playing-song-mark" pv-class="playing-process: {{ play == 'play' }}"></div>
+						
+						<span
+						  class="playing-song-mark"
+						  pv-class="playing-process: {{ play == 'play' }} "
+						  >
+						</span>
+
 					</div>
 
 				</div>
