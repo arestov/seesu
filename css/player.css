@@ -11,9 +11,7 @@
 }
 .song{
 	padding:3px 1px 0;
-
 	border:0  !important;
-
 	}
 .track-node{
 	display:block;
@@ -101,12 +99,7 @@
 	border-bottom: 1px solid #767676;
 	border-left: 1px solid #4E4E4E;
 	border-radius: 7px;
-
-
 	background-color: #444444;
-
-
-
 	}
 
 	.mf-load-progress, .mf-play-progress{
@@ -135,11 +128,7 @@
 		border-radius: 5px;
 		background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
 		cursor:pointer;
-
 		}
-
-
-
 
 .song-track-name {
 	display: block;
@@ -151,7 +140,6 @@
 	color: hsl(0, 0%, 50%);
 	font-size: 0.85rem;
 	}
-
 
 .placeholder-decor{
 	display: none;
