@@ -93,24 +93,6 @@
 	.pc-tag.surf_nav{
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"tag-button"}');
 		}
-.pc-next{
-	background-image:url(../i/buttons/pc-m-next-l.png);
-	}
-	.pc-next:hover{
-		background-image:url(../i/buttons/pc-m-next-h.png);
-		}
-	.pc-next:active{
-		background-image:url(../i/buttons/pc-m-next-a.png);
-		}
-.pc-prev{
-	background-image:url(../i/buttons/pc-m-prev-l.png);
-	}
-	.pc-prev:hover{
-		background-image:url(../i/buttons/pc-m-prev-h.png);
-		}
-	.pc-prev:active{
-		background-image:url(../i/buttons/pc-m-prev-a.png);
-		}
 
 .play-button-place.surf_nav{
 	background-color: transparent;
