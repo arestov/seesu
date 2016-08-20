@@ -706,31 +706,6 @@ iframe.you-tube-video,embed.you-tube-video{
 .pokki-app ::-webkit-scrollbar-button: {
 	display: none;
 }
-.attention-message{
-	overflow: hidden;
-	margin: 0 -1rem;
-	padding: 1rem;
-	border-radius: 7px;
-	background: #404040;
-	color: #999;
-	}
-	.attention-message .message-image{
-		float: left;
-		margin-right: 1rem;
-		}
-	.attention-message .close-message{
-		float:right;
-		margin-top: -0.3rem;
-		margin-left: 1rem;
-		height: 0.5rem;
-		color:#999;
-		font-size:3rem;
-		line-height: 1;
-		cursor: pointer;
-		}
-		.attention-message .close-message:hover{
-			color:#ccc;
-			}
 
 .row-song-context input{
 	margin:0;
