@@ -891,24 +891,6 @@ body .surf_nav{
 	cursor: pointer;
 	}
 
-.songcard_page .nested_artist{
-	background: #4D4D4D;
-	border-top: 1px solid #464646;
-	border-bottom: 1px solid #5C5C5C;
-	padding: 1rem;
-	border-radius: 0.5rem;
-	margin-top:2rem;
-	margin-bottom:2rem;
-	}
-	.songcard_page-header{
-		font-weight: 400;
-
-		margin: 0;
-		}
-	.full-page .songcard_page-header{
-		font-size: 1.5rem;
-		}
-
 .dmca_notice{
 	font-size: 0.8rem;
 	color:#999;
