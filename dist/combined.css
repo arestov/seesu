@@ -2216,9 +2216,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:block;
 	}
 
-	.show-zoom-to-track .playlist-info{
-		display:none;
-	}
 	.show-zoom-to-track .load-more-list-data{
 		display: none;
 	}
@@ -2547,13 +2544,6 @@ a.track_name_loading .song-track-name{
 	top:1px;
 	height:26px;
 	}
-
-.playlist-info .artist-info{
-	margin-bottom:30px;
-}
-
-
-
 
 .as-application:not(.chrome-extension) body{
 	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */

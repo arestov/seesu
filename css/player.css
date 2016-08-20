@@ -377,9 +377,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:block;
 	}
 
-	.show-zoom-to-track .playlist-info{
-		display:none;
-	}
 	.show-zoom-to-track .load-more-list-data{
 		display: none;
 	}
