@@ -299,7 +299,7 @@ a.track_name_loading .song-track-name,
 		bottom: 0;
 		right: 0.3rem;
 		}
-	ul.tracks-for-play > li{
+	.song-view{
 		position:relative;
 		margin: 0 0 0 0;
 		}

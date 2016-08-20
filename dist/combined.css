@@ -941,7 +941,7 @@ a.track_name_loading .song-track-name,
 		bottom: 0;
 		right: 0.3rem;
 		}
-	ul.tracks-for-play > li{
+	.song-view{
 		position:relative;
 		margin: 0 0 0 0;
 		}
@@ -1807,13 +1807,13 @@ a.track_name_loading .nothing-toy{
 
 
 ul.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node,
-.page-scheme ul.tracks-for-play > li:nth-of-type(even) > .track-node{
+.page-scheme .song-view:nth-of-type(even) > .track-node{
 	background-color: #4D4D4D;
 	}
 
 
 ul.tracks-for-play.list-overview > li > a.track-node:hover,
-.page-scheme ul.tracks-for-play > li > a.track-node:hover{
+.page-scheme .song-view > a.track-node:hover{
 	background-color:#535353;
 	}
 
@@ -1966,7 +1966,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:none;
 	}
 
-	ul.tracks-for-play > li{
+	.song-view{
 		background-color: #505050;
 	}
 
@@ -2075,7 +2075,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 .show-zoom-to-track a.track-node:hover{
 	background-color:#535353;
 	}
-.show-zoom-to-track ul.tracks-for-play > li.viewing-song > a.track-node{
+.show-zoom-to-track .song-view.viewing-song > a.track-node{
 	padding-top: 2px;
 	padding-bottom: 2px;
 	background-color: transparent;
@@ -2148,7 +2148,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	.show-zoom-to-track li.to-play-next{
 
 		}
-	.show-zoom-to-track ul.tracks-for-play > li.viewing-song{
+	.show-zoom-to-track .song-view.viewing-song{
 		margin:0 -5px;
 		padding: 5px;
 		border-top: 1px solid #737373;
@@ -2157,28 +2157,28 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		background: #5E5E5E;
 		color:#fff;
 		}
-		.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
+		.show-zoom-to-track .song-view.viewing-song .track-node{
 
 			cursor:default;
 
 			}
-		.show-zoom-to-track ul.tracks-for-play > li.viewing-song .song{
+		.show-zoom-to-track .song-view.viewing-song .song{
 
 
 			text-shadow: 0 1px 0 #333;
 			}
-		.show-zoom-to-track ul.tracks-for-play>li.viewing-song .search-mp3-failed{
+		.show-zoom-to-track .song-view.viewing-song .search-mp3-failed{
 			color:#737373;
 		}
 
 
 
-	.show-zoom-to-track .tracks-for-play>li{
+	.show-zoom-to-track .song-view{
 		display:none;
 		}
 
 	.show-zoom-to-track li.v-song-sibling,
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song{
+	.show-zoom-to-track .song-view.viewing-song{
 		display: list-item;
 		}
 
@@ -2251,7 +2251,7 @@ a.track_name_loading .song-track-name{
 .show-zoom-to-track .player_song.v-song-sibling .full-song_title{
 	padding-right: 22px;
 }
-.playlist-container ul.tracks-for-play > li.selected_song a.track-node {
+.playlist-container .song-view.selected_song a.track-node {
 	background: #444;
 	}
 
