@@ -46,9 +46,7 @@
 .page-scheme .start-screen{
 	padding-top: 1rem;
 	}
-.page-scheme .art_card{
-	padding-top: 1rem;
-}
+
 .page-scheme .usual_page{
 	padding-top: 1rem;
 	padding-bottom: 1rem;
@@ -117,14 +115,6 @@
 .full-page .preview_ffp {
 	display: block;
 }
-.art_card{
-
-	overflow:hidden;
-	margin: 0 auto;
-	padding-bottom: 20px;
-	max-width: 750px;
-	}
-
 
 .full_wide_col{
 	clear:both;
