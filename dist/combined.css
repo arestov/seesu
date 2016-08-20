@@ -933,11 +933,6 @@ a.track_name_loading .song-track-name,
 		margin-right: 0.5em;
 
 		}
-	.tags_list-tag {
-		white-space: nowrap;
-		margin-right: 0.5em;
-		color: hsl(0, 0%, 55%);
-	}
 
 #search #search-p{
 	overflow:hidden;
@@ -2389,6 +2384,12 @@ html.opera-extension{
 }
 
 
+		.tags_list-tag {
+			white-space: nowrap;
+			margin-right: 0.5em;
+			color: hsl(0, 0%, 55%);
+		}
+		
 		.user_tag{
 
 			}
