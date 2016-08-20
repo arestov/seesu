@@ -258,9 +258,7 @@
 		color: #AAA;
 
 		}
-.show-zoom-to-track .tracks-for-play{
-	position: relative;
-	}
+
 
 	.show-zoom-to-track .v-song-sibling.to-play-previous{
 
@@ -299,12 +297,6 @@
 	.show-zoom-to-track .load-more-list-data{
 		display: none;
 	}
-
-	.show-zoom-to-track .tracks-for-play{
-
-		padding-top:40px;
-	}
-
 
 	.show-zoom-to-track .to-play-next{
 

@@ -1920,9 +1920,7 @@ body .surf_nav{
 		color: #AAA;
 
 		}
-.show-zoom-to-track .tracks-for-play{
-	position: relative;
-	}
+
 
 	.show-zoom-to-track .v-song-sibling.to-play-previous{
 
@@ -1961,12 +1959,6 @@ body .surf_nav{
 	.show-zoom-to-track .load-more-list-data{
 		display: none;
 	}
-
-	.show-zoom-to-track .tracks-for-play{
-
-		padding-top:40px;
-	}
-
 
 	.show-zoom-to-track .to-play-next{
 
@@ -2843,6 +2835,14 @@ html.opera-extension{
 			.has-files-in-songs .open-external-playlist.nicebutton{
 				display: block;
 				}
+		
+		.show-zoom-to-track .tracks-for-play{
+			position: relative;
+		}
+
+		.show-zoom-to-track .tracks-for-play{
+			padding-top:40px;
+		}
 		
 		.album_preview-big{
 			cursor: pointer;
