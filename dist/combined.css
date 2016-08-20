@@ -2067,7 +2067,7 @@ body .surf_nav{
 	display: none;
 	}
 
-.show-zoom-to-track li.viewing-song .track-context{
+.show-zoom-to-track .viewing-song .track-context{
 		display:block;
 	}
 
@@ -2086,7 +2086,7 @@ body .surf_nav{
 	}
 
 
-	.show-zoom-to-track li.to-play-next{
+	.show-zoom-to-track .to-play-next{
 
 		}
 	.show-zoom-to-track .song-view.viewing-song{
@@ -2118,7 +2118,7 @@ body .surf_nav{
 		display:none;
 		}
 
-	.show-zoom-to-track li.v-song-sibling,
+	.show-zoom-to-track .v-song-sibling,
 	.show-zoom-to-track .song-view.viewing-song{
 		display: list-item;
 		}
