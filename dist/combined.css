@@ -1776,64 +1776,6 @@ body .surf_nav{
 	left:-100rem;
 	z-index:-10;
 }
-.selected-mf .mf-progress {
-
-	}
-
-	.mf-text{
-		position: relative;
-		z-index: 2;
-		margin:0 5px;
-		}
-	.selected-mf .mf-text{
-		margin:0 4px;
-		color: hsl(0, 0%, 55%);
-		}
-.mopla-item .mf-progress{
-	line-height:1.2;
-	}
-.mopla-item.selected-mf .mf-progress{
-	position:relative;
-	right:0;
-	left:0;
-	overflow:hidden;
-	padding:0;
-	max-width:100%;
-	border-top: 1px solid #434343;
-	border-right: 1px solid #4E4E4E;
-	border-bottom: 1px solid #767676;
-	border-left: 1px solid #4E4E4E;
-	border-radius: 7px;
-	background-color: #444444;
-	}
-
-	.mf-load-progress, .mf-play-progress{
-		display: none;
-	}
-	.selected-mf .mf-load-progress{
-		position:absolute;
-		top:0;
-		left:0;
-		display: block;
-		width:0;
-		height:100%;
-		border-radius: 5px;
-		background:#484848;
-		cursor:pointer;
-
-
-		}
-	.selected-mf .mf-play-progress{
-		position:absolute;
-		top:0;
-		left:0;
-		display: block;
-		width:0;
-		height:100%;
-		border-radius: 5px;
-		background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
-		cursor:pointer;
-		}
 
 .song-track-name {
 	display: block;
@@ -4083,6 +4025,67 @@ html.opera-extension{
 		.mopla-item .download-pressed{
 			color: #757575;
 			}
+		
+		.selected-mf .mf-progress {
+
+			}
+
+			.mopla-item .mf-progress{
+				line-height:1.2;
+				}
+			.mopla-item.selected-mf .mf-progress{
+				position:relative;
+				right:0;
+				left:0;
+				overflow:hidden;
+				padding:0;
+				max-width:100%;
+				border-top: 1px solid #434343;
+				border-right: 1px solid #4E4E4E;
+				border-bottom: 1px solid #767676;
+				border-left: 1px solid #4E4E4E;
+				border-radius: 7px;
+				background-color: #444444;
+				}
+
+		.mf-text{
+			position: relative;
+			z-index: 2;
+			margin:0 5px;
+			}
+		.selected-mf .mf-text{
+			margin:0 4px;
+			color: hsl(0, 0%, 55%);
+			}
+
+		.mf-load-progress, .mf-play-progress{
+			display: none;
+		}
+		.selected-mf .mf-load-progress{
+			position:absolute;
+			top:0;
+			left:0;
+			display: block;
+			width:0;
+			height:100%;
+			border-radius: 5px;
+			background:#484848;
+			cursor:pointer;
+
+
+			}
+		.selected-mf .mf-play-progress{
+			position:absolute;
+			top:0;
+			left:0;
+			display: block;
+			width:0;
+			height:100%;
+			border-radius: 5px;
+			background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
+			cursor:pointer;
+			}
+
 		
 		.vk-needs-login .vk-login-context{
 			display:block;
