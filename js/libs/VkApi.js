@@ -147,6 +147,7 @@ VkSearch.prototype = {
 		var params_u = {};
 			params_u.q = query;
 			params_u.count = 30;
+			params_u.sort = 2;
 
 		var async_ans = this.api.get('audio.search', params_u, opts);
 
