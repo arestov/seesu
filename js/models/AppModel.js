@@ -156,7 +156,12 @@ var props = {
 			var pl = artcard.showTopTacks(track_name);
 
 			return pl;
-		}
+		},
+		showTopTacks: function(artist, track_name) {
+			var artcard = this.showArtcardPage(artist);
+			var pl = artcard.showTopTacks(track_name);
+			return pl;
+		},
 	},
 	getVkUser: function(userid) {
 		return this.start_page.getSPI('users/vk:' + encodeURIComponent(userid), true);
