@@ -131,7 +131,7 @@ VkSearch.prototype = {
 			if (!entity) {
 				continue;
 			}
-			if (!entity.link.match(/audio\/.mp3$/) && !Mp3Search.hasMusicCopy( music_list, entity)){
+			if (!entity.link.match(/audio\/.mp3$/)){
 				music_list.push(entity);
 			}
 		}
