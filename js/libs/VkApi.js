@@ -109,21 +109,20 @@ VkSearch.prototype = {
 		return this.makeSong(item);
 	},
 	makeSong: function(cursor, msq){
-		if (cursor && cursor.url){
-			var entity = {
-				artist	: htmlencoding.decode(cursor.artist ? cursor.artist : cursor.audio.artist),
-				duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
-				link		: cursor.url ? cursor.url : cursor.audio.url,
-				track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
-				from		: 'vk',
-				downloadable: false,
-				_id			: cursor.owner_id + '_' + cursor.id,
-				type: 'mp3',
-				media_type: 'mp3'
-			};
-
-			return entity;
+		if (!cursor || !cursor.url) {
+			return;
 		}
+		return {
+			artist	: htmlencoding.decode(cursor.artist ? cursor.artist : cursor.audio.artist),
+			duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
+			link		: cursor.url ? cursor.url : cursor.audio.url,
+			track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
+			from		: 'vk',
+			downloadable: false,
+			_id			: cursor.owner_id + '_' + cursor.id,
+			type: 'mp3',
+			media_type: 'mp3'
+		};
 	},
 	makeMusicList: function(r, msq) {
 		var music_list = [];
