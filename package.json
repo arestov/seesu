@@ -17,7 +17,9 @@
   },
   "node-remote": "https://arestov.github.io",
   "devDependencies": {
+    "CSSwhat": "^0.4.7",
     "autoprefixer": "^6.0.2",
+    "css-select": "^1.2.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-concat-css": "^2.2.0",
@@ -29,6 +31,7 @@
     "gulp-sourcemaps": "^1.5.2",
     "gulp-util": "^3.0.7",
     "gulp-zip": "^3.2.0",
+    "lodash": "^4.15.0",
     "postcss": "^5.0.5",
     "xmldom": "^0.1.19"
   }

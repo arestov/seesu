@@ -40,8 +40,8 @@ module.exports = function(string, options, callback) {
 			}
 		}
 
-		
-		
+
+
 		callback(err);
 		// console.log('sax error', e);
 		// console.log(string.slice(parser.position - 10, parser.position + 10))
@@ -59,7 +59,7 @@ module.exports = function(string, options, callback) {
 				start: last.end,
 				end: getPos()
 			}
-			
+
 		});
 
 	};
@@ -86,7 +86,7 @@ module.exports = function(string, options, callback) {
 			} else {
 				array.push(item);
 			}
-			
+
 			last = item;
 		  // got some text.  t is the string of text.
 		};
@@ -136,7 +136,7 @@ module.exports = function(string, options, callback) {
 			type = 'script';
 		}
 
-		var item = {
+		var draft = {
 			parent: cur || null,
 			next: null,
 			prev: null,
@@ -145,6 +145,7 @@ module.exports = function(string, options, callback) {
 			name: node.name,
 			children: [],
 			attribs: index,
+			extended: null,
 			o: {
 				type: 'node',
 				name: node.name,
@@ -160,6 +161,11 @@ module.exports = function(string, options, callback) {
 			// pos: getPos()
 		};
 
+		if (options.extend) {
+			draft.extended = options.extend(draft);
+		}
+
+		var item = draft;
 
 		if (cur) {
 			var last = cur.children[cur.children.length -1];
@@ -178,7 +184,7 @@ module.exports = function(string, options, callback) {
 		} else {
 			stack.push(item);
 		}
-		
+
 		last = item;
 
 	  // opened a tag.  node has "name" and "attributes"
@@ -211,11 +217,11 @@ module.exports = function(string, options, callback) {
 		attributes.push(data);
 
 		// cur.attrs.push(last = data);
-		
+
 	  // an attribute.  attr has "name" and "value"
 	};
 	parser.onend = function () {
-	
+
 	  callback(null, array);
 	};
 
@@ -245,7 +251,7 @@ function out(item, changeNode) {
 
 			var result = '';
 			result += '<' + item.name;
-			
+
 			for (var i = 0; i < item.o.attrs.length; i++) {
 				var cur = item.o.attrs[i];
 				if (cur.removed) {
@@ -261,12 +267,12 @@ function out(item, changeNode) {
 					result += cur.quoter || '';
 					result += cur.value.value;
 					result += cur.quoter || '';
-				}					
+				}
 			}
 
 			if (item.isSelfClosing) {
 				result += item.o.ending;
-			} else {					
+			} else {
 				result += item.o.ending;
 
 				result += iterate(item.children, changeNode);
@@ -274,7 +280,7 @@ function out(item, changeNode) {
 				result += '</' + item.name + '>';
 			}
 
-			
+
 			return result;
 		}
 	}
@@ -290,7 +296,7 @@ function iterate(array, changeNode) {
 		result += out(array[i], changeNode);
 	}
 	return result;
-	
+
 }
 
 module.exports.stringify = iterate;
@@ -314,7 +320,7 @@ function handleIndexHTML (err, file) {
 	var string = file.toString();
 
 
-	
+
 
 	var doc;
 	try {
@@ -367,11 +373,11 @@ function handleIndexHTML (err, file) {
 							attr.value.value += ' ' + class_name;
 						});
 					}
-					// var attr = 
+					// var attr =
 					// forEach()
 				}
 			}
-			
+
 
 			// node.attr('pv-class', struct.value);
 		});
@@ -382,6 +388,3 @@ function handleIndexHTML (err, file) {
 
 	module.exports(string, {}, output);
 }
-
-
-
