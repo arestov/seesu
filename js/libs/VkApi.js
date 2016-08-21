@@ -128,14 +128,13 @@ VkSearch.prototype = {
 		var music_list = [];
 		for (var i=0, l = r.length; i < l; i++) {
 			var entity = this.makeSong(r[i], msq);
-			if (entity){
-
-				if (!entity.link.match(/audio\/.mp3$/) && !Mp3Search.hasMusicCopy( music_list, entity)){
-					music_list.push(entity);
-				}
+			if (!entity) {
+				continue;
+			}
+			if (!entity.link.match(/audio\/.mp3$/) && !Mp3Search.hasMusicCopy( music_list, entity)){
+				music_list.push(entity);
 			}
 		}
-
 		return music_list;
 	},
 	findAudio: function(msq, opts) {
