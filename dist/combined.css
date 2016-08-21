@@ -645,34 +645,13 @@ a.track_name_loading .song-track-name,
 		line-height:1.5;
 		}
 
-.lfm-finish{
-	display:none;
-	opacity:0.3;
-}
-.deep-sandbox .lfm-finish{
-	display:block;
-}
-.lfm-finish .lfm-code{
-	margin-right: 1.72rem;
-	width: 314px;
-}
-.waiting-auth .lfm-finish{
-	opacity:1;
-}
 .lfm-auth p{
 	margin:0.3rem 0;
 	}
 .lfm-auth .real-lfm-auth-part{
 	margin-bottom:20px;
 }
-.lfm-auth-module .auth-block{
-	overflow: hidden;
-}
 
-.login-lastfm-button,.lastfm-auth-bp{
-	float:right;
-	margin-left:1rem;
-}
 .page-scheme .nicebutton{
 	height: 19px;
 	line-height: 19px;
@@ -1143,27 +1122,13 @@ body .surf_nav{
 	color:#999;
 	padding: 0.5rem 1rem 0;
 	}
-	.pl-auth-con .vk-login-context{
-		padding: 0;
-		margin: 0;
-		}
+
 .access-request .pl-auth-con{
 	display: block;
 	}
 	.pl-auth-con p {
 		margin:0;
 
-		}
-
-.area_for_button .pl-auth-con .vk-login-context{
-	margin: 0;
-	padding: 0;
-	background: transparent;
-	color:inherit;
-	}
-	.area_for_button .pl-auth-con .vk-login-context a{
-		border-bottom-color: #ccc;
-		color:#ddd;
 		}
 
 .aqc_preview{
@@ -1180,32 +1145,6 @@ body .surf_nav{
 	width: 4.58rem;
 	}
 
-.notify-closer{
-	display: none;
-	position: absolute;
-	bottom: 0.5rem;
-	left: 0;
-	background: #F53C35;
-	color: #fff;
-	text-align: center;
-	width: 1.5rem;
-	height: 1.5rem;
-	font-size: 1.2rem;
-	border-radius: 0 40% 40% 0;
-	cursor: pointer;
-	}
-
-.fast-code-input-access {
-	display: none;
-	margin-top: 1rem;
-	padding-bottom: 0.3rem;
-}
-	.deep-sandbox .fast-code-input-access{
-		display: block;
-	}
-	.waiting-auth .fast-code-input-access{
-		display: none;
-	}
 
 #pages_area_width_streamer-wrapper {
 	position: absolute;
@@ -4067,6 +4006,21 @@ html.opera-extension{
 			}
 
 		
+		.notify-closer{
+			display: none;
+			position: absolute;
+			bottom: 0.5rem;
+			left: 0;
+			background: #F53C35;
+			color: #fff;
+			text-align: center;
+			width: 1.5rem;
+			height: 1.5rem;
+			font-size: 1.2rem;
+			border-radius: 0 40% 40% 0;
+			cursor: pointer;
+		}
+
 		.vk-needs-login .vk-login-context{
 			display:block;
 		}
@@ -4189,8 +4143,63 @@ html.opera-extension{
 					margin:0;
 					width:10rem;
 				}
+
 		.vk-login-context input{
 			margin-left:0;
+		}
+
+
+		.pl-auth-con .vk-login-context{
+			padding: 0;
+			margin: 0;
+			}
+
+		.area_for_button .pl-auth-con .vk-login-context{
+			margin: 0;
+			padding: 0;
+			background: transparent;
+			color:inherit;
+			}
+			.area_for_button .pl-auth-con .vk-login-context a{
+				border-bottom-color: #ccc;
+				color:#ddd;
+				}
+
+		.fast-code-input-access {
+			display: none;
+			margin-top: 1rem;
+			padding-bottom: 0.3rem;
+		}
+			.deep-sandbox .fast-code-input-access{
+				display: block;
+			}
+			.waiting-auth .fast-code-input-access{
+				display: none;
+			}
+
+		
+		.lfm-finish{
+			display:none;
+			opacity:0.3;
+		}
+		.deep-sandbox .lfm-finish{
+			display:block;
+		}
+		.lfm-finish .lfm-code{
+			margin-right: 1.72rem;
+			width: 314px;
+		}
+		.waiting-auth .lfm-finish{
+			opacity:1;
+		}
+
+		.lfm-auth-module .auth-block{
+			overflow: hidden;
+		}
+
+		.lastfm-auth-bp{
+			float:right;
+			margin-left:1rem;
 		}
 		
 		.song-act-tagging input{

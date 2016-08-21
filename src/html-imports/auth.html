@@ -1,4 +1,19 @@
 <style type="text/css">
+.notify-closer{
+	display: none;
+	position: absolute;
+	bottom: 0.5rem;
+	left: 0;
+	background: #F53C35;
+	color: #fff;
+	text-align: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	font-size: 1.2rem;
+	border-radius: 0 40% 40% 0;
+	cursor: pointer;
+}
+
 .vk-needs-login .vk-login-context{
 	display:block;
 }
@@ -121,9 +136,40 @@
 			margin:0;
 			width:10rem;
 		}
+
 .vk-login-context input{
 	margin-left:0;
 }
+
+
+.pl-auth-con .vk-login-context{
+	padding: 0;
+	margin: 0;
+	}
+
+.area_for_button .pl-auth-con .vk-login-context{
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	color:inherit;
+	}
+	.area_for_button .pl-auth-con .vk-login-context a{
+		border-bottom-color: #ccc;
+		color:#ddd;
+		}
+
+.fast-code-input-access {
+	display: none;
+	margin-top: 1rem;
+	padding-bottom: 0.3rem;
+}
+	.deep-sandbox .fast-code-input-access{
+		display: block;
+	}
+	.waiting-auth .fast-code-input-access{
+		display: none;
+	}
+
 </style>
 <div class="vk_login_common">
 	<div class="decor">
@@ -155,6 +201,31 @@
 <div class="vk_login vk-login-context">
 	<!--pv-replace sample_name:vk_login_common-->
 </div>
+<style>
+.lfm-finish{
+	display:none;
+	opacity:0.3;
+}
+.deep-sandbox .lfm-finish{
+	display:block;
+}
+.lfm-finish .lfm-code{
+	margin-right: 1.72rem;
+	width: 314px;
+}
+.waiting-auth .lfm-finish{
+	opacity:1;
+}
+
+.lfm-auth-module .auth-block{
+	overflow: hidden;
+}
+
+.lastfm-auth-bp{
+	float:right;
+	margin-left:1rem;
+}
+</style>
 <div class="lfm-auth-module">
 	<div class="auth-block">
 		<p>
