@@ -63,8 +63,7 @@
 }
 
 .page-scheme .relations-invites-wrap,
-.page-scheme .relations-likes-wrap,
-.page-scheme .users-play-this{
+.page-scheme .relations-likes-wrap{
 	display: none;
 	}
 

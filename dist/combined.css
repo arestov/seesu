@@ -763,11 +763,6 @@ a.track_name_loading .song-track-name,
 #q.surf_nav{
 	color:#fff;
 }
-.users-play-this{
-	clear: both;
-	overflow:hidden;
-
-}
 
 .chart-song{
 	display: block;
@@ -779,28 +774,6 @@ a.track_name_loading .song-track-name,
 		overflow:hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-	}
-
-
-.users-play-this li{
-	float: left;
-	overflow: hidden;
-	margin-bottom: 1rem;
-	min-width: 13rem;
-	width: 33%;
-}
-	.users-play-this li .vk-ava{
-		float:left;
-		margin:0 1rem 0 0;
-		padding:0;
-	}
-	.users-play-this li .vk-ava img{
-		padding:2px;
-		border-radius:2px;
-		width: 50px;
-		height: 50px;
-
-		background:#5C5C5C;
 	}
 
 
@@ -1032,7 +1005,6 @@ iframe.you-tube-video,embed.you-tube-video{
 	background-color: #4D4D4D;
 	cursor: pointer;
 	}
-	.users-play-this .desc-row,
 	.song-by-user .song-track-name,
 	.song-by-user .song-artist_name{
 		overflow: hidden;
@@ -1265,8 +1237,7 @@ body .surf_nav{
 }
 
 .page-scheme .relations-invites-wrap,
-.page-scheme .relations-likes-wrap,
-.page-scheme .users-play-this{
+.page-scheme .relations-likes-wrap{
 	display: none;
 	}
 
@@ -4641,4 +4612,44 @@ html.opera-extension{
               .full-page .personal-stuff-preview .area-button{
                 margin: -0.5rem -0.5rem 0;
                 }
+            
+            .users-play-this{
+            	clear: both;
+            	overflow:hidden;
+
+            }
+
+            .page-scheme .users-play-this{
+            	display: none;
+            }
+
+            .users-play-this li{
+            	float: left;
+            	overflow: hidden;
+            	margin-bottom: 1rem;
+            	min-width: 13rem;
+            	width: 33%;
+            }
+            	.users-play-this li .vk-ava{
+            		float:left;
+            		margin:0 1rem 0 0;
+            		padding:0;
+            	}
+            	.users-play-this li .vk-ava img{
+            		padding:2px;
+            		border-radius:2px;
+            		width: 50px;
+            		height: 50px;
+
+            		background:#5C5C5C;
+            }
+
+            .users-play-this .desc-row{
+              overflow: hidden;
+              height: 1.5rem;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              line-height: 1.5rem;
+              }
+
             
