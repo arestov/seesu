@@ -47,24 +47,6 @@
 	display: none;
 	}
 
-.random-metro-chart{
-
-	}
-	.random-metro-chart .show-in-header{
-		display: none;
-		margin-left: 0 !important;
-		}
-	.page-scheme .random-metro-chart ul{
-		display: none;
-		}
-	.page-scheme .random-metro-chart .refresh-in-header{
-		display: none;
-		}
-	.page-scheme .random-metro-chart .show-in-header{
-		display: inline;
-		}
-
-
 .tags-hyped{
 
 	}
