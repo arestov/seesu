@@ -599,30 +599,12 @@ a.track_name_loading .song-track-name,
 	opacity: 0.3;
 	}
 
-	.lfm-auth{
-		display:none;
-		padding-left:20px;
-		line-height:1.5;
-		}
-
-.lfm-auth p{
-	margin:0.3rem 0;
-	}
-.lfm-auth .real-lfm-auth-part{
-	margin-bottom:20px;
-}
-
 .page-scheme .nicebutton{
 	height: 19px;
 	line-height: 19px;
 	}
 .page-scheme .button-hole{
 	display: block;
-	}
-
-.lfm-auth form{
-	margin-bottom:2.5rem;
-	padding-bottom:1rem;
 	}
 
 
