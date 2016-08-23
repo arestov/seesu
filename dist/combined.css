@@ -771,15 +771,6 @@ a.track_name_loading .song-track-name,
 
 		margin-right:15px;
 		}
-.tags_list-preview{
-	font-size: 0.8em;
-	color:#707070;
-	}
-	.tags_list-preview span{
-		white-space: nowrap;
-		margin-right: 0.5em;
-
-		}
 
 .desc{
 	color:#999;
