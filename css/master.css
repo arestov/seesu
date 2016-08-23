@@ -159,20 +159,6 @@ a.track_name_loading .song-track-name,
 	margin-bottom:2.5rem;
 	padding-bottom:1rem;
 	}
-	.full-page .personal-stuff-preview{
-		margin: 0 -0.5rem;
-		padding: 1rem 1rem 0.5rem;
-		border-top: 1px solid #444;
-		border-bottom: 1px solid #555;
-		border-radius: 1rem;
-		background: #4D4D4D;
-		color:#999;
-		min-height: 6.7rem;
-		}
-		.full-page .personal-stuff-preview .area-button{
-			margin: -0.5rem -0.5rem 0;
-			}
-
 
 
 		.window-bottom{
