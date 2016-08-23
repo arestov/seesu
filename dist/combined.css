@@ -746,24 +746,6 @@ a.track_name_loading .song-track-name,
 
 		}
 
-#search{
-	padding-top:1rem;
-
-	}
-#search #q{
-	box-sizing:border-box;
-
-	padding: 2px 0;
-
-	width:100%;
-	height:2.3rem;
-
-	-webkit-appearance: none;
-}
-#q.surf_nav{
-	color:#fff;
-}
-
 .start-page-messages{
 	display: none;
 	}
@@ -799,41 +781,6 @@ a.track_name_loading .song-track-name,
 
 		}
 
-#search #search-p{
-	overflow:hidden;
-	margin:10px 0 5px;
-	position: relative;
-	}
-	.main_search_label{
-		float:left;
-		margin-right:0.34rem;
-
-		line-height: 1.5em;
-		font-style:normal;
-		font-size: 1rem;
-	}
-		#search-p .main_search_label {
-			padding-top:0.2rem;
-			position: absolute;
-			top: 0.4rem;
-			left: 0.4rem;
-			z-index: 2;
-			color:#777;
-		}
-	#search #search-p label span.loading{
-		position: relative;
-	}
-	#search #search-p label span.loading:after{
-		left:auto;
-		right:0;
-		top:50%;
-		margin-top: -0.6rem;
-	}
-	#search #search-p label span.inpt{
-		display:block;
-		overflow:hidden;
-		padding:0.14rem;
-	}
 .desc{
 	color:#999;
 }
@@ -1162,11 +1109,6 @@ body .surf_nav{
 	padding-top: 1rem;
 	padding-bottom: 1rem;
 }
-#search {
-	margin: 0 auto;
-
-
-	}
 
 .page-scheme .relations-invites-wrap,
 .page-scheme .relations-likes-wrap{
@@ -4531,6 +4473,67 @@ html.opera-extension{
 								background-image: url(../i/equalaizer.gif);
 							}
 						
+          #search{
+          	padding-top:1rem;
+
+          	}
+
+          #search {
+          	margin: 0 auto;
+          	}
+
+          #search #q{
+          	box-sizing:border-box;
+
+          	padding: 2px 0;
+
+          	width:100%;
+          	height:2.3rem;
+
+          	-webkit-appearance: none;
+          }
+
+          #q.surf_nav{
+          	color:#fff;
+          }
+
+          #search #search-p{
+          	overflow:hidden;
+          	margin:10px 0 5px;
+          	position: relative;
+          	}
+          	.main_search_label{
+          		float:left;
+          		margin-right:0.34rem;
+
+          		line-height: 1.5em;
+          		font-style:normal;
+          		font-size: 1rem;
+          	}
+          		#search-p .main_search_label {
+          			padding-top:0.2rem;
+          			position: absolute;
+          			top: 0.4rem;
+          			left: 0.4rem;
+          			z-index: 2;
+          			color:#777;
+          		}
+          	#search #search-p label span.loading{
+          		position: relative;
+          	}
+          	#search #search-p label span.loading:after{
+          		left:auto;
+          		right:0;
+          		top:50%;
+          		margin-top: -0.6rem;
+          	}
+          	#search #search-p label span.inpt{
+          		display:block;
+          		overflow:hidden;
+          		padding:0.14rem;
+          	}
+
+          
             .start-screen{
             	padding-bottom:1.5rem;
             	}
