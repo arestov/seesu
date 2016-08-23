@@ -561,46 +561,6 @@ a.track_name_loading .song-track-name,
 	z-index:10;
 }
 
-@-webkit-keyframes "pulse1" {
-	 0% {
-	    background-color: red;
-	 }
-	 50% {
-	    background-color: #bb17b5;
-	 }
-	 100% {
-	    background-color: red;
-	 }
-
-}
-
-@-o-keyframes "pulse1" {
-	 0% {
-	    background-color: red;
-	 }
-	 50% {
-	    background-color: #bb17b5;
-	 }
-	 100% {
-	    background-color: red;
-	 }
-
-}
-
-@keyframes "pulse1" {
-	 0% {
-	    background-color: red;
-	 }
-	 50% {
-	    background-color: #bb17b5;
-	 }
-	 100% {
-	    background-color: red;
-	 }
-
-}
-
-
 
 #close-widget{
 	position:absolute;
@@ -2630,6 +2590,42 @@ html.opera-extension{
 			position: relative;
 			z-index: 2;
 			float:right;
+			}
+			@-webkit-keyframes "pulse1" {
+				 0% {
+				    background-color: red;
+				 }
+				 50% {
+				    background-color: #bb17b5;
+				 }
+				 100% {
+				    background-color: red;
+				 }
+
+			}
+			@-o-keyframes "pulse1" {
+				 0% {
+				    background-color: red;
+				 }
+				 50% {
+				    background-color: #bb17b5;
+				 }
+				 100% {
+				    background-color: red;
+				 }
+
+			}
+			@keyframes "pulse1" {
+				 0% {
+				    background-color: red;
+				 }
+				 50% {
+				    background-color: #bb17b5;
+				 }
+				 100% {
+				    background-color: red;
+				 }
+
 			}
 			.moplas-block .show-all-songs .notifier{
 				position: absolute;

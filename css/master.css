@@ -96,20 +96,6 @@ a.track_name_loading .song-track-name,
 	z-index:10;
 }
 
-@keyframes "pulse1" {
-	 0% {
-	    background-color: red;
-	 }
-	 50% {
-	    background-color: #bb17b5;
-	 }
-	 100% {
-	    background-color: red;
-	 }
-
-}
-
-
 
 #close-widget{
 	position:absolute;
