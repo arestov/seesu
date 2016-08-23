@@ -4,6 +4,7 @@ const promisify = require('./promisify');
 const postcss = require('postcss');
 const glob = promisify(require('glob'));
 const readFile = promisify(require('fs').readFile);
+const writeFile = promisify(require('fs').writeFile);
 const parseSelector = require('CSSwhat');
 const stringifyCSS = require('./stringifyCSS');
 const keyBy = require('lodash/keyBy');
@@ -555,6 +556,64 @@ function logItem(item) {
   // if (item.selector.original.parsed.length !== item.selector.full.parsed.length) {
   //   console.log(item.selector.full.parsed)
   // }
+}
+
+function showSelector(result, selector) {
+  const index = groupBy(result, 'selector.full.string');
+  console.log(index[selector]);
+}
+
+
+function sepFile(result, css_file, html_chunk_name) {
+
+  const css_file_by_matches = groupBy(result, 'file')[css_file].filter(item => exactMatch(item)).reduce((index, item) => {
+    var keys = item.files.index_all;
+    forEach(keys, key => {
+      if (!index[key]) {
+        index[key] = [];
+      }
+      index[key].push(item);
+    });
+
+    return index;
+  }, {});
+
+
+  const moved = postcss.root();
+
+  const array = css_file_by_matches[html_chunk_name];
+  const original = array[0].rule.parent;
+
+  array.forEach(item => {
+    const rule = item.rule;
+
+    if (rule.mark) {
+      return;
+    }
+
+    // rule.prepend(postcss.comment({ text: `<<move to '${html_chunk_name}.html'>>` }));
+    const parent = rule.parent;
+
+    if (!rule || !rule.parent) {
+      console.log(rule)
+    }
+
+
+    rule.mark = true;
+    parent.removeChild(rule);
+    moved.append(rule.clone());
+    moved.append({ text: '\n' });
+  });
+
+
+  return {
+    original: original.toString(),
+    moved: moved.toString()
+  }
+
+  return
+
+  // postcss.stringify(array[0].rule.parent);
 }
 
 function logFile(result) {
