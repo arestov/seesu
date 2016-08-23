@@ -533,7 +533,7 @@ Promise.all([all_selectors, html_parsed]).then(args => {
 
 
 
-  logFile(result)
+  logFile(result, '../css/master.css');
 
 
 
