@@ -764,19 +764,6 @@ a.track_name_loading .song-track-name,
 	color:#fff;
 }
 
-.chart-song{
-	display: block;
-	overflow:hidden;
-	margin-right: 1rem;
-	}
-	.chart-song .song-track-name,
-	.chart-song .song-artist_name{
-		overflow:hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-
 .start-page-messages{
 	display: none;
 	}
