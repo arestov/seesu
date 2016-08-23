@@ -616,8 +616,8 @@ function sepFile(result, css_file, html_chunk_name) {
   // postcss.stringify(array[0].rule.parent);
 }
 
-function logFile(result) {
-  const css_file_by_matches = groupBy(result, 'file')['../css/player.css'].filter(item => !exactMatch(item)).reduce((index, item) => {
+function logFile(result, css_file) {
+  const css_file_by_matches = groupBy(result, 'file')[css_file].filter(item => !exactMatch(item)).reduce((index, item) => {
     var keys = item.files.index_all;
     forEach(keys, key => {
       if (!index[key]) {
@@ -629,7 +629,7 @@ function logFile(result) {
     return index;
   }, {});
 
-  console.log('../css/player.css')
+  console.log(css_file)
   forEach(css_file_by_matches, (items, match_name) => {
     console.log(' ', match_name);
     forEach(items, logItem);
