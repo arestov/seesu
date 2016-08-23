@@ -288,7 +288,7 @@ const withoutGlobalAndPseudo = (parsed) => {
       return result;
     }
 
-    if (isNested(part) && (!result[i-1] || isNested(result[i-1]))) {
+    if (isNested(part) && (!result.length || isNested(result[result.length - 1]))) {
       return result;
     }
 
@@ -312,13 +312,15 @@ const getCombo = (selector) => {
   const start = selectWithClass(groups);
   const end = selectWithClass(groups.slice().reverse());
 
+  const fullString = stringifyCSS([full]);
+
   return {
     original: {
       string: selector,
       parsed: raw
     },
     full: {
-      string: stringifyCSS([full]),
+      string: fullString,
       parsed: full
     },
     start: {
@@ -373,6 +375,7 @@ const all_selectors = css_parsed.then(list => {
           // selector: selector,
           rule: rule,
           file: item.path,
+          wrap: item,
           selector: getCombo(selector)
         });
         return result;
