@@ -1171,16 +1171,6 @@ body .surf_nav{
 
 }
 
-.start-screen{
-	padding-bottom:1.5rem;
-	}
-.full-page .start-screen{
-	padding: 0 1rem 1.5rem;
-	}
-.page-scheme .start-screen{
-	padding-top: 1rem;
-	}
-
 .page-scheme .usual_page{
 	padding-top: 1rem;
 	padding-bottom: 1rem;
@@ -4554,6 +4544,16 @@ html.opera-extension{
 								background-image: url(../i/equalaizer.gif);
 							}
 						
+            .start-screen{
+            	padding-bottom:1.5rem;
+            	}
+            .full-page .start-screen{
+            	padding: 0 1rem 1.5rem;
+            	}
+            .page-scheme .start-screen{
+            	padding-top: 1rem;
+            	}
+            
             .full-page .personal-stuff-preview{
               margin: 0 -0.5rem;
               padding: 1rem 1rem 0.5rem;
