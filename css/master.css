@@ -451,19 +451,6 @@ body .surf_nav{
 	1box-shadow:0 0 0 2pt #1DD8B2;
 	}
 
-
-
-.playlist_preview-c{
-	margin-bottom: 1rem;
-	}
-.playlist_preview-c{
-	border-radius: 1rem;
-	background: #4D4D4D;
-	}
-	.playlist_preview-c .area-button{
-		margin-bottom: 0;
-		}
-
 .pl-auth-con{
 	display: none;
 	color:#999;
