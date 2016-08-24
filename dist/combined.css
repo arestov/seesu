@@ -731,13 +731,6 @@ a.track_name_loading .song-track-name,
 		display: block;
 		}
 
-	.tags-hyped h3{
-		margin-bottom:10px;
-	}
-
-	.full-page .tags-hyped{
-
-		}
 .tags_list{
 	text-align: justify;
 	line-height: 2;
@@ -1071,9 +1064,6 @@ body .surf_nav{
 	display: none;
 	}
 
-.tags-hyped{
-
-	}
 	.page-scheme .tags_list a{
 		display: block;
 		padding:0.2rem 0.5rem;
