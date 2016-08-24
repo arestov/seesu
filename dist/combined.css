@@ -120,10 +120,6 @@ a.desc{
 	text-decoration:none;
 	font-style:normal;
 }
-.get-vk-photo-request-b{
-	width: 15rem;
-	}
-
 
 .button-hole{
 	display:inline-block;
@@ -3515,11 +3511,6 @@ html.opera-extension{
 				  overflow:hidden;
 				  padding-top:1rem;
 				  }
-				  .big-listener-info .get-vk-photo-request-b{
-				    float:right;
-				    margin-bottom: 1rem;
-				    margin-left:1rem;
-				    }
 				
 				.row-listeners-context{
 					margin-top:14px;
