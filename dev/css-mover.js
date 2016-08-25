@@ -267,7 +267,7 @@ const isNested = (part) => {
   return part.type === 'descendant' || part.type === 'child';
 }
 
-const pseudos = keyBy(['ative', 'hover', 'after', 'focus']);
+const pseudos = keyBy(['active', 'hover', 'after', 'focus']);
 
 const isPseudo = (part) => {
   if (part.type === 'pseudo' && pseudos[part.name]) {
