@@ -53,12 +53,20 @@ return pv.behavior({
 		}
 	],
 	'compx-remain_time_desc': [
-		['rel', 'just_accepted_est'],
-		function(rel, just_accepted_est) {
+		['userlink', 'rel', 'just_accepted_est',
+			'#locales.wget-link', '#locales.attime', '#locales'],
+		function(userlink, rel, just_accepted_est,
+			lo_will_get, lo_time, locales) {
+			if (userlink) {return;}
+			if (!lo_will_get || !lo_time || !locales) {return;}
 			var est = just_accepted_est || (rel && rel.item.est);
 			if (!est) {return;}
 
-			return app_serv.getRemainTimeText(new Date(est), true);
+			var d = new Date(est);
+
+			var lo_month = locales['m'+(d.getMonth()+1)];
+
+			return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
 		}
 	],
 
