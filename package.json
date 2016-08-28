@@ -19,6 +19,7 @@
   "devDependencies": {
     "CSSwhat": "^0.4.7",
     "autoprefixer": "^6.0.2",
+    "css-color-extractor": "0.0.5",
     "css-select": "^1.2.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
