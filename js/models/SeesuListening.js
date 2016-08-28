@@ -39,6 +39,19 @@ return pv.behavior({
 			return like || invite;
 		}
 	],
+	'compx-userlink': [
+		['rel.item.accepted', 'rel.info'],
+		function(accepted, user_info) {
+			if (accepted){
+				if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
+					return {
+						href: '#/users/vk:' + user_info.uid,
+						text: user_info.full_name
+					};
+				}
+			}
+		}
+	],
 	'compx-remain_time_desc': [
 		['rel', 'just_accepted_est'],
 		function(rel, just_accepted_est) {

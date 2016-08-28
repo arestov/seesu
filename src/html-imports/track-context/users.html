@@ -160,10 +160,9 @@
     </div>
     <div pv-when="rel">
       <a
-        class="external"
-        pv-when="rel.info.full_name && rel.info.domain"
+        pv-when="userlink"
         pv-text="{{rel.info.full_name}}"
-        pv-props="href:{{rel.info.domain && ('https://vk.com/' + rel.info.domain)}}"></a>
+        pv-props="href:{{userlink}}"></a>
 
       <span
         pv-when="remain_time_desc"
