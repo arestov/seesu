@@ -13,13 +13,19 @@
 .full-page .personal-stuff-preview{
   margin: 0 -0.5rem;
   padding: 1rem 1rem 0.5rem;
-  border-top: 1px solid #444;
-  border-bottom: 1px solid #555;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
   border-radius: 1rem;
-  background: #4D4D4D;
-  color:#999;
+  background: transparent;
+  color:transparent;
   min-height: 6.7rem;
   }
+.theme--dark .full-page .personal-stuff-preview{
+  border-top-color: #444;
+  border-bottom-color: #555;
+  background-color: #4D4D4D;
+  color: #999;
+}
   .full-page .personal-stuff-preview .area-button{
     margin: -0.5rem -0.5rem 0;
     }
@@ -53,7 +59,11 @@
 		width: 50px;
 		height: 50px;
 
-		background:#5C5C5C;
+		background:transparent;
+}
+	.theme--dark .users-play-this li .vk-ava img{
+	background-color: #5C5C5C;
+
 }
 
 .users-play-this .desc-row{
@@ -97,9 +107,12 @@
 	overflow: hidden;
 	margin-right: 1rem;
 	border-radius: 0.5rem;
-	background-color: #4D4D4D;
+	background-color: transparent;
 	cursor: pointer;
 	}
+.theme--dark .song-by-user{
+	background-color: #4D4D4D;
+}
 	.song-by-user .song-track-name,
 	.song-by-user .song-artist_name{
 		overflow: hidden;
@@ -109,9 +122,12 @@
 		line-height: 1.5rem;
 		}
 .song-by-user:hover{
-	background-color:#535353;
+	background-color:transparent;
 
 	}
+.theme--dark .song-by-user:hover{
+	background-color: #535353;
+}
 </style>
 <div class="complex-page_material start-screen"
   id="start-screen" pv-foreign>

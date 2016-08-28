@@ -6,12 +6,18 @@
 	padding-right:1rem;
 	padding-left:1rem;
 	min-height:36px;
-	border-bottom:1px solid #252525;
-	background:#444 url(../i/nav/head-gradient.png) repeat-x;
-	background-image: linear-gradient(#525252,#363636);
+	border-bottom:1px solid transparent;
+	background:transparent url(../i/nav/head-gradient.png) repeat-x;
+	background-image: linear-gradient(transparent,transparent);
 
 	font-size: 1.28rem;
 	font-family: "Trebuchet MS", sans-serif;
+
+}
+.theme--dark .navs{
+	border-bottom-color: #252525;
+	background-color: #444;
+	background-image: linear-gradient(#525252,#363636);
 
 }
 .daddy.not-inited * {
@@ -54,15 +60,27 @@
 		border-radius: 0;
 		}
 	.page-scheme .tags_list span:nth-of-type(even) a{
-		background-color: #4D4D4D;
+		background-color: transparent;
 
 		}
+	.theme--dark .page-scheme .tags_list span:nth-of-type(even) a{
+	background-color: #4D4D4D;
+
+}
 	.page-scheme .tags_list a:hover{
-		background-color: #535353;
+		background-color: transparent;
 		}
+	.theme--dark .page-scheme .tags_list a:hover{
+	background-color: #535353;
+
+}
 	#slider .page-scheme .tags_list a.surf_nav{
-		background-color: #000;
+		background-color: transparent;
 		}
+	.theme--dark #slider .page-scheme .tags_list a.surf_nav{
+	background-color: #000;
+
+}
 
 .full-page .usual_page{
 	margin-top:1.72rem;

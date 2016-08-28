@@ -13,23 +13,36 @@
 	}
 .artist_in_list {
 	overflow: hidden;
-	color: #aaa;
+	color: transparent;
 	display: block;
-	background: #555;
+	background: transparent;
 	padding: 0.5rem;
-	border: 1px solid #494949;
+	border: 1px solid transparent;
 	margin-bottom: 0.5rem;
 	border-radius: 0.54rem;
 	cursor: pointer;
 	}
+.theme--dark .artist_in_list{
+	color: #aaa;
+	background-color: #555;
+	border-color: #494949;
+}
 	.artist_in_list:hover{
-		background-color: #444;
+		background-color: transparent;
 		}
+	.theme--dark .artist_in_list:hover{
+	background-color: #444;
+}
 
 	.artist_in_list.surf_nav{
-		background-color: #000;
-		color:#fff;
+		background-color: transparent;
+		color:transparent;
 		}
+
+	.theme--dark .artist_in_list.surf_nav{
+	background-color: #000;
+	color: #fff;
+}
 	.artist_in_list .song-image-con{
 		border-radius: 0.4rem;
 		margin-right: 0.5rem;

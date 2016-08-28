@@ -123,11 +123,19 @@
 
 		}
 		.one-artist-playlist a{
-			color:#666;
+			color:transparent;
 			}
+		.theme--dark .one-artist-playlist a{
+	color:#666;
+
+}
 			.one-artist-playlist a:hover{
-				color:#777;
+				color:transparent;
 				}
+			.theme--dark .one-artist-playlist a:hover{
+	color:#777;
+
+}
 	.artist_preview-base .extend-switcher{
 		float:right;
 		cursor: pointer;
@@ -136,30 +144,53 @@
 		padding: 0.5rem 0.6rem;
 		border:0;
 		border-radius: 0 0  0.5rem 0.5rem;
-		color: hsl(0, 0%, 60%);
-		text-shadow: 0 1px 0 #4A4A4A;
+		color: transparent;
+		text-shadow: 0 1px 0 transparent;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		}
+	.theme--dark .artist_preview-base .extend-switcher{
+	color:hsl(0, 0%, 60%);
+	text-shadow:0 1px 0 #4A4A4A;
+
+}
 		.artist_preview-base .extend-switcher .big-space{
 			padding-bottom: 1px;
-			border-bottom: 1px dotted #696969;
+			border-bottom: 1px dotted transparent;
 		}
+		.theme--dark .artist_preview-base .extend-switcher .big-space{
+	border-bottom-color:#696969;
+
+}
 
 
 		.artist_preview-base .extend-switcher:hover{
-			background-color:#555;
+			background-color:transparent;
 			}
+
+
+		.theme--dark .artist_preview-base .extend-switcher:hover{
+	background-color:#555;
+
+}
 			.artist_preview-base .extend-switcher:hover .big-space{
 				border-bottom-color:transparent;
 				}
+			.theme--dark .artist_preview-base .extend-switcher:hover .big-space{
+	border-bottom-color:transparent;
+
+}
 		.track-context .want-more-info .extend-switcher{
 			text-shadow:0;
 		}
 		.track-context .want-more-info .extend-switcher:hover{
-			background-color:#585858;
+			background-color:transparent;
 		}
+		.theme--dark .track-context .want-more-info .extend-switcher:hover{
+	background-color:#585858;
+
+}
 
 
 	.artist_preview-base.want-more-info{

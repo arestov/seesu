@@ -6,14 +6,23 @@
 	}
 	@keyframes "pulse1" {
 		 0% {
-		    background-color: red;
+		    background-color: transparent;
 		 }
+		 .theme--dark 0%{
+		background-color: red;
+	}
 		 50% {
-		    background-color: #bb17b5;
+		    background-color: transparent;
 		 }
+		 .theme--dark 50%{
+		background-color: #bb17b5;
+	}
 		 100% {
-		    background-color: red;
+		    background-color: transparent;
 		 }
+		 .theme--dark 100%{
+		background-color: red;
+	}
 
 	}
 	.moplas-block .show-all-songs .notifier{
@@ -23,28 +32,44 @@
 		width: 1.5rem;
 		height: 1.5rem;
 		border-radius: 0.75rem;
-		background: red;
+		background: transparent;
 		text-align: center;
 		line-height: 1.5rem;
 		opacity: 0.8;
-		color:#fff;
+		color:transparent;
 		animation: pulse1 1s cubic-bezier(0.77, 0, 0.175, 1) infinite;
 		}
+	.theme--dark .moplas-block .show-all-songs .notifier{
+	background-color: red;
+	color: #fff;
+}
 	.moplas-block .show-all-songs a{
 		display: inline-block;
 		padding:5px 10px;
-		color: hsl(0, 0%, 60%);
-		text-shadow: 0 1px 0 #4A4A4A;
+		color: transparent;
+		text-shadow: 0 1px 0 transparent;
 		cursor: pointer;
 		}
+	.theme--dark .moplas-block .show-all-songs a{
+	color: hsl(0, 0%, 60%);
+	text-shadow: 0 1px 0 #4A4A4A;
+}
 		.moplas-block .show-all-songs a:hover{
-			background:#555;
-			color:#ccc;
+			background:transparent;
+			color:transparent;
 			}
+		.theme--dark .moplas-block .show-all-songs a:hover{
+	background-color: #555;
+	color: #ccc;
+}
 		.moplas-block .show-all-songs a:active{
-			box-shadow: inset 0 0 0.8rem 0 #444;
-			color:#aaa;
+			box-shadow: inset 0 0 0.8rem 0 transparent;
+			color:transparent;
 			}
+		.theme--dark .moplas-block .show-all-songs a:active{
+	box-shadow: inset 0 0 0.8rem 0 #444;
+	color: #aaa;
+}
 		.moplas-block .show-all-songs a span{
 			border-bottom: 1px dotted;
 			}
@@ -80,9 +105,12 @@
 		position: relative;
 		padding:0.5rem 0;
 		font-weight: 400;
-		color:#d5d5d5;
+		color:transparent;
 		overflow: hidden;
 		}
+	.theme--dark .moplas-block .files-list-pioneer{
+	color: #d5d5d5;
+}
 		.files-list-pioneer .disabled_search {
 			text-decoration: line-through;
 		}
@@ -100,16 +128,25 @@
 		display: block;
 	}
 	.moplas_source-tuner {
-		background: #535353;
-		border-top: 1px solid #4f4f4f;
-		border-bottom: 1px solid #646464;
+		background: transparent;
+		border-top: 1px solid transparent;
+		border-bottom: 1px solid transparent;
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
 	}
+	.theme--dark .moplas_source-tuner{
+	background-color: #535353;
+	border-top-color: #4f4f4f;
+	border-bottom-color: #646464;
+}
 
 	.moplas_source-unavailable {
-		color: #666;
+		color: transparent;
 	}
+
+	.theme--dark .moplas_source-unavailable{
+	color: #666;
+}
 	.moplas_source-icon {
 		background: transparent no-repeat url(../i/icon-gear.svg);
 		height: 1.14rem;
@@ -119,12 +156,21 @@
 		cursor: pointer;
 		border-radius: 0.3rem;
 		}
+	.theme--dark .moplas_source-icon{
+	background-color: transparent;
+}
 		.moplas_source-icon:hover {
-			background-color: #666;
+			background-color: transparent;
 			}
+		.theme--dark .moplas_source-icon:hover{
+	background-color: #666;
+}
 		.moplas_source-icon:active {
-			background-color: #444;
+			background-color: transparent;
 			}
+		.theme--dark .moplas_source-icon:active{
+	background-color: #444;
+}
 	.moplas-block .moplas_source-icon{
 		float: left;
 		margin-right: 0.2rem;
@@ -138,10 +184,16 @@
 
 
 .cant_play_music_message{
-	background: #D12E2E;
-	text-shadow: 1px 1px 1px #000;
+	background: transparent;
+	text-shadow: 1px 1px 1px transparent;
 	padding: 0.5rem 1rem;
 	}
+
+
+.theme--dark .cant_play_music_message{
+	background-color: #D12E2E;
+	text-shadow: 1px 1px 1px #000;
+}
 
 .file_source {
 	padding-left:  3.1rem;
@@ -159,11 +211,15 @@
 
 .dmca_notice{
 	font-size: 0.8rem;
-	color:#999;
+	color:transparent;
 	display: none;
 	padding: 0.5rem 1rem 1rem;
 	padding-left: 3.2rem;
 	}
+
+.theme--dark .dmca_notice{
+	color: #999;
+}
 	.want_more_songs .dmca_notice{
 		display: block;
 	}

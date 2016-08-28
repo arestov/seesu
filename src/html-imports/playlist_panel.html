@@ -19,12 +19,18 @@
 			overflow: hidden;
 			}
 			.pla-panel .pla-button{
-				color: #5e5e5e;
+				color: transparent;
 				cursor: pointer;
 				}
+			.theme--dark .pla-panel .pla-button{
+	color:#5e5e5e;
+}
 			.pla-panel .pla-button:hover{
-				color:#666;
+				color:transparent;
 				}
+			.theme--dark .pla-panel .pla-button:hover{
+	color:#666;
+}
 
 			.playlist_panel .playlist-actions .pla-button{
 				float:left;
@@ -47,21 +53,33 @@
 		position:relative;
 		margin:1rem -1rem 0;
 		padding: 1rem;
-		border-top: 1px solid #444;
-		border-bottom: 1px solid #555;
+		border-top: 1px solid transparent;
+		border-bottom: 1px solid transparent;
 		border-radius: 1rem;
-		background: #4D4D4D;
+		background: transparent;
 
-		color:#999;
+		color:transparent;
 		line-height: 1.5;
 
 		}
+	.theme--dark .playlist_panel .pla-row-content{
+	border-top-color:#444;
+	border-bottom-color:#555;
+	background-color:#4D4D4D;
+	color:#999;
+}
 		.playlist_panel .pla-row-content .rc-s-arrow{
-			border-bottom-color:#444;
+			border-bottom-color:transparent;
 			}
+		.theme--dark .playlist_panel .pla-row-content .rc-s-arrow{
+	border-bottom-color:#444;
+}
 			.playlist_panel .pla-row-content .rc-s-arrow-bg{
-				border-bottom-color:#4D4D4D;
+				border-bottom-color:transparent;
 				}
+			.theme--dark .playlist_panel .pla-row-content .rc-s-arrow-bg{
+	border-bottom-color:#4D4D4D;
+}
 
 .loader_disallowing_desc {
 	margin-top: 2rem;

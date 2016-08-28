@@ -61,13 +61,16 @@
 .user_artist{
 	display: inline-block;
 	width: 8rem;
-	border: 2px dotted #777;
+	border: 2px dotted transparent;
 	margin-bottom: 0.5rem;
 	border-radius: 0.5rem;
 	padding: 0.2rem;
 	margin-right: 0.5rem;
 	cursor: pointer;
 	}
+.theme--dark .user_artist{
+	border-color: #777;
+}
 	.full-page .user_artist{
 		margin-bottom: 2.5rem;
 	}

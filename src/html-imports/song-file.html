@@ -6,6 +6,10 @@
 	background: transparent no-repeat;
 }
 
+.theme--dark .pc-indicator{
+	background-color:transparent;
+}
+
 .big-indicator{
 	width:32px;
 	height:32px;
@@ -59,13 +63,21 @@
 	padding:0.5rem 0.4rem 0.5rem 3.1rem;
 	border-top: 1px solid transparent;
 	border-bottom: 1px solid transparent;
-	color:#999;
+	color:transparent;
 	cursor: pointer;
 	position: relative;
 	}
+.theme--dark .mopla-item{
+	border-top-color:transparent;
+	border-bottom-color:transparent;
+	color:#999;
+}
 .mopla-item.mf-unavailable{
-	color:#666;
+	color:transparent;
 	}
+.theme--dark .mopla-item.mf-unavailable{
+	color:#666;
+}
 	.mopla-item .play-button-place{
 		position: absolute;
 		left:0.4rem;
@@ -77,6 +89,10 @@
 	.play-button-place.surf_nav{
 		background-color: transparent;
 		}
+
+	.theme--dark .play-button-place.surf_nav{
+	background-color:transparent;
+}
 
 	.mopla-item .play-button-place .pc-place{
 		display: none;
@@ -91,9 +107,13 @@
 		max-height:15px;
 		}
 		.moplas-block.want_more_songs .mopla-item{
-			border-top-color:#5D5D5D;
-			border-bottom-color:#555555;
+			border-top-color:transparent;
+			border-bottom-color:transparent;
 			}
+		.theme--dark .moplas-block.want_more_songs .mopla-item{
+	border-top-color:#5D5D5D;
+	border-bottom-color:#555555;
+}
 		.moplas-block.want_more_songs .mopla-item .mf-progress{
 			max-height:none;
 			}
@@ -105,8 +125,11 @@
 	.mopla-item .mf-source{
 		margin-right:5px;
 		margin-left: 2px;
-		color: hsl(0, 0%, 47%);
+		color: transparent;
 		}
+	.theme--dark .mopla-item .mf-source{
+	color:hsl(0, 0%, 47%);
+}
 		.moplas-block.want_more_songs ul .mf-source{
 			display: none;
 			}
@@ -160,8 +183,11 @@
 	margin-right:5px;
 	}
 .mopla-item .download-pressed{
-	color: #757575;
+	color: transparent;
 	}
+.theme--dark .mopla-item .download-pressed{
+	color: #757575;
+}
 </style>
 <style>
 .selected-mf .mf-progress {
@@ -178,13 +204,20 @@
 		overflow:hidden;
 		padding:0;
 		max-width:100%;
-		border-top: 1px solid #434343;
-		border-right: 1px solid #4E4E4E;
-		border-bottom: 1px solid #767676;
-		border-left: 1px solid #4E4E4E;
+		border-top: 1px solid transparent;
+		border-right: 1px solid transparent;
+		border-bottom: 1px solid transparent;
+		border-left: 1px solid transparent;
 		border-radius: 7px;
-		background-color: #444444;
+		background-color: transparent;
 		}
+	.theme--dark .mopla-item.selected-mf .mf-progress {
+		border-top-color:#434343;
+		border-right-color:#4E4E4E;
+		border-bottom-color:#767676;
+		border-left-color:#4E4E4E;
+		background-color:#444444;
+}
 
 .mf-text{
 	position: relative;
@@ -193,8 +226,11 @@
 	}
 .selected-mf .mf-text{
 	margin:0 4px;
-	color: hsl(0, 0%, 55%);
+	color: transparent;
 	}
+.theme--dark .selected-mf .mf-text {
+		color:hsl(0, 0%, 55%);
+}
 
 .mf-load-progress, .mf-play-progress{
 	display: none;
@@ -207,11 +243,14 @@
 	width:0;
 	height:100%;
 	border-radius: 5px;
-	background:#484848;
+	background:transparent;
 	cursor:pointer;
 
 
 	}
+.theme--dark .selected-mf .mf-load-progress {
+		background-color:#484848;
+}
 .selected-mf .mf-play-progress{
 	position:absolute;
 	top:0;
@@ -220,9 +259,12 @@
 	width:0;
 	height:100%;
 	border-radius: 5px;
-	background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
+	background:transparent url(../i/playing-gradient.png) repeat-x 0 0;
 	cursor:pointer;
 	}
+.theme--dark .selected-mf .mf-play-progress {
+		background-color:0;
+}
 
 </style>
 <li

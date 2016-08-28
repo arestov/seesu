@@ -8,12 +8,15 @@ body{
 	width: 760px;
 
 	height:596px;
-	color:#E6E6E6;
+	color:transparent;
 
 	font-family: Arial, Helvetica ,sans-serif;
 	line-height:1.5;
 
 	}
+.theme--dark body{
+	color:#E6E6E6;
+}
 body.slice-for-height{
 	overflow:hidden;
 }
@@ -26,9 +29,13 @@ html.not-as-application, .not-as-application  body{
 }
 
 .not-as-application body{
-	background-color: #505050;
+	background-color: transparent;
 
 
+}
+
+.theme--dark.not-as-application body{
+	background-color:#505050;
 }
 .not-as-application .slider-materail{
 	padding-bottom:15px;
@@ -102,19 +109,31 @@ a.track_name_loading .song-track-name,
 	top:5px;
 	right:8px;
 	height:25px;
-	color:#ffffff;
+	color:transparent;
 	font-size:1.2rem;
 	font-family:"Trebuchet MS", sans-serif;
 	line-height:1;
 	cursor:pointer;
 	}
 
+
+.theme--dark #close-widget{
+	color:#ffffff;
+}
+
 	#close-widget:hover{
-		color:#E52573;
+		color:transparent;
 	}
+
+	.theme--dark #close-widget:hover{
+	color:#E52573;
+}
 	#close-widget:active{
-		color:#F4AF16;
+		color:transparent;
 	}
+	.theme--dark #close-widget:active{
+	color:#F4AF16;
+}
 
 
 .has_session .add-to-lfmfav{
@@ -165,13 +184,20 @@ a.track_name_loading .song-track-name,
 	display:block;
 	padding:0.5rem;
 	border-radius:4px;
-	color: gray;
+	color: transparent;
 
 	cursor:pointer;
 	}
+
+.theme--dark .load-more-list-data{
+	color:gray;
+}
 	.load-more-list-data:hover{
-		background-color: #595959;
+		background-color: transparent;
 		}
+	.theme--dark .load-more-list-data:hover{
+	background-color:#595959;
+}
 
 .photo-cont{
 	position: relative;
@@ -223,8 +249,14 @@ a.track_name_loading .song-track-name,
 #slider-materail{
 	position: relative;
 	z-index:2;
-	background:#505050;
+	background:transparent;
 	}
+
+
+
+.theme--dark #slider-materail{
+	background-color:#505050;
+}
 .footer{
 	position: relative;
 	z-index: 3;
@@ -251,14 +283,20 @@ a.track_name_loading .song-track-name,
 	padding-right: 18px;
 	padding-left:18px;
 	height:10px;
-	color:#999;
+	color:transparent;
 	font-size:0.8rem;
+}
+.theme--dark #promo{
+	color:#999;
 }
 	#promo a{
 		padding: 1px 0.5rem;
-		background:#505050;
+		background:transparent;
 
 		}
+	.theme--dark #promo a{
+	background-color:#505050;
+}
 		#promo a:hover{
 
 		}
@@ -283,6 +321,10 @@ a.track_name_loading .song-track-name,
 		}
 
 .desc{
+	color:transparent;
+}
+
+.theme--dark .desc{
 	color:#999;
 }
 .search-desc {
@@ -311,15 +353,21 @@ a.track_name_loading .song-track-name,
 		top:-11px;
 		border-style: solid;
 		border-width: 11px;
-		border-color: transparent   transparent  #555 transparent ;
+		border-color: transparent   transparent  transparent transparent;
 		}
+	.theme--dark .rc-s-arrow,.theme--dark .tl-arrow{
+	border-color:transparent   transparent  #555 transparent ;
+}
 		.rc-s-arrow-bg,.tl-arrow-bg {
 			top: -10px;
 			left: -11px;
 			border-style: solid;
 			border-width: 11px;
-			border-color: transparent transparent #5A5A5A transparent  ;
+			border-color: transparent transparent transparent transparent;
 			}
+		.theme--dark .rc-s-arrow-bg,.theme--dark .tl-arrow-bg{
+	border-color:transparent transparent #5A5A5A transparent  ;
+}
 	.tl-arrow{
 		margin-left:0;
 	}
@@ -382,12 +430,18 @@ iframe.you-tube-video,embed.you-tube-video{
 
 	}
 	.minimize-button:hover{
-		box-shadow: 0 0 9px #999;
+		box-shadow: 0 0 9px transparent;
 		opacity: 1;
 		}
+	.theme--dark .minimize-button:hover{
+	box-shadow:0 0 9px #999;
+}
 		.minimize-button:active{
-			box-shadow: inset 0 0 7px #000;
+			box-shadow: inset 0 0 7px transparent;
 			}
+		.theme--dark .minimize-button:active{
+	box-shadow:inset 0 0 7px #000;
+}
 /* Custom CSS scrollbar */
 
 .pokki-app ::-webkit-scrollbar {
@@ -405,7 +459,10 @@ iframe.you-tube-video,embed.you-tube-video{
 	width: 8px;
 	height: 20px;
 	border-radius: 5px;
-	background: #999;
+	background: transparent;
+}
+.theme--dark .pokki-app ::-webkit-scrollbar-thumb{
+	background-color:#999;
 }
 
 .pokki-app ::-webkit-scrollbar-button: {
@@ -413,15 +470,23 @@ iframe.you-tube-video,embed.you-tube-video{
 }
 
 body .surf_nav{
-	background-color: #000;
+	background-color: transparent;
 	1box-shadow:0 0 0 2pt #1DD8B2;
 	}
 
+.theme--dark body .surf_nav{
+	background-color:#000;
+}
+
 .pl-auth-con{
 	display: none;
-	color:#999;
+	color:transparent;
 	padding: 0.5rem 1rem 0;
 	}
+
+.theme--dark .pl-auth-con{
+	color:#999;
+}
 
 .access-request .pl-auth-con{
 	display: block;
@@ -464,8 +529,14 @@ body .surf_nav{
 .nav_helper {
 	position: relative;
 	padding: 1rem;
-	background: #313131;
-	border-bottom: 1px solid #252525;
+	background: transparent;
+	border-bottom: 1px solid transparent;
+}
+
+
+.theme--dark .nav_helper{
+	background-color:#313131;
+	border-bottom-color:#252525;
 }
 	.nav_helper-header {
 		margin: 0 1rem 0.5rem
@@ -473,10 +544,13 @@ body .surf_nav{
 	.nav_helper-fullb {
 		display: inline;
 		padding: 0.2rem 1rem;
-		background: #2E2E2E;
+		background: transparent;
 		border-radius: 0.3rem;
 		cursor: pointer;
 	}
+	.theme--dark .nav_helper-fullb{
+	background-color:#2E2E2E;
+}
 	.nav_helper-closer {
 		font-size: 2rem;
 		position: absolute;
@@ -488,33 +562,53 @@ body .surf_nav{
 		border-radius: 0.4rem;
 	}
 	.nav_helper-closer:hover {
-		background-color:#3F3F3F;
+		background-color:transparent;
 	}
+	.theme--dark .nav_helper-closer:hover{
+	background-color:#3F3F3F;
+}
 
 
 .nav_pl_hitem {
 	display: none;
 	cursor: pointer;
-	background: #2E2E2E;
-	border-top: 1px solid #353535;
-	border-bottom: 1px solid #292929;
+	background: transparent;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
 	border-radius: 0.5rem;
 	padding: 0.5rem 1rem;
 	margin-bottom: 0.5rem;
 	max-width: 750px;
 	position: relative;
 }
+
+
+.theme--dark .nav_pl_hitem{
+	background-color:#2E2E2E;
+	border-top-color:#353535;
+	border-bottom-color:#292929;
+}
 .nav_pl_hitem-selected {
-	background: #333333;
+	background: transparent;
 	border: 1px solid transparent;
 	cursor: default;
 }
+.theme--dark .nav_pl_hitem-selected{
+	background-color:#333333;
+	border-color:transparent;
+}
 .nav_pl_hitem:hover {
-	background: #333;
+	background: transparent;
+}
+.theme--dark .nav_pl_hitem:hover{
+	background-color:#333;
 }
 .nav_pl_hitem-song {
 	font-size: 0.8rem;
-	color: #aaa;
+	color: transparent;
+}
+.theme--dark .nav_pl_hitem-song{
+	color:#aaa;
 }
 
 .nav_pl_hitem-allow_preview {
@@ -530,15 +624,24 @@ body .surf_nav{
 		top: -11px;
 		border-style: solid;
 		border-width: 11px;
-		border-color: transparent transparent #252525 transparent;
+		border-color: transparent transparent transparent transparent;
 		}
+
+
+
+	.theme--dark .nvh-s-arrow{
+	border-color:transparent transparent #252525 transparent;
+}
 		.nvh-s-arrow-bg {
 			top: -10px;
 			left: -11px;
 			border-style: solid;
 			border-width: 11px;
-			border-color: transparent transparent #313131 transparent;
+			border-color: transparent transparent transparent transparent;
 			}
+		.theme--dark .nvh-s-arrow-bg{
+	border-color:transparent transparent #313131 transparent;
+}
 .nvh-arrow{
 	position: absolute;
 	top: -11px;

@@ -4,14 +4,19 @@
 	position: absolute;
 	bottom: 0.5rem;
 	left: 0;
-	background: #F53C35;
-	color: #fff;
+	background: transparent;
+	color: transparent;
 	text-align: center;
 	width: 1.5rem;
 	height: 1.5rem;
 	font-size: 1.2rem;
 	border-radius: 0 40% 40% 0;
 	cursor: pointer;
+}
+
+.theme--dark .notify-closer{
+	background-color: #F53C35;
+	color: #fff;
 }
 
 .vk-needs-login .vk-login-context{
@@ -43,9 +48,14 @@
 			}
 
 	.vk-login-context.attention-focuser{
-		background:#faebd7 no-repeat 100% 1rem;
-		color:#000;
+		background:transparent no-repeat 100% 1rem;
+		color:transparent;
 		}
+
+	.theme--dark .vk-login-context.attention-focuser{
+	background-color: #faebd7;
+	color: #000;
+}
 	.moplas-block .vk-login-context{
 		display: none;
 
@@ -80,17 +90,29 @@
 		margin:0;
 	}
 	.vk-login-context.attention-focuser a{
-		border-bottom-color:#dddba9;
-		color:#83ac1b;
+		border-bottom-color:transparent;
+		color:transparent;
 	}
+	.theme--dark .vk-login-context.attention-focuser a{
+	border-bottom-color: #dddba9;
+	color: #83ac1b;
+}
 	.vk-login-context.attention-focuser a:hover{
-		border-bottom-color:#e3e5a0;
-		color:#a1d404;
+		border-bottom-color:transparent;
+		color:transparent;
 	}
+	.theme--dark .vk-login-context.attention-focuser a:hover{
+	border-bottom-color: #e3e5a0;
+	color: #a1d404;
+}
 	.vk-login-context.attention-focuser .js-serv{
-		background: #fff;
+		background: transparent;
 		border-color: transparent;
 		}
+	.theme--dark .vk-login-context.attention-focuser .js-serv{
+	background-color: #fff;
+	border-color: transparent;
+}
 	.vk-login-reg-link{
 		float:right;
 		margin-left:1rem;
@@ -153,10 +175,18 @@
 	background: transparent;
 	color:inherit;
 	}
+
+.theme--dark .area_for_button .pl-auth-con .vk-login-context{
+	background-color: transparent;
+}
 	.area_for_button .pl-auth-con .vk-login-context a{
-		border-bottom-color: #ccc;
-		color:#ddd;
+		border-bottom-color: transparent;
+		color:transparent;
 		}
+	.theme--dark .area_for_button .pl-auth-con .vk-login-context a{
+	border-bottom-color: #ccc;
+	color: #ddd;
+}
 
 .fast-code-input-access {
 	display: none;

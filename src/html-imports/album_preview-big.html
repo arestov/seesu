@@ -3,8 +3,11 @@
 	cursor: pointer;
 	}
 	.album_preview-big:hover{
-		background: #555;
+		background: transparent;
 		}
+	.theme--dark .album_preview-big:hover{
+	background-color: #555;
+}
 .full-page .album_preview-big{
 	float:left;
 	}
@@ -13,8 +16,12 @@
 		display: block;
 		height: 9rem;
 		width: 9rem;
-		background-color: #666;
+		background-color: transparent;
 		}
+
+	.theme--dark .album_preview-big img{
+	background-color: #666;
+}
 	.album_preview-big .full_album_name{
 
 		padding:0.5rem 0;
@@ -33,8 +40,11 @@
 		margin-bottom: 1rem;
 		}
 	.full_album_name .album_name{
-		color: #999;
+		color: transparent;
 		}
+	.theme--dark .full_album_name .album_name{
+	color: #999;
+}
 </style>
 <div class="album_preview-big"
 	pv-events="click:requestPage"

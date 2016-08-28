@@ -7,6 +7,11 @@
 }
 
 
+.theme--dark.as-application:not(.chrome-extension) body{
+	background-color:transparent;
+}
+
+
 html.as-application:not(.chrome-extension){
 	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
 	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
@@ -54,9 +59,14 @@ html.opera-extension{
 	right: 0;
 	bottom: 0;
 	left: 0;
-	border:1px solid #666;
+	border:1px solid transparent;
 	border-top:0;
-	background-color: #505050;
+	background-color: transparent;
+}
+
+.theme--dark.as-application:not(.chrome-extension) #slider-materail{
+	border-color:#666;
+	background-color:#505050;
 }
 
 #promo{

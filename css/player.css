@@ -1,6 +1,10 @@
 #slider .track-node.surf_nav{
-		background: #000;
+		background: transparent;
 		}
+
+.theme--dark #slider .track-node.surf_nav{
+		background-color: #000;
+}
 
 #i_f_sm2{
 	position:absolute;
@@ -24,9 +28,13 @@
 
 .song-artist_name {
 	display: block;
-	color: hsl(0, 0%, 50%);
+	color: transparent;
 	font-size: 0.85rem;
 	}
+
+.theme--dark .song-artist_name{
+		color: hsl(0, 0%, 50%);
+}
 
 .page-scheme .song-track-name {
 	overflow: hidden;

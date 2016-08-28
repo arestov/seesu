@@ -71,8 +71,11 @@
     height:1.8rem;
     }
   .shareb-base .share-user-suggest:hover a,.post-to-my-vk-wall:hover{
-    background-color: #494949;
+    background-color: transparent;
     }
+  .theme--dark .shareb-base .share-user-suggest:hover a,.theme--dark .post-to-my-vk-wall:hover{
+    background-color:#494949;
+}
 </style>
 <style>
 
@@ -89,10 +92,13 @@
 	}
 	.vk_share_header{
 		float:left;
-		color: #999;
+		color: transparent;
 		padding-top: 0.1rem;
 		margin: 0 1rem 0 0;
 	}
+	.theme--dark .vk_share_header{
+		color: #999;
+}
 	.post-to-my-vk-wall{
 		float:left;
 	}
@@ -104,15 +110,21 @@
 	overflow: hidden;
 }
 .shareb-base{
-	background: #545454;
+	background: transparent;
 	border: 1px solid transparent;
-	border-top: 1px solid #4E4E4E;
-	border-bottom: 1px solid #646464;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
 	border-radius: 0.5rem;
 	margin-bottom: 0.2rem;
 	padding: 0.7rem;
 	overflow: hidden;
 	}
+.theme--dark .shareb-base{
+		background-color: #545454;
+		border-color: transparent;
+		border-top-color: #4E4E4E;
+		border-bottom-color: #646464;
+}
 
 	.shareb-con{
 		clear: both;
@@ -131,13 +143,21 @@
 	top:0;
 	bottom: 0;
 	right: 0;
-	background: #333;
+	background: transparent;
 	opacity: 0.5;
 	}
+.theme--dark .clicks_protecter{
+	background-color: #333;
+
+}
 	.clicks_protecter:hover{
 		cursor: pointer;
-		border-bottom: 0.2rem solid #fff;
+		border-bottom: 0.2rem solid transparent;
 		}
+	.theme--dark .clicks_protecter:hover{
+	border-bottom-color: #fff;
+
+}
 .compact_share {
 
 	}

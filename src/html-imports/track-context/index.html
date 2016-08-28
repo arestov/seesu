@@ -22,10 +22,16 @@
 }
 
 .track-context .photo_and_artinfo{
-	border-top:1px solid #555555;
-	border-bottom:1px solid #6e6e6e;
-	background:#5a5a5a;
+	border-top:1px solid transparent;
+	border-bottom:1px solid transparent;
+	background:transparent;
 	margin:0 -13px;
+}
+
+.theme--dark .track-context .photo_and_artinfo{
+	border-top-color:#555555;
+	border-bottom-color:#6e6e6e;
+	background-color:#5a5a5a;
 }
 
 .album_insong_image {
@@ -60,10 +66,16 @@
 	position:relative;
 	margin: 0 -13px 11px;
 	padding: 0 13px 1rem;
-	border-top: 1px solid #555555;
-	border-bottom: 1px solid #6e6e6e;
-	background: #5a5a5a;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	background: transparent;
 	}
+
+.theme--dark .song-row-content{
+	border-top-color:#555555;
+	border-bottom-color:#6e6e6e;
+	background-color:#5a5a5a;
+}
 	.song-row-content .simple_row_setting{
 		padding-top:1rem;
 		}
@@ -82,6 +94,9 @@
 	margin-top: 3px;
 	font-size: 0.8rem;
 	padding: 0 1rem 1rem;
+	color: transparent;
+}
+.theme--dark .track-aside-info_friendly-app {
 	color: #7d7d7d;
 }
 </style>
@@ -129,9 +144,15 @@
 <style>
 .row-song-context input{
 	margin:0;
-	border-color:#919191;
+	border-color:transparent;
 	border-radius:4px;
-	background: #777;
+	background: transparent;
+	color:transparent;
+
+}
+.theme--dark .row-song-context input{
+	border-color:#919191;
+	background-color:#777;
 	color:#eee;
 
 }

@@ -21,8 +21,12 @@
 	padding: 0 0 0.5rem;
 	border-radius: 0.5rem;
 	margin-bottom: 1rem;
-	border: 1px dashed #616161;
+	border: 1px dashed transparent;
 	}
+
+.theme--dark .area_for_button{
+	border-color: #616161;
+}
 
 	.area_for_button .area-button{
 		margin-bottom: 0;
@@ -30,6 +34,10 @@
 		padding-bottom: 0rem;
 		min-height: 1.5rem;
 		}
+
+	.theme--dark .area_for_button .area-button{
+	border-color: transparent;
+}
 
 	.page-scheme .area_for_button .area-button{
 		padding-bottom: 0.5rem;
@@ -39,8 +47,11 @@
 		display: block;
 		font-size: 0.8em;
 
-		color: hsl(0, 0%, 55%);
+		color: transparent;
 		}
+	.theme--dark .area_for_button .area-description{
+	color: hsl(0, 0%, 55%);
+}
 	.access-request .area_for_button .area-description {
 		display: none;
 		}
@@ -71,9 +82,12 @@
 				position: relative;
 				margin-top: -0.2rem;
 				top: 0.2rem;
-				background: #666;
+				background: transparent;
 				border-radius: 50%;
 			}
+			.theme--dark .desc_prevw_list .desc_item-imgcon{
+	background-color: #666;
+}
 			.desc_item-imgcon img{
 				width: 1rem;
 				height: 1rem;
@@ -84,6 +98,10 @@
 		background-image: none;
 		background-color: transparent;
 		}
+	.theme--dark .area_for_button.surf_nav .area-button{
+	border-color: transparent;
+	background-color: transparent;
+}
 	.desc_prevw_list.list_loading{
 		position: relative;
 		}
@@ -107,13 +125,17 @@
 	border-radius: 0.6rem;
 
 
-	border: 1px dashed #616161;
+	border: 1px dashed transparent;
 
 
 
-	color: hsl(0, 0%, 70%);
+	color: transparent;
 
 	}
+.theme--dark .area-button{
+	border-color: #616161;
+	color: hsl(0, 0%, 70%);
+}
 
 	.no_arfb .area-button{
 		cursor: pointer;
@@ -123,28 +145,44 @@
 		}
 	.area_for_button:hover,
 	.no_arfb .area-button:hover{
-		background: #4f4f4f;
+		background: transparent;
 		border-color: transparent;
-		border-top: 1px solid #5E5E5E;
+		border-top: 1px solid transparent;
 		/*
 		#5E5E5E;
 		#545454), to(#4D4D4D));
 		#474747;
 		*/
-		border-bottom: 1px solid #474747;
-		background-image: linear-gradient(#545454,#4D4D4D);
+		border-bottom: 1px solid transparent;
+		background-image: linear-gradient(transparent,transparent);
 		}
+	.theme--dark .area_for_button:hover,
+	.theme--dark .no_arfb .area-button:hover{
+	background-color: #4f4f4f;
+	border-color: transparent;
+	border-top-color: #5E5E5E;
+	border-bottom-color: #474747;
+	background-image: linear-gradient(#545454,#4D4D4D);
+}
 	.area_for_button:active,
 	.no_arfb .area-button:active{
 
 		border-color:transparent;
 		background-image: none;
-		box-shadow: inset 0 0 10px 1px #454545;
+		box-shadow: inset 0 0 10px 1px transparent;
 		}
+	.theme--dark .area_for_button:active,
+	.theme--dark .no_arfb .area-button:active{
+	border-color: transparent;
+	box-shadow: inset 0 0 10px 1px #454545;
+}
 	.no_arfb .area-button.surf_nav{
 		border-color: transparent;
 		background-image: none;
 		}
+	.theme--dark .no_arfb .area-button.surf_nav{
+	border-color: transparent;
+}
 
 	.area-button .area-description{
 		min-height: 2rem;
@@ -166,13 +204,26 @@
 		border-radius: 0.5rem;
 		cursor: pointer;
 		}
+
+	.theme--dark .arb-union .arb-ally{
+	border-color: transparent;
+}
 		.arb-union .arb-ally:hover {
-			background: #555;
+			background: transparent;
 			}
+		.theme--dark .arb-union .arb-ally:hover{
+	background-color: #555;
+}
 .button_selected{
-	background-color: #444;
+	background-color: transparent;
 	border: 1px solid transparent;
-	border-top: 1px solid #404040;
-	border-bottom: 1px solid #555;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
 	cursor: default;
 	}
+.theme--dark .button_selected{
+	background-color: #444;
+	border-color: transparent;
+	border-top-color: #404040;
+	border-bottom-color: #555;
+}
