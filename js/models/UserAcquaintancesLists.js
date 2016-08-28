@@ -38,7 +38,10 @@ var UserAcquaintance = spv.inh(pv.Model, {
 				'accepted', 'remainded_date', 'userlink',
 				'#locales.wget-link', '#locales.attime', '#locales'
 			],
-			fn: function(accepted, remainded_date, userlink, lo_will_get, lo_time, locales) {
+			fn: function(
+					accepted, remainded_date, userlink,
+					lo_will_get, lo_time, locales
+				) {
 				if (!lo_will_get || !lo_time || !locales) {return;}
 				if (accepted && !userlink){
 					var d = new Date(remainded_date);
