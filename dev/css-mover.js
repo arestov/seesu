@@ -533,7 +533,23 @@ Promise.all([all_selectors, html_parsed]).then(args => {
 
 
 
-  logFile(result, '../css/master.css');
+  // logFile(result, '../css/master.css');
+
+  result
+  .filter(item => !item.selector || item.selector.full.parsed.some(isClassPart))
+  .filter(item => {
+
+
+    const full = item.files.full || [];
+    const start = item.files.start || [];
+    const end = item.files.end || [];
+    const each_part_at_end = item.files.each_part_at_end || [];
+
+    if (!full.length && !each_part_at_end.length && !start.length) {
+      return true;
+    }
+  })
+  .forEach(logItem)
 
 
 
