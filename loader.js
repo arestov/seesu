@@ -26,7 +26,7 @@ requirejs.config({
 	},
 	waitSeconds: window.tizen && 0
 });
-var seesu_version = 4.94;
+var seesu_version = 4.95;
 
 window._gaq = window._gaq || [];
 
