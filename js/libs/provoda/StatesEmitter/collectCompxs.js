@@ -126,6 +126,7 @@ return function(self, props) {
     cur = self.full_comlxs_list[i];
     for (jj = 0; jj < cur.watch_list.length; jj++) {
       state_name = cur.watch_list[jj];
+      if (state_name === cur.name) {continue;}
       if (!self.full_comlxs_index[state_name]) {
         self.full_comlxs_index[state_name] = [];
       }
