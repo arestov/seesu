@@ -133,7 +133,8 @@ var LfmAuth = spv.inh(pv.Model, {
 	},
 	'api-bridge': [
 		'requested_once',
-		function () {
+		['window'],
+		function (window) {
 			return window.document.createElement('iframe');
 		}
 	],

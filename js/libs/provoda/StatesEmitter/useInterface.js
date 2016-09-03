@@ -2,6 +2,7 @@ define(function (require) {
 'use strict';
 
 var spv = require('spv');
+var pvUpdate = require('../updateProxy').update;
 
 var getStateUpdater = function(em, state_name) {
 	if (!em._state_updaters) {
@@ -104,6 +105,7 @@ return function (self, interface_name, obj) {
 	using = self._interfaces_using = makeBindChanges(self, self._build_cache_interfaces, using, values_original);
 
 	if (!obj) {
+		pvUpdate(self, '_api_used_' + interface_name, false);
 		return;
 	}
 
@@ -111,5 +113,6 @@ return function (self, interface_name, obj) {
 	using.used[interface_name] = obj;
 	using = self._interfaces_using = markApi(self._interfaces_to_states_index, using, interface_name, true);
 	using = self._interfaces_using = makeBindChanges(self, self._build_cache_interfaces, using, values_original2);
+	pvUpdate(self, '_api_used_' + interface_name, true);
 };
 });

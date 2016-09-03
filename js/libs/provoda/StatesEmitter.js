@@ -473,17 +473,9 @@ var StatesEmitter = spv.inh(Eventor, {
 			obj.current_motivator = obj.current_motivator || null;
 
 			obj._state_updaters = null;
-			obj._used_interfaces = null;
-			obj._unuse_interface_instr = null;
+			obj._interfaces_using = null;
 
 			obj.states = {};
-
-			if (obj.__apis_$_usual && obj.__apis_$_usual.length) {
-				for (var i = 0; i < obj.__apis_$_usual.length; i++) {
-					var cur = obj.__apis_$_usual[i];
-					obj.useInterface(cur.name, cur.fn());
-				}
-			}
 		};
 	},
 	onExtend: function(md, props, original) {

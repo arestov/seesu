@@ -355,6 +355,14 @@ var modelInit = (function() {
 			self.initStates();
 		}
 
+
+		if (self.__apis_$_usual && self.__apis_$_usual.length) {
+			for (var i = 0; i < self.__apis_$_usual.length; i++) {
+				var cur = self.__apis_$_usual[i];
+				self.useInterface(cur.name, cur.fn());
+			}
+		}
+
 		return self;
 	};
 })();
