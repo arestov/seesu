@@ -90,9 +90,9 @@ var makeBindChanges = function (self, index, using, original_values) {
 return function (self, interface_name, obj) {
 	var using = self._interfaces_using;
 	var old_interface = using && using.used[interface_name];
-  if (obj === old_interface) {
-    return;
-  }
+	if (obj === old_interface) {
+		return;
+	}
 
 	if (!using) {
 		using = self._interfaces_using = template(self);
