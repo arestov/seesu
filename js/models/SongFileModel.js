@@ -157,7 +157,6 @@ function props() {
 				return Math.round(duration * playing_progress);
 			}
 		],
-
 		'compx-visible_duration_text': [
 			['visible_duration'],
 			function (state) {
@@ -263,6 +262,37 @@ function props() {
 				});
 			}
 		},
+		'compx-last_play': [
+			['playing_progress', 'play'],
+			function (playing_progress, play) {
+				if (!play || typeof playing_progress !== 'number') {
+					return null;
+				}
+				return Date.now();
+			}
+		],
+		'compx-played_amount': [
+			['played_amount', 'last_play', 'play'],
+			function (played_amount, last_play, play) {
+				if (!play) {
+					return null;
+				}
+
+				if (last_play == undefined) {
+					return played_amount;
+				}
+
+				var amount = played_amount && played_amount.value || 0;
+				var prev = played_amount && played_amount.last_play;
+
+				return {
+					last_play: last_play,
+					value: prev
+						? amount + (last_play - prev)
+						: 0
+				}
+			}
+		],
 		failPlaying: function() {
 			var old_fails = pvState(this, 'unavailable') || 0;
 
