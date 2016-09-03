@@ -164,7 +164,17 @@ function checkApi(declr, value, self) {
 		return;
 	}
 
-	self.useInterface(declr.name, declr.fn());
+	if (!declr.needed_apis) {
+		self.useInterface(declr.name, declr.fn());
+	}
+
+	var args = new Array(declr.needed_apis.length);
+	for (var i = 0; i < declr.needed_apis.length; i++) {
+		args[i] = self._interfaces_using.used[declr.needed_apis[i]];
+	}
+
+	self.useInterface(declr.name, declr.fn.apply(null, args));
+
 }
 
 function iterateApis(changes_list, context) {
@@ -179,6 +189,8 @@ function iterateApis(changes_list, context) {
 		if (!index[state_name]) {
 			continue;
 		}
+
+		debugger;
 
 		checkApi(index[state_name], changes_list[i+2], context);
 	}
