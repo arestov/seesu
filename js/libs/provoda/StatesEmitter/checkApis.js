@@ -103,7 +103,7 @@ var ApiEffectDeclr = function(name, data) {
     break;
     case 4: {
       this.deps = wrapDeps(data[1]);
-      this.deps_name = '_need_api_effect' + name;
+      this.deps_name = '_need_api_effect_' + name;
 
       this.compxes = [
         this.deps_name, this.deps
