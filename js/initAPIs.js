@@ -31,6 +31,7 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 	self.vk = {};
 	var lfm = initLfm(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 	self.lfm = lfm;
+	self.useInterface('lfm', lfm);
 	initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 };
 
