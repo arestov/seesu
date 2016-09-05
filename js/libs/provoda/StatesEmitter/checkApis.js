@@ -99,6 +99,20 @@ var ApiDeclr = function(name, data) {
 ],
 */
 
+var getHandler = function (schema) {
+  var parse = typeof schema === 'object' && spv.mmap(schema);
+  var is_one_field = typeof schema === 'string';
+
+  if (is_one_field) {
+    return function (self, result) {
+      pvUpdate(self, schema, result);
+    };
+  }
+  return function (self, result) {
+    self.updateManyStates(parse(result));
+  };
+}
+
 var ApiEffectDeclr = function(name, data) {
 
   this.name = name;
@@ -110,6 +124,7 @@ var ApiEffectDeclr = function(name, data) {
   this.fn = null;
   this.result_schema = null;
   this.is_async = null;
+  this.result_handler = null;
 
   this.compxes = null;
 
@@ -119,6 +134,8 @@ var ApiEffectDeclr = function(name, data) {
   this.fn = execution[2];
   this.result_schema = execution[3];
   this.is_async = !!execution[4];
+
+  this.result_handler = this.result_schema && getHandler(this.is_async, this.result_schema);
 
   var condition = data[1];
   var deps = condition && condition[0];
