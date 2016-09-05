@@ -293,6 +293,43 @@ function props() {
 				}
 			}
 		],
+		'compx-current_scrobbles': [
+			['current_scrobbles', 'duration', 'played_amount.value'],
+			function(current_scrobbles, duration, current_amount) {
+				if (!duration ||!current_amount) {
+					return null;
+				}
+
+				var count = 0;
+				count += Math.floor( current_amount / duration )
+
+				if (current_amount % duration > (duration * 0.5)) {
+					count++;
+				}
+
+				if (current_scrobbles && current_scrobbles.length === count) {
+					return current_scrobbles;
+				}
+
+				var result = current_scrobbles ? current_scrobbles.slice() : [];
+				if (count !== result.length) {
+					result.push(Date.now());
+				}
+
+				return result;
+			}
+		],
+		'effect-scrobble': [
+			[
+				['#lfm', 'current_scrobbles.length'],
+				function(lfm, count) {
+					// lfm.
+				},
+				// null,
+				// true
+			],
+			['current_scrobbles.length']
+		],
 		failPlaying: function() {
 			var old_fails = pvState(this, 'unavailable') || 0;
 
