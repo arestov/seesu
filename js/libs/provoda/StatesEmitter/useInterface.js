@@ -31,7 +31,7 @@ var checkState = function (using, binder) {
 };
 
 var markApi = function (index, using, interface_name, mark) {
-	var list = index[interface_name];
+	var list = index && index[interface_name];
 	if (!list || !list.length) {
 		return using;
 	}
