@@ -6,11 +6,15 @@ function checkAndMutateCondReadyEffects(changes_list, self) {
 
 	for (var i = 0; i < changes_list.length; i+=3) {
 		var state_name = changes_list[i+1];
+		if (!index[state_name]) {continue;}
+
 		var value = changes_list[i+2];
-		if (!value || !index[state_name]) {
+
+		var old_ready = self._effects_using.conditions_ready[index[state_name].name];
+		self._effects_using.conditions_ready[index[state_name].name] = Boolean(value);
+		if (old_ready === Boolean(value)) {
 			continue;
 		}
-		self._effects_using.conditions_ready[index[state_name].name] = true;
 		self._effects_using.invalidated[index[state_name].name] = true;
 	}
 }
@@ -207,8 +211,6 @@ function iterateApis(changes_list, context) {
 		if (!index[state_name]) {
 			continue;
 		}
-
-		debugger;
 
 		checkApi(index[state_name], changes_list[i+2], context);
 	}
