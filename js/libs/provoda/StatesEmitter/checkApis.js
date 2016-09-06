@@ -245,6 +245,26 @@ var getDepsToInsert = function (source, self, props) {
   }
 };
 
+function rootApis(obj) {
+  if (!obj) {return;}
+
+  var index = {};
+
+  for (var name in obj) {
+    var cur = obj[name];
+    if (!cur) {continue;}
+
+    for (var i = 0; i < cur.apis.length; i++) {
+      if (!spv.startsWith(cur.apis[i], '#')) {continue;}
+      index[cur.apis[i].slice(1)] = true;
+    }
+  }
+
+  var result = Object.keys(index);
+
+  return result.length ? result : null;
+}
+
 return function checkApis(self, props) {
   var apis = checkApi(self, props);
   // var states = checkApiState(self, props);
@@ -257,6 +277,8 @@ return function checkApis(self, props) {
   self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;
   self.__api_effects_$_index = indexByDepName(effects) || self.__api_effects_$_index;
   self.__api_effects_$_index_by_triggering = indexByList(effects, 'triggering_states') || self.__api_effects_$_index_by_triggering;
+
+  self.__api_root_dep_apis = rootApis(effects) || self.__api_root_dep_apis || null;
 
   collectStatesBinders(self, props);
 };
