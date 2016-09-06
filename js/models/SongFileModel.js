@@ -2,6 +2,10 @@ define(['pv', 'app_serv', 'spv', './PlayRequest'], function(pv, app_serv, spv, P
 "use strict";
 var app_env = app_serv.app_env;
 
+var isStoped = function (play) {
+	return !play && play !== false;
+};
+
 var finup = function(callback) {
 	callback.finup = true;
 	return callback;
@@ -189,7 +193,7 @@ function props() {
 				// if (mo){
 				// 	pv.update(mo, 'play', false);
 				// }
-				pv.update(this, 'play', false);
+				pv.update(this, 'play', null);
 			},
 			play: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
@@ -234,7 +238,7 @@ function props() {
 				// if (mo){
 				// 	pv.update(mo, 'play', false);
 				// }
-				pv.update(this, 'play', false);
+				pv.update(this, 'play', null);
 			},
 			error: function() {
 				var d = new Date();
@@ -265,7 +269,7 @@ function props() {
 		'compx-last_play': [
 			['playing_progress', 'play'],
 			function (playing_progress, play) {
-				if (!play || typeof playing_progress !== 'number') {
+				if (isStoped(play) || typeof playing_progress !== 'number') {
 					return null;
 				}
 				return Date.now();
@@ -274,7 +278,7 @@ function props() {
 		'compx-played_amount': [
 			['played_amount', 'last_play', 'play'],
 			function (played_amount, last_play, play) {
-				if (!play) {
+				if (isStoped(play)) {
 					return null;
 				}
 
@@ -290,7 +294,7 @@ function props() {
 					value: prev
 						? amount + (last_play - prev)
 						: 0
-				}
+				};
 			}
 		],
 		'compx-current_scrobbles': [
@@ -381,7 +385,7 @@ function props() {
 				this.setPosition(0, false, true);
 				this.removeCache();
 
-				pv.update(this, 'play', false);
+				pv.update(this, 'play', null);
 				pv.update(this, 'loading_progress', 0);
 				pv.update(this, 'playing_progress', 0);
 
