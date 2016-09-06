@@ -141,7 +141,7 @@ var ApiEffectDeclr = function(name, data) {
   var deps = condition && condition[0];
   if (deps) {
     this.deps = wrapDeps(deps);
-    this.deps_name = '_need_api_effect' + name;
+    this.deps_name = '_need_api_effect_' + name;
 
     this.compxes = [
       this.deps_name, this.deps
