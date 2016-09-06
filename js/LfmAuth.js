@@ -163,33 +163,33 @@ var LfmAuth = spv.inh(pv.Model, {
 		}
 	],
 	'effect-started_bridge': [
-		['bridge', 'window'],
-		'bridge_url',
-		[['bridge_url']],
-		function (bridge, win, bridge_url) {
-			bridge.className = 'serv-container';
-			bridge.src = bridge_url;
-			win.document.body.appendChild(bridge);
-		}
+		[
+			['bridge', 'window'], 'bridge_url',
+			function (bridge, win, bridge_url) {
+				bridge.className = 'serv-container';
+				bridge.src = bridge_url;
+				win.document.body.appendChild(bridge);
+			}
+		],
+		['bridge_url'],
 	],
 	'effect-prepared_bridge': [
-		'bridge',
-		[['_bridge_ready', 'bridge_key']], // возможен только при выполнении условия
 		[
-			['bridge_key'], // инвалидирующие состояния
-			['started_bridge'] // задаёт порядок выполнения (нужно чтобы выполнилось хоть раз)
+			'bridge', 'bridge_key',
+			function (bridge, key) {
+				bridge.contentWindow.postMessage("add_keys:" + key, '*');
+			}
 		],
-		function (bridge, key) {
-			bridge.contentWindow.postMessage("add_keys:" + key, '*');
-		}
+		[['_bridge_ready', 'bridge_key'], ['started_bridge']]
 	],
 	'effect-asked_permission': [
-		['self'],
-		[['auth_data']],
-		[['auth_data'], ['prepared_bridge']],
-		function (self, data) {
-			self.trigger('want-open-url', data.link, data.opts);
-		}
+		[
+			'self', 'auth_data',
+			function (self, data) {
+				self.trigger('want-open-url', data.link, data.opts);
+			}
+		],
+		['auth_data', 'prepared_bridge']
 	],
 	'stch-token': function (target, token) {
 		target.setToken(token);

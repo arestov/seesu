@@ -5,6 +5,8 @@ var spv = require('spv');
 var checkPrefix = require('./checkPrefix');
 var collectStatesBinders = require('./collectStatesBinders');
 
+var toRealArray = spv.toRealArray;
+
 var wrapDeps = function(deps) {
   if (typeof deps == 'string') {
     return [[deps]];
@@ -82,40 +84,71 @@ var ApiDeclr = function(name, data) {
   }
 };
 
+
+/*
+
+'effect-': [
+  [
+    ['апи'], ['инвалидирующие состояния'],
+    function (апи..., инвалидирующие состояния...) {
+
+    },
+    true || {state_name: 'response.field'}
+  ],
+  [['необходимые состояние'], ['необходимые эффекты']],
+],
+*/
+
+var getHandler = function (schema) {
+  var parse = typeof schema === 'object' && spv.mmap(schema);
+  var is_one_field = typeof schema === 'string';
+
+  if (is_one_field) {
+    return function (self, result) {
+      pvUpdate(self, schema, result);
+    };
+  }
+  return function (self, result) {
+    self.updateManyStates(parse(result));
+  };
+}
+
 var ApiEffectDeclr = function(name, data) {
 
   this.name = name;
-  this.apis = spv.toRealArray(data[0]);
+  this.apis = null;
   this.triggering_states = null;
   this.deps = null;
   this.deps_name = null;
   this.effects_deps = null;
   this.fn = null;
+  this.result_schema = null;
+  this.is_async = null;
+  this.result_handler = null;
 
   this.compxes = null;
 
-  switch (data.length) {
-    case 3: {
-      this.triggering_states = data[1][0];
-      this.effects_deps = data[1][1];
-      this.fn = data[2];
-    }
-    break;
-    case 4: {
-      this.deps = wrapDeps(data[1]);
-      this.deps_name = '_need_api_effect' + name;
+  var execution = data[0];
+  this.apis = toRealArray(execution[0]);
+  this.triggering_states = toRealArray(execution[1]);
+  this.fn = execution[2];
+  this.result_schema = execution[3];
+  this.is_async = !!execution[4];
 
-      this.compxes = [
-        this.deps_name, this.deps
-      ];
+  this.result_handler = this.result_schema && getHandler(this.is_async, this.result_schema);
 
-      this.triggering_states = data[2][0];
-      this.effects_deps = data[2][1];
-      this.fn = data[3];
-    }
-    break;
+  var condition = data[1];
+  var deps = condition && condition[0];
+  if (deps) {
+    this.deps = wrapDeps(deps);
+    this.deps_name = '_need_api_effect_' + name;
+
+    this.compxes = [
+      this.deps_name, this.deps
+    ];
   }
-
+  var effects_deps = condition && condition[1];
+  this.effects_deps = (effects_deps && toRealArray(effects_deps)) || null;
 };
 
 var checkApi = checkPrefix('api-', ApiDeclr, '__apis');
@@ -212,6 +245,26 @@ var getDepsToInsert = function (source, self, props) {
   }
 };
 
+function rootApis(obj) {
+  if (!obj) {return;}
+
+  var index = {};
+
+  for (var name in obj) {
+    var cur = obj[name];
+    if (!cur) {continue;}
+
+    for (var i = 0; i < cur.apis.length; i++) {
+      if (!spv.startsWith(cur.apis[i], '#')) {continue;}
+      index[cur.apis[i].slice(1)] = true;
+    }
+  }
+
+  var result = Object.keys(index);
+
+  return result.length ? result : null;
+}
+
 return function checkApis(self, props) {
   var apis = checkApi(self, props);
   // var states = checkApiState(self, props);
@@ -224,6 +277,8 @@ return function checkApis(self, props) {
   self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;
   self.__api_effects_$_index = indexByDepName(effects) || self.__api_effects_$_index;
   self.__api_effects_$_index_by_triggering = indexByList(effects, 'triggering_states') || self.__api_effects_$_index_by_triggering;
+
+  self.__api_root_dep_apis = rootApis(effects) || self.__api_root_dep_apis || null;
 
   collectStatesBinders(self, props);
 };

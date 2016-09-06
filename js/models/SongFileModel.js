@@ -2,6 +2,10 @@ define(['pv', 'app_serv', 'spv', './PlayRequest'], function(pv, app_serv, spv, P
 "use strict";
 var app_env = app_serv.app_env;
 
+var isStoped = function (play) {
+	return !play && play !== false;
+};
+
 var finup = function(callback) {
 	callback.finup = true;
 	return callback;
@@ -157,7 +161,6 @@ function props() {
 				return Math.round(duration * playing_progress);
 			}
 		],
-
 		'compx-visible_duration_text': [
 			['visible_duration'],
 			function (state) {
@@ -186,21 +189,9 @@ function props() {
 		}),
 		events: {
 			finish: function(){
-				var mo = ((this == this.mo.mopla) && this.mo);
-				// if (mo){
-				// 	pv.update(mo, 'play', false);
-				// }
-				pv.update(this, 'play', false);
+				pv.update(this, 'play', null);
 			},
 			play: function(){
-				var mo = ((this == this.mo.mopla) && this.mo);
-				if (mo){
-					// pv.update(mo, 'play', 'play');
-					if (!mo.start_time){
-						//fixme
-						mo.start_time = (Date.now()/1000).toFixed(0);
-					}
-				}
 				pv.update(this, 'play', 'play');
 			},
 			playing: function(opts){
@@ -223,19 +214,10 @@ function props() {
 				}
 			},
 			pause: function(){
-				var mo = ((this == this.mo.mopla) && this.mo);
-				// if (mo){
-				// 	// pv.update(mo, 'play', false);
-				// }
 				pv.update(this, 'play', false);
 			},
 			stop: function(){
-				//throw "Do not rely on stop event"
-				var mo = ((this == this.mo.mopla) && this.mo);
-				// if (mo){
-				// 	pv.update(mo, 'play', false);
-				// }
-				pv.update(this, 'play', false);
+				pv.update(this, 'play', null);
 			},
 			error: function() {
 				var d = new Date();
@@ -263,6 +245,63 @@ function props() {
 				});
 			}
 		},
+		'compx-last_play': [
+			['playing_progress', 'play'],
+			function (playing_progress, play) {
+				if (isStoped(play) || typeof playing_progress !== 'number') {
+					return null;
+				}
+				return Date.now();
+			}
+		],
+		'compx-played_amount': [
+			['played_amount', 'last_play', 'play'],
+			function (played_amount, last_play, play) {
+				if (isStoped(play)) {
+					return null;
+				}
+
+				if (last_play == undefined) {
+					return played_amount;
+				}
+
+				var amount = played_amount && played_amount.value || 0;
+				var prev = played_amount && played_amount.last_play;
+
+				return {
+					last_play: last_play,
+					value: prev
+						? amount + (last_play - prev)
+						: 0
+				};
+			}
+		],
+		'compx-current_scrobbles': [
+			['current_scrobbles', 'duration', 'played_amount.value'],
+			function(current_scrobbles, duration, current_amount) {
+				if (!duration ||!current_amount) {
+					return null;
+				}
+
+				var count = 0;
+				count += Math.floor( current_amount / duration );
+
+				if (current_amount % duration > (duration * 0.5)) {
+					count++;
+				}
+
+				if (current_scrobbles && current_scrobbles.length === count) {
+					return current_scrobbles;
+				}
+
+				var result = current_scrobbles ? current_scrobbles.slice() : [];
+				if (count !== result.length) {
+					result.push(Date.now());
+				}
+
+				return result;
+			}
+		],
 		failPlaying: function() {
 			var old_fails = pvState(this, 'unavailable') || 0;
 
@@ -314,7 +353,7 @@ function props() {
 				this.setPosition(0, false, true);
 				this.removeCache();
 
-				pv.update(this, 'play', false);
+				pv.update(this, 'play', null);
 				pv.update(this, 'loading_progress', 0);
 				pv.update(this, 'playing_progress', 0);
 

@@ -6,11 +6,15 @@ function checkAndMutateCondReadyEffects(changes_list, self) {
 
 	for (var i = 0; i < changes_list.length; i+=3) {
 		var state_name = changes_list[i+1];
+		if (!index[state_name]) {continue;}
+
 		var value = changes_list[i+2];
-		if (!value || !index[state_name]) {
+
+		var old_ready = self._effects_using.conditions_ready[index[state_name].name];
+		self._effects_using.conditions_ready[index[state_name].name] = Boolean(value);
+		if (old_ready === Boolean(value)) {
 			continue;
 		}
-		self._effects_using.conditions_ready[index[state_name].name] = true;
 		self._effects_using.invalidated[index[state_name].name] = true;
 	}
 }
@@ -103,6 +107,23 @@ function checkAndMutateDepReadyEffects(self) {
 	using.dep_effects_ready_is_empty = using.dep_effects_ready_is_empty && !has_one;
 }
 
+function handleEffectResult(self, effect, result) {
+	var handle = effect.result_handler;
+	if (!effect.is_async) {
+		if (!handle) {return;}
+		handle(self, result);
+		return;
+	}
+
+	self.addRequest(result);
+
+	if (!handle) {return;}
+	result.then(function (result) {
+		handle(self, result);
+	});
+
+}
+
 function checkExecuteMutateEffects(self) {
 	var using = self._effects_using;
 	var effects = self.__api_effects;
@@ -122,7 +143,8 @@ function checkExecuteMutateEffects(self) {
 			args[effect.apis.length + jj] = self.state(effect.triggering_states[jj]);
 		}
 
-		effect.fn.apply(null, args);
+		var result = effect.fn.apply(null, args);
+		handleEffectResult(self, effect, result);
 
 		using.invalidated[effect_name] = false;
 		using.dep_effects_ready[effect_name] = false;
@@ -189,8 +211,6 @@ function iterateApis(changes_list, context) {
 		if (!index[state_name]) {
 			continue;
 		}
-
-		debugger;
 
 		checkApi(index[state_name], changes_list[i+2], context);
 	}

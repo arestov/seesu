@@ -365,9 +365,6 @@ var navigator = window.navigator;
 			features_storage.app = app;
 
 			self
-			.on('finish', function(e){
-				e.song_file.mo.submitPlayed();
-			})
 			.on('song-play-error', function(song, can_play) {
 				if (self.c_song == song){
 					self.onPlaybackError(song, can_play);

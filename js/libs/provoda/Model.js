@@ -363,6 +363,15 @@ var modelInit = (function() {
 			}
 		}
 
+		if (self.__api_root_dep_apis) {
+			for (var i = 0; i < self.__api_root_dep_apis.length; i++) {
+				var cur = self.__api_root_dep_apis[i];
+				var api = self.app._interfaces_using.used[cur]
+				self.useInterface('#' + cur, api);
+
+			}
+		}
+
 		return self;
 	};
 })();

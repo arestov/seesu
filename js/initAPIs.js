@@ -31,6 +31,7 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 	self.vk = {};
 	var lfm = initLfm(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 	self.lfm = lfm;
+	self.useInterface('lfm', lfm);
 	initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 };
 
@@ -139,8 +140,9 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
 
 
-	self.s  = new SeesuServerAPI(self, app_serv.store('dg_auth'), self.server_url);
+	self.s = new SeesuServerAPI(self, app_serv.store('dg_auth'), self.server_url);
 	pv.update(self, 'su_server_api', true);
+	self.useInterface('sus', self.s);
 
 	self.s.on('info-change-vk', function(data) {
 		pv.update(self, 'vk_info', data);
