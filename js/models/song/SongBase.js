@@ -597,12 +597,7 @@ return spv.inh(BrowseMap.Model, {
 	},
 	posistionChangeInMopla: function(mopla){
 		if (this.getCurrentMopla() == mopla){
-			this.submitPlayed(true);
 			this.submitNowPlaying();
-
-			if (!this.start_time){
-				this.start_time = (Date.now()/1000).toFixed(0);
-			}
 		}
 	},
 	getCurrentMopla: function(){

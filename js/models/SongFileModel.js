@@ -192,14 +192,6 @@ function props() {
 				pv.update(this, 'play', null);
 			},
 			play: function(){
-				var mo = ((this == this.mo.mopla) && this.mo);
-				if (mo){
-					// pv.update(mo, 'play', 'play');
-					if (!mo.start_time){
-						//fixme
-						mo.start_time = (Date.now()/1000).toFixed(0);
-					}
-				}
 				pv.update(this, 'play', 'play');
 			},
 			playing: function(opts){
@@ -309,17 +301,6 @@ function props() {
 
 				return result;
 			}
-		],
-		'effect-scrobble': [
-			[
-				['#lfm', 'current_scrobbles.length'],
-				function(lfm, count) {
-					// lfm.
-				},
-				// null,
-				// true
-			],
-			['current_scrobbles.length']
 		],
 		failPlaying: function() {
 			var old_fails = pvState(this, 'unavailable') || 0;

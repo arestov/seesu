@@ -27,9 +27,6 @@ var pvUpdate = pv.update;
 
 			self.mf_cor = null;
 			self.mopla = null;
-			self.start_time = null;
-			self.last_scrobble = null;
-
 
 			var spec_image_wrap;
 			if (omo.image_url){
@@ -326,46 +323,58 @@ var pvUpdate = pv.update;
 			return; //su.vk_api.get("wall.post", data, {nocache: true});
 			//console.log(uid);
 		},
-		submitPlayed: function(careful){
-			var
-				starttime = this.start_time,
-				last_scrobble = this.last_scrobble,
-				timestamp = (Date.now()/1000).toFixed(0),
-				duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
+		'compx-to_scrobble': [
+			[
+				'@one:current_scrobbles:current_mopla', '@one:duration:current_mopla',
+				'artist', 'track', 'album_name'
+			],
+			function(current_scrobbles, duration, artist, track, album_name) {
+				if (!current_scrobbles || !duration || !artist || !track) {return;}
 
+				var timestamp = current_scrobbles[ current_scrobbles.length - 1 ];
+				if (!timestamp) {return;}
 
-			if (
-				(!duration && !careful) ||
-				(
-					((timestamp - starttime)/duration > 0.33) && !last_scrobble ||
-					((timestamp - last_scrobble)/duration > 0.6)
-				) ){
+				return {
+					timestamp: Math.round(timestamp/1000),
+					duration: duration,
+					artist: artist,
+					track: track,
+					album_name: album_name
+				};
+			}
+		],
+		'effect-lfm-scrobble': [
+			[
+				'#lfm', 'to_scrobble',
+				function(lfm, to_scrobble) {
+					return lfm.submit({
+						artist: to_scrobble.artist,
+						track: to_scrobble.track,
+						album: to_scrobble.album_name,
+					}, to_scrobble.duration, to_scrobble.timestamp);
 
-				this.start_time = false;
-				this.last_scrobble = timestamp;
-				delete this.start_time;
-
-
-				if (this.app.settings['lfm-scrobbling']){
-					this.app.lfm.submit({
-						artist: this.state('artist'),
-						track: this.state('track'),
-						album: this.state('album_name')
-					}, duration, timestamp);
 				}
-				if (this.app.s.loggedIn()){
-					this.app.s.api('track.scrobble', {
-						client: this.app.env.app_type,
+			],
+			[['to_scrobble', '#settings-lfm-scrobbling']]
+		],
+		'effect-sus-scrobble': [
+			[
+				'#sus', ['to_scrobble', '#env.app_type'], // #env.app_type is not watcheable
+				function(sus, to_scrobble, app_type) {
+					if (!sus.loggedIn()){return;}
+
+					sus.api('track.scrobble', {
+						client: app_type,
 						status: 'finished',
-						duration: duration,
-						artist: this.state('artist'),
-						title: this.state('track'),
-						timestamp: timestamp
+						duration: to_scrobble.duration,
+						artist: to_scrobble.artist,
+						title: to_scrobble.track,
+						timestamp: to_scrobble.timestamp.toFixed(0)
 					});
 				}
-			} else {
-			}
-		},
+			],
+			[['to_scrobble', '#su_userid', '#env.app_type']] // remove #env.app_type from here
+		],
 		submitNowPlaying: spv.debounce(function(){
 			var mopla = this.getCurrentMopla();
 			if (!mopla) {
