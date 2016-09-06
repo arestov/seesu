@@ -298,10 +298,10 @@ function props() {
 			function(current_scrobbles, duration, current_amount) {
 				if (!duration ||!current_amount) {
 					return null;
-				};
+				}
 
 				var count = 0;
-				count += Math.floor( current_amount / duration )
+				count += Math.floor( current_amount / duration );
 
 				if (current_amount % duration > (duration * 0.5)) {
 					count++;
