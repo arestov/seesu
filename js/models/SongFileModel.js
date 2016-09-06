@@ -185,7 +185,7 @@ function props() {
 		}),
 		events: {
 			finish: function(){
-				var mo = ((this == this.mo.mopla) && this.mo);
+				// var mo = ((this == this.mo.mopla) && this.mo);
 				// if (mo){
 				// 	pv.update(mo, 'play', false);
 				// }
@@ -222,7 +222,7 @@ function props() {
 				}
 			},
 			pause: function(){
-				var mo = ((this == this.mo.mopla) && this.mo);
+				// var mo = ((this == this.mo.mopla) && this.mo);
 				// if (mo){
 				// 	// pv.update(mo, 'play', false);
 				// }
@@ -230,7 +230,7 @@ function props() {
 			},
 			stop: function(){
 				//throw "Do not rely on stop event"
-				var mo = ((this == this.mo.mopla) && this.mo);
+				// var mo = ((this == this.mo.mopla) && this.mo);
 				// if (mo){
 				// 	pv.update(mo, 'play', false);
 				// }
@@ -298,7 +298,7 @@ function props() {
 			function(current_scrobbles, duration, current_amount) {
 				if (!duration ||!current_amount) {
 					return null;
-				}
+				};
 
 				var count = 0;
 				count += Math.floor( current_amount / duration )
