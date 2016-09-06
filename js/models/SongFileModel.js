@@ -189,10 +189,6 @@ function props() {
 		}),
 		events: {
 			finish: function(){
-				// var mo = ((this == this.mo.mopla) && this.mo);
-				// if (mo){
-				// 	pv.update(mo, 'play', false);
-				// }
 				pv.update(this, 'play', null);
 			},
 			play: function(){
@@ -226,18 +222,9 @@ function props() {
 				}
 			},
 			pause: function(){
-				// var mo = ((this == this.mo.mopla) && this.mo);
-				// if (mo){
-				// 	// pv.update(mo, 'play', false);
-				// }
 				pv.update(this, 'play', false);
 			},
 			stop: function(){
-				//throw "Do not rely on stop event"
-				// var mo = ((this == this.mo.mopla) && this.mo);
-				// if (mo){
-				// 	pv.update(mo, 'play', false);
-				// }
 				pv.update(this, 'play', null);
 			},
 			error: function() {
