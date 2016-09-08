@@ -295,7 +295,7 @@ function props() {
 				}
 
 				var result = current_scrobbles ? current_scrobbles.slice() : [];
-				if (count !== result.length) {
+				if (result.length < count) {
 					result.push(Date.now());
 				}
 
