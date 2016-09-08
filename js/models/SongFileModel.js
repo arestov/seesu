@@ -255,6 +255,9 @@ function props() {
 				if (isStoped(play) || typeof playing_progress !== 'number') {
 					return null;
 				}
+				if (play === false) {
+					return 0;
+				}
 				return Date.now();
 			}
 		],
@@ -272,11 +275,18 @@ function props() {
 				var amount = played_amount && played_amount.value || 0;
 				var prev = played_amount && played_amount.last_play;
 
+				if (last_play === 0) {
+					return {
+						last_play: 0,
+						value: amount || 0
+					};
+				}
+
+				var to_add = prev ? (last_play - prev) : 0;
+
 				return {
 					last_play: last_play,
-					value: prev
-						? amount + (last_play - prev)
-						: 0
+					value: amount + to_add,
 				};
 			}
 		],
