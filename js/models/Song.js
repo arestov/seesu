@@ -325,17 +325,21 @@ var pvUpdate = pv.update;
 		},
 		'compx-to_scrobble': [
 			[
-				'@one:current_scrobbles:current_mopla', '@one:duration:current_mopla',
+				'to_scrobble', '@one:current_scrobbles:current_mopla', '@one:duration:current_mopla',
 				'artist', 'track', 'album_name'
 			],
-			function(current_scrobbles, duration, artist, track, album_name) {
+			function(to_scrobble, current_scrobbles, duration, artist, track, album_name) {
 				if (!current_scrobbles || !duration || !artist || !track) {return;}
 
 				var timestamp = current_scrobbles[ current_scrobbles.length - 1 ];
 				if (!timestamp) {return;}
 
+				var new_ts = Math.round(timestamp/1000);
+				if (to_scrobble && to_scrobble.timestamp === new_ts) {
+					return to_scrobble;
+				}
 				return {
-					timestamp: Math.round(timestamp/1000),
+					timestamp: new_ts,
 					duration: duration,
 					artist: artist,
 					track: track,
