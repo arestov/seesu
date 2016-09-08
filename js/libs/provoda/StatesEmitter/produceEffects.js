@@ -12,7 +12,7 @@ function checkAndMutateCondReadyEffects(changes_list, self) {
 
 		var old_ready = self._effects_using.conditions_ready[index[state_name].name];
 		self._effects_using.conditions_ready[index[state_name].name] = Boolean(value);
-		if (old_ready === Boolean(value)) {
+		if (Boolean(old_ready) === Boolean(value)) {
 			continue;
 		}
 		self._effects_using.invalidated[index[state_name].name] = true;
