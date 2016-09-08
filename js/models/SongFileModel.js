@@ -214,6 +214,10 @@ function props() {
 				}
 			},
 			pause: function(){
+				if (this.state('play') === null) {
+					// `stoped` should not become `paused`
+					return;
+				}
 				pv.update(this, 'play', false);
 			},
 			stop: function(){
