@@ -121,11 +121,8 @@ serv.handleDocument = function(d, tracking_opts) {
 		dstates.addState('no-transform_upport');
 	}
 
-	spv.domReady(d, function() {
-		var current_dst = new NodeClassStates(d.documentElement, dstates.getFullState());
-		current_dst.applyStates();
-	});
-
+	var current_dst = new NodeClassStates(d.documentElement, dstates.getFullState());
+	current_dst.applyStates();
 
 	spv.domReady(d, function() {
 		if (!d.head){
