@@ -10,14 +10,6 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 		target.wch(target.pmd || target.map_parent, 'active_view');
 		target.wch(target.app.getArtcard(target.mo.state('artist')).getTagsModel(), 'simple_tags_list', 'artist_tags');
 
-
-		target.on('state_change-canload_personal', function(e) {
-			if (e.value){
-				target.requestState('personal_tags');
-			}
-
-		});
-
 		target.wch(target, 'petags', function(e) {
 			if (e.value) {
 				if (e.value.length && !target.state('user_tags_string')) {
@@ -28,6 +20,15 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 
 	}
 }, {
+	'effect-personal_tags': [
+		[
+			'self', 'canload_personal',
+			function (self) {
+				self.requestState('personal_tags');
+			}
+		],
+		['canload_personal']
+	],
 	'compx-access_desc': [['#locales.lastfm-tagging-access']],
 	comma_regx: /\s*\,\s*/,
 	comma_regx_end: /\s*\,\s*$/,
