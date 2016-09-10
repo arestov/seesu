@@ -45,7 +45,6 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 });
 var LoveRow = spv.inh(comd.BaseCRow, {
 	init: function(target){
-		target.actionsrow = target.map_parent;
 		target.mo = target.map_parent.map_parent;
 
 		var old_lit = null;
@@ -65,24 +64,19 @@ var LoveRow = spv.inh(comd.BaseCRow, {
 
 	}
 }, {
+	actionsrow_src: '^',
 	'nest-lfm_loveit': [LfmLoveIt, false, 'active_view'],//ver important to not init this each song selected
 	model_name: 'row-love'
 });
 
-var ScrobbleRow = spv.inh(comd.BaseCRow, {
-	init: function(target){
-		target.actionsrow = target.map_parent;
-	}
-}, {
+var ScrobbleRow = spv.inh(comd.BaseCRow, {}, {
+	actionsrow_src: '^',
 	'nest-lfm_scrobble': [LfmAuth.LfmScrobble],
 	model_name: 'row-lastfm'
 });
 
-var ShuffleListRow = spv.inh(comd.BaseCRow, {
-	init: function(target) {
-		target.actionsrow = target.map_parent;
-	}
-}, {
+var ShuffleListRow = spv.inh(comd.BaseCRow, {}, {
+	actionsrow_src: '^',
 	'compx-pl_shuffle': [['#settings-pl-shuffle']],
 	model_name: 'row-pl-shuffle',
 	switchSetting: function(state) {
@@ -90,11 +84,8 @@ var ShuffleListRow = spv.inh(comd.BaseCRow, {
 	}
 });
 
-var RepeatSongRow = spv.inh(comd.BaseCRow, {
-	init: function(target){
-		target.actionsrow = target.map_parent;
-	}
-}, {
+var RepeatSongRow = spv.inh(comd.BaseCRow, {}, {
+	actionsrow_src: '^',
 	'compx-rept_song': [['#settings-rept-song']],
 	model_name: 'row-repeat-song',
 	switchSetting: function(state) {
