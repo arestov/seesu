@@ -112,8 +112,6 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
 		//target.app = mo.app;
 		target.inited_parts = {};
 
-		target.nextTick(target.initHeavyPart);
-
 		target.wch(target.map_parent, 'mp_show', target.hndSongHide);
 	}
 }, {
@@ -125,21 +123,9 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
 			this.hideAll();
 		}
 	},
-	initHeavyPart: function(target) {
-
-		target.wch(target.app, 'settings-volume', function(e) {
-			if (!e.value) {
-				return;
-			}
-			target.setVolumeState(e.value);
-		});
-	},
-	setVolumeState: function(fac) {
-		if (!fac){
-			return;
-		}
-		pv.update(this, 'volume', fac[0]/fac[1]);
-	},
+	'compx-volume': [['#settings-volume'], function (fac) {
+		return fac && fac[0]/fac[1];
+	}],
 	sendVolume: function(vol) {
 		this.app.setSetting('volume', vol);
 	},
@@ -147,7 +133,6 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
 		if (!fac){
 			return;
 		}
-		pv.update(this, 'volume', fac[0]/fac[1]);
 		this.sendVolume(fac);
 		this.map_parent.setVolume(fac);
 
