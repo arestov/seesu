@@ -300,7 +300,7 @@ function props() {
 				var count = 0;
 				count += Math.floor( current_amount / duration );
 
-				if (current_amount % duration > (duration * 0.5)) {
+				if (current_amount % duration > (duration * 0.35)) {
 					count++;
 				}
 
