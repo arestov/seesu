@@ -368,8 +368,11 @@ var modelInit = (function() {
 				var cur = self.__api_root_dep_apis[i];
 				var api = self.app._interfaces_using.used[cur]
 				self.useInterface('#' + cur, api);
-
 			}
+		}
+
+		if (self.__api_effects_$_index_by_apis && self.__api_effects_$_index_by_apis['self']) {
+			self.useInterface('self', self);
 		}
 
 		return self;

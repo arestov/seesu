@@ -277,8 +277,11 @@ return function checkApis(self, props) {
   self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;
   self.__api_effects_$_index = indexByDepName(effects) || self.__api_effects_$_index;
   self.__api_effects_$_index_by_triggering = indexByList(effects, 'triggering_states') || self.__api_effects_$_index_by_triggering;
+  self.__api_effects_$_index_by_apis = indexByList(effects, 'apis') || self.__api_effects_$_index_by_apis;
 
   self.__api_root_dep_apis = rootApis(effects) || self.__api_root_dep_apis || null;
+
+
 
   collectStatesBinders(self, props);
 };

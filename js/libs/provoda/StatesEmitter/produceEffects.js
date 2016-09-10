@@ -74,7 +74,7 @@ function checkAndMutateDepReadyEffects(self) {
 		for (var cc = 0; cc < effect.apis.length; cc++) {
 			var api = effect.apis[cc];
 
-			if (!self._interfaces_using.used[api]) {
+			if (!self._interfaces_using || !self._interfaces_using.used[api]) {
 				deps_ready = false;
 				break;
 			}
@@ -161,6 +161,7 @@ function iterateEffects(changes_list, self) {
 
 	if (!self._effects_using) {
 		self._effects_using = {
+			processing: false,
 			conditions_ready: {},
 			invalidated: {},
 			once: {},
@@ -168,6 +169,11 @@ function iterateEffects(changes_list, self) {
 			dep_effects_ready_is_empty: true
 		};
 	}
+
+	if (self._effects_using.processing) {
+		return;
+	}
+	self._effects_using.processing = true;
 
 	checkAndMutateCondReadyEffects(changes_list, self);
 	checkAndMutateInvalidatedEffects(changes_list, self);
@@ -178,6 +184,7 @@ function iterateEffects(changes_list, self) {
 		checkExecuteMutateEffects(self);
 		checkAndMutateDepReadyEffects(self);
 	}
+	self._effects_using.processing = false;
 }
 
 function checkApi(declr, value, self) {
