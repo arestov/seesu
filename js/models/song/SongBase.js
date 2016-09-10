@@ -287,6 +287,7 @@ return spv.inh(BrowseMap.Model, {
 		}
 		return n || 'no title';
 	},
+	'compx-rept-song': [['#settings-rept-song']],
 	playNext: function(auto) {
 		if (this.state('rept-song')){
 			this.play();

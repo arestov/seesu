@@ -69,13 +69,6 @@ var LoveRow = spv.inh(comd.BaseCRow, {
 	model_name: 'row-love'
 });
 
-
-
-
-
-
-
-
 var ScrobbleRow = spv.inh(comd.BaseCRow, {
 	init: function(target){
 		target.actionsrow = target.map_parent;
@@ -85,45 +78,26 @@ var ScrobbleRow = spv.inh(comd.BaseCRow, {
 	model_name: 'row-lastfm'
 });
 
-
-
-
-
 var ShuffleListRow = spv.inh(comd.BaseCRow, {
 	init: function(target) {
 		target.actionsrow = target.map_parent;
-
-		target.wch(target.app, 'settings-pl-shuffle', function(e) {
-			pv.update(this, 'pl_shuffle', e.value);
-			pv.update(this.actionsrow.mo, 'pl-shuffle', e.value);
-		});
 	}
 }, {
+	'compx-pl_shuffle': [['#settings-pl-shuffle']],
 	model_name: 'row-pl-shuffle',
-
 	switchSetting: function(state) {
-		pv.update(this, 'pl_shuffle', state);
 		this.app.setSetting('pl-shuffle', state);
 	}
-
-
 });
-
-
 
 var RepeatSongRow = spv.inh(comd.BaseCRow, {
 	init: function(target){
 		target.actionsrow = target.map_parent;
-
-		target.wch(target.app, 'settings-rept-song', function(e) {
-			pv.update(this, 'rept_song', e.value);
-			pv.update(this.actionsrow.mo, 'rept-song', e.value);
-		});
 	}
 }, {
+	'compx-rept_song': [['#settings-rept-song']],
 	model_name: 'row-repeat-song',
 	switchSetting: function(state) {
-		pv.update(this, 'rept_song', state);
 		this.app.setSetting('rept-song', state);
 	}
 });
