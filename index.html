@@ -1348,8 +1348,8 @@
 				    <div pv-when="rel">
 				      <a
 				        pv-when="userlink"
-				        pv-text="{{rel.info.full_name}}"
-				        pv-props="href:{{userlink}}"></a>
+				        pv-text="{{userlink.text}}"
+				        pv-props="href:{{userlink.href}}"></a>
 
 				      <span
 				        pv-when="remain_time_desc"
@@ -1373,13 +1373,13 @@
 				      </span>
 				    </div>
 
-				    <div  pv-when="!rel.item.accepted && has_vk_auth && !current_user_has_photo">
+				    <div  pv-when="!rel.item && has_vk_auth && !current_user_has_photo">
 				      <span class="button-hole">
 				        <a class="nicebutton lang localize-vk_photo_update" pv-events="click::#getPhotoFromVK">Get photo from my vk.com profile</a>
 				      </span>
 				    </div>
 
-				    <div pv-when="!like_just_sended && !rel.item.accepted && has_vk_auth && current_user_has_photo">
+				    <div pv-when="!like_just_sended && !rel.item && has_vk_auth && current_user_has_photo">
 				      <span class="button-hole">
 				        <a class="nicebutton lang localize-want-meet" pv-events="click::setLike">Want to meet!</a>
 				      </span>
