@@ -81,7 +81,6 @@ var UserAcquaintance = spv.inh(pv.Model, {
 
 var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
 	init: function(target) {
-		target.wch(target.app, 'su_userid', 'current_user');
 		target.app.on('state_change-su_server_api', function(e) {
 			if (e.value){
 				target.bindDataSteams();
@@ -91,6 +90,7 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
 }, {
 	model_name: 'user_acqs_list',
 	'chi-item': UserAcquaintance,
+	'compx-current_user': [['#su_userid']],
 	'compx-wait_me_desc': {
 		depends_on: ['@every:accepted:acqs_from_someone', '#locales.if-you-accept-one-i', '#locales.will-get-link'],
 		fn: function(not_wait_me, accept_desc, get_desc) {
