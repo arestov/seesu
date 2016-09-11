@@ -403,16 +403,12 @@ var SongActSharing = spv.inh(comd.BaseCRow, {
 	init: function(target){
 		target.actionsrow = target.map_parent;
 		target.mo = target.map_parent.map_parent;
-		target.wch(target.mo, 'url_part', target.hndUpdateShareURL);
 		target.search('');
 	}
 }, {
 
 	'nest-searcher': [StrusersRowSearch],
-	hndUpdateShareURL: function() {
-		pv.update(this, 'share_url', this.mo.getShareUrl());
-	},
-
+	'compx-share_url': [['^^share_url']],
 	search: function(q) {
 		pv.update(this, 'query', q);
 		var searcher = this.getNesting('searcher');

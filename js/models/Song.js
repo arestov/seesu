@@ -263,6 +263,15 @@ var pvUpdate = pv.update;
 				return url;
 			}
 		],
+		'compx-share_url': [
+			['artist', 'track'],
+			function (artist, track) {
+				if (!artist || !track) {return '';}
+				return "http://seesu.me/o#/catalog/" +
+					(this.app.encodeURLPart(artist) + "/_/" + this.app.encodeURLPart(track))
+					.replace(/\'/gi, '%27');
+			}
+		],
 		shareWithLFMUser: function(userid) {
 			var artist = this.state('artist');
 			var track = this.state('track');
