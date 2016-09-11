@@ -243,14 +243,15 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 var pvUpdate = pv.update;
 var FilesSourceTuner = spv.inh(pv.Model, {
 	init: function(target, opts, data) {
-		var search_name = data.search_name;
-		target.wch(target.app, 'settings-files_sources', function (e) {
-			pvUpdate(this, 'settings', e.value && e.value[search_name]);
-		});
 		target.updateManyStates(data);
 	}
-
 }, {
+	'compx-settings': [
+		['search_name', '#settings-files_sources'],
+		function (search_name, value) {
+			return value && value[search_name];
+		}
+	],
 	'compx-disable_search': [
 		['settings'],
 		function(settings) {
