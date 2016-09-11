@@ -37,7 +37,7 @@ BrowseMap.Model.extendTo(MusicBlog, {
 
 		this.initStates(params);
 		this.sub_pa_params = {url: params.blog_url};
-		this.wch(this, 'mp_show', function(e) {
+		this.wch(this, 'mp_show', function(e) { //load
 			if (e.value) {
 				this.requestState('nav_title');
 			}

@@ -89,7 +89,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 			this.searchByQuery(this.state('query'));
 		}, self.getContextOpts());
 
-		self.lwch(self, 'can_search', function(state) {
+		self.lwch(self, 'can_search', function(state) { //load
 			if (!state){return;}
 
 			this.friends_page.preloadStart();
@@ -209,7 +209,7 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
 			this.searchByQuery(this.state('query'));
 		}, target.getContextOpts());
 
-		target.lwch(target, 'can_search', function(state) {
+		target.lwch(target, 'can_search', function(state) { //load
 			if (!state){return;}
 
 			this.friends_page.preloadStart();
@@ -292,7 +292,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 		target.mo = target.map_parent.mo;
 		target.rpl = target.map_parent.map_parent;
 
-		target.wch(target, 'can_share', function(e) {
+		target.wch(target, 'can_share', function(e) { //load
 			if (e.value){
 				this.searchFriends();
 			}
