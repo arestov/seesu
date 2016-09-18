@@ -205,7 +205,10 @@ return {
 				}
 
 				return failed(new Error(has_error || 'no Result'));
-			}).then(function(result){
+			}).then(handleResponse);
+
+
+      function handleResponse(result){
 				var i;
 				var result_states;
 
@@ -237,7 +240,7 @@ return {
 
 				store.error = false;
 				store.done = true;
-			});
+			}
 		}
 
 		function sendRequest(selected_map, store, self) {
