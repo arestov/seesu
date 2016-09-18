@@ -439,7 +439,9 @@ return {
 			store.error = true;
 		});
 
-		request.then(function(r){
+    request.then(handleResponse);
+
+    function handleResponse(r){
 			var sputnik = _this.sputnik;
 			var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
 
@@ -509,7 +511,7 @@ return {
       }
 
       //сделать выводы о завершенности всех данных
-		});
+		}
 
 		this.addRequest(request);
 		return request;
