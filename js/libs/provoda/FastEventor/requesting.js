@@ -186,7 +186,7 @@ return {
 
 			function anyway() {
 				store.process = false;
-				self.sputnik.updateManyStates(self.makeLoadingMarks(states_list, false));
+				self.sputnik.updateManyStates(makeLoadingMarks(states_list, false));
 			}
 
 			request.then(anyway, anyway);
@@ -301,13 +301,21 @@ return {
 			return req;
 		}
 
+    function makeLoadingMarks(states_list, value) {
+      var loading_marks = {};
+      for (var i = 0; i < states_list.length; i++) {
+        loading_marks[ states_list[i] + '__loading'] = value;
+      }
+      return loading_marks;
+    }
+
 		return function(state_name) {
 			var current_value = this.sputnik.state(state_name);
 			if (current_value) {
 				return;
 			}
 
-			var i, cur, states_list;
+			var i, cur;
 			var maps_for_state = this.sputnik._states_reqs_index && this.sputnik._states_reqs_index[state_name];
 
 			var cant_request;
@@ -344,8 +352,7 @@ return {
 
 			store.process = true;
 
-			states_list = selected_map.states_list;
-			this.sputnik.updateManyStates(this.makeLoadingMarks(states_list, true));
+			this.sputnik.updateManyStates(makeLoadingMarks(selected_map.states_list, true));
 
 			if (!selected_map.dependencies) {
 				return bindRequest(sendRequest(selected_map, store, this), selected_map, store, this);
@@ -361,15 +368,6 @@ return {
 
 		};
 	})(),
-	makeLoadingMarks: function(states_list, value) {
-		var loading_marks = {};
-		for (var i = 0; i < states_list.length; i++) {
-
-			loading_marks[ states_list[i] + '__loading'] = value;
-
-		}
-		return loading_marks;
-	},
 	requestNesting: function(dclt, nesting_name) {
 		if (!dclt) {
 			return;
