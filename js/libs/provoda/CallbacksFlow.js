@@ -203,13 +203,7 @@ CallbacksFlow.prototype = {
 	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup) {
 		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup);
 		if (!motivator) {
-			if (this.flow_end) {
-				this.flow_end.next = flow_step;
-			}
-			this.flow_end = flow_step;
-			if (!this.flow_start) {
-				this.flow_start = flow_step;
-			}
+			toEnd(this, flow_step);
 
 			this.checkCallbacksFlow();
 			return flow_step;
@@ -247,13 +241,7 @@ CallbacksFlow.prototype = {
 			}
 
 		} else {
-			if (this.flow_end) {
-				this.flow_end.next = flow_step;
-			}
-			this.flow_end = flow_step;
-			if (!this.flow_start) {
-				this.flow_start = flow_step;
-			}
+			toEnd(this, flow_step);
 		}
 
 		this.checkCallbacksFlow();
@@ -261,5 +249,15 @@ CallbacksFlow.prototype = {
 
 	}
 };
+
+function toEnd(self, flow_step) {
+	if (self.flow_end) {
+		self.flow_end.next = flow_step;
+	}
+	self.flow_end = flow_step;
+	if (!self.flow_start) {
+		self.flow_start = flow_step;
+	}
+}
 return CallbacksFlow;
 });
