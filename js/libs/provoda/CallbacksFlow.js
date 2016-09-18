@@ -202,47 +202,50 @@ CallbacksFlow.prototype = {
 	},
 	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup) {
 		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup);
-		if (motivator){
-			var last_item = this.flow_end;
-			var result = last_item && sortFlows(last_item, flow_step);
-			if (result === 1) {
-				//очевидно, что новый элемент должен в результате занять другую позицию
+		if (!motivator) {
+			if (this.flow_end) {
+				this.flow_end.next = flow_step;
+			}
+			this.flow_end = flow_step;
+			if (!this.flow_start) {
+				this.flow_start = flow_step;
+			}
 
-				var last_matched;
-				for (var cur = this.flow_start; cur; cur = cur.next) {
-					var match_result = sortFlows(cur, flow_step);
-					if (match_result == -1) {
-						last_matched = cur;
-					} else {
-						if (cur) {
-							// debugger;
-						}
+			this.checkCallbacksFlow();
+			return flow_step;
+		}
 
-						break;
-					}
-				}
+		var last_item = this.flow_end;
+		var result = last_item && sortFlows(last_item, flow_step);
+		if (result === 1) {
+			//очевидно, что новый элемент должен в результате занять другую позицию
 
-				if (!cur) {
-					throw new Error('something wrong');
-				}
-
-				if (!last_matched) {
-					flow_step.next = this.flow_start;
-					this.flow_start = flow_step;
+			var last_matched;
+			for (var cur = this.flow_start; cur; cur = cur.next) {
+				var match_result = sortFlows(cur, flow_step);
+				if (match_result == -1) {
+					last_matched = cur;
 				} else {
-					flow_step.next = last_matched.next;
-					last_matched.next = flow_step;
-				}
+					if (cur) {
+						// debugger;
+					}
 
-			} else {
-				if (this.flow_end) {
-					this.flow_end.next = flow_step;
-				}
-				this.flow_end = flow_step;
-				if (!this.flow_start) {
-					this.flow_start = flow_step;
+					break;
 				}
 			}
+
+			if (!cur) {
+				throw new Error('something wrong');
+			}
+
+			if (!last_matched) {
+				flow_step.next = this.flow_start;
+				this.flow_start = flow_step;
+			} else {
+				flow_step.next = last_matched.next;
+				last_matched.next = flow_step;
+			}
+
 		} else {
 			if (this.flow_end) {
 				this.flow_end.next = flow_step;
