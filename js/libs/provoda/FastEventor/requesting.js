@@ -498,16 +498,16 @@ return {
       //special logic where server send us page without few items. but it can be more pages available
       //so serv_data in this case is answer for question "Is more data available?"
 
-      if (side_data_parsers) {
-        for (var i = 0; i < side_data_parsers.length; i++) {
-          sputnik.nextTick(
-            sputnik.handleNetworkSideData, [
-              sputnik,
-              source_name,
-              side_data_parsers[i][0],
-              side_data_parsers[i][1].call(sputnik, r, paging_opts, morph_helpers)
-            ], true);
-        }
+      if (!side_data_parsers) {return;}
+
+      for (var i = 0; i < side_data_parsers.length; i++) {
+        sputnik.nextTick(
+          sputnik.handleNetworkSideData, [
+            sputnik,
+            source_name,
+            side_data_parsers[i][0],
+            side_data_parsers[i][1].call(sputnik, r, paging_opts, morph_helpers)
+          ], true);
       }
 
       //сделать выводы о завершенности всех данных
