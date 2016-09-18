@@ -3,6 +3,10 @@ define(function(require) {
 
 var spv = require('spv');
 
+var preloadStart = function (md) {
+	md.preloadStart();
+};
+
 var executePreload = function(md, nesting_name) {
 	var lists_list = md.getNesting(nesting_name);
 
@@ -11,13 +15,13 @@ var executePreload = function(md, nesting_name) {
 		for (var i = 0; i < lists_list.length; i++) {
 			var cur = lists_list[i];
 			if (cur.preloadStart){
-				cur.preloadStart();
+				md.useMotivator(cur, preloadStart);
 			}
 
 		}
 	} else {
 		if (lists_list.preloadStart){
-			lists_list.preloadStart();
+			md.useMotivator(lists_list, preloadStart);
 		}
 	}
 };
