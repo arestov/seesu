@@ -6,6 +6,7 @@ var hex_md5 = require('hex_md5');
 var hp = require('../helpers');
 var spv = require('spv');
 var toBigPromise = require('js/modules/extendPromise').toBigPromise;
+var pvUpdate = require('../updateProxy').update;
 
 var clean_obj = {};
 
@@ -189,8 +190,6 @@ return {
 				self.sputnik.updateManyStates(makeLoadingMarks(states_list, false));
 			}
 
-			request.then(anyway, anyway);
-
 			onPromiseFail(request, function(){
 				store.error = true;
 			});
@@ -205,7 +204,14 @@ return {
 				}
 
 				return failed(new Error(has_error || 'no Result'));
-			}).then(handleResponse);
+			}).then(function (response) {
+        self.sputnik.nextTick(function () {
+          anyway();
+          handleResponse(response);
+        });
+			}, function() {
+        self.sputnik.nextTick(anyway);
+			});
 
 
       function handleResponse(result){
@@ -436,13 +442,18 @@ return {
 			}
 		}
 
-		request.then(anyway, anyway);
-
 		onPromiseFail(request, function(){
 			store.error = true;
 		});
 
-    request.then(handleResponse);
+    request.then(function (response) {
+      _this.sputnik.nextTick(function () {
+        anyway();
+        handleResponse(response);
+      });
+    }, function () {
+      _this.sputnik.nextTick(anyway);
+    });
 
     function handleResponse(r){
 			var sputnik = _this.sputnik;
@@ -469,7 +480,7 @@ return {
       }
       items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
 
-      sputnik.nextTick(sputnik.insertDataAsSubitems, [sputnik, nesting_name, items, serv_data, source_name], true);
+      sputnik.insertDataAsSubitems(sputnik, nesting_name, items, serv_data, source_name);
 
       if (!sputnik.loaded_nestings_items) {
         sputnik.loaded_nestings_items = {};
@@ -484,6 +495,9 @@ return {
         has_data_holes ? paging_opts.page_limit : (items ? items.length : 0);
       //special logic where server send us page without few items. but it can be more pages available
       //so serv_data in this case is answer for question "Is more data available?"
+
+
+			pvUpdate(sputnik, nesting_name + '$length', sputnik.getLength(nesting_name));
 
       if (!side_data_parsers) {return;}
 
