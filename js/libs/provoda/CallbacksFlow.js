@@ -202,54 +202,51 @@ CallbacksFlow.prototype = {
 	},
 	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup) {
 		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup);
-		if (!motivator) {
-			toEnd(this, flow_step);
-
-			this.checkCallbacksFlow();
-			return flow_step;
-		}
-
-		var last_item = this.flow_end;
-		var result = last_item && sortFlows(last_item, flow_step);
-		if (result !== 1) {
-			//очевидно, что новый элемент должен стать в конец
-			toEnd(this, flow_step);
-
-			this.checkCallbacksFlow();
-			return flow_step;
-		}
-
-		var last_matched;
-		for (var cur = this.flow_start; cur; cur = cur.next) {
-			var match_result = sortFlows(cur, flow_step);
-			if (match_result == -1) {
-				last_matched = cur;
-			} else {
-				if (cur) {
-					// debugger;
-				}
-
-				break;
-			}
-		}
-
-		if (!cur) {
-			throw new Error('something wrong');
-		}
-
-		if (!last_matched) {
-			flow_step.next = this.flow_start;
-			this.flow_start = flow_step;
-		} else {
-			flow_step.next = last_matched.next;
-			last_matched.next = flow_step;
-		}
-
+		order(this, flow_step, motivator);
 		this.checkCallbacksFlow();
 		return flow_step;
 
 	}
 };
+
+function order(self, flow_step, motivator) {
+	if (!motivator) {
+		return toEnd(self, flow_step);
+	}
+
+	var last_item = self.flow_end;
+	var result = last_item && sortFlows(last_item, flow_step);
+	if (result !== 1) {
+		//очевидно, что новый элемент должен стать в конец
+		return toEnd(self, flow_step);
+	}
+
+	var last_matched;
+	for (var cur = self.flow_start; cur; cur = cur.next) {
+		var match_result = sortFlows(cur, flow_step);
+		if (match_result == -1) {
+			last_matched = cur;
+		} else {
+			if (cur) {
+				// debugger;
+			}
+
+			break;
+		}
+	}
+
+	if (!cur) {
+		throw new Error('something wrong');
+	}
+
+	if (!last_matched) {
+		flow_step.next = self.flow_start;
+		self.flow_start = flow_step;
+	} else {
+		flow_step.next = last_matched.next;
+		last_matched.next = flow_step;
+	}
+}
 
 function toEnd(self, flow_step) {
 	if (self.flow_end) {
@@ -259,6 +256,8 @@ function toEnd(self, flow_step) {
 	if (!self.flow_start) {
 		self.flow_start = flow_step;
 	}
+
+	return flow_step;
 }
 return CallbacksFlow;
 });
