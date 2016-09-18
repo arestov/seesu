@@ -445,79 +445,70 @@ return {
 
 			if (has_error){
 				store.error = true;
-			} else {
-				var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers);
-				var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
-
-
-
-				if (!supports_paging) {
-					store.has_all_items = true;
-
-					sputnik.updateState("all_data_loaded", true);
-				} else {
-					var has_more_data;
-					if (serv_data === true) {
-						has_more_data = true;
-					} else if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
-						if (!isNaN(serv_data.total)) {
-							if ( (paging_opts.current_length + items.length) < serv_data.total && serv_data.total > paging_opts.page_limit) {
-								has_more_data = true;
-							}
-						} else {
-							if (serv_data.page_num < serv_data.total_pages_num) {
-								has_more_data = true;
-							}
-						}
-
-					} else {
-						has_more_data = items.length == sputnik.page_limit;
-					}
-
-
-
-					if (!has_more_data) {
-						store.has_all_items = true;
-						sputnik.updateState("all_data_loaded", true);
-					}
-				}
-				items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
-
-				sputnik.nextTick(sputnik.insertDataAsSubitems, [sputnik, nesting_name, items, serv_data, source_name], true);
-
-				if (!sputnik.loaded_nestings_items) {
-					sputnik.loaded_nestings_items = {};
-				}
-
-				if (!sputnik.loaded_nestings_items[nesting_name]) {
-					sputnik.loaded_nestings_items[nesting_name] = 0;
-				}
-				var has_data_holes = serv_data === true || (serv_data && serv_data.has_data_holes === true);
-
-				sputnik.loaded_nestings_items[nesting_name] +=
-					has_data_holes ? paging_opts.page_limit : (items ? items.length : 0);
-				//special logic where server send us page without few items. but it can be more pages available
-				//so serv_data in this case is answer for question "Is more data available?"
-
-				if (side_data_parsers) {
-					for (var i = 0; i < side_data_parsers.length; i++) {
-						sputnik.nextTick(
-							sputnik.handleNetworkSideData, [
-								sputnik,
-								source_name,
-								side_data_parsers[i][0],
-								side_data_parsers[i][1].call(sputnik, r, paging_opts, morph_helpers)
-							], true);
-
-					}
-
-				}
-
-
-
-
-				//сделать выводы о завершенности всех данных
+        return;
 			}
+
+      var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers);
+      var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
+
+      if (!supports_paging) {
+        store.has_all_items = true;
+        sputnik.updateState("all_data_loaded", true);
+      } else {
+        var has_more_data;
+        if (serv_data === true) {
+          has_more_data = true;
+        } else if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
+          if (!isNaN(serv_data.total)) {
+            if ( (paging_opts.current_length + items.length) < serv_data.total && serv_data.total > paging_opts.page_limit) {
+              has_more_data = true;
+            }
+          } else {
+            if (serv_data.page_num < serv_data.total_pages_num) {
+              has_more_data = true;
+            }
+          }
+
+        } else {
+          has_more_data = items.length == sputnik.page_limit;
+        }
+
+        if (!has_more_data) {
+          store.has_all_items = true;
+          sputnik.updateState("all_data_loaded", true);
+        }
+      }
+      items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
+
+      sputnik.nextTick(sputnik.insertDataAsSubitems, [sputnik, nesting_name, items, serv_data, source_name], true);
+
+      if (!sputnik.loaded_nestings_items) {
+        sputnik.loaded_nestings_items = {};
+      }
+
+      if (!sputnik.loaded_nestings_items[nesting_name]) {
+        sputnik.loaded_nestings_items[nesting_name] = 0;
+      }
+      var has_data_holes = serv_data === true || (serv_data && serv_data.has_data_holes === true);
+
+      sputnik.loaded_nestings_items[nesting_name] +=
+        has_data_holes ? paging_opts.page_limit : (items ? items.length : 0);
+      //special logic where server send us page without few items. but it can be more pages available
+      //so serv_data in this case is answer for question "Is more data available?"
+
+      if (side_data_parsers) {
+        for (var i = 0; i < side_data_parsers.length; i++) {
+          sputnik.nextTick(
+            sputnik.handleNetworkSideData, [
+              sputnik,
+              source_name,
+              side_data_parsers[i][0],
+              side_data_parsers[i][1].call(sputnik, r, paging_opts, morph_helpers)
+            ], true);
+        }
+      }
+
+      //сделать выводы о завершенности всех данных
 		});
 
 		this.addRequest(request);
