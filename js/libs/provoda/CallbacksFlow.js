@@ -211,37 +211,38 @@ CallbacksFlow.prototype = {
 
 		var last_item = this.flow_end;
 		var result = last_item && sortFlows(last_item, flow_step);
-		if (result === 1) {
-			//очевидно, что новый элемент должен в результате занять другую позицию
-
-			var last_matched;
-			for (var cur = this.flow_start; cur; cur = cur.next) {
-				var match_result = sortFlows(cur, flow_step);
-				if (match_result == -1) {
-					last_matched = cur;
-				} else {
-					if (cur) {
-						// debugger;
-					}
-
-					break;
-				}
-			}
-
-			if (!cur) {
-				throw new Error('something wrong');
-			}
-
-			if (!last_matched) {
-				flow_step.next = this.flow_start;
-				this.flow_start = flow_step;
-			} else {
-				flow_step.next = last_matched.next;
-				last_matched.next = flow_step;
-			}
-
-		} else {
+		if (result !== 1) {
+			//очевидно, что новый элемент должен стать в конец
 			toEnd(this, flow_step);
+
+			this.checkCallbacksFlow();
+			return flow_step;
+		}
+
+		var last_matched;
+		for (var cur = this.flow_start; cur; cur = cur.next) {
+			var match_result = sortFlows(cur, flow_step);
+			if (match_result == -1) {
+				last_matched = cur;
+			} else {
+				if (cur) {
+					// debugger;
+				}
+
+				break;
+			}
+		}
+
+		if (!cur) {
+			throw new Error('something wrong');
+		}
+
+		if (!last_matched) {
+			flow_step.next = this.flow_start;
+			this.flow_start = flow_step;
+		} else {
+			flow_step.next = last_matched.next;
+			last_matched.next = flow_step;
 		}
 
 		this.checkCallbacksFlow();
