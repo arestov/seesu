@@ -457,23 +457,7 @@ return {
         store.has_all_items = true;
         sputnik.updateState("all_data_loaded", true);
       } else {
-        var has_more_data;
-        if (serv_data === true) {
-          has_more_data = true;
-        } else if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
-          if (!isNaN(serv_data.total)) {
-            if ( (paging_opts.current_length + items.length) < serv_data.total && serv_data.total > paging_opts.page_limit) {
-              has_more_data = true;
-            }
-          } else {
-            if (serv_data.page_num < serv_data.total_pages_num) {
-              has_more_data = true;
-            }
-          }
-
-        } else {
-          has_more_data = items.length == sputnik.page_limit;
-        }
+        var has_more_data = hasMoreData(serv_data, sputnik.page_limit, paging_opts, items);
 
         if (!has_more_data) {
           store.has_all_items = true;
@@ -530,6 +514,26 @@ return {
 
 
 };
+
+function hasMoreData(serv_data, page_limit, paging_opts, items) {
+  if (serv_data === true) {
+    return true;
+  } else if (serv_data && ((serv_data.hasOwnProperty('total_pages_num') && serv_data.hasOwnProperty('page_num')) || serv_data.hasOwnProperty('total'))) {
+    if (!isNaN(serv_data.total)) {
+      if ( (paging_opts.current_length + items.length) < serv_data.total && serv_data.total > paging_opts.page_limit) {
+        return true;
+      }
+    } else {
+      if (serv_data.page_num < serv_data.total_pages_num) {
+        return true;
+      }
+    }
+
+  } else {
+    return items.length == page_limit;
+  }
+
+}
 
 function findErrorByList(data, errors_selectors) {
 	var i, cur, has_error;
