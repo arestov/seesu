@@ -2,7 +2,7 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var FastEventor = require('./FastEventor');
+var FastEventor = require('./FastEventor/index');
 var hp = require('./helpers');
 
 
