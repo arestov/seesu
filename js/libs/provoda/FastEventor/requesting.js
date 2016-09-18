@@ -194,6 +194,8 @@ return {
 				store.error = true;
 			});
 
+      var initiator = self.sputnik.current_motivator;
+
 			return request.then(function(r) {
 				var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
 				if (!has_error) {
@@ -208,9 +210,9 @@ return {
         self.sputnik.nextTick(function () {
           anyway();
           handleResponse(response);
-        });
+        }, null, false, initiator);
 			}, function() {
-        self.sputnik.nextTick(anyway);
+        self.sputnik.nextTick(anyway, null, false, initiator);
 			});
 
 
@@ -446,13 +448,15 @@ return {
 			store.error = true;
 		});
 
+    var initiator = _this.sputnik.current_motivator;
+
     request.then(function (response) {
       _this.sputnik.nextTick(function () {
         anyway();
         handleResponse(response);
-      });
+      }, null, false, initiator);
     }, function () {
-      _this.sputnik.nextTick(anyway);
+      _this.sputnik.nextTick(anyway, null, false, initiator);
     });
 
     function handleResponse(r){

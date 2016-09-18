@@ -7,6 +7,7 @@ var spv = require('spv');
 var Group = function(num) {
 	this.num = num;
 	this.complex_order = [num];
+	this.inited_order = this.complex_order;
 };
 
 var sortFlows = function(item_one, item_two) {
@@ -200,8 +201,8 @@ CallbacksFlow.prototype = {
 			this.iteration_delayed = true;
 		}
 	},
-	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup) {
-		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup);
+	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator) {
+		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator);
 		order(this, flow_step, motivator);
 		this.checkCallbacksFlow();
 		return flow_step;
