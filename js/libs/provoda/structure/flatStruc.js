@@ -124,13 +124,12 @@ var relatedDeps = function(app, md, state_name) {
 			continue;
 		}
 
-		var ddep = {
+		var conv = chechTreeStructure(app, md, {
 			dep_id: dep_counter++,
 			type: 'state',
 			value: cur
-		};
+		});
 
-		var conv = chechTreeStructure(app, md, ddep);
 		if (conv) {
 			related.push(conv);
 		}
