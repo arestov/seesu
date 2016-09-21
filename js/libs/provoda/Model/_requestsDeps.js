@@ -169,19 +169,23 @@ var unhandleState = function(dep, req_dep, self) {
 	}
 };
 
+function requestNesting(md, declr, dep) {
+	md.requestNesting(declr, dep.value);
+}
+
 var handleCountlessNesting = function(dep, req_dep, self) {
 	var declr = self[ 'nest_req-' + dep.value ];
 	if (dep.state) {
 		req_dep.anchor = function(state) {
 			if (state) {
-				self.requestNesting(declr, dep.value);
+				requestNesting(self, declr, dep);
 			}
 		};
 		self.lwch(self, dep.state, req_dep.anchor);
 		watchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
 
 	} else {
-		self.requestNesting(declr, dep.value);
+		requestNesting(self, declr, dep);
 	}
 };
 
