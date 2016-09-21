@@ -88,14 +88,13 @@ var checkNestingPath = function(app, md, dep, path, original_need) {
 		result.push(item);
 
 		if (item.type == 'finite') {
-			var step = {
+			return {
 				dep_id: dep_counter++,
 				type: 'nesting',
 				value: path.slice(0, i),
 				nesting_path: result,
 				needed: [preciseNesting(app, constr, path.slice(i), original_need)]
 			};
-			return step;
 		}
 
 		cur = constr.prototype;
