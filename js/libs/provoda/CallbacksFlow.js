@@ -31,7 +31,7 @@ var sortFlows = function(item_one, item_two) {
 	}
 
 
-	var max_length;
+
 
 	/*if (item_one.custom_order && item_two.custom_order) {
 
@@ -42,7 +42,7 @@ var sortFlows = function(item_one, item_two) {
 	}*/
 
 
-	max_length = Math.max(item_one.complex_order.length, item_two.complex_order.length);
+	var max_length = Math.max(item_one.complex_order.length, item_two.complex_order.length);
 
 	for (var i = 0; i < max_length; i++) {
 		var item_one_step = item_one.complex_order[i];
