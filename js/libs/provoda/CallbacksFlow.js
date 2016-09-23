@@ -10,6 +10,31 @@ var Group = function(num) {
 	this.inited_order = this.complex_order;
 };
 
+var compareOrder = function (array_one, array_two) {
+	var max_length = Math.max(array_one.length, array_two.length);
+
+	for (var i = 0; i < max_length; i++) {
+		var item_one_step = array_one[i];
+		var item_two_step = array_two[i];
+
+		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
+			return;
+		}
+		if (typeof item_one_step == 'undefined'){
+			return -1;
+		}
+		if (typeof item_two_step == 'undefined'){
+			return 1;
+		}
+		if (item_one_step > item_two_step){
+			return 1;
+		}
+		if (item_one_step < item_two_step){
+			return -1;
+		}
+	}
+};
+
 var sortFlows = function(item_one, item_two) {
 	var none_one = !item_one || item_one.aborted;
 	var none_two = !item_two || item_two.aborted;
@@ -41,30 +66,7 @@ var sortFlows = function(item_one, item_two) {
 
 	}*/
 
-	var array_one = item_one.complex_order;
-	var array_two = item_two.complex_order;
-	var max_length = Math.max(array_one.length, array_two.length);
-
-	for (var i = 0; i < max_length; i++) {
-		var item_one_step = array_one[i];
-		var item_two_step = array_two[i];
-
-		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
-			return;
-		}
-		if (typeof item_one_step == 'undefined'){
-			return -1;
-		}
-		if (typeof item_two_step == 'undefined'){
-			return 1;
-		}
-		if (item_one_step > item_two_step){
-			return 1;
-		}
-		if (item_one_step < item_two_step){
-			return -1;
-		}
-	}
+	return compareOrder(item_one.complex_order, item_two.complex_order);
 };
 
 
