@@ -41,12 +41,13 @@ var sortFlows = function(item_one, item_two) {
 
 	}*/
 
-
-	var max_length = Math.max(item_one.complex_order.length, item_two.complex_order.length);
+	var array_one = item_one.complex_order;
+	var array_two = item_two.complex_order;
+	var max_length = Math.max(array_one.length, array_two.length);
 
 	for (var i = 0; i < max_length; i++) {
-		var item_one_step = item_one.complex_order[i];
-		var item_two_step = item_two.complex_order[i];
+		var item_one_step = array_one[i];
+		var item_two_step = array_two[i];
 
 		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
 			return;
