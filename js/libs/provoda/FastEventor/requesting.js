@@ -95,7 +95,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 	}
 	var requests_by_declarations = sputnik._highway.requests_by_declarations;
 
-	var api_name = send_declr.api_name;
+
 	var network_api = hp.getNetApiByDeclr(send_declr, sputnik);
 	var api_part = !send_declr.api_resource_path
 		? network_api
@@ -110,6 +110,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		throw new Error('provide a way to detect errors!');
 	}
 
+	var api_name = send_declr.api_name;
 	if (typeof api_name != 'string') {
 		api_name = network_api.api_name;
 	}
