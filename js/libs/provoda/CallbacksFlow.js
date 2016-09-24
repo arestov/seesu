@@ -233,10 +233,6 @@ function order(self, flow_step, motivator) {
 		if (match_result == -1) {
 			last_matched = cur;
 		} else {
-			if (cur) {
-				// debugger;
-			}
-
 			break;
 		}
 	}
