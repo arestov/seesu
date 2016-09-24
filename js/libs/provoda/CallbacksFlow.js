@@ -219,8 +219,10 @@ function order(self, flow_step, motivator) {
 	}
 
 	var last_item = self.flow_end;
-	var result = last_item && sortFlows(last_item, flow_step);
-	if (result !== 1) {
+
+	var result = last_item && sortFlows(flow_step, last_item);
+
+	if (result >= 0) {
 		//очевидно, что новый элемент должен стать в конец
 		return toEnd(self, flow_step);
 	}
