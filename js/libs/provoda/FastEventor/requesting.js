@@ -7,6 +7,8 @@ var hp = require('../helpers');
 var spv = require('spv');
 var toBigPromise = require('js/modules/extendPromise').toBigPromise;
 var pvUpdate = require('../updateProxy').update;
+var countKeys = spv.countKeys;
+var getTargetField = spv.getTargetField;
 
 var clean_obj = {};
 
@@ -89,6 +91,13 @@ var oneFromList = function(array) {
 	return array && array[0];
 };
 
+var getApiPart = function (send_declr, sputnik, app) {
+	var network_api = hp.getNetApiByDeclr(send_declr, sputnik, app);
+	return !send_declr.api_resource_path
+		? network_api
+		: spv.getTargetField(network_api, send_declr.api_resource_path);
+};
+
 var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 	if (!sputnik._highway.requests_by_declarations) {
 		sputnik._highway.requests_by_declarations = {};
@@ -97,10 +106,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 
 
 	var network_api = hp.getNetApiByDeclr(send_declr, sputnik);
-	var api_part = !send_declr.api_resource_path
-		? network_api
-		: spv.getTargetField(network_api, send_declr.api_resource_path);
-
+	var api_part = getApiPart(send_declr, sputnik);
 
 	if (!network_api.source_name) {
 		throw new Error('network_api must have source_name!');
@@ -141,8 +147,13 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		request_data.data[0] = api_part;
 		request = send_declr.manual.fn.apply(null, request_data.data);
 	} else if (send_declr.ids_declr) {
-		request = send_declr.ids_declr.req.call(null, api_part, [request_data.data])
-			.then(oneFromList);
+		if (sputnik._highway.reqs_batching.is_processing) {
+			request = doBatch(sputnik._highway.reqs_batching, send_declr, request_data.data);
+		} else {
+			request = send_declr.ids_declr.req.call(null, api_part, [request_data.data])
+				.then(oneFromList);
+		}
+
 		//  idsRequest(send_declr, sputnik, opts);
 	}
 
@@ -450,14 +461,23 @@ return {
 		});
 
     var initiator = _this.sputnik.current_motivator;
+		var num = initiator.num;
+		batch(_this.sputnik, num);
+
+		var release = function () {
+			releaseBatch(this, num);
+		};
+		release.init_end = true;
 
     request.then(function (response) {
       _this.sputnik.nextTick(function () {
         anyway();
         handleResponse(response);
       }, null, false, initiator);
+			_this.sputnik.nextTick(release, null, false, initiator);
     }, function () {
       _this.sputnik.nextTick(anyway, null, false, initiator);
+			_this.sputnik.nextTick(release, null, false, initiator);
     });
 
     function handleResponse(r){
@@ -576,4 +596,111 @@ function onPromiseFail(promise, cb) {
 		return promise.catch(cb);
 	}
 }
+
+function BatchingTemplate() {
+	this.keys = {};
+	this.is_processing = false;
+	this.collected = {};
+}
+
+function batch(md, num) {
+	if (!md._highway.reqs_batching) {
+		md._highway.reqs_batching = new BatchingTemplate();
+	}
+
+	var batching =  md._highway.reqs_batching;
+	batching.keys[num] = true;
+	batching.is_processing = true;
+}
+
+function releaseBatch(md, num) {
+	var batching =  md._highway.reqs_batching;
+	batching.keys[num] = false;
+	batching.is_processing = countKeys(batching.keys, true);
+	if (!batching.is_processing) {
+		finalizeBatch(batching, md);
+	}
+}
+
+function doBatch(reqs_batching, send_declr, id) {
+	if (!reqs_batching.collected[send_declr.id]) {
+		reqs_batching.collected[send_declr.id] = new CollectedTemplate(send_declr);
+	}
+
+	var colleted = reqs_batching.collected[send_declr.id];
+
+	if (!colleted.ids[id]) {
+		colleted.ids[id] = ensureDeferred(colleted).then(function (index) {
+			return index[id];
+		});
+	}
+
+	return colleted.ids[id];
+}
+
+function bindToMakeIndex(send_declr) {
+	return function (arr) {
+		var index = {};
+		for (var i = 0; i < arr.length; i++) {
+			index[getTargetField(arr[i], send_declr.ids_declr.indexBy)] = arr[i];
+		}
+		return index;
+	};
+}
+
+function finalizeCollected(collected, md) {
+	if (!collected.deffered) {
+		return;
+	}
+
+	var send_declr = collected.send_declr;
+	var req = send_declr.ids_declr.req.call(null, getApiPart(send_declr, md), Object.keys(collected.ids))
+		.then(bindToMakeIndex(send_declr));
+
+	var deffered = collected.deffered;
+	req.then(function () {
+		if (collected.deffered !== deffered) {
+			return;
+		}
+		collected.ids = {};
+		collected.effered = null;
+		collected.resolve = null;
+		collected.reject = null;
+	});
+
+	req.then(collected.resolve, collected.reject);
+
+
+}
+
+function finalizeBatch(reqs_batching, md) {
+	for (var send_declr_id in reqs_batching.collected) {
+		finalizeCollected(reqs_batching.collected[send_declr_id], md);
+		reqs_batching.collected[send_declr_id] = null;
+	}
+}
+
+function CollectedTemplate(send_declr) {
+	this.ids = {};
+	this.send_declr = send_declr;
+	this.deffered = null;
+	this.resolve = null;
+	this.reject = null;
+}
+
+function ensureDeferred(collected) {
+	if (collected.deffered) {
+		return collected.deffered;
+	}
+
+	collected.deffered = new Promise(function (resolve, reject) {
+		collected.resolve = resolve;
+		collected.reject = reject;
+	});
+
+	return collected.deffered;
+}
+
+
+
 });

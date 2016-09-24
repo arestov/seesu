@@ -594,7 +594,10 @@ add({
 			};
 		});
 
+		var counter = 1;
+
 		function SendDeclaration(declr) {
+			this.id = counter++;
 			this.api_name = null;
 			this.api_resource_path = null;
 
