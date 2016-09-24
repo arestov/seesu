@@ -41,7 +41,7 @@ var Eventor = spv.inh(function() {}, {
 		nextTick: function(fn, args, use_current_motivator, initiator) {
 			return this._calls_flow.pushToFlow(
 				fn, this, args, !args && this, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator, false,
-				initiator
+				initiator, fn.init_end
 			);
 		},
 		once: function(namespace, cb, opts, context) {

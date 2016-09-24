@@ -12,7 +12,7 @@ function initedOrder(initiator, parent_motivator) {
 	return [];
 }
 
-var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, parent_motivator, finup, initiator) {
+var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, parent_motivator, finup, initiator, init_end) {
 	this.aborted = false;
 	this.p_space = '';
 	this.p_index_key = '';
@@ -28,6 +28,7 @@ var FlowStep = function(num, fn, context, args, arg, cb_wrapper, real_context, p
 	this.complex_order.push(this.num);
 	this.inited_order = initedOrder(initiator, parent_motivator);
 	this.inited_order.push(this.num);
+	this.init_end = Boolean(init_end) || null;
 
 	this.next = null;
 
