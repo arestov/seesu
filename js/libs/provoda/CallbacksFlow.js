@@ -10,7 +10,7 @@ var Group = function(num) {
 	this.inited_order = this.complex_order;
 };
 
-var compareOrder = function (array_one, array_two) {
+var compareComplexOrder = function (array_one, array_two) {
 	var max_length = Math.max(array_one.length, array_two.length);
 
 	for (var i = 0; i < max_length; i++) {
@@ -21,9 +21,68 @@ var compareOrder = function (array_one, array_two) {
 			return;
 		}
 		if (typeof item_one_step == 'undefined'){
+			// __[1, 2] vs [1, 2, 3] => __[1, 2], [1, 2, 3]
 			return -1;
 		}
 		if (typeof item_two_step == 'undefined'){
+			// __[1, 2, 3] vs [1, 2] => [1, 2], __[1, 2, 3]
+			return 1;
+		}
+		if (item_one_step > item_two_step){
+			return 1;
+		}
+		if (item_one_step < item_two_step){
+			return -1;
+		}
+	}
+};
+
+var compareInitOrder = function (array_one, array_two, end_one, end_two) {
+	var max_length = Math.max(array_one.length, array_two.length);
+
+	for (var i = 0; i < max_length; i++) {
+		var item_one_step = array_one[i];
+		var item_two_step = array_two[i];
+
+		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
+			return;
+		}
+		if (typeof item_one_step == 'undefined'){
+			// __[1, 2]*END, [1, 2, 3]*END => [1, 2, 3]*END, __[1, 2]*END
+			if (end_one && end_two) {
+				return 1;
+			}
+
+			// __[1, 2]*END vs [1, 2, 3] => [1, 2, 3], __[1, 2]*END
+			if (end_one) {
+				return 1;
+			}
+
+			// __[1, 2], [1, 2, 3]*END => __[1, 2], [1, 2, 3]*END
+			if (end_two) {
+				return -1;
+			}
+
+			// __[1, 2] vs [1, 2, 3] => __[1, 2], [1, 2, 3]
+			return -1;
+		}
+ 		if (typeof item_two_step == 'undefined'){
+			// __[1, 2, 3]*END, [1, 2]*END => __[1, 2, 3]*END, [1, 2]*END
+			if (end_one && end_two) {
+				return -1;
+			}
+
+			// __[1, 2, 3]*END, [1, 2] => [1, 2], __[1, 2, 3]*END
+			if (end_one) {
+				return 1;
+			}
+
+			// __[1, 2, 3], [1, 2]*END => __[1, 2, 3], [1, 2]*END
+			if (end_two) {
+				return -1;
+			}
+
+			//__[1, 2, 3], [1, 2] vs  => [1, 2], __[1, 2, 3]
 			return 1;
 		}
 		if (item_one_step > item_two_step){
@@ -55,6 +114,10 @@ var sortFlows = function(item_one, item_two) {
 		return -1;
 	}
 
+	if (item_one.init_end || item_two.init_end) {
+		return compareInitOrder(item_one.inited_order, item_two.inited_order, item_one.init_end, item_two.init_end);
+	}
+
 
 
 
@@ -66,7 +129,7 @@ var sortFlows = function(item_one, item_two) {
 
 	}*/
 
-	return compareOrder(item_one.complex_order, item_two.complex_order);
+	return compareComplexOrder(item_one.complex_order, item_two.complex_order);
 };
 
 
@@ -204,8 +267,8 @@ CallbacksFlow.prototype = {
 			this.iteration_delayed = true;
 		}
 	},
-	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator) {
-		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator);
+	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator, init_end) {
+		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator, init_end);
 		order(this, flow_step, motivator);
 		this.checkCallbacksFlow();
 		return flow_step;
