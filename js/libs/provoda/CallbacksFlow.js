@@ -213,11 +213,7 @@ CallbacksFlow.prototype = {
 	}
 };
 
-function order(self, flow_step, motivator) {
-	if (!motivator) {
-		return toEnd(self, flow_step);
-	}
-
+function order(self, flow_step) {
 	var last_item = self.flow_end;
 
 	var result = last_item && sortFlows(flow_step, last_item);
