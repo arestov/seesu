@@ -66,7 +66,7 @@ var idsRequest = function (send_declr, sputnik) {
 	var declr = send_declr.ids_declr;
 	var api_name = send_declr.api_name;
 
-	var ids = [sputnik.state(declr.arrayof)];
+	var ids = sputnik.state(declr.arrayof);
 
 	var cache_key = hex_md5(JSON.stringify([
 		'ids', api_name, send_declr.api_resource_path, declr.fn_body, ids
@@ -140,7 +140,7 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 		request_data.data[0] = api_part;
 		request = send_declr.manual.fn.apply(null, request_data.data);
 	} else if (send_declr.ids_declr) {
-		request = send_declr.ids_declr.req.call(null, api_part, request_data.data)
+		request = send_declr.ids_declr.req.call(null, api_part, [request_data.data])
 			.then(oneFromList);
 		//  idsRequest(send_declr, sputnik, opts);
 	}
