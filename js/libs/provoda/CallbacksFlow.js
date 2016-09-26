@@ -7,6 +7,91 @@ var spv = require('spv');
 var Group = function(num) {
 	this.num = num;
 	this.complex_order = [num];
+	this.inited_order = this.complex_order;
+};
+
+var compareComplexOrder = function (array_one, array_two) {
+	var max_length = Math.max(array_one.length, array_two.length);
+
+	for (var i = 0; i < max_length; i++) {
+		var item_one_step = array_one[i];
+		var item_two_step = array_two[i];
+
+		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
+			return;
+		}
+		if (typeof item_one_step == 'undefined'){
+			// __[1, 2] vs [1, 2, 3] => __[1, 2], [1, 2, 3]
+			return -1;
+		}
+		if (typeof item_two_step == 'undefined'){
+			// __[1, 2, 3] vs [1, 2] => [1, 2], __[1, 2, 3]
+			return 1;
+		}
+		if (item_one_step > item_two_step){
+			return 1;
+		}
+		if (item_one_step < item_two_step){
+			return -1;
+		}
+	}
+};
+
+var compareInitOrder = function (array_one, array_two, end_one, end_two) {
+	var max_length = Math.max(array_one.length, array_two.length);
+
+	for (var i = 0; i < max_length; i++) {
+		var item_one_step = array_one[i];
+		var item_two_step = array_two[i];
+
+		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
+			return;
+		}
+		if (typeof item_one_step == 'undefined'){
+			// __[1, 2]*END, [1, 2, 3]*END => [1, 2, 3]*END, __[1, 2]*END
+			if (end_one && end_two) {
+				return 1;
+			}
+
+			// __[1, 2]*END vs [1, 2, 3] => [1, 2, 3], __[1, 2]*END
+			if (end_one) {
+				return 1;
+			}
+
+			// __[1, 2], [1, 2, 3]*END => __[1, 2], [1, 2, 3]*END
+			if (end_two) {
+				return -1;
+			}
+
+			// __[1, 2] vs [1, 2, 3] => __[1, 2], [1, 2, 3]
+			return -1;
+		}
+ 		if (typeof item_two_step == 'undefined'){
+			// __[1, 2, 3]*END, [1, 2]*END => __[1, 2, 3]*END, [1, 2]*END
+			if (end_one && end_two) {
+				return -1;
+			}
+
+			// __[1, 2, 3]*END, [1, 2] => [1, 2], __[1, 2, 3]*END
+			if (end_one) {
+				return 1;
+			}
+
+			// __[1, 2, 3], [1, 2]*END => __[1, 2, 3], [1, 2]*END
+			if (end_two) {
+				return -1;
+			}
+
+			//__[1, 2, 3], [1, 2] vs  => [1, 2], __[1, 2, 3]
+			return 1;
+		}
+		if (item_one_step > item_two_step){
+			return 1;
+		}
+		if (item_one_step < item_two_step){
+			return -1;
+		}
+	}
 };
 
 var sortFlows = function(item_one, item_two) {
@@ -29,8 +114,12 @@ var sortFlows = function(item_one, item_two) {
 		return -1;
 	}
 
+	if (item_one.init_end || item_two.init_end) {
+		return compareInitOrder(item_one.inited_order, item_two.inited_order, item_one.init_end, item_two.init_end);
+	}
 
-	var max_length;
+
+
 
 	/*if (item_one.custom_order && item_two.custom_order) {
 
@@ -40,29 +129,7 @@ var sortFlows = function(item_one, item_two) {
 
 	}*/
 
-
-	max_length = Math.max(item_one.complex_order.length, item_two.complex_order.length);
-
-	for (var i = 0; i < max_length; i++) {
-		var item_one_step = item_one.complex_order[i];
-		var item_two_step = item_two.complex_order[i];
-
-		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
-			return;
-		}
-		if (typeof item_one_step == 'undefined'){
-			return -1;
-		}
-		if (typeof item_two_step == 'undefined'){
-			return 1;
-		}
-		if (item_one_step > item_two_step){
-			return 1;
-		}
-		if (item_one_step < item_two_step){
-			return -1;
-		}
-	}
+	return compareComplexOrder(item_one.complex_order, item_two.complex_order);
 };
 
 
@@ -200,8 +267,8 @@ CallbacksFlow.prototype = {
 			this.iteration_delayed = true;
 		}
 	},
-	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup) {
-		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup);
+	pushToFlow: function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator, init_end) {
+		var flow_step = new FlowStep(++this.flow_steps_counter, fn, context, args, cbf_arg, cb_wrapper, real_context, motivator, finup, initiator, init_end);
 		order(this, flow_step, motivator);
 		this.checkCallbacksFlow();
 		return flow_step;
@@ -209,14 +276,12 @@ CallbacksFlow.prototype = {
 	}
 };
 
-function order(self, flow_step, motivator) {
-	if (!motivator) {
-		return toEnd(self, flow_step);
-	}
-
+function order(self, flow_step) {
 	var last_item = self.flow_end;
-	var result = last_item && sortFlows(last_item, flow_step);
-	if (result !== 1) {
+
+	var result = last_item && sortFlows(flow_step, last_item);
+
+	if (result >= 0) {
 		//очевидно, что новый элемент должен стать в конец
 		return toEnd(self, flow_step);
 	}
@@ -227,10 +292,6 @@ function order(self, flow_step, motivator) {
 		if (match_result == -1) {
 			last_matched = cur;
 		} else {
-			if (cur) {
-				// debugger;
-			}
-
 			break;
 		}
 	}

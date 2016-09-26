@@ -38,8 +38,11 @@ var Eventor = spv.inh(function() {}, {
 		nextLocalTick: function(fn, args, use_current_motivator, finup) {
 			return this._getCallsFlow().pushToFlow(fn, this, args, false, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator, finup);
 		},
-		nextTick: function(fn, args, use_current_motivator) {
-			return this._calls_flow.pushToFlow(fn, this, args, !args && this, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
+		nextTick: function(fn, args, use_current_motivator, initiator) {
+			return this._calls_flow.pushToFlow(
+				fn, this, args, !args && this, hp.oop_ext.hndMotivationWrappper, this, use_current_motivator && this.current_motivator, false,
+				initiator, fn.init_end
+			);
 		},
 		once: function(namespace, cb, opts, context) {
 			return this.evcompanion.once(namespace, cb, opts, context);

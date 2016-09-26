@@ -236,7 +236,7 @@ var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
 
 var modelInit = (function() {
 	return function initModel(self, opts, data, params, more, states) {
-		self.current_motivator = self.current_motivator || (opts && opts.motivator);
+		self.current_motivator = self.current_motivator || (opts && opts._motivator);
 
 		if (opts && opts.app){
 			self.app = opts.app;
@@ -337,9 +337,7 @@ var modelInit = (function() {
 
 
 		if (self.nestings_declarations) {
-			self.nextTick(function(target) {
-				initDeclaredNestings(target);
-			});
+			self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
 		}
 
 		self._requests_deps = null;
@@ -596,7 +594,10 @@ add({
 			};
 		});
 
+		var counter = 1;
+
 		function SendDeclaration(declr) {
+			this.id = counter++;
 			this.api_name = null;
 			this.api_resource_path = null;
 

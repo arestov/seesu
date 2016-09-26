@@ -155,10 +155,11 @@ add({
 			}
 
 		}
+    if (reg_fires && reg_fires.length && reg_fires[0].getWrapper){
+      callbacks_wrapper = reg_fires[0].getWrapper.call(this.sputnik);
+    }
+
 		if (fired){
-			if (reg_fires[0].getWrapper){
-				callbacks_wrapper = reg_fires[0].getWrapper.call(this.sputnik);
-			}
 			if (!skip_reg){
 				var mo_context = context || _this.sputnik;
 				if (soft_reg === false){
