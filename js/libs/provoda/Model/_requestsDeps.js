@@ -170,7 +170,7 @@ var unhandleState = function(dep, req_dep, self) {
 };
 
 function requestNesting(md, declr, dep) {
-	md.requestNesting(declr, dep.value);
+	md.requestNesting(declr, dep.value, dep.limit);
 }
 
 var handleCountlessNesting = function(dep, req_dep, self) {

@@ -65,7 +65,8 @@ var checkNestingPath = function(app, md, dep, path, original_need) {
 				type: 'countless_nesting',
 				value: right_nesting_name,
 				state: null,
-				related: null
+				related: null,
+				limit: dep.limit
 			};
 
 			if (declr && declr.state_dep) {
@@ -287,7 +288,8 @@ function flatSources(struc, parent_path) {
 		dep_id: dep_counter++,
 		type: 'nesting',
 		value: parent,
-		needed: needed
+		needed: needed,
+		limit: struc.main.limit,
 	});
 
 	var obj = struc.main.m_children.children;
@@ -300,6 +302,7 @@ function flatSources(struc, parent_path) {
 			dep_id: dep_counter++,
 			type: 'nesting',
 			value: path,
+			limit: obj[name].main.limit,
 		});
 
 		result_list.push.apply(result_list, flatSources(obj[name], path));

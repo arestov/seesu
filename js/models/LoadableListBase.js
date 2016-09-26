@@ -95,8 +95,8 @@ return spv.inh(BrowseMap.Model, {
 	preview_nesting_source: null,
 	getMainListChangeOpts: function() {},
 	page_limit: 30,
-	getPagingInfo: function(nesting_name) {
-		var page_limit = this.page_limit || this.map_parent.page_limit;
+	getPagingInfo: function(nesting_name, limit) {
+		var page_limit = limit || this.page_limit || this.map_parent.page_limit;
 		var length = this.getLength(nesting_name);
 		var has_pages = Math.floor(length/page_limit);
 		var remainder = length % page_limit;

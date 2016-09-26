@@ -391,7 +391,7 @@ return {
 
 		};
 	})(),
-	requestNesting: function(dclt, nesting_name) {
+	requestNesting: function(dclt, nesting_name, limit) {
 		if (!dclt) {
 			return;
 		}
@@ -426,7 +426,8 @@ return {
 		var side_data_parsers = dclt.side_data_parsers;
 		var send_declr = dclt.send_declr;
 		var supports_paging = !!parse_serv;
-		var paging_opts = this.sputnik.getPagingInfo(nesting_name);
+		var limit_value = limit && (limit[1] - limit[0]);
+		var paging_opts = this.sputnik.getPagingInfo(nesting_name, limit_value);
 
 		var network_api_opts = {
 			nocache: store.error
@@ -496,7 +497,7 @@ return {
         store.has_all_items = true;
         sputnik.updateState("all_data_loaded", true);
       } else {
-        var has_more_data = hasMoreData(serv_data, sputnik.page_limit, paging_opts, items);
+        var has_more_data = hasMoreData(serv_data, limit_value, paging_opts, items);
 
         if (!has_more_data) {
           store.has_all_items = true;
