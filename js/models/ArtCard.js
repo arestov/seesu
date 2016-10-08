@@ -583,13 +583,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 		}
 	},
 	//soundcloud_nickname
-	loadInfo: function(){
-		if (this.info_loaded){
-			return;
-		} else {
-			this.info_loaded = true;
-		}
-	},
 	'compx-no_soundcloud_profile': [
 		['soundcloud_profile__$complete', 'soundcloud_profile'],
 		function(two_complete, two) {
@@ -759,16 +752,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 });
 
 
-ArtCard = spv.inh(ArtCardBase, {
-	init: function(target) {
-		target.wch(target, 'mp_has_focus', function(e) {
-			if (e.value){
-				this.loadInfo();
-			}
-		}, true);
-	}
-}, {
-});
+ArtCard = spv.inh(ArtCardBase, {}, {});
 
 var ArtistInArtl = spv.inh(ArtCardBase, {}, {
 	net_head: ['artist_name'],
