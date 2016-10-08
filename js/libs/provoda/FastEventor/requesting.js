@@ -462,23 +462,33 @@ return {
 		});
 
     var initiator = _this.sputnik.current_motivator;
-		var num = initiator.num;
-		batch(_this.sputnik, num);
+		var release;
+		if (initiator) {
+			var num = initiator.num;
+			batch(_this.sputnik, num);
 
-		var release = function () {
-			releaseBatch(this, num);
-		};
-		release.init_end = true;
+			release = function () {
+				releaseBatch(this, num);
+			};
+			release.init_end = true;
+		}
+
 
     request.then(function (response) {
       _this.sputnik.nextTick(function () {
         anyway();
         handleResponse(response);
       }, null, false, initiator);
-			_this.sputnik.nextTick(release, null, false, initiator);
+			if (release) {
+				_this.sputnik.nextTick(release, null, false, initiator);
+			}
+
     }, function () {
       _this.sputnik.nextTick(anyway, null, false, initiator);
-			_this.sputnik.nextTick(release, null, false, initiator);
+			if (release) {
+				_this.sputnik.nextTick(release, null, false, initiator);
+			}
+
     });
 
     function handleResponse(r){
