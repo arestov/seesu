@@ -219,22 +219,6 @@ var SongActTaging = spv.inh(comd.BaseCRow, {
 	init: function(target){
 		target.actionsrow = target.map_parent;
 		target.mo = target.map_parent.map_parent;
-
-		var old_tit = null;
-		var hide_on_tag = function() {
-			target.hide();
-		};
-		target.on('child_change-lfm_tagsong', function(e) {
-			if (old_tit) {
-				old_tit.off('tagged-success', hide_on_tag);
-			}
-
-			if (e.value) {
-				e.value.on('tagged-success', hide_on_tag);
-			}
-			old_tit = e.value;
-		});
-
 	}
 }, {
 	'nest-lfm_tagsong': [LfmTagSong],
