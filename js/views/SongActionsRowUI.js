@@ -158,14 +158,11 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
 	dom_rp: true,
 	bindBase: function(){
 		this._super();
-
 		this.createVolumeControl();
-
-		this.wch(this.parent_view, 'mp_show_end', function(e){
-			this.setVisState('is_visible', !!e.value);
-		});
-
 	},
+	'compx-vis_is_visible': [['^mp_show_end'], function (value) {
+		return Boolean(value);
+	}],
 	'compx-p_mpshe': [
 		['^mp_show_end'],
 		function (mp_show_end) {
