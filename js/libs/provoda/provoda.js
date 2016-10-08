@@ -201,11 +201,6 @@ var HModel = spv.inh(Model, {
 	_hndOnPMDSwitch: function(e) {
 		this.checkPMDSwiched(e.value);
 	},
-	setPmdSwitcher: function(pmd) {
-		this.pmd_switch = pmd;
-
-		pmd.on('state_change-vswitched', this._hndOnPMDSwitch, this.getContextOptsI());
-	},
 	'stch-vswitched': function(target, state, old_state) {
 		if (state) {
 			var md = pv.getModelById(target, state);
