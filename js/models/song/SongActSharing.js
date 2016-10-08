@@ -92,7 +92,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 		self.lwch(self, 'can_search', function(state) { //load
 			if (!state){return;}
 
-			this.friends_page.preloadStart();
+			this.useMotivator(this.friends_page, preloadStart);
 			this.searchFriends();
 		});
 	}
@@ -193,7 +193,9 @@ var LFMUserSuggest = spv.inh(invstg.BaseSuggest, {
 	}
 });
 
-
+function preloadStart(item) {
+	item.preloadStart();
+}
 
 var LFMFriendsSection = spv.inh(invstg.SearchSection, {
 	'nest-friends': ['#/users/me/lfm:friends', 'can_share', 'can_share'],
@@ -212,7 +214,7 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
 		target.lwch(target, 'can_search', function(state) { //load
 			if (!state){return;}
 
-			this.friends_page.preloadStart();
+			this.useMotivator(this.friends_page, preloadStart);
 			this.searchFriends();
 		});
 	},
