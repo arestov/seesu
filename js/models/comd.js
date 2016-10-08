@@ -93,6 +93,7 @@ var TrackImages  = spv.inh(ImagesPack, {
 		target.artist = params.info.artist;
 		target.track = params.info.track;
 
+		// results is state
 		target.wch(params.artmd, 'image-to-use', 'artist_image');
 	}
 }, {
@@ -540,4 +541,3 @@ return {
 	VkLoginB: VkLoginB
 };
 });
-

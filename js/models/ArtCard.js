@@ -811,6 +811,7 @@ var ArtistsList = spv.inh(LoadableList, {}, {
 var SimilarArtists = spv.inh(ArtistsList, {
 	init: function(target) {
 		target.wch(target, 'preview_list', function(e) {
+			// results is nesting
 			if (e.value) {
 				this.setPreviewList(e.value);
 			}

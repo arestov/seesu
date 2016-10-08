@@ -332,8 +332,10 @@ var getMatchedSongs = function(music_list, msq) {
 			target.tuner = target.mp3_search.getSourceTuner(search_eng_name);
 			target.wch(target.tuner, 'disable_search', function(e) {
 				//debugger;
+				// result is state
 				pvUpdate(this, 'disable_search', e.value);
 			});
+			// result is state
 			target.wch(target.tuner, 'wait_before_playing');
 
 			//this.wch(this.map_parent, 'must_load');
