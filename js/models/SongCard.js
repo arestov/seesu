@@ -30,12 +30,12 @@ var SongFansList = spv.inh(user_music_lfm.LfmUsersList, {}, {
 			track: this.state('track_name')
 		};
 	},
-	'nest_req-list_items': [
-		declr_parsers.lfm.getUsers('topfans', true),
-		['lfm', 'get', function() {
-			return ['track.getTopFans', this.getRqData()];
-		}]
-	],
+	// 'nest_req-list_items': [
+	// 	declr_parsers.lfm.getUsers('topfans', true),
+	// 	['lfm', 'get', function() {
+	// 		return ['track.getTopFans', this.getRqData()];
+	// 	}]
+	// ],
 	beforeReportChange: function(list) {
 		list.sort(sortByGif);
 		return list;

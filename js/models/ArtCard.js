@@ -624,16 +624,16 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 		// 		}]
 		// 	]
 		// ],
-		[
-			['images'],
-			function(r) {
-				var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
-				return [images];
-			},
-			['lfm', 'get', function() {
-				return ['artist.getImages', {'artist': this.head.artist_name }];
-			}]
-		],
+		// [
+		// 	['images'],
+		// 	function(r) {
+		// 		var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
+		// 		return [images];
+		// 	},
+		// 	['lfm', 'get', function() {
+		// 		return ['artist.getImages', {'artist': this.head.artist_name }];
+		// 	}]
+		// ],
 		[
 			['profile_image', 'bio', 'listeners', 'playcount', 'similar_artists_list', 'tags_list'],
 			function(r) {
