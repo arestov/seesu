@@ -50,10 +50,10 @@ var LfmLogin = spv.inh(pv.Model, {
 
 var LfmScrobble = spv.inh(LfmLogin, {
 	init: function(target){
-		target.wch(target.app, 'settings-lfm-scrobbling', 'scrobbling');
 		pvUpdate(target, 'active', true);
 	}
 }, {
+	'compx-scrobbling':[['#settings-lfm-scrobbling']],
 	'compx-access_desc': [['#locales.lastfm-scrobble-access']],
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -65,7 +65,6 @@ var LfmScrobble = spv.inh(LfmLogin, {
 		pvUpdate(this.app, 'lfm_auth_request', this);
 	},
 	setScrobbling: function(state) {
-		pvUpdate(this, 'scrobbling', state);
 		this.app.setSetting('lfm-scrobbling', state);
 		//this.auth.setScrobbling(state);
 	}
