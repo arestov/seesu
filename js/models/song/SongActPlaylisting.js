@@ -65,11 +65,11 @@ var PlaylistRowSearch = spv.inh(invstg.Investigation, {
 
 SongActPlaylisting = spv.inh(comd.BaseCRow, {
 	init: function(target){
-		target.actionsrow = target.map_parent;
 		target.mo = target.map_parent.map_parent;
 		target.app.gena.on('child_change-lists_list', target.checkFullMatch, target.getContextOpts());
 	}
 }, {
+	actionsrow_src: '^',
 	'nest-searcher': [PlaylistRowSearch],
 	model_name: 'row-playlist-add',
 	search: function(q) {

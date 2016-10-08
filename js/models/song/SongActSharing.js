@@ -403,12 +403,11 @@ var StrusersRowSearch = spv.inh(invstg.Investigation, {
 
 var SongActSharing = spv.inh(comd.BaseCRow, {
 	init: function(target){
-		target.actionsrow = target.map_parent;
 		target.mo = target.map_parent.map_parent;
 		target.search('');
 	}
 }, {
-
+	actionsrow_src: '^',
 	'nest-searcher': [StrusersRowSearch],
 	'compx-share_url': [['^^share_url']],
 	search: function(q) {
