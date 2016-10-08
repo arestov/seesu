@@ -563,12 +563,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 		pl.showOnMap();
 		return pl;
 	},
-	preloadChildren: function(array) {
-		var list = (array && array.length && array) || [this.top_songs, this.hypem_new, this.hypem_fav, this.hypem_reblog, this.albums, this.soundc_prof, this.soundc_likes, this.dgs_albums];
-		for (var i = 0; i < list.length; i++) {
-			list[i].preloadStart();
-		}
-	},
 	//soundcloud_nickname
 	'compx-no_soundcloud_profile': [
 		['soundcloud_profile__$complete', 'soundcloud_profile'],
