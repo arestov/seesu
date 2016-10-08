@@ -208,19 +208,6 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
 });
 
 var DiscogsAlbums = spv.inh(AlbumsList, {}, {
-	// init: function(opts, params) {
-	// 	this._super.apply(this, arguments);
-	// 	// this.artist_name = params.artist;
-
-	// 	this.initStates({
-	// 		'artist_id': false,
-	// 		'possible_loader_disallowing': //#locales.no-dgs-id
-	// 	});
-
-	// 	// this.wch(this.map_parent, 'discogs_id_searching', 'profile_searching', true);
-	// 	// this.wch(this.map_parent, 'discogs_id', 'artist_id', true);
-
-	// },
 	'stch-should_load': function(target, state) {
 		if (state) {
 			target.preloadStart();
