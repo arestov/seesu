@@ -484,15 +484,14 @@ var getMatchedSongs = function(music_list, msq) {
 						_this.wlch(music_list, '@items', 'search_result');
 
 						_this.lwch(music_list, 'query_complete', function(state) {
-							if (state) {
-								_this.updateManyStates({
-									search_complete: true,
-									search_progress: false,
-									has_request: false
-								});
-							} else {
-
+							if (!state) {
+								return;
 							}
+							_this.updateManyStates({
+								search_complete: true,
+								search_progress: false,
+								has_request: false
+							});
 						});
 
 					} else {
