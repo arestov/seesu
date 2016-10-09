@@ -1525,10 +1525,10 @@ if (String.prototype.startsWith) {
 	//http://jsperf.com/starts-with/14, without problems for GC
 	startsWith = function(str, substr, pos) {
 		var len = substr.length;
-		var i = pos || 0;
+		var shift = pos || 0;
 
-		for (/*i = 0*/; i < len; i ++) {
-			if (str.charAt(i) != substr.charAt(i)) {
+		for (var i = 0; i < len; i ++) {
+			if (str.charAt(i + shift) != substr.charAt(i)) {
 				return false;
 			}
 		}
