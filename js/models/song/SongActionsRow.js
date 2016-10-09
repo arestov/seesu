@@ -8,7 +8,6 @@ var pvUpdate = pv.update;
 var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 	init: function(target) {
 		target.song = target.map_parent.mo;
-		pv.update(target, 'active', true);
 	}
 }, {
 	'compx-access_desc': [['#locales.lastfm-loveit-access']],

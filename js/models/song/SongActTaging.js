@@ -6,7 +6,6 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 	init: function(target) {
 		target.mo = target.map_parent.mo;
 
-		pvUpdate(target, 'active', true);
 		target.wch(target.app.getArtcard(target.mo.state('artist')).getTagsModel(), 'simple_tags_list', 'artist_tags');
 
 		target.wch(target, 'petags', function(e) {
