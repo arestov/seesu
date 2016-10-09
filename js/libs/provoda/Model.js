@@ -33,60 +33,6 @@ var unsubcribeOld = function(evColr, items_list) {
 	return index;
 };
 
-var setEvLiItems = function(items_list) {
-	var old_value = this.current_motivator;
-	this.current_motivator = this.current_motivator;
-
-	items_list = spv.toRealArray(items_list);
-	var saved_items = unsubcribeOld( this, items_list );
-	this.items_list = items_list;
-	this.controls_list.length = 0;
-	this.controls_list.length = items_list.length;
-	for (var i = 0; i < items_list.length; i++) {
-		var cur = items_list[i];
-		var oldv = cur.current_motivator;
-		cur.current_motivator = this.current_motivator;
-		var cur_id = cur._provoda_id || cur.view_id;
-		if (saved_items.hasOwnProperty( cur_id )) {
-			this.controls_list[i] = saved_items[ cur_id ];
-		} else {
-			this.controls_list[i] = cur.evcompanion._addEventHandler(this.event_name, this.event_callback, this, false, false, true, false, false, true);
-			//_addEventHandler: function(namespace, cb, context, immediately, exlusive, skip_reg, soft_reg, once, easy_bind_control)
-		}
-		cur.current_motivator = oldv;
-	}
-	this.current_motivator = old_value;
-};
-
-var ItemsEvents = function(event_name, md, callback) {
-	this.items_list = null;
-	this.md = md;
-	this.controls_list = [];
-	this.event_name = event_name;
-	this.callback = callback;
-	//this.skip_reg = true;
-	this.current_motivator = null;
-};
-
-ItemsEvents.prototype = {
-	event_callback: function(e) {
-		var old_value = this.md.current_motivator;
-		this.md.current_motivator = this.current_motivator;
-		this.callback.call(this.md, {
-			target: this.md,
-			item: e && e.target,
-			value: e && e.value,
-			items: this.items_list
-		});
-		this.md.current_motivator = old_value;
-	},
-	setItemsReal: setEvLiItems,
-	setItems: function(items_list) {
-		this.setItemsReal( items_list && spv.toRealArray( items_list ) );
-		this.event_callback();
-	}
-};
-
 var one = function(state) {
 	return state;
 };
@@ -98,68 +44,6 @@ var some = function(values_array) {
 };
 
 var hasargfn = function(cur) {return cur;};
-var StatesArchiver = function(state_name, result_state_name, md, calculateResult) {
-	this.items_list = null;
-	this.controls_list = [];
-	this.current_motivator = null;
-	this.md = md;
-	this.result_state_name = result_state_name;
-
-	this.state_name = state_name;
-	this.event_name = 'lgh_sch-' + this.state_name;
-	//this.skip_reg = true;
-
-	var calcR = calculateResult;
-	if (calcR){
-		if (typeof calcR == 'function'){
-			this.calculate_result = calcR;
-		} else {
-			if (calcR == 'some'){
-				this.calculate_result = some;
-			} else if (calcR == 'every'){
-				this.calculate_result = every;
-			} else if (calcR == 'one') {
-				this.calculate_result = one;
-			}
-		}
-
-	} else {
-		this.calculate_result = some;
-	}
-
-
-};
-StatesArchiver.prototype = {
-	event_callback: function() {
-		this.getItemsValues();
-	},
-	setResult: function(value) {
-		var old_value = this.md.current_motivator;
-		this.md.current_motivator = this.current_motivator;
-		this.md.updateState(this.result_state_name, value);
-		this.md.current_motivator = old_value;
-	},
-	getItemsValues: function() {
-		if (this.calculate_result == one) {
-			var item = this.items_list[0];
-			var state = item && item.state(this.state_name);
-			this.setResult(state);
-		} else {
-			var values_list = new Array(this.items_list.length);
-			for (var i = 0; i < this.items_list.length; i++) {
-				values_list[i] = this.items_list[i].state(this.state_name);
-			}
-			this.setResult(this.calculate_result.call(this, values_list));
-		}
-
-	},
-	setItemsReal: setEvLiItems,
-	setItems: function(items_list) {
-		this.setItemsReal( items_list && spv.toRealArray( items_list ) );
-		this.event_callback();
-	}
-};
-
 var stackNestingFlowStep = function(flow_step, nesting_name) {
 	if (!this.zdsv) {
 		this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
@@ -1208,18 +1092,6 @@ var hasDot = spv.memorize(function(nesting_name) {
 });
 
 add({
-	watchChildrenStates: function(collection_name, state_name, callback) {
-		// legacy. can remove!?
-
-		var items_events = new ItemsEvents( hp.getSTEVNameDefault(state_name), this, callback);
-		this.on(hp.getFullChilChEvName(collection_name), passCollectionsChange, null, items_events);
-	},
-	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
-		// legacy. can remove!?
-
-		var archiver = new StatesArchiver(collection_state, result_state_name || collection_state, this, statesCalcFunc);
-		this.on(hp.getFullChilChEvName(collection_name), passCollectionsChange, null, archiver);
-	},
 	getRelativeRequestsGroups: function(space, only_models) {
 		var all_models = [];
 		var groups = [];
