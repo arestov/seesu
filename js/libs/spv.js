@@ -1538,6 +1538,27 @@ if (String.prototype.startsWith) {
 
 spv.startsWith = startsWith;
 
+var endsWith;
+if (String.prototype.endsWith) {
+	endsWith = function(str, substr, pos) {
+		return str.endsWith(substr, pos);
+	}
+} else {
+	endsWith = function (str, substr, pos) {
+		var len = substr.length;
+		var big_length_diff = (pos || str.length) - len;
+
+		for (var i = len;i > 0; i --) {
+			if (str.charAt(big_length_diff + i - 1) !== substr.charAt(i - 1)) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
+spv.endsWith = endsWith;
+
 spv.getDeprefixFunc = function(prefix, simple) {
 	var cache = {};
 	return function (namespace) {
