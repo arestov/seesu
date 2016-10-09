@@ -17,21 +17,6 @@ var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
 
 var getComplexInitList = updateProxy.getComplexInitList;
-var unsubcribeOld = function(evColr, items_list) {
-	var index = {};
-	if (evColr.controls_list.length){
-		for (var i = 0; i < evColr.controls_list.length; i++) {
-			var opts = evColr.controls_list[ i ];
-			var cur = evColr.items_list[ i ];
-			if (items_list.length && items_list.indexOf( cur ) != -1) {
-				index[ cur._provoda_id || cur.view_id ] = opts;
-			} else {
-				cur.evcompanion.off(opts.ev_name, opts.cb, opts);
-			}
-		}
-	}
-	return index;
-};
 
 var one = function(state) {
 	return state;
