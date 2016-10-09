@@ -7,7 +7,6 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 		target.mo = target.map_parent.mo;
 
 		pvUpdate(target, 'active', true);
-		target.wch(target.pmd || target.map_parent, 'active_view');
 		target.wch(target.app.getArtcard(target.mo.state('artist')).getTagsModel(), 'simple_tags_list', 'artist_tags');
 
 		target.wch(target, 'petags', function(e) {
@@ -29,6 +28,7 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 		],
 		['canload_personal']
 	],
+	'compx-active_view': [['^active_view']],
 	'compx-access_desc': [['#locales.lastfm-tagging-access']],
 	comma_regx: /\s*\,\s*/,
 	comma_regx_end: /\s*\,\s*$/,
