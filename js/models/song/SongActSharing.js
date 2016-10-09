@@ -294,10 +294,10 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 		target.mo = target.map_parent.mo;
 		target.rpl = target.map_parent.map_parent;
 
-		target.wch(target, 'can_share', function(e) { //load
-			if (e.value){
-				this.searchFriends();
-			}
+		target.lwch(target, 'can_share', function(state) { //load
+			if (!state){return;}
+
+			this.searchFriends();
 		});
 	}
 }, {
