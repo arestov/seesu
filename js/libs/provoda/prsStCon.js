@@ -31,24 +31,7 @@ define(function() {
 				}
 
 			},
-			nesting: function(md) {
-				var list = md.conndst_nesting;
-				if (!list){
-					return;
-				}
-				if (!md.archivateChildrenStates) {
-					throw new Error('cant calculate nesting based complex states for view (only for models)');
-				}
-				for (var i = 0; i < list.length; i++) {
-					var cur = list[i];
-
-					if (cur.state_name) {
-						// md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zip_func, cur.full_name);
-					} else {
-						// watchNestingAsState(md, cur.nesting_name, cur.full_name);
-					}
-				}
-			},
+			nesting: function() {},
 			root: function(md) {
 				var list = md.conndst_root;
 				if (!list){
