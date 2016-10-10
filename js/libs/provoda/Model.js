@@ -18,17 +18,6 @@ var cloneObj = spv.cloneObj;
 
 var getComplexInitList = updateProxy.getComplexInitList;
 
-var one = function(state) {
-	return state;
-};
-var every = function(values_array) {
-	return !!values_array.every(hasargfn);
-};
-var some = function(values_array) {
-	return !!values_array.some(hasargfn);
-};
-
-var hasargfn = function(cur) {return cur;};
 var stackNestingFlowStep = function(flow_step, nesting_name) {
 	if (!this.zdsv) {
 		this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
@@ -1002,13 +991,6 @@ add({
 		return this;
 	}
 });
-
-
-
-var passCollectionsChange = function(e) {
-	this.setItems(e.value, e.target.current_motivator);
-};
-
 
 var removeNestWatchs = function(item, array, one) {
 		for (var i = 0; i < array.length; i++) {
