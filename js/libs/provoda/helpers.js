@@ -12,7 +12,7 @@ var NestWatch = function(selector, state_name, zip_func, full_name, handler, add
 	this.short_state_name = state_name && getShortStateName(state_name);
 	this.full_name = full_name;
 	this.zip_func = zip_func;
-	this.handler = handler;
+	this.handler = handler; // mainely for 'stch-'
 	this.addHandler = addHandler;
 	this.removeHandler = removeHandler;
 };
