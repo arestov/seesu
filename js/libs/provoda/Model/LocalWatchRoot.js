@@ -1,7 +1,6 @@
 define(['spv', '../helpers', '../updateProxy'],function(spv, hp, updateProxy){
 'use strict';
 
-var lw_count = 0;
 var buildItems = function(lnwatch) {
 	if (!lnwatch.items_changed) {return;}
 	lnwatch.items_changed = false;
@@ -153,7 +152,7 @@ var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) 
 	});
 });
 
-
+var lw_count = 0;
 return function LocalWatchRoot(md, nwatch, data) {
 		this.num = ++lw_count;
 		this.selector = nwatch.selector;
