@@ -43,10 +43,14 @@ return function LocalWatchRoot(md, nwatch, data) {
 		// если нет, значит просто передать массив в пользовательскую функцию
 		var full_name_handler = full_name && getStateWriter(full_name, this.state_name, this.zip_name);
 
-		this.state_handler = this.state_name ? ( full_name ? full_name_handler : stateHandler) : null;
+
+		var handle_state_change = this.state_name ? ( full_name ? full_name_handler : stateHandler) : null;
+		var handle_count_or_order_change = full_name ? full_name_handler : wrapper;
+
+		this.state_handler = handle_state_change;
 		// handle state change
 
-		this.handler = full_name ? full_name_handler : wrapper;
+		this.handler = handle_count_or_order_change;
 		// handle count/order change
 
 		this.addHandler = nwatch.addHandler;
