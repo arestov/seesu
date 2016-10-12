@@ -1,6 +1,26 @@
 define(function (require) {
 'use strict';
 var spv = require('spv');
+var getStateWriter = require('./getStateWriter');
+var standart = require('./standartNWH');
+
+var wrapper = standart(function wrapper(md, items, lnwatch) {
+	var callback = lnwatch.callback;
+	callback(md, null, null, {
+		items: items,
+		item: null
+	});
+});
+
+
+var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) {
+	if (!args.length) {return;}
+	var callback = lnwatch.callback;
+	callback(md, args[1], args[2], {
+		items: items,
+		item: args[3]
+	});
+});
 
 var NestWatch = function(selector, state_name, zip_func, full_name, handler, addHandler, removeHandler) {
 	this.selector = selector;
@@ -11,6 +31,14 @@ var NestWatch = function(selector, state_name, zip_func, full_name, handler, add
 	this.handler = handler; // mainely for 'stch-'
 	this.addHandler = addHandler;
 	this.removeHandler = removeHandler;
+
+	// если есть full_name значит нам надо записать новое состояние
+	// если нет, значит просто передать массив в пользовательскую функцию
+	var full_name_handler = full_name && getStateWriter(full_name, state_name, zip_func);
+
+
+	this.handle_state_change = this.state_name ? ( full_name ? full_name_handler : stateHandler) : null;
+	this.handle_count_or_order_change = full_name ? full_name_handler : wrapper;
 };
 
 var enc_states = {
@@ -88,6 +116,6 @@ function itself(item) {return item;}
 return {
 	getShortStateName: getShortStateName,
 	getEncodedState: getEncodedState,
-	NestWatch: NestWatch
+	NestWatch: NestWatch,
 };
 });

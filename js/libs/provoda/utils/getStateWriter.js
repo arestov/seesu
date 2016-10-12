@@ -2,11 +2,11 @@ define(function (require) {
 'use strict';
 
 var spv = require('spv');
-var hp = require('../helpers');
+var pvState = require('./state');
 var pvUpdate = require('../updateProxy').update;
 var standart = require('./standartNWH');
 
-var pvState = hp.state;
+
 
 var stateOf = spv.memorize(function(state_name) {
 	return function(md) {

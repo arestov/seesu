@@ -3,6 +3,9 @@ define(function(require) {
 
 var spv = require('spv');
 var utils = require('./utils/index');
+var utils_simple = require('./utils/simple')
+var pvState = require('./utils/state');
+var stateGetter = require('./utils/stateGetter');
 var getEncodedState = utils.getEncodedState;
 var NestWatch = utils.NestWatch;
 var getShortStateName = utils.getShortStateName;
@@ -31,25 +34,6 @@ function getBwlevId(view) {
 	return getBwlevView(view).mpx._provoda_id;
 }
 
-var getTargetField = spv.getTargetField;
-
-var stateGetter = spv.memorize(function stateGetter(state_path) {
-	var enc = getEncodedState(state_path);
-	if (enc) {
-		return function(states) {
-			return states[state_path];
-		};
-	} else {
-		return function(states) {
-			return getTargetField(states, state_path);
-		};
-	}
-});
-
-
-
-
-
 return {
 	NestWatch: NestWatch,
 	getRDep: (function() {
@@ -70,37 +54,15 @@ return {
 		};
 
 	})(),
-	state: (function(){
-		var getter = stateGetter;
-		return function(item, state_path){
-			var getField = getter(state_path);
-
-			if (item._lbr && item._lbr.undetailed_states) {
-				return getField(item._lbr.undetailed_states);
-			}
-
-			return getField(item.states);
-		};
-	})(),
+	state: pvState,
 	triggerDestroy: function(md) {
 		var array = md.evcompanion.getMatchedCallbacks('die');
 		if (array.length) {
 			md.evcompanion.triggerCallbacks(array, false, emergency_opt, 'die');
 		}
 	},
-	wipeObj: function (obj){
-		for (var p in obj){
-			if (obj.hasOwnProperty(p)){
-				delete obj[p];
-			}
-		}
-	},
-	markFlowSteps: function(flow_steps, p_space, p_index_key) {
-		for (var i = 0; i < flow_steps.length; i++) {
-			flow_steps[i].p_space = p_space;
-			flow_steps[i].p_index_key = p_index_key;
-		}
-	},
+	wipeObj: utils_simple.wipeObj,
+	markFlowSteps: utils_simple.markFlowSteps,
 	getRightNestingName: function(md, nesting_name) {
 		if (md.preview_nesting_source && nesting_name == 'preview_list') {
 			nesting_name = md.preview_nesting_source;
@@ -146,10 +108,10 @@ return {
 			return result;
 		};
 	},
-	getSTEVNameVIP: spv.getPrefixingFunc('vip_state_change-'),
-	getSTEVNameDefault: spv.getPrefixingFunc('state_change-'),
-	getSTEVNameLight: spv.getPrefixingFunc('lgh_sch-'),
-	getFullChilChEvName: spv.getPrefixingFunc('child_change-'),
+	getSTEVNameVIP: utils_simple.getSTEVNameVIP,
+	getSTEVNameDefault: utils_simple.getSTEVNameDefault,
+	getSTEVNameLight: utils_simple.getSTEVNameLight,
+	getFullChilChEvName: utils_simple.getFullChilChEvName,
 	getRemovedNestingItems: function(array, old_value) {
 		var removed;
 		if (Array.isArray(old_value)){

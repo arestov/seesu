@@ -2,7 +2,7 @@ define(function(require) {
 'use strict';
 
 var StatesLabour = require('./StatesLabour');
-var hp = require('./helpers');
+var utils_simple = require('./utils/simple');
 var spv = require('spv');
 var produceEffects = require('./StatesEmitter/produceEffects');
 var push = Array.prototype.push;
@@ -138,7 +138,7 @@ function updateProxy(etr, changes_list, opts) {
 		}
 
 
-		hp.wipeObj(original_states);
+		utils_simple.wipeObj(original_states);
 		all_i_cg.length = changed_states.length = 0;
 		if (all_ch_compxs) {
 			all_ch_compxs.length = 0;
@@ -153,7 +153,7 @@ function updateProxy(etr, changes_list, opts) {
 	iterateChList(total_ch, etr, _triggerStChanges, zdsv);
 	produceEffects(total_ch, etr);
 
-	//hp.wipeObj(original_states);
+	//utils_simple.wipeObj(original_states);
 	//all_i_cg.length = all_ch_compxs.length = changed_states.length = 0;
 
 	if (etr.sendStatesToMPX && total_ch.length){
@@ -378,7 +378,7 @@ var PVStateChangeEvent = function(type, value, old_value, target) {
 var st_event_opt = {force_async: true};
 
 function _triggerVipChanges(etr, i, state_name, value, zdsv) {
-	var vip_name = hp.getSTEVNameVIP( state_name);
+	var vip_name = utils_simple.getSTEVNameVIP( state_name);
 	zdsv.abortFlowSteps('vip_stdch_ev', state_name);
 
 
@@ -392,7 +392,7 @@ function _triggerVipChanges(etr, i, state_name, value, zdsv) {
 
 	//вызов внутреннего для самого объекта события
 	etr.evcompanion.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg, flow_steps);
-	hp.markFlowSteps(flow_steps, 'vip_stdch_ev', state_name);
+	utils_simple.markFlowSteps(flow_steps, 'vip_stdch_ev', state_name);
 }
 
 function triggerLegacySChEv(etr, state_name, value, old_value, default_cb_cs, default_name, flow_steps) {
@@ -417,8 +417,8 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 		}
 	}
 
-	var default_name = hp.getSTEVNameDefault( state_name );
-	var light_name = hp.getSTEVNameLight( state_name );
+	var default_name = utils_simple.getSTEVNameDefault( state_name );
+	var light_name = utils_simple.getSTEVNameLight( state_name );
 
 	var default_cb_cs = etr.evcompanion.getMatchedCallbacks(default_name);
 	var light_cb_cs = etr.evcompanion.getMatchedCallbacks(light_name);
@@ -438,7 +438,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 	}
 
 	if (flow_steps) {
-		hp.markFlowSteps(flow_steps, 'stev', state_name);
+		utils_simple.markFlowSteps(flow_steps, 'stev', state_name);
 	}
 
 	// states_links
