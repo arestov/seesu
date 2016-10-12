@@ -185,6 +185,7 @@ return function LocalWatchRoot(md, nwatch, data) {
 		// handle count/order change
 
 		this.addHandler = nwatch.addHandler;
+		this.removeHandler = nwatch.removeHandler;
 
 		if (!full_name) {
 			// debugger;
