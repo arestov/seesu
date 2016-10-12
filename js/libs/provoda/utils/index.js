@@ -13,7 +13,6 @@ var NestWatch = function(selector, state_name, zip_func, full_name, handler, add
 	this.removeHandler = removeHandler;
 };
 
-var encoded_states = {};
 var enc_states = {
 	'^': (function(){
 		// parent
@@ -69,20 +68,15 @@ var enc_states = {
 	}
 };
 
-function getEncodedState(state_name) {
-	if (!encoded_states.hasOwnProperty(state_name)) {
 
-		var start = state_name.charAt(0);
-		if (enc_states[start]) {
-			encoded_states[state_name] = enc_states[start](state_name);
-		} else {
-			encoded_states[state_name] = null;
-		}
-
+var getEncodedState = spv.memorize(function getEncodedState(state_name) {
+	var start = state_name.charAt(0);
+	if (enc_states[start]) {
+		return enc_states[start](state_name);
+	} else {
+		return null;
 	}
-	return encoded_states[state_name];
-}
-
+});
 
 function getShortStateName(state_path) {
 	var enc = getEncodedState(state_path);
