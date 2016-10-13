@@ -37,13 +37,6 @@ return function LocalWatchRoot(md, nwatch, data) {
 		// если есть state_name значит массив будет состоять не из моделей
 		// а из состояния этих моделей с соостветствующим названим
 
-
-		// if (cur.state_name) {
-		// 			md.archivateChildrenStates(cur.nesting_name, cur.state_name, cur.zip_func, cur.full_name);
-		// 		} else {
-		// 			watchNestingAsState(md, cur.nesting_name, cur.full_name);
-		// 		}
-
 		this.nwatch = nwatch;
 	};
 });
