@@ -98,6 +98,7 @@ var enc_states = {
 
 
 var getEncodedState = spv.memorize(function getEncodedState(state_name) {
+	// isSpecialState
 	var start = state_name.charAt(0);
 	if (enc_states[start]) {
 		return enc_states[start](state_name);
@@ -107,6 +108,7 @@ var getEncodedState = spv.memorize(function getEncodedState(state_name) {
 });
 
 function getShortStateName(state_path) {
+	// isSpecialState
 	var enc = getEncodedState(state_path);
 	return enc ? state_path : spv.getFieldsTree(state_path)[0];
 }
