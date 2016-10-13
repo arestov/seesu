@@ -22,11 +22,11 @@ var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) 
 	});
 });
 
-var NestWatch = function(selector, state_name, zip_func, full_name, handler, addHandler, removeHandler) {
+var NestWatch = function(selector, state_name, zip_func, result_state_name, handler, addHandler, removeHandler) {
 	this.selector = selector;
 	this.state_name = state_name;
 	this.short_state_name = state_name && getShortStateName(state_name);
-	this.full_name = full_name;
+	this.full_name = result_state_name;
 	this.zip_func = zip_func;
 	this.handler = handler; // mainely for 'stch-'
 	this.addHandler = addHandler;
@@ -34,11 +34,11 @@ var NestWatch = function(selector, state_name, zip_func, full_name, handler, add
 
 	// если есть full_name значит нам надо записать новое состояние
 	// если нет, значит просто передать массив в пользовательскую функцию
-	var full_name_handler = full_name && getStateWriter(full_name, state_name, zip_func);
+	var full_name_handler = result_state_name && getStateWriter(result_state_name, state_name, zip_func);
 
 
-	this.handle_state_change = this.state_name ? ( full_name ? full_name_handler : stateHandler) : null;
-	this.handle_count_or_order_change = full_name ? full_name_handler : wrapper;
+	this.handle_state_change = this.state_name ? ( result_state_name ? full_name_handler : stateHandler) : null;
+	this.handle_count_or_order_change = result_state_name ? full_name_handler : wrapper;
 };
 
 var enc_states = {
