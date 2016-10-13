@@ -1,4 +1,4 @@
-define(['spv', '../helpers', '../utils/standartNWH', '../utils/getStateWriter'],function(spv, hp, standart, getStateWriter){
+define(function(){
 'use strict';
 
 var lw_count = 0;
