@@ -3,6 +3,7 @@ define(function (require) {
 var spv = require('spv');
 var getStateWriter = require('./getStateWriter');
 var standart = require('./standartNWH');
+var getShortStateName = require('./getShortStateName');
 
 var wrapper = standart(function wrapper(md, items, lnwatch) {
 	var callback = lnwatch.callback;
@@ -106,12 +107,6 @@ var getEncodedState = spv.memorize(function getEncodedState(state_name) {
 		return null;
 	}
 });
-
-function getShortStateName(state_path) {
-	// isSpecialState
-	var enc = getEncodedState(state_path);
-	return enc ? state_path : spv.getFieldsTree(state_path)[0];
-}
 
 function itself(item) {return item;}
 
