@@ -29,7 +29,7 @@ var buildItems = function(lnwatch) {
 
 
 return function standart(callback) {
-	return function standart(motivator, fn, context, args, lnwatch) {
+	return function standart(motivator, fn, lnwatch, args) {
 		buildItems(lnwatch);
 		var md = lnwatch.md;
 		var old_value = md.current_motivator;
@@ -37,7 +37,7 @@ return function standart(callback) {
 
 		var items = lnwatch.one_item_mode ? ( lnwatch.state_name ? [lnwatch.one_item] : lnwatch.one_item ) : lnwatch.items;
 
-		callback(md, items, lnwatch, args, motivator, fn, context);
+		callback(md, items, lnwatch, args, motivator, fn);
 
 		md.current_motivator = old_value;
 	};

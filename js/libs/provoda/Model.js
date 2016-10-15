@@ -1132,7 +1132,8 @@ add({
 			for (var i = 0; i < changed_nawchs.length; i++) {
 				var cur = changed_nawchs[i];
 
-				calls_flow.pushToFlow(null, null, null, cur, cur.handler, null, this.current_motivator);
+
+				calls_flow.pushToFlow(null, cur, null, array, cur.handler, null, this.current_motivator);
 
 			}
 
