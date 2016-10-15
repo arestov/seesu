@@ -21,6 +21,7 @@ var buildItems = function(lnwatch) {
 		if (!lnwatch.items_index[provoda_id]) {
 			continue;
 		}
+		// TODO: FIX. LOOSING ORDER OF LIST HERE BY WRITING FIELDS IN RANDOM ORDER!?!?
 		lnwatch.items.push(lnwatch.items_index[provoda_id]);
 	}
 	return lnwatch;
