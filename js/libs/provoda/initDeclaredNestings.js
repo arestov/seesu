@@ -77,11 +77,21 @@ var executeStringTemplate = function(app, md, obj, need_constr) {
 
 
 var string_state_regexp = /\[\:.+?\]/gi;
+
+var isFromRoot = function(first_char, string_template) {
+	var from_root = first_char == '#';
+	if (!from_root) {return;}
+
+	return string_template.slice( 1 );
+};
+
 var getParsedPath = spv.memorize(function(string_template) {
 
 	//example "#tracks/[:artist],[:track]"
-	var from_root = string_template.charAt(0) == '#';
-	var full_usable_string = from_root ? string_template.slice( 1 ) : string_template;
+	var first_char = string_template.charAt(0);
+	var from_root = isFromRoot(first_char, string_template);
+
+	var full_usable_string = from_root || string_template;
 
 	var clean_string_parts = full_usable_string.split(string_state_regexp);
 	var states = full_usable_string.match(string_state_regexp);
