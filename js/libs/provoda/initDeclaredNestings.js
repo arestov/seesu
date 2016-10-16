@@ -47,9 +47,8 @@ var bindPreload = function(md, preload_state_name, nesting_name) {
 
 var pathExecutor = function(getChunk) {
 	return function getPath(obj, app, arg1, arg2) {
-		var full_path;
 		if (obj.states) {
-			full_path = '';
+			var full_path = '';
 			for (var i = 0; i < obj.clean_string_parts.length; i++) {
 				full_path += obj.clean_string_parts[i];
 				var cur_state = obj.states[i];
@@ -58,10 +57,9 @@ var pathExecutor = function(getChunk) {
 					full_path += (chunk && app.encodeURLPart(chunk || '')) || 'null';
 				}
 			}
-		} else {
-			full_path = obj.full_usable_string;
+			return full_path;
 		}
-		return full_path;
+		return obj.full_usable_string;
 	};
 };
 
