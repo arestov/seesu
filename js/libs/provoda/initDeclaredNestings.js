@@ -69,7 +69,10 @@ var getPath = pathExecutor(function(chunkName, app, md) {
 
 var executeStringTemplate = function(app, md, obj, need_constr) {
 	var full_path = getPath(obj, app, md);
-	return app.routePathByModels(full_path, obj.from_root ? app.start_page : md, need_constr);
+	if (obj.from_root) {
+		return app.routePathByModels(full_path, app.start_page, need_constr);
+	}
+	return app.routePathByModels(full_path, md, need_constr);
 
 };
 
