@@ -571,13 +571,24 @@ var getMatchedSongs = function(music_list, msq) {
 
 		},
 	}, {
-
-		'stch-disable_search@sources_list': filterList('available_sources', function(item) {
-			return !pvState(item, 'disable_search');
-		}),
-		'stch-wait_before_playing@sources_list': filterList('expected_sources', function(item) {
-			return pvState(item, 'wait_before_playing');
-		}),
+		'nest_sel-available_sources': {
+			from: 'sources_list',
+			where: [
+				['disable_search:'],
+				function (state) {
+					return !state;
+				}
+			]
+		},
+		'nest_sel-expected_sources': {
+			from: 'sources_list',
+			where: [
+				['wait_before_playing:'],
+				function (state) {
+					return Boolean(state);
+				}
+			]
+		},
 		'compx-has_request': [
 			['@some:has_request:available_sources']
 		],
