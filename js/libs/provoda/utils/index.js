@@ -24,22 +24,46 @@ var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) 
 });
 
 var NestWatch = function(selector, state_name, zip_func, result_state_name, handler, addHandler, removeHandler) {
+	if (!Array.isArray(selector)) {
+		throw new Error('selector should be array');
+	}
+	if (Array.isArray(state_name)) {
+		if (result_state_name) {
+			throw new Error('state_name cant be array when result_state_name is presented');
+		}
+		if (!handler.onchd_count || !handler.onchd_state) {
+			throw new Error('should be both onchd_count and onchd_state');
+		}
+	}
+
 	this.selector = selector;
 	this.state_name = state_name;
-	this.short_state_name = state_name && getShortStateName(state_name);
+	this.short_state_name = state_name &&
+		(Array.isArray(state_name)
+			? (state_name.map(getShortStateName))
+			: getShortStateName(state_name));
 	this.full_name = result_state_name;
 	this.zip_func = zip_func;
 	this.handler = handler; // mainely for 'stch-'
 	this.addHandler = addHandler;
 	this.removeHandler = removeHandler;
 
-	// если есть full_name значит нам надо записать новое состояние
-	// если нет, значит просто передать массив в пользовательскую функцию
-	var full_name_handler = result_state_name && getStateWriter(result_state_name, state_name, zip_func);
+	this.handle_state_change = null;
+	this.handle_count_or_order_change = null;
 
 
-	this.handle_state_change = this.state_name ? ( result_state_name ? full_name_handler : stateHandler) : null;
-	this.handle_count_or_order_change = result_state_name ? full_name_handler : wrapper;
+	if (Array.isArray(state_name)) {
+		this.handle_state_change = handler.onchd_state;
+		this.handle_count_or_order_change = handler.onchd_count;
+	} else {
+		// если есть full_name значит нам надо записать новое состояние
+		// если нет, значит просто передать массив в пользовательскую функцию
+		var full_name_handler = result_state_name && getStateWriter(result_state_name, state_name, zip_func);
+
+		this.handle_state_change = this.state_name ? ( result_state_name ? full_name_handler : stateHandler) : null;
+		this.handle_count_or_order_change = result_state_name ? full_name_handler : wrapper;
+	}
+
 };
 
 var enc_states = {

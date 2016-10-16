@@ -9,6 +9,7 @@ var initDeclaredNestings = require('./initDeclaredNestings');
 var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
+var NestSelector = require('./StatesEmitter/NestSelector');
 var LocalWatchRoot = require('./Model/LocalWatchRoot');
 var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
@@ -200,6 +201,18 @@ var modelInit = (function() {
 
 		self._requests_deps = null;
 		self.nes_match_index = null;
+
+		if (self.nest_sel_nest_matches) {
+			for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
+				var cur = self.nest_sel_nest_matches[i];
+				var dest_w = new NestSelector(self, cur);
+				var source_w = new LocalWatchRoot(self, cur.nwbase, dest_w);
+				if (dest_w.state_name) {
+					self.addNestWatch(dest_w, 0);
+				}
+				self.addNestWatch(source_w, 0);
+			}
+		}
 
 		if (self.nest_match) {
 			for (var i = 0; i < self.nest_match.length; i++) {
@@ -802,8 +815,8 @@ add({
 				nwatch.one_item = null;
 			}
 
-			if (this.states_links && this.states_links[nwatch.short_state_name]) {
-				this.states_links[nwatch.short_state_name] = spv.findAndRemoveItem(this.states_links[nwatch.short_state_name], nwatch);
+			if (this.states_links) {
+				removeNWatchFromSI(this.states_links, nwatch);
 			}
 			// console.log('full match!', this, nwa);
 		} else {
@@ -848,10 +861,7 @@ add({
 				if (!this.states_links) {
 					this.states_links = {};
 				}
-				if (!this.states_links[nwatch.short_state_name]) {
-					this.states_links[nwatch.short_state_name] = [];
-				}
-				this.states_links[nwatch.short_state_name].push(nwatch);
+				addNWatchToSI(this.states_links, nwatch);
 
 			} else {
 				if (!this.nes_match_index) {
@@ -1367,6 +1377,40 @@ add({
 	getLinedStructure: getLinedStructure ,
 	toSimpleStructure: toSimpleStructure
 });
+}
+
+function addNWOne(states_links, state_name, nwatch) {
+	if (!states_links[state_name]) {
+		states_links[state_name] = [];
+	}
+	states_links[state_name].push(nwatch);
+}
+
+function addNWatchToSI(states_links, nwatch) {
+	if (Array.isArray(nwatch.short_state_name)) {
+		for (var i = 0; i < nwatch.short_state_name.length; i++) {
+			addNWOne(states_links, nwatch.short_state_name[i], nwatch);
+		}
+	} else {
+		addNWOne(states_links, nwatch.short_state_name, nwatch);
+	}
+}
+
+function removeOne(states_links, state_name, nwatch) {
+	if (!states_links[state_name]) {
+		return;
+	}
+	states_links[state_name] = spv.findAndRemoveItem(states_links[state_name], nwatch);
+}
+
+function removeNWatchFromSI(states_links, nwatch) {
+	if (Array.isArray(nwatch.short_state_name)) {
+		for (var i = 0; i < nwatch.short_state_name.length; i++) {
+			removeOne(states_links, nwatch.short_state_name[i], nwatch);
+		}
+	} else {
+		removeOne(states_links, nwatch.short_state_name, nwatch);
+	}
 }
 
 return Model;
