@@ -77,32 +77,27 @@ var executeStringTemplate = function(app, md, obj, need_constr) {
 
 
 var string_state_regexp = /\[\:.+?\]/gi;
-var parsed_strings_templates = {};
-
-
 var getParsedPath = spv.memorize(function(string_template) {
-	if (!parsed_strings_templates[string_template]) {
-		//example "#tracks/[:artist],[:track]"
-		var from_root = string_template.charAt(0) == '#';
-		var full_usable_string = from_root ? string_template.slice( 1 ) : string_template;
 
-		var clean_string_parts = full_usable_string.split(string_state_regexp);
-		var states = full_usable_string.match(string_state_regexp);
+	//example "#tracks/[:artist],[:track]"
+	var from_root = string_template.charAt(0) == '#';
+	var full_usable_string = from_root ? string_template.slice( 1 ) : string_template;
 
-		if (states) {
-			for (var i = 0; i < states.length; i++) {
-				states[i] = states[i].slice( 2, states[i].length - 1 );
-			}
+	var clean_string_parts = full_usable_string.split(string_state_regexp);
+	var states = full_usable_string.match(string_state_regexp);
+
+	if (states) {
+		for (var i = 0; i < states.length; i++) {
+			states[i] = states[i].slice( 2, states[i].length - 1 );
 		}
-
-		parsed_strings_templates[string_template] = {
-			from_root: from_root,
-			clean_string_parts: clean_string_parts,
-			states: states,
-			full_usable_string: full_usable_string
-		};
 	}
-	return parsed_strings_templates[string_template];
+
+	return {
+		from_root: from_root,
+		clean_string_parts: clean_string_parts,
+		states: states,
+		full_usable_string: full_usable_string
+	};
 });
 
 var getSPByPathTemplate = function(app, md, string_template, need_constr) {
