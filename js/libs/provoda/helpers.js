@@ -2,88 +2,14 @@ define(function(require) {
 "use strict";
 
 var spv = require('spv');
+var utils = require('./utils/index');
+var utils_simple = require('./utils/simple')
+var pvState = require('./utils/state');
+var stateGetter = require('./utils/stateGetter');
+var getEncodedState = utils.getEncodedState;
+var NestWatch = utils.NestWatch;
+var getShortStateName = utils.getShortStateName;
 
-function itself(item) {return item;}
-
-
-var NestWatch = function(selector, state_name, zip_func, full_name, handler, addHandler, removeHandler) {
-	this.selector = selector;
-	this.state_name = state_name;
-	this.short_state_name = state_name && getShortStateName(state_name);
-	this.full_name = full_name;
-	this.zip_func = zip_func;
-	this.handler = handler;
-	this.addHandler = addHandler;
-	this.removeHandler = removeHandler;
-};
-
-var encoded_states = {};
-var enc_states = {
-	'^': (function(){
-		// parent
-
-		var parent_count_regexp = /^\^+/gi;
-
-		return function parent(string) {
-			//example: '^visible'
-
-			if (!encoded_states[string]){
-				var state_name = string.replace(parent_count_regexp, '');
-				var count = string.length - state_name.length;
-				encoded_states[string] = {
-					rel_type: 'parent',
-					full_name: string,
-					ancestors: count,
-					state_name: state_name
-				};
-			}
-
-			return encoded_states[string];
-		};
-	})(),
-	'@': function nesting(string) {
-		// nesting
-
-		//example:  '@some:complete:list'
-		if (!encoded_states[string]){
-			var nesting_and_state_name = string.slice(1);
-			var parts = nesting_and_state_name.split(':');
-
-			var nesting_name = parts.pop();
-			var state_name = parts.pop();
-			var zip_func = parts.pop();
-
-			encoded_states[string] = {
-				rel_type: 'nesting',
-				full_name: string,
-				nesting_name: nesting_name,
-				state_name: state_name,
-				zip_func: zip_func || itself,
-				nwatch: new NestWatch(nesting_name.split('.'), state_name, zip_func, string)
-			};
-		}
-
-		return encoded_states[string];
-	},
-	'#': function(string) {
-		// root
-
-		//example: '#vk_id'
-		if (!encoded_states[string]){
-			var state_name = string.slice(1);
-			if (!state_name) {
-				throw new Error('should be state_name');
-			}
-			encoded_states[string] = {
-				rel_type: 'root',
-				full_name: string,
-				state_name: state_name
-			};
-		}
-
-		return encoded_states[string];
-	}
-};
 var emergency_opt = {
 	emergency: true
 };
@@ -108,42 +34,6 @@ function getBwlevId(view) {
 	return getBwlevView(view).mpx._provoda_id;
 }
 
-var getTargetField = spv.getTargetField;
-
-var stateGetter = spv.memorize(function stateGetter(state_path) {
-	var enc = getEncodedState(state_path);
-	if (enc) {
-		return function(states) {
-			return states[state_path];
-		};
-	} else {
-		return function(states) {
-			return getTargetField(states, state_path);
-		};
-	}
-});
-
-
-
-function getEncodedState(state_name) {
-	if (!encoded_states.hasOwnProperty(state_name)) {
-
-		var start = state_name.charAt(0);
-		if (enc_states[start]) {
-			enc_states[start](state_name);
-		} else {
-			encoded_states[state_name] = null;
-		}
-
-	}
-	return encoded_states[state_name];
-}
-
-function getShortStateName(state_path) {
-	var enc = getEncodedState(state_path);
-	return enc ? state_path : spv.getFieldsTree(state_path)[0];
-}
-
 return {
 	NestWatch: NestWatch,
 	getRDep: (function() {
@@ -164,37 +54,15 @@ return {
 		};
 
 	})(),
-	state: (function(){
-		var getter = stateGetter;
-		return function(item, state_path){
-			var getField = getter(state_path);
-
-			if (item._lbr && item._lbr.undetailed_states) {
-				return getField(item._lbr.undetailed_states);
-			}
-
-			return getField(item.states);
-		};
-	})(),
+	state: pvState,
 	triggerDestroy: function(md) {
 		var array = md.evcompanion.getMatchedCallbacks('die');
 		if (array.length) {
 			md.evcompanion.triggerCallbacks(array, false, emergency_opt, 'die');
 		}
 	},
-	wipeObj: function (obj){
-		for (var p in obj){
-			if (obj.hasOwnProperty(p)){
-				delete obj[p];
-			}
-		}
-	},
-	markFlowSteps: function(flow_steps, p_space, p_index_key) {
-		for (var i = 0; i < flow_steps.length; i++) {
-			flow_steps[i].p_space = p_space;
-			flow_steps[i].p_index_key = p_index_key;
-		}
-	},
+	wipeObj: utils_simple.wipeObj,
+	markFlowSteps: utils_simple.markFlowSteps,
 	getRightNestingName: function(md, nesting_name) {
 		if (md.preview_nesting_source && nesting_name == 'preview_list') {
 			nesting_name = md.preview_nesting_source;
@@ -240,10 +108,10 @@ return {
 			return result;
 		};
 	},
-	getSTEVNameVIP: spv.getPrefixingFunc('vip_state_change-'),
-	getSTEVNameDefault: spv.getPrefixingFunc('state_change-'),
-	getSTEVNameLight: spv.getPrefixingFunc('lgh_sch-'),
-	getFullChilChEvName: spv.getPrefixingFunc('child_change-'),
+	getSTEVNameVIP: utils_simple.getSTEVNameVIP,
+	getSTEVNameDefault: utils_simple.getSTEVNameDefault,
+	getSTEVNameLight: utils_simple.getSTEVNameLight,
+	getFullChilChEvName: utils_simple.getFullChilChEvName,
 	getRemovedNestingItems: function(array, old_value) {
 		var removed;
 		if (Array.isArray(old_value)){

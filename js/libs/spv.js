@@ -1525,10 +1525,10 @@ if (String.prototype.startsWith) {
 	//http://jsperf.com/starts-with/14, without problems for GC
 	startsWith = function(str, substr, pos) {
 		var len = substr.length;
-		var i = pos || 0;
+		var shift = pos || 0;
 
-		for (/*i = 0*/; i < len; i ++) {
-			if (str.charAt(i) != substr.charAt(i)) {
+		for (var i = 0; i < len; i ++) {
+			if (str.charAt(i + shift) != substr.charAt(i)) {
 				return false;
 			}
 		}
@@ -1537,6 +1537,27 @@ if (String.prototype.startsWith) {
 }
 
 spv.startsWith = startsWith;
+
+var endsWith;
+if (String.prototype.endsWith) {
+	endsWith = function(str, substr, pos) {
+		return str.endsWith(substr, pos);
+	}
+} else {
+	endsWith = function (str, substr, pos) {
+		var len = substr.length;
+		var big_length_diff = (pos || str.length) - len;
+
+		for (var i = len;i > 0; i --) {
+			if (str.charAt(big_length_diff + i - 1) !== substr.charAt(i - 1)) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
+spv.endsWith = endsWith;
 
 spv.getDeprefixFunc = function(prefix, simple) {
 	var cache = {};

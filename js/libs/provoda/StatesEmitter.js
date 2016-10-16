@@ -13,6 +13,7 @@ var collectSubpages = require('./StatesEmitter/collectSubpages');
 var collectCompxs = require('./StatesEmitter/collectCompxs');
 var checkChi = require('./StatesEmitter/checkChi');
 var checkNestRqC = require('./StatesEmitter/checkNestRqC');
+var checkNestSel = require('./StatesEmitter/checkNestSel');
 var useInterface = require('./StatesEmitter/useInterface');
 
 var connects_store = {};
@@ -94,6 +95,7 @@ var onPropsExtend = function (props) {
 	checkSubpager(this, props);
 	checkChi(this, props);
 	checkNestRqC(this, props);
+	checkNestSel(this, props);
 
 	this.collectRegFires(this, props);
 
