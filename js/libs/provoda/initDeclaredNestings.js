@@ -126,6 +126,10 @@ var getParsedPath = spv.memorize(function(string_template) {
 		}
 	}
 
+	if (!full_usable_string && !from_parent) {
+		throw new Error('path cannot be empty')
+	}
+
 	return {
 		from_root: Boolean(from_root),
 		from_parent: from_parent && from_parent.count,
