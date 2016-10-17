@@ -28,7 +28,7 @@ return pv.behavior({
 			return current_user == user;
 		}
 	],
-	pmd_switch_is_parent: true,
+	'nest-pmd_switch': ['^'],
 	'compx-rel': [
 		['#relations_likes', '#relations_invites', 'user'],
 		function(likes, invites, user) {

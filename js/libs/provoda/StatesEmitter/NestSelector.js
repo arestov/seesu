@@ -104,10 +104,11 @@ function isFine(md, nestsel) {
 	return nestsel.item_cond_index[_provoda_id];
 }
 
-function runFilter(motivator, nestsel) {
-	// item_cond_index
-	// item_states_index
-	// dest_states
+function getMatchedItems(nestsel) {
+	if (!nestsel.declr.deps_dest && !nestsel.declr.deps_source) {
+		return nestsel.items;
+	}
+
 	var result = [];
 
 	for (var i = 0; i < nestsel.items.length; i++) {
@@ -116,6 +117,15 @@ function runFilter(motivator, nestsel) {
 			result.push(cur);
 		}
 	}
+
+	return result;
+}
+
+function runFilter(motivator, nestsel) {
+	// item_cond_index
+	// item_states_index
+	// dest_states
+	var result = getMatchedItems(nestsel);
 
 	var md = nestsel.md;
 	var old_motivator = md.current_motivator;

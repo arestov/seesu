@@ -47,9 +47,8 @@ var bindPreload = function(md, preload_state_name, nesting_name) {
 
 var pathExecutor = function(getChunk) {
 	return function getPath(obj, app, arg1, arg2) {
-		var full_path;
 		if (obj.states) {
-			full_path = '';
+			var full_path = '';
 			for (var i = 0; i < obj.clean_string_parts.length; i++) {
 				full_path += obj.clean_string_parts[i];
 				var cur_state = obj.states[i];
@@ -58,10 +57,9 @@ var pathExecutor = function(getChunk) {
 					full_path += (chunk && app.encodeURLPart(chunk || '')) || 'null';
 				}
 			}
-		} else {
-			full_path = obj.full_usable_string;
+			return full_path;
 		}
-		return full_path;
+		return obj.full_usable_string;
 	};
 };
 
@@ -71,38 +69,74 @@ var getPath = pathExecutor(function(chunkName, app, md) {
 
 var executeStringTemplate = function(app, md, obj, need_constr) {
 	var full_path = getPath(obj, app, md);
-	return app.routePathByModels(full_path, obj.from_root ? app.start_page : md, need_constr);
+	if (obj.from_root) {
+		return app.routePathByModels(full_path, app.start_page, need_constr);
+	}
+	if (obj.from_parent) {
+		var target_md_start = md;
+		for (var i = 0; i < obj.from_parent; i++) {
+			target_md_start = target_md_start.map_parent;
+		}
+		if (!full_path) {
+			return target_md_start;
+		}
+		return app.routePathByModels(full_path, target_md_start, need_constr);
+	}
+
+	return app.routePathByModels(full_path, md, need_constr);
 
 };
 
 
 var string_state_regexp = /\[\:.+?\]/gi;
-var parsed_strings_templates = {};
 
+var isFromRoot = function(first_char, string_template) {
+	var from_root = first_char == '#';
+	if (!from_root) {return;}
+
+	return string_template.slice( 1 );
+};
+
+var parent_count_regexp = /^\^+/gi;
+var isFromParent = function (first_char, string_template) {
+	if (first_char != '^') {return;}
+
+	var cutted = string_template.replace(parent_count_regexp, '');
+	return {
+		cutted: cutted,
+		count: string_template.length - cutted.length
+	};
+};
 
 var getParsedPath = spv.memorize(function(string_template) {
-	if (!parsed_strings_templates[string_template]) {
-		//example "#tracks/[:artist],[:track]"
-		var from_root = string_template.charAt(0) == '#';
-		var full_usable_string = from_root ? string_template.slice( 1 ) : string_template;
 
-		var clean_string_parts = full_usable_string.split(string_state_regexp);
-		var states = full_usable_string.match(string_state_regexp);
+	//example "#tracks/[:artist],[:track]"
+	var first_char = string_template.charAt(0);
+	var from_root = isFromRoot(first_char, string_template);
+	var from_parent = !from_root && isFromParent(first_char, string_template);
 
-		if (states) {
-			for (var i = 0; i < states.length; i++) {
-				states[i] = states[i].slice( 2, states[i].length - 1 );
-			}
+	var full_usable_string = from_root || (from_parent && from_parent.cutted) || string_template;
+
+	var clean_string_parts = full_usable_string.split(string_state_regexp);
+	var states = full_usable_string.match(string_state_regexp);
+
+	if (states) {
+		for (var i = 0; i < states.length; i++) {
+			states[i] = states[i].slice( 2, states[i].length - 1 );
 		}
-
-		parsed_strings_templates[string_template] = {
-			from_root: from_root,
-			clean_string_parts: clean_string_parts,
-			states: states,
-			full_usable_string: full_usable_string
-		};
 	}
-	return parsed_strings_templates[string_template];
+
+	if (!full_usable_string && !from_parent) {
+		throw new Error('path cannot be empty')
+	}
+
+	return {
+		from_root: Boolean(from_root),
+		from_parent: from_parent && from_parent.count,
+		clean_string_parts: clean_string_parts,
+		states: states,
+		full_usable_string: full_usable_string
+	};
 });
 
 var getSPByPathTemplate = function(app, md, string_template, need_constr) {
@@ -189,6 +223,7 @@ initDeclaredNestings.pathExecutor = pathExecutor;
 initDeclaredNestings.getConstrByPath = function(app, md, string_template) {
 	return getSPByPathTemplate(app, md, string_template, true);
 };
+initDeclaredNestings.getSPByPathTemplate = getSPByPathTemplate;
 
 return initDeclaredNestings;
 });

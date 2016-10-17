@@ -205,6 +205,7 @@ var modelInit = (function() {
 		if (self.nest_sel_nest_matches) {
 			for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
 				var cur = self.nest_sel_nest_matches[i];
+				var start_point = cur.start_point ? initDeclaredNestings.get(self.app, self, cur.start_point) : self;
 				var dest_w = new NestSelector(self, cur);
 				var source_w = new LocalWatchRoot(self, cur.nwbase, dest_w);
 				if (dest_w.state_name) {

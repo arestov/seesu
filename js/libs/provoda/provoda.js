@@ -171,8 +171,6 @@ var HModel = spv.inh(Model, {
 			self.map_parent = null;
 		}
 
-		self.pmd_switch = null;
-
 		if (!self.skip_map_init){
 
 			if (!opts || !opts.map_parent) {
@@ -218,7 +216,7 @@ var HModel = spv.inh(Model, {
 		} else {
 			new_state = !this.state('pmd_vswitched');
 		}
-		var pmd_switch = this.pmd_switch || this.pmd_switch_is_parent && this.map_parent;
+		var pmd_switch = this.getNesting('pmd_switch');
 
 		if (new_state){
 			if (!this.state('pmd_vswitched')){
