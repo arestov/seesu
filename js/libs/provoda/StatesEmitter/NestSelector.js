@@ -105,6 +105,10 @@ function isFine(md, nestsel) {
 }
 
 function getMatchedItems(nestsel) {
+	if (!nestsel.declr.deps_dest && !nestsel.declr.deps_source) {
+		return nestsel.items;
+	}
+
 	var result = [];
 
 	for (var i = 0; i < nestsel.items.length; i++) {
