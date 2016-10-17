@@ -20,7 +20,9 @@ var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 // var nestConstructor = constr_mention.nestConstructor;
 
 var SelectNestingDeclaration = function(dest_name, data) {
-	this.from = data.from.split('.');
+	var parts = data.from.split(':');
+	this.start_point = parts.length > 1 && parts[0];
+	this.from = parts[parts.length - 1].split('.');
 	this.dest_name = dest_name;
 	this.deps_dest = null;
 	this.deps_source = null;

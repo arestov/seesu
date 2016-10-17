@@ -223,6 +223,7 @@ initDeclaredNestings.pathExecutor = pathExecutor;
 initDeclaredNestings.getConstrByPath = function(app, md, string_template) {
 	return getSPByPathTemplate(app, md, string_template, true);
 };
+initDeclaredNestings.getSPByPathTemplate = getSPByPathTemplate;
 
 return initDeclaredNestings;
 });
