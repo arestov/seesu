@@ -72,6 +72,17 @@ var executeStringTemplate = function(app, md, obj, need_constr) {
 	if (obj.from_root) {
 		return app.routePathByModels(full_path, app.start_page, need_constr);
 	}
+	if (obj.from_parent) {
+		var target_md_start = md;
+		for (var i = 0; i < obj.from_parent; i++) {
+			target_md_start = target_md_start.map_parent;
+		}
+		if (!full_path) {
+			return target_md_start;
+		}
+		return app.routePathByModels(full_path, target_md_start, need_constr);
+	}
+
 	return app.routePathByModels(full_path, md, need_constr);
 
 };
@@ -86,13 +97,25 @@ var isFromRoot = function(first_char, string_template) {
 	return string_template.slice( 1 );
 };
 
+var parent_count_regexp = /^\^+/gi;
+var isFromParent = function (first_char, string_template) {
+	if (first_char != '^') {return;}
+
+	var cutted = string_template.replace(parent_count_regexp, '');
+	return {
+		cutted: cutted,
+		count: string_template.length - cutted.length
+	};
+};
+
 var getParsedPath = spv.memorize(function(string_template) {
 
 	//example "#tracks/[:artist],[:track]"
 	var first_char = string_template.charAt(0);
 	var from_root = isFromRoot(first_char, string_template);
+	var from_parent = !from_root && isFromParent(first_char, string_template);
 
-	var full_usable_string = from_root || string_template;
+	var full_usable_string = from_root || (from_parent && from_parent.cutted) || string_template;
 
 	var clean_string_parts = full_usable_string.split(string_state_regexp);
 	var states = full_usable_string.match(string_state_regexp);
@@ -104,7 +127,8 @@ var getParsedPath = spv.memorize(function(string_template) {
 	}
 
 	return {
-		from_root: from_root,
+		from_root: Boolean(from_root),
+		from_parent: from_parent && from_parent.count,
 		clean_string_parts: clean_string_parts,
 		states: states,
 		full_usable_string: full_usable_string
