@@ -30,8 +30,7 @@ var no_access_compx = {
 
 var auth_bh = {
 	'compx-has_no_access': no_access_compx,
-	pmd_switch_is_parent: true,
-
+	'nest-pmd_switch': ['^'],
 	'nest-auth_part': [UserCardLFMLogin, true, 'for_current_user'],
 
 	'compx-userid': [
