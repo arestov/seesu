@@ -328,16 +328,6 @@ var getMatchedSongs = function(music_list, msq) {
 				'dmca_url': target.search_eng && target.search_eng.dmca_url,
 				'search_name': search_eng_name
 			});
-
-			target.tuner = target.mp3_search.getSourceTuner(search_eng_name);
-			target.wch(target.tuner, 'disable_search', function(e) {
-				//debugger;
-				// result is state
-				pvUpdate(this, 'disable_search', e.value);
-			});
-			// result is state
-			target.wch(target.tuner, 'wait_before_playing');
-
 			//this.wch(this.map_parent, 'must_load');
 
 			//cache
@@ -345,10 +335,12 @@ var getMatchedSongs = function(music_list, msq) {
 			//scope
 		}
 	}, {
-
+		'nest-tuner': ['^^tuners/[:search_name]'],
+		'compx-disable_search': [['@one:disable_search:tuner']],
+		'compx-wait_before_playing': [['@one:wait_before_playing:tuner']],
 		switchTunerVisibility: function() {
 			var visible = this.getNesting('vis_tuner');
-			pv.updateNesting(this, 'vis_tuner', ( visible ? null : this.tuner ) );
+			pv.updateNesting(this, 'vis_tuner', ( visible ? null : this.getNesting('tuner') ) );
 		},
 		startSearch: function(opts) {
 			opts = opts || {};
@@ -855,7 +847,18 @@ var getAverageDurations = function(mu_array, time_limit){
 			});
 		}
 	},  {
-
+		sub_pager: {
+			type: {
+				tuners: 'tuner'
+			},
+			by_type: {
+				tuner: [
+					FilesSourceTuner, null, {
+						search_name: 'simple_name'
+					}
+				]
+			}
+		},
 		'regfr-listchange': {
 			event_name: 'list-changed',
 			fn: function() {
