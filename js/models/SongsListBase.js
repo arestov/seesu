@@ -15,7 +15,6 @@ return spv.inh(LoadableList, {
 		target.app = opts.app;
 		target.player = target.app.p;
 		target.mp3_search = target.app.mp3_search;
-		target.pmd = opts.pmd || target.pmd;
 	},
 }, spv.coe(function(add) {
 
