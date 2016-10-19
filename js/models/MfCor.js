@@ -106,6 +106,7 @@ var MfComplect = spv.inh(pv.Model, {
 				var part_end = e.value.slice(5);
 				pv.updateNesting(self, 'moplas_list_start', part_start);
 				pv.updateNesting(self, 'moplas_list_end', part_end);
+				pv.update(self, 'moplas_list_end$length', part_end.length);
 			}
 		});
 	}
@@ -117,14 +118,9 @@ var MfComplect = spv.inh(pv.Model, {
 		}
 		var moplas_list = [];
 		pv.update(this, 'overstock', files_list.length > this.overstock_limit);
-		var sf;
 		for (var i = 0; i < files_list.length; i++) {
-
-			sf =
-				this.mf_cor.getSFM(files_list[i]);
-			pv.update(sf, 'overstock', i + 1 > this.overstock_limit);
+			var sf = this.mf_cor.getSFM(files_list[i]);
 			moplas_list.push(sf);
-
 		}
 		pv.updateNesting(this, 'moplas_list', moplas_list);
 		pv.update(this, 'list_length', moplas_list.length);

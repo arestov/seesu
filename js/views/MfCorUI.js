@@ -24,18 +24,12 @@ var FileIntorrentPromiseUI = spv.inh(View, {}, {
 	}
 });
 
+
 var FileInTorrentUI = spv.inh(View, {},{
 	state_change: {
 		"download-pressed": function(target, state) {
 			if (state){
 				target.downloadlink.addClass('download-pressed');
-			}
-		},
-		overstock: function(target, state) {
-			if (state){
-				target.c.addClass('overstocked');
-			} else {
-				target.c.removeClass('overstocked');
 			}
 		},
 		'full_title': function(target, state) {
@@ -91,18 +85,7 @@ var SongFileModelUI = spv.inh(View, {}, {
 				return can;
 			}
 		},
-		'vis_wp_usable': {
-			depends_on: ['overstock', '^^want_more_songs', '^show_overstocked'],
-			fn: function(overstock, pp_wmss, p_show_overstock) {
-
-				if (overstock){
-					return pp_wmss && p_show_overstock;
-				} else {
-					return pp_wmss;
-				}
-
-			}
-		},
+		'vis_wp_usable': [['^^want_more_songs']],
 		'key-progress-c-width': [
 			['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
 			function (can, p_wmss, workarea_width, must_be_expandable) {
@@ -269,6 +252,15 @@ var ComplectPionerView = spv.inh(View, {}, {
 });
 
 
+var SongFileModelUIOverstock = spv.inh(SongFileModelUI, {}, {
+	'compx-vis_wp_usable': {
+		depends_on: ['^^want_more_songs', '^show_overstocked'],
+		fn: function(pp_wmss, p_show_overstock) {
+			return pp_wmss && p_show_overstock;
+		}
+	},
+})
+
 
 
 var mfComplectUI = spv.inh(View, {}, {
@@ -284,7 +276,7 @@ var mfComplectUI = spv.inh(View, {}, {
 		moplas_list_end: {
 			'file-torrent-promise': FileIntorrentPromiseUI,
 			'file-torrent': FileInTorrentUI,
-			'file-http': SongFileModelUI
+			'file-http': SongFileModelUIOverstock
 		}
 	},
 	'collch-moplas_list_start': {

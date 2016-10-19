@@ -254,7 +254,6 @@
 		</div>
 		<div
 			class="moplas-list"
-			pv-class="want-overstocked-songs: show_overstocked"
 			pv-nest="sorted_completcs"
 			>
 			<div
@@ -302,17 +301,20 @@
 
 
 
-
 			<ul pv-anchor='listc-start'></ul>
-			<div class="full_mb_part full_list_switch">
-				<a
-					class="hidden lang localize-full-list js-serv"
-					pv-type="{{overstock && 'way-point'}}"
-					pv-class="hidden: !overstock"
-					pv-events="click::toggleOverstocked"
-					>full list</a>
+			<div pv-class="hidden: !moplas_list_end$length">
+				<div class="full_mb_part full_list_switch">
+					<a
+						class="hidden lang localize-full-list js-serv"
+						pv-type="{{moplas_list_end$length && 'way-point'}}"
+						pv-class="hidden: !moplas_list_end$length"
+						pv-events="click::toggleOverstocked"
+						>full list</a>
+				</div>
+				<ul pv-anchor='listc-end' class="hidden" pv-class="hidden: !show_overstocked"></ul>
 			</div>
-			<ul pv-anchor='listc-end'></ul>
+
+
 
 		</div>
 
