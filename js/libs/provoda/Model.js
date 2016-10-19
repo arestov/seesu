@@ -1189,15 +1189,6 @@ add({
 
 		}
 
-
-
-
-
-
-
-
-
-
 		if (!opts || !opts.skip_report){
 			this.sendCollectionChange(collection_name, array, old_value, removed);
 		}
