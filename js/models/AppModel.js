@@ -138,11 +138,6 @@ var props = {
 			return invstg;
 
 		},
-		showLastfmUser: function(username) {
-			var md = this.getLastfmUser(username);
-			md.showOnMap();
-			return md;
-		},
 		show_tag: function(tag){
 			var md = this.routePathByModels('tags/' + tag );
 
