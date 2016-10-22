@@ -24,7 +24,6 @@ var setMotive = function(context, fn, motivator, args, arg) {
 	var ov_t;
 
 	if (this != context) {
-		debugger
 		//устанавливаем мотиватор реальному владельцу события, чтобы его могли взять вручную
 		//что-то вроде api
 		ov_t = this.current_motivator;
