@@ -333,7 +333,7 @@ var SeesuApp = spv.inh(AppModel, {
 			character_id = key * -1;
 		}
 
-		md.wch(store, character_id, result_state);
+		md.wlch(store, character_id, result_state);
 
 	},
 	migrateStorage: function(ver){
