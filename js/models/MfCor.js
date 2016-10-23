@@ -604,8 +604,8 @@ var MfCor = spv.inh(LoadableList, {
 	addMFComplect: function(complect, name) {
 		this.complects[name] = complect;
 	},
-	hndFilesListCh: function(e) {
-		if (e.value){
+	hndFilesListCh: function(state) {
+		if (state){
 			this.updateDefaultMopla();
 		}
 	},
@@ -619,7 +619,7 @@ var MfCor = spv.inh(LoadableList, {
 				source_name: source_name
 			});
 			this.addMFComplect(complect, source_name);
-			this.wch(f_investg_s, 'files-list', this.hndFilesListCh);
+			this.lwch(f_investg_s, 'files-list', this.hndFilesListCh);
 
 		//	many_files = many_files || complect.hasManyFiles();
 		}
