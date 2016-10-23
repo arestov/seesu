@@ -41,24 +41,23 @@ return spv.inh(BrowseMap.Model, {
 		}
 	}
 }, {
-	hndSPlOnFocus: function(e) {
-		if (e.value){
-			this.preloadStart();
-		}
-	},
-	hndSPlOnLoadAllowing: function(e) {
-		if (e.value && this.state('mp_has_focus')){
-			this.preloadStart();
-		}
-	},
 	hndCheckPreviews: function(e) {
 		if (!e.skip_report){
 			pv.updateNesting(this, this.preview_mlist_name, e.value);
 		}
 	},
+	'compx-$needs_load': [
+		['more_load_available', 'mp_has_focus'],
+		function (can_more, focus) {
+			return Boolean(focus && can_more);
+		}
+	],
+	'stch-$needs_load': function (target, state) {
+		if (state) {
+			target.preloadStart();
+		}
+	},
 	bindStaCons: function() {
-		this.wch(this, 'mp_has_focus', this.hndSPlOnFocus);
-		this.on('state_change-more_load_available', this.hndSPlOnLoadAllowing);
 		if (!this.manual_previews){
 			this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
 		}
