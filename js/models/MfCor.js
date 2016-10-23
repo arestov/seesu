@@ -93,7 +93,7 @@ var MfComplect = spv.inh(pv.Model, {
 			pv.update(self, 'has_start_file', true);
 		} else {
 			self.search_source = params.search_source;
-			self.wch(self.search_source, 'files-list', self.hndFilesListCh);
+			self.lwch(self.search_source, 'files-list', self.hndFilesListCh);
 			pv.updateNesting(self, 'pioneer', params.search_source);
 
 		}
@@ -111,8 +111,7 @@ var MfComplect = spv.inh(pv.Model, {
 		});
 	}
 }, {
-	hndFilesListCh: function(e) {
-		var files_list = e.value;
+	hndFilesListCh: function(files_list) {
 		if (!files_list){
 			return;
 		}
