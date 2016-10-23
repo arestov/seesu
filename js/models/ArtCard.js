@@ -804,10 +804,11 @@ var ArtistsList = spv.inh(LoadableList, {}, {
 
 var SimilarArtists = spv.inh(ArtistsList, {
 	init: function(target) {
-		target.wch(target, 'preview_list', function(e) {
+
+		target.lwch(target, 'preview_list', function(value) {
 			// results is nesting
-			if (e.value) {
-				this.setPreviewList(e.value);
+			if (value) {
+				this.setPreviewList(value);
 			}
 		});
 	}
