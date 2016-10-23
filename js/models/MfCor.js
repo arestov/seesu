@@ -649,7 +649,7 @@ var MfCor = spv.inh(LoadableList, {
 		if (!investg){
 			return;
 		}
-		this.wch(investg, 'search_ready_to_use', 'search_ready');
+		this.wlch(investg, 'search_ready_to_use', 'search_ready');
 		investg.on('child_change-sources_list', this.hndSourcesList, this.getContextOpts());
 
 

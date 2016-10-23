@@ -60,7 +60,7 @@ var pvUpdate = pv.update;
 				} else {
 					images_pack = self.app.art_images.getArtistImagesModel(self.init_states['artist']);
 				}
-				self.wch(images_pack, 'image-to-use', 'ext_lfm_image');
+				self.wlch(images_pack, 'image-to-use', 'ext_lfm_image');
 				still_init = false;
 			}
 
