@@ -187,7 +187,6 @@ var MfCor = spv.inh(LoadableList, {
 			self.semChanged(val);
 		};
 		*/
-		// self.wch(self.mo, 'is_important', self.hndMoImportant);
 
 
 
@@ -207,7 +206,6 @@ var MfCor = spv.inh(LoadableList, {
 			pv.updateNesting(self, 'sorted_completcs', [complect]);
 
 		} else {
-			//self.wch(self.mo, 'track', )
 			self.mo.on('vip_state_change-track', self.hndTrackNameCh, {immediately: true, soft_reg: false, context: self});
 
 		}

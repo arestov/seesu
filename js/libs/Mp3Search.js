@@ -328,7 +328,6 @@ var getMatchedSongs = function(music_list, msq) {
 				'dmca_url': target.search_eng && target.search_eng.dmca_url,
 				'search_name': search_eng_name
 			});
-			//this.wch(this.map_parent, 'must_load');
 
 			//cache
 			//network
