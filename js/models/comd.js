@@ -94,7 +94,7 @@ var TrackImages  = spv.inh(ImagesPack, {
 		target.track = params.info.track;
 
 		// results is state
-		target.wch(params.artmd, 'image-to-use', 'artist_image');
+		target.wlch(params.artmd, 'image-to-use', 'artist_image');
 	}
 }, {
 	complex_states: {
