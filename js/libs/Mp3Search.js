@@ -539,7 +539,7 @@ var getMatchedSongs = function(music_list, msq) {
 
 			target.mp3_search.on('list-changed', target.hndListChange, {soft_reg: false, context: target});
 
-			target.wch(target.mp3_search, 'big_files_list', target.hndBigFilesList);
+			target.lwch(target.mp3_search, 'big_files_list', target.hndBigFilesList);
 
 			target.nextTick(function(target) {
 				target.startSearch( {only_cache: true} );
@@ -607,8 +607,8 @@ var getMatchedSongs = function(music_list, msq) {
 				_this.wch(_this, 'must_load', callback);
 			};
 		},
-		hndBigFilesList: function(e) {
-			var array = e && e.value || [];
+		hndBigFilesList: function(value) {
+			var array = value || [];
 			for (var i = 0; i < array.length; i++) {
 				this.delayFileCheck(array[i]);
 			}
