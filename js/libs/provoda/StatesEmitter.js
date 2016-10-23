@@ -26,15 +26,11 @@ var getConnector = function(state_name) {
 	return connects_store[state_name];
 };
 
-var light_con_store = {};
-var getLightConnector = function(state_name) {
-	if (!light_con_store[state_name]){
-		light_con_store[state_name] = function(value) {
-			this.updateState(state_name, value);
-		};
-	}
-	return light_con_store[state_name];
-};
+var getLightConnector = spv.memorize(function(state_name) {
+	return function updateStateBinded(value) {
+		this.updateState(state_name, value);
+	};
+});
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
 	var chunks_counter = 0;
