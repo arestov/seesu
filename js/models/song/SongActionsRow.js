@@ -110,16 +110,14 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
 		pv.update(target, 'active_part', false);
 		//target.app = mo.app;
 		target.inited_parts = {};
-
-		target.wch(target.map_parent, 'mp_show', target.hndSongHide);
 	}
 }, {
 	sub_page: parts_storage,
 	'nest_posb-context_parts': constrs_names,
-
-	hndSongHide: function(e) {
-		if (!e.value) {
-			this.hideAll();
+	'compx-parent_show': [['^mp_show']],
+	'stch-parent_show': function (target, state) {
+		if (!state) {
+			target.hideAll();
 		}
 	},
 	'compx-volume': [['#settings-volume'], function (fac) {
