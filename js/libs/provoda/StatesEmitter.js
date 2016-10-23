@@ -16,18 +16,14 @@ var checkNestRqC = require('./StatesEmitter/checkNestRqC');
 var checkNestSel = require('./StatesEmitter/checkNestSel');
 var useInterface = require('./StatesEmitter/useInterface');
 
-var connects_store = {};
-var getConnector = function(state_name) {
-	if (!connects_store[state_name]){
-		connects_store[state_name] = function(e) {
-			this.updateState(state_name, e.value);
-		};
-	}
-	return connects_store[state_name];
-};
+var getConnector = spv.memorize(function(state_name) {
+	return function updateStateBinded(e) {
+		this.updateState(state_name, e.value);
+	};
+});
 
 var getLightConnector = spv.memorize(function(state_name) {
-	return function updateStateBinded(value) {
+	return function updateStateBindedLightly(value) {
 		this.updateState(state_name, value);
 	};
 });
