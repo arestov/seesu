@@ -4,10 +4,10 @@ var pvUpdate = pv.update;
 
 var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 	init: function(target) {
-		target.wch(target, 'petags', function(e) {
-			if (e.value) {
-				if (e.value.length && !target.state('user_tags_string')) {
-					pvUpdate(target, 'user_tags_string', e.value.join(', '));
+		target.lwch(target, 'petags', function(state) {
+			if (state) {
+				if (state.length && !target.state('user_tags_string')) {
+					pvUpdate(target, 'user_tags_string', state.join(', '));
 				}
 			}
 		});
