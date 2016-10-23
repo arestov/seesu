@@ -31,18 +31,11 @@ var executePreload = function(md, nesting_name) {
 //если изменилось гнездование
 
 var bindPreload = function(md, preload_state_name, nesting_name) {
-
-	md.on('lgh_sch-' + preload_state_name, function(state) {
+	md.lwch(md, preload_state_name, function(state) {
 		if (state) {
 			executePreload(md, nesting_name);
 		}
 	});
-	/*
-	md.wch(md, preload_state_name, function(e) {
-		if (e.value){
-			executePreload(md, nesting_name);
-		}
-	});*/
 };
 
 var pathExecutor = function(getChunk) {
