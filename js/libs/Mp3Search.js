@@ -54,7 +54,7 @@ var guessArtist = function(track_title_raw, query_artist){
 var QueryMatchIndex = function() {};
 
 spv.Class.extendTo(QueryMatchIndex, {
-	init: function(file, query) {
+	init: function() {
 
 	},
 	match: function(){
@@ -520,20 +520,6 @@ var getMatchedSongs = function(music_list, msq) {
 	});
 
 	var isDepend = pv.utils.isDepend;
-	var pvState = pv.state;
-	var updateNesting = pv.updateNesting;
-
-	var filterList = function(target_list_name, check) {
-		return function(target, newst, old, source) {
-			var result = [];
-			for (var i = 0; i < source.items.length; i++) {
-				if ( check( source.items[i] ) ) {
-					result.push( source.items[i] );
-				}
-			}
-			updateNesting(target, target_list_name, result);
-		};
-	};
 
 	var FilesInvestg = spv.inh(pv.Model, {
 		init: function(target, opts, data, params) {
@@ -666,7 +652,7 @@ var getMatchedSongs = function(music_list, msq) {
 
 		},
 		'chi-files_by_source': FilesBySource,
-		bindSource: function(name, data, mp3_search) {
+		bindSource: function(name, data) {
 			var files_by_source = this.initChi('files_by_source', data, name);
 			var _this = this;
 			files_by_source.on('requests', function(requests) {
@@ -703,20 +689,8 @@ var getMatchedSongs = function(music_list, msq) {
 				}
 			]
 		},
-		startSearch: function(opts) {
+		startSearch: function() {
 			return;
-
-			var requests = [];
-			var sources_list = this.getNesting('available_sources') || [];
-			for (var i = 0; i < sources_list.length; i++) {
-				var req = sources_list[i].startSearch(opts);
-				if (req){
-					requests.push(req);
-				}
-			}
-			if (requests.length){
-				//this.addRequests(requests);
-			}
 		},
 		byBestSearchIndex: function(g,f, searches_pr){
 			if (g && f) {
@@ -967,8 +941,6 @@ var getAverageDurations = function(mu_array, time_limit){
 				exitst_master_of_slave: false
 			};
 			var i;
-			var exist_slave;
-			var exist_alone_master;
 			for (i=0; i < this.se_list.length; i++) {
 				var cmp3s = this.se_list[i];
 				if (!cmp3s.disabled && cmp3s.name == filter){
