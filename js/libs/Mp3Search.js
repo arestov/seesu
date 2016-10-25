@@ -836,7 +836,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			event_name: 'list-changed',
 			fn: function() {
 				if (this.se_list.length){
-					return [this.se_list];
+					return this.se_list;
 				}
 			}
 		},

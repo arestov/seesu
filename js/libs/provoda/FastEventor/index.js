@@ -139,19 +139,15 @@ add({
 			this.off(ev_name);
 		}
 
-		var reg_args = null, one_reg_arg = null;
+		var one_reg_arg = null;
 
 		var callbacks_wrapper = this.hndUsualEvCallbacksWrapper;
 
 		var reg_fires = this.getPossibleRegfires(ev_name);
 		if (reg_fires && reg_fires.length){
-			reg_args = reg_fires[0].fn.call(this.sputnik, ev_name);
-			if (typeof reg_args != 'undefined') {
+			one_reg_arg = reg_fires[0].fn.call(this.sputnik, ev_name);
+			if (typeof one_reg_arg != 'undefined') {
 				fired = true;
-				if (!Array.isArray(reg_args)) {
-					one_reg_arg = reg_args;
-					reg_args = null;
-				}
 			}
 
 		}
@@ -163,14 +159,10 @@ add({
 			if (!skip_reg){
 				var mo_context = context || _this.sputnik;
 				if (soft_reg === false){
-					if (one_reg_arg) {
-						cb.call(mo_context, one_reg_arg);
-					} else {
-						cb.apply(mo_context, reg_args);
-					}
+					cb.call(mo_context, one_reg_arg);
 
 				} else {
-					var flow_step = this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, reg_args, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
+					var flow_step = this.sputnik._getCallsFlow().pushToFlow(cb, mo_context, null, one_reg_arg, callbacks_wrapper, this.sputnik, this.sputnik.current_motivator);
 					if (reg_fires[0].handleFlowStep) {
 
 						reg_fires[0].handleFlowStep.call(this.sputnik, flow_step, reg_fires[0].getFSNamespace(ev_name));
