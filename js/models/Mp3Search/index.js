@@ -6,7 +6,6 @@ var SongFileModel = require('../SongFileModel');
 var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
 
 
-
 var guessArtist = function(track_title_raw, query_artist){
 	var track_title = track_title_raw.slice(0, 80);
 
@@ -381,6 +380,9 @@ var getMatchedSongs = function(music_list, msq) {
 				return [];
 			}
 		},
+		// 'stch-files-list': function (target, array) {
+		// 	target.updateNesting('files-list', array);
+		// },
 		complex_states: {
 			'request_required': [
 				['disable_search', '^must_load'],
@@ -651,6 +653,14 @@ var getMatchedSongs = function(music_list, msq) {
 
 			//_this.trigger('child_change-sources_list', _this.sources_list);
 		},
+		'stch-@sources_list_mapped': function (target, value, old, wrap) {
+			console.log(wrap);
+		},
+		'nest_sel-sources_list_mapped': {
+			from: '^>sources_core_list',
+			map: '[:search_name]'
+		},
+		'nest_cnt-sources_list2': ['sources_list_mapped', 'sources_list_more', 'sources_list'],
 		addFbS: function(search_name) {
 			var _this = this;
 			if (!this.sources[search_name]){
@@ -807,6 +817,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			target.se_list = [];
 			target.searches_pr  = searches_pr || {};
 			target.tools_by_name = {};
+			target.api_wrappers = {};
 			pvUpdate(target, 'tools_by_name', target.tools_by_name);
 			target.investgs = {};
 			target.investgs_by_artist = {};
@@ -829,16 +840,22 @@ var getAverageDurations = function(mu_array, time_limit){
 	},  {
 		sub_pager: {
 			type: {
-				tuners: 'tuner'
+				tuners: 'tuner',
 			},
 			by_type: {
 				tuner: [
 					FilesSourceTuner, null, {
 						search_name: 'simple_name'
 					}
-				]
+				],
 			}
 		},
+		// sub_page: {
+		// 	'files': {
+		// 		constr: Files,
+		// 		title:  [[]]
+		// 	}
+		// },
 		'regfr-listchange': {
 			event_name: 'list-changed',
 			fn: function() {
@@ -937,10 +954,18 @@ var getAverageDurations = function(mu_array, time_limit){
 		newSearchInit: function(filter, search){
 			this.tools_by_name[filter] = search;
 
+
 			this.trigger('list-changed', this.se_list);
 			this.trigger('new-search', search, filter);
 
+
+			var wrapper = this.initChi('api_wrapper', null, null, null, {search_name: filter});
+			var core_list = this.getNesting('sources_core_list') || [];
+			core_list.push(wrapper);
+			this.updateNesting('sources_core_list', core_list);
+
 		},
+		'chi-api_wrapper': pv.Model,
 		getMasterSlaveSearch: function(filter){
 			var o = {
 				exist_slave: false,
@@ -1047,6 +1072,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			this.se_list = spv.arrayExclude(this.se_list, msearch);
 			if (se_list.length != this.se_list){
 				this.trigger('list-changed', this.se_list);
+				this.updateNesting('sources_core_list', this.se_list);
 			}
 
 		}
