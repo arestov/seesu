@@ -111,6 +111,10 @@ var MfComplect = spv.inh(pv.Model, {
 		});
 	}
 }, {
+	// 'nest_sel-moplas_list2': {
+	// 	from: 'search_source.files-list',
+	// 	map: true,
+	// },
 	hndFilesListCh: function(files_list) {
 		if (!files_list){
 			return;
