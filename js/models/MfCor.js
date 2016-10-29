@@ -1,4 +1,4 @@
-define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/libs/Mp3Search', './comd', './YoutubeVideo', './LoadableList'],
+define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/models/Mp3Search/index', './comd', './YoutubeVideo', './LoadableList'],
 function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, LoadableList) {
 "use strict";
 
