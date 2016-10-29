@@ -747,7 +747,7 @@ var RandomSong = spv.inh(Song, {}, {
 	'compx-track': [
 		['track_name_provided', 'random_lfm_track_name'],
 		function (provied, random) {
-			return provied || random
+			return provied || random;
 		}
 	]
 });
