@@ -329,6 +329,10 @@ var getMatchedSongs = function(music_list, msq) {
 				'search_name': search_eng_name
 			});
 
+			target.on('requests', function(requests) {
+				this.map_parent.addRequests(requests);
+			});
+
 			//cache
 			//network
 			//scope
@@ -653,13 +657,7 @@ var getMatchedSongs = function(music_list, msq) {
 		},
 		'chi-files_by_source': FilesBySource,
 		bindSource: function(name, data) {
-			var files_by_source = this.initChi('files_by_source', data, name);
-			var _this = this;
-			files_by_source.on('requests', function(requests) {
-				_this.addRequests(requests);
-			});
-
-			return files_by_source;
+			return this.initChi('files_by_source', data, name);
 		},
 		complex_states: {
 			'exsrc_incomplete': [
