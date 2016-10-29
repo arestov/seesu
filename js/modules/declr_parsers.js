@@ -1,4 +1,4 @@
-define(['spv','js/libs/Mp3Search', 'js/common-libs/htmlencoding'],function(spv, Mp3Search, htmlencoding) {
+define(['spv','js/models/Mp3Search/index', 'js/common-libs/htmlencoding'],function(spv, Mp3Search, htmlencoding) {
 "use strict";
 
 var toArrayByKeys = function(r) {

@@ -1,4 +1,4 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'js/modules/extendPromise', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'],
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'js/modules/extendPromise', 'hex_md5', 'js/common-libs/htmlencoding', 'js/models/Mp3Search/index'],
 function(spv, aReq, wrapRequest, extendPromise, hex_md5, htmlencoding, Mp3Search) {
 'use strict';
 var ScApi = function(key, queue, crossdomain, cache_ajax) {

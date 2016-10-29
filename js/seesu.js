@@ -1,5 +1,5 @@
 define(
-['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap', './libs/Mp3Search',
+['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap', './models/Mp3Search/index',
 './libs/FuncsQueue', './LfmAuth',
 './models/AppModel', './models/comd', './models/StartPage', './libs/VkAuth', './libs/VkApi', './modules/initVk',
 './modules/PlayerSeesu', './models/invstg', 'cache_ajax', 'View', 'js/libs/localizer', './modules/route', './initAPIs'],

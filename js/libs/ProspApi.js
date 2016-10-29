@@ -1,4 +1,4 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search) {
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/models/Mp3Search/index'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search) {
 "use strict";
 
 

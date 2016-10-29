@@ -1,4 +1,4 @@
-define(['jquery', 'js/libs/FuncsStack', 'spv', 'pv', 'js/libs/Mp3Search'], function($, FuncsStack, spv, pv, Mp3Search) {
+define(['jquery', 'js/libs/FuncsStack', 'spv', 'pv', 'js/models/Mp3Search/index'], function($, FuncsStack, spv, pv, Mp3Search) {
 "use strict";
 /*
 var trackers = ["udp://tracker.openbittorrent.com:80",
