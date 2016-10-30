@@ -4,6 +4,7 @@ var spv = require('spv');
 var getStateWriter = require('./getStateWriter');
 var standart = require('./standartNWH');
 var getShortStateName = require('./getShortStateName');
+var NestingSourceDr = require('./NestingSourceDr');
 
 var wrapper = standart(function wrapper(md, items, lnwatch) {
 	var callback = lnwatch.callback;
@@ -23,7 +24,8 @@ var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) 
 	});
 });
 
-var NestWatch = function(selector, state_name, zip_func, result_state_name, handler, addHandler, removeHandler) {
+var NestWatch = function(nesting_source, state_name, zip_func, result_state_name, handler, addHandler, removeHandler) {
+	var selector = nesting_source.selector;
 	if (!Array.isArray(selector)) {
 		throw new Error('selector should be array');
 	}
@@ -37,6 +39,7 @@ var NestWatch = function(selector, state_name, zip_func, result_state_name, hand
 	}
 
 	this.selector = selector;
+	this.start_point = nesting_source.start_point || null;
 	this.state_name = state_name;
 	this.short_state_name = state_name &&
 		(Array.isArray(state_name)
@@ -96,13 +99,15 @@ var enc_states = {
 		var state_name = parts.pop();
 		var zip_func = parts.pop();
 
+		var nesting_source = new NestingSourceDr(nesting_name);
+
 		return {
 			rel_type: 'nesting',
 			full_name: string,
-			nesting_name: nesting_name,
+			nesting_name: nesting_source.selector.join('.'),
 			state_name: state_name,
 			zip_func: zip_func || itself,
-			nwatch: new NestWatch(nesting_name.split('.'), state_name, zip_func, string)
+			nwatch: new NestWatch(nesting_source, state_name, zip_func, string)
 		};
 	},
 	'#': function(string) {

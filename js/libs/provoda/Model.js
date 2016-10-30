@@ -205,19 +205,18 @@ var modelInit = (function() {
 		if (self.nest_sel_nest_matches) {
 			for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
 				var cur = self.nest_sel_nest_matches[i];
-				var start_point = cur.start_point ? initDeclaredNestings.get(self.app, self, cur.start_point) : self;
 				var dest_w = new NestSelector(self, cur);
 				var source_w = new LocalWatchRoot(self, cur.nwbase, dest_w);
 				if (dest_w.state_name) {
-					self.addNestWatch(dest_w, 0);
+					addNestWatch(self, dest_w, 0);
 				}
-				self.addNestWatch(source_w, 0);
+				addNestWatch(self, source_w, 0);
 			}
 		}
 
 		if (self.nest_match) {
 			for (var i = 0; i < self.nest_match.length; i++) {
-				self.addNestWatch(new LocalWatchRoot(self, self.nest_match[i]), 0);
+				addNestWatch(self, new LocalWatchRoot(self, self.nest_match[i]), 0);
 			}
 		}
 
@@ -247,6 +246,10 @@ var modelInit = (function() {
 
 		return self;
 	};
+	function addNestWatch(target, lnest_watch, skip) {
+		var start_md = lnest_watch.start_point ? initDeclaredNestings.get(target.app, target, lnest_watch.start_point) : target;
+		start_md.addNestWatch(lnest_watch, skip);
+	}
 })();
 
 var onPropsExtend = (function(){
@@ -367,7 +370,7 @@ add({
 				if (!nw_draft2) { continue; }
 
 				this.st_nest_matches.push(
-					new NestWatch(nw_draft2.selector, nw_draft2.state, null, null, index[stname])
+					new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, null, null, index[stname])
 				);
 
 			}
