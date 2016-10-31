@@ -55,7 +55,7 @@ var NestWatch = function(nesting_source, state_name, zip_func, result_state_name
 	this.handle_count_or_order_change = null;
 
 
-	if (Array.isArray(state_name)) {
+	if (Array.isArray(state_name) || typeof handler == 'object') {
 		this.handle_state_change = handler.onchd_state;
 		this.handle_count_or_order_change = handler.onchd_count;
 	} else {
