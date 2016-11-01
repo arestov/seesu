@@ -13,6 +13,7 @@ var NestSelector = require('./StatesEmitter/NestSelector');
 var LocalWatchRoot = require('./Model/LocalWatchRoot');
 var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
+var addNestWatch = require('./Model/addNestWatch');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -246,10 +247,6 @@ var modelInit = (function() {
 
 		return self;
 	};
-	function addNestWatch(target, lnest_watch, skip) {
-		var start_md = lnest_watch.start_point ? initDeclaredNestings.get(target.app, target, lnest_watch.start_point) : target;
-		start_md.addNestWatch(lnest_watch, skip);
-	}
 })();
 
 var onPropsExtend = (function(){
