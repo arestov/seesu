@@ -9,11 +9,9 @@ var initDeclaredNestings = require('./initDeclaredNestings');
 var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
-var NestSelector = require('./StatesEmitter/NestSelector');
-var LocalWatchRoot = require('./Model/LocalWatchRoot');
+var initNestWatchers = require('./nest-watch/index').init;
 var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
-var addNestWatch = require('./Model/addNestWatch');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -201,25 +199,8 @@ var modelInit = (function() {
 		}
 
 		self._requests_deps = null;
-		self.nes_match_index = null;
 
-		if (self.nest_sel_nest_matches) {
-			for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
-				var cur = self.nest_sel_nest_matches[i];
-				var dest_w = new NestSelector(self, cur);
-				var source_w = new LocalWatchRoot(self, cur.nwbase, dest_w);
-				if (dest_w.state_name) {
-					addNestWatch(self, dest_w, 0);
-				}
-				addNestWatch(self, source_w, 0);
-			}
-		}
-
-		if (self.nest_match) {
-			for (var i = 0; i < self.nest_match.length; i++) {
-				addNestWatch(self, new LocalWatchRoot(self, self.nest_match[i]), 0);
-			}
-		}
+		initNestWatchers(self);
 
 		if (!self.manual_states_init) {
 			self.initStates();
