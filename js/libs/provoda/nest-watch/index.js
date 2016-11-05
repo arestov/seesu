@@ -5,6 +5,7 @@ var LocalWatchRoot = require('./LocalWatchRoot');
 var initDeclaredNestings = require('../initDeclaredNestings');
 var addNestWatch = require('./add-remove').addNestWatch;
 var checkNesting = require('./checkNesting');
+var checkStates = require('./checkStates');
 
 function init(self) {
   self.states_links = null;
@@ -39,6 +40,7 @@ function addFrom(target, lnest_watch, skip) {
 return {
   init: init,
   checkNesting: checkNesting,
+  checkStates: checkStates,
 };
 
 });
