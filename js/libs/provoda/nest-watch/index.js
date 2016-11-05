@@ -3,6 +3,7 @@ define(function (require) {
 var NestSelector = require('../StatesEmitter/NestSelector');
 var LocalWatchRoot = require('./LocalWatchRoot');
 var initDeclaredNestings = require('../initDeclaredNestings');
+var addNestWatch = require('./add-remove').addNestWatch;
 
 function init(self) {
   self.nes_match_index = null;
@@ -13,24 +14,24 @@ function init(self) {
       var dest_w = new NestSelector(self, cur);
       var source_w = new LocalWatchRoot(self, cur.nwbase, dest_w);
       if (dest_w.state_name) {
-        addNestWatch(self, dest_w, 0);
+        addFrom(self, dest_w, 0);
       }
-      addNestWatch(self, source_w, 0);
+      addFrom(self, source_w, 0);
     }
   }
 
   if (self.nest_match) {
     for (var i = 0; i < self.nest_match.length; i++) {
-      addNestWatch(self, new LocalWatchRoot(self, self.nest_match[i]), 0);
+      addFrom(self, new LocalWatchRoot(self, self.nest_match[i]), 0);
     }
   }
 }
 
-function addNestWatch(target, lnest_watch, skip) {
+function addFrom(target, lnest_watch, skip) {
   var start_md = lnest_watch.nwatch.start_point
     ? initDeclaredNestings.getSPByPathTemplate(target.app, target, lnest_watch.nwatch.start_point)
     : target;
-  start_md.addNestWatch(lnest_watch, skip);
+  addNestWatch(start_md, lnest_watch, skip);
 }
 
 return {
