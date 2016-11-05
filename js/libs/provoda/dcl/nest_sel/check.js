@@ -9,10 +9,12 @@ var NestingSourceDr = require('../../utils/NestingSourceDr');
 var NestWatch = require('../../nest-watch/NestWatch');
 
 var NestSelector = require('./NestSelector');
+var getParsedPath = require('../../initDeclaredNestings').getParsedPath;
 var handleChdDeepState = NestSelector.handleChdDeepState;
 var handleChdCount = NestSelector.handleChdCount;
 var handleAdding = NestSelector.handleAdding;
 var handleRemoving = NestSelector.handleRemoving;
+var rerun = NestSelector.rerun;
 
 var endsWith = spv.endsWith;
 // var constr_mention = require('../structure/constr_mention');
@@ -23,7 +25,12 @@ var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 // var nestConstructor = constr_mention.nestConstructor;
 
 var SelectNestingDeclaration = function(dest_name, data) {
+	this.map = null;
+	if (data.map) {
+		this.map = typeof data.map == 'string' ? getParsedPath(data.map) : data.map;
+	}
 	var nesting_source = new NestingSourceDr(data.from);
+
 	this.start_point = nesting_source.start_point;
 	this.from = nesting_source.selector;
 	this.dest_name = dest_name;
@@ -33,6 +40,8 @@ var SelectNestingDeclaration = function(dest_name, data) {
 	this.selectFn = null;
 	this.dest_state_names = null;
 	this.short_state_name = null;
+
+	this.all_deep_states = [];
 
 	if (Array.isArray(data.where)) {
 		var deps_dest = [];
@@ -71,10 +80,23 @@ var SelectNestingDeclaration = function(dest_name, data) {
 		}
 		this.selectFn = data.where[1];
 
-		this.nwbase = new NestWatch(nesting_source, deps_source, null, null, {
+		if (this.deps_source) {
+			this.all_deep_states = this.all_deep_states.concat(this.deps_source);
+		}
+
+		if (this.map && this.map.states) {
+			this.all_deep_states = this.all_deep_states.concat(this.map.states);
+		}
+
+		this.nwbase = new NestWatch(nesting_source, this.all_deep_states, null, null, {
 			onchd_count: handleChdCount,
 			onchd_state: handleChdDeepState
 		}, handleAdding, handleRemoving);
+	} else if (this.map) {
+		this.nwbase = new NestWatch(nesting_source, this.map.states, null, null, {
+			onchd_count: handleChdCount,
+			onchd_state: rerun
+		});
 	} else {
 		throw new Error();
 	}
