@@ -2,8 +2,7 @@ define(function (require) {
 'use strict';
 var NestSelector = require('../StatesEmitter/NestSelector');
 var LocalWatchRoot = require('../Model/LocalWatchRoot');
-var addNestWatch = require('../Model/addNestWatch');
-
+var initDeclaredNestings = require('../initDeclaredNestings');
 
 function init(self) {
   self.nes_match_index = null;
@@ -25,6 +24,13 @@ function init(self) {
       addNestWatch(self, new LocalWatchRoot(self, self.nest_match[i]), 0);
     }
   }
+}
+
+function addNestWatch(target, lnest_watch, skip) {
+  var start_md = lnest_watch.nwatch.start_point
+    ? initDeclaredNestings.getSPByPathTemplate(target.app, target, lnest_watch.nwatch.start_point)
+    : target;
+  start_md.addNestWatch(lnest_watch, skip);
 }
 
 return {
