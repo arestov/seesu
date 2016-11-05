@@ -1,6 +1,7 @@
 define(function (require) {
 'use strict';
 var spv = require('spv');
+var orderItems = require('./orderItems');
 
 var SublWtch = function SublWtch(nwatch, skip, md, parent) {
   this.nwatch = nwatch;
@@ -150,6 +151,11 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
         checkNestWatchs(self, nesting_name, self.children_models[nesting_name]);
       }
     }
+
+    if (skip === 0) {
+      var calls_flow = self._getCallsFlow();
+      calls_flow.pushToFlow(null, subl_wtch.nwatch, null, null, handleEndItems, null, self.current_motivator);
+    }
   }
 
   var addHandler = nwatch.addHandler;
@@ -157,6 +163,13 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
     addHandler(self, nwatch, skip);
   }
 }
+
+
+function handleEndItems(motivator, _, lnwatch) {
+  orderItems(lnwatch);
+  lnwatch.handler.call(null, motivator, null, lnwatch, null, lnwatch.ordered_items);
+}
+
 
 function removeNestWatch(self, nwatch, skip) {
   if (isDeepestLevel(nwatch, skip)) {

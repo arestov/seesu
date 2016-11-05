@@ -1,6 +1,7 @@
 define(function (require) {
 'use strict';
 var pvState = require('../../utils/state');
+var executeStringTemplate = require('../../initDeclaredNestings').executeStringTemplate;
 
 var count = 1;
 var NestSelector = function (md, declr) {
@@ -39,6 +40,7 @@ NestSelector.handleChdDeepState = handleChdDeepState;
 NestSelector.handleChdCount = handleChdCount;
 NestSelector.handleAdding = handleAdding;
 NestSelector.handleRemoving = handleRemoving;
+NestSelector.rerun = rerun;
 
 function handleChdDestState(motivator, fn, nestsel, args) {
 	// input - changed "dest" state
@@ -68,6 +70,11 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 	states[state_name] = value;
 	nestsel.item_states_index[_provoda_id] = states;
 
+	runFilter(motivator, nestsel);
+}
+
+function rerun(motivator, _, lnwatch) {
+	var nestsel = lnwatch.data;
 	runFilter(motivator, nestsel);
 }
 
@@ -105,8 +112,31 @@ function isFine(md, nestsel) {
 }
 
 function getMatchedItems(nestsel) {
-	if (!nestsel.declr.deps_dest && !nestsel.declr.deps_source) {
-		return nestsel.items;
+	var dcl = nestsel.declr;
+
+	if (!dcl.deps_dest && !dcl.deps_source) {
+		if (!dcl.map) {
+			return nestsel.items;
+		}
+
+		if (typeof dcl.map === 'object') {
+
+			var arr = new Array(nestsel.items.length);
+			for (var i = 0; i < nestsel.items.length; i++) {
+				var cur = nestsel.items[i];
+				arr[i] = executeStringTemplate(
+					nestsel.md.app, nestsel.md, dcl.map, false, cur
+				);
+			}
+			return arr;
+
+		} else {
+			throw new Error('unsupported map type');
+		}
+	}
+
+	if (dcl.map) {
+		throw new Error('implement map support');
 	}
 
 	var result = [];
@@ -126,7 +156,6 @@ function runFilter(motivator, nestsel) {
 	// item_states_index
 	// dest_states
 	var result = getMatchedItems(nestsel);
-
 	var md = nestsel.md;
 	var old_motivator = md.current_motivator;
 	md.current_motivator = motivator;
