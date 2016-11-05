@@ -7,6 +7,7 @@ var addNestWatch = require('./add-remove').addNestWatch;
 var checkNesting = require('./checkNesting');
 
 function init(self) {
+  self.states_links = null;
   self.nes_match_index = null;
 
   if (self.nest_sel_nest_matches) {

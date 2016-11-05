@@ -128,7 +128,6 @@ var modelInit = (function() {
 		self.map_parent = self.map_parent || null;
 
 		self.req_order_field = null;
-		self.states_links = null;
 
 		self._provoda_id = self._highway.models_counters++;
 		self._highway.models[self._provoda_id] = self;
