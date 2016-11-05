@@ -767,11 +767,11 @@ add({
 	getSiOpts: function() {
 		return getSiOpts(this);
 	},
-	initChi: function(name, data, params) {
+	initChi: function(name, data, params, more, states) {
 		var Constr = this._all_chi['chi-' + name];
-		return this.initSi(Constr, data, params);
+		return this.initSi(Constr, data, params, more, states);
 	},
-	initSi: function(Constr, data, params) {
+	initSi: function(Constr, data, params, more, states) {
 		if (Constr.prototype.conndst_parent && Constr.prototype.conndst_parent.length) {
 			if (Constr.prototype.pconstr_id !== true && this.constr_id !== Constr.prototype.pconstr_id) {
 				console.log( (new Error('pconstr_id should match constr_id')).stack );
@@ -783,7 +783,7 @@ add({
 			var initsbi_opts = this.getSiOpts();
 
 			this.useMotivator(instance, function(instance) {
-				instance.init(initsbi_opts, data, params);
+				instance.init(initsbi_opts, data, params, more, states);
 			});
 
 			return instance;
@@ -796,7 +796,7 @@ add({
 				app: this.app
 			};
 
-			var instancePure = new Constr(opts, data, params);
+			var instancePure = new Constr(opts, data, params, more, states);
 
 			instancePure.current_motivator = null;
 
