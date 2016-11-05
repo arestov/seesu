@@ -1,7 +1,7 @@
 define(function (require) {
 'use strict';
 var NestSelector = require('../StatesEmitter/NestSelector');
-var LocalWatchRoot = require('../Model/LocalWatchRoot');
+var LocalWatchRoot = require('./LocalWatchRoot');
 var initDeclaredNestings = require('../initDeclaredNestings');
 
 function init(self) {

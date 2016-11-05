@@ -2,7 +2,7 @@ define(function(require){
 'use strict';
 
 var hp = require('../helpers');
-var LocalWatchRoot = require('./LocalWatchRoot');
+var LocalWatchRoot = require('../nest-watch/LocalWatchRoot');
 var spv = require('spv');
 
 var count = 1;
