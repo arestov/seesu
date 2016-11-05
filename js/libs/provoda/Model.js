@@ -10,9 +10,9 @@ var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
 var initNestWatchers = require('./nest-watch/index').init;
+var checkNesting =  require('./nest-watch/index').checkNesting;
 var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
-var checkNestWatchs = require('./nest-watch/add-remove').checkNestWatchs;
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -895,28 +895,6 @@ add({
 	}
 });
 
-
-
-function checkChangedNestWatchs(md, collection_name) {
-	if (md.nes_match_index && md.nes_match_index[collection_name]) {
-		// console.log('match!', collection_name);
-		var nwats = md.nes_match_index[collection_name];
-
-		var result = [];
-		for (var i = 0; i < nwats.length; i++) {
-			var cur = nwats[i].nwatch;
-			if (cur.items_changed) {
-				result.push(cur);
-				// console.log(cur.selector, cur);
-			}
-
-		}
-
-		return result.length && result;
-	}
-}
-
-
 var hasDot = spv.memorize(function(nesting_name) {
 	return nesting_name.indexOf('.') != -1;
 });
@@ -985,24 +963,7 @@ add({
 		}
 
 		var removed = hp.getRemovedNestingItems(array, old_value);
-
-		checkNestWatchs(this, collection_name, array, removed);
-
-		var changed_nawchs = checkChangedNestWatchs(this, collection_name);
-		//var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
-		var calls_flow = this._getCallsFlow();
-		if (changed_nawchs) {
-			for (var i = 0; i < changed_nawchs.length; i++) {
-				var cur = changed_nawchs[i];
-
-
-				calls_flow.pushToFlow(null, cur, null, array, cur.handler, null, this.current_motivator);
-
-			}
-
-		}
-
-
+		checkNesting(this, collection_name, array, removed);
 		// !?
 
 

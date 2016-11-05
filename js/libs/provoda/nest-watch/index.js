@@ -4,6 +4,7 @@ var NestSelector = require('../StatesEmitter/NestSelector');
 var LocalWatchRoot = require('./LocalWatchRoot');
 var initDeclaredNestings = require('../initDeclaredNestings');
 var addNestWatch = require('./add-remove').addNestWatch;
+var checkNesting = require('./checkNesting');
 
 function init(self) {
   self.nes_match_index = null;
@@ -35,7 +36,8 @@ function addFrom(target, lnest_watch, skip) {
 }
 
 return {
-  init: init
+  init: init,
+  checkNesting: checkNesting,
 };
 
 });
