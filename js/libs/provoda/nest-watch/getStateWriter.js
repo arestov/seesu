@@ -2,9 +2,9 @@ define(function (require) {
 'use strict';
 
 var spv = require('spv');
-var pvState = require('./state');
+var pvState = require('../utils/state');
 var pvUpdate = require('../updateProxy').update;
-var standart = require('./standartNWH');
+var standart = require('../utils/standartNWH');
 
 
 

@@ -2,7 +2,7 @@ define(function (require) {
 'use strict';
 var getShortStateName = require('../utils/getShortStateName');
 
-var getStateWriter = require('../utils/getStateWriter');
+var getStateWriter = require('./getStateWriter');
 var standart = require('../utils/standartNWH');
 
 var wrapper = standart(function wrapper(md, items, lnwatch) {
