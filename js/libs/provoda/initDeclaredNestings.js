@@ -60,8 +60,8 @@ var getPath = pathExecutor(function(chunkName, app, md) {
 	return md._provoda_id && md.state(chunkName);
 });
 
-var executeStringTemplate = function(app, md, obj, need_constr) {
-	var full_path = getPath(obj, app, md);
+var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) {
+	var full_path = getPath(obj, app, md_for_urldata || md);
 	if (obj.from_root) {
 		return app.routePathByModels(full_path, app.start_page, need_constr);
 	}
@@ -132,12 +132,12 @@ var getParsedPath = spv.memorize(function(string_template) {
 	};
 });
 
-var getSPByPathTemplate = function(app, md, string_template, need_constr) {
+var getSPByPathTemplate = function(app, start_md, string_template, need_constr, md_for_urldata) {
 
 	var parsed_template = getParsedPath(string_template);
 
 
-	return executeStringTemplate(app, md, parsed_template, need_constr);
+	return executeStringTemplate(app, start_md, parsed_template, need_constr, md_for_urldata);
 };
 
 var getSubPByDeclr = function(md, cur) {
