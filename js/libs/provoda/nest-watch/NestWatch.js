@@ -3,7 +3,7 @@ define(function (require) {
 var getShortStateName = require('../utils/getShortStateName');
 
 var getStateWriter = require('./getStateWriter');
-var standart = require('../utils/standartNWH');
+var standart = require('./standartNWH');
 
 var wrapper = standart(function wrapper(md, items, lnwatch) {
 	var callback = lnwatch.callback;
