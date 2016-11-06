@@ -4,13 +4,7 @@ var spv = require('spv');
 var cloneObj = spv.cloneObj;
 
 var checkApis = require('./StatesEmitter/checkApis');
-var checkSubpager = require('./StatesEmitter/checkSubpager');
-var collectSubpages = require('./StatesEmitter/collectSubpages');
 var collectCompxs = require('./StatesEmitter/collectCompxs');
-var checkChi = require('./StatesEmitter/checkChi');
-var checkNestRqC = require('./StatesEmitter/checkNestRqC');
-var checkNestSel = require('./StatesEmitter/checkNestSel');
-
 var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
 var collectSelectorsOfCollchs = require('./dcl/collectSelectorsOfCollchs');
 var collectCollectionChangeDeclarations = require('./dcl/collectCollectionChangeDeclarations');
