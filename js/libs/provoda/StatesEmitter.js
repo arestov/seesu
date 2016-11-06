@@ -187,47 +187,47 @@ add({
 	onExtend: function(props, original) {
 		onPropsExtend(this, props, original);
 	},
-	collectBaseExtendStates: (function() {
-
-		var getUnprefixed = spv.getDeprefixFunc('$ondemand-');
-		return function() {
-			var states_list = [], states_index = {};
-			var dclrs_expandable = {};
-
-			for ( var nesting_name in this.dclrs_fpckgs ) {
-
-				if ( getUnprefixed(nesting_name) ) {
-					var cur = this.dclrs_fpckgs[ nesting_name ];
-					var added = false;
-
-					if (cur.needs_expand_state) {
-						var state_name = cur.needs_expand_state;
-						if (!states_index[state_name]) {
-							states_index[state_name] = true;
-							states_list.push( state_name );
-						}
-
-						if (!added) {
-							if ( !dclrs_expandable[state_name] ) {
-								dclrs_expandable[state_name] = [];
-							}
-							dclrs_expandable[state_name].push( getUnprefixed(nesting_name) );
-						}
-
-					}
-				}
-			}
-
-			if (states_list.length) {
-				this.base_tree_expand_states = states_list;
-				this.dclrs_expandable = dclrs_expandable;
-			}
-
-
-			//debugger;
-		};
-	})()
+	collectBaseExtendStates: function() {
+		collectBaseExtendStates(this);
+	}
 });
+var getUnprefixed = spv.getDeprefixFunc('$ondemand-');
+function collectBaseExtendStates(self) {
+	var states_list = [], states_index = {};
+	var dclrs_expandable = {};
+
+	for ( var nesting_name in self.dclrs_fpckgs ) {
+
+		if ( getUnprefixed(nesting_name) ) {
+			var cur = self.dclrs_fpckgs[ nesting_name ];
+			var added = false;
+
+			if (cur.needs_expand_state) {
+				var state_name = cur.needs_expand_state;
+				if (!states_index[state_name]) {
+					states_index[state_name] = true;
+					states_list.push( state_name );
+				}
+
+				if (!added) {
+					if ( !dclrs_expandable[state_name] ) {
+						dclrs_expandable[state_name] = [];
+					}
+					dclrs_expandable[state_name].push( getUnprefixed(nesting_name) );
+				}
+
+			}
+		}
+	}
+
+	if (states_list.length) {
+		self.base_tree_expand_states = states_list;
+		self.dclrs_expandable = dclrs_expandable;
+	}
+
+
+	//debugger;
+}
 
 add({
 //	full_comlxs_list: [],
