@@ -8,6 +8,7 @@ var updateProxy = require('./updateProxy');
 var prsStCon =  require('./prsStCon');
 var StatesEmitter = require('./StatesEmitter');
 var PvTemplate = require('./PvTemplate');
+var onPropsExtend = require('./onExtendView');
 
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
@@ -157,21 +158,6 @@ var initView = function(target, view_otps, opts){
 	prsStCon.connect.parent(target);
 	prsStCon.connect.root(target);
 };
-
-var onPropsExtend = function(self, props, original) {
-	if (props.tpl_events) {
-		self.tpl_events = {};
-		cloneObj(self.tpl_events, original.tpl_events);
-		cloneObj(self.tpl_events, props.tpl_events);
-	}
-
-	if (props.tpl_r_events) {
-		self.tpl_r_events = {};
-		cloneObj(self.tpl_r_events, original.tpl_r_events);
-		cloneObj(self.tpl_r_events, props.tpl_r_events);
-	}
-};
-
 
 var sources = function (item_source, sources_list) {
 	var arr = [];
