@@ -55,10 +55,6 @@ var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'
 return function(self, props, original) {
   checkApis(self, props);
 
-	if (self.changeDataMorphDeclarations) {
-		self.changeDataMorphDeclarations(props);
-	}
-
 	if (self.collectStateChangeHandlers){
 		self.collectStateChangeHandlers(props);
 	}

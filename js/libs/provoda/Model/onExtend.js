@@ -56,9 +56,7 @@ return function(self, props, original, params) {
 
   checkApis(self, props);
 
-	if (self.changeDataMorphDeclarations) {
-		self.changeDataMorphDeclarations(props);
-	}
+	self.changeDataMorphDeclarations(props);
 
 	if (self.collectStateChangeHandlers){
 		self.collectStateChangeHandlers(props);
