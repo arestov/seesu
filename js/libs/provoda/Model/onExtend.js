@@ -11,7 +11,7 @@ var checkNestRqC = require('../StatesEmitter/checkNestRqC');
 var checkNestSel = require('../StatesEmitter/checkNestSel');
 
 var collectBaseExtendStates = require('../dcl/collectBaseExtendStates');
-
+var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
@@ -56,7 +56,7 @@ return function(self, props, original, params) {
 
   checkApis(self, props);
 
-	self.changeDataMorphDeclarations(props);
+	changeDataMorphDeclarations(self, props);
 
 	if (self.collectStateChangeHandlers){
 		self.collectStateChangeHandlers(props);
