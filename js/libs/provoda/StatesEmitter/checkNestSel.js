@@ -2,7 +2,6 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var hp = require('../helpers');
 var getShortStateName = require('../utils/getShortStateName');
 var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
 var NestingSourceDr = require('../utils/NestingSourceDr');
@@ -19,7 +18,7 @@ var endsWith = spv.endsWith;
 // var constr_mention = require('../structure/constr_mention');
 
 var getUnprefixed = spv.getDeprefixFunc( 'nest_sel-' );
-var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
 // var nestConstructor = constr_mention.nestConstructor;
 
