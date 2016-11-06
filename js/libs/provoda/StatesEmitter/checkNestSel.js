@@ -3,9 +3,11 @@ define(function(require) {
 
 var spv = require('spv');
 var hp = require('../helpers');
-var NestWatch = require('../utils/index').NestWatch;
 var getShortStateName = require('../utils/getShortStateName');
+var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
 var NestingSourceDr = require('../utils/NestingSourceDr');
+
+var NestWatch = require('../nest-watch/NestWatch');
 
 var NestSelector = require('./NestSelector');
 var handleChdDeepState = NestSelector.handleChdDeepState;

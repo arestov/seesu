@@ -5,6 +5,7 @@ var hp = require('../helpers');
 var LocalWatchRoot = require('../nest-watch/LocalWatchRoot');
 var addNestWatch = require('../nest-watch/add-remove').addNestWatch;
 var removeNestWatch = require('../nest-watch/add-remove').removeNestWatch;
+var NestWatch = require('../nest-watch/NestWatch');
 var spv = require('spv');
 
 var count = 1;
@@ -22,7 +23,7 @@ var sourceKey = function(req_dep, suffix) {
 	return req_dep.target._provoda_id + '-' + suffix;
 };
 
-var NestWatch = hp.NestWatch;
+
 
 var noop = function() {};
 

@@ -10,6 +10,7 @@ var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
 var initNestWatchers = require('./nest-watch/index').init;
+var NestWatch = require('./nest-watch/NestWatch');
 var checkNesting =  require('./nest-watch/index').checkNesting;
 var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
@@ -313,7 +314,6 @@ add({
 	collectStateChangeHandlers: (function() {
 		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-		var NestWatch = hp.NestWatch;
 
 		return function(props) {
 			var need_recalc = false;

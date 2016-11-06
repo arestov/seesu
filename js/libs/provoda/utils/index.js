@@ -79,7 +79,6 @@ function itself(item) {return item;}
 return {
 	getShortStateName: getShortStateName,
 	getEncodedState: getEncodedState,
-	NestWatch: NestWatch,
 	getPropsPrefixChecker: getPropsPrefixChecker,
 };
 });

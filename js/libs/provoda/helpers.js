@@ -7,7 +7,6 @@ var utils_simple = require('./utils/simple')
 var pvState = require('./utils/state');
 var stateGetter = require('./utils/stateGetter');
 var getEncodedState = utils.getEncodedState;
-var NestWatch = utils.NestWatch;
 var getShortStateName = utils.getShortStateName;
 
 var emergency_opt = {
@@ -35,7 +34,6 @@ function getBwlevId(view) {
 }
 
 return {
-	NestWatch: NestWatch,
 	getRDep: (function() {
 		var getTargetName = spv.memorize(function getTargetName(state_name) {
 			return state_name.split( ':' )[ 1 ];
