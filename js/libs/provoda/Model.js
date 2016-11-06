@@ -10,7 +10,6 @@ var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
 var initNestWatchers = require('./nest-watch/index').init;
-var NestWatch = require('./nest-watch/NestWatch');
 var checkNesting =  require('./nest-watch/index').checkNesting;
 var _requestsDeps = require('./Model/_requestsDeps');
 var onPropsExtend = require('./Model/onExtend');
@@ -68,18 +67,6 @@ var changeSourcesByApiNames = function(md, store) {
 		}
 	}
 };
-
-
-var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
-	if (string.indexOf('@') == -1) {
-		return false;
-	}
-	var parts = string.split('@');
-	return {
-		state: parts[0],
-		selector: parts[1].split('.')
-	};
-});
 
 var modelInit = (function() {
 	return function initModel(self, opts, data, params, more, states) {
@@ -276,55 +263,7 @@ add({
 				return result;
 			}
 		}
-
-
-
 	},
-	collectStateChangeHandlers: (function() {
-		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-		return function(props) {
-			var need_recalc = false;
-
-			if (props.state_change || hasPrefixedProps(props)) {
-				need_recalc = true;
-			}
-
-			if (!need_recalc){
-				return;
-			}
-
-			var index = {};
-
-			for (var lprop in this.state_change) {
-				index[lprop] = this.state_change[lprop];
-			}
-
-			for (var prop_name in this) {
-				if (getUnprefixed(prop_name)) {
-					var string = getUnprefixed(prop_name);
-					index[string] = this[prop_name];
-				}
-			}
-
-			this.st_nest_matches = [];
-
-			for (var stname in index) {
-				if (!index[stname]) {continue;}
-
-				var nw_draft2 = getParsedStateChange(stname);
-				if (!nw_draft2) { continue; }
-
-				this.st_nest_matches.push(
-					new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, null, null, index[stname])
-				);
-
-			}
-
-			this._has_stchs = true;
-		};
-	})(),
 	getNetworkSources: function() {
 		if (!this.netsources_of_all) {
 			return;

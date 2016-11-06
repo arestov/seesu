@@ -12,6 +12,7 @@ var checkNestSel = require('../StatesEmitter/checkNestSel');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');
+var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
@@ -21,10 +22,7 @@ return function(self, props, original, params) {
   checkApis(self, props);
 
 	changeDataMorphDeclarations(self, props);
-
-	if (self.collectStateChangeHandlers){
-		self.collectStateChangeHandlers(props);
-	}
+	collectStateChangeHandlers(self, props);
 
 	collectCompxs(self, props);
 	collectSubpages(self, props);

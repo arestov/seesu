@@ -15,6 +15,7 @@ var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
 var collectSelectorsOfCollchs = require('./dcl/collectSelectorsOfCollchs');
 var collectCollectionChangeDeclarations = require('./dcl/collectCollectionChangeDeclarations');
 var changeChildrenViewsDeclarations = require('./dcl/changeChildrenViewsDeclarations');
+var collectStateChangeHandlers = require('./dcl/v-collectStateChangeHandlers');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
@@ -55,9 +56,7 @@ var getBaseTreeCheckList = function(start) {
 return function(self, props, original) {
   checkApis(self, props);
 
-	if (self.collectStateChangeHandlers){
-		self.collectStateChangeHandlers(props);
-	}
+	collectStateChangeHandlers(self, props);
 	var collches_modified = collectCollectionChangeDeclarations(self, props);
 
 	collectSelectorsOfCollchs(self, props);
