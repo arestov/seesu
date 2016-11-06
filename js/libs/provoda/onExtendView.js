@@ -13,6 +13,7 @@ var checkNestSel = require('./StatesEmitter/checkNestSel');
 
 var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
 var collectSelectorsOfCollchs = require('./dcl/collectSelectorsOfCollchs');
+var collectCollectionChangeDeclarations = require('./dcl/collectCollectionChangeDeclarations');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
@@ -56,7 +57,7 @@ return function(self, props, original) {
 	if (self.collectStateChangeHandlers){
 		self.collectStateChangeHandlers(props);
 	}
-	var collches_modified = self.collectCollectionChangeDeclarations(props);
+	var collches_modified = collectCollectionChangeDeclarations(self, props);
 
 	collectSelectorsOfCollchs(self, props);
 
