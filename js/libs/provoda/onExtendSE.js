@@ -9,6 +9,8 @@ var checkChi = require('./StatesEmitter/checkChi');
 var checkNestRqC = require('./StatesEmitter/checkNestRqC');
 var checkNestSel = require('./StatesEmitter/checkNestSel');
 
+var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
+
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
 	var chunks_counter = 0;
@@ -82,7 +84,7 @@ return function onPropsExtend (self, props) {
 		self.base_tree_list = getBaseTreeCheckList(props.base_tree);
 	}
 	if (collches_modified || base_tree_mofified) {
-		self.collectBaseExtendStates();
+		collectBaseExtendStates(self);
 	}
 
 	if (self.collectNestingsDeclarations) {
