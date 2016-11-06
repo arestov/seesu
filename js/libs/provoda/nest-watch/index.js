@@ -4,7 +4,7 @@ var LocalWatchRoot = require('./LocalWatchRoot');
 var addFrom = require('./addFrom');
 var checkNesting = require('./checkNesting');
 var checkStates = require('./checkStates');
-var initNestSel = require('../StatesEmitter/initNestSel');
+var initNestSel = require('../dcl/nest_sel/init');
 
 function init(self) {
   self.states_links = null;

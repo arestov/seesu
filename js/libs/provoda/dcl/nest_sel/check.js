@@ -2,11 +2,11 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var getShortStateName = require('../utils/getShortStateName');
-var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
-var NestingSourceDr = require('../utils/NestingSourceDr');
+var getShortStateName = require('../../utils/getShortStateName');
+var getPropsPrefixChecker = require('../../utils/getPropsPrefixChecker');
+var NestingSourceDr = require('../../utils/NestingSourceDr');
 
-var NestWatch = require('../nest-watch/NestWatch');
+var NestWatch = require('../../nest-watch/NestWatch');
 
 var NestSelector = require('./NestSelector');
 var handleChdDeepState = NestSelector.handleChdDeepState;

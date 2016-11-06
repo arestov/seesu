@@ -1,7 +1,7 @@
 define(function(require) {
 'use strict';
-var LocalWatchRoot = require('../nest-watch/LocalWatchRoot');
-var addFrom = require('../nest-watch/addFrom');
+var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
+var addFrom = require('../../nest-watch/addFrom');
 var NestSelector = require('./NestSelector');
 
 return function init(self) {

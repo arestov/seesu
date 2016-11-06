@@ -8,7 +8,7 @@ var collectSubpages = require('../StatesEmitter/collectSubpages');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var checkChi = require('../StatesEmitter/checkChi');
 var checkNestRqC = require('../StatesEmitter/checkNestRqC');
-var checkNestSel = require('../StatesEmitter/checkNestSel');
+var checkNestSel = require('../dcl/nest_sel/check');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');
