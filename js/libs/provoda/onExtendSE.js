@@ -51,6 +51,8 @@ var getBaseTreeCheckList = function(start) {
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
 return function onPropsExtend (self, props) {
+  collectRegFires(self, props);
+  
 	checkApis(self, props);
 
 	if (self.changeDataMorphDeclarations) {
@@ -74,7 +76,7 @@ return function onPropsExtend (self, props) {
 	checkNestRqC(self, props);
 	checkNestSel(self, props);
 
-	collectRegFires(self, props);
+
 
 	if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
 		self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
