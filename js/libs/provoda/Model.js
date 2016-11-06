@@ -14,6 +14,7 @@ var NestWatch = require('./nest-watch/NestWatch');
 var checkNesting =  require('./nest-watch/index').checkNesting;
 var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
+var onPropsExtend = require('./Model/onExtend');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -228,21 +229,6 @@ var modelInit = (function() {
 		}
 
 		return self;
-	};
-})();
-
-var onPropsExtend = (function(){
-	var check = /initStates/gi;
-	return function(self, props, original, params) {
-		var init = params && params.init || props.init;
-		if (init) {
-			if (init.length > 2 && !self.hasOwnProperty('network_data_as_states')) {
-				self.network_data_as_states = false;
-			}
-			if (self.toString().search(check) != -1) {
-				self.manual_states_init = true;
-			}
-		}
 	};
 })();
 
