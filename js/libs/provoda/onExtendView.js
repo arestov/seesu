@@ -14,6 +14,7 @@ var checkNestSel = require('./StatesEmitter/checkNestSel');
 var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
 var collectSelectorsOfCollchs = require('./dcl/collectSelectorsOfCollchs');
 var collectCollectionChangeDeclarations = require('./dcl/collectCollectionChangeDeclarations');
+var changeChildrenViewsDeclarations = require('./dcl/changeChildrenViewsDeclarations');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
@@ -80,7 +81,7 @@ return function(self, props, original) {
 		collectBaseExtendStates(self);
 	}
 
-	self.changeChildrenViewsDeclarations(props);
+	changeChildrenViewsDeclarations(self, props);
 
 	if (props.tpl_events) {
 		self.tpl_events = {};

@@ -1529,32 +1529,6 @@ var View = spv.inh(StatesEmitter, {
 			}
 		}
 	},
-	changeChildrenViewsDeclarations: function(props) {
-		var nesting_name, cur;
-		if (props.children_views) {
-			for (nesting_name in this.children_views) {
-				cur = this.children_views[nesting_name];
-				if (typeof cur == 'function') {
-					this.children_views[nesting_name] = {
-						main: cur
-					};
-				}
-			}
-		}
-		if (props.children_views_by_mn) {
-			for (nesting_name in this.children_views_by_mn) {
-				for (var model_name in this.children_views_by_mn[nesting_name]) {
-					cur = this.children_views_by_mn[nesting_name][model_name];
-					if (typeof cur == 'function') {
-						this.children_views_by_mn[nesting_name][model_name] = {
-							main: cur
-						};
-					}
-				}
-			}
-		}
-
-	},
 	callCollectionChangeDeclaration: function(dclr_fpckg, nesname, array, old_value, removed) {
 		if (typeof dclr_fpckg == 'function'){
 			dclr_fpckg.call(this, nesname, array, old_value, removed);
