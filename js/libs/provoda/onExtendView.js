@@ -58,10 +58,8 @@ return function(self, props, original) {
 	if (self.collectStateChangeHandlers){
 		self.collectStateChangeHandlers(props);
 	}
-	var collches_modified;
-	if (self.collectCollectionChangeDeclarations){
-		collches_modified = self.collectCollectionChangeDeclarations(props);
-	}
+	var collches_modified = self.collectCollectionChangeDeclarations(props);
+
 	if (self.collectSelectorsOfCollchs) {
 		self.collectSelectorsOfCollchs(props);
 	}
