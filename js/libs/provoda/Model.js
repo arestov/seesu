@@ -233,14 +233,14 @@ var modelInit = (function() {
 
 var onPropsExtend = (function(){
 	var check = /initStates/gi;
-	return function(props, original, params) {
+	return function(self, props, original, params) {
 		var init = params && params.init || props.init;
 		if (init) {
-			if (init.length > 2 && !this.hasOwnProperty('network_data_as_states')) {
-				this.network_data_as_states = false;
+			if (init.length > 2 && !self.hasOwnProperty('network_data_as_states')) {
+				self.network_data_as_states = false;
 			}
-			if (init.toString().search(check) != -1) {
-				this.manual_states_init = true;
+			if (self.toString().search(check) != -1) {
+				self.manual_states_init = true;
 			}
 		}
 	};
@@ -253,9 +253,7 @@ var Model = spv.inh(StatesEmitter, {
 		};
 	},
 	skip_first_extend: true,
-	onExtend: function(md, props, original, params) {
-		onPropsExtend.call(md, props, original, params);
-	},
+	onExtend: onPropsExtend,
 	init: modelInit,
 	props: modelProps
 });
@@ -846,7 +844,9 @@ add({
 		this.init_states = false;
 	},
 	network_data_as_states: true,
-	onExtend: spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend),
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (props, original, params) {
+		onPropsExtend(this, props, original, params);
+	}),
 	getConstrByPathTemplate: function(app, path_template) {
 		return initDeclaredNestings.getConstrByPath(app, this, path_template);
 	},
