@@ -79,10 +79,6 @@ return function(self, props, original) {
 		collectBaseExtendStates(self);
 	}
 
-	if (self.collectNestingsDeclarations) {
-		self.collectNestingsDeclarations(props);
-	}
-
 	self.changeChildrenViewsDeclarations(props);
 
 	if (props.tpl_events) {

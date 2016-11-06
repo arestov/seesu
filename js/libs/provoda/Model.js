@@ -12,7 +12,6 @@ var StatesEmitter = require('./StatesEmitter');
 var initNestWatchers = require('./nest-watch/index').init;
 var NestWatch = require('./nest-watch/NestWatch');
 var checkNesting =  require('./nest-watch/index').checkNesting;
-var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
 var onPropsExtend = require('./Model/onExtend');
 
@@ -324,85 +323,6 @@ add({
 			}
 
 			this._has_stchs = true;
-		};
-	})(),
-	collectNestingsDeclarations: (function() {
-		var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-		var declarationConstructor = constr_mention.declarationConstructor;
-
-		return function(props) {
-			var
-				has_props = hasPrefixedProps(props),
-				has_pack = this.hasOwnProperty('nest'),
-				prop, cur, real_name;
-
-			if (has_props || has_pack){
-				var result = [];
-
-				var used_props = {};
-
-				if (has_props) {
-					for (prop in this) {
-
-						if (getUnprefixed(prop)) {
-
-							real_name = getUnprefixed(prop);
-							cur = this[prop];
-							used_props[real_name] = true;
-							result.push({
-								nesting_name: real_name,
-								subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-								preload: cur[1],
-								init_state_name: cur[2]
-							});
-						}
-					}
-				}
-
-				if (has_pack) {
-					for (real_name in this.nest) {
-						if (used_props[real_name]) {
-							continue;
-						}
-						cur = this.nest[real_name];
-						used_props[real_name] = true;
-						result.push({
-							nesting_name: real_name,
-							subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-							preload: cur[1],
-							init_state_name: cur[2]
-						});
-					}
-				}
-
-				this.nestings_declarations = result;
-				this.idx_nestings_declarations = {};
-				this._chi_nest = {};
-				for (var i = 0; i < result.length; i++) {
-					this.idx_nestings_declarations[result[i].nesting_name] = result[i];
-
-					var item = result[i].subpages_names_list;
-					if (Array.isArray(item)) {
-						for (var kk = 0; kk < item.length; kk++) {
-							if (item[kk].type == 'constr') {
-								this._chi_nest[item[kk].key] = item[kk].value;
-							}
-						}
-					} else {
-						if (item.type == 'constr') {
-							this._chi_nest[item.key] = item.value;
-						}
-					}
-
-				}
-
-
-			}
-
-
-
 		};
 	})(),
 	getNetworkSources: function() {

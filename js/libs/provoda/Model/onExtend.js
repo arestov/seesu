@@ -11,6 +11,7 @@ var checkNestRqC = require('../StatesEmitter/checkNestRqC');
 var checkNestSel = require('../StatesEmitter/checkNestSel');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
+var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
@@ -38,9 +39,7 @@ return function(self, props, original, params) {
 		self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
 	}
 
-	if (self.collectNestingsDeclarations) {
-		self.collectNestingsDeclarations(props);
-	}
+	collectNestingsDeclarations(self, props);
 
 	for (var i = 0; i < xxxx_morph_props.length; i++) {
 		// если есть декларации - парсим, делаем функции
