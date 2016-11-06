@@ -238,7 +238,6 @@ var Model = spv.inh(StatesEmitter, {
 			fn(this, opts, data, params, more, states);
 		};
 	},
-	skip_first_extend: true,
 	onExtend: onPropsExtend,
 	init: modelInit,
 	props: modelProps

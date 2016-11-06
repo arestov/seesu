@@ -177,7 +177,6 @@ var View = spv.inh(StatesEmitter, {
 		};
 	},
 	init: initView,
-	skip_first_extend: true,
 	onExtend: onPropsExtend
 }, {
 	handleTemplateRPC: function(method) {
