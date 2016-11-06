@@ -65,50 +65,50 @@ var getBaseTreeCheckList = function(start) {
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
-var onPropsExtend = function (props) {
-	checkApis(this, props);
+var onPropsExtend = function (self, props) {
+	checkApis(self, props);
 
-	if (this.changeDataMorphDeclarations) {
-		this.changeDataMorphDeclarations(props);
+	if (self.changeDataMorphDeclarations) {
+		self.changeDataMorphDeclarations(props);
 	}
 
-	if (this.collectStateChangeHandlers){
-		this.collectStateChangeHandlers(props);
+	if (self.collectStateChangeHandlers){
+		self.collectStateChangeHandlers(props);
 	}
 	var collches_modified;
-	if (this.collectCollectionChangeDeclarations){
-		collches_modified = this.collectCollectionChangeDeclarations(props);
+	if (self.collectCollectionChangeDeclarations){
+		collches_modified = self.collectCollectionChangeDeclarations(props);
 	}
-	if (this.collectSelectorsOfCollchs) {
-		this.collectSelectorsOfCollchs(props);
+	if (self.collectSelectorsOfCollchs) {
+		self.collectSelectorsOfCollchs(props);
 	}
-	collectCompxs(this, props);
-	collectSubpages(this, props);
-	checkSubpager(this, props);
-	checkChi(this, props);
-	checkNestRqC(this, props);
-	checkNestSel(this, props);
+	collectCompxs(self, props);
+	collectSubpages(self, props);
+	checkSubpager(self, props);
+	checkChi(self, props);
+	checkNestRqC(self, props);
+	checkNestSel(self, props);
 
-	this.collectRegFires(this, props);
+	self.collectRegFires(self, props);
 
-	if (this.hasOwnProperty('st_nest_matches') || this.hasOwnProperty('compx_nest_matches')) {
-		this.nest_match = (this.st_nest_matches || []).concat(this.compx_nest_matches || []);
+	if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
+		self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
 	}
 
 	var base_tree_mofified = props.hasOwnProperty('base_tree');
 	if (base_tree_mofified) {
-		this.base_tree_list = getBaseTreeCheckList(props.base_tree);
+		self.base_tree_list = getBaseTreeCheckList(props.base_tree);
 	}
 	if (collches_modified || base_tree_mofified) {
-		this.collectBaseExtendStates();
+		self.collectBaseExtendStates();
 	}
 
-	if (this.collectNestingsDeclarations) {
-		this.collectNestingsDeclarations(props);
+	if (self.collectNestingsDeclarations) {
+		self.collectNestingsDeclarations(props);
 	}
 
-	if (this.changeChildrenViewsDeclarations) {
-		this.changeChildrenViewsDeclarations(props);
+	if (self.changeChildrenViewsDeclarations) {
+		self.changeChildrenViewsDeclarations(props);
 	}
 
 
@@ -119,14 +119,14 @@ var onPropsExtend = function (props) {
 		var cur_name = Array.isArray(cur) ? cur[0] : cur;
 		var subfield = Array.isArray(cur) && cur[1];
 		if (props.hasOwnProperty(cur_name)) {
-			if (typeof this[cur_name] != 'function' && this[cur_name] !== true) {
+			if (typeof self[cur_name] != 'function' && self[cur_name] !== true) {
 				var obj = {
-					props_map: this[cur_name]
+					props_map: self[cur_name]
 				};
 				if (subfield) {
 					obj.source = subfield;
 				}
-				this[cur_name] = spv.mmap(obj);
+				self[cur_name] = spv.mmap(obj);
 			}
 
 		}
@@ -294,7 +294,9 @@ add({
 		return this;
 
 	},
-	onExtend: onPropsExtend,
+	onExtend: function(props, original) {
+		onPropsExtend(this, props, original);
+	},
 	collectBaseExtendStates: (function() {
 
 		var getUnprefixed = spv.getDeprefixFunc('$ondemand-');
@@ -472,9 +474,7 @@ var StatesEmitter = spv.inh(Eventor, {
 			obj.states = {};
 		};
 	},
-	onExtend: function(md, props, original) {
-		onPropsExtend.call(md, props, original);
-	},
+	onExtend: onPropsExtend,
 	props: props
 });
 
