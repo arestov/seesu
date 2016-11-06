@@ -45,11 +45,6 @@ return function(self, props, original, params) {
 		self.collectNestingsDeclarations(props);
 	}
 
-	if (self.changeChildrenViewsDeclarations) {
-		self.changeChildrenViewsDeclarations(props);
-	}
-
-
 	for (var i = 0; i < xxxx_morph_props.length; i++) {
 		// если есть декларации - парсим, делаем функции
 		// на вход функции - одна структура, на выход - другая

@@ -83,9 +83,7 @@ return function(self, props, original) {
 		self.collectNestingsDeclarations(props);
 	}
 
-	if (self.changeChildrenViewsDeclarations) {
-		self.changeChildrenViewsDeclarations(props);
-	}
+	self.changeChildrenViewsDeclarations(props);
 
 	if (props.tpl_events) {
 		self.tpl_events = {};
