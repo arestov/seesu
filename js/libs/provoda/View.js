@@ -158,17 +158,17 @@ var initView = function(target, view_otps, opts){
 	prsStCon.connect.root(target);
 };
 
-var onPropsExtend = function(props, original) {
+var onPropsExtend = function(self, props, original) {
 	if (props.tpl_events) {
-		this.tpl_events = {};
-		cloneObj(this.tpl_events, original.tpl_events);
-		cloneObj(this.tpl_events, props.tpl_events);
+		self.tpl_events = {};
+		cloneObj(self.tpl_events, original.tpl_events);
+		cloneObj(self.tpl_events, props.tpl_events);
 	}
 
 	if (props.tpl_r_events) {
-		this.tpl_r_events = {};
-		cloneObj(this.tpl_r_events, original.tpl_r_events);
-		cloneObj(this.tpl_r_events, props.tpl_r_events);
+		self.tpl_r_events = {};
+		cloneObj(self.tpl_r_events, original.tpl_r_events);
+		cloneObj(self.tpl_r_events, props.tpl_r_events);
 	}
 };
 
@@ -192,9 +192,7 @@ var View = spv.inh(StatesEmitter, {
 	},
 	init: initView,
 	skip_first_extend: true,
-	onExtend: function(md, props, original, params) {
-		onPropsExtend.call(md, props, original, params);
-	}
+	onExtend: onPropsExtend
 }, {
 	handleTemplateRPC: function(method) {
 		if (arguments.length === 1) {
@@ -222,7 +220,9 @@ var View = spv.inh(StatesEmitter, {
 			bwlev_view.RPCLegacy('followTo', md_id);
 		}
 	},
-	onExtend: spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend),
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
+		return onPropsExtend(md, props, original, params);
+	}),
 	'stch-map_slice_view_sources': function(target, state) {
 		if (!state) {
 			return;
