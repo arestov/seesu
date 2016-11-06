@@ -4,6 +4,7 @@ var spv = require('spv');
 var NestWatch = require('../nest-watch/NestWatch');
 var getShortStateName = require('./getShortStateName');
 var NestingSourceDr = require('./NestingSourceDr');
+var getPropsPrefixChecker= require('./getPropsPrefixChecker');
 
 var enc_states = {
 	'^': (function(){
@@ -79,5 +80,6 @@ return {
 	getShortStateName: getShortStateName,
 	getEncodedState: getEncodedState,
 	NestWatch: NestWatch,
+	getPropsPrefixChecker: getPropsPrefixChecker,
 };
 });
