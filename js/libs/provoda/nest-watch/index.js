@@ -2,8 +2,7 @@ define(function (require) {
 'use strict';
 var NestSelector = require('../StatesEmitter/NestSelector');
 var LocalWatchRoot = require('./LocalWatchRoot');
-var initDeclaredNestings = require('../initDeclaredNestings');
-var addNestWatch = require('./add-remove').addNestWatch;
+var addFrom = require('./addFrom');
 var checkNesting = require('./checkNesting');
 var checkStates = require('./checkStates');
 
@@ -30,12 +29,6 @@ function init(self) {
   }
 }
 
-function addFrom(target, lnest_watch, skip) {
-  var start_md = lnest_watch.nwatch.start_point
-    ? initDeclaredNestings.getSPByPathTemplate(target.app, target, lnest_watch.nwatch.start_point)
-    : target;
-  addNestWatch(start_md, lnest_watch, skip);
-}
 
 return {
   init: init,
