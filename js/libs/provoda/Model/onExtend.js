@@ -25,9 +25,6 @@ return function(self, props, original, params) {
 		self.collectStateChangeHandlers(props);
 	}
 
-	if (self.collectSelectorsOfCollchs) {
-		self.collectSelectorsOfCollchs(props);
-	}
 	collectCompxs(self, props);
 	collectSubpages(self, props);
 	checkSubpager(self, props);

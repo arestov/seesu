@@ -12,6 +12,7 @@ var checkNestRqC = require('./StatesEmitter/checkNestRqC');
 var checkNestSel = require('./StatesEmitter/checkNestSel');
 
 var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
+var collectSelectorsOfCollchs = require('./dcl/collectSelectorsOfCollchs');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
@@ -57,9 +58,8 @@ return function(self, props, original) {
 	}
 	var collches_modified = self.collectCollectionChangeDeclarations(props);
 
-	if (self.collectSelectorsOfCollchs) {
-		self.collectSelectorsOfCollchs(props);
-	}
+	collectSelectorsOfCollchs(self, props);
+
 	collectCompxs(self, props);
 	collectSubpages(self, props);
 	checkSubpager(self, props);
