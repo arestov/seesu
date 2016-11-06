@@ -10,6 +10,7 @@ var checkNestRqC = require('./StatesEmitter/checkNestRqC');
 var checkNestSel = require('./StatesEmitter/checkNestSel');
 
 var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
+var collectRegFires = require('./dcl/collectRegFires');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
@@ -73,7 +74,7 @@ return function onPropsExtend (self, props) {
 	checkNestRqC(self, props);
 	checkNestSel(self, props);
 
-	self.collectRegFires(self, props);
+	collectRegFires(self, props);
 
 	if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
 		self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
