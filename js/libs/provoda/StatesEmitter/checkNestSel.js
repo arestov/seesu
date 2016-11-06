@@ -2,9 +2,12 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var hp = require('../helpers');
-var NestWatch = require('../utils/index').NestWatch;
 var getShortStateName = require('../utils/getShortStateName');
+var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
+var NestingSourceDr = require('../utils/NestingSourceDr');
+
+var NestWatch = require('../nest-watch/NestWatch');
+
 var NestSelector = require('./NestSelector');
 var handleChdDeepState = NestSelector.handleChdDeepState;
 var handleChdCount = NestSelector.handleChdCount;
@@ -15,14 +18,14 @@ var endsWith = spv.endsWith;
 // var constr_mention = require('../structure/constr_mention');
 
 var getUnprefixed = spv.getDeprefixFunc( 'nest_sel-' );
-var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
 // var nestConstructor = constr_mention.nestConstructor;
 
 var SelectNestingDeclaration = function(dest_name, data) {
-	var parts = data.from.split(':');
-	this.start_point = parts.length > 1 && parts[0];
-	this.from = parts[parts.length - 1].split('.');
+	var nesting_source = new NestingSourceDr(data.from);
+	this.start_point = nesting_source.start_point;
+	this.from = nesting_source.selector;
 	this.dest_name = dest_name;
 	this.deps_dest = null;
 	this.deps_source = null;
@@ -68,7 +71,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
 		}
 		this.selectFn = data.where[1];
 
-		this.nwbase = new NestWatch(this.from, deps_source, null, null, {
+		this.nwbase = new NestWatch(nesting_source, deps_source, null, null, {
 			onchd_count: handleChdCount,
 			onchd_state: handleChdDeepState
 		}, handleAdding, handleRemoving);

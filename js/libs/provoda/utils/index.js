@@ -1,70 +1,10 @@
 define(function (require) {
 'use strict';
 var spv = require('spv');
-var getStateWriter = require('./getStateWriter');
-var standart = require('./standartNWH');
+var NestWatch = require('../nest-watch/NestWatch');
 var getShortStateName = require('./getShortStateName');
-
-var wrapper = standart(function wrapper(md, items, lnwatch) {
-	var callback = lnwatch.callback;
-	callback(md, null, null, {
-		items: items,
-		item: null
-	});
-});
-
-
-var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) {
-	if (!args.length) {return;}
-	var callback = lnwatch.callback;
-	callback(md, args[1], args[2], {
-		items: items,
-		item: args[3]
-	});
-});
-
-var NestWatch = function(selector, state_name, zip_func, result_state_name, handler, addHandler, removeHandler) {
-	if (!Array.isArray(selector)) {
-		throw new Error('selector should be array');
-	}
-	if (Array.isArray(state_name)) {
-		if (result_state_name) {
-			throw new Error('state_name cant be array when result_state_name is presented');
-		}
-		if (!handler.onchd_count || !handler.onchd_state) {
-			throw new Error('should be both onchd_count and onchd_state');
-		}
-	}
-
-	this.selector = selector;
-	this.state_name = state_name;
-	this.short_state_name = state_name &&
-		(Array.isArray(state_name)
-			? (state_name.map(getShortStateName))
-			: getShortStateName(state_name));
-	this.full_name = result_state_name;
-	this.zip_func = zip_func;
-	this.handler = handler; // mainely for 'stch-'
-	this.addHandler = addHandler;
-	this.removeHandler = removeHandler;
-
-	this.handle_state_change = null;
-	this.handle_count_or_order_change = null;
-
-
-	if (Array.isArray(state_name)) {
-		this.handle_state_change = handler.onchd_state;
-		this.handle_count_or_order_change = handler.onchd_count;
-	} else {
-		// если есть full_name значит нам надо записать новое состояние
-		// если нет, значит просто передать массив в пользовательскую функцию
-		var full_name_handler = result_state_name && getStateWriter(result_state_name, state_name, zip_func);
-
-		this.handle_state_change = this.state_name ? ( result_state_name ? full_name_handler : stateHandler) : null;
-		this.handle_count_or_order_change = result_state_name ? full_name_handler : wrapper;
-	}
-
-};
+var NestingSourceDr = require('./NestingSourceDr');
+var getPropsPrefixChecker= require('./getPropsPrefixChecker');
 
 var enc_states = {
 	'^': (function(){
@@ -96,13 +36,15 @@ var enc_states = {
 		var state_name = parts.pop();
 		var zip_func = parts.pop();
 
+		var nesting_source = new NestingSourceDr(nesting_name);
+
 		return {
 			rel_type: 'nesting',
 			full_name: string,
-			nesting_name: nesting_name,
+			nesting_name: nesting_source.selector.join('.'),
 			state_name: state_name,
 			zip_func: zip_func || itself,
-			nwatch: new NestWatch(nesting_name.split('.'), state_name, zip_func, string)
+			nwatch: new NestWatch(nesting_source, state_name, zip_func, string)
 		};
 	},
 	'#': function(string) {
@@ -137,6 +79,6 @@ function itself(item) {return item;}
 return {
 	getShortStateName: getShortStateName,
 	getEncodedState: getEncodedState,
-	NestWatch: NestWatch,
+	getPropsPrefixChecker: getPropsPrefixChecker,
 };
 });

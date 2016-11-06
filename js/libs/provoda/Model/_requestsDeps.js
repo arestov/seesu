@@ -2,7 +2,10 @@ define(function(require){
 'use strict';
 
 var hp = require('../helpers');
-var LocalWatchRoot = require('./LocalWatchRoot');
+var LocalWatchRoot = require('../nest-watch/LocalWatchRoot');
+var addNestWatch = require('../nest-watch/add-remove').addNestWatch;
+var removeNestWatch = require('../nest-watch/add-remove').removeNestWatch;
+var NestWatch = require('../nest-watch/NestWatch');
 var spv = require('spv');
 
 var count = 1;
@@ -20,7 +23,7 @@ var sourceKey = function(req_dep, suffix) {
 	return req_dep.target._provoda_id + '-' + suffix;
 };
 
-var NestWatch = hp.NestWatch;
+
 
 var noop = function() {};
 
@@ -95,7 +98,7 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
 		}
 	};
 
-	return new NestWatch(dep.value, null, noop, null, noop, addHandler, removeHandler);
+	return new NestWatch({selector: dep.value}, null, noop, null, noop, addHandler, removeHandler);
 }, function(dep) {
 	return dep.dep_id;
 });
@@ -126,7 +129,7 @@ var handleNesting = function(dep, req_dep, self) {
 
 		var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
 
-		self.addNestWatch(lo_ne_wa, 0);
+		addNestWatch(self, lo_ne_wa, 0);
 		req_dep.anchor = lo_ne_wa;
 	} else {
 		watchRelated(self, dep, req_dep);
@@ -146,7 +149,7 @@ var unhandleNesting = function(dep, req_dep, self) {
 			return;
 		}
 
-		self.removeNestWatch(req_dep.anchor, 0);
+		removeNestWatch(self, req_dep.anchor, 0);
 	} else {
 		unwatchRelated(self, dep, req_dep);
 	}

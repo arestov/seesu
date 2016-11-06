@@ -9,8 +9,9 @@ var initDeclaredNestings = require('./initDeclaredNestings');
 var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
-var NestSelector = require('./StatesEmitter/NestSelector');
-var LocalWatchRoot = require('./Model/LocalWatchRoot');
+var initNestWatchers = require('./nest-watch/index').init;
+var NestWatch = require('./nest-watch/NestWatch');
+var checkNesting =  require('./nest-watch/index').checkNesting;
 var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
 
@@ -128,7 +129,6 @@ var modelInit = (function() {
 		self.map_parent = self.map_parent || null;
 
 		self.req_order_field = null;
-		self.states_links = null;
 
 		self._provoda_id = self._highway.models_counters++;
 		self._highway.models[self._provoda_id] = self;
@@ -200,26 +200,8 @@ var modelInit = (function() {
 		}
 
 		self._requests_deps = null;
-		self.nes_match_index = null;
 
-		if (self.nest_sel_nest_matches) {
-			for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
-				var cur = self.nest_sel_nest_matches[i];
-				var start_point = cur.start_point ? initDeclaredNestings.get(self.app, self, cur.start_point) : self;
-				var dest_w = new NestSelector(self, cur);
-				var source_w = new LocalWatchRoot(self, cur.nwbase, dest_w);
-				if (dest_w.state_name) {
-					self.addNestWatch(dest_w, 0);
-				}
-				self.addNestWatch(source_w, 0);
-			}
-		}
-
-		if (self.nest_match) {
-			for (var i = 0; i < self.nest_match.length; i++) {
-				self.addNestWatch(new LocalWatchRoot(self, self.nest_match[i]), 0);
-			}
-		}
+		initNestWatchers(self);
 
 		if (!self.manual_states_init) {
 			self.initStates();
@@ -332,7 +314,6 @@ add({
 	collectStateChangeHandlers: (function() {
 		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
 		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-		var NestWatch = hp.NestWatch;
 
 		return function(props) {
 			var need_recalc = false;
@@ -367,7 +348,7 @@ add({
 				if (!nw_draft2) { continue; }
 
 				this.st_nest_matches.push(
-					new NestWatch(nw_draft2.selector, nw_draft2.state, null, null, index[stname])
+					new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, null, null, index[stname])
 				);
 
 			}
@@ -767,11 +748,11 @@ add({
 	getSiOpts: function() {
 		return getSiOpts(this);
 	},
-	initChi: function(name, data, params) {
+	initChi: function(name, data, params, more, states) {
 		var Constr = this._all_chi['chi-' + name];
-		return this.initSi(Constr, data, params);
+		return this.initSi(Constr, data, params, more, states);
 	},
-	initSi: function(Constr, data, params) {
+	initSi: function(Constr, data, params, more, states) {
 		if (Constr.prototype.conndst_parent && Constr.prototype.conndst_parent.length) {
 			if (Constr.prototype.pconstr_id !== true && this.constr_id !== Constr.prototype.pconstr_id) {
 				console.log( (new Error('pconstr_id should match constr_id')).stack );
@@ -783,7 +764,7 @@ add({
 			var initsbi_opts = this.getSiOpts();
 
 			this.useMotivator(instance, function(instance) {
-				instance.init(initsbi_opts, data, params);
+				instance.init(initsbi_opts, data, params, more, states);
 			});
 
 			return instance;
@@ -796,7 +777,7 @@ add({
 				app: this.app
 			};
 
-			var instancePure = new Constr(opts, data, params);
+			var instancePure = new Constr(opts, data, params, more, states);
 
 			instancePure.current_motivator = null;
 
@@ -804,96 +785,6 @@ add({
 		}
 
 	},
-	removeNestWatch: function(nwatch, skip) {
-		if (nwatch.selector.length == skip) {
-			if (!nwatch.items_index) {
-				return;
-			}
-
-			nwatch.items_index[this._provoda_id] = null;
-			nwatch.items_changed = true;
-			if (nwatch.one_item_mode && nwatch.one_item == this) {
-				nwatch.one_item = null;
-			}
-
-			if (this.states_links) {
-				removeNWatchFromSI(this.states_links, nwatch);
-			}
-			// console.log('full match!', this, nwa);
-		} else {
-			var nesting_name = nwatch.selector[skip];
-			if (this.nes_match_index && this.nes_match_index[nesting_name]) {
-				this.nes_match_index[nesting_name] = spv.findAndRemoveItem(this.nes_match_index[nesting_name], nwatch);
-				// this.nes_match_index[nesting_name].remoVe();
-			}
-		}
-
-		var removeHandler = nwatch.removeHandler;
-		if (removeHandler) {
-			removeHandler(this, nwatch, skip);
-		}
-
-	},
-	addNestWatch: (function() {
-		var SublWtch = function SublWtch(nwatch, skip) {
-			this.nwatch = nwatch;
-			this.skip = skip;
-		};
-		return function(nwatch, skip) {
-			if (!this.nes_match_handeled) {
-				this.nes_match_handeled = {};
-			}
-			if (!this.nes_match_handeled[nwatch.num]) {
-				this.nes_match_handeled[nwatch.num] = true;
-			} else {
-				return;
-			}
-
-			if (nwatch.selector.length == skip) {
-				// console.log('full match!', this, nwatch);
-				if (!nwatch.items_index) {
-					nwatch.items_index = {};
-				}
-				nwatch.items_index[this._provoda_id] = this;
-				nwatch.items_changed = true;
-				if (nwatch.one_item_mode) {
-					nwatch.one_item = this;
-				}
-				if (!this.states_links) {
-					this.states_links = {};
-				}
-				addNWatchToSI(this.states_links, nwatch);
-
-			} else {
-				if (!this.nes_match_index) {
-					this.nes_match_index = {};
-				}
-
-				var nesting_name = nwatch.selector[skip];
-				if (!this.nes_match_index[nesting_name]) {
-					this.nes_match_index[nesting_name] = [];
-				}
-				var subl_wtch = new SublWtch(nwatch, skip);
-
-				this.nes_match_index[nesting_name].push(subl_wtch);
-
-
-				if (this.children_models) {
-					for (var nesting_name in this.children_models) {
-						checkNestWatchs(this, nesting_name, this.children_models[nesting_name]);
-					}
-				}
-			}
-
-			var addHandler = nwatch.addHandler;
-			if (addHandler) {
-				addHandler(this, nwatch, skip);
-			}
-
-
-
-		};
-	})(),
 	mapStates: function(states_map, donor, acceptor) {
 		if (acceptor && typeof acceptor == 'boolean'){
 			if (this.init_states === false) {
@@ -1003,68 +894,6 @@ add({
 	}
 });
 
-var removeNestWatchs = function(item, array, one) {
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			cur.nwatch.one_item_mode = !!one;
-			item.removeNestWatch(cur.nwatch, cur.skip + 1);
-		}
-};
-
-var addNestWatchs = function(item, array, one) {
-	for (var i = 0; i < array.length; i++) {
-		var cur = array[i];
-		cur.nwatch.one_item_mode = !!one;
-		item.addNestWatch(cur.nwatch, cur.skip + 1);
-	}
-};
-
-function checkNestWatchs(md, collection_name, array, removed) {
-	if (md.nes_match_index && md.nes_match_index[collection_name]) {
-		// console.log('match!', collection_name);
-		var nwats = md.nes_match_index[collection_name];
-
-		if (Array.isArray(removed)) {
-			for (var i = 0; i < removed.length; i++) {
-				if (!removed[i]) {continue;}
-				removeNestWatchs(removed[i], nwats);
-			}
-		} else if (removed){
-			removeNestWatchs(array, nwats, true);
-		}
-
-
-		if (Array.isArray(array)) {
-			for (var i = 0; i < array.length; i++) {
-				if (!array[i]) {continue;}
-				addNestWatchs(array[i], nwats);
-			}
-		} else if(array) {
-			addNestWatchs(array, nwats, true);
-		}
-	}
-}
-
-function checkChangedNestWatchs(md, collection_name) {
-	if (md.nes_match_index && md.nes_match_index[collection_name]) {
-		// console.log('match!', collection_name);
-		var nwats = md.nes_match_index[collection_name];
-
-		var result = [];
-		for (var i = 0; i < nwats.length; i++) {
-			var cur = nwats[i].nwatch;
-			if (cur.items_changed) {
-				result.push(cur);
-				// console.log(cur.selector, cur);
-			}
-
-		}
-
-		return result.length && result;
-	}
-}
-
-
 var hasDot = spv.memorize(function(nesting_name) {
 	return nesting_name.indexOf('.') != -1;
 });
@@ -1133,24 +962,7 @@ add({
 		}
 
 		var removed = hp.getRemovedNestingItems(array, old_value);
-
-		checkNestWatchs(this, collection_name, array, removed);
-
-		var changed_nawchs = checkChangedNestWatchs(this, collection_name);
-		//var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
-		var calls_flow = this._getCallsFlow();
-		if (changed_nawchs) {
-			for (var i = 0; i < changed_nawchs.length; i++) {
-				var cur = changed_nawchs[i];
-
-
-				calls_flow.pushToFlow(null, cur, null, array, cur.handler, null, this.current_motivator);
-
-			}
-
-		}
-
-
+		checkNesting(this, collection_name, array, removed);
 		// !?
 
 
@@ -1369,40 +1181,6 @@ add({
 	getLinedStructure: getLinedStructure ,
 	toSimpleStructure: toSimpleStructure
 });
-}
-
-function addNWOne(states_links, state_name, nwatch) {
-	if (!states_links[state_name]) {
-		states_links[state_name] = [];
-	}
-	states_links[state_name].push(nwatch);
-}
-
-function addNWatchToSI(states_links, nwatch) {
-	if (Array.isArray(nwatch.short_state_name)) {
-		for (var i = 0; i < nwatch.short_state_name.length; i++) {
-			addNWOne(states_links, nwatch.short_state_name[i], nwatch);
-		}
-	} else {
-		addNWOne(states_links, nwatch.short_state_name, nwatch);
-	}
-}
-
-function removeOne(states_links, state_name, nwatch) {
-	if (!states_links[state_name]) {
-		return;
-	}
-	states_links[state_name] = spv.findAndRemoveItem(states_links[state_name], nwatch);
-}
-
-function removeNWatchFromSI(states_links, nwatch) {
-	if (Array.isArray(nwatch.short_state_name)) {
-		for (var i = 0; i < nwatch.short_state_name.length; i++) {
-			removeOne(states_links, nwatch.short_state_name[i], nwatch);
-		}
-	} else {
-		removeOne(states_links, nwatch.short_state_name, nwatch);
-	}
 }
 
 return Model;

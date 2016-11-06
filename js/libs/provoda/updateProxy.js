@@ -8,7 +8,7 @@ var produceEffects = require('./StatesEmitter/produceEffects');
 var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 var getFinupFullname = spv.getPrefixingFunc('finup-');
-
+var checkStates = require('./nest-watch/index').checkStates;
 
 var serv_counter = 1;
 var ServStates = function() {
@@ -405,17 +405,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 
 	zdsv.abortFlowSteps('stev', state_name);
 
-
-	var links = etr.states_links && etr.states_links[state_name];
-	if (links) {
-		for (var k = 0; k < links.length; k++) {
-			var cur = links[k];
-			// var calls_flow = (opts && opts.emergency) ? main_calls_flow : this.sputnik._getCallsFlow();
-			var calls_flow = etr._getCallsFlow();
-			calls_flow.pushToFlow(null, cur, [state_name, value, zdsv.original_states[state_name], etr], null, cur.state_handler, null, etr.current_motivator);
-
-		}
-	}
+	checkStates(etr, zdsv, state_name, value, zdsv.original_states[state_name]);
 
 	var default_name = utils_simple.getSTEVNameDefault( state_name );
 	var light_name = utils_simple.getSTEVNameLight( state_name );

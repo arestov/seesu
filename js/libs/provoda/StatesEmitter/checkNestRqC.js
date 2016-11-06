@@ -30,7 +30,10 @@ return function checkNestRqC(self, props) {
 			self._nest_rqc[clean_name] = item;
 			if (item.type == 'constr') {
 				self._chi_nest_rqc[key] = item.value;
+			} else {
+				self._chi_nest_rqc[key] = null;
 			}
+
 		} else {
 			self._chi_nest_rqc[key] = null;
 			self._nest_rqc[clean_name] = null;

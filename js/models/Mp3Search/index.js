@@ -1,5 +1,10 @@
-define(['pv', 'spv', '../SongFileModel'], function(pv, spv, SongFileModel){
+define(function(require){
 "use strict";
+var pv = require('pv');
+var spv = require('spv');
+var SongFileModel = require('../SongFileModel');
+var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
+
 
 
 var guessArtist = function(track_title_raw, query_artist){
@@ -314,19 +319,23 @@ var getMatchedSongs = function(music_list, msq) {
 };
 
 	var FilesBySource = spv.inh(pv.Model, {
-		init: function(target, opts, data, search_eng_name) {
+		init: function(target, opts, data) {
 			// this._super.apply(this, arguments);
-
+			var search_eng_name = data.head.search_name;
 			target.mp3_search = target.map_parent.map_parent;
 			target.search_name = search_eng_name;
 			target.search_eng = target.mp3_search.getSearchByName(search_eng_name);
 
-			target.msq = data.msq;
-			target.query_string = data.query_string;
+			target.msq = target.map_parent.msq;
+			target.query_string = target.map_parent.query_string;
 
 			target.updateManyStates({
 				'dmca_url': target.search_eng && target.search_eng.dmca_url,
 				'search_name': search_eng_name
+			});
+
+			target.on('requests', function(requests) {
+				this.map_parent.addRequests(requests);
 			});
 
 			//cache
@@ -545,7 +554,8 @@ var getMatchedSongs = function(music_list, msq) {
 				target.startSearch( {only_cache: true} );
 			});
 
-
+			target.head = target.head || {};
+			target.head.msq =  target.msq;
 		},
 	}, {
 		'nest_sel-available_sources': {
@@ -614,15 +624,21 @@ var getMatchedSongs = function(music_list, msq) {
 			}
 
 		},
+		sub_pager: {
+			item: [
+				FilesBySource,
+				[[]],
+				{
+					search_name: 'decoded_name'
+				}
+			]
+		},
 		hndListChange: function(list) {
 			var _this = this;
 			for (var i = 0; i < list.length; i++) {
 				var cur = list[i].name;
 				if (!this.sources[cur]){
-					this.sources[cur] = this.bindSource(cur, {
-						msq: this.msq,
-						query_string: this.query_string
-					}, this.mp3_search);
+					this.sources[cur] = this.bindSource(cur);
 					this.sources_list.push(this.sources[cur]);
 				}
 			}
@@ -638,10 +654,7 @@ var getMatchedSongs = function(music_list, msq) {
 		addFbS: function(search_name) {
 			var _this = this;
 			if (!this.sources[search_name]){
-				this.sources[search_name] = this.bindSource(search_name, {
-					msq: this.msq,
-					query_string: this.query_string
-				}, this.mp3_search);
+				this.sources[search_name] = this.bindSource(search_name);
 				this.sources_list.push(_this.sources[search_name]);
 				this.sources_list.sort(function(g,f){
 					return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
@@ -652,14 +665,8 @@ var getMatchedSongs = function(music_list, msq) {
 
 		},
 		'chi-files_by_source': FilesBySource,
-		bindSource: function(name, data) {
-			var files_by_source = this.initChi('files_by_source', data, name);
-			var _this = this;
-			files_by_source.on('requests', function(requests) {
-				_this.addRequests(requests);
-			});
-
-			return files_by_source;
+		bindSource: function(name) {
+			return routePathByModels(this, name, false, true);
 		},
 		complex_states: {
 			'exsrc_incomplete': [
