@@ -22,4 +22,4 @@ return function addSubpage(self, name, cur) {
 	self._build_cache_sub_pages_side[name] = item;
 
 };
-})
+});

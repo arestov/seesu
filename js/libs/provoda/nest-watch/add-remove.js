@@ -24,29 +24,28 @@ var addNestWatchs = function(item, array, one) {
 };
 
 function checkNestWatchs(md, collection_name, array, removed) {
-	if (md.nes_match_index && md.nes_match_index[collection_name]) {
-		// console.log('match!', collection_name);
-		var nwats = md.nes_match_index[collection_name];
+	if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
+  // console.log('match!', collection_name);
+  var nwats = md.nes_match_index[collection_name];
 
-		if (Array.isArray(removed)) {
-			for (var i = 0; i < removed.length; i++) {
-				if (!removed[i]) {continue;}
-				removeNestWatchs(removed[i], nwats);
-			}
-		} else if (removed){
-			removeNestWatchs(array, nwats, true);
-		}
+  if (Array.isArray(removed)) {
+    for (var i = 0; i < removed.length; i++) {
+      if (!removed[i]) {continue;}
+      removeNestWatchs(removed[i], nwats);
+    }
+  } else if (removed){
+    removeNestWatchs(array, nwats, true);
+  }
 
 
-		if (Array.isArray(array)) {
-			for (var i = 0; i < array.length; i++) {
-				if (!array[i]) {continue;}
-				addNestWatchs(array[i], nwats);
-			}
-		} else if(array) {
-			addNestWatchs(array, nwats, true);
-		}
-	}
+  if (Array.isArray(array)) {
+    for (var i = 0; i < array.length; i++) {
+      if (!array[i]) {continue;}
+      addNestWatchs(array[i], nwats);
+    }
+  } else if(array) {
+    addNestWatchs(array, nwats, true);
+  }
 }
 
 function addNestWatch(self, nwatch, skip) {
@@ -72,7 +71,7 @@ function addNestWatch(self, nwatch, skip) {
     if (!self.states_links) {
       self.states_links = {};
     }
-    addNWatchToSI(self.states_links, nwatch);
+    addNWatchToStatesIndex(self.states_links, nwatch);
 
   } else {
     if (!self.nes_match_index) {
@@ -140,7 +139,7 @@ function addNWOne(states_links, state_name, nwatch) {
 	states_links[state_name].push(nwatch);
 }
 
-function addNWatchToSI(states_links, nwatch) {
+function addNWatchToStatesIndex(states_links, nwatch) {
 	if (Array.isArray(nwatch.short_state_name)) {
 		for (var i = 0; i < nwatch.short_state_name.length; i++) {
 			addNWOne(states_links, nwatch.short_state_name[i], nwatch);

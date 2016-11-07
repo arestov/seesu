@@ -8,6 +8,7 @@ var updateProxy = require('./updateProxy');
 var prsStCon =  require('./prsStCon');
 var StatesEmitter = require('./StatesEmitter');
 var PvTemplate = require('./PvTemplate');
+var onPropsExtend = require('./onExtendView');
 
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
@@ -158,21 +159,6 @@ var initView = function(target, view_otps, opts){
 	prsStCon.connect.root(target);
 };
 
-var onPropsExtend = function(props, original) {
-	if (props.tpl_events) {
-		this.tpl_events = {};
-		cloneObj(this.tpl_events, original.tpl_events);
-		cloneObj(this.tpl_events, props.tpl_events);
-	}
-
-	if (props.tpl_r_events) {
-		this.tpl_r_events = {};
-		cloneObj(this.tpl_r_events, original.tpl_r_events);
-		cloneObj(this.tpl_r_events, props.tpl_r_events);
-	}
-};
-
-
 var sources = function (item_source, sources_list) {
 	var arr = [];
 	if (item_source) {
@@ -191,10 +177,7 @@ var View = spv.inh(StatesEmitter, {
 		};
 	},
 	init: initView,
-	skip_first_extend: true,
-	onExtend: function(md, props, original, params) {
-		onPropsExtend.call(md, props, original, params);
-	}
+	onExtend: onPropsExtend
 }, {
 	handleTemplateRPC: function(method) {
 		if (arguments.length === 1) {
@@ -222,7 +205,9 @@ var View = spv.inh(StatesEmitter, {
 			bwlev_view.RPCLegacy('followTo', md_id);
 		}
 	},
-	onExtend: spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend),
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
+		return onPropsExtend(md, props, original, params);
+	}),
 	'stch-map_slice_view_sources': function(target, state) {
 		if (!state) {
 			return;
@@ -1082,73 +1067,6 @@ var View = spv.inh(StatesEmitter, {
 	getPart: function(part_name) {
 		return this.view_parts && this.view_parts[part_name];
 	},
-	collectStateChangeHandlers: (function() {
-		// var thisT = /this/gi;
-
-		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-		return function(props) {
-			var need_recalc = false, prop;
-			if (this.hasOwnProperty('state_change')){
-				need_recalc = true;
-			} else {
-				need_recalc = hasPrefixedProps(props);
-
-			}
-			if (!need_recalc){
-				return;
-			}
-			this._has_stchs = true;
-
-			var has_stchh = {};
-			var result = [];
-
-			this.stch_hs_list = [];
-
-
-			for (prop in this) {
-
-				if (getUnprefixed( prop )){
-					var real_name = getUnprefixed( prop );
-					has_stchh[real_name] = true;
-					result.push({
-						name: real_name,
-						item: this[prop]
-					});
-
-					this.stch_hs_list.push(real_name);
-				}
-			}
-
-			if (this.state_change){
-				for (prop in this.state_change) {
-					if (!has_stchh[prop]){
-						has_stchh[prop] = true;
-						result.push({
-							name: prop,
-							item: this.state_change[prop]
-						});
-
-						this.stch_hs_list.push(prop);
-					}
-
-				}
-			}
-
-			this.stch_hs = result;
-
-			// for (var i = 0; i < this.stch_hs.length; i++) {
-
-			// 	var cur = this.stch_hs[i];
-			// 	var digi = thisT.test(cur.item);
-			// 	if (digi){
-
-			// 		console.log(cur.item);
-			// 	}
-
-			// }
-		};
-	})(),
 	requirePart: function(part_name) {
 		if (!this.isAlive()){
 			return $();
@@ -1544,173 +1462,6 @@ var View = spv.inh(StatesEmitter, {
 			}
 		}
 	},
-	changeChildrenViewsDeclarations: function(props) {
-		var nesting_name, cur;
-		if (props.children_views) {
-			for (nesting_name in this.children_views) {
-				cur = this.children_views[nesting_name];
-				if (typeof cur == 'function') {
-					this.children_views[nesting_name] = {
-						main: cur
-					};
-				}
-			}
-		}
-		if (props.children_views_by_mn) {
-			for (nesting_name in this.children_views_by_mn) {
-				for (var model_name in this.children_views_by_mn[nesting_name]) {
-					cur = this.children_views_by_mn[nesting_name][model_name];
-					if (typeof cur == 'function') {
-						this.children_views_by_mn[nesting_name][model_name] = {
-							main: cur
-						};
-					}
-				}
-			}
-		}
-
-	},
-	collectSelectorsOfCollchs: (function(){
-		var parseCollchSel = spv.memorize(function(str) {
-			var parts = str.split('/');
-			var model_name = parts[1];
-			var parent_space_name = parts[2];
-			var prio = 0;
-			if (model_name) {
-				prio += 2;
-			}
-			if (parent_space_name) {
-				prio += 1;
-			}
-
-			var key = '';
-			if (model_name) {
-				key += model_name;
-			}
-			if (parent_space_name) {
-				key += '/' + parent_space_name;
-			}
-
-			return {
-				nesting_name : parts[0],
-				model_name: parts[1] || null,
-				parent_space_name: parts[2] || null,
-				prio: prio,
-				key: key
-			};
-		});
-
-		var getUnprefixed = spv.getDeprefixFunc( 'sel-coll-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-		return function(props){
-			var need_recalc = hasPrefixedProps( props );
-			if (!need_recalc){
-				return;
-			}
-
-			var prop;
-
-			this.dclrs_selectors = {};
-
-			for (prop in this){
-				if (getUnprefixed( prop )){
-					var collch = this[ prop ];
-					var selector_string = getUnprefixed( prop );
-					//this.dclrs_selectors[selector_string] = collch;
-					var selector = parseCollchSel(selector_string);
-					if (!this.dclrs_selectors.hasOwnProperty(selector.nesting_name)) {
-						this.dclrs_selectors[selector.nesting_name] = {};
-					}
-					this.dclrs_selectors[selector.nesting_name][selector.key] = collch;
-
-					// this.dclrs_selectors[selector.nesting_name].push({
-					// 	selector: selector,
-					// 	collch: collch
-					// });
-
-
-				}
-			}
-			return true;
-		};
-	})(),
-	collectCollectionChangeDeclarations: (function() {
-		var solvingOf = function(declr) {
-			var by_model_name = declr.by_model_name;
-			var space = declr.space != 'main' && declr.space;
-			var is_wrapper_parent = declr.is_wrapper_parent;
-			var needs_expand_state = declr.needs_expand_state;
-			if (by_model_name || space || is_wrapper_parent || needs_expand_state) {
-				return {
-					by_model_name: by_model_name,
-					space: space,
-					is_wrapper_parent: is_wrapper_parent,
-					needs_expand_state: needs_expand_state
-				};
-			}
-		};
-		var parseCollectionChangeDeclaration = function(collch) {
-			if (typeof collch == 'string'){
-				collch = {
-					place: collch
-				};
-			}
-			var expand_state = collch.needs_expand_state;
-			if (expand_state && typeof expand_state != 'string') {
-				expand_state = 'can_expand';
-			}
-
-			var is_wrapper_parent = collch.is_wrapper_parent &&  collch.is_wrapper_parent.match(/^\^+/gi);
-
-			var declr = {
-				place: collch.place,
-				by_model_name: collch.by_model_name,
-				space: collch.space || 'main',
-				strict: collch.strict,
-				is_wrapper_parent: is_wrapper_parent && is_wrapper_parent[0].length,
-				opts: collch.opts,
-				needs_expand_state: expand_state || null,
-				not_request: collch.not_request,
-				limit: collch.limit,
-				solving: null
-			};
-			var solving = solvingOf(declr);
-			if (solving) {
-				declr.solving = solving;
-			}
-			return declr;
-		};
-		var getUnprefixed = spv.getDeprefixFunc(  'collch-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-		return function(props) {
-			var need_recalc = hasPrefixedProps( props );
-
-
-			if (!need_recalc){
-				return;
-			}
-			var prop;
-
-			this.dclrs_fpckgs = {};
-
-			for (prop in this){
-				if (getUnprefixed( prop )){
-					var collch = this[ prop ];
-					var nesting_name = getUnprefixed( prop );
-					if (typeof collch == 'function'){
-						this.dclrs_fpckgs[ nesting_name ] = collch;
-					} else {
-						if (Array.isArray(collch)) {
-							throw new Error('do not support arrays anymore');
-						}
-						this.dclrs_fpckgs[ nesting_name ] = parseCollectionChangeDeclaration(collch);
-					}
-
-				}
-			}
-			return true;
-		};
-	})(),
 	callCollectionChangeDeclaration: function(dclr_fpckg, nesname, array, old_value, removed) {
 		if (typeof dclr_fpckg == 'function'){
 			dclr_fpckg.call(this, nesname, array, old_value, removed);

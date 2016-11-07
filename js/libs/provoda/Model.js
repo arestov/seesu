@@ -10,10 +10,9 @@ var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
 var initNestWatchers = require('./nest-watch/index').init;
-var NestWatch = require('./nest-watch/NestWatch');
 var checkNesting =  require('./nest-watch/index').checkNesting;
-var constr_mention = require('./structure/constr_mention');
 var _requestsDeps = require('./Model/_requestsDeps');
+var onPropsExtend = require('./Model/onExtend');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -49,19 +48,6 @@ var getSiOpts = function(md) {
 	return si_opts_cache[provoda_id];
 };
 
-var changeSources = function(store, send_declr) {
-	var api_name = send_declr.api_name;
-	if (typeof api_name == 'string') {
-		store.api_names.push(api_name);
-	} else {
-		var network_api = api_name.call();
-		if (!network_api.source_name) {
-			throw new Error('no source_name');
-		}
-		store.sources_names.push(network_api.source_name);
-	}
-};
-
 var changeSourcesByApiNames = function(md, store) {
 	if (!store.api_names_converted) {
 		store.api_names_converted = true;
@@ -81,18 +67,6 @@ var changeSourcesByApiNames = function(md, store) {
 		}
 	}
 };
-
-
-var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
-	if (string.indexOf('@') == -1) {
-		return false;
-	}
-	var parts = string.split('@');
-	return {
-		state: parts[0],
-		selector: parts[1].split('.')
-	};
-});
 
 var modelInit = (function() {
 	return function initModel(self, opts, data, params, more, states) {
@@ -231,31 +205,13 @@ var modelInit = (function() {
 	};
 })();
 
-var onPropsExtend = (function(){
-	var check = /initStates/gi;
-	return function(props, original, params) {
-		var init = params && params.init || props.init;
-		if (init) {
-			if (init.length > 2 && !this.hasOwnProperty('network_data_as_states')) {
-				this.network_data_as_states = false;
-			}
-			if (init.toString().search(check) != -1) {
-				this.manual_states_init = true;
-			}
-		}
-	};
-})();
-
 var Model = spv.inh(StatesEmitter, {
 	naming: function(fn) {
 		return function Model(opts, data, params, more, states) {
 			fn(this, opts, data, params, more, states);
 		};
 	},
-	skip_first_extend: true,
-	onExtend: function(md, props, original, params) {
-		onPropsExtend.call(md, props, original, params);
-	},
+	onExtend: onPropsExtend,
 	init: modelInit,
 	props: modelProps
 });
@@ -307,390 +263,7 @@ add({
 				return result;
 			}
 		}
-
-
-
 	},
-	collectStateChangeHandlers: (function() {
-		var getUnprefixed = spv.getDeprefixFunc( 'stch-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-		return function(props) {
-			var need_recalc = false;
-
-			if (props.state_change || hasPrefixedProps(props)) {
-				need_recalc = true;
-			}
-
-			if (!need_recalc){
-				return;
-			}
-
-			var index = {};
-
-			for (var lprop in this.state_change) {
-				index[lprop] = this.state_change[lprop];
-			}
-
-			for (var prop_name in this) {
-				if (getUnprefixed(prop_name)) {
-					var string = getUnprefixed(prop_name);
-					index[string] = this[prop_name];
-				}
-			}
-
-			this.st_nest_matches = [];
-
-			for (var stname in index) {
-				if (!index[stname]) {continue;}
-
-				var nw_draft2 = getParsedStateChange(stname);
-				if (!nw_draft2) { continue; }
-
-				this.st_nest_matches.push(
-					new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, null, null, index[stname])
-				);
-
-			}
-
-			this._has_stchs = true;
-		};
-	})(),
-	collectNestingsDeclarations: (function() {
-		var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-		var declarationConstructor = constr_mention.declarationConstructor;
-
-		return function(props) {
-			var
-				has_props = hasPrefixedProps(props),
-				has_pack = this.hasOwnProperty('nest'),
-				prop, cur, real_name;
-
-			if (has_props || has_pack){
-				var result = [];
-
-				var used_props = {};
-
-				if (has_props) {
-					for (prop in this) {
-
-						if (getUnprefixed(prop)) {
-
-							real_name = getUnprefixed(prop);
-							cur = this[prop];
-							used_props[real_name] = true;
-							result.push({
-								nesting_name: real_name,
-								subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-								preload: cur[1],
-								init_state_name: cur[2]
-							});
-						}
-					}
-				}
-
-				if (has_pack) {
-					for (real_name in this.nest) {
-						if (used_props[real_name]) {
-							continue;
-						}
-						cur = this.nest[real_name];
-						used_props[real_name] = true;
-						result.push({
-							nesting_name: real_name,
-							subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-							preload: cur[1],
-							init_state_name: cur[2]
-						});
-					}
-				}
-
-				this.nestings_declarations = result;
-				this.idx_nestings_declarations = {};
-				this._chi_nest = {};
-				for (var i = 0; i < result.length; i++) {
-					this.idx_nestings_declarations[result[i].nesting_name] = result[i];
-
-					var item = result[i].subpages_names_list;
-					if (Array.isArray(item)) {
-						for (var kk = 0; kk < item.length; kk++) {
-							if (item[kk].type == 'constr') {
-								this._chi_nest[item[kk].key] = item[kk].value;
-							}
-						}
-					} else {
-						if (item.type == 'constr') {
-							this._chi_nest[item.key] = item.value;
-						}
-					}
-
-				}
-
-
-			}
-
-
-
-		};
-	})(),
-	changeDataMorphDeclarations: (function() {
-		var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
-		var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
-
-		var apiDeclr = spv.memorize(function(name) {
-			var parts = name.split('.');
-			return {
-				name: parts[0],
-				resource_path: parts.length > 1 ? parts.slice(1) : null
-			};
-		});
-
-		var counter = 1;
-
-		function SendDeclaration(declr) {
-			this.id = counter++;
-			this.api_name = null;
-			this.api_resource_path = null;
-
-			if (typeof declr[0] == 'function') {
-				this.api_name = declr[0];
-			} else {
-				var api_declr = apiDeclr(declr[0]);
-				this.api_name = api_declr.name;
-				this.api_resource_path = api_declr.resource_path;
-			}
-
-			this.api_method_name = null;
-			this.manual = null;
-			this.ids_declr = null;
-
-			if (typeof declr[1] =='string') {
-				this.api_method_name = declr[1];
-			} else if (Array.isArray(declr[1])) {
-				var manual = declr[1];
-				this.manual = {
-					dependencies: manual[0],
-					fn: manual[1],
-					fn_body: manual[1].toString()
-				};
-			} else if (declr[1].arrayof) {
-				this.ids_declr = declr[1];
-				this.ids_declr.fn_body = this.ids_declr.req.toString();
-			}
-
-			this.getArgs = declr[2];
-			this.non_standart_api_opts = declr[3];
-		}
-
-		function ReqMap(req_item, num) {
-			this.num = num;
-			this.dependencies = null;
-			this.send_declr = null;
-			var relations = req_item[0];
-			if (Array.isArray(relations[0])) {
-				throw new Error('wrong');
-			} else {
-			}
-
-			this.states_list = relations;
-
-			var parse;
-			if (typeof req_item[1] != 'function') {
-				parse = spv.mmap( req_item[1] );
-			} else {
-				parse = req_item[1];
-			}
-			this.parse = parse;
-			var send_declr = req_item[2];
-
-			if (!Array.isArray(send_declr[0])) {
-				this.send_declr = new SendDeclaration(send_declr);
-			} else {
-				this.dependencies = send_declr[0];
-				this.send_declr = new SendDeclaration(send_declr[1]);
-			}
-		}
-
-		function stateName(name) {
-			return '$__can_load_' + name;
-		}
-
-		function NestReqMap(dclt, name) {
-
-			if (typeof dclt[0][0] != 'function') {
-				dclt[0][0] = spv.mmap(dclt[0][0]);
-			}
-			if (dclt[0][1] && dclt[0][1] !== true && typeof dclt[0][1] != 'function') {
-				dclt[0][1] = spv.mmap(dclt[0][1]);
-			}
-			var array = dclt[0][2];
-			if (array) {
-				for (var i = 0; i < array.length; i++) {
-					var spec_cur = array[i];
-					if (typeof spec_cur[1] != 'function') {
-						spec_cur[1] = spv.mmap(spec_cur[1]);
-					}
-				}
-			}
-			this.original = this;
-			this.nest_name = name;
-			this.parse_items = dclt[0][0];
-			this.parse_serv = dclt[0][1];
-			this.side_data_parsers = dclt[0][2];
-			this.send_declr = null;
-			this.dependencies = null;
-			this.state_dep = null;
-
-			var send_declr = dclt[1];
-			if (!Array.isArray(send_declr[0])) {
-				this.send_declr = new SendDeclaration(send_declr);
-			} else {
-				this.dependencies = send_declr[0];
-				this.send_declr = new SendDeclaration(send_declr[1]);
-			}
-
-
-			if (this.dependencies) {
-				this.state_dep = stateName(this.nest_name);
-			}
-
-		}
-
-		function NestReqMapCopy(nest_declr, is_main) {
-			this.original = nest_declr;
-
-			this.nest_name = nest_declr.nest_name;
-			this.parse_items = nest_declr.parse_items;
-			this.parse_serv = nest_declr.parse_serv;
-			this.side_data_parsers = nest_declr.side_data_parsers;
-			this.send_declr = nest_declr.send_declr;
-			this.dependencies = nest_declr.dependencies;
-			this.state_dep = nest_declr.state_dep;
-
-			if (!is_main) {
-				return;
-			}
-
-			var more = ['can_load_data'];
-			this.dependencies = !this.dependencies
-				? more
-				: this.dependencies.concat(more);
-
-			this.state_dep = stateName(this.nest_name);
-
-		}
-
-		var doIndex = function(list, value) {
-			var result = [];
-
-			for (var i = 0; i < list.length; i++) {
-				var states_list = list[i].states_list;
-				if (states_list.indexOf(value) != -1) {
-					result.push(list[i]);
-				}
-			}
-
-			return result;
-		};
-
-		var assign = function(md, props, nest_declr) {
-			var key = 'compx-' + nest_declr.state_dep;
-			md[key] = props[key] = [nest_declr.dependencies, spv.hasEveryArgs];
-		};
-
-		return function(props) {
-			var i, cur;
-
-
-			var has_changes = false;
-
-			if (props.hasOwnProperty('req_map')) {
-				this.netsources_of_states = {
-					api_names: [],
-					api_names_converted: false,
-					sources_names: []
-				};
-				has_changes = true;
-
-				var list = new Array(props.req_map.length);
-				for (var i = 0; i < props.req_map.length; i++) {
-					list[i] = new ReqMap(props.req_map[i], i);
-				}
-				for (var i = 0; i < list.length; i++) {
-					changeSources(this.netsources_of_states, list[i].send_declr);
-
-				}
-
-				this._states_reqs_index = {};
-				var states_index = {};
-
-				for (var i = 0; i < list.length; i++) {
-					var states_list = list[i].states_list;
-					for (var jj = 0; jj < states_list.length; jj++) {
-						states_index[states_list[jj]] = true;
-					}
-				}
-				for (var state_name in states_index) {
-					this._states_reqs_index[state_name] = doIndex(list, state_name);
-				}
-			}
-
-			var has_reqnest_decls = hasPrefixedProps(props);
-
-			var main_list_nest_req = this.main_list_nest_req;
-
-			if (has_reqnest_decls) {
-				this.has_reqnest_decls = true;
-				this.netsources_of_nestings = {
-					api_names: [],
-					api_names_converted: false,
-					sources_names: []
-				};
-				has_changes = true;
-				for (var prop_name in props) {
-					if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
-						var nest_name = getUnprefixed(prop_name);
-						var nest_declr = new NestReqMap(props[ prop_name ], nest_name);
-
-						changeSources(this.netsources_of_nestings, nest_declr.send_declr);
-
-						var is_main = nest_name == this.main_list_name;
-						// if (is_main) {
-						// 	debugger;
-						// }
-						var cur_nest = !is_main ? nest_declr : new NestReqMapCopy(nest_declr, is_main);
-						this[prop_name] = cur_nest;
-
-						if (!cur_nest.state_dep) {
-							continue;
-						}
-
-						assign(this, props, cur_nest);
-
-						if (!is_main) {
-							continue;
-						}
-
-						this.main_list_nest_req = cur_nest;
-					}
-				}
-			}
-
-			if (props.hasOwnProperty('main_list_nest_req') && main_list_nest_req && main_list_nest_req.nest_name !== props.main_list_name) {
-				assign(this, props, main_list_nest_req.original);
-				this['nest_req-' + main_list_nest_req.nest_name] = main_list_nest_req.original;
-			}
-
-			if (has_changes) {
-				this.netsources_of_all = {
-					nestings: this.netsources_of_nestings,
-					states: this.netsources_of_states
-				};
-			}
-		};
-	})(),
 	getNetworkSources: function() {
 		if (!this.netsources_of_all) {
 			return;
@@ -846,7 +419,9 @@ add({
 		this.init_states = false;
 	},
 	network_data_as_states: true,
-	onExtend: spv.precall(StatesEmitter.prototype.onExtend, onPropsExtend),
+	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (props, original, params) {
+		onPropsExtend(this, props, original, params);
+	}),
 	getConstrByPathTemplate: function(app, path_template) {
 		return initDeclaredNestings.getConstrByPath(app, this, path_template);
 	},
