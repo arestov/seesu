@@ -16,21 +16,20 @@ return function checkNesting(self, collection_name, array, removed) {
 };
 
 function checkChangedNestWatchs(md, collection_name) {
-	if (md.nes_match_index && md.nes_match_index[collection_name]) {
-		// console.log('match!', collection_name);
-		var nwats = md.nes_match_index[collection_name];
+	if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
+  // console.log('match!', collection_name);
+  var nwats = md.nes_match_index[collection_name];
 
-		var result = [];
-		for (var i = 0; i < nwats.length; i++) {
-			var cur = nwats[i].nwatch;
-			if (cur.items_changed) {
-				result.push(cur);
-				// console.log(cur.selector, cur);
-			}
+  var result = [];
+  for (var i = 0; i < nwats.length; i++) {
+    var cur = nwats[i].nwatch;
+    if (cur.items_changed) {
+      result.push(cur);
+      // console.log(cur.selector, cur);
+    }
 
-		}
+  }
 
-		return result.length && result;
-	}
+  return result.length && result;
 }
 });
