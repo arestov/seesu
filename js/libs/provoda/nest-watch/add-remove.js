@@ -72,7 +72,7 @@ function addNestWatch(self, nwatch, skip) {
     if (!self.states_links) {
       self.states_links = {};
     }
-    addNWatchToSI(self.states_links, nwatch);
+    addNWatchToStatesIndex(self.states_links, nwatch);
 
   } else {
     if (!self.nes_match_index) {
@@ -140,7 +140,7 @@ function addNWOne(states_links, state_name, nwatch) {
 	states_links[state_name].push(nwatch);
 }
 
-function addNWatchToSI(states_links, nwatch) {
+function addNWatchToStatesIndex(states_links, nwatch) {
 	if (Array.isArray(nwatch.short_state_name)) {
 		for (var i = 0; i < nwatch.short_state_name.length; i++) {
 			addNWOne(states_links, nwatch.short_state_name[i], nwatch);
