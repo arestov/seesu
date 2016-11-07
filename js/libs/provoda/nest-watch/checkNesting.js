@@ -6,13 +6,12 @@ return function checkNesting(self, collection_name, array, removed) {
   checkNestWatchs(self, collection_name, array, removed);
 
   var changed_nawchs = checkChangedNestWatchs(self, collection_name);
+  if (!changed_nawchs) {return;}
   //var calls_flow = (opts && opts.emergency) ? main_calls_flow : self.sputnik._getCallsFlow();
   var calls_flow = self._getCallsFlow();
-  if (changed_nawchs) {
-    for (var i = 0; i < changed_nawchs.length; i++) {
-      var cur = changed_nawchs[i];
-      calls_flow.pushToFlow(null, cur, null, array, cur.handler, null, self.current_motivator);
-    }
+  for (var i = 0; i < changed_nawchs.length; i++) {
+    var cur = changed_nawchs[i];
+    calls_flow.pushToFlow(null, cur, null, array, cur.handler, null, self.current_motivator);
   }
 };
 
