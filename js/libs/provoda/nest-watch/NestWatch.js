@@ -38,6 +38,8 @@ var NestWatch = function(nesting_source, state_name, zip_func, result_state_name
 		}
 	}
 
+	this.handled_subl_wtchs = null;
+
 	this.selector = selector;
 	this.start_point = nesting_source.start_point || null;
 	this.state_name = state_name;

@@ -49,11 +49,12 @@ function checkNestWatchs(md, collection_name, array, removed) {
 }
 
 function addNestWatch(self, nwatch, skip) {
-  if (!self.nes_match_handeled) {
-    self.nes_match_handeled = {};
+  if (!nwatch.handled_subl_wtchs) {
+    nwatch.handled_subl_wtchs = {};
   }
-  if (!self.nes_match_handeled[nwatch.num]) {
-    self.nes_match_handeled[nwatch.num] = true;
+  var key = self._provoda_id + '-' + skip;
+  if (!nwatch.handled_subl_wtchs[key]) {
+    nwatch.handled_subl_wtchs[key] = true;
   } else {
     return;
   }
