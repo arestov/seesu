@@ -9,10 +9,9 @@ return function LocalWatchRoot(md, nwatch, data) {
 		this.state_name = nwatch.state_name;
 		this.short_state_name = nwatch.short_state_name;
 		// this.itemChange = handler;
-		this.items_changed = false;
-		this.items_index = null;
-		this.items = null;
-		this.one_item = null;
+
+		this.ordered_items = null;
+		this.ordered_items_changed = 0;
 		this.one_item_mode = false;
 
 		this.state_handler = nwatch.state_handler;
