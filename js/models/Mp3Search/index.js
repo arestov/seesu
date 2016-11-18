@@ -4,7 +4,7 @@ var pv = require('pv');
 var spv = require('spv');
 var SongFileModel = require('../SongFileModel');
 var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
-
+var pvState = pv.state;
 
 var guessArtist = function(track_title_raw, query_artist){
 	var track_title = track_title_raw.slice(0, 80);
@@ -745,8 +745,8 @@ var getMatchedSongs = function(music_list, msq) {
 
 function byBestSearchIndex(g,f, searches_pr){
 	if (g && f) {
-		var gg = searches_pr[g.search_name];
-		var ff = searches_pr[f.search_name];
+		var gg = searches_pr[pvState(g, 'search_name')];
+		var ff = searches_pr[pvState(f, 'search_name')];
 		if (typeof gg =='undefined'){
 			gg = -1000;
 		}
