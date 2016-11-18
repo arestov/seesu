@@ -737,12 +737,6 @@ var getMatchedSongs = function(music_list, msq) {
 		}
 	});
 
-
-
-
-
-
-
 function byBestSearchIndex(g,f, searches_pr){
 	if (g && f) {
 		var gg = searches_pr[pvState(g, 'search_name')];
@@ -766,8 +760,6 @@ function byBestSearchIndex(g,f, searches_pr){
 		return 0;
 	}
 }
-
-
 
 var hasMusicCopy = function (array, entity, from_position){
 	var ess = /(^\s*)|(\s*$)/g;
