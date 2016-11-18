@@ -58,7 +58,7 @@ function handleChdDestState(motivator, fn, nestsel, args) {
 
 function handleChdDeepState(motivator, _, lnwatch, args) {
 	// input - changed "deep source" state
-	// expected - rerunned query, updated nesting
+	// expected - invalidated one item condition, rerunned query, updated nesting
 
 	var state_name = args[0];
 	var value = args[1];
@@ -69,6 +69,8 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 	var states = nestsel.item_states_index[_provoda_id];
 	states[state_name] = value;
 	nestsel.item_states_index[_provoda_id] = states;
+
+	delete nestsel.item_cond_index[_provoda_id];
 
 	runFilter(motivator, nestsel);
 }
