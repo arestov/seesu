@@ -646,7 +646,7 @@ var getMatchedSongs = function(music_list, msq) {
 			}
 
 			this.sources_list.sort(function(g,f){
-				return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
+				return byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
 			});
 
 			pv.updateNesting(this, 'sources_list', this.sources_list);
@@ -667,7 +667,7 @@ var getMatchedSongs = function(music_list, msq) {
 				this.sources[search_name] = this.bindSource(search_name);
 				this.sources_list.push(_this.sources[search_name]);
 				this.sources_list.sort(function(g,f){
-					return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
+					return byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
 				});
 
 				pv.updateNesting(this, 'sources_list', this.sources_list);
@@ -709,29 +709,6 @@ var getMatchedSongs = function(music_list, msq) {
 		startSearch: function() {
 			return;
 		},
-		byBestSearchIndex: function(g,f, searches_pr){
-			if (g && f) {
-				var gg = searches_pr[g.search_name];
-				var ff = searches_pr[f.search_name];
-				if (typeof gg =='undefined'){
-					gg = -1000;
-				}
-				if (typeof ff =='undefined'){
-					ff = -1000;
-				}
-				if (gg < ff){
-					return 1;
-				}
-				else if (gg > ff){
-					return -1;
-				}
-				else{
-					return 0;
-				}
-			} else {
-				return 0;
-			}
-		},
 		delayFileCheck: function(file) {
 			if (file.artist == this.msq.artist){
 				this.nextTick(function(target) {
@@ -766,7 +743,29 @@ var getMatchedSongs = function(music_list, msq) {
 
 
 
-
+function byBestSearchIndex(g,f, searches_pr){
+	if (g && f) {
+		var gg = searches_pr[g.search_name];
+		var ff = searches_pr[f.search_name];
+		if (typeof gg =='undefined'){
+			gg = -1000;
+		}
+		if (typeof ff =='undefined'){
+			ff = -1000;
+		}
+		if (gg < ff){
+			return 1;
+		}
+		else if (gg > ff){
+			return -1;
+		}
+		else{
+			return 0;
+		}
+	} else {
+		return 0;
+	}
+}
 
 
 
