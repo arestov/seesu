@@ -15,20 +15,21 @@ var NestSelector = function (md, declr) {
   this.items_changed = null;
 	// this.waiting_chd_count = false;
 
-  this.state_name = declr.dest_state_names;
-  this.short_state_name = declr.short_state_name;
+  this.state_name = declr.deps.base.list;
+  this.short_state_name = declr.deps.base.shorts;
 
-	this.item_cond_index = {};
-	this.item_states_index = {};
-	this.dest_states = null;
+	this.item_cond_index = null;
+	this.item_cond_index = (declr.deps.base.cond || declr.deps.deep.cond) && {};
+	this.deep_item_states_index = {};
+	this.base_states = null;
 
-	if (declr.deps_dest) {
-		var dest_states = {};
-		for (var i = 0; i < declr.deps_dest.length; i++) {
-			var cur = declr.deps_dest[i];
-			dest_states[cur] = pvState(md, cur);
+	if (declr.deps.base.list) {
+		var base_states = {};
+		for (var i = 0; i < declr.deps.base.list.length; i++) {
+			var cur = declr.deps.base.list[i];
+			base_states[cur] = pvState(md, cur);
 		}
-		this.dest_states = dest_states;
+		this.base_states = base_states;
 	}
 
 };
@@ -49,12 +50,15 @@ function handleChdDestState(motivator, fn, nestsel, args) {
 	var state_name = args[0];
 	var value = args[1];
 
-	var states = nestsel.dest_states;
+	var states = nestsel.base_states;
 	states[state_name] = value;
-	nestsel.item_cond_index = {};
+	var base = nestsel.declr.deps.base;
+	if (base.cond && base.cond.index[state_name] === true) {
+		nestsel.item_cond_index = {};
+	}
+
 	runFilter(motivator, nestsel);
 }
-
 
 function handleChdDeepState(motivator, _, lnwatch, args) {
 	// input - changed "deep source" state
@@ -66,11 +70,14 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 
 	var nestsel = lnwatch.data;
 	var _provoda_id = md._provoda_id;
-	var states = nestsel.item_states_index[_provoda_id];
+	var states = nestsel.deep_item_states_index[_provoda_id];
 	states[state_name] = value;
-	nestsel.item_states_index[_provoda_id] = states;
+	nestsel.deep_item_states_index[_provoda_id] = states;
 
-	delete nestsel.item_cond_index[_provoda_id];
+	var deep = nestsel.declr.deps.deep;
+	if (deep.cond && deep.cond.index[state_name] === true) {
+		delete nestsel.item_cond_index[_provoda_id];
+	}
 
 	runFilter(motivator, nestsel);
 }
@@ -81,8 +88,8 @@ function rerun(motivator, _, lnwatch) {
 }
 
 function checkCondition(nestsel, _provoda_id) {
-	var source_states = nestsel.item_states_index[_provoda_id];
-	var dest_states = nestsel.dest_states;
+	var deep_states = nestsel.deep_item_states_index[_provoda_id];
+	var base_states = nestsel.base_states;
 	var args_schema = nestsel.declr.args_schema;
 
 	var args = new Array(args_schema.length);
@@ -90,11 +97,11 @@ function checkCondition(nestsel, _provoda_id) {
 		var cur = args_schema[i];
 		var value;
 		switch (cur.type) {
-			case 'source':
-				value = source_states[cur.name];
+			case 'deep':
+				value = deep_states[cur.name];
 				break;
-			case 'dest':
-				value = dest_states[cur.name];
+			case 'base':
+				value = base_states[cur.name];
 				break;
 			default:
 				throw new Error('unknow type dep type');
@@ -116,7 +123,7 @@ function isFine(md, nestsel) {
 function getMatchedItems(nestsel) {
 	var dcl = nestsel.declr;
 
-	if (!dcl.deps_dest && !dcl.deps_source) {
+	if (!dcl.deps.base.list && !dcl.deps.deep.list) {
 		if (!dcl.map) {
 			return nestsel.items;
 		}
@@ -155,9 +162,16 @@ function getMatchedItems(nestsel) {
 
 function runFilter(motivator, nestsel) {
 	// item_cond_index
-	// item_states_index
-	// dest_states
+	// deep_item_states_index
+	// base_states
 	var result = getMatchedItems(nestsel);
+	if (nestsel.declr.sortFn) {
+		// curretly just always sort
+		result.sort(function (one, two) {
+			return nestsel.declr.sortFn.call(null, one, two, nestsel.md);
+		});
+	}
+
 	var md = nestsel.md;
 	var old_motivator = md.current_motivator;
 	md.current_motivator = motivator;
@@ -186,11 +200,12 @@ function handleAdding(md, lnwatch, skip) {
 	var _provoda_id = md._provoda_id;
 
 	var states = {};
-	for (var i = 0; i < nestsel.declr.deps_source.length; i++) {
-		var cur = nestsel.declr.deps_source[i];
+	var deep = nestsel.declr.deps.deep;
+	for (var i = 0; i < deep.cond.list.length; i++) {
+		var cur = deep.cond.list[i];
 		states[cur] = pvState(md, cur);
 	}
-	nestsel.item_states_index[_provoda_id] = states;
+	nestsel.deep_item_states_index[_provoda_id] = states;
 }
 
 function handleRemoving(md, lnwatch, skip) {
@@ -201,7 +216,7 @@ function handleRemoving(md, lnwatch, skip) {
 
 	var nestsel = lnwatch.data;
 	var _provoda_id = md._provoda_id;
-	delete nestsel.item_states_index[_provoda_id];
+	delete nestsel.deep_item_states_index[_provoda_id];
 }
 
 return NestSelector;
