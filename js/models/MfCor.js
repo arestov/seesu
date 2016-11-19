@@ -106,7 +106,6 @@ var MfComplect = spv.inh(pv.Model, {
 				var part_end = e.value.slice(5);
 				pv.updateNesting(self, 'moplas_list_start', part_start);
 				pv.updateNesting(self, 'moplas_list_end', part_end);
-				pv.update(self, 'moplas_list_end$length', part_end.length);
 			}
 		});
 	}
@@ -303,7 +302,7 @@ var MfCor = spv.inh(LoadableList, {
 
 	},
 	'compx-has_files': [
-		['@some:list_length:sorted_completcs'],
+		['@some:moplas_list$length:sorted_completcs'],
 		function (state) {
 			return state;
 		}

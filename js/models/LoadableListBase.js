@@ -154,7 +154,6 @@ return spv.inh(BrowseMap.Model, {
 			}
 			target.dataListChange(mlc_opts, items_list, nesting_name);
 		}
-		pvUpdate(target, nesting_name + '$length', target.getLength(nesting_name));
 
 	},
 	getRelativeRequestsGroups: function(space) {
