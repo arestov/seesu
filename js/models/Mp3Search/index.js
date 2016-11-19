@@ -656,9 +656,16 @@ var getMatchedSongs = function(music_list, msq) {
 		'stch-@sources_list_mapped': function (target, value, old, wrap) {
 			console.log(wrap);
 		},
+		'compx-searches_pr': [['^searches_pr']],
 		'nest_sel-sources_list_mapped': {
 			from: '^>sources_core_list',
-			map: '[:search_name]'
+			map: '[:search_name]',
+			sort: [
+				['search_name:', 'searches_pr'],
+				function (one, two, base) {
+					return byBestSearchIndex(one, two, pvState(base, 'searches_pr'));
+				}
+			]
 		},
 		'nest_cnt-sources_list2': ['sources_list_mapped', 'sources_list_more', 'sources_list'],
 		addFbS: function(search_name) {
@@ -810,6 +817,8 @@ var getAverageDurations = function(mu_array, time_limit){
 			target.tools_by_name = {};
 			target.api_wrappers = {};
 			pvUpdate(target, 'tools_by_name', target.tools_by_name);
+			pvUpdate(target, 'searches_pr', target.searches_pr);
+
 			target.investgs = {};
 			target.investgs_by_artist = {};
 			target.files_ids = {};
