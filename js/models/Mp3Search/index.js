@@ -548,8 +548,6 @@ var getMatchedSongs = function(music_list, msq) {
 			//	console.log('search_progress: ' + e.value);
 			//}, {immediately: true});
 
-			target.mp3_search.on('list-changed', target.hndListChange, {soft_reg: false, context: target});
-
 			target.lwch(target.mp3_search, 'big_files_list', target.hndBigFilesList);
 
 			target.nextTick(function(target) {
@@ -635,27 +633,6 @@ var getMatchedSongs = function(music_list, msq) {
 				}
 			]
 		},
-		hndListChange: function(list) {
-			var _this = this;
-			for (var i = 0; i < list.length; i++) {
-				var cur = list[i].name;
-				if (!this.sources[cur]){
-					this.sources[cur] = this.bindSource(cur);
-					this.sources_list.push(this.sources[cur]);
-				}
-			}
-
-			this.sources_list.sort(function(g,f){
-				return byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
-			});
-
-			pv.updateNesting(this, 'sources_list', this.sources_list);
-
-			//_this.trigger('child_change-sources_list', _this.sources_list);
-		},
-		'stch-@sources_list_mapped': function (target, value, old, wrap) {
-			console.log(wrap);
-		},
 		'compx-searches_pr': [['^searches_pr']],
 		'nest_sel-sources_list_mapped': {
 			from: '^>sources_core_list',
@@ -667,19 +644,16 @@ var getMatchedSongs = function(music_list, msq) {
 				}
 			]
 		},
-		'nest_cnt-sources_list2': ['sources_list_mapped', 'sources_list_more', 'sources_list'],
+		'nest_cnt-sources_list': ['sources_list_mapped', 'sources_list_more'],
 		addFbS: function(search_name) {
-			var _this = this;
 			if (!this.sources[search_name]){
 				this.sources[search_name] = this.bindSource(search_name);
-				this.sources_list.push(_this.sources[search_name]);
-				this.sources_list.sort(function(g,f){
-					return byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
-				});
 
-				pv.updateNesting(this, 'sources_list', this.sources_list);
+				var list = this.getNesting('sources_list_more') || [];
+				list.push(this.sources[search_name]);
+
+				pv.updateNesting(this, 'sources_list_more', list);
 			}
-
 		},
 		'chi-files_by_source': FilesBySource,
 		bindSource: function(name) {
