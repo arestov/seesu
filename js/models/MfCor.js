@@ -119,13 +119,11 @@ var MfComplect = spv.inh(pv.Model, {
 			return;
 		}
 		var moplas_list = [];
-		pv.update(this, 'overstock', files_list.length > this.overstock_limit);
 		for (var i = 0; i < files_list.length; i++) {
 			var sf = this.mf_cor.getSFM(files_list[i]);
 			moplas_list.push(sf);
 		}
 		pv.updateNesting(this, 'moplas_list', moplas_list);
-		pv.update(this, 'list_length', moplas_list.length);
 		this.moplas_list = moplas_list;
 
 	},
