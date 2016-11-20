@@ -124,7 +124,9 @@ var TopTagSongs = spv.inh(SongsList, {}, {
 
 var SongsLists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list': [['_', 'free', /*'trending_exfm', 'explore_exfm',*/
-			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], true],
+			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], {
+				preload_on: 'mp_has_focus',
+			}],
 	model_name: 'tag_songs',
 	sub_page: {
 		'_': {
@@ -193,7 +195,9 @@ var TagTopArtists = spv.inh(ArtistsList, {}, {
 });
 
 var ArtistsLists = spv.inh(BrowseMap.Model, {}, {
-	'nest-lists_list': [['_', 'week'], true],
+	'nest-lists_list': [['_', 'week'], {
+		preload_on: 'mp_has_focus',
+	}],
 	model_name: 'tag_artists',
 	sub_page: {
 		'_': {
@@ -214,7 +218,9 @@ var TagPage = spv.inh(BrowseMap.Model, {}, {
 	'nest-albums_list': ['albums'],
 	'nest-similar_tags': ['similar'],
 
-	'nest-pwis': [['albums','similar'], true],
+	'nest-pwis': [['albums','similar'], {
+		preload_on: 'mp_has_focus',
+	}],
 	model_name: 'tag_page',
 	sub_page: {
 		similar: [

@@ -76,7 +76,9 @@ var UserCard = spv.inh(BrowseMap.Model, {
 		var result = {
 			'user-playlists': ['playlists'],
 			'users_acqutes': ['acquaintances'],
-			'preload_list': [['vk:friends', 'lfm:tags', 'lfm:friends', 'lfm:neighbours'], true]
+			'preload_list': [['vk:friends', 'lfm:tags', 'lfm:friends', 'lfm:neighbours'], {
+			  preload_on: 'mp_has_focus',
+			}]
 		};
 
 

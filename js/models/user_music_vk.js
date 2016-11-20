@@ -28,7 +28,9 @@ var no_access_compx = {
 var auth_bh = {
 	'compx-has_no_access': no_access_compx,
 	'nest-pmd_switch': ['^'],
-	'nest-auth_part': [VkAudioLogin, true, 'for_current_user'],
+	'nest-auth_part': [VkAudioLogin, {
+		ask_for: 'for_current_user'
+	}],
 
 	'compx-userid': [
 		['vk_userid', '#vk_userid', 'for_current_user'],
@@ -118,7 +120,9 @@ var VkUserTracks = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list':
 		[vk_user_tracks_sp],
 	'nest-preview_list':
-		[vk_user_tracks_sp, true],
+		[vk_user_tracks_sp, {
+			preload_on: 'mp_has_focus'
+		}],
 	sub_page: {
 		'my': {
 			constr: MyVkAudioList,

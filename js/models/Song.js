@@ -193,7 +193,9 @@ var pvUpdate = pv.update;
 				}
 			}
 		],
-		'nest-actionsrow': [SongActionsRow, false, 'mp_show'],
+		'nest-actionsrow': [SongActionsRow, {
+			idle_until: 'mp_show'
+		}],
 		getMFCore: function(){
 			this.initHeavyPart();
 			return this.mf_cor;
@@ -434,6 +436,8 @@ var pvUpdate = pv.update;
 				return artist && (needs_states_connecting || is_important);
 			}
 		],
-		'nest-artist': ['#catalog/[:artist]', false, 'load_artcard']
+		'nest-artist': ['#catalog/[:artist]', {
+			ask_for: 'load_artcard',
+		}]
 	});
 });
