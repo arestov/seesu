@@ -86,7 +86,9 @@ var AllPSongsLoved = spv.inh(SongsList, {}, {
 
 
 var AllPlacesSongsLists = spv.inh(BrowseMap.Model, {}, {
-	'nest-lists_list':[['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'], true],
+	'nest-lists_list':[['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'], {
+		preload_on: 'mp_has_focus',
+	}],
 	sub_page: {
 		latest: {
 			constr: AllPHypemLatestSongs,
@@ -137,7 +139,9 @@ var AllPArtistsChart = spv.inh(ArtistsList, {}, {
 
 
 var AllPlacesArtistsLists = spv.inh(BrowseMap.Model, {}, {
-	'nest-lists_list':[ ['hyped', '_'], true],
+	'nest-lists_list':[ ['hyped', '_'], {
+		preload_on: 'mp_has_focus',
+	}],
 	model_name: 'artists_lists',
 	sub_page: {
 		'_': {
@@ -210,7 +214,9 @@ var CityArtistsUnique = spv.inh(ArtistsList, {}, {
 
 var CityArtistsLists = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'artists_lists',
-	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
+	'nest-lists_list':[ ['_', 'hyped', 'unique'], {
+		preload_on: 'mp_has_focus',
+	}],
 	sub_page: {
 		'_': {
 			constr: CityAritstsTop,
@@ -255,7 +261,9 @@ var CitySongsUnique = spv.inh(SongsList, {}, {
 
 var CitySongsLists = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'songs_lists',
-	'nest-lists_list':[ ['_', 'hyped', 'unique'], true ],
+	'nest-lists_list':[ ['_', 'hyped', 'unique'], {
+		preload_on: 'mp_has_focus',
+	}],
 	sub_page: {
 		'_': {
 			constr: CitySongsTop,
@@ -367,8 +375,13 @@ var CountryPlace = spv.inh(BrowseMap.Model, {}, {
 
 	'stch-mp_has_focus': heavyInitReactn,
 
-	'nest-lists_list':[ ['artists_top', 'songs_top', 'cities'], false, 'mp_alhf' ],
-	'nest-pwis':[ ['artists_top', 'songs_top'], true, 'mp_alhf' ],
+	'nest-lists_list':[ ['artists_top', 'songs_top', 'cities'], {
+		idle_until: 'mp_alhf',
+	}],
+	'nest-pwis':[ ['artists_top', 'songs_top'], {
+		preload_on: 'mp_has_focus',
+		idle_until: 'mp_alhf',
+	}],
 	sub_page: {
 		'songs_top': {
 			constr: CountryTopSongs,
@@ -460,7 +473,9 @@ MusicConductor = spv.inh(BrowseMap.Model, {}, {
 			return result;
 		}
 	],
-	'nest-preview_playlists': [['world/songs/topnow_hypem', 'world/songs/_'], 'can_load_previews'],
+	'nest-preview_playlists': [['world/songs/topnow_hypem', 'world/songs/_'], {
+		preload_on: 'can_load_previews',
+	}],
 	'nest-preview_list':
 		[['world/songs', 'world/songs/topnow_hypem', 'world/songs/_', 'world/artists', 'world']],
 	'nest-allpas': ['world'],
