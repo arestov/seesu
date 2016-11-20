@@ -6,6 +6,15 @@ var declarationConstructor = require('../structure/constr_mention').declarationC
 var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
+var nestDcl = function (name, data) {
+  this.nesting_name = name;
+  this.subpages_names_list = declarationConstructor(data[0], 'nest-' + name);
+
+  var preload = data[1];
+  this.preload = (preload === true ? 'mp_has_focus' : preload) || null;
+  this.init_state_name = data[2] || null;
+};
+
 return function(self, props) {
   var
     has_props = hasPrefixedProps(props),
@@ -25,12 +34,7 @@ return function(self, props) {
           real_name = getUnprefixed(prop);
           cur = self[prop];
           used_props[real_name] = true;
-          result.push({
-            nesting_name: real_name,
-            subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-            preload: cur[1],
-            init_state_name: cur[2]
-          });
+          result.push(new nestDcl(real_name, cur));
         }
       }
     }
@@ -42,12 +46,7 @@ return function(self, props) {
         }
         cur = self.nest[real_name];
         used_props[real_name] = true;
-        result.push({
-          nesting_name: real_name,
-          subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-          preload: cur[1],
-          init_state_name: cur[2]
-        });
+        result.push(new nestDcl(real_name, cur));
       }
     }
 
