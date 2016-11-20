@@ -70,7 +70,9 @@ return pv.behavior({
 		}
 	],
 
-	'nest-auth_part': [auth, true, 'pmd_vswitched'],
+	'nest-auth_part': [auth, {
+		idle_until: 'pmd_vswitched'
+	}],
 	'compx-current_user': [[ '#vk_userid']],
 	'compx-has_vk_auth': [['@one:has_session:auth_part']],
 	'compx-current_user_has_photo': [

@@ -129,7 +129,9 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 		}
 	],
 	//desc: improve ?
-	'nest-vk_auth': [VKLoginFSearch, false, 'needs_vk_auth'],
+	'nest-vk_auth': [VKLoginFSearch, {
+		ask_for: 'needs_vk_auth',
+	}],
 	'stch-can_search_friends': function(target, state) {
 		if (state){
 			target.searchByQuery(pvState(target, 'query'));

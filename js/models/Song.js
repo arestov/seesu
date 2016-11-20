@@ -69,7 +69,9 @@ var pvUpdate = pv.update;
 	}, {
 		network_data_as_states: false,
 		manual_states_init: true,
-		'nest-songcard': ['#tracks/[:artist],[:track]', false, 'can_load_songcard'],
+		'nest-songcard': ['#tracks/[:artist],[:track]', {
+			ask_for: 'can_load_songcard',
+		}],
 		'compx-$relation:songcard-for-active_song': [
 			['can_load_songcard', '@songcard'],
 			function(can_load_songcard, songcard) {
