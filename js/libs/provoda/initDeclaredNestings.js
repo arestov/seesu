@@ -168,36 +168,34 @@ var initOneDeclaredNesting = function(md, el) {
 	nesting_name
 	subpages_names_list
 	preload
-	init_state_name
+	idle_until
 
 
 	subpages_names_list: ...cur[0]...,
 	preload: cur[1],
-	init_state_name: cur[2]
+	idle_until: cur[2]
 	*/
-	var preload_state_name = el.preload && (typeof el.preload == 'string' ? el.preload : 'mp_has_focus');
-
-	if (el.init_state_name) {
+	if (el.idle_until) {
 		var init_func = function(state) {
 
 			if (state) {
 				this.updateNesting(el.nesting_name, getSubpages( this, el ));
-				if (preload_state_name && this.state(preload_state_name)) {
+				if (el.preload_on && this.state(el.preload_on)) {
 					executePreload(this, el.nesting_name);
 				}
 
-				md.off('lgh_sch-' + el.init_state_name, init_func);
+				md.off('lgh_sch-' + el.idle_until, init_func);
 			}
 		};
 
-		md.on('lgh_sch-' + el.init_state_name, init_func);
+		md.on('lgh_sch-' + el.idle_until, init_func);
 
 	} else {
 		md.updateNesting(el.nesting_name, getSubpages( md, el ));
 	}
 
-	if (el.preload) {
-		bindPreload(md, preload_state_name, el.nesting_name);
+	if (el.preload_on) {
+		bindPreload(md, el.preload_on, el.nesting_name);
 	}
 
 };
