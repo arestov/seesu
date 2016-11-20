@@ -286,7 +286,7 @@ var MfCor = spv.inh(LoadableList, {
 		}
 	},
 	'nest-vk_auth': [MFCorVkLogin, {
-		idle_until: 'needs_vk_auth'
+		ask_for: 'needs_vk_auth'
 	}],
 
 	getSFM: function(file) {
