@@ -787,11 +787,9 @@ var getAverageDurations = function(mu_array, time_limit){
 
 			// this.app = opts.app;
 			target.se_list = [];
-			target.searches_pr  = searches_pr || {};
 			target.tools_by_name = {};
 			target.api_wrappers = {};
 			pvUpdate(target, 'tools_by_name', target.tools_by_name);
-			pvUpdate(target, 'searches_pr', target.searches_pr);
 
 			target.investgs = {};
 			target.investgs_by_artist = {};
@@ -812,6 +810,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			});
 		}
 	},  {
+		'compx-searches_pr': [['#mp3_search_order']],
 		sub_pager: {
 			type: {
 				tuners: 'tuner',
@@ -848,7 +847,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		},
 		getQueryString: getQueryString,
 		sortMusicFilesArray: function(music_list, msq, time_limit) {
-			var searches_pr = this.searches_pr;
+			var searches_pr = pvState(this, 'searches_pr');
 
 			var query_string = getQueryString(msq);
 			time_limit = time_limit || 30000;
