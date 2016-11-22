@@ -24,6 +24,7 @@ $.ajaxSetup({
 $.support.cors = true;
 
 var pvUpdate = pv.update;
+var pvState = pv.state;
 var chrome = window.chrome;
 var ChromeExtensionButtonView = spv.inh(View, {}, {
 	state_change: {
@@ -121,7 +122,7 @@ var SeesuApp = spv.inh(AppModel, {
 		}, 1000 * 60 * 2);
 
 		self.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
-		self.mp3_search = self.initChi('mp3_search', false, {
+		pvUpdate(self, 'mp3_search_order', {
 			vk: 5,
 			'pleer.com': 4,
 			nigma: 1,
@@ -130,6 +131,7 @@ var SeesuApp = spv.inh(AppModel, {
 			lastfm:-10,
 			torrents: -15
 		});
+		self.mp3_search = self.initChi('mp3_search', false, pvState(self, 'mp3_search_order'));
 
 
 
