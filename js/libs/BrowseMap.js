@@ -1319,8 +1319,9 @@ function subPageType(type_obj, str) {
 }
 
 var getSPOpts = function(md, sp_name) {
-	var parts = sp_name.split(':');
-
+	var by_colon = sp_name.split(':').map(decodeURIComponent);
+	var by_comma = sp_name.split(',').map(decodeURIComponent);
+	var by_slash = sp_name.split('/').map(decodeURIComponent);
 	return [
 		{
 			url_part: '/' + sp_name
@@ -1328,7 +1329,10 @@ var getSPOpts = function(md, sp_name) {
 		{
 			simple_name: sp_name,
 			decoded_name: decodeURIComponent(sp_name),
-			name_spaced: decodeURIComponent(parts[1])
+			name_spaced: by_colon[1],
+			by_comma: by_comma,
+			by_colon: by_colon,
+			by_slash: by_slash,
 		}];
 };
 
