@@ -1,9 +1,9 @@
 define(
-['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap', './models/Mp3Search/index',
+['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap',
 './libs/FuncsQueue', './LfmAuth',
 './models/AppModel', './models/comd', './models/StartPage', './libs/VkAuth', './libs/VkApi', './modules/initVk',
 './modules/PlayerSeesu', './models/invstg', 'cache_ajax', 'View', 'js/libs/localizer', './modules/route', './initAPIs'],
-function(spv, app_serv, pv, $, navi, BrowseMap, Mp3Search,
+function(spv, app_serv, pv, $, navi, BrowseMap,
 FuncsQueue, LfmAuth ,
 AppModel, comd, StartPage, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, View, localize_dict, route, initAPIs) {
@@ -131,7 +131,6 @@ var SeesuApp = spv.inh(AppModel, {
 			lastfm:-10,
 			torrents: -15
 		});
-		self.mp3_search = self.initChi('mp3_search', false, pvState(self, 'mp3_search_order'));
 
 
 
@@ -145,7 +144,10 @@ var SeesuApp = spv.inh(AppModel, {
 			}
 		);
 
-		initAPIs(self, app_serv, app_env, cache_ajax, resortQueue);
+		var addQueue = initAPIs(self, app_serv, app_env, cache_ajax, resortQueue);
+		self.addQueueFn = addQueue;
+		self.resortQueueFn = resortQueue;
+		self.cache_ajax = cache_ajax;
 
 		self.p = new PlayerSeesu(self);
 		self.player = self.p;
@@ -317,7 +319,6 @@ var SeesuApp = spv.inh(AppModel, {
 	'chi-vk_users': pv.Model,
 	'chi-vk_groups': pv.Model,
 	'chi-art_images': comd.LastFMArtistImagesSelector,
-	'chi-mp3_search': Mp3Search,
 	'chi-vk_auth': VkAuth,
 	'chi-lfm_auth': LfmAuth,
 	'chi-start__page': StartPage,
@@ -578,7 +579,7 @@ var SeesuApp = spv.inh(AppModel, {
 
 		var lostAuth = function(vkapi) {
 
-			_this.mp3_search.remove(vkapi.asearch);
+			_this.start_page.mp3_search.remove(vkapi.asearch);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
 				_this.vk_api = null;
@@ -595,12 +596,12 @@ var SeesuApp = spv.inh(AppModel, {
 				lostAuth(vkapi);
 				initVk.checkDeadSavedToken(vk_token);
 			},
-			mp3_search: _this.mp3_search
+			mp3_search: _this.start_page.mp3_search
 		});
 
 		_this.setVkApi(vkapi, vk_token.user_id);
 		if (access){
-			_this.mp3_search.add(vkapi.asearch, true);
+			_this.start_page.mp3_search.add(vkapi.asearch, true);
 		}
 
 		if (vk_token.expires_in){
@@ -696,9 +697,9 @@ var SeesuApp = spv.inh(AppModel, {
 					cur.media_type = 'mp3';
 				}
 
-				this.mp3_search.addFileToInvestg(cur, cur);
+				this.start_page.mp3_search.addFileToInvestg(cur, cur);
 				if (second_msq) {
-					this.mp3_search.addFileToInvestg(cur, second_msq);
+					this.start_page.mp3_search.addFileToInvestg(cur, second_msq);
 				}
 			}
 

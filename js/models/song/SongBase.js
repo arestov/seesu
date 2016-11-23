@@ -26,7 +26,7 @@ return spv.inh(BrowseMap.Model, {
 		self.rtn_request = null;
 		self.playable_info = null;
 
-		self.mp3_search = opts.app.mp3_search;
+		self.mp3_search = opts.app.start_page.mp3_search;
 		self.player = opts.app.player;
 
 		if (omo.track){

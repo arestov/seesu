@@ -68,11 +68,11 @@ var initVk = function(su) {
 			if ((sts & 8)*1){
 				if (!music_connected){
 					music_connected = true;
-					su.mp3_search.add(vkapi.asearch, true);
+					su.start_page.mp3_search.add(vkapi.asearch, true);
 				}
 			} else{
 				if (music_connected){
-					su.mp3_search.remove(vkapi.asearch, true);
+					su.start_page.mp3_search.remove(vkapi.asearch, true);
 				}
 			}
 		});
