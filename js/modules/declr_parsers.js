@@ -166,7 +166,7 @@ return {
 				}
 				song_data.track = htmlencoding.decode(song_data.track);
 				song_data.image_url = cur.artwork_url;
-				song_data.file = this.app.mp3_search.getSearchByName('soundcloud').makeSongFile(cur);
+				song_data.file = this.app.start_page.mp3_search.getSearchByName('soundcloud').makeSongFile(cur);
 				track_list.push(song_data);
 			}
 			return track_list;
@@ -175,7 +175,7 @@ return {
 	vk: {
 		getTracksFn: function(field) {
 			return function(r) {
-				var vk_search = this.app.mp3_search.getSearchByName('vk');
+				var vk_search = this.app.start_page.mp3_search.getSearchByName('vk');
 				var track_list = [];
 
 				var items = spv.getTargetField(r, field);
