@@ -1308,8 +1308,11 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 		return result;
 };
 
-function subPageType(type_obj, str) {
-	var parts = str.split('/');
+function slash(str) {
+	return str.split('/');
+}
+
+function subPageType(type_obj, parts) {
 	var target = type_obj[decodeURIComponent(parts[0])];
 	if (typeof target !== 'function') {
 		return target || null;
@@ -1318,10 +1321,11 @@ function subPageType(type_obj, str) {
 	return target(parts[1]);
 }
 
-var getSPOpts = function(md, sp_name) {
-	var by_colon = sp_name.split(':').map(decodeURIComponent);
-	var by_comma = sp_name.split(',').map(decodeURIComponent);
-	var by_slash = sp_name.split('/').map(decodeURIComponent);
+var getSPOpts = function(md, sp_name, slashed, type) {
+	var normal_part = type ? slashed.slice(1) : slashed;
+	var by_colon = normal_part[0].split(':').map(decodeURIComponent);
+	var by_comma = normal_part[0].split(',').map(decodeURIComponent);
+	var by_slash = normal_part.map(decodeURIComponent);
 	return [
 		{
 			url_part: '/' + sp_name
@@ -1618,7 +1622,7 @@ function getterSPI(){
 		return target;
 	};
 
-	var prepare = function(self, item, sp_name) {
+	var prepare = function(self, item, sp_name, slashed, type) {
 		var Constr = self._all_chi[item.key];
 		/*
 		hp_bound
@@ -1630,7 +1634,7 @@ function getterSPI(){
 		накладываем данные из урла
 		*/
 
-		var common_opts = getSPOpts(self, sp_name);
+		var common_opts = getSPOpts(self, sp_name, slashed, type);
 
 		var instance_data = getInitData(self, common_opts);
 		var dbu_declr = Constr.prototype.data_by_urlname;
@@ -1647,12 +1651,12 @@ function getterSPI(){
 
 	return function getSPI(self, sp_name) {
 		var item = self._sub_pages && self._sub_pages[sp_name];
-
+		var slashed = slash(sp_name);
 		if (item){
 			if (self.sub_pages && self.sub_pages[sp_name]){
 				return self.sub_pages[sp_name];
 			}
-			self.sub_pages[sp_name] = prepare(self, item, sp_name);
+			self.sub_pages[sp_name] = prepare(self, item, sp_name, slashed);
 			return self.sub_pages[sp_name];
 		}
 
@@ -1666,11 +1670,13 @@ function getterSPI(){
 				return self.sub_pages[key];
 			}
 
+			var type;
+
 			if (sub_pager.item) {
 				item = sub_pager.item;
 			} else {
 				var types = sub_pager.by_type;
-				var type = subPageType(sub_pager.type, sp_name);
+				type = subPageType(sub_pager.type, slashed);
 				if (type && !types[type]) {
 					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
 				}
@@ -1678,7 +1684,7 @@ function getterSPI(){
 				item = type && sub_pager.by_type[type];
 			}
 
-			var instance = item && prepare(self, item, sp_name);
+			var instance = item && prepare(self, item, sp_name, slashed, type);
 			if (instance) {
 				self.sub_pages[key] = instance;
 				return instance;
@@ -1709,7 +1715,7 @@ function getterSPIConstr(){
 				return sub_pager.item;
 			} else {
 				var types = sub_pager.by_type;
-				var type = subPageType(sub_pager.type, sp_name);
+				var type = subPageType(sub_pager.type, slash(sp_name));
 				if (type && !types[type]) {
 					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
 				}
