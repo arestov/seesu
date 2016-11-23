@@ -107,9 +107,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 		by_type: {
 			artist: [
 				ArtCard, null, {
-					artist_name: [function(arg){
-						return route.decodeURLPart(arg.split('/')[1]);
-					},'simple_name']
+					artist_name: 'by_slash.0'
 				}
 				/*
 				url_part: [['artist_name'], function(artist_name) {
@@ -119,14 +117,8 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			],
 			track: [
 				SongCard, null, {
-					artist_name: [function(raw_str) {
-						var last = route.decodeURLPart(raw_str.split('/')[1]);
-						return route.getCommaParts(last)[0];
-					}, 'simple_name'],
-					track_name: [function(raw_str) {
-						var last = route.decodeURLPart(raw_str.split('/')[1]);
-						return route.getCommaParts(last)[1];
-					}, 'simple_name'],
+					artist_name: 'by_comma.0',
+					track_name: 'by_comma.1',
 				}
 			],
 			user_current: [
