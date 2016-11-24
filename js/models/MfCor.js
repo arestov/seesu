@@ -842,16 +842,6 @@ var MfCor = spv.inh(LoadableList, {
 	raw: function(){
 		return !!this.omo && !!this.omo.raw;
 	},
-	song: function(){
-		if (this.raw()){
-			return this.getSFM(this.omo);
-		} else if (this.sem) {
-			var s = this.sem.getAllSongTracks('mp3');
-			return !!s && this.getSFM(s[0].t[0]);
-		} else{
-			return false;
-		}
-	},
 	getVKFile: function(){
 		var file = this.state('current_mopla');
 		if (file && file.from == 'vk'){
