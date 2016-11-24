@@ -900,28 +900,6 @@ var MfCor = spv.inh(LoadableList, {
 		}
 
 	},
-	compoundFiles: function(fn, type) {
-		var
-			r = [],
-			mfs = [],
-			all = this.file ? [{t: [this.file]}] : this.sem.getAllSongTracks(type || "mp3");
-
-		for (var i = 0; i < all.length; i++) {
-			mfs.push.apply(mfs, all[i].t);
-		}
-		if (fn){
-			for (var i = 0; i < mfs.length; i++) {
-				var el = mfs[i];
-				if (fn(el)){
-					r.push(el);
-				}
-			}
-			return r;
-		} else {
-			return mfs;
-		}
-
-	},
 	canPlay: function() {
 		return !!this.state("mopla_to_use");
 	}
