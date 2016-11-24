@@ -170,25 +170,6 @@ var MfCor = spv.inh(LoadableList, {
 		self.files_models = {};
 		self.complects = {};
 		self.updateNesting('mp3_search', self.mo.mp3_search);
-		// self.subscribed_to = [];
-
-
-
-		// self.mfPlayStateChange = function(e) {
-		// 	if (self.state('used_mopla') == this){
-		// 		pv.update(_this, 'play', e.value);
-		// 	}
-		// };
-		// self.mfError = function() {
-		// 	self.checkMoplas(this);
-		// };
-		/*
-		self.semChange = function(val) {
-			self.semChanged(val);
-		};
-		*/
-
-
 
 
 		self.initNotifier();
@@ -218,15 +199,6 @@ var MfCor = spv.inh(LoadableList, {
 	}
 }, {
 	'chi-mf_complect': MfComplect,
-	// hndMoImportant: function(e) {
-
-	// 	if (e.value){
-
-	// 		if (!this.getLength('yt_videos')){
-	// 			this.requestMoreData('yt_videos');
-	// 		}
-	// 	}
-	// },
 	hndTrackNameCh: function(e) {
 		if (e.value){
 			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.state('artist'), track: this.mo.state('track')}, this.current_motivator);
@@ -404,13 +376,6 @@ var MfCor = spv.inh(LoadableList, {
 						dataType: 'jsonp',
 						data: data,
 						resourceCachingAvailable: true,
-						// afterChange: function(opts) {
-						// 	if (opts.dataType == 'json'){
-						// 		data.alt = 'json';
-						// 		opts.headers = null;
-						// 	}
-
-						// },
 						thisOriginAllowed: true
 					});
 				},
@@ -469,19 +434,11 @@ var MfCor = spv.inh(LoadableList, {
 		}
 	},
 	'stch-unavailable@sorted_completcs.moplas_list': function(target, state, old_state, source) {
-
-		//source.item
 		if (state) {
 			target.checkMoplas(source.item);
-			// debugger;
 		}
 	},
 	state_change: {
-		// "mopla_to_use": function(target, nmf, omf) {
-		// 	if (nmf){
-		// 		target.listenMopla(nmf);
-		// 	}
-		// },
 		"selected_mopla": function() {
 
 		},
@@ -495,18 +452,6 @@ var MfCor = spv.inh(LoadableList, {
 			}
 			pv.updateNesting(target, 'current_mopla', nmf);
 		},
-		// "mopla_to_preload": function(target, nmf, omf){
-		// 	if (omf){
-		// 		//omf.removeCache();
-		// 	}
-		// 	if (nmf) {
-		// 		//nmf.load();
-		// 	}
-		// }
-		// "default_mopla": function(target, nmf, omf) {
-
-		// }
-
 	},
 	'compx-current_source': [
 		['current_mopla', 'default_mopla'],
@@ -585,7 +530,6 @@ var MfCor = spv.inh(LoadableList, {
 	switchMoreSongsView: function() {
 		if (!this.state('want_more_songs')){
 			pv.update(this, 'want_more_songs', true);
-			//this.markMessagesReaded();
 		} else {
 			pv.update(this, 'want_more_songs', false);
 		}
@@ -593,45 +537,17 @@ var MfCor = spv.inh(LoadableList, {
 	},
 	markMessagesReaded: function() {
 		this.sf_notf.markAsReaded('vk_audio_auth ');
-		//this.notifier.banMessage('vk_audio_auth ');
 	},
-
-
-	/*hndNFSearch: function(search, name) {
-		if (name == 'vk'){
-			//this.removeVKAudioAuth();
-		}
-	},*/
 	hndNtfRead: function(message_id) {
 		this.notifier.banMessage(message_id);
 	},
 	bindMessagesRecieving: function() {
-
-		/*var _this = this;
-		if (this.mo.mp3_search){
-
-			this.mo.mp3_search.on('new-search', this.hndNFSearch, this.getContextOpts());
-		}*/
 		this.sf_notf.on('read', this.hndNtfRead, this.getContextOpts());
 
 	},
 	collapseExpanders: function() {
 		pv.update(this, 'want_more_songs', false);
 	},
-	/*
-	setSem: function(sem) {
-		if (this.file){
-			throw new Error('already using single file instead of search');
-		}
-		if (this.sem != sem){
-			if (this.sem){
-				sem.off('changed', this.semChange);
-			}
-			this.sem  = sem;
-			sem.on('changed', this.semChange);
-		}
-
-	},*/
 	addMFComplect: function(complect, name) {
 		this.complects[name] = complect;
 	},
@@ -685,51 +601,6 @@ var MfCor = spv.inh(LoadableList, {
 
 
 	},
-	/*
-	semChanged: function(complete) {
-		this.checkVKAuthNeed();
-
-		var songs_packs = this.songs_packs = this.sem.getAllSongTracks();
-
-		this.pa_o = spv.filter(songs_packs, 'name');
-
-		var many_files = this.pa_o.length > 1;
-
-		var sorted_completcs = [];
-
-		for (var i = 0; i < this.pa_o.length; i++) {
-			var cp_name = this.pa_o[i];
-			if (!this.complects[cp_name]){
-				var complect = new MfComplect({
-					mf_cor: this,
-					mo: this.mo
-				}, {
-					sem_part: songs_packs[i]
-				});
-				this.addMFComplect(complect, cp_name);
-
-
-				many_files = many_files || complect.hasManyFiles();
-			}
-			sorted_completcs.push(this.complects[cp_name]);
-		}
-
-
-		pv.update(this, 'has_files', many_files);
-		this.updateDefaultMopla();
-
-		pv.updateNesting(this, 'sorted_completcs', sorted_completcs);
-
-	},*/
-	// listenMopla: function(mopla) {
-	// 	if (this.subscribed_to.indexOf(mopla) == -1){
-	// 		mopla.on('state_change-play', this.mfPlayStateChange);
-	// 		mopla.on('unavailable', this.mfError);
-
-	// 		this.subscribed_to.push(mopla);
-	// 	}
-	// 	return this;
-	// },
 	checkMoplas: function(unavailable_mopla) {
 		var current_mopla_unavailable;
 		if (this.state("used_mopla") == unavailable_mopla){
