@@ -842,10 +842,6 @@ var MfCor = spv.inh(LoadableList, {
 	raw: function(){
 		return !!this.omo && !!this.omo.raw;
 	},
-	isHaveAnyResultsFrom: function(source_name){
-		var complect = this.complects[source_name];
-		return complect && complect.search_source && complect.search_source.state('search_complete');
-	},
 	song: function(){
 		if (this.raw()){
 			return this.getSFM(this.omo);
