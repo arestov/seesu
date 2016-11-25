@@ -38,6 +38,17 @@ return spv.inh(BrowseMap.Model, {
 		self.artist = artist_name;
 		self.track = omo.track;
 
+		if (self.init_states) {
+			delete self.init_states.artist_name;
+			delete self.init_states.track_name;
+		}
+
+		if (self.head) {
+			delete self.head.artist_name;
+			delete self.head.track_name;
+		}
+
+
 		self.omo = omo;
 
 		if (artist_name){
@@ -54,6 +65,8 @@ return spv.inh(BrowseMap.Model, {
 
 	}
 }, {
+	'compx-track_name': [['track']],
+	'compx-artist_name': [['artist']],
 	'compx-track': [['track_name_provided']],
 	model_name: "song",
 	network_data_as_states: false,

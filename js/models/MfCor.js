@@ -1,7 +1,8 @@
-define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/models/Mp3Search/index', './comd', './YoutubeVideo', './LoadableList'],
-function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, LoadableList) {
+define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/models/Mp3Search/index', './comd', './YoutubeVideo', './LoadableList', 'js/libs/BrowseMap'],
+function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, LoadableList, BrowseMap) {
 "use strict";
-
+var pvState = pv.state;
+var pvUpdate = pv.update;
 var MFCorVkLogin = spv.inh(comd.VkLoginB, {}, {
 	'compx-access_desc': [
 		['#locales.to-find-and-play', '#locales.music-files-from-vk'],
@@ -77,7 +78,6 @@ var MfComplectBase = spv.inh(pv.Model, {
 		// self.selectMf = function() {
 		// 	_self.mf_cor.playSelectedByUser(this);
 		// };
-		self.search_source = null;
 
 		self.on('child_change-moplas_list', function(e) {
 			if (e.value) {
@@ -90,22 +90,14 @@ var MfComplectBase = spv.inh(pv.Model, {
 		});
 	}
 }, {
-	// 'nest_sel-moplas_list2': {
-	// 	from: 'search_source.files-list',
-	// 	map: true,
-	// },
-	hndFilesListCh: function(files_list) {
-		if (!files_list){
-			return;
+	'compx-artist_name': [['^artist_name']],
+	'compx-track_name': [['^track_name']],
+	'compx-can_search': [
+		['artist_name', 'track_name'],
+		function (artist_name, track_name) {
+			return artist_name && track_name;
 		}
-		var moplas_list = [];
-		for (var i = 0; i < files_list.length; i++) {
-			var sf = this.mf_cor.getSFM(files_list[i]);
-			moplas_list.push(sf);
-		}
-		pv.updateNesting(this, 'moplas_list', moplas_list);
-
-	},
+	],
 	toggleOverstocked: function() {
 		pv.update(this, 'show_overstocked', !this.state('show_overstocked'));
 	},
@@ -114,27 +106,37 @@ var MfComplectBase = spv.inh(pv.Model, {
 		return this.sem_part && this.sem_part.t && this.sem_part.t.length > 1;
 	},
 	getFiles: function(type) {
-		return this.search_source.getFiles(type);
+
+		return this.map_parent.getNesting('lookup').bindSource(pvState(this, 'search_name')).getFiles(type);
 	}
 });
 
-var MfComplect = spv.inh(MfComplectBase, {
-	init: function (self, opts, data, params) {
-		self.search_source = params.search_source;
-		self.lwch(self.search_source, 'files-list', self.hndFilesListCh);
-		pv.updateNesting(self, 'pioneer', params.search_source);
+var MfComplect = spv.inh(MfComplectBase, {}, {
+	'stch-files-list@pioneer': function (target, files_list) {
+		if (!files_list){
+			return;
+		}
+		var moplas_list = [];
+		for (var i = 0; i < files_list.length; i++) {
+			var sf = target.map_parent.getSFM(files_list[i]);
+			moplas_list.push(sf);
+		}
+		pv.updateNesting(target, 'moplas_list', moplas_list);
 	},
-	'nest-search_source': ['#mp3_search/']
+	'nest-pioneer': ['#mp3_search/lookups/[:artist_name],[:track_name]/[:search_name]', {
+		ask_for: 'can_search'
+	}]
 });
 
-var MfComplectSingle = spv.inh(MfComplectBase, {
-	init: function (self, opts, data, params) {
-		self.start_file = params.file;
-		var sf = self.mf_cor.getSFM(self.start_file);
+var MfComplectSingle = spv.inh(MfComplectBase, {}, {
+	'compx-file': [['^file']],
+	'stch-file': function (target, file) {
+		if (!file) {
+			pv.updateNesting(target, 'moplas_list', null);
+			return;
+		}
 
-			//.on('want-to-play-sf', self.selectMf);
-		pv.updateNesting(self, 'moplas_list', [sf]);
-		pv.update(self, 'has_start_file', true);
+		pv.updateNesting(target, 'moplas_list', [target.mf_cor.getSFM(file)]);
 	}
 });
 
@@ -168,37 +170,30 @@ var MfCor = spv.inh(LoadableList, {
 		self.omo = omo;
 		self.mo = self.map_parent;
 		self.files_models = {};
-		self.complects = {};
-		self.updateNesting('mp3_search', self.mo.mp3_search);
-
 
 		self.initNotifier();
+		pvUpdate(self, 'file', omo.file);
 		if (omo.file){
 			self.file = omo.file;
-
-			var complect = self.initChi('mf_complect', null, {
-					mf_cor: self,
-					mo: self.mo,
-					file: self.file,
-					source_name: 'vk'
-				});
-			self.addMFComplect(complect, self.file.from);
 			self.updateDefaultMopla();
-			pv.updateNesting(self, 'sorted_completcs', [complect]);
-
 		} else {
 			self.mo.on('vip_state_change-track', self.hndTrackNameCh, {immediately: true, soft_reg: false, context: self});
-
 		}
-		self.wlch(self.mo.mp3_search, 'tools_by_name');
-		self.on('child_change-sorted_completcs', function() {
-			pv.updateNesting(this, 'vk_source', this.complects['vk'] && this.complects['vk'].search_source);
-		});
 
 		self.intMessages();
 	}
 }, {
-	'chi-mf_complect': MfComplect,
+	'compx-artist_name': [['^artist_name']],
+	'compx-track_name': [['^track_name']],
+	'compx-can_search': [
+		['artist_name', 'track_name'],
+		function (artist_name, track_name) {
+			return artist_name && track_name;
+		}
+	],
+	'nest-lookup': ['#mp3_search/lookups/[:artist_name],[:track_name]', {
+		ask_for: 'can_search'
+	}],
 	hndTrackNameCh: function(e) {
 		if (e.value){
 			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.state('artist'), track: this.mo.state('track')}, this.current_motivator);
@@ -221,14 +216,8 @@ var MfCor = spv.inh(LoadableList, {
 	'compx-is_important': [
 		['^is_important']
 	],
-	'compx-has_any_vk_results': [
-		['@some:has_any_data:vk_source'],
-		function (has_any_data) {
-			return !!has_any_data;
-		}
-	],
 	'compx-has_vk_tool': [
-		['tools_by_name'],
+		['@one:tools_by_name:mp3_search'],
 		function (tools) {
 			return !!tools && !!tools.vk;
 		}
@@ -275,12 +264,19 @@ var MfCor = spv.inh(LoadableList, {
 			],
 		}
 	},
-	'nest_cnt-complects2': ['complects_single', 'complects_normal'],
+	'stch-files-list@lookup.sources_list': function (target) {
+		target.updateDefaultMopla();
+	},
+	getSource: function (source_name) {
+		return BrowseMap.routePathByModels(this, 'complects/' + source_name, false, true);
+	},
+	'nest_cnt-sorted_completcs': ['complects_normal', 'complects_single'],
 	'nest-complects_single': [
-		['single-complects/[:file.from]'], {
+		'single-complects/[:file.from]', {
 			ask_for: 'file'
 		},
 	],
+	'nest-mp3_search': ['#mp3_search'],
 	'nest_sel-complects_normal': {
 		from: '#mp3_search>sources_core_list',
 		map: 'complects/[:search_name]'
@@ -288,6 +284,21 @@ var MfCor = spv.inh(LoadableList, {
 	'nest-vk_auth': [MFCorVkLogin, {
 		ask_for: 'needs_vk_auth'
 	}],
+	'nest_sel-vk_source': {
+		from: 'complects_normal',
+		where: [
+			['search_name:'],
+			function (name) {
+				return name == 'vk';
+			}
+		]
+	},
+	'compx-has_any_vk_results': [
+		['@one:moplas_list$length:vk_source', 'file'],
+		function (has_any_data, file) {
+			return !!has_any_data || (file && file.from == 'vk');
+		}
+	],
 
 	getSFM: function(file) {
 
@@ -548,30 +559,6 @@ var MfCor = spv.inh(LoadableList, {
 	collapseExpanders: function() {
 		pv.update(this, 'want_more_songs', false);
 	},
-	addMFComplect: function(complect, name) {
-		this.complects[name] = complect;
-	},
-	hndFilesListCh: function(state) {
-		if (state){
-			this.updateDefaultMopla();
-		}
-	},
-	bindSource: function(f_investg_s) {
-		var source_name = f_investg_s.search_name;
-		if (!this.complects[source_name]){
-			var complect = this.initChi('mf_complect', null, {
-				mf_cor: this,
-				mo: this.mo,
-				search_source: f_investg_s,
-				source_name: source_name
-			});
-			this.addMFComplect(complect, source_name);
-			this.lwch(f_investg_s, 'files-list', this.hndFilesListCh);
-
-		//	many_files = many_files || complect.hasManyFiles();
-		}
-
-	},
 	startSearch: function(opts) {
 		if (this.files_investg){
 			this.files_investg.startSearch(opts);
@@ -579,27 +566,18 @@ var MfCor = spv.inh(LoadableList, {
 			this.last_search_opts = opts;
 		}
 	},
-	hndSourcesList: function(e) {
-		var sorted_completcs = new Array(e.value.length || 0);
-		for (var i = 0; i < e.value.length; i++) {
-			var cur = e.value[i];
-			this.bindSource(cur);
-			sorted_completcs[i] = this.complects[cur.search_name];
+	'compx-few_sources': [
+		['sorted_completcs$length'],
+		function (length) {
+			return length > 1;
 		}
-		pv.updateNesting(this, 'sorted_completcs', sorted_completcs);
-		pv.update(this, 'few_sources', e.value.length > 1);
-	},
+	],
 	bindInvestgChanges: function() {
-		//
 		var investg = this.files_investg;
 		if (!investg){
 			return;
 		}
 		this.wlch(investg, 'search_ready_to_use', 'search_ready');
-		investg.on('child_change-sources_list', this.hndSourcesList, this.getContextOpts());
-
-
-
 	},
 	checkMoplas: function(unavailable_mopla) {
 		var current_mopla_unavailable;
@@ -731,7 +709,16 @@ var MfCor = spv.inh(LoadableList, {
 			all_files.push(this.file);
 		} else {
 			if (source_name){
-				var complect = this.complects[source_name];
+				var list = this.getNesting('sorted_completcs');
+				var complect;
+				if (list) {
+					for (var i = 0; i < list.length; i++) {
+						if (pvState(list[i], 'search_name') == source_name) {
+							complect = list[i];
+						}
+					}
+				}
+
 				if (complect){
 					all_files = all_files.concat(complect.getFiles(type));
 				}
