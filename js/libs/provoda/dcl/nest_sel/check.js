@@ -73,20 +73,21 @@ var SelectNestingDeclaration = function(dest_name, data) {
 var types = ['sort', 'map', 'cond'];
 
 function combineStates(obj) {
-	var result = {
-		list: [],
-		shorts: [],
-	};
+	var list = [];
+	var shorts = [];
 
 	for (var i = 0; i < types.length; i++) {
 		var cur = types[i];
 		if (obj[cur]) {
-			push.apply(result.list, obj[cur].list);
-			push.apply(result.shorts, obj[cur].shorts);
+			push.apply(list, obj[cur].list);
+			push.apply(shorts, obj[cur].shorts);
 		}
 	}
 
-	return result;
+	return {
+		list: list.length ? list : null,
+		shorts: shorts.length ? shorts : null,
+	};
 }
 
 

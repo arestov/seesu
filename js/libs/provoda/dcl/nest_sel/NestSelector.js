@@ -15,18 +15,18 @@ var NestSelector = function (md, declr) {
   this.items_changed = null;
 	// this.waiting_chd_count = false;
 
-  this.state_name = declr.deps.base.list;
-  this.short_state_name = declr.deps.base.shorts;
+  this.state_name = declr.deps.base.all.list;
+  this.short_state_name = declr.deps.base.all.shorts;
 
 	this.item_cond_index = null;
 	this.item_cond_index = (declr.deps.base.cond || declr.deps.deep.cond) && {};
 	this.deep_item_states_index = {};
 	this.base_states = null;
 
-	if (declr.deps.base.list) {
+	if (declr.deps.base.all.list) {
 		var base_states = {};
-		for (var i = 0; i < declr.deps.base.list.length; i++) {
-			var cur = declr.deps.base.list[i];
+		for (var i = 0; i < declr.deps.base.all.list.length; i++) {
+			var cur = declr.deps.base.all.list[i];
 			base_states[cur] = pvState(md, cur);
 		}
 		this.base_states = base_states;
@@ -63,7 +63,6 @@ function handleChdDestState(motivator, fn, nestsel, args) {
 function handleChdDeepState(motivator, _, lnwatch, args) {
 	// input - changed "deep source" state
 	// expected - invalidated one item condition, rerunned query, updated nesting
-
 	var state_name = args[0];
 	var value = args[1];
 	var md = args[3];
@@ -122,14 +121,15 @@ function isFine(md, nestsel) {
 
 function getMatchedItems(nestsel) {
 	var dcl = nestsel.declr;
-
-	if (!dcl.deps.base.list && !dcl.deps.deep.list) {
+	var cond_base = dcl.deps.base.cond;
+	var cond_deep = dcl.deps.deep.cond;
+	if (!(cond_base && cond_base.list) && !(cond_deep && cond_deep.list)) {
 		if (!dcl.map) {
 			return nestsel.items;
 		}
 
 		if (typeof dcl.map === 'object') {
-
+			if (!nestsel.items) {return;}
 			var arr = new Array(nestsel.items.length);
 			for (var i = 0; i < nestsel.items.length; i++) {
 				var cur = nestsel.items[i];
@@ -148,6 +148,10 @@ function getMatchedItems(nestsel) {
 		throw new Error('implement map support');
 	}
 
+
+	if (!nestsel.items) {
+		return;
+	}
 	var result = [];
 
 	for (var i = 0; i < nestsel.items.length; i++) {
@@ -165,7 +169,7 @@ function runFilter(motivator, nestsel) {
 	// deep_item_states_index
 	// base_states
 	var result = getMatchedItems(nestsel);
-	if (nestsel.declr.sortFn) {
+	if (result && nestsel.declr.sortFn) {
 		// curretly just always sort
 		result.sort(function (one, two) {
 			return nestsel.declr.sortFn.call(null, one, two, nestsel.md);
