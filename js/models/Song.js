@@ -225,9 +225,7 @@ var pvUpdate = pv.update;
 			pv.update(this, 'mf_cor', this.mf_cor);
 
 		}),
-		'compx-mf_cor_has_available_tracks': [
-			['@some:has_available_tracks:mf_cor']
-		],
+
 		'compx-play': [
 			['@one:play:current_mopla']
 		],

@@ -142,37 +142,6 @@ return spv.inh(BrowseMap.Model, {
 				}
 			}
 		},
-		'can-use-as-neighbour':{
-			depends_on: ['has_none_files_to_play', 'forbidden_by_copyrh'],
-			fn: function(h_nftp, forbidden_by_copyrh) {
-				if (forbidden_by_copyrh) {
-					return false;
-				}
-				if (h_nftp){
-					return false;
-				} else {
-					return true;
-				}
-
-			}
-		},
-		'has_none_files_to_play': {
-			depends_on: ['mf_cor', 'search_complete', 'track_name_not_found', 'mf_cor_has_available_tracks'],
-			fn: function(mf_cor, scomt, track_name_not_found, mf_cor_tracks) {
-				if (mf_cor && !mf_cor_tracks){
-					if (!mf_cor.isSearchAllowed()){
-						return true;
-					} else if (scomt){
-						return true;
-					}
-				}
-
-				if (track_name_not_found){
-					return true;
-				}
-				return false;
-			}
-		},
 		'$relation:next_preload_song-for-loaded_player_song': [
 			['player_song', 'related_next_preload_song', 'file_almost_loaded'],
 			function(player_song, related_next_preload_song, file_almost_loaded) {
@@ -517,8 +486,42 @@ return spv.inh(BrowseMap.Model, {
 			target.map_parent.markAsPlayable();
 		}
 	},
+	'compx-can-use-as-neighbour': [
+		['has_none_files_to_play', 'forbidden_by_copyrh'],
+		function(h_nftp, forbidden_by_copyrh) {
+			if (forbidden_by_copyrh) {
+				return false;
+			}
+			if (h_nftp){
+				return false;
+			} else {
+				return true;
+			}
+
+		}
+	],
+	'compx-has_none_files_to_play': [
+		['mf_cor', 'search_complete', 'track_name_not_found', 'mf_cor_has_available_tracks'],
+		function(mf_cor, scomt, track_name_not_found, mf_cor_tracks) {
+			if (mf_cor && !mf_cor_tracks){
+				if (!mf_cor.isSearchAllowed()){
+					return true;
+				} else if (scomt){
+					return true;
+				}
+			}
+
+			if (track_name_not_found){
+				return true;
+			}
+			return false;
+		}
+	],
 	'compx-search_complete': [
 		['@one:search_complete:investg']
+	],
+	'compx-mf_cor_has_available_tracks': [
+		['@some:has_available_tracks:mf_cor']
 	],
 	'compx-playable': [
 		['@one:has_mp3_files:investg', '@one:has_available_tracks:mf_cor'],

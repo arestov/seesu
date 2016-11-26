@@ -216,6 +216,12 @@ var MfCor = spv.inh(LoadableList, {
 	'compx-is_important': [
 		['^is_important']
 	],
+	'compx-has_files': [
+		['@some:moplas_list$length:sorted_completcs'],
+		function (state) {
+			return state;
+		}
+	],
 	'compx-has_vk_tool': [
 		['@one:tools_by_name:mp3_search'],
 		function (tools) {
@@ -226,6 +232,24 @@ var MfCor = spv.inh(LoadableList, {
 		['has_vk_tool', 'has_any_vk_results'],
 		function (has_vk_tool, has_any_vk_results) {
 			return !has_vk_tool && !has_any_vk_results;
+		}
+	],
+	'nest-vk_auth': [MFCorVkLogin, {
+		ask_for: 'needs_vk_auth'
+	}],
+	'nest_sel-vk_source': {
+		from: 'complects_normal',
+		where: [
+			['>search_name'],
+			function (name) {
+				return name == 'vk';
+			}
+		]
+	},
+	'compx-has_any_vk_results': [
+		['@one:moplas_list$length:vk_source', 'file'],
+		function (has_any_data, file) {
+			return !!has_any_data || (file && file.from == 'vk');
 		}
 	],
 	'stch-needs_vk_auth': function(target, state) {
@@ -246,6 +270,12 @@ var MfCor = spv.inh(LoadableList, {
 
 		}
 	},
+	'compx-few_sources': [
+		['sorted_completcs$length'],
+		function (length) {
+			return length > 1;
+		}
+	],
 	sub_pager: {
 		type: {
 			complects: 'complect',
@@ -281,24 +311,6 @@ var MfCor = spv.inh(LoadableList, {
 		from: '#mp3_search>sources_sorted_list',
 		map: 'complects/[:search_name]'
 	},
-	'nest-vk_auth': [MFCorVkLogin, {
-		ask_for: 'needs_vk_auth'
-	}],
-	'nest_sel-vk_source': {
-		from: 'complects_normal',
-		where: [
-			['>search_name'],
-			function (name) {
-				return name == 'vk';
-			}
-		]
-	},
-	'compx-has_any_vk_results': [
-		['@one:moplas_list$length:vk_source', 'file'],
-		function (has_any_data, file) {
-			return !!has_any_data || (file && file.from == 'vk');
-		}
-	],
 
 	getSFM: function(file) {
 
@@ -312,12 +324,6 @@ var MfCor = spv.inh(LoadableList, {
 
 
 	},
-	'compx-has_files': [
-		['@some:moplas_list$length:sorted_completcs'],
-		function (state) {
-			return state;
-		}
-	],
 	'compx-almost_loaded': [
 		['@loading_progress:current_mopla'],
 		function (array) {
@@ -566,12 +572,6 @@ var MfCor = spv.inh(LoadableList, {
 			this.last_search_opts = opts;
 		}
 	},
-	'compx-few_sources': [
-		['sorted_completcs$length'],
-		function (length) {
-			return length > 1;
-		}
-	],
 	bindInvestgChanges: function() {
 		var investg = this.files_investg;
 		if (!investg){
