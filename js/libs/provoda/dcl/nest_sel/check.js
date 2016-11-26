@@ -192,7 +192,7 @@ function getArgsSchema(list) {
 }
 
 function isForDeep(name) {
-	return startsWith(name, ">") && name.slice(0, -1);
+	return startsWith(name, ">") && name.slice(1);
 }
 
 
