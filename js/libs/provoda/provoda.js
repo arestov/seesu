@@ -217,6 +217,7 @@ var HModel = spv.inh(Model, {
 			new_state = !this.state('pmd_vswitched');
 		}
 		var pmd_switch = this.getNesting('pmd_switch');
+		if (!pmd_switch) {return;}
 
 		if (new_state){
 			if (!this.state('pmd_vswitched')){
