@@ -19,11 +19,11 @@ var NestSelector = function (md, declr) {
   this.short_state_name = declr.deps.base.all.shorts;
 
 	this.item_cond_index = null;
-	this.item_cond_index = (declr.deps.base.cond || declr.deps.deep.cond) && {};
-	this.deep_item_states_index = {};
+	this.item_cond_index = declr.selectFn && (declr.deps.base.cond || declr.deps.deep.cond) && {};
+	this.deep_item_states_index = declr.selectFn && {};
 	this.base_states = null;
 
-	if (declr.deps.base.all.list) {
+	if (declr.selectFn && declr.deps.base.all.list) {
 		var base_states = {};
 		for (var i = 0; i < declr.deps.base.all.list.length; i++) {
 			var cur = declr.deps.base.all.list[i];
@@ -46,6 +46,10 @@ NestSelector.rerun = rerun;
 function handleChdDestState(motivator, fn, nestsel, args) {
 	// input - changed "dest" state
 	// expected - invalidated all item conditions, rerunned query, updated nesting
+
+	if (!nestsel.declr.selectFn) {
+		return runFilter(motivator, nestsel);
+	}
 
 	var state_name = args[0];
 	var value = args[1];

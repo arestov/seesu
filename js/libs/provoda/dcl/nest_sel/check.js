@@ -53,19 +53,12 @@ var SelectNestingDeclaration = function(dest_name, data) {
 			throw new Error('where[1] should be func');
 		}
 		this.selectFn = data.where[1];
-
-		this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, null, null, {
-			onchd_count: handleChdCount,
-			onchd_state: handleChdDeepState
-		}, handleAdding, handleRemoving);
-	} else if (this.map) {
-		this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, null, null, {
-			onchd_count: handleChdCount,
-			onchd_state: rerun
-		});
-	} else {
-		throw new Error();
 	}
+
+	this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, null, null, {
+		onchd_count: handleChdCount,
+		onchd_state: this.selectFn ? handleChdDeepState : rerun
+	}, this.selectFn && handleAdding, this.selectFn && handleRemoving);
 
 
 };
