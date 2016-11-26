@@ -2,6 +2,7 @@ define(function(require){
 "use strict";
 var pv = require('pv');
 var spv = require('spv');
+var MusicFile = require('./MusicFile');
 var SongFileModel = require('../SongFileModel');
 var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
 var pvState = pv.state;
@@ -359,6 +360,10 @@ var getMatchedSongs = function(music_list, msq) {
 			}
 		},
 		addFile: function(file) {
+      var injected_music_files = this.getNesting('injected_music_files') || [];
+      var music_file = this.mp3_search.initChi('music_file', null, null, null, file);
+      this.updateNesting('injected_music_files', injected_music_files.concat([music_file]));
+
 			var new_array = [];
 
 			var inj_arr = this.state('injected_files') || [];
@@ -383,6 +388,33 @@ var getMatchedSongs = function(music_list, msq) {
 		// 'stch-files-list': function (target, array) {
 		// 	target.updateNesting('files-list', array);
 		// },
+    'nest_cnt-music_files_list': ['requested_music_files', 'injected_music_files'],
+    'compx-qmi_key': [['msq'], QMIKey],
+    'nest_sel-best_music_files': {
+      from: 'music_files_list',
+      where: [
+        ['qmi_key', '>query_match_index'],
+        function (qmi_key, query_match_index) {
+          if (!query_match_index || !qmi_key) {
+            return;
+          }
+          var value = query_match_index && query_match_index[qmi_key];
+
+          if (value !== -1 && value < 20){
+            return true;
+          }
+        }
+      ],
+    },
+    'nest_sel-mp3files': {
+      from: 'music_files_list',
+      where: [
+        ['>media_type'],
+        function (media_type) {
+          return media_type == 'mp3';
+        }
+      ]
+    },
 		complex_states: {
 			'request_required': [
 				['disable_search', '^must_load'],
@@ -406,40 +438,12 @@ var getMatchedSongs = function(music_list, msq) {
 						this.mp3_search.sortMusicFilesArray(all, pvState(this, 'msq'));
 					}
 
-
 					return !!all.length && all;
 				}
 			],
-			'has_mp3_files': [
-				['files-list'],
-				function(sarr) {
-					if (!sarr) {return;}
-					for (var i = 0; i < sarr.length; i++) {
-						if (sarr[i].media_type =='mp3'){
-							return true;
-						}
-					}
-				}
-			],
-			'has_best_files': [
-				['files-list'],
-				function(fslist) {
-					if (!fslist) {return;}
-					var field_name = 'query_match_index.' + getQueryString(this.msq).replace(/\./gi, '');
-					var best_songs = spv.filter(fslist, field_name, function(value){
-						if (value !== -1 && value < 20){
-							return true;
-						}
-					});
-					return !!best_songs.length;
-				}
-			],
-			'has_files': [
-				['files-list'],
-				function(fslist) {
-					return fslist && !!fslist.length;
-				}
-			],
+			'has_mp3_files': [['mp3files$exists']],
+			'has_best_files': [['best_music_files$exists']],
+			'has_files': [['music_files_list$exists']],
 			'has_any_data': [
 				['has_files', 'search_complete'],
 				function (has_files, search_complete) {
@@ -481,26 +485,37 @@ var getMatchedSongs = function(music_list, msq) {
 							search_complete: true
 						});
 					} else if (music_list instanceof pv.Model) {
-						pv.update(_this, 'search_fail', false);
-
-						_this.wlch(music_list, '@items', 'search_result');
-
-						_this.lwch(music_list, 'query_complete', function(state) {
-							if (!state) {
-								return;
-							}
-							_this.updateManyStates({
-								search_complete: true,
-								search_progress: false,
-								has_request: false
-							});
-						});
+						throw new Error('broken!');
+						// pv.update(_this, 'search_fail', false);
+						//
+						// _this.wlch(music_list, '@items', 'search_result');
+						//
+						// _this.lwch(music_list, 'query_complete', function(state) {
+						// 	if (!state) {
+						// 		return;
+						// 	}
+						// 	_this.updateManyStates({
+						// 		search_complete: true,
+						// 		search_progress: false,
+						// 		has_request: false
+						// 	});
+						// });
 
 					} else {
-						_this.updateManyStates({
-							search_result: getMatchedSongs(music_list, msq),
-							search_fail: false,
+						var matched = getMatchedSongs(music_list, msq);
+						var list = new Array(matched.length);
+						for (var i = 0; i < matched.length; i++) {
+							var cur = _this.mp3_search.initChi('music_file', null, null, null, matched[i]);
+              var query_match_index = matched[i].query_match_index;
+              cur.query_match_index = query_match_index;
+              pvUpdate(cur, 'query_match_index', query_match_index);
+              list[i] = cur;
+						}
+						_this.updateNesting('requested_music_files', list);
 
+            _this.updateManyStates({
+							search_result: matched,
+							search_fail: false,
 
 							search_progress: false,
 							has_request: false,
@@ -844,6 +859,7 @@ var getAverageDurations = function(mu_array, time_limit){
 				}
 			}
 		},
+		'chi-music_file': MusicFile,
 		'chi-tuner': FilesSourceTuner,
 		getSourceTuner: function(search_name) {
 			if (!this.tuners[search_name]) {
@@ -1058,6 +1074,10 @@ var getAverageDurations = function(mu_array, time_limit){
 		}
 
 	};
+  function QMIKey(msq) {
+    if (!msq) {return;}
+    return getQueryString(msq).replace(/\./gi, '');
+  }
 	Mp3Search.setFileQMI = setFileQMI;
 	Mp3Search.getFileQMI = getFileQMI;
 	Mp3Search.hasMusicCopy = hasMusicCopy;
