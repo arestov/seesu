@@ -278,7 +278,7 @@ var MfCor = spv.inh(LoadableList, {
 	],
 	'nest-mp3_search': ['#mp3_search'],
 	'nest_sel-complects_normal': {
-		from: '#mp3_search>sources_core_list',
+		from: '#mp3_search>sources_sorted_list',
 		map: 'complects/[:search_name]'
 	},
 	'nest-vk_auth': [MFCorVkLogin, {

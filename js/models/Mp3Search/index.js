@@ -638,14 +638,8 @@ var getMatchedSongs = function(music_list, msq) {
 		},
 		'compx-searches_pr': [['^searches_pr']],
 		'nest_sel-sources_list_mapped': {
-			from: '^>sources_core_list',
-			map: '[:search_name]',
-			sort: [
-				['>search_name', 'searches_pr'],
-				function (one, two, base) {
-					return byBestSearchIndex(one, two, pvState(base, 'searches_pr'));
-				}
-			]
+			from: '^>sources_sorted_list',
+			map: '[:search_name]'
 		},
 		'nest_cnt-sources_list': ['sources_list_mapped', 'sources_list_more'],
 		addFbS: function(search_name) {
@@ -929,6 +923,15 @@ var getAverageDurations = function(mu_array, time_limit){
 			core_list.push(wrapper);
 			this.updateNesting('sources_core_list', core_list);
 
+		},
+		'nest_sel-sources_sorted_list': {
+			from: 'sources_core_list',
+			sort: [
+				['>search_name', 'searches_pr'],
+				function (one, two, base) {
+					return byBestSearchIndex(one, two, pvState(base, 'searches_pr'));
+				}
+			]
 		},
 		'chi-api_wrapper': pv.Model,
 		getMasterSlaveSearch: function(filter){
