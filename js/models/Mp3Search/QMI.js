@@ -42,23 +42,7 @@ spv.Class.extendTo(QueryMatchIndex, {
 		return this.match_index;
 	},
 	hardTrim: function(string, min_length){
-		var trimmed;
-		if (!this.trim_index[string]) {
-
-			trimmed = spv.hardTrim(string);
-			/*
-			trimmed = string.toLowerCase()
-				.replace(/^The /, '')
-				.replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '')
-				.replace(/(^\s+)|(\s+$)/gi, '')
-				.replace(/\s+/gi, ' ');*/
-			this.trim_index[string] = trimmed;
-		}
-
-
-
-		trimmed = this.trim_index[string];
-
+		var trimmed = spv.hardTrim(string);
 
 		if (!min_length){
 			return trimmed;
