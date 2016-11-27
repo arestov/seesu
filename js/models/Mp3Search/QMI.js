@@ -194,7 +194,7 @@ function getUsefulDescParts(description) {
 var getQMSongIndex= spv.memorize(function (msq, song) {
   return ( new SongQueryMatchIndex(song, msq) * 1 );
 }, function (msq, song) {
-  var first_part = msq.artist + '-' + msq.title + ' : ';
+  var first_part = msq.artist + '-' + msq.track + ' : ';
   if (song.description) {
     return first_part + hex_md5(song.artist + song.track + song.description);
   }
