@@ -138,9 +138,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 		inDescription: function(file_song, query){
       if (!file_song.description || !query.track) {return;}
 
-      var raw = file_song.description.split(/\n/).filter(function (item) {
-        return item && item.replace(/\s/gi, '') && item.length <= 100;
-      });
+      var raw = getUsefulDescParts(file_song.description);
 
       if (raw.length > 1){
         for (var i = 0; i < raw.length; i++) {
@@ -170,6 +168,26 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 		}
 	}
 });
+
+var spaces = /\s/gi;
+var filterParts = function (item) {
+  return item && item.replace(spaces, '') && item.length <= 100;
+};
+
+function getUsefulDescParts(description) {
+  return description.split(/\n/).filter(filterParts);
+}
+
+var getQMSongIndex= spv.memorize(function (msq, song) {
+  return ( new SongQueryMatchIndex(song, msq) * 1 );
+}, function (msq, song) {
+  var first_part = msq.artist + '-' + msq.title + ' : ';
+  if (song.description) {
+    return first_part + hex_md5(song.artist + song.track + song.description);
+  }
+  return first_part + song.artist + song.track;
+});
+
 
 var setFileQMI = function(file, msq, Constr, force_rewrite) {
 	var query_string = getQueryString(msq);
