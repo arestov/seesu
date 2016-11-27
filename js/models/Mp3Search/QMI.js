@@ -136,45 +136,37 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 			}
 		},
 		inDescription: function(file_song, query){
-			if (file_song.description){
-				if (!query.track){
-					return;
-				}
-				var full_title = this.hardTrim(file_song.description, 3);
-				if (!full_title){
-					return false;
-				}
-				var query_artist = this.hardTrim(query.artist, 3);
-				var query_track = this.hardTrim(query.track, 3);
+      if (!file_song.description || !query.track) {return;}
 
+      var raw = file_song.description.split(/\n/).filter(function (item) {
+        return item && item.replace(/\s/gi, '') && item.length <= 100;
+      });
 
-				var raw = file_song.description.split(/\n/);
-				if (raw.length > 1){
-					for (var i = 0; i < raw.length; i++) {
-						if (!raw[i] || !raw[i].replace(/\s/gi, '')){
-							continue;
-						}
-						var guess_info  = guessArtist(raw[i], query.artist);
-						if (!guess_info.artist){
-							continue;
-							//guess_info.track = full_title; - why!?!?
-						}
-						var maindex = new SongQueryMatchIndex(guess_info, query);
-						if (maindex != -1){
-							return maindex * 1;
-						}
-					}
-				} else {
-					var artist_match = file_song.artist && query_artist && full_title.indexOf(query_artist) != -1;
-					var track_match = file_song.track && query_track && full_title.indexOf(query_track) != -1;
-					if (artist_match && track_match){
-						return 9;
-					}
-				}
-
-
-
-			}
+      if (raw.length > 1){
+        for (var i = 0; i < raw.length; i++) {
+          var guess_info  = guessArtist(raw[i], query.artist);
+          if (!guess_info.artist){
+            continue;
+            //guess_info.track = full_title; - why!?!?
+          }
+          var maindex = new SongQueryMatchIndex(guess_info, query);
+          if (maindex != -1){
+            return maindex * 1;
+          }
+        }
+      } else {
+        var full_title = this.hardTrim(file_song.description, 3);
+        if (!full_title){
+          return false;
+        }
+        var query_artist = this.hardTrim(query.artist, 3);
+        var query_track = this.hardTrim(query.track, 3);
+        var artist_match = file_song.artist && query_artist && full_title.indexOf(query_artist) != -1;
+        var track_match = file_song.track && query_track && full_title.indexOf(query_track) != -1;
+        if (artist_match && track_match){
+          return 9;
+        }
+      }
 		}
 	}
 });
