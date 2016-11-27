@@ -3,7 +3,7 @@ define(function (require) {
 var spv = require('spv');
 var guessArtist= require('./guessArtist');
 var hex_md5 = require('hex_md5');
-
+var hardTrim = spv.hardTrim;
 
 var getQueryString = function(msq) {
 	return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
@@ -43,20 +43,21 @@ spv.Class.extendTo(QueryMatchIndex, {
 	valueOf: function(){
 		return this.match_index;
 	},
-	hardTrim: function(string, min_length){
-		var trimmed = spv.hardTrim(string);
-
-		if (!min_length){
-			return trimmed;
-		} else {
-			if (trimmed.length >= min_length){
-				return trimmed;
-			} else {
-				return string;
-			}
-		}
-	}
 });
+
+function hardTrimLimited(string, min_length){
+  var trimmed = hardTrim(string);
+
+  if (!min_length){
+    return trimmed;
+  } else {
+    if (trimmed.length >= min_length){
+      return trimmed;
+    } else {
+      return string;
+    }
+  }
+}
 
 var SongQueryMatchIndex = function(song_item, query){
 	this.trim_index = null;
@@ -75,32 +76,32 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 		},
 		almost: function(file_song, query){
 			if (query.artist && file_song.artist){
-				if (this.hardTrim(query.artist).length >= 3 && (!query.track || this.hardTrim(query.track).length >= 3)){
-					return (this.hardTrim(query.artist) == this.hardTrim(file_song.artist) && (!query.track || this.hardTrim(query.track) == this.hardTrim(file_song.track))) && 0;
+				if (hardTrimLimited(query.artist).length >= 3 && (!query.track || hardTrimLimited(query.track).length >= 3)){
+					return (hardTrimLimited(query.artist) == hardTrimLimited(file_song.artist) && (!query.track || hardTrimLimited(query.track) == hardTrimLimited(file_song.track))) && 0;
 
 				}
 			}
 
 		},
 		anyGood: function(file_song, query){
-			var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
+			var full_title = hardTrimLimited(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
 
 			if (query.q){
 
-				if (full_title.indexOf(this.hardTrim(query.q, 3)) != -1){
+				if (full_title.indexOf(hardTrimLimited(query.q, 3)) != -1){
 					return 0;
 				}
 			} else {
-				var query_artist = this.hardTrim(query.artist, 3);
-				var artist_match = file_song.artist && query_artist && this.hardTrim(file_song.artist, 3).indexOf(query_artist) != -1;
+				var query_artist = hardTrimLimited(query.artist, 3);
+				var artist_match = file_song.artist && query_artist && hardTrimLimited(file_song.artist, 3).indexOf(query_artist) != -1;
 
 				if (!query.track){
 					if (artist_match){
 						return 0;
 					}
 				} else {
-					var query_track = this.hardTrim(query.track, 3);
-					var track_match  = file_song.track && query_track && this.hardTrim(file_song.track, 3).indexOf(query_track) != -1;
+					var query_track = hardTrimLimited(query.track, 3);
+					var track_match  = file_song.track && query_track && hardTrimLimited(file_song.track, 3).indexOf(query_track) != -1;
 					if (artist_match && track_match){
 						return 0;
 					} else {
@@ -117,7 +118,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 		},
 		byWordsInTrackField: function(file_song, query){
 			if (this.artist_in_full_title && query.track){
-				var match = spv.matchWords(this.hardTrim(file_song.track, 3), this.hardTrim(query.track, 3));
+				var match = spv.matchWords(hardTrimLimited(file_song.track, 3), hardTrimLimited(query.track, 3));
 				if (match.forward){
 					return 0;
 				} else if (match.any){
@@ -127,9 +128,9 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 		},
 		byWordsInFullTitle: function(file_song, query){
 			if (this.artist_in_full_title && query.q || query.track){
-				var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
+				var full_title = hardTrimLimited(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
 				var full_query =  query.q || ((query.artist || '') + ' - ' + (query.track || ''));
-				var match = spv.matchWords(full_title, this.hardTrim(full_query, 3));
+				var match = spv.matchWords(full_title, hardTrimLimited(full_query, 3));
 				if (match.forward){
 					return 0;
 				} else if (match.any){
@@ -155,12 +156,12 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
           }
         }
       } else {
-        var full_title = this.hardTrim(file_song.description, 3);
+        var full_title = hardTrimLimited(file_song.description, 3);
         if (!full_title){
           return false;
         }
-        var query_artist = this.hardTrim(query.artist, 3);
-        var query_track = this.hardTrim(query.track, 3);
+        var query_artist = hardTrimLimited(query.artist, 3);
+        var query_track = hardTrimLimited(query.track, 3);
         var artist_match = file_song.artist && query_artist && full_title.indexOf(query_artist) != -1;
         var track_match = file_song.track && query_track && full_title.indexOf(query_track) != -1;
         if (artist_match && track_match){
