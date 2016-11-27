@@ -119,14 +119,16 @@ var modelInit = (function() {
 
 		self.init_states = self.init_states || null;
 
+		self.init_service_states = {};
+
 		if (states || (data && data.states)) {
 
 			if (!self.init_states) {self.init_states = {};}
 
-			cloneObj(self.init_states, states);
+			cloneObj(self.init_service_states, states);
 
 			if (data && data.states) {
-				cloneObj(self.init_states, data.states);
+				cloneObj(self.init_service_states, data.states);
 			}
 			// pv.create must init init_states
 		}
@@ -143,9 +145,10 @@ var modelInit = (function() {
 			cloneObj(self.head, data.head);
 		}
 
+
 		if (self.network_data_as_states && data && data.network_states) {
 			if (!self.init_states) {self.init_states = {};}
-			cloneObj(self.init_states, data.network_states);
+			cloneObj(self.init_service_states, data.network_states);
 
 			if (self.net_head) {
 				if (!self.head) {self.head = {};}
@@ -159,7 +162,7 @@ var modelInit = (function() {
 		if (self.head) {
 			if (!self.init_states) {self.init_states = {};}
 
-			cloneObj(self.init_states, self.head);
+			cloneObj(self.init_service_states, self.head);
 		}
 
 
@@ -177,6 +180,12 @@ var modelInit = (function() {
 		self._requests_deps = null;
 
 		initNestWatchers(self);
+
+		for (var state_name in self.init_service_states) {
+			if (self.hasComplexStateFn(state_name)) {
+				delete self.init_service_states[state_name];
+			}
+		}
 
 		if (!self.manual_states_init) {
 			self.initStates();
@@ -385,6 +394,9 @@ add({
 		this.init_states[state_name] = state_value;
 	},
 	initStates: function(more_states) {
+		cloneObj(this.init_states, this.init_service_states);
+		this.init_service_states = null;
+
 		if (this.init_states === false) {
 			throw new Error('states inited already, you can\'t init now');
 		}
@@ -411,6 +423,9 @@ add({
 				changes_list.push(true, state_name, this.init_states[state_name]);
 			}
 		}
+
+		prsStCon.prefill.parent(this, changes_list);
+		prsStCon.prefill.root(this, changes_list);
 
 		if (changes_list && changes_list.length) {
 			updateProxy(this, changes_list);
