@@ -506,15 +506,15 @@ var hasMusicCopy = function (array, entity, from_position){
 
 
 
-var getAverageDurations = function(mu_array, time_limit){
+var getAverageDurations = function(mu_array, time_limit, qmi_index){
 	var r = {};
 	var filtr = function(value){
 		if (value && value > time_limit){
 			return true;
 		}
 	};
-	for (var a in mu_array.qmi_index){
-		var durs = spv.filter(spv.filter(mu_array.qmi_index[a], 'duration', filtr), "duration");
+	for (var a in qmi_index){
+		var durs = spv.filter(spv.filter(qmi_index[a], 'duration', filtr), "duration");
 
 
 		var summ = 0;
@@ -615,8 +615,8 @@ var getAverageDurations = function(mu_array, time_limit){
 			time_limit = time_limit || 30000;
 
 			var field_name = ['query_match_index', query_string.replace(/\./gi, '')];
-			music_list.qmi_index = spv.makeIndexByField(music_list, field_name);
-			var average_durs = getAverageDurations(music_list, time_limit);
+			var qmi_index = spv.makeIndexByField(music_list, field_name);
+			var average_durs = getAverageDurations(music_list, time_limit, qmi_index);
 			music_list.sort(function(a, b){
 				return spv.sortByRules(a, b, [
 					function(item) {
