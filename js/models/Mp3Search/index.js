@@ -141,21 +141,13 @@ var getMatchedSongs = function(music_list, msq) {
 		// },
     'nest_cnt-music_files_list': ['requested_music_files', 'injected_music_files'],
     'compx-qmi_key': [['msq'], QMIKey],
-    'nest_sel-best_music_files': {
+		'nest_sel-best_music_files': {
+			from: 'match_ratings',
+			map: '>^'
+		},
+    'nest_sel-match_ratings': {
       from: 'music_files_list',
-      where: [
-        ['qmi_key', '>query_match_index'],
-        function (qmi_key, query_match_index) {
-          if (!query_match_index || !qmi_key) {
-            return;
-          }
-          var value = query_match_index && query_match_index[qmi_key];
-
-          if (value !== -1 && value < 20){
-            return true;
-          }
-        }
-      ],
+      map: '>match_ratings/[:artist_name],[:track_title]'
     },
     'nest_sel-mp3files': {
       from: 'music_files_list',
@@ -256,11 +248,7 @@ var getMatchedSongs = function(music_list, msq) {
 						var matched = getMatchedSongs(music_list, msq);
 						var list = new Array(matched.length);
 						for (var i = 0; i < matched.length; i++) {
-							var cur = _this.mp3_search.initChi('music_file', null, null, null, matched[i]);
-              var query_match_index = matched[i].query_match_index;
-              cur.query_match_index = query_match_index;
-              pvUpdate(cur, 'query_match_index', query_match_index);
-              list[i] = cur;
+              list[i] = _this.mp3_search.initChi('music_file', null, null, null, matched[i]);
 						}
 						_this.updateNesting('requested_music_files', list);
 

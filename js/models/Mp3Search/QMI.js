@@ -46,6 +46,7 @@ spv.Class.extendTo(QueryMatchIndex, {
 });
 
 function hardTrimLimited(string, min_length){
+  if (!string) {return '';}
   var trimmed = hardTrim(string);
 
   if (!min_length){

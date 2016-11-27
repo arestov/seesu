@@ -3,6 +3,26 @@ define(function (require) {
 var spv = require('spv');
 var pv = require('pv');
 var SongFileModel = require('../SongFileModel');
+var QMI = require('./QMI');
+var getQMSongIndex = QMI.getQMSongIndex;
+
+
+var Match = pv.behavior({
+  'compx-index_value': [
+    ['msq', '^artist', '^track', '^description'],
+    function (msq, artist, track, description) {
+      if (!msq || !artist) {
+        return -1;
+      }
+
+      return getQMSongIndex(msq, {
+        artist: artist,
+        track: track,
+        description: description,
+      });
+    }
+  ]
+});
 
 var MusicFile = spv.inh(pv.Model, {
 	naming: function(fn) {
@@ -12,13 +32,25 @@ var MusicFile = spv.inh(pv.Model, {
 	}
 }, {
   sub_pager: {
-    item: [
-      SongFileModel,
-      [[]],
-      {
-        customer: 'decoded_name'
-      }
-    ]
+    type: {
+      match_ratings: 'match',
+      playable_files: 'file'
+    },
+    by_type: {
+      match: [
+        Match, null, {
+          artist_name: 'by_comma.0',
+          track_title: 'by_comma.1',
+          'msq.artist': 'by_comma.0',
+          'msq.track': 'by_comma.1',
+        }
+      ],
+      file: [
+        SongFileModel, null, {
+          customer: 'simple_name'
+        }
+      ],
+    }
   }
 });
 
