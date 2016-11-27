@@ -1,5 +1,8 @@
 define(function () {
 'use strict';
+var artist_name_regexp = /([\s\S]*?)\s?[\—\-\—\–]\s/;
+var track_title_clearing_regexp = /^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/;
+var has_prefix_digits_regexp = /^\d+?\s?\S*?\s/;
 return function guessArtist(track_title_raw, query_artist){
 	var track_title = track_title_raw.slice(0, 80);
 
@@ -7,12 +10,12 @@ return function guessArtist(track_title_raw, query_artist){
 	if (!track_title){
 		return r;
 	}
-	var remove_digits = !query_artist || query_artist.search(/^\d+?\s?\S*?\s/) === 0;
+	var remove_digits = !query_artist || query_artist.search(has_prefix_digits_regexp) === 0;
 
 	if (remove_digits){
 		var matched_spaces = track_title.match(/\s?[\—\-\—\–]\s/gi);
 		if (matched_spaces && matched_spaces.length > 1){
-			track_title = track_title.replace(/^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/,"");
+			track_title = track_title.replace(track_title_clearing_regexp,"");
 		}
 		///^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/  for "813 - Elastique ( Rinse FM Rip )"
 
@@ -20,7 +23,7 @@ return function guessArtist(track_title_raw, query_artist){
 	}
 
 	var title_parts = track_title.split(/\s?[\—\-\—\–]\s/);
-	var artist_name_match = track_title.match(/([\s\S]*?)\s?[\—\-\—\–]\s/);
+	var artist_name_match = track_title.match(artist_name_regexp);
 	if (title_parts && title_parts.length > 1){
 		if (title_parts[0] == query_artist){
 			r.artist = artist_name_match[1];
