@@ -2,6 +2,8 @@ define(function (require) {
 'use strict';
 var spv = require('spv');
 var guessArtist= require('./guessArtist');
+var hex_md5 = require('hex_md5');
+
 
 var getQueryString = function(msq) {
 	return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
@@ -195,7 +197,7 @@ var setFileQMI = function(file, msq, Constr, force_rewrite) {
 	if (file.query_match_index[ query_string ] && !force_rewrite) {
 		return file.query_match_index[ query_string ];
 	}
-	file.query_match_index[ query_string.replace(/\./gi, '') ] = Constr ? ( new Constr(file, msq) * 1 ) : ( new SongQueryMatchIndex(file, msq) * 1 );
+	file.query_match_index[ query_string.replace(/\./gi, '') ] = Constr ? ( new Constr(file, msq) * 1 ) : getQMSongIndex(msq, file);
 	return file.query_match_index[ query_string ];
 };
 
@@ -210,6 +212,7 @@ return {
   SongQueryMatchIndex: SongQueryMatchIndex,
   setFileQMI: setFileQMI,
   getFileQMI: getFileQMI,
+  getQMSongIndex: getQMSongIndex,
 };
 
 });
