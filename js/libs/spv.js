@@ -1470,13 +1470,12 @@ spv.coe = function(cb) {
 	return result;
 };
 
-var letter_regexp = /[\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
+var letter_regexp = /[^\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
 //http://stackoverflow.com/questions/150033/regular-expression-to-match-non-english-characters#comment22322603_150078
 
 
 var hardTrim = function(string) {
-	var letters = string.match(letter_regexp);
-	return letters ? letters.join('').toLowerCase() : '';
+	return string.replace(letter_regexp, '').toLowerCase();
 };
 spv.hardTrim = hardTrim;
 
