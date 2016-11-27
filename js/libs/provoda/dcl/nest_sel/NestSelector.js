@@ -123,6 +123,10 @@ function isFine(md, nestsel) {
 	return nestsel.item_cond_index[_provoda_id];
 }
 
+function switchDistant(do_switch, base, deep) {
+	return do_switch ? deep : base;
+}
+
 function getMatchedItems(nestsel) {
 	var dcl = nestsel.declr;
 	var cond_base = dcl.deps.base.cond;
@@ -135,10 +139,14 @@ function getMatchedItems(nestsel) {
 		if (typeof dcl.map === 'object') {
 			if (!nestsel.items) {return;}
 			var arr = new Array(nestsel.items.length);
+			var distant = dcl.map.from_distant_model;
 			for (var i = 0; i < nestsel.items.length; i++) {
 				var cur = nestsel.items[i];
+				var md_from = switchDistant(distant, nestsel.md, cur);
+				var md_states_from = switchDistant(distant, cur, nestsel.md);
+
 				arr[i] = executeStringTemplate(
-					nestsel.md.app, nestsel.md, dcl.map, false, cur
+					nestsel.md.app, md_from, dcl.map, false, md_states_from
 				);
 			}
 			return arr;

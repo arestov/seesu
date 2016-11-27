@@ -106,7 +106,7 @@ function getMap(base, deep, map) {
 
 	deep.map = {
 		list: map.states,
-		shorts: map.states.map(getShortStateName)
+		shorts: map.states ? map.states.map(getShortStateName) : null
 	};
 }
 
