@@ -75,12 +75,14 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 			return (file_song.artist == query.artist && (!query.track || file_song.track == query.track)) && 0;
 		},
 		almost: function(file_song, query){
-			if (query.artist && file_song.artist){
-				if (hardTrimLimited(query.artist).length >= 3 && (!query.track || hardTrimLimited(query.track).length >= 3)){
-					return (hardTrimLimited(query.artist) == hardTrimLimited(file_song.artist) && (!query.track || hardTrimLimited(query.track) == hardTrimLimited(file_song.track))) && 0;
-
-				}
-			}
+      if (!query.artist || !file_song.artist) {
+        return;
+      }
+      var trimmed_query_artist = hardTrimLimited(query.artist);
+      var trimmed_query_track = hardTrimLimited(query.track);
+      if (trimmed_query_artist.length >= 3 && (!query.track || trimmed_query_track.length >= 3)){
+        return (trimmed_query_artist == hardTrimLimited(file_song.artist) && (!query.track || trimmed_query_track == hardTrimLimited(file_song.track))) && 0;
+      }
 
 		},
 		anyGood: function(file_song, query){
