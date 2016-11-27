@@ -264,6 +264,7 @@ var SongFileModelUIOverstock = spv.inh(SongFileModelUI, {}, {
 
 
 var mfComplectUI = spv.inh(View, {}, {
+  'compx-want_more_songs': [['^want_more_songs']],
 	children_views: {
 		'pioneer': ComplectPionerView
 	},

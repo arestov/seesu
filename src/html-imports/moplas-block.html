@@ -311,7 +311,7 @@
 						pv-events="click::toggleOverstocked"
 						>full list</a>
 				</div>
-				<ul pv-anchor='listc-end' class="hidden" pv-class="hidden: !show_overstocked"></ul>
+				<ul pv-anchor='listc-end' class="overstocked-part" pv-class="show_overstocked: {{want_more_songs && show_overstocked}}"></ul>
 			</div>
 
 
