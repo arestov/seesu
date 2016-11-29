@@ -287,7 +287,7 @@ var MfCor = spv.inh(LoadableList, {
 	'nest_sel-vk_source': {
 		from: 'complects_normal',
 		where: [
-			['search_name:'],
+			['>search_name'],
 			function (name) {
 				return name == 'vk';
 			}

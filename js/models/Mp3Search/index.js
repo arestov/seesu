@@ -564,7 +564,7 @@ var getMatchedSongs = function(music_list, msq) {
 		'nest_sel-available_sources': {
 			from: 'sources_list',
 			where: [
-				['disable_search:'],
+				['>disable_search'],
 				function (state) {
 					return !state;
 				}
@@ -573,7 +573,7 @@ var getMatchedSongs = function(music_list, msq) {
 		'nest_sel-expected_sources': {
 			from: 'sources_list',
 			where: [
-				['wait_before_playing:'],
+				['>wait_before_playing'],
 				function (state) {
 					return Boolean(state);
 				}
@@ -641,7 +641,7 @@ var getMatchedSongs = function(music_list, msq) {
 			from: '^>sources_core_list',
 			map: '[:search_name]',
 			sort: [
-				['search_name:', 'searches_pr'],
+				['>search_name', 'searches_pr'],
 				function (one, two, base) {
 					return byBestSearchIndex(one, two, pvState(base, 'searches_pr'));
 				}
