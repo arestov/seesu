@@ -16,7 +16,7 @@ var handleAdding = NestSelector.handleAdding;
 var handleRemoving = NestSelector.handleRemoving;
 var rerun = NestSelector.rerun;
 
-var endsWith = spv.endsWith;
+var startsWith = spv.startsWith;
 // var constr_mention = require('../structure/constr_mention');
 
 var getUnprefixed = spv.getDeprefixFunc( 'nest_sel-' );
@@ -199,7 +199,7 @@ function getArgsSchema(list) {
 }
 
 function isForDeep(name) {
-	return endsWith(name, ":") && name.slice(0, -1);
+	return startsWith(name, ">") && name.slice(0, -1);
 }
 
 
