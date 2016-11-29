@@ -11,7 +11,7 @@ return {
 
 function encodeURLPart(part){
 	if (typeof part == 'number') {
-		return part;
+		return encodeURIComponent(part);
 	}
 
 	var spaced = part.split(" ");

@@ -38,6 +38,16 @@ var bindPreload = function(md, preload_state_name, nesting_name) {
 	});
 };
 
+var getValue = function (app, value) {
+	if (value) {
+		return app.encodeURLPart(value);
+	}
+
+	if (value === 0) {
+		return app.encodeURLPart(value);
+	}
+};
+
 var pathExecutor = function(getChunk) {
 	return function getPath(obj, app, arg1, arg2) {
 		if (obj.states) {
@@ -47,7 +57,7 @@ var pathExecutor = function(getChunk) {
 				var cur_state = obj.states[i];
 				if (cur_state) {
 					var chunk = getChunk(cur_state, app, arg1, arg2);
-					full_path += (chunk && app.encodeURLPart(chunk || '')) || 'null';
+					full_path += getValue(app, chunk) || 'null';
 				}
 			}
 			return full_path;
