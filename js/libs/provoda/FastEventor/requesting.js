@@ -6,7 +6,6 @@ var hex_md5 = require('hex_md5');
 var hp = require('../helpers');
 var spv = require('spv');
 var toBigPromise = require('js/modules/extendPromise').toBigPromise;
-var pvUpdate = require('../updateProxy').update;
 var countKeys = spv.countKeys;
 var getTargetField = spv.getTargetField;
 
@@ -531,9 +530,6 @@ return {
         has_data_holes ? paging_opts.page_limit : (items ? items.length : 0);
       //special logic where server send us page without few items. but it can be more pages available
       //so serv_data in this case is answer for question "Is more data available?"
-
-
-			pvUpdate(sputnik, nesting_name + '$length', sputnik.getLength(nesting_name));
 
       if (!side_data_parsers) {return;}
 

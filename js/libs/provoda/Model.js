@@ -13,6 +13,7 @@ var initNestWatchers = require('./nest-watch/index').init;
 var checkNesting =  require('./nest-watch/index').checkNesting;
 var _requestsDeps = require('./Model/_requestsDeps');
 var onPropsExtend = require('./Model/onExtend');
+var pvUpdate = updateProxy.update;
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -579,6 +580,13 @@ add({
 		if (!opts || !opts.skip_report){
 			this.sendCollectionChange(collection_name, array, old_value, removed);
 		}
+
+		var count = Array.isArray(array)
+			? array.length
+			: (array ? 1 : 0);
+
+		pvUpdate(this, collection_name + '$length', count);
+		pvUpdate(this, collection_name + '$exists', Boolean(count));
 
 		return this;
 	},
