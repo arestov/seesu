@@ -63,8 +63,6 @@ var pvUpdate = pv.update;
 				self.wlch(images_pack, 'image-to-use', 'ext_lfm_image');
 				still_init = false;
 			}
-
-			self.initStates();
 		}
 	}, {
 		network_data_as_states: false,
