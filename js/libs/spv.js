@@ -897,7 +897,7 @@ function extend(Class, params, propsArg) {
     building = stBuilding;
   }
 
-	var parentBuilder = Class.builder;
+	var parentBuilder = Class.inh_constr;
 
 	var passedProps = propsArg || params.props;
 	var props = typeof passedProps == 'function' ?
@@ -914,12 +914,12 @@ function extend(Class, params, propsArg) {
 
 
 	// building нужен что бы к родительской инициализации добавить какую-то конкретную новую
-	var finalBuilder = building(parentBuilder || empty);
+	var mainConstructor = building(parentBuilder || empty);
 
-	var result = naming(finalBuilder);
+	var result = naming(mainConstructor);
 
 	if (initLength === false) {
-		initLength = finalBuilder.length;
+		initLength = mainConstructor.length;
 	}
 
 	if (params.strict) {
@@ -935,7 +935,7 @@ function extend(Class, params, propsArg) {
 
 
 	result.naming = naming;
-	result.builder = finalBuilder;
+	result.inh_constr = mainConstructor;
 	result.onExtend = onExtend;
 	result.initLength = Math.max(Class.initLength || initLength, initLength);
 
@@ -973,7 +973,7 @@ function extend(Class, params, propsArg) {
 			result.legacy = naming(empty);
 			result.legacy.pureBase = result;
 			result.legacy.prototype = cloneObj(new PrototypeConstr(), result.prototype);
-			result.legacy.prototype.init = makeInit(result.builder);
+			result.legacy.prototype.init = makeInit(result.inh_constr);
 			result.legacy.prototype.constr_id = constr_id++;
 			result.legacy.prototype.constructor = result.legacy;
 			if (!params.skip_code_path) {
