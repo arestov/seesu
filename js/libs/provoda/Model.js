@@ -70,21 +70,18 @@ var changeSourcesByApiNames = function(md, store) {
 };
 
 function postInitModel(self) {
+  // prefill own states before connecting relations
+  self.__initStates();
+
   prsStCon.connect.parent(self);
   prsStCon.connect.root(self);
   prsStCon.connect.nesting(self);
-
 
   if (self.nestings_declarations) {
     self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
   }
 
   initNestWatchers(self);
-
-  // manual_states_init
-
-  self.__initStates();
-
 
   if (self.__apis_$_usual && self.__apis_$_usual.length) {
     for (var i = 0; i < self.__apis_$_usual.length; i++) {
