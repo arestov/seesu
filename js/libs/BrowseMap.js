@@ -1478,81 +1478,77 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			fn(this, opts, data, params, more, states);
 		};
 	},
-	building: function(parent) {
-		return function initBrowseMapModel(self, opts, data, params, more, states) {
-			if (!self.skip_map_init){
-				if (data) {
-					if (data['url_part']){
-						self.initState('url_part', data['url_part']);
-					}
-					if (data['nav_title']){
-						self.initState('nav_title', data['nav_title']);
-					}
-				}
-			}
+  init: function (self, opts, data) {
+    if (!self.skip_map_init){
+      if (data) {
+        if (data['url_part']){
+          self.initState('url_part', data['url_part']);
+        }
+        if (data['nav_title']){
+          self.initState('nav_title', data['nav_title']);
+        }
+      }
+    }
 
-			parent(self, opts, data, params, more, states);
+    self.lists_list = null;
+    // self.map_level_num = null;
+    self.head_props = self.head_props || null;
 
-			self.lists_list = null;
-			// self.map_level_num = null;
-			self.head_props = self.head_props || null;
-
-			/*
-				результат работы этого кода - это
-				1) установленное значение head_props
-				2) состояния url_part и nav_title
-				3) установленное значение sub_pa_params
+    /*
+      результат работы этого кода - это
+      1) установленное значение head_props
+      2) состояния url_part и nav_title
+      3) установленное значение sub_pa_params
 
 
-				использование data_by_hp подразумевает, что у родителя есть head_props
-				head_props могут быть собраны вручную, но в основном собирается с помощью hp_bound
-				hp_bound использует data и если будет ссылатся на родителя,
-					то sub_pa_params родителя, sub_pa_params может передаваться и непосредственно как data
+      использование data_by_hp подразумевает, что у родителя есть head_props
+      head_props могут быть собраны вручную, но в основном собирается с помощью hp_bound
+      hp_bound использует data и если будет ссылатся на родителя,
+        то sub_pa_params родителя, sub_pa_params может передаваться и непосредственно как data
 
-			*/
-
-
-			if (self.hp_bound && !data) {
-				throw new Error('pass data arg!');
-			} else {
-				if (self.head_props) {
-					console.log('already has head_props');
-				} else if (self.hp_bound) {
-
-					var complex_obj = {
-						'--data--': null
-					};
-
-					if (self.map_parent.sub_pa_params) {
-						cloneObj(complex_obj, self.map_parent.sub_pa_params);
-					}
-
-					complex_obj['--data--'] = data;
-
-					self.head_props = self.hp_bound(complex_obj);
-				}
-			}
-
-			opts = opts || {};
+    */
 
 
-			if (self.data_by_hp && typeof self.data_by_hp == 'function') {
-				self.sub_pa_params = self.data_by_hp(data);
-			}
+    if (self.hp_bound && !data) {
+      throw new Error('pass data arg!');
+    } else {
+      if (self.head_props) {
+        console.log('already has head_props');
+      } else if (self.hp_bound) {
+
+        var complex_obj = {
+          '--data--': null
+        };
+
+        if (self.map_parent.sub_pa_params) {
+          cloneObj(complex_obj, self.map_parent.sub_pa_params);
+        }
+
+        complex_obj['--data--'] = data;
+
+        self.head_props = self.hp_bound(complex_obj);
+      }
+    }
+
+    opts = opts || {};
+
+
+    if (self.data_by_hp && typeof self.data_by_hp == 'function') {
+      self.sub_pa_params = self.data_by_hp(data);
+    }
 
 
 
-			if (self.allow_data_init) {
-				self.updateManyStates(data);
-			}
+    if (self.allow_data_init) {
+      self.updateManyStates(data);
+    }
 
-			if (self.preview_nesting_source) {
-				self.on('child_change-' + self.preview_nesting_source, function(e) {
-					pv.updateNesting(this, 'preview_list', e.value);
-				});
-			}
-		};
-	}
+    if (self.preview_nesting_source) {
+      self.on('child_change-' + self.preview_nesting_source, function(e) {
+        pv.updateNesting(this, 'preview_list', e.value);
+      });
+    }
+  }
 }, {
 	network_data_as_states: true,
 	'__required-nav_title': true,
