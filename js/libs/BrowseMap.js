@@ -25,32 +25,29 @@ var BrowseMap = spv.inh(pv.Model, {
 			fn(this, opts, params);
 		};
 	},
-	building: function(fn) {
-		return function buildBrowseMap(self, opts, params) {
-			fn(self, opts);
-			self.changes_group = null;
-			self.grouping_changes = null;
-			self.collecting_changes = null;
-			self.current_level_num = null;
-			self.nav_tree = null;
-			self.onNavTitleChange = null;
-			self.onNavUrlChange = null;
+	init: function(self, opts, params) {
+    self.changes_group = null;
+    self.grouping_changes = null;
+    self.collecting_changes = null;
+    self.current_level_num = null;
+    self.nav_tree = null;
+    self.onNavTitleChange = null;
+    self.onNavUrlChange = null;
 
 
 
-			self.levels = [];
-			if (!params.start){
-				throw new Error('give me 0 index level (start screen)');
-			}
-			self.mainLevelResident = params.start;
+    self.levels = [];
+    if (!params.start){
+      throw new Error('give me 0 index level (start screen)');
+    }
+    self.mainLevelResident = params.start;
 
 
-			self.cha_counter = 0;
-			self.chans_coll = [];
-			self.residents = [];
+    self.cha_counter = 0;
+    self.chans_coll = [];
+    self.residents = [];
 
-		};
-	},
+  },
 	props: {
 	isGroupingChanges: function() {
 		return this.grouping_changes;

@@ -12,12 +12,8 @@ var Eventor = spv.inh(function() {}, {
 			construct(this);
 		};
 	},
-	building: function(parentBuilder) {
-		return function EventorBuilder(self) {
-			parentBuilder(self);
-
-			self.evcompanion = new FastEventor(self);
-		};
+	init: function(self) {
+		self.evcompanion = new FastEventor(self);
 	},
 	props: {
 		// init: function(){
