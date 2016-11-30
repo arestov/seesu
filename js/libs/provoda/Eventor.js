@@ -13,10 +13,10 @@ var Eventor = spv.inh(function() {}, {
 		};
 	},
 	building: function(parentBuilder) {
-		return function EventorBuilder(obj) {
-			parentBuilder(obj);
+		return function EventorBuilder(self) {
+			parentBuilder(self);
 
-			obj.evcompanion = new FastEventor(obj);
+			self.evcompanion = new FastEventor(self);
 		};
 	},
 	props: {

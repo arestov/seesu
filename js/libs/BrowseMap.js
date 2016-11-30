@@ -26,28 +26,28 @@ var BrowseMap = spv.inh(pv.Model, {
 		};
 	},
 	building: function(fn) {
-		return function buildBrowseMap(obj, opts, params) {
-			fn(obj, opts);
-			obj.changes_group = null;
-			obj.grouping_changes = null;
-			obj.collecting_changes = null;
-			obj.current_level_num = null;
-			obj.nav_tree = null;
-			obj.onNavTitleChange = null;
-			obj.onNavUrlChange = null;
+		return function buildBrowseMap(self, opts, params) {
+			fn(self, opts);
+			self.changes_group = null;
+			self.grouping_changes = null;
+			self.collecting_changes = null;
+			self.current_level_num = null;
+			self.nav_tree = null;
+			self.onNavTitleChange = null;
+			self.onNavUrlChange = null;
 
 
 
-			obj.levels = [];
+			self.levels = [];
 			if (!params.start){
 				throw new Error('give me 0 index level (start screen)');
 			}
-			obj.mainLevelResident = params.start;
+			self.mainLevelResident = params.start;
 
 
-			obj.cha_counter = 0;
-			obj.chans_coll = [];
-			obj.residents = [];
+			self.cha_counter = 0;
+			self.chans_coll = [];
+			self.residents = [];
 
 		};
 	},

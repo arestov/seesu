@@ -272,18 +272,18 @@ var StatesEmitter = spv.inh(Eventor, {
 		};
 	},
 	building: function(parentBuilder) {
-		return function StatesEmitterBuilder(obj) {
-			parentBuilder(obj);
+		return function StatesEmitterBuilder(self) {
+			parentBuilder(self);
 
-			obj.conx_optsi = null;
-			obj.conx_opts = null;
-			obj.zdsv = null;
-			obj.current_motivator = obj.current_motivator || null;
+			self.conx_optsi = null;
+			self.conx_opts = null;
+			self.zdsv = null;
+			self.current_motivator = self.current_motivator || null;
 
-			obj._state_updaters = null;
-			obj._interfaces_using = null;
+			self._state_updaters = null;
+			self._interfaces_using = null;
 
-			obj.states = {};
+			self.states = {};
 		};
 	},
 	onExtend: onPropsExtend,
