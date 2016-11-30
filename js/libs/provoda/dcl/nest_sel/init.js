@@ -10,7 +10,7 @@ return function init(self) {
 	for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
 		var cur = self.nest_sel_nest_matches[i];
 		var dest_w = new NestSelector(self, cur);
-		var source_w = new LocalWatchRoot(self, cur.nwbase, dest_w);
+		var source_w = new LocalWatchRoot(null, cur.nwbase, dest_w);
 		if (dest_w.state_name) {
 			addFrom(self, dest_w, 0);
 		}
