@@ -81,12 +81,6 @@ function postInitModel(self) {
 
   initNestWatchers(self);
 
-  for (var state_name in self.init_service_states) {
-    if (self.hasComplexStateFn(state_name)) {
-      delete self.init_service_states[state_name];
-    }
-  }
-
   // manual_states_init
 
   self.__initStates();
@@ -113,6 +107,15 @@ function postInitModel(self) {
 }
 
 var modelInit = (function() {
+  function toServStates(self, states) {
+    if (!states) {return;}
+
+    if (!self.init_service_states) {
+      self.init_service_states = {};
+    }
+
+    cloneObj(self.init_service_states, states);
+  }
 	return function initModel(self, opts, data, params, more, states) {
 		self.current_motivator = self.current_motivator || (opts && opts._motivator);
 
@@ -159,20 +162,16 @@ var modelInit = (function() {
 
 		self.md_replacer = null;
 		self.mpx = null;
+    self._requests_deps = null;
 
 		self.init_states = self.init_states || null;
 
-		self.init_service_states = {};
+		self.init_service_states = null;
 
 		if (states || (data && data.states)) {
 
-			if (!self.init_states) {self.init_states = {};}
-
-			cloneObj(self.init_service_states, states);
-
-			if (data && data.states) {
-				cloneObj(self.init_service_states, data.states);
-			}
+			toServStates(self, states);
+      toServStates(self, data && data.states);
 			// pv.create must init init_states
 		}
 
@@ -190,8 +189,7 @@ var modelInit = (function() {
 
 
 		if (self.network_data_as_states && data && data.network_states) {
-			if (!self.init_states) {self.init_states = {};}
-			cloneObj(self.init_service_states, data.network_states);
+      toServStates(self, data.network_states);
 
 			if (self.net_head) {
 				if (!self.head) {self.head = {};}
@@ -203,12 +201,25 @@ var modelInit = (function() {
 		}
 
 		if (self.head) {
-			if (!self.init_states) {self.init_states = {};}
-
-			cloneObj(self.init_service_states, self.head);
+      toServStates(self, self.head);
 		}
 
-    self._requests_deps = null;
+    if (!self.init_service_states) {
+      return self;
+    }
+
+    for (var state_name in self.init_service_states) {
+      if (self.hasComplexStateFn(state_name)) {
+        delete self.init_service_states[state_name];
+      }
+    }
+
+    self.init_states = self.init_states || {};
+
+    cloneObj(self.init_states, self.init_service_states);
+		self.init_service_states = null;
+
+
 		return self;
 	};
 })();
@@ -407,9 +418,6 @@ add({
     cloneObj(this.init_states, more_states);
   },
 	__initStates: function() {
-		cloneObj(this.init_states, this.init_service_states);
-		this.init_service_states = null;
-
 		if (this.init_states === false) {
 			throw new Error('states inited already, you can\'t init now');
 		}
