@@ -143,10 +143,6 @@ pv = provoda = {
 
 		}
 
-		if (model.init_states) {
-			model.initStates();
-		}
-
 		return model;
 	},
 	markStrucure: markStrucure
