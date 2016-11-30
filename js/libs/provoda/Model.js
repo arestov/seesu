@@ -69,6 +69,49 @@ var changeSourcesByApiNames = function(md, store) {
 	}
 };
 
+function postInitModel(self) {
+  prsStCon.connect.parent(self);
+  prsStCon.connect.root(self);
+  prsStCon.connect.nesting(self);
+
+
+  if (self.nestings_declarations) {
+    self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
+  }
+
+  initNestWatchers(self);
+
+  for (var state_name in self.init_service_states) {
+    if (self.hasComplexStateFn(state_name)) {
+      delete self.init_service_states[state_name];
+    }
+  }
+
+  // manual_states_init
+
+  self.__initStates();
+
+
+  if (self.__apis_$_usual && self.__apis_$_usual.length) {
+    for (var i = 0; i < self.__apis_$_usual.length; i++) {
+      var cur = self.__apis_$_usual[i];
+      self.useInterface(cur.name, cur.fn());
+    }
+  }
+
+  if (self.__api_root_dep_apis) {
+    for (var i = 0; i < self.__api_root_dep_apis.length; i++) {
+      var cur = self.__api_root_dep_apis[i];
+      var api = self.app._interfaces_using.used[cur]
+      self.useInterface('#' + cur, api);
+    }
+  }
+
+  if (self.__api_effects_$_index_by_apis && self.__api_effects_$_index_by_apis['self']) {
+    self.useInterface('self', self);
+  }
+}
+
 var modelInit = (function() {
 	return function initModel(self, opts, data, params, more, states) {
 		self.current_motivator = self.current_motivator || (opts && opts._motivator);
@@ -165,52 +208,7 @@ var modelInit = (function() {
 			cloneObj(self.init_service_states, self.head);
 		}
 
-
-
-		prsStCon.connect.parent(self);
-		prsStCon.connect.root(self);
-		prsStCon.connect.nesting(self);
-
-
-
-		if (self.nestings_declarations) {
-			self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
-		}
-
-		self._requests_deps = null;
-
-		initNestWatchers(self);
-
-		for (var state_name in self.init_service_states) {
-			if (self.hasComplexStateFn(state_name)) {
-				delete self.init_service_states[state_name];
-			}
-		}
-
-		if (!self.manual_states_init) {
-			self.initStates();
-		}
-
-
-		if (self.__apis_$_usual && self.__apis_$_usual.length) {
-			for (var i = 0; i < self.__apis_$_usual.length; i++) {
-				var cur = self.__apis_$_usual[i];
-				self.useInterface(cur.name, cur.fn());
-			}
-		}
-
-		if (self.__api_root_dep_apis) {
-			for (var i = 0; i < self.__api_root_dep_apis.length; i++) {
-				var cur = self.__api_root_dep_apis[i];
-				var api = self.app._interfaces_using.used[cur]
-				self.useInterface('#' + cur, api);
-			}
-		}
-
-		if (self.__api_effects_$_index_by_apis && self.__api_effects_$_index_by_apis['self']) {
-			self.useInterface('self', self);
-		}
-
+    self._requests_deps = null;
 		return self;
 	};
 })();
@@ -223,6 +221,7 @@ var Model = spv.inh(StatesEmitter, {
 	},
 	onExtend: onPropsExtend,
 	init: modelInit,
+  postInit: postInitModel,
 	props: modelProps
 });
 
@@ -393,19 +392,26 @@ add({
 		}
 		this.init_states[state_name] = state_value;
 	},
-	initStates: function(more_states) {
+  initStates: function (more_states) {
+    if (!more_states) {
+      return;
+    }
+
+    if (this.init_states === false) {
+			throw new Error('states inited already, you can\'t init now');
+		}
+
+    if (!this.init_states) {
+      this.init_states = {};
+    }
+    cloneObj(this.init_states, more_states);
+  },
+	__initStates: function() {
 		cloneObj(this.init_states, this.init_service_states);
 		this.init_service_states = null;
 
 		if (this.init_states === false) {
 			throw new Error('states inited already, you can\'t init now');
-		}
-
-		if (more_states) {
-			if (!this.init_states) {
-				this.init_states = {};
-			}
-			cloneObj(this.init_states, more_states);
 		}
 
 		var changes_list = getComplexInitList(this) || this.init_states && [];
