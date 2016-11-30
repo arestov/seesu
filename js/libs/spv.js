@@ -879,9 +879,7 @@ function extend(Class, params, propsArg) {
 	var building;
 
 	var initLength = false;
-  if (params.building) {
-    building = params.building;
-  } else if (params.init) {
+  if (params.init) {
 		var init = params.init;
 		building = function(parentBuilder) {
 			return stPartWrapping(parentBuilder, init);
