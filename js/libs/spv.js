@@ -910,14 +910,32 @@ function extend(Class, params, propsArg) {
 		? wrapExtend(firstExtend, params.onExtend)
 		: firstExtend;
 
-  var parentBuilder = Class.inh_constr;
+  var parentMainBuilder = Class.inh_main_constr;
 	// building нужен что бы к родительской инициализации добавить какую-то конкретную новую
-	var mainConstructor = building(parentBuilder || empty);
+	var mainConstructor = building(parentMainBuilder || empty);
 
-	var result = naming(mainConstructor);
+  var parentPostbuilder = Class.inh_post_constr;
+  var postConstructor = (function () {
+    if (!params.postInit) {
+      return parentPostbuilder;
+    } else if (!parentPostbuilder) {
+      return params.postInit;
+    }
+    // parent post init should always be the last in order
+    return stPartWrapping(params.postInit, parentPostbuilder);
+  })();
+
+  var finalConstructor = postConstructor
+    ? stPartWrapping(mainConstructor, postConstructor)
+    : mainConstructor;
+
+	var result = naming(finalConstructor);
 
 	if (initLength === false) {
-		initLength = mainConstructor.length;
+    initLength =
+      postConstructor
+        ? Math.max(mainConstructor.length, postConstructor.length)
+        : mainConstructor.length;
 	}
 
 	if (params.strict) {
@@ -933,7 +951,9 @@ function extend(Class, params, propsArg) {
 
 
 	result.naming = naming;
-	result.inh_constr = mainConstructor;
+  result.inh_main_constr = mainConstructor;
+  result.inh_post_constr = postConstructor;
+	result.inh_constr = finalConstructor;
 	result.onExtend = onExtend;
 	result.initLength = Math.max(Class.initLength || initLength, initLength);
 
