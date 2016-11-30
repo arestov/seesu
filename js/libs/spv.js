@@ -897,8 +897,6 @@ function extend(Class, params, propsArg) {
     building = stBuilding;
   }
 
-	var parentBuilder = Class.inh_constr;
-
 	var passedProps = propsArg || params.props;
 	var props = typeof passedProps == 'function' ?
 		spv.coe(passedProps) :
@@ -912,7 +910,7 @@ function extend(Class, params, propsArg) {
 		? wrapExtend(firstExtend, params.onExtend)
 		: firstExtend;
 
-
+  var parentBuilder = Class.inh_constr;
 	// building нужен что бы к родительской инициализации добавить какую-то конкретную новую
 	var mainConstructor = building(parentBuilder || empty);
 
