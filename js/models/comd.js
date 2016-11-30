@@ -9,10 +9,10 @@ var CommonMessagesStore = spv.inh(pv.Eventor, {
 		};
 	},
 	building: function(pconstr) {
-		return function buildComMS(obj, app, glob_store, store_name){
-			pconstr(obj, app);
-			obj.glob_store = glob_store;
-			obj.store_name = store_name;
+		return function buildComMS(self, app, glob_store, store_name){
+			pconstr(self, app);
+			self.glob_store = glob_store;
+			self.store_name = store_name;
 		};
 	},
 	props: {
