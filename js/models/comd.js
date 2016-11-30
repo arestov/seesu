@@ -8,12 +8,9 @@ var CommonMessagesStore = spv.inh(pv.Eventor, {
 			constr(this, app, glob_store, store_name);
 		};
 	},
-	building: function(pconstr) {
-		return function buildComMS(self, app, glob_store, store_name){
-			pconstr(self, app);
-			self.glob_store = glob_store;
-			self.store_name = store_name;
-		};
+	init: function (self, app, glob_store, store_name) {
+    self.glob_store = glob_store;
+    self.store_name = store_name;
 	},
 	props: {
 		markAsReaded: function(message) {
