@@ -877,7 +877,6 @@ function extend(Class, params, propsArg) {
 	var parentNaming = Class.naming || stNaming;
 	var naming = params.naming || parentNaming;
 	var building = params.building || stBuilding;
-	var partWrapping = params.partWrapping || Class.partWrapping || stPartWrapping;
 
 	var initLength = false;
 
@@ -896,7 +895,6 @@ function extend(Class, params, propsArg) {
 	}
 
 	var parentBuilder = Class.builder;
-	var partBuilder = params.partBuilder;
 
 	var passedProps = propsArg || params.props;
 	var props = typeof passedProps == 'function' ?
@@ -913,13 +911,12 @@ function extend(Class, params, propsArg) {
 
 
 	// building нужен что бы к родительской инициализации добавить какую-то конкретную новую
-	var currentBuilder = building(parentBuilder || empty);
-	var finalBuilder = partBuilder ? partWrapping(currentBuilder, partBuilder) : currentBuilder;
+	var finalBuilder = building(parentBuilder || empty);
 
 	var result = naming(finalBuilder);
 
 	if (initLength === false) {
-		initLength = currentBuilder.length;
+		initLength = finalBuilder.length;
 	}
 
 	if (params.strict) {
@@ -936,7 +933,6 @@ function extend(Class, params, propsArg) {
 
 	result.naming = naming;
 	result.building = building;
-	result.partWrapping = partWrapping;
 	result.builder = finalBuilder;
 	result.onExtend = onExtend;
 	result.initLength = Math.max(Class.initLength || initLength, initLength);
