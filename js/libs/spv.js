@@ -876,11 +876,12 @@ var extendTo = Class.extendTo;
 function extend(Class, params, propsArg) {
 	var parentNaming = Class.naming || stNaming;
 	var naming = params.naming || parentNaming;
-	var building = params.building || stBuilding;
+	var building;
 
 	var initLength = false;
-
-	if (params.init) {
+  if (params.building) {
+    building = params.building;
+  } else if (params.init) {
 		var init = params.init;
 		building = function(parentBuilder) {
 			return stPartWrapping(parentBuilder, init);
@@ -892,7 +893,9 @@ function extend(Class, params, propsArg) {
 			return stPartWrapping(preinit, parentBuilder);
 		};
 		initLength = preinit.length;
-	}
+	} else {
+    building = stBuilding;
+  }
 
 	var parentBuilder = Class.builder;
 
@@ -932,7 +935,6 @@ function extend(Class, params, propsArg) {
 
 
 	result.naming = naming;
-	result.building = building;
 	result.builder = finalBuilder;
 	result.onExtend = onExtend;
 	result.initLength = Math.max(Class.initLength || initLength, initLength);
