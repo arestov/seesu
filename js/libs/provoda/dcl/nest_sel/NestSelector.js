@@ -176,10 +176,7 @@ function getReadyItems(head, hands, filtered) {
   return arr;
 }
 
-function runFilter(motivator, head, hands) {
-	// item_cond_index
-	// deep_item_states_index
-	// base_states
+function getSorted(head, hands) {
   var filtered = getFiltered(head, hands);
   var sorted = (filtered && head.declr.sortFn)
     ? filtered.sort(function (one, two) {
@@ -187,6 +184,15 @@ function runFilter(motivator, head, hands) {
   		})
     : filtered;
 
+  return sorted;
+}
+
+function runFilter(motivator, head, hands) {
+	// item_cond_index
+	// deep_item_states_index
+	// base_states
+
+  var sorted = getSorted(head, hands);
 	var result = getReadyItems(head, hands, sorted);
 
 	var md = head.md;
