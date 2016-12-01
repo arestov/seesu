@@ -133,44 +133,16 @@ function switchDistant(do_switch, base, deep) {
 	return do_switch ? deep : base;
 }
 
-function getMatchedItems(head, hands) {
-	var dcl = head.declr;
-	var cond_base = dcl.deps.base.cond;
+function getFiltered(head, hands) {
+  if (!hands.items) {return;}
+  var dcl = head.declr;
+  var cond_base = dcl.deps.base.cond;
 	var cond_deep = dcl.deps.deep.cond;
-	if (!(cond_base && cond_base.list) && !(cond_deep && cond_deep.list)) {
-		if (!dcl.map) {
-			return hands.items;
-		}
+  if (!(cond_base && cond_base.list) && !(cond_deep && cond_deep.list)) {
+    return hands.items;
+  }
 
-		if (typeof dcl.map === 'object') {
-			if (!hands.items) {return;}
-			var arr = new Array(hands.items.length);
-			var distant = dcl.map.from_distant_model;
-			for (var i = 0; i < hands.items.length; i++) {
-				var cur = hands.items[i];
-				var md_from = switchDistant(distant, head.md, cur);
-				var md_states_from = switchDistant(distant, cur, head.md);
-
-				arr[i] = executeStringTemplate(
-					head.md.app, md_from, dcl.map, false, md_states_from
-				);
-			}
-			return arr;
-
-		} else {
-			throw new Error('unsupported map type');
-		}
-	}
-
-	if (dcl.map) {
-		throw new Error('implement map support');
-	}
-
-
-	if (!hands.items) {
-		return;
-	}
-	var result = [];
+  var result = [];
 
 	for (var i = 0; i < hands.items.length; i++) {
 		var cur = hands.items[i];
@@ -182,11 +154,38 @@ function getMatchedItems(head, hands) {
 	return result;
 }
 
+function getReadyItems(head, hands, filtered) {
+	var dcl = head.declr;
+
+  if (!dcl.map) {
+    return filtered;
+  }
+
+  if (typeof dcl.map === 'object') {
+    if (!filtered) {return;}
+    var arr = new Array(filtered.length);
+    var distant = dcl.map.from_distant_model;
+    for (var i = 0; i < filtered.length; i++) {
+      var cur = filtered[i];
+      var md_from = switchDistant(distant, head.md, cur);
+      var md_states_from = switchDistant(distant, cur, head.md);
+
+      arr[i] = executeStringTemplate(
+        head.md.app, md_from, dcl.map, false, md_states_from
+      );
+    }
+    return arr;
+
+  } else {
+    throw new Error('unsupported map type');
+  }
+}
+
 function runFilter(motivator, head, hands) {
 	// item_cond_index
 	// deep_item_states_index
 	// base_states
-	var result = getMatchedItems(head, hands);
+	var result = getReadyItems(head, hands, getFiltered(head, hands));
 	if (result && head.declr.sortFn) {
 		// curretly just always sort
 		result.sort(function (one, two) {
