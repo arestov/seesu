@@ -3,6 +3,31 @@ define(function(require) {
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');
 var NestSelector = require('./NestSelector');
+var getParsedPath = require('../../initDeclaredNestings').getParsedPath;
+
+function Hands(declr) {
+  this.items = null;
+  this.deep_item_states_index = null;
+  this.deep_item_states_index = declr.selectFn && {};
+}
+
+function add(start, nwbase, dest_w) {
+  var start_point  = nwbase && nwbase.start_point;
+  var path_template = start_point && getParsedPath(start_point);
+  if (!path_template) {
+    var lnw = new LocalWatchRoot(null, nwbase, {
+      hands: new Hands(dest_w.declr),
+      head: dest_w,
+    });
+    return addFrom(start, lnw, 0);
+  }
+
+  var lnw = new LocalWatchRoot(null, nwbase, {
+    hands: new Hands(dest_w.declr),
+    head: dest_w,
+  });
+  addFrom(start, lnw, 0);
+}
 
 return function init(self) {
 	if (!self.nest_sel_nest_matches) {return;}
@@ -10,11 +35,10 @@ return function init(self) {
 	for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
 		var cur = self.nest_sel_nest_matches[i];
 		var dest_w = new NestSelector(self, cur);
-		var source_w = new LocalWatchRoot(null, cur.nwbase, dest_w);
 		if (dest_w.state_name) {
 			addFrom(self, dest_w, 0);
 		}
-		addFrom(self, source_w, 0);
+    add(self, cur.nwbase, dest_w);
 	}
 
 };

@@ -7,7 +7,6 @@ var count = 1;
 var NestSelector = function (md, declr) {
 	this.num = 'nsel-' + (count++);
 	this.md = md;
-	this.items = [];
 	this.declr = declr;
 
   this.items_changed = null;
@@ -18,7 +17,6 @@ var NestSelector = function (md, declr) {
 
 	this.item_cond_index = null;
 	this.item_cond_index = declr.selectFn && (declr.deps.base.cond || declr.deps.deep.cond) && {};
-	this.deep_item_states_index = declr.selectFn && {};
 	this.base_states = null;
 
 	if (declr.selectFn && declr.deps.base.all.list) {
@@ -41,25 +39,26 @@ NestSelector.handleAdding = handleAdding;
 NestSelector.handleRemoving = handleRemoving;
 NestSelector.rerun = rerun;
 
-function handleChdDestState(motivator, fn, nestsel, args) {
+function handleChdDestState(motivator, fn, data, args) {
 	// input - changed "dest" state
 	// expected - invalidated all item conditions, rerunned query, updated nesting
-
-	if (!nestsel.declr.selectFn) {
-		return runFilter(motivator, nestsel);
+  var head = data.head;
+  var hands = data.hands;
+	if (!head.declr.selectFn) {
+		return runFilter(motivator, head, hands);
 	}
 
 	var state_name = args[0];
 	var value = args[1];
 
-	var states = nestsel.base_states;
+	var states = head.base_states;
 	states[state_name] = value;
-	var base = nestsel.declr.deps.base;
+	var base = head.declr.deps.base;
 	if (base.cond && base.cond.index[state_name] === true) {
-		nestsel.item_cond_index = {};
+		head.item_cond_index = {};
 	}
 
-	runFilter(motivator, nestsel);
+	runFilter(motivator, head, hands);
 }
 
 function handleChdDeepState(motivator, _, lnwatch, args) {
@@ -69,29 +68,30 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 	var value = args[1];
 	var md = args[3];
 
-	var nestsel = lnwatch.data;
-	var _provoda_id = md._provoda_id;
-	var states = nestsel.deep_item_states_index[_provoda_id];
-	states[state_name] = value;
-	nestsel.deep_item_states_index[_provoda_id] = states;
+  var head = lnwatch.data.head;
 
-	var deep = nestsel.declr.deps.deep;
+	var hands = lnwatch.data.hands;
+	var _provoda_id = md._provoda_id;
+	var states = hands.deep_item_states_index[_provoda_id];
+	states[state_name] = value;
+	hands.deep_item_states_index[_provoda_id] = states;
+
+	var deep = head.declr.deps.deep;
 	if (deep.cond && deep.cond.index[state_name] === true) {
-		delete nestsel.item_cond_index[_provoda_id];
+		delete head.item_cond_index[_provoda_id];
 	}
 
-	runFilter(motivator, nestsel);
+	runFilter(motivator, head, hands);
 }
 
 function rerun(motivator, _, lnwatch) {
-	var nestsel = lnwatch.data;
-	runFilter(motivator, nestsel);
+	runFilter(motivator, lnwatch.data.head, lnwatch.data.hands);
 }
 
-function checkCondition(nestsel, _provoda_id) {
-	var deep_states = nestsel.deep_item_states_index[_provoda_id];
-	var base_states = nestsel.base_states;
-	var args_schema = nestsel.declr.args_schema;
+function checkCondition(head, hands, _provoda_id) {
+	var deep_states = hands.deep_item_states_index[_provoda_id];
+	var base_states = head.base_states;
+	var args_schema = head.declr.args_schema;
 
 	var args = new Array(args_schema.length);
 	for (var i = 0; i < args_schema.length; i++) {
@@ -109,42 +109,42 @@ function checkCondition(nestsel, _provoda_id) {
 		}
 		args[i] = value;
 	}
-	return Boolean(nestsel.declr.selectFn.apply(null, args));
+	return Boolean(head.declr.selectFn.apply(null, args));
 }
 
 
-function isFine(md, nestsel) {
+function isFine(md, head, hands) {
 	var _provoda_id = md._provoda_id;
-	if (!nestsel.item_cond_index.hasOwnProperty(_provoda_id)) {
-		nestsel.item_cond_index[_provoda_id] = checkCondition(nestsel, _provoda_id);
+	if (!head.item_cond_index.hasOwnProperty(_provoda_id)) {
+		head.item_cond_index[_provoda_id] = checkCondition(head, hands, _provoda_id);
 	}
-	return nestsel.item_cond_index[_provoda_id];
+	return head.item_cond_index[_provoda_id];
 }
 
 function switchDistant(do_switch, base, deep) {
 	return do_switch ? deep : base;
 }
 
-function getMatchedItems(nestsel) {
-	var dcl = nestsel.declr;
+function getMatchedItems(head, hands) {
+	var dcl = head.declr;
 	var cond_base = dcl.deps.base.cond;
 	var cond_deep = dcl.deps.deep.cond;
 	if (!(cond_base && cond_base.list) && !(cond_deep && cond_deep.list)) {
 		if (!dcl.map) {
-			return nestsel.items;
+			return hands.items;
 		}
 
 		if (typeof dcl.map === 'object') {
-			if (!nestsel.items) {return;}
-			var arr = new Array(nestsel.items.length);
+			if (!hands.items) {return;}
+			var arr = new Array(hands.items.length);
 			var distant = dcl.map.from_distant_model;
-			for (var i = 0; i < nestsel.items.length; i++) {
-				var cur = nestsel.items[i];
-				var md_from = switchDistant(distant, nestsel.md, cur);
-				var md_states_from = switchDistant(distant, cur, nestsel.md);
+			for (var i = 0; i < hands.items.length; i++) {
+				var cur = hands.items[i];
+				var md_from = switchDistant(distant, head.md, cur);
+				var md_states_from = switchDistant(distant, cur, head.md);
 
 				arr[i] = executeStringTemplate(
-					nestsel.md.app, md_from, dcl.map, false, md_states_from
+					head.md.app, md_from, dcl.map, false, md_states_from
 				);
 			}
 			return arr;
@@ -159,14 +159,14 @@ function getMatchedItems(nestsel) {
 	}
 
 
-	if (!nestsel.items) {
+	if (!hands.items) {
 		return;
 	}
 	var result = [];
 
-	for (var i = 0; i < nestsel.items.length; i++) {
-		var cur = nestsel.items[i];
-		if (isFine(cur, nestsel)) {
+	for (var i = 0; i < hands.items.length; i++) {
+		var cur = hands.items[i];
+		if (isFine(cur, head, hands)) {
 			result.push(cur);
 		}
 	}
@@ -174,22 +174,22 @@ function getMatchedItems(nestsel) {
 	return result;
 }
 
-function runFilter(motivator, nestsel) {
+function runFilter(motivator, head, hands) {
 	// item_cond_index
 	// deep_item_states_index
 	// base_states
-	var result = getMatchedItems(nestsel);
-	if (result && nestsel.declr.sortFn) {
+	var result = getMatchedItems(head, hands);
+	if (result && head.declr.sortFn) {
 		// curretly just always sort
 		result.sort(function (one, two) {
-			return nestsel.declr.sortFn.call(null, one, two, nestsel.md);
+			return head.declr.sortFn.call(null, one, two, head.md);
 		});
 	}
 
-	var md = nestsel.md;
+	var md = head.md;
 	var old_motivator = md.current_motivator;
 	md.current_motivator = motivator;
-	md.updateNesting(nestsel.declr.dest_name, result);
+	md.updateNesting(head.declr.dest_name, result);
 	md.current_motivator = old_motivator;
 
 	return result;
@@ -199,9 +199,9 @@ function handleChdCount(motivator, _, lnwatch, __, items) {
 	// input - changed list order or length
 	// expected - rerunned query, updated nesting
 
-	var nestsel = lnwatch.data;
-	nestsel.items = items;
-	runFilter(motivator, nestsel);
+	var hands = lnwatch.data.hands;
+	hands.items = items;
+	runFilter(motivator, lnwatch.data.head, hands);
 }
 
 function handleAdding(md, lnwatch, skip) {
@@ -210,16 +210,17 @@ function handleAdding(md, lnwatch, skip) {
 
 	if (skip !== lnwatch.selector.length) {return;}
 
-	var nestsel = lnwatch.data;
+  var declr = lnwatch.data.head.declr;
+	var hands = lnwatch.data.hands;
 	var _provoda_id = md._provoda_id;
 
 	var states = {};
-	var deep = nestsel.declr.deps.deep;
+	var deep = declr.deps.deep;
 	for (var i = 0; i < deep.cond.list.length; i++) {
 		var cur = deep.cond.list[i];
 		states[cur] = pvState(md, cur);
 	}
-	nestsel.deep_item_states_index[_provoda_id] = states;
+	hands.deep_item_states_index[_provoda_id] = states;
 }
 
 function handleRemoving(md, lnwatch, skip) {
@@ -228,9 +229,9 @@ function handleRemoving(md, lnwatch, skip) {
 
 	if (skip !== lnwatch.selector.length) {return;}
 
-	var nestsel = lnwatch.data;
+	var hands = lnwatch.data.hands;
 	var _provoda_id = md._provoda_id;
-	delete nestsel.deep_item_states_index[_provoda_id];
+	delete hands.deep_item_states_index[_provoda_id];
 }
 
 return NestSelector;
