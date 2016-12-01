@@ -10,8 +10,6 @@ var NestSelector = function (md, declr) {
 	this.items = [];
 	this.declr = declr;
 
-
-  this.items_index = null;
   this.items_changed = null;
 	// this.waiting_chd_count = false;
 
