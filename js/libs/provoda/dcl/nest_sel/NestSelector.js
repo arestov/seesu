@@ -7,6 +7,17 @@ function Hands(declr) {
   this.items = null;
   this.deep_item_states_index = null;
   this.deep_item_states_index = declr.selectFn && {};
+
+  // sometimes different heads can share one `hands` object
+  // when filtering does not depend on head
+  // we can share `filtering` result for different heads
+  this.can_filter_here = !declr.deps.base.cond;
+  // when sorting does not depend on head
+  // we can share `sorting` result for different heads
+  this.can_sort_here = this.can_filter_here && !declr.deps.base.sort;
+
+  this.items_filtered = null;
+  this.items_sorted = null;
 }
 
 var count = 1;
@@ -87,7 +98,13 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 	var deep = head.declr.deps.deep;
 	if (deep.cond && deep.cond.index[state_name] === true) {
 		delete head.item_cond_index[_provoda_id];
+    if (hands.can_filter_here) {
+      hands.items_filtered = null;
+    }
 	}
+  if (hands.can_sort_here && deep.sort && deep.sort.index[state_name] === true) {
+    hands.items_sorted = null;
+  }
 
 	runFilter(motivator, head, hands);
 }
@@ -176,12 +193,39 @@ function getReadyItems(head, hands, filtered) {
   return arr;
 }
 
+function getCommonFiltered(head, hands) {
+  var sharing_allowed = hands.can_filter_here;
+  if (!sharing_allowed) {
+    return getFiltered(head, hands);
+  }
+  if (!hands.items_filtered) {
+    hands.items_filtered = getFiltered(head, hands);
+  }
+  return hands.items_filtered;
+}
+
+function getSorted(head, hands, items) {
+  if (!items) {return;}
+  return items.slice().sort(function (one, two) {
+    return head.declr.sortFn.call(null, one, two, head.md);
+  });
+}
+
+function getCommonSorted(head, hands, items) {
+  var sharing_allowed = hands.can_sort_here;
+  if (!sharing_allowed) {
+    return getSorted(head, hands, items);
+  }
+  if (!hands.items_sorted) {
+    hands.items_sorted = getSorted(head, hands, items);
+  }
+  return hands.items_sorted;
+}
+
 function getFilteredAndSorted(head, hands) {
-  var filtered = getFiltered(head, hands);
+  var filtered = getCommonFiltered(head, hands);
   var sorted = (filtered && head.declr.sortFn)
-    ? filtered.sort(function (one, two) {
-  			return head.declr.sortFn.call(null, one, two, head.md);
-  		})
+    ? getCommonSorted(head, hands, filtered)
     : filtered;
 
   return sorted;
