@@ -3,6 +3,12 @@ define(function (require) {
 var pvState = require('../../utils/state');
 var executeStringTemplate = require('../../initDeclaredNestings').executeStringTemplate;
 
+function Hands(declr) {
+  this.items = null;
+  this.deep_item_states_index = null;
+  this.deep_item_states_index = declr.selectFn && {};
+}
+
 var count = 1;
 var NestSelector = function (md, declr) {
 	this.num = 'nsel-' + (count++);
@@ -29,6 +35,8 @@ var NestSelector = function (md, declr) {
 	}
 
 };
+
+NestSelector.Hands = Hands;
 
 NestSelector.prototype.selector = [];
 NestSelector.prototype.state_handler = handleChdDestState;

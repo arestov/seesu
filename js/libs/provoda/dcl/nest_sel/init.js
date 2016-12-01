@@ -3,13 +3,8 @@ define(function(require) {
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');
 var NestSelector = require('./NestSelector');
+var Hands= NestSelector.Hands;
 var getParsedPath = require('../../initDeclaredNestings').getParsedPath;
-
-function Hands(declr) {
-  this.items = null;
-  this.deep_item_states_index = null;
-  this.deep_item_states_index = declr.selectFn && {};
-}
 
 function add(start, nwbase, dest_w) {
   var start_point  = nwbase && nwbase.start_point;
