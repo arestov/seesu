@@ -176,7 +176,7 @@ function getReadyItems(head, hands, filtered) {
   return arr;
 }
 
-function getSorted(head, hands) {
+function getFilteredAndSorted(head, hands) {
   var filtered = getFiltered(head, hands);
   var sorted = (filtered && head.declr.sortFn)
     ? filtered.sort(function (one, two) {
@@ -192,7 +192,7 @@ function runFilter(motivator, head, hands) {
 	// deep_item_states_index
 	// base_states
 
-  var sorted = getSorted(head, hands);
+  var sorted = getFilteredAndSorted(head, hands);
 	var result = getReadyItems(head, hands, sorted);
 
 	var md = head.md;
