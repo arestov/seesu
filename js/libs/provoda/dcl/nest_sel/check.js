@@ -29,6 +29,10 @@ var SelectNestingDeclaration = function(dest_name, data) {
 	if (data.map) {
 		this.map = typeof data.map == 'string' ? getParsedPath(data.map) : data.map;
 	}
+
+  if (this.map && typeof this.map !== 'object') {
+    throw new Error('unsupported map type');
+  }
 	var nesting_source = new NestingSourceDr(data.from);
 
 	this.start_point = nesting_source.start_point;

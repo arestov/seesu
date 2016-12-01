@@ -161,24 +161,19 @@ function getReadyItems(head, hands, filtered) {
     return filtered;
   }
 
-  if (typeof dcl.map === 'object') {
-    if (!filtered) {return;}
-    var arr = new Array(filtered.length);
-    var distant = dcl.map.from_distant_model;
-    for (var i = 0; i < filtered.length; i++) {
-      var cur = filtered[i];
-      var md_from = switchDistant(distant, head.md, cur);
-      var md_states_from = switchDistant(distant, cur, head.md);
+  if (!filtered) {return;}
+  var arr = new Array(filtered.length);
+  var distant = dcl.map.from_distant_model;
+  for (var i = 0; i < filtered.length; i++) {
+    var cur = filtered[i];
+    var md_from = switchDistant(distant, head.md, cur);
+    var md_states_from = switchDistant(distant, cur, head.md);
 
-      arr[i] = executeStringTemplate(
-        head.md.app, md_from, dcl.map, false, md_states_from
-      );
-    }
-    return arr;
-
-  } else {
-    throw new Error('unsupported map type');
+    arr[i] = executeStringTemplate(
+      head.md.app, md_from, dcl.map, false, md_states_from
+    );
   }
+  return arr;
 }
 
 function runFilter(motivator, head, hands) {
