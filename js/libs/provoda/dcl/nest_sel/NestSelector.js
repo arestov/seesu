@@ -180,13 +180,14 @@ function runFilter(motivator, head, hands) {
 	// item_cond_index
 	// deep_item_states_index
 	// base_states
-	var result = getReadyItems(head, hands, getFiltered(head, hands));
-	if (result && head.declr.sortFn) {
-		// curretly just always sort
-		result.sort(function (one, two) {
-			return head.declr.sortFn.call(null, one, two, head.md);
-		});
-	}
+  var filtered = getFiltered(head, hands);
+  var sorted = (filtered && head.declr.sortFn)
+    ? filtered.sort(function (one, two) {
+  			return head.declr.sortFn.call(null, one, two, head.md);
+  		})
+    : filtered;
+
+	var result = getReadyItems(head, hands, sorted);
 
 	var md = head.md;
 	var old_motivator = md.current_motivator;
