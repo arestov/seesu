@@ -9,12 +9,16 @@ function Hands(declr) {
   this.deep_item_states_index = declr.selectFn && {};
 
   // sometimes different heads can share one `hands` object
+
   // when filtering does not depend on head
   // we can share `filtering` result for different heads
   this.can_filter_here = !declr.deps.base.cond;
+  this.item_cond_index = this.can_filter_here ? {} : null;
+
   // when sorting does not depend on head
   // we can share `sorting` result for different heads
   this.can_sort_here = this.can_filter_here && !declr.deps.base.sort;
+
 
   this.items_filtered = null;
   this.items_sorted = null;
@@ -32,8 +36,7 @@ var NestSelector = function (md, declr) {
   this.state_name = declr.deps.base.all.list;
   this.short_state_name = declr.deps.base.all.shorts;
 
-	this.item_cond_index = null;
-	this.item_cond_index = declr.selectFn && (declr.deps.base.cond || declr.deps.deep.cond) && {};
+	this.item_cond_index = (declr.selectFn && declr.deps.base.cond) ? {} : null;
 	this.base_states = null;
 
 	if (declr.selectFn && declr.deps.base.all.list) {
@@ -97,9 +100,12 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 
 	var deep = head.declr.deps.deep;
 	if (deep.cond && deep.cond.index[state_name] === true) {
-		delete head.item_cond_index[_provoda_id];
+
     if (hands.can_filter_here) {
+      delete hands.item_cond_index[_provoda_id];
       hands.items_filtered = null;
+    } else {
+      delete head.item_cond_index[_provoda_id];
     }
 	}
   if (hands.can_sort_here && deep.sort && deep.sort.index[state_name] === true) {
@@ -137,13 +143,16 @@ function checkCondition(head, hands, _provoda_id) {
 	return Boolean(head.declr.selectFn.apply(null, args));
 }
 
+function keyFromCache(head, hands, cache, key) {
+  if (!cache.hasOwnProperty(key)) {
+		cache[key] = checkCondition(head, hands, key);
+	}
+	return cache[key];
+}
 
 function isFine(md, head, hands) {
-	var _provoda_id = md._provoda_id;
-	if (!head.item_cond_index.hasOwnProperty(_provoda_id)) {
-		head.item_cond_index[_provoda_id] = checkCondition(head, hands, _provoda_id);
-	}
-	return head.item_cond_index[_provoda_id];
+  var cache = hands.can_filter_here ? hands.item_cond_index : head.item_cond_index;
+  return keyFromCache(head, hands, cache, md._provoda_id);
 }
 
 function switchDistant(do_switch, base, deep) {
