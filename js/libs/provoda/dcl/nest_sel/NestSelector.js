@@ -3,21 +3,23 @@ define(function (require) {
 var pvState = require('../../utils/state');
 var executeStringTemplate = require('../../initDeclaredNestings').executeStringTemplate;
 
-function Hands(declr) {
+function Hands(dcl) {
+  this.dcl = dcl;
   this.items = null;
+  this.hands = this;
   this.deep_item_states_index = null;
-  this.deep_item_states_index = declr.selectFn && {};
+  this.deep_item_states_index = dcl.selectFn && {};
 
   // sometimes different heads can share one `hands` object
 
   // when filtering does not depend on head
   // we can share `filtering` result for different heads
-  this.can_filter_here = !declr.deps.base.cond;
+  this.can_filter_here = !dcl.deps.base.cond;
   this.item_cond_index = this.can_filter_here ? {} : null;
 
   // when sorting does not depend on head
   // we can share `sorting` result for different heads
-  this.can_sort_here = this.can_filter_here && !declr.deps.base.sort;
+  this.can_sort_here = this.can_filter_here && !dcl.deps.base.sort;
 
 
   this.items_filtered = null;
@@ -61,12 +63,11 @@ NestSelector.handleAdding = handleAdding;
 NestSelector.handleRemoving = handleRemoving;
 NestSelector.rerun = rerun;
 
-function handleChdDestState(motivator, fn, data, args) {
+function handleChdDestState(motivator, fn, hands, args) {
 	// input - changed "dest" state
 	// expected - invalidated all item conditions, rerunned query, updated nesting
-  var head = data.head;
-  var hands = data.hands;
-	if (!head.declr.selectFn) {
+  var head = hands.head;
+	if (!hands.declr.selectFn) {
 		return runFilter(motivator, head, hands);
 	}
 
@@ -75,7 +76,7 @@ function handleChdDestState(motivator, fn, data, args) {
 
 	var states = head.base_states;
 	states[state_name] = value;
-	var base = head.declr.deps.base;
+	var base = hands.dcl.deps.base;
 	if (base.cond && base.cond.index[state_name] === true) {
 		head.item_cond_index = {};
 	}
@@ -90,15 +91,15 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 	var value = args[1];
 	var md = args[3];
 
-  var head = lnwatch.data.head;
+  var hands = lnwatch.data;
+  var head = hands.head;
 
-	var hands = lnwatch.data.hands;
 	var _provoda_id = md._provoda_id;
 	var states = hands.deep_item_states_index[_provoda_id];
 	states[state_name] = value;
 	hands.deep_item_states_index[_provoda_id] = states;
 
-	var deep = head.declr.deps.deep;
+	var deep = hands.dcl.deps.deep;
 	if (deep.cond && deep.cond.index[state_name] === true) {
 
     if (hands.can_filter_here) {
@@ -116,7 +117,7 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 }
 
 function rerun(motivator, _, lnwatch) {
-	runFilter(motivator, lnwatch.data.head, lnwatch.data.hands);
+	runFilter(motivator, lnwatch.data.head, lnwatch.data);
 }
 
 function checkCondition(head, hands, _provoda_id) {
@@ -261,7 +262,7 @@ function handleChdCount(motivator, _, lnwatch, __, items) {
 	// input - changed list order or length
 	// expected - rerunned query, updated nesting
 
-	var hands = lnwatch.data.hands;
+	var hands = lnwatch.data;
 	hands.items = items;
 	runFilter(motivator, lnwatch.data.head, hands);
 }
@@ -272,8 +273,9 @@ function handleAdding(md, lnwatch, skip) {
 
 	if (skip !== lnwatch.selector.length) {return;}
 
-  var declr = lnwatch.data.head.declr;
-	var hands = lnwatch.data.hands;
+
+	var hands = lnwatch.data;
+  var declr = hands.dcl;
 	var _provoda_id = md._provoda_id;
 
 	var states = {};
@@ -291,7 +293,7 @@ function handleRemoving(md, lnwatch, skip) {
 
 	if (skip !== lnwatch.selector.length) {return;}
 
-	var hands = lnwatch.data.hands;
+	var hands = lnwatch.data;
 	var _provoda_id = md._provoda_id;
 	delete hands.deep_item_states_index[_provoda_id];
 }
