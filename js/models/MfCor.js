@@ -106,8 +106,9 @@ var MfComplectBase = spv.inh(pv.Model, {
 		return this.sem_part && this.sem_part.t && this.sem_part.t.length > 1;
 	},
 	getFiles: function(type) {
-
-		return this.map_parent.getNesting('lookup').bindSource(pvState(this, 'search_name')).getFiles(type);
+		var lookup = this.map_parent.getNesting('lookup');
+		if (!lookup) {return [];}
+		return lookup.bindSource(pvState(this, 'search_name')).getFiles(type);
 	}
 });
 
