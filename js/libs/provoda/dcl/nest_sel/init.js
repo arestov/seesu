@@ -4,6 +4,7 @@ var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');
 var NestSelector = require('./NestSelector');
 var Hands= NestSelector.Hands;
+var addHead = NestSelector.addHead;
 var getParsedPath = require('../../initDeclaredNestings').getParsedPath;
 
 function add(start, nwbase, dest_w, hands) {
@@ -25,11 +26,11 @@ return function init(self) {
 		var dcl = self.nest_sel_nest_matches[i];
     var hands = new Hands(dcl);
 		var dest_w = new NestSelector(self, dcl, hands);
-    hands.head = dest_w;
 		if (dest_w.state_name) {
 			addFrom(self, dest_w, 0);
 		}
     add(self, dcl.nwbase, dest_w, hands);
+    addHead(self, hands, dest_w);
 	}
 
 };
