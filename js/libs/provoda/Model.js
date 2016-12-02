@@ -160,6 +160,7 @@ var modelInit = (function() {
 		self.md_replacer = null;
 		self.mpx = null;
     self._requests_deps = null;
+		self.shared_nest_sel_hands = null;
 
 		self.init_states = self.init_states || null;
 

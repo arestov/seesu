@@ -23,7 +23,7 @@ var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) 
 	});
 });
 
-
+var counter = 1;
 var NestWatch = function(nesting_source, state_name, zip_func, result_state_name, handler, addHandler, removeHandler) {
 	var selector = nesting_source.selector;
 	if (!Array.isArray(selector)) {
@@ -37,7 +37,7 @@ var NestWatch = function(nesting_source, state_name, zip_func, result_state_name
 			throw new Error('should be both onchd_count and onchd_state');
 		}
 	}
-
+	this.num = counter++;
 	this.handled_subl_wtchs = null;
 
 	this.selector = selector;

@@ -1,22 +1,40 @@
 define(function(require) {
 'use strict';
+var initDeclaredNestings = require('../../initDeclaredNestings');
+var getParsedPath = initDeclaredNestings.getParsedPath;
+var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
+var addNestWatch = require('../../nest-watch/add-remove').addNestWatch;
+
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');
 var NestSelector = require('./NestSelector');
 var Hands= NestSelector.Hands;
 var addHead = NestSelector.addHead;
-var getParsedPath = require('../../initDeclaredNestings').getParsedPath;
 
-function add(start, nwbase, dest_w, hands) {
+function add(self, nwbase, dcl) {
   var start_point  = nwbase && nwbase.start_point;
   var path_template = start_point && getParsedPath(start_point);
   if (!path_template) {
-    var lnw = new LocalWatchRoot(null, nwbase, hands);
-    return addFrom(start, lnw, 0);
+    var lnw = new LocalWatchRoot(null, nwbase, new Hands(dcl));
+    addFrom(self, lnw, 0);
+    return lnw;
   }
 
-  var lnw = new LocalWatchRoot(null, nwbase, hands);
-  addFrom(start, lnw, 0);
+  var start_md = getSPByPathTemplate(self.app, self, start_point);
+
+  if (!start_md.shared_nest_sel_hands) {
+    start_md.shared_nest_sel_hands = {};
+  }
+
+  var key = nwbase.num;
+
+  if (!start_md.shared_nest_sel_hands[key]) {
+    var lnw = new LocalWatchRoot(null, nwbase, new Hands(dcl));
+    addNestWatch(start_md, lnw, 0);
+    start_md.shared_nest_sel_hands[key] = lnw;
+  }
+
+  return start_md.shared_nest_sel_hands[key];
 }
 
 return function init(self) {
@@ -24,12 +42,13 @@ return function init(self) {
 
 	for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
 		var dcl = self.nest_sel_nest_matches[i];
-    var hands = new Hands(dcl);
+    var deep_nwatch = add(self, dcl.nwbase, dcl);
+    var hands = deep_nwatch.data;
 		var dest_w = new NestSelector(self, dcl, hands);
 		if (dest_w.state_name) {
 			addFrom(self, dest_w, 0);
 		}
-    add(self, dcl.nwbase, dest_w, hands);
+
     addHead(self, hands, dest_w);
 	}
 
