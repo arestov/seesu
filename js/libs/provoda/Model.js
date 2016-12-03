@@ -420,7 +420,8 @@ add({
 			throw new Error('states inited already, you can\'t init now');
 		}
 
-		var changes_list = getComplexInitList(this) || this.init_states && [];
+		var changes_list = getComplexInitList(this) || [];
+		changes_list.push(true, '_provoda_id', this._provoda_id);
 
 		if (this.init_states) {
 			for (var state_name in this.init_states) {
