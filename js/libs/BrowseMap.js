@@ -1,6 +1,5 @@
-define(['pv', 'spv', './provoda/structure/get_constr', './provoda/structure/flatStruc'], function(pv, spv, get_constr, flatStruc) {
+define(['pv', 'spv', './provoda/structure/get_constr', './provoda/structure/flatStruc', 'js/libs/morph_helpers'], function(pv, spv, get_constr, flatStruc, morph_helpers) {
 "use strict";
-
 var pvState = pv.state;
 var cloneObj = spv.cloneObj;
 var filter = spv.filter;
@@ -1632,8 +1631,8 @@ function getterSPI(){
 		var instance_data = getInitData(self, common_opts);
 		var dbu_declr = Constr.prototype.data_by_urlname;
 		var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
-		var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
-		var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
+		var data_by_urlname = dbu_declr && dbu_declr(common_opts[1], null, morph_helpers);
+		var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
 		if (head_by_urlname) {
 			instance_data.head = head_by_urlname;
 		}
