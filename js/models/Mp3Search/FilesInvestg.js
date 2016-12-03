@@ -50,30 +50,14 @@ var FilesInvestg = spv.inh(pv.Model, {
       '>wait_before_playing': [['=', 'boolean'], [true]]
     }
   },
-  'compx-has_request': [
-    ['@some:has_request:available_sources']
-  ],
-  'compx-search_progress': [
-    ['@some:search_progress:available_sources']
-  ],
-  'compx-search_complete': [
-    ['@every:search_complete:available_sources']
-  ],
-  'compx-has_files':[
-    ['@some:has_files:available_sources']
-  ],
-  'compx-has_mp3_files': [
-    ['@some:has_mp3_files:available_sources']
-  ],
-  'compx-has_best_files': [
-    ['@some:has_best_files:available_sources']
-  ],
-  'compx-exsrc_has_request': [
-    ['@some:has_request:expected_sources']
-  ],
-  'compx-exsrc_search_complete': [
-    ['@every:search_complete:expected_sources']
-  ],
+  'compx-has_request': [['@some:has_request:available_sources']],
+  'compx-search_progress': [['@some:search_progress:available_sources']],
+  'compx-search_complete': [['@every:search_complete:available_sources']],
+  'compx-has_files':[['@some:has_files:available_sources']],
+  'compx-has_mp3_files': [['@some:has_mp3_files:available_sources']],
+  'compx-has_best_files': [['@some:has_best_files:available_sources']],
+  'compx-exsrc_has_request': [['@some:has_request:expected_sources']],
+  'compx-exsrc_search_complete': [['@every:search_complete:expected_sources']],
   'compx-must_load': [
     ['investg_to_load-for-song_need'],
     function(state) {
