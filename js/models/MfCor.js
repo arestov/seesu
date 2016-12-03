@@ -589,7 +589,7 @@ var MfCor = spv.inh(LoadableList, {
 		}
 		if (this.state("user_preferred") == unavailable_mopla){
 			pv.update(this, "selected_mopla_to_use", false);
-			var from = this.state("selected_mopla").from;
+			var from = pvState(this.state("selected_mopla"), 'from');
 			var available = this.getFilteredFiles(from, function(mf) {
 
 				if (pvState(mf, 'from') == from && !pvState(mf, 'unavailable')){
