@@ -590,7 +590,8 @@ var MfCor = spv.inh(LoadableList, {
 			pv.update(this, "selected_mopla_to_use", false);
 			var from = this.state("selected_mopla").from;
 			var available = this.getFilteredFiles(from, function(mf) {
-				if (mf.from == from && !mf.unavailable){
+
+				if (pvState(mf, 'from') == from && !pvState(mf, 'unavailable')){
 					return true;
 				}
 			});
@@ -608,7 +609,7 @@ var MfCor = spv.inh(LoadableList, {
 	},
 	updateDefaultMopla: function() {
 		var available = this.getFilteredFiles(false, function(mf) {
-			if (!mf.unavailable){
+			if (!pvState(mf, 'unavailable')){
 				return true;
 			}
 		});
