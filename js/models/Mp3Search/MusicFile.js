@@ -2,7 +2,7 @@ define(function (require) {
 'use strict';
 var spv = require('spv');
 var pv = require('pv');
-var SongFileModel = require('../SongFileModel');
+var SongFileModel = require('./SongFileModel');
 var QMI = require('./QMI');
 var getQMSongIndex = QMI.getQMSongIndex;
 
