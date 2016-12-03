@@ -487,6 +487,43 @@ var getFieldValueByRule = function(obj, rule){
 };
 
 
+spv.compareArray = function compareArray(one, two) {
+  if (!one || !two) {
+    if (!one && !two) {
+      return;
+    }
+    if (!one) {
+      return 1;
+    }
+    if (!two) {
+      return -1;
+    }
+  }
+  var max = Math.max(one.length, two.length);
+  for (var i = 0; i < max; i++) {
+    var value_one = one[i];
+    var value_two = two[i];
+    if (value_one === value_two) {
+      continue;
+    }
+
+    if (value_one == null && value_two == null) {
+      continue;
+    } else if (value_one == null) {
+      return 1;
+    } else if (value_two == null) {
+      return -1;
+    }
+
+    if (value_one > value_two) {
+      return 1;
+    }
+    if (value_one < value_two) {
+      return -1;
+    }
+  }
+};
+
 sortByRules = spv.sortByRules = function(a, b, rules){
 	if (a instanceof Object && b instanceof Object){
 		var shift = 0;
