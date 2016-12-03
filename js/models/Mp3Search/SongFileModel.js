@@ -323,12 +323,15 @@ function props() {
 
 			pvUpdate(this, 'unavailable', fails);
 
-			if (this.parent){
-				this.parent.unavailable = fails;
-			}
+      this.markParentFailed(fails);
 
 			this.trigger("unavailable");
 		},
+    markParentFailed: function (fails) {
+      if (this.parent){
+        this.parent.unavailable = fails;
+      }
+    },
 		setPlayer: function(player){
 			if (player){
 				this.player = player;
