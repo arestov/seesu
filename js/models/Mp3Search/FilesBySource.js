@@ -131,7 +131,10 @@ var FilesBySource = spv.inh(pv.Model, {
   'compx-qmi_key': [['msq'], QMIKey],
   'nest_sel-best_music_files': {
     from: 'match_ratings',
-    map: '>^'
+    map: '>^',
+    where : {
+      '>index_value': ['=', [0]]
+    },
   },
   'nest_sel-match_ratings_raw': {
     from: 'music_files_list',
