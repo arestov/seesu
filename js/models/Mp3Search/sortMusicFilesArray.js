@@ -47,6 +47,7 @@ var getAverageDurations = function(mu_array, time_limit, qmi_index){
 
   music_list.sort(function(a, b){
     return spv.sortByRules(a, b, [
+      // qmi
       function(item) {
         var value = spv.getTargetField(item, field_name);
         if (value === -1){
@@ -55,6 +56,7 @@ var getAverageDurations = function(mu_array, time_limit, qmi_index){
           return value;
         }
       },
+      // search name order
       {
         field: function(item) {
           if (item.from && searches_pr.hasOwnProperty(item.from) ) {
@@ -65,6 +67,7 @@ var getAverageDurations = function(mu_array, time_limit, qmi_index){
         },
         reverse: true
       },
+      // time diff
       function(item){
 
         var average_dur = average_durs[spv.getTargetField(item, field_name)];
