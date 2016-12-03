@@ -51,7 +51,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
     this.sortFn = data.sort[1];
   }
 
-	this.deps = getDeps(data, this.map);
+	this.deps = getDeps(data, this.map, this.where_states);
 
 	this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, null, null, {
 		onchd_count: handleChdCount,
@@ -82,11 +82,11 @@ function combineStates(obj) {
 }
 
 
-function getDeps(data, map) {
+function getDeps(data, map, where_states) {
 	var base = {all: null};
 	var deep = {all: null};
 
-	getConditinal(base, deep, data.where_states);
+	getConditinal(base, deep, where_states);
 	getMap(base, deep, map);
 	getSort(base, deep, data.sort);
 

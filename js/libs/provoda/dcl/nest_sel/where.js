@@ -4,14 +4,17 @@ var spv = require('spv');
 var startsWith = spv.startsWith;
 
 return function (self, where) {
+  if (!where) {
+    return;
+  }
   if (Array.isArray(where)) {
-    this.args_schema = getArgsSchema(where[0]);
+    self.args_schema = getArgsSchema(where[0]);
 
     if (typeof where[1] !== 'function') {
       throw new Error('where[1] should be func');
     }
-    this.selectFn = where[1];
-    this.where_states = where[0];
+    self.selectFn = where[1];
+    self.where_states = where[0];
   }
 };
 
