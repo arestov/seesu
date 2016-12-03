@@ -77,18 +77,18 @@ var getNiceSeconds = function(state) {
 			self.parent = file;
 		}
 
-		self.setPlayer(self.app.p);
-
 		return self;
 	};
 
-var SongFileModel = spv.inh(pv.Model, {
+var SongFileModelBase = spv.inh(pv.Model, {
 	naming: function(fn) {
 		return function SongFileModel(opts, states, params) {
 			fn(this, opts, states, params);
 		};
 	},
-	init: initSFModel,
+  init: function (self) {
+    self.setPlayer(self.app.p);
+  },
 	props: props()
 });
 
@@ -430,7 +430,11 @@ function props() {
 		}
 	};
 }
+var SongFileModel = spv.inh(SongFileModelBase, {
+	init: initSFModel,
+});
 
 SongFileModel.FileInTorrent = FileInTorrent;
+SongFileModel.SongFileModelBase = SongFileModelBase;
 return SongFileModel;
 });
