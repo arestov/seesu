@@ -136,6 +136,10 @@ var FilesBySource = spv.inh(pv.Model, {
       '>index_value': ['=', [0]]
     },
   },
+  'nest_sel-music_files_sorted': {
+    from: 'match_ratings',
+    map: '>^'
+  },
   'nest_sel-match_ratings_raw': {
     from: 'music_files_list',
     map: '>match_ratings/[:search_name],[:artist_name],[:track_title]'
