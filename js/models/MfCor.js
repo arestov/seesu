@@ -240,12 +240,9 @@ var MfCor = spv.inh(LoadableList, {
 	}],
 	'nest_sel-vk_source': {
 		from: 'complects_normal',
-		where: [
-			['>search_name'],
-			function (name) {
-				return name == 'vk';
-			}
-		]
+    where: {
+      '>search_name': ['=', ['vk']]
+    }
 	},
 	'compx-has_any_vk_results': [
 		['@one:moplas_list$length:vk_source', 'file'],

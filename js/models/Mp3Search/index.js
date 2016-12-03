@@ -151,12 +151,9 @@ var getMatchedSongs = function(music_list, msq) {
     },
     'nest_sel-mp3files': {
       from: 'music_files_list',
-      where: [
-        ['>media_type'],
-        function (media_type) {
-          return media_type == 'mp3';
-        }
-      ]
+      where: {
+        '>media_type': ['=', ['mp3']]
+      }
     },
 		complex_states: {
 			'request_required': [
@@ -317,21 +314,15 @@ var getMatchedSongs = function(music_list, msq) {
 		}],
 		'nest_sel-available_sources': {
 			from: 'sources_list',
-			where: [
-				['>disable_search'],
-				function (state) {
-					return !state;
-				}
-			]
+      where: {
+        '>disable_search': [['=', 'boolean'], [false]]
+      }
 		},
 		'nest_sel-expected_sources': {
 			from: 'sources_list',
-			where: [
-				['>wait_before_playing'],
-				function (state) {
-					return Boolean(state);
-				}
-			]
+      where: {
+        '>wait_before_playing': [['=', 'boolean'], [true]]
+      }
 		},
 		'compx-has_request': [
 			['@some:has_request:available_sources']
