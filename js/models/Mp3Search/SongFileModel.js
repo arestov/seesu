@@ -59,8 +59,6 @@ var getNiceSeconds = function(state) {
 
 
 	var initSFModel = function(self, opts, states, params) {
-		self.sound = null;
-
 		self.mo = self.map_parent.map_parent;
 
 		if (params.file){
@@ -87,6 +85,8 @@ var SongFileModelBase = spv.inh(pv.Model, {
 		};
 	},
   init: function (self) {
+    self.sound = null;
+    self.mo = null;
     self.setPlayer(self.app.p);
   },
 	props: props()
@@ -96,7 +96,7 @@ function props() {
 	return {
 		model_name: 'file-http',
 		requestPlay: function(bwlev_id) {
-			this.map_parent.selectMopla(this);
+			this.mo.getMFCore().selectMopla(this);
 
 			var bwlev = pv.getModelById(this, bwlev_id);
 
