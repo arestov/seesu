@@ -15,5 +15,6 @@
 	},
 	"node": true,
 	"trailing": true,
-	"sub": true
+	"sub": true,
+	"-W041": false
 }
