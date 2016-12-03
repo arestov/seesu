@@ -100,19 +100,6 @@ var FilesBySource = spv.inh(pv.Model, {
     pv.update(this, 'injected_files', new_array);
 
   },
-  getFiles: function(type) {
-
-    var array = this.state('files-list');
-    if (array && array.length){
-      if (type){
-        return spv.filter(array, 'media_type', type);
-      } else {
-        return array;
-      }
-    } else {
-      return [];
-    }
-  },
   sub_pager: {
     type: {
       duration_groups: 'duration_group',

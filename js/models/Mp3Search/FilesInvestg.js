@@ -1,8 +1,10 @@
 define(function (require) {
 'use strict';
 var pv = require('pv');
+var pvState = pv.state;
 var isDepend = pv.utils.isDepend;
 var spv = require('spv');
+var compareArray = spv.compareArray;
 var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
 var FilesBySource = require('./FilesBySource');
 
@@ -38,6 +40,22 @@ var FilesInvestg = spv.inh(pv.Model, {
   'compx-query_string': [['msq'], function (msq) {
     return msq && getQueryString(msq);
   }],
+  'nest_sel-all_music_files': {
+    from: 'sources_list.match_ratings_raw',
+    sort: [
+      ['matched_order'],
+      function (one, two) {
+        var value_one = pvState(one, 'matched_order');
+        var value_two = pvState(two, 'matched_order');
+        return compareArray(value_one, value_two);
+      }
+    ],
+    map: '>^'
+  },
+  'nest_sel-mp3files_all': {
+    from: 'all_music_files',
+    where: {'>media_type': ['=', ['mp3']]},
+  },
   'nest_sel-available_sources': {
     from: 'sources_list',
     where: {

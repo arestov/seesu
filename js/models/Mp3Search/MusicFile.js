@@ -2,7 +2,8 @@ define(function (require) {
 'use strict';
 var spv = require('spv');
 var pv = require('pv');
-var SongFileModel = require('./SongFileModel');
+var pvUpdate = pv.update;
+var SongFileModelBase = require('./SongFileModel').SongFileModelBase;
 var QMI = require('./QMI');
 var getQMSongIndex = QMI.getQMSongIndex;
 
@@ -61,6 +62,22 @@ var Match = pv.behavior({
 	}]
 });
 
+var SongFileModel = pv.behavior({
+  'compx-artist': [['^artist']],
+  'compx-track': [['^track']],
+  'compx-from': [['^from']],
+  'compx-page_link': [['^page_link']],
+  'compx-link': [['^link']],
+  'compx-duration': [['^duration']],
+  markParentFailed: function (fails) {
+    pvUpdate(this.map_parent, 'unavailable', fails);
+  },
+}, SongFileModelBase, {
+  init: function (self) {
+    self.mo = pv.getModelById(self, self.head.mf_cor_id).map_parent;
+  }
+});
+
 var MusicFile = spv.inh(pv.Model, {
 	naming: function(fn) {
 		return function MusicFile(opts, data, params, more, states) {
@@ -85,7 +102,7 @@ var MusicFile = spv.inh(pv.Model, {
       ],
       file: [
         SongFileModel, null, {
-          customer: 'simple_name'
+          mf_cor_id: 'by_slash.0'
         }
       ],
     }
