@@ -6,6 +6,7 @@ var pvState = pv.state;
 var QMI = require('./QMI');
 var setFileQMI = QMI.setFileQMI;
 var getQueryString = QMI.getQueryString;
+var getAvg = require('./sortMusicFilesArray').getAvg;
 
 var getMatchedSongs = function(music_list, msq) {
 
@@ -29,6 +30,20 @@ function QMIKey(msq) {
   if (!msq) {return;}
   return getQueryString(msq).replace(/\./gi, '');
 }
+
+var DurationGroup = pv.behavior({
+  DurationGroup: true,
+  'nest_sel-filtered_music_files_matches': {
+    from: '^>match_ratings',
+    where: {
+      '>index_value': ['=', 'index_value']
+    }
+  },
+  'compx-average_dur': [
+    ['@duration:filtered_music_files_matches'],
+    getAvg
+  ],
+});
 
 var FilesBySource = spv.inh(pv.Model, {
   init: function(target, opts, data) {
@@ -97,6 +112,18 @@ var FilesBySource = spv.inh(pv.Model, {
       return [];
     }
   },
+  sub_pager: {
+    type: {
+      duration_groups: 'duration_group',
+    },
+    by_type: {
+      duration_group: [
+        DurationGroup, null, {
+          index_value: ['num', 'by_slash.0'],
+        }
+      ],
+    }
+  },
   // 'stch-files-list': function (target, array) {
   // 	target.updateNesting('files-list', array);
   // },
@@ -106,9 +133,20 @@ var FilesBySource = spv.inh(pv.Model, {
     from: 'match_ratings',
     map: '>^'
   },
-  'nest_sel-match_ratings': {
+  'nest_sel-match_ratings_raw': {
     from: 'music_files_list',
     map: '>match_ratings/[:search_name],[:artist_name],[:track_title]'
+  },
+  'nest_sel-match_ratings': {
+    from: 'match_ratings_raw',
+    sort: [
+      ['matched_order'],
+      function (one, two) {
+        var value_one = pvState(one, 'matched_order');
+        var value_two = pvState(two, 'matched_order');
+        return compareArray(value_one, value_two);
+      }
+    ]
   },
   'nest_sel-mp3files': {
     from: 'music_files_list',
@@ -241,5 +279,44 @@ var FilesBySource = spv.inh(pv.Model, {
 
   }
 });
+
+function compareArray(one, two) {
+  if (!one || !two) {
+    if (!one && !two) {
+      return;
+    }
+    if (!one) {
+      return 1;
+    }
+    if (!two) {
+      return -1;
+    }
+  }
+  var max = Math.max(one.length, two.length);
+  for (var i = 0; i < max; i++) {
+    var value_one = one[i];
+    var value_two = two[i];
+    if (value_one === value_two) {
+      continue;
+    }
+
+    if (value_one == null && value_two == null) {
+      continue;
+    } else if (value_one == null) {
+      return 1;
+    } else if (value_two == null) {
+      return -1;
+    }
+
+    if (value_one > value_two) {
+      return 1;
+    }
+    if (value_one < value_two) {
+      return -1;
+    }
+
+  }
+}
+
 return FilesBySource;
 });
