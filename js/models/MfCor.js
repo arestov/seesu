@@ -702,7 +702,6 @@ var MfCor = spv.inh(LoadableList, {
 	getFilteredFiles: function(source_name, fn, type) {
 		type = type || 'mp3';
 		var all_files = [];
-		var mfs = [];
 
 		if (this.file){
 			all_files.push(this.file);
@@ -734,17 +733,18 @@ var MfCor = spv.inh(LoadableList, {
 			}
 			//all_files = this.files_investg.getFiles(source_name, type);
 		}
-		if (fn){
-			for (var i = 0; i < all_files.length; i++) {
-				var el = all_files[i];
-				if (fn(el)){
-					mfs.push(el);
-				}
-			}
-			return mfs;
-		} else {
-			return all_files;
-		}
+    if (!fn) {
+      return all_files;
+    }
+
+    var mfs = [];
+    for (var i = 0; i < all_files.length; i++) {
+      var el = all_files[i];
+      if (fn(el)){
+        mfs.push(el);
+      }
+    }
+    return mfs;
 
 	},
 	canPlay: function() {
