@@ -176,6 +176,7 @@ var MfCor = spv.inh(LoadableList, {
 		pvUpdate(self, 'file', omo.file);
 		if (omo.file){
 			self.file = omo.file;
+      self.file.states = self.file;
 			self.updateDefaultMopla();
 		} else {
 			self.mo.on('vip_state_change-track', self.hndTrackNameCh, {immediately: true, soft_reg: false, context: self});
