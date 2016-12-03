@@ -44,20 +44,21 @@ var SelectNestingDeclaration = function(dest_name, data) {
 	this.selectFn = null;
 	this.sortFn = null;
 
+  if (Array.isArray(data.where)) {
+    this.args_schema = getArgsSchema(data.where[0]);
+
+    if (typeof data.where[1] !== 'function') {
+      throw new Error('where[1] should be func');
+    }
+    this.selectFn = data.where[1];
+    this.where_states = data.where[0];
+  }
+
+  if (data.sort) {
+    this.sortFn = data.sort[1];
+  }
+
 	this.deps = getDeps(data, this.map);
-
-	if (data.sort) {
-		this.sortFn = data.sort[1];
-	}
-
-	if (Array.isArray(data.where)) {
-		this.args_schema = getArgsSchema(data.where[0]);
-
-		if (typeof data.where[1] !== 'function') {
-			throw new Error('where[1] should be func');
-		}
-		this.selectFn = data.where[1];
-	}
 
 	this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, null, null, {
 		onchd_count: handleChdCount,
@@ -92,7 +93,7 @@ function getDeps(data, map) {
 	var base = {all: null};
 	var deep = {all: null};
 
-	getConditinal(base, deep, data.where);
+	getConditinal(base, deep, data.where_states);
 	getMap(base, deep, map);
 	getSort(base, deep, data.sort);
 
@@ -123,14 +124,10 @@ function getSort(base, deep, sort) {
 }
 
 
-function getConditinal(base, deep, where) {
-	if (!where) {return;}
+function getConditinal(base, deep, list) {
+	if (!list) {return;}
 
-	if (!Array.isArray(where)) {
-		throw new Error('not implement type of `where`');
-	}
-
-	var state_names = getStates(where[0], true);
+	var state_names = getStates(list, true);
 	deep.cond = state_names.deep;
 	base.cond = state_names.base;
 }
