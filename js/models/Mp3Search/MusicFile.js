@@ -39,10 +39,11 @@ var MusicFile = spv.inh(pv.Model, {
     by_type: {
       match: [
         Match, null, {
-          artist_name: 'by_comma.0',
-          track_title: 'by_comma.1',
-          'msq.artist': 'by_comma.0',
-          'msq.track': 'by_comma.1',
+          search_name: 'by_comma.0',
+          artist_name: 'by_comma.1',
+          track_title: 'by_comma.2',
+          'msq.artist': 'by_comma.1',
+          'msq.track': 'by_comma.2',
         }
       ],
       file: [

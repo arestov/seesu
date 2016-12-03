@@ -147,7 +147,7 @@ var getMatchedSongs = function(music_list, msq) {
 		},
     'nest_sel-match_ratings': {
       from: 'music_files_list',
-      map: '>match_ratings/[:artist_name],[:track_title]'
+      map: '>match_ratings/[:search_name],[:artist_name],[:track_title]'
     },
     'nest_sel-mp3files': {
       from: 'music_files_list',
