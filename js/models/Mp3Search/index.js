@@ -495,7 +495,20 @@ var hasMusicCopy = function (array, entity, from_position){
 	}
 };
 
+function calcSumm(arr) {
+  var summ = 0;
+  for (var i = 0; i < arr.length; i++) {
+    summ += arr[i];
+  }
+  return summ;
+}
 
+function getAvg(arr) {
+  if (!arr || !arr.length) {
+    return;
+  }
+  return calcSumm(arr)/arr.length;
+}
 
 var getAverageDurations = function(mu_array, time_limit, qmi_index){
 	var r = {};
@@ -506,16 +519,7 @@ var getAverageDurations = function(mu_array, time_limit, qmi_index){
 	};
 	for (var a in qmi_index){
 		var durs = spv.filter(spv.filter(qmi_index[a], 'duration', filtr), "duration");
-
-
-		var summ = 0;
-
-		for (var i = 0; i < durs.length; i++) {
-			summ += durs[i];
-		}
-		if (summ){
-			r[a] = summ/durs.length;
-		}
+		r[a] = getAvg(durs);
 	}
 	return r;
 };
