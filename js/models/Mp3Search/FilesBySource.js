@@ -185,6 +185,11 @@ var FilesBySource = spv.inh(pv.Model, {
           this.mp3_search.sortMusicFilesArray(all, pvState(this, 'msq'));
         }
 
+        for (var i = 0; i < all.length; i++) {
+          var cur = all[i];
+          cur.states = cur;
+        }
+
         return !!all.length && all;
       }
     ],
