@@ -89,7 +89,7 @@ var hasMusicCopy = function (array, entity, from_position){
 };
 
 	var Mp3Search = spv.inh(pv.Model, {
-		init: function(target, opts, data, searches_pr) {
+		init: function(target) {
 			// this._super.apply(this, arguments);
 
 			// this.app = opts.app;
