@@ -17,6 +17,7 @@ var handleRemoving = NestSelector.handleRemoving;
 var rerun = NestSelector.rerun;
 
 var startsWith = spv.startsWith;
+var where = require('./where');
 // var constr_mention = require('../structure/constr_mention');
 
 var getUnprefixed = spv.getDeprefixFunc( 'nest_sel-' );
@@ -44,15 +45,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
 	this.selectFn = null;
 	this.sortFn = null;
 
-  if (Array.isArray(data.where)) {
-    this.args_schema = getArgsSchema(data.where[0]);
-
-    if (typeof data.where[1] !== 'function') {
-      throw new Error('where[1] should be func');
-    }
-    this.selectFn = data.where[1];
-    this.where_states = data.where[0];
-  }
+  where(this, data.where);
 
   if (data.sort) {
     this.sortFn = data.sort[1];
@@ -168,28 +161,6 @@ function getComplect(list, with_index) {
 			? getIndex(shorts)
 			: null
 	};
-}
-
-function getArgsSchema(list) {
-	var args_schema = [];
-	for (var i = 0; i < list.length; i++) {
-		var cur = list[i];
-		var state_name = isForDeep(cur);
-		if (state_name) {
-			args_schema.push({
-				type: 'deep',
-				name: state_name
-			});
-
-		} else {
-			args_schema.push({
-				type: 'base',
-				name: cur
-			});
-
-		}
-	}
-	return args_schema;
 }
 
 function isForDeep(name) {
