@@ -302,14 +302,14 @@ function handleFile(self, file) {
 
 		},
 		postToVKWall: function(uid){
-			var
-				data = {},
-				file = this.getMFCore().getVKFile();
+			var data = {};
+			var file = this.getMFCore().getVKFile();
+      var file_id = file && pv.state(file, '_id')
 			if (uid){
 				data.owner_id = uid;
 			}
-			if (file){
-				data.attachments = "audio" + file._id;
+			if (file_id){
+				data.attachments = "audio" + file_id;
 			}
 			data.message = this.state('nav_title') + " \n" + this.getShareUrl();
 			if (data.attachments){

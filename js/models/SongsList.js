@@ -87,7 +87,7 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 			if (!songs_list.length){return false;}
 			var simple_playlist = [];
 			for (var i=0; i < songs_list.length; i++) {
-				var files = songs_list[i].getMFCore().getFilteredFiles();
+				var files = songs_list[i].getMFCore().getAllFiles();
 				var song = files && files[0];
 				if (song){
 					simple_playlist.push({
