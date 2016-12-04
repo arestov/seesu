@@ -286,7 +286,11 @@ return spv.inh(BrowseMap.Model, {
 				var app = this.app;
 				var path = getPath(pathObj, app, data);
 				var result = app.routePathByModels(path, pathObj.from_root ? app.start_page : md);
-				result.updateManyStates(data);
+
+        this.useMotivator(result, function () {
+          result.updateManyStates(data);
+        });
+
 				return result;
 			}
 
