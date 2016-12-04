@@ -8,6 +8,7 @@ var QMI = require('./QMI');
 var setFileQMI = QMI.setFileQMI;
 var getQueryString = QMI.getQueryString;
 var getAvg = require('./sortMusicFilesArray').getAvg;
+var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
 
 var getMatchedSongs = function(music_list, msq) {
 
@@ -89,7 +90,13 @@ var FilesBySource = spv.inh(pv.Model, {
   },
   addFile: function(file) {
     var injected_music_files = this.getNesting('injected_music_files') || [];
-    var music_file = this.mp3_search.initChi('music_file', null, null, null, file);
+    var cur = routePathByModels(
+        this.mp3_search,
+        'sources/' + file.from + '/files/' + file._id,
+        false,
+        true);
+    cur.updateManyStates(file);
+    var music_file = cur;
     this.updateNesting('injected_music_files', injected_music_files.concat([music_file]));
 
     var new_array = [];
@@ -247,7 +254,14 @@ var FilesBySource = spv.inh(pv.Model, {
         var list = new Array(matched.length);
         _this.useMotivator(_this.mp3_search, function () {
           for (var i = 0; i < matched.length; i++) {
-            list[i] = _this.mp3_search.initChi('music_file', null, null, null, matched[i]);
+            var cur = routePathByModels(
+              _this.mp3_search,
+              'sources/' + pvState(_this, 'search_name') + '/files/' + matched[i]._id,
+              false,
+              true);
+            cur.updateManyStates(matched[i]);
+
+            list[i] = cur;
           }
         });
 

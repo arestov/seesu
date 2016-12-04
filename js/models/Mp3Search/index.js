@@ -88,6 +88,22 @@ var hasMusicCopy = function (array, entity, from_position){
 	}
 };
 
+
+var Source = pv.behavior({
+  sub_pager: {
+    type: {
+      files: 'file'
+    },
+    by_type: {
+      file: [
+        MusicFile, null, {
+          id: 'by_slash.0'
+        }
+      ],
+    }
+  }
+});
+
 	var Mp3Search = spv.inh(pv.Model, {
 		init: function(target) {
 			// this._super.apply(this, arguments);
@@ -121,7 +137,8 @@ var hasMusicCopy = function (array, entity, from_position){
 		sub_pager: {
 			type: {
 				tuners: 'tuner',
-				lookups: 'lookup'
+				lookups: 'lookup',
+				sources: 'source'
 			},
 			by_type: {
 				lookup: [
@@ -137,6 +154,11 @@ var hasMusicCopy = function (array, entity, from_position){
 						search_name: 'simple_name'
 					}
 				],
+        source: [
+          Source, null, {
+            search_name: 'by_slash.0'
+          }
+        ]
 			}
 		},
 		getFilesInvestg: function(msq, motivator) {
@@ -154,7 +176,6 @@ var hasMusicCopy = function (array, entity, from_position){
 				}
 			}
 		},
-		'chi-music_file': MusicFile,
 		'chi-tuner': FilesSourceTuner,
 		getSourceTuner: function(search_name) {
 			if (!this.tuners[search_name]) {
