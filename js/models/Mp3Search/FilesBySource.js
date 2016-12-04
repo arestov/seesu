@@ -88,24 +88,9 @@ var FilesBySource = spv.inh(pv.Model, {
       });
     }
   },
-  addFile: function(file) {
+  addFile: function(music_file) {
     var injected_music_files = this.getNesting('injected_music_files') || [];
-    var cur = routePathByModels(
-        this.mp3_search,
-        'sources/' + file.from + '/files/' + file._id,
-        false,
-        true);
-    cur.updateManyStates(file);
-    var music_file = cur;
     this.updateNesting('injected_music_files', injected_music_files.concat([music_file]));
-
-    var new_array = [];
-
-    var inj_arr = this.state('injected_files') || [];
-    new_array = new_array.concat(inj_arr);
-    new_array.push(file);
-    pv.update(this, 'injected_files', new_array);
-
   },
   sub_pager: {
     type: {

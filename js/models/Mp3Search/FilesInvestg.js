@@ -177,14 +177,13 @@ var FilesInvestg = spv.inh(pv.Model, {
       var qmi = this.mp3_search.setFileQMI(file, this.msq);
 
       if (qmi !== -1 && qmi < 20){
-        this.addFile(file, search_name);
+        this.map_parent.addFile(file, pvState(this, 'msq'));
       }
-
     }
   },
-  addFile: function(file, search_name) {
+  addFile: function(music_file, search_name) {
     this.addFbS(search_name);
-    this.sources[search_name].addFile(file);
+    this.sources[search_name].addFile(music_file);
   }
 });
 

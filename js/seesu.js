@@ -696,10 +696,9 @@ var SeesuApp = spv.inh(AppModel, {
 				if (!cur.media_type) {
 					cur.media_type = 'mp3';
 				}
-
-				this.start_page.mp3_search.addFileToInvestg(cur, cur);
+				this.start_page.mp3_search.addFile(cur, cur);
 				if (second_msq) {
-					this.start_page.mp3_search.addFileToInvestg(cur, second_msq);
+					this.start_page.mp3_search.addFile(cur, second_msq);
 				}
 			}
 

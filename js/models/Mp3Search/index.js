@@ -259,15 +259,29 @@ var Source = pv.behavior({
 			}
 			return o;
 		},
-		addFileToInvestg: function(file, msq) {
+    addFile: function (file, msq) {
+      if (!file.from) {
+        throw new Error('file must have `from` value');
+      }
+      if (!file._id) {
+        throw new Error('file must have `_id` value');
+      }
+
+      var cur = routePathByModels(
+        this,
+        'sources/' + file.from + '/files/' + file._id,
+        false,
+        true);
+
+      cur.updateManyStates(file);
+      this.addFileToInvestg(file, cur, msq);
+    },
+		addFileToInvestg: function(file, music_file, msq) {
 			var qmi = this.setFileQMI(file, msq);
 			if (qmi != -1) {
 				var investg = this.getFilesInvestg(msq);
-				investg.addFile(file, file.from);
+				investg.addFile(music_file, file.from);
 			}
-
-
-
 		},
 		pushSomeResults: function(music_list) {
 			var allowed_files = [];

@@ -50,6 +50,9 @@ var parseVKPostSong = spv.mmap({
 			artist: 'artist',
 			track: 'title',
 			from: ['vk'],
+			_id: [function (cursor) {
+        return cursor.owner_id + '_' + cursor.id;
+			}, '^'],
 			media_type: ['mp3'],
 			duration: ['seconds', 'duration'],
 			link: 'url'

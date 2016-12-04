@@ -14,6 +14,15 @@ var album_placeholder = {
 
 var pvUpdate = pv.update;
 
+function handleFile(self, file) {
+  if (!file || !file.link) {
+    return null;
+  }
+
+  self.mp3_search.addFile(file, file);
+  return file;
+}
+
 	var app_env = app_serv.app_env;
 
 	return spv.inh(SongBase, {
@@ -63,6 +72,9 @@ var pvUpdate = pv.update;
 				self.wlch(images_pack, 'image-to-use', 'ext_lfm_image');
 				still_init = false;
 			}
+
+      omo.file = handleFile(self, omo.file);
+      omo.side_file = handleFile(self, omo.side_file);
 		}
 	}, {
 		network_data_as_states: false,
@@ -201,17 +213,6 @@ var pvUpdate = pv.update;
 		'chi-mf__cor': MfCor,
 		initHeavyPart: pv.getOCF('izheavy', function() {
 			var omo = this.omo;
-
-			if (omo.side_file && !omo.side_file.link) {
-				omo.side_file = null;
-			}
-			if (omo.side_file) {
-				this.mp3_search.addFileToInvestg(omo.side_file, omo.side_file);
-				omo.side_file = null;
-			}
-			if (omo.file && !omo.file.link) {
-				omo.file = null;
-			}
 
 			this.mf_cor = this.initChi('mf__cor', null, omo);
 
