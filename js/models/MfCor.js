@@ -694,7 +694,7 @@ var MfCorBase = spv.inh(LoadableList, {
 	},
 	getVKFile: function(){
 		var file = this.state('current_mopla');
-		if (file && file.from == 'vk'){
+		if (file && pvState(file, 'from') == 'vk'){
 			return file;
 		} else{
 			return this.getFirstFrom('vk');
