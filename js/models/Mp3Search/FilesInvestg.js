@@ -56,6 +56,12 @@ var FilesInvestg = spv.inh(pv.Model, {
     from: 'all_music_files',
     where: {'>media_type': ['=', ['mp3']]},
   },
+  'nest_sel-able_to_play_mp3files_all': {
+    from: 'mp3files_all',
+    where: {
+      '>unavailable': [['=', 'boolean'], [false]]
+    }
+  },
   'nest_sel-available_sources': {
     from: 'sources_list',
     where: {

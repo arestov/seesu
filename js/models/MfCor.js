@@ -128,6 +128,9 @@ var MfComplect = spv.inh(MfComplectBase, {}, {
   'nest-multi_pioneer': ['#mp3_search/lookups/[:artist_name],[:track_name]/[:search_name]', {
     ask_for: 'use_multisearch'
   }],
+  'nest_sel-available_to_play': {
+    from: 'multi_pioneer.able_to_play_mp3files'
+  },
   'nest_sel-music_files': {
     from: 'multi_pioneer.music_files_sorted',
   },
