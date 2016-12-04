@@ -605,8 +605,7 @@ var MfCorBase = spv.inh(LoadableList, {
 		if (this.state("user_preferred") == unavailable_mopla){
 			pv.update(this, "selected_mopla_to_use", false);
 			var from = pvState(this.state("selected_mopla"), 'from');
-			var available = this.getFilesFrom(from);
-			available = available && available[0];
+			var available = this.getFirstFrom(from);
 			if (available){
 				pv.update(this, "almost_selected_mopla", getSFM(this, available));
 			} else {
@@ -619,8 +618,7 @@ var MfCorBase = spv.inh(LoadableList, {
 
 	},
 	updateDefaultMopla: function() {
-		var available = this.getAllFiles();
-		available = available && available[0];
+		var available = this.getFirstFile();
 		if (available){
 			pv.update(this, "default_mopla", getSFM(this, available));
 		} else {
@@ -699,23 +697,19 @@ var MfCorBase = spv.inh(LoadableList, {
 		if (file && file.from == 'vk'){
 			return file;
 		} else{
-			var files = this.getFilesFrom('vk');
-			return files && files[0];
+			return this.getFirstFrom('vk');
 		}
 	},
-  getFilesFrom: function(source_name) {
+  getFirstFrom: function(source_name) {
     var list = this.getNesting('sorted_completcs');
     if (!list) {return;}
     var complect;
     for (var i = 0; i < list.length; i++) {
       if (pvState(list[i], 'search_name') == source_name) {
-        complect = list[i];
+        var list = list[i].getFiles(source_name);
+        return list && list[0];
       }
     }
-    if (!complect) {return;}
-
-    var files = complect.getFiles(source_name);
-    return files && files.slice();
   },
 	canPlay: function() {
 		return !!this.state("mopla_to_use");
@@ -734,14 +728,10 @@ var MfCorUsual = spv.inh(MfCorBase, {
     from: '#mp3_search>sources_sorted_list',
     map: 'complects/[:search_name]'
   },
-  getAllFiles: function() {
+  getFirstFile: function() {
     var lookup = this.getNesting('multi_lookup');
     var list = lookup && lookup.getNesting('able_to_play_mp3files_all');
-    if (!list || !list.length) {
-      return [];
-    }
-
-    return list;
+    return list && list[0];
   }
 });
 
@@ -763,9 +753,10 @@ var MfCorSingle = spv.inh(MfCorBase, {
       ask_for: 'file'
     },
   ],
-  getAllFiles: function() {
+  getFirstFile: function() {
     var single = this.getNesting('sorted_completcs');
-    return single && single.getNesting('music_files');
+    var list = single && single.getNesting('music_files');
+    return list && list[0];
   },
 });
 
