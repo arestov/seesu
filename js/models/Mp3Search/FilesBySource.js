@@ -245,9 +245,12 @@ var FilesBySource = spv.inh(pv.Model, {
       } else {
         var matched = getMatchedSongs(music_list, msq);
         var list = new Array(matched.length);
-        for (var i = 0; i < matched.length; i++) {
-          list[i] = _this.mp3_search.initChi('music_file', null, null, null, matched[i]);
-        }
+        _this.useMotivator(_this.mp3_search, function () {
+          for (var i = 0; i < matched.length; i++) {
+            list[i] = _this.mp3_search.initChi('music_file', null, null, null, matched[i]);
+          }
+        });
+
         _this.updateNesting('requested_music_files', list);
 
         _this.updateManyStates({
