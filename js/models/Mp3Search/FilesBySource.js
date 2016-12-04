@@ -104,9 +104,6 @@ var FilesBySource = spv.inh(pv.Model, {
       ],
     }
   },
-  // 'stch-files-list': function (target, array) {
-  // 	target.updateNesting('files-list', array);
-  // },
   'nest_cnt-music_files_list': ['requested_music_files', 'injected_music_files'],
   'compx-qmi_key': [['msq'], QMIKey],
   'nest_sel-best_music_files': {
@@ -146,30 +143,6 @@ var FilesBySource = spv.inh(pv.Model, {
       ['disable_search', '^must_load'],
       function(disabled, must_load) {
         return !disabled && must_load;
-      }
-    ],
-    'files-list': [
-      ['search_result', 'injected_files'],
-      function(sarr, inj_f) {
-        var all = [];
-        if (sarr && sarr.length){
-          all = all.concat(sarr);
-        }
-
-        if (inj_f && inj_f.length){
-          all = all.concat(inj_f);
-        }
-
-        if (all.length) {
-          this.mp3_search.sortMusicFilesArray(all, pvState(this, 'msq'));
-        }
-
-        for (var i = 0; i < all.length; i++) {
-          var cur = all[i];
-          cur.states = cur;
-        }
-
-        return !!all.length && all;
       }
     ],
     'has_mp3_files': [['mp3files$exists']],
@@ -253,7 +226,6 @@ var FilesBySource = spv.inh(pv.Model, {
         _this.updateNesting('requested_music_files', list);
 
         _this.updateManyStates({
-          search_result: matched,
           search_fail: false,
 
           search_progress: false,
