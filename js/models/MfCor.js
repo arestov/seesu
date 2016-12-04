@@ -694,9 +694,6 @@ var MfCorBase = spv.inh(LoadableList, {
 		}
 
 	},
-	raw: function(){
-		return !!this.omo && !!this.omo.raw;
-	},
 	getVKFile: function(){
 		var file = this.state('current_mopla');
 		if (file && file.from == 'vk'){
