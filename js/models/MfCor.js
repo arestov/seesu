@@ -168,7 +168,7 @@ var sources_map = {
 	'btdigg-torrents': 'http://btdigg.org/'
 };
 
-var MfCor = spv.inh(LoadableList, {
+var MfCorBase = spv.inh(LoadableList, {
 	naming: function(fn) {
 		return function MfCor(opts, data, params, more, states) {
 			fn(this, opts, data, params, more, states);
@@ -190,15 +190,6 @@ var MfCor = spv.inh(LoadableList, {
 		self.files_models = {};
 
 		self.initNotifier();
-		pvUpdate(self, 'file', omo.file);
-		if (omo.file){
-			self.file = omo.file;
-      self.file.states = self.file;
-			self.updateDefaultMopla();
-		} else {
-			self.mo.on('vip_state_change-track', self.hndTrackNameCh, {immediately: true, soft_reg: false, context: self});
-		}
-
 		self.intMessages();
 	}
 }, {
@@ -266,7 +257,7 @@ var MfCor = spv.inh(LoadableList, {
 		ask_for: 'needs_vk_auth'
 	}],
 	'nest_sel-vk_source': {
-		from: 'complects_normal',
+		from: 'sorted_completcs',
     where: {
       '>search_name': ['=', ['vk']]
     }
@@ -319,28 +310,13 @@ var MfCor = spv.inh(LoadableList, {
 			],
 		}
 	},
-  'stch-@complects_single.music_files': function (target) {
-		target.updateDefaultMopla();
-	},
-	'stch-@multi_lookup.mp3files_all': function (target) {
+  'stch-@sorted_completcs.moplas_list': function (target) {
 		target.updateDefaultMopla();
 	},
 	getSource: function (source_name) {
 		return BrowseMap.routePathByModels(this, 'complects/' + source_name, false, true);
 	},
-	'nest_cnt-sorted_completcs': ['complects_normal', 'complects_single'],
-  'compx-file_from': [['file.from']],
-	'nest-complects_single': [
-		'single-complects/[:file_from]', {
-			ask_for: 'file'
-		},
-	],
 	'nest-mp3_search': ['#mp3_search'],
-	'nest_sel-complects_normal': {
-		from: '#mp3_search>sources_sorted_list',
-		map: 'complects/[:search_name]'
-	},
-
 	getSFM: function(file) {
 
 		if (!file.hasOwnProperty('file_id')){
@@ -735,7 +711,7 @@ var MfCor = spv.inh(LoadableList, {
 		var all_files;
 
 		if (this.file){
-      var single = this.getNesting('complects_single');
+      var single = this.getNesting('sorted_completcs');
       return single && single.getNesting('music_files');
 		} else {
 			if (source_name){
@@ -781,5 +757,37 @@ var MfCor = spv.inh(LoadableList, {
 		return !!this.state("mopla_to_use");
 	}
 });
-return MfCor;
+
+var MfCorUsual = spv.inh(MfCorBase, {
+  init: function(self) {
+    self.mo.on('vip_state_change-track', self.hndTrackNameCh, {immediately: true, soft_reg: false, context: self});
+  }
+}, {
+  'nest_sel-sorted_completcs': {
+    from: '#mp3_search>sources_sorted_list',
+    map: 'complects/[:search_name]'
+  },
+});
+
+var MfCorSingle = spv.inh(MfCorBase, {
+  init: function(self, opts, data, omo) {
+    pvUpdate(self, 'file', omo.file);
+
+    self.file = omo.file;
+    self.file.states = self.file;
+    self.updateDefaultMopla();
+  }
+}, {
+  'compx-file_from': [['file.from']],
+  'nest-sorted_completcs': [
+    'single-complects/[:file_from]', {
+      ask_for: 'file'
+    },
+  ],
+});
+
+MfCorUsual.Single = MfCorSingle;
+
+
+return MfCorUsual;
 });

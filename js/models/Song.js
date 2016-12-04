@@ -1,5 +1,5 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
-function(pv, spv, app_serv, BrowseMap, MfCor, SongActionsRow, SongBase){
+function(pv, spv, app_serv, BrowseMap, MfCorUsual, SongActionsRow, SongBase){
 "use strict";
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
@@ -210,11 +210,13 @@ function handleFile(self, file) {
 			this.initHeavyPart();
 			return this.mf_cor;
 		},
-		'chi-mf__cor': MfCor,
+		'chi-mf__cor_usual': MfCorUsual,
+		'chi-mf__cor_single': MfCorUsual.Single,
 		initHeavyPart: pv.getOCF('izheavy', function() {
 			var omo = this.omo;
 
-			this.mf_cor = this.initChi('mf__cor', null, omo);
+			var chi = omo.file ? 'mf__cor_single' : 'mf__cor_usual';
+			this.mf_cor = this.initChi(chi, null, omo);
 
 			this.mf_cor
 				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())
