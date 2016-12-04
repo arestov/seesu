@@ -128,6 +128,9 @@ var MfComplect = spv.inh(MfComplectBase, {}, {
   'nest-multi_pioneer': ['#mp3_search/lookups/[:artist_name],[:track_name]/[:search_name]', {
     ask_for: 'use_multisearch'
   }],
+  'nest_sel-music_files': {
+    from: 'multi_pioneer.music_files_sorted',
+  },
   'nest_sel-moplas_list': {
     from: 'multi_pioneer.music_files_sorted',
     map: '>playable_files/[:mf_cor_id]'
@@ -236,7 +239,7 @@ var MfCorBase = spv.inh(LoadableList, {
 		['^is_important']
 	],
 	'compx-has_files': [
-		['@some:moplas_list$length:sorted_completcs'],
+		['@some:music_files$exists:sorted_completcs'],
 		function (state) {
 			return state;
 		}
@@ -263,7 +266,7 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 	},
 	'compx-has_any_vk_results': [
-		['@one:moplas_list$length:vk_source', 'file'],
+		['@one:music_files$exists:vk_source', 'file'],
 		function (has_any_data, file) {
 			return !!has_any_data || (file && file.from == 'vk');
 		}
