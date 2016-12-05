@@ -68,7 +68,7 @@ var MfComplectBase = spv.inh(pv.Model, {
 			fn(this, opts, data, params);
 		};
 	},
-	init: function(self, opts, data, params) {
+	init: function(self, opts, data) {
 		self.mo = self.map_parent.map_parent;
 		self.mf_cor = self.map_parent;
 
@@ -166,7 +166,6 @@ function getSFM(mf_cor, file) {
       false,
       true);
   }
-  debugger;
   return mf_cor.getSFM(file);
 }
 
@@ -701,12 +700,12 @@ var MfCorBase = spv.inh(LoadableList, {
 		}
 	},
   getFirstFrom: function(source_name) {
-    var list = this.getNesting('sorted_completcs');
-    if (!list) {return;}
-    var complect;
-    for (var i = 0; i < list.length; i++) {
-      if (pvState(list[i], 'search_name') == source_name) {
-        var list = list[i].getFiles(source_name);
+    var sorted_completcs = this.getNesting('sorted_completcs');
+    if (!sorted_completcs) {return;}
+    for (var i = 0; i < sorted_completcs.length; i++) {
+			var cur = sorted_completcs[i];
+      if (pvState(cur, 'search_name') == source_name) {
+        var list = cur.getFiles(source_name);
         return list && list[0];
       }
     }
