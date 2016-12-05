@@ -13,19 +13,12 @@ var getQueryString = QMI.getQueryString;
 
 var FilesInvestg = spv.inh(pv.Model, {
   init: function(target) {
-    // this._super.apply(this, arguments);
     target.sources = {};
     target.sources_list = [];
     target.checked_files = {};
     target.mp3_search = target.map_parent;
 
-    // target.query_string = params.query_string;
-
     target.createRelationsBinder();
-
-    //this.on('vip_state_change-search_progress', function(e) {
-    //	console.log('search_progress: ' + e.value);
-    //}, {immediately: true});
 
     target.lwch(target.map_parent, 'big_files_list', target.hndBigFilesList);
 
