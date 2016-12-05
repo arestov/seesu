@@ -2,7 +2,7 @@ define(function(require){
 "use strict";
 var pv = require('pv');
 var spv = require('spv');
-var MusicFile = require('./MusicFile');
+var Sources = require('./Sources');
 var FilesInvestg = require('./FilesInvestg');
 var SongFileModel = require('./SongFileModel');
 var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
@@ -88,22 +88,6 @@ var hasMusicCopy = function (array, entity, from_position){
 	}
 };
 
-
-var Source = pv.behavior({
-  sub_pager: {
-    type: {
-      files: 'file'
-    },
-    by_type: {
-      file: [
-        MusicFile, null, {
-          id: 'by_slash.0'
-        }
-      ],
-    }
-  }
-});
-
 	var Mp3Search = spv.inh(pv.Model, {
 		init: function(target) {
 			// this._super.apply(this, arguments);
@@ -134,11 +118,16 @@ var Source = pv.behavior({
 		}
 	},  {
 		'compx-searches_pr': [['#mp3_search_order']],
+    sub_page: {
+  		'sources': {
+  			constr: Sources,
+  			title: [['']],
+  		},
+  	},
 		sub_pager: {
 			type: {
 				tuners: 'tuner',
 				lookups: 'lookup',
-				sources: 'source'
 			},
 			by_type: {
 				lookup: [
@@ -154,11 +143,6 @@ var Source = pv.behavior({
 						search_name: 'simple_name'
 					}
 				],
-        source: [
-          Source, null, {
-            search_name: 'by_slash.0'
-          }
-        ]
 			}
 		},
 		getFilesInvestg: function(msq, motivator) {
