@@ -245,6 +245,18 @@ var FilesBySource = spv.inh(pv.Model, {
       _this.nextTick(function () {
         handle(music_list);
       })
+    }, function () {
+      _this.nextTick(function () {
+        _this.updateManyStates({
+          search_result: null,
+          search_fail: true,
+
+          search_progress: false,
+          has_request: false,
+          search_complete: true
+        });
+      });
+
     });
 
     var req;
