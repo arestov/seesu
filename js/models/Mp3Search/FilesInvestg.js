@@ -22,10 +22,6 @@ var FilesInvestg = spv.inh(pv.Model, {
 
     target.lwch(target.map_parent, 'big_files_list', target.hndBigFilesList);
 
-    target.nextTick(function(target) {
-      target.startSearch( {only_cache: true} );
-    });
-
     target.head = target.head || {};
     target.msq = target.head.msq;
   },
@@ -81,11 +77,6 @@ var FilesInvestg = spv.inh(pv.Model, {
       return isDepend(state);
     }
   ],
-  'stch-must_load': function(target, state) {
-    if (state) {
-      target.startSearch();
-    }
-  },
   createRelationsBinder: function() {
     var _this = this;
     this.bindRelation = function(callback) {
@@ -155,9 +146,6 @@ var FilesInvestg = spv.inh(pv.Model, {
         return h_best_f || s_complete;
       }
     ]
-  },
-  startSearch: function() {
-    return;
   },
   delayFileCheck: function(file) {
     if (file.artist == this.msq.artist){

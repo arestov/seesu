@@ -187,7 +187,6 @@ var MfCorBase = spv.inh(LoadableList, {
 	},
 	init: function(self, opts, data, omo) {
 		self.files_investg = null;
-		self.last_search_opts = null;
 		self.file = null;
 		self.notifier = null;
 		self.sf_notf = null;
@@ -229,10 +228,6 @@ var MfCorBase = spv.inh(LoadableList, {
 			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.state('artist'), track: this.mo.state('track')}, this.current_motivator);
 			this.bindInvestgChanges();
 			this.mo.bindFilesSearchChanges(this.files_investg);
-			if (this.last_search_opts){
-				this.files_investg.startSearch(this.last_search_opts);
-				this.last_search_opts = null;
-			}
 			pv.update(this, 'files_investg', this.files_investg);
 		}
 
@@ -577,13 +572,6 @@ var MfCorBase = spv.inh(LoadableList, {
 	},
 	collapseExpanders: function() {
 		pv.update(this, 'want_more_songs', false);
-	},
-	startSearch: function(opts) {
-		if (this.files_investg){
-			this.files_investg.startSearch(opts);
-		} else {
-			this.last_search_opts = opts;
-		}
 	},
 	bindInvestgChanges: function() {
 		var investg = this.files_investg;
