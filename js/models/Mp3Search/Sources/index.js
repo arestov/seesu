@@ -1,7 +1,7 @@
 define(function (require) {
 'use strict';
 var pv = require('pv');
-var MusicFile = require('./MusicFile');
+var MusicFile = require('../MusicFile');
 
 var Source = pv.behavior({
   sub_pager: {

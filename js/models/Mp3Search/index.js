@@ -2,7 +2,7 @@ define(function(require){
 "use strict";
 var pv = require('pv');
 var spv = require('spv');
-var Sources = require('./Sources');
+var Sources = require('./Sources/index');
 var FilesInvestg = require('./FilesInvestg');
 var SongFileModel = require('./SongFileModel');
 var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
