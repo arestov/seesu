@@ -124,7 +124,7 @@ var SeesuApp = spv.inh(AppModel, {
 		self.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		pvUpdate(self, 'mp3_search_order', {
 			vk: 5,
-			'pleer.com': 4,
+			'pleer.net': 4,
 			nigma: 1,
 			exfm: 0,
 			soundcloud: -5,

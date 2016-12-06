@@ -174,7 +174,7 @@ var file_id_counter = 0;
 
 var sources_map = {
 	'vk': 'https://vk.com',
-	'pleer.com': 'http://pleer.com',
+	'pleer.net': 'http://pleer.net',
 	'soundcloud': 'https://soundcloud.com',
 	'btdigg-torrents': 'http://btdigg.org/'
 };

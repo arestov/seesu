@@ -33,7 +33,7 @@
 		"http://hypem.com/*",
 		"https://api.discogs.com/*",
 		"https://api.mixcloud.com/*",
-		"http://pleer.com/*"
+		"http://pleer.net/*"
 	],
 	"content_security_policy": "script-src 'self'; object-src 'self' https://www.youtube.com/v/"
 
