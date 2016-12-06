@@ -77,7 +77,9 @@ var datamorph_map = new spv.MorphMap({
 		page_link: 'link',
 		artist: 'artist',
 		track: 'track',
-		link: 'file',
+		link: [function (link) {
+      return link.replace('pleer.com/', 'pleer.net/');
+		}, 'file'],
 		duration: 'length'
 	}
 });
@@ -143,13 +145,12 @@ ProspMusicSearch.prototype = {
 
 		var async_ans = this.api.get('search', params_u, opts);
 
-		var olddone = async_ans.done,
+		var olddone = async_ans.then,
 			result;
 
-		async_ans.done = function(cb) {
+		async_ans.then = function(cb, errorcb) {
 			olddone.call(this, function(r) {
 				if (!result){
-
 					var list = datamorph_map(r);
 					var music_list = [];
 
@@ -164,7 +165,7 @@ ProspMusicSearch.prototype = {
 				}
 				cb(result, 'mp3');
 
-			});
+			}, errorcb);
 			return this;
 		};
 		return async_ans;
