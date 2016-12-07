@@ -70,9 +70,12 @@ var getPath = pathExecutor(function(chunkName, app, md) {
 	return md._provoda_id && md.state(chunkName);
 });
 
-var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) {
-	var full_path = getPath(obj, app, md_for_urldata || md);
-	if (obj.from_root) {
+var getPathBySimpleData = pathExecutor(function(chunkName, app, data) {
+	return data && data[chunkName];
+});
+
+var followStringTemplate = function (app, md, obj, need_constr, full_path) {
+  if (obj.from_root) {
 		return app.routePathByModels(full_path, app.start_page, need_constr);
 	}
 	if (obj.from_parent) {
@@ -85,9 +88,12 @@ var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) 
 		}
 		return app.routePathByModels(full_path, target_md_start, need_constr);
 	}
+  return app.routePathByModels(full_path, md, need_constr);
+};
 
-	return app.routePathByModels(full_path, md, need_constr);
-
+var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) {
+	var full_path = getPath(obj, app, md_for_urldata || md);
+  return followStringTemplate(app, md, obj, need_constr, full_path);
 };
 
 
@@ -148,11 +154,15 @@ var getParsedPath = spv.memorize(function(raw_string_template) {
 	};
 });
 
+
+var getSPByPathTemplateAndData = function (app, start_md, string_template, need_constr, data) {
+  var parsed_template = getParsedPath(string_template);
+  var full_path = getPathBySimpleData(parsed_template, app, data);
+  return followStringTemplate(app, start_md, parsed_template, need_constr, full_path);
+};
+
 var getSPByPathTemplate = function(app, start_md, string_template, need_constr, md_for_urldata) {
-
 	var parsed_template = getParsedPath(string_template);
-
-
 	return executeStringTemplate(app, start_md, parsed_template, need_constr, md_for_urldata);
 };
 
@@ -232,6 +242,7 @@ initDeclaredNestings.getConstrByPath = function(app, md, string_template) {
 	return getSPByPathTemplate(app, md, string_template, true);
 };
 initDeclaredNestings.getSPByPathTemplate = getSPByPathTemplate;
+initDeclaredNestings.getSPByPathTemplateAndData = getSPByPathTemplateAndData;
 
 return initDeclaredNestings;
 });
