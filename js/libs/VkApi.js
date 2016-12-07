@@ -106,48 +106,18 @@ VkSearch.prototype = {
 	},
 	dmca_url: 'https://vk.com/dmca',
 	makeSongFile: function(item) {
-		return this.makeSong(item);
-	},
-	makeSong: function(cursor, msq){
-		if (!cursor || !cursor.url) {
-			return;
-		}
-		return {
-			artist	: htmlencoding.decode(cursor.artist ? cursor.artist : cursor.audio.artist),
-			duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
-			link		: cursor.url ? cursor.url : cursor.audio.url,
-			track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
-			from		: 'vk',
-			downloadable: false,
-			_id			: cursor.owner_id + '_' + cursor.id,
-			type: 'mp3',
-			media_type: 'mp3'
-		};
-	},
-	makeMusicList: function(r, msq) {
-		var music_list = [];
-		for (var i=0, l = r.length; i < l; i++) {
-			var entity = this.makeSong(r[i], msq);
-			if (!entity) {
-				continue;
-			}
-			if (!entity.link.match(/audio\/.mp3$/)){
-				music_list.push(entity);
-			}
-		}
-		return music_list;
+		return makeSong(item);
 	},
 	findAudio: function(msq, opts) {
-		var _this = this;
 		var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
 
 		opts = opts || {};
-		opts.cache_key = opts.cache_key || query;
 
 		var params_u = {};
 			params_u.q = query;
 			params_u.count = 30;
 			params_u.sort = 2;
+      params_u.offset = 0;
 
 		var async_ans = this.api.get('audio.search', params_u, opts);
 
@@ -159,7 +129,7 @@ VkSearch.prototype = {
 					deferred.reject.apply(deferred, arguments);
 				} else{
 					if (r.response.items && r.response.items.length){
-						var ml = _this.makeMusicList(r.response.items, msq);
+						var ml = makeMusicList(r.response.items, msq);
 
 						deferred.resolve.call(deferred, !!ml.length && ml, 'mp3');
 					} else {
@@ -176,6 +146,37 @@ VkSearch.prototype = {
 		return promise;
 	}
 };
+
+function makeSong(cursor){
+  if (!cursor || !cursor.url) {
+    return;
+  }
+  return {
+    artist	: htmlencoding.decode(cursor.artist ? cursor.artist : cursor.audio.artist),
+    duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
+    link		: cursor.url ? cursor.url : cursor.audio.url,
+    track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
+    from		: 'vk',
+    downloadable: false,
+    _id			: cursor.owner_id + '_' + cursor.id,
+    type: 'mp3',
+    media_type: 'mp3'
+  };
+}
+
+function makeMusicList(r, msq) {
+  var music_list = [];
+  for (var i=0, l = r.length; i < l; i++) {
+    var entity = makeSong(r[i], msq);
+    if (!entity) {
+      continue;
+    }
+    if (!entity.link.match(/audio\/.mp3$/)){
+      music_list.push(entity);
+    }
+  }
+  return music_list;
+}
 
 
 
