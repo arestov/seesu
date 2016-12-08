@@ -112,29 +112,24 @@ ScMusicSearch.prototype = {
 
 function makeSong(cursor, msq, sc_api_key){
 	var search_string = cursor.title;
-	var entity;
-	if (search_string){
+	if (!search_string) {return;}
 
-		var guess_info = Mp3Search.guessArtist(search_string, msq && msq.artist);
+	var guess_info = Mp3Search.guessArtist(search_string, msq && msq.artist);
 
-		entity = {
-			artist		: htmlencoding.decode(guess_info.artist || cursor.user.permalink || ""),
-			track		: htmlencoding.decode(guess_info.track || search_string),
-			duration	: cursor.duration,
-			link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + sc_api_key,
-			from		: 'soundcloud',
-			real_title	: cursor.title,
-			page_link	: cursor.permalink_url.replace(/^http\:/, 'https:'),
-			description : htmlencoding.decode(cursor.description) || false,
-			downloadable: cursor.downloadable,
-			_id			: cursor.id,
-			type: 'mp3',
-			media_type: 'mp3',
-		};
-
-
-	}
-	return entity;
+	return {
+		artist		: htmlencoding.decode(guess_info.artist || cursor.user.permalink || ""),
+		track		: htmlencoding.decode(guess_info.track || search_string),
+		duration	: cursor.duration,
+		link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + sc_api_key,
+		from		: 'soundcloud',
+		real_title	: cursor.title,
+		page_link	: cursor.permalink_url.replace(/^http\:/, 'https:'),
+		description : htmlencoding.decode(cursor.description) || false,
+		downloadable: cursor.downloadable,
+		_id			: cursor.id,
+		type: 'mp3',
+		media_type: 'mp3',
+	};
 }
 
 ScApi.ScMusicSearch = ScMusicSearch;
