@@ -416,6 +416,7 @@ return {
 		var is_main_list = nesting_name == this.sputnik.main_list_name;
 
 		this.sputnik.updateState('loading_nesting_' + nesting_name, true);
+    this.sputnik.updateState(nesting_name + '$loading', true);
 		if (is_main_list) {
 			this.sputnik.updateState('main_list_loading', true);
 		}
@@ -451,6 +452,7 @@ return {
 		function anyway() {
 			store.process = false;
 			_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
+      _this.sputnik.updateState(nesting_name + '$loading', false);
 			if (is_main_list) {
 				_this.sputnik.updateState('main_list_loading', false);
 			}
@@ -471,6 +473,16 @@ return {
 			};
 			release.init_end = true;
 		}
+
+    /*
+      postfixes:
+
+      $error
+      $has_any
+      $all_loaded
+      $loading
+
+    */
 
 
     request.then(function (response) {
@@ -496,23 +508,42 @@ return {
 
 			if (has_error){
 				store.error = true;
+        sputnik.updateState(nesting_name + "$error", true);
         return;
 			}
+
+
+
+      var many_states = {};
+      many_states[nesting_name + "$error"] = null;
+      many_states[nesting_name + "$has_any"] = true;
 
       var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers, network_api);
       var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
 
       if (!supports_paging) {
         store.has_all_items = true;
-        sputnik.updateState("all_data_loaded", true);
+        if (is_main_list) {
+            sputnik.updateState("all_data_loaded", true);
+        }
+
+        many_states[nesting_name + "$all_loaded"] = true;
       } else {
         var has_more_data = hasMoreData(serv_data, limit_value, paging_opts, items);
 
         if (!has_more_data) {
           store.has_all_items = true;
-          sputnik.updateState("all_data_loaded", true);
+
+          if (is_main_list) {
+              sputnik.updateState("all_data_loaded", true);
+          }
+
+          many_states[nesting_name + "$all_loaded"] = true;
         }
       }
+
+      sputnik.updateManyStates(many_states);
+
       items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
 
       sputnik.insertDataAsSubitems(sputnik, nesting_name, items, serv_data, source_name);
