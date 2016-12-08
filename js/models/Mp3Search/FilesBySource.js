@@ -104,7 +104,10 @@ var FilesBySource = spv.inh(pv.Model, {
       ],
     }
   },
-  'nest_cnt-music_files_list': ['requested_music_files', 'injected_music_files'],
+	'nest_sel-queried_music_files': {
+		from: 'search_query.files'
+	},
+  'nest_cnt-music_files_list': ['queried_music_files', 'requested_music_files', 'injected_music_files'],
   'compx-qmi_key': [['msq'], QMIKey],
   'nest_sel-best_music_files': {
     from: 'match_ratings',
@@ -165,6 +168,21 @@ var FilesBySource = spv.inh(pv.Model, {
     if (state) {
       target.startSearch();
     }
+  },
+  'nest-search_query': ['#mp3_search/sources/[:search_name]/queries/[:artist_name],[:track_title]'],
+  'compx-load_query': [
+    ['request_required', 'search_query$exists'],
+    function (one, two) {
+      return one && two;
+    }
+  ],
+  'stch-load_query': function (target, state) {
+    if (!state) {return;}
+
+    var request = target.getNesting('search_query').requestFiles();
+		if (!request) {return;}
+
+		target.addRequest(request);
   },
   makeRequest: function(msq, opts) {
     if (!this.search_eng || opts.only_cache || this.state('has_request')){
