@@ -80,12 +80,12 @@ ScMusicSearch.prototype = {
 			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
-		opts.cache_key = opts.cache_key || query;
 
 		var params_u = {
 			filter:'streamable,downloadable',
-			limit: 30,
-			q: query
+			q: query,
+      limit: 30,
+      offset: 0,
 		};
 
 		var async_ans = this.sc_api.get('tracks', params_u, opts);
