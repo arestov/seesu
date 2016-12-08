@@ -121,9 +121,8 @@ ProspMusicSearch.prototype = {
 
 		var params_u = {
 			//results: limit_value,
-			page: 1,
-			limit: limit_value,
-			q: query
+			q: query,
+      limit: limit_value,
 		};
 
 		var async_ans = this.api.get('search', params_u, opts);
