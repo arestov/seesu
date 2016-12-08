@@ -1,7 +1,6 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/models/Mp3Search/index'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search) {
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/models/Mp3Search/index', 'js/libs/morph_helpers'],
+function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search, morph_helpers) {
 "use strict";
-
-
 
 /*
 
@@ -23,6 +22,9 @@ var ProspApi = function(queue, crossdomain, cache_ajax) {
 };
 
 ProspApi.prototype = {
+  checkResponse: function(r) {
+    return !r || !!r.error;
+  },
 	constructor: ProspApi,
 	source_name: 'pleer.net',
 	cache_namespace: 'pleer.net',
@@ -72,27 +74,27 @@ var datamorph_map = new spv.MorphMap({
 	is_array: true,
 	source: 'tracks',
 	props_map: {
+		from: ['pleer.net'],
+		type: ['mp3'],
+		media_type: ['mp3'],
 
 		_id: 'id',
 		page_link: 'link',
-		artist: 'artist',
+		artist: [function (artist) {
+			return artist && (artist + '');
+		}, 'artist'],
 		track: 'track',
 		link: [function (link) {
       return link.replace('pleer.com/', 'pleer.net/');
 		}, 'file'],
-		duration: 'length'
+		duration: ['timestamp', 'length']
 	}
-});
+}, morph_helpers);
 
 
 var ProspMusicSearch = function(opts) {
 	this.api = opts.api;
 	this.mp3_search = opts.mp3_search;
-};
-var standart_props = {
-	from: 'pleer.net',
-	type: 'mp3',
-	media_type: 'mp3'
 };
 
 ProspMusicSearch.prototype = {
@@ -104,28 +106,10 @@ ProspMusicSearch.prototype = {
 	dmca_url: 'http://pleer.net/feedback',
 	preferred: null,
 	makeSongFile: function(item) {
-		return this.makeSong(item);
-	},
-	makeSong: function(cursor, msq){
-		cursor.artist = cursor.artist + '';
-		cursor.duration = cursor.duration && cursor.duration * 1000;
-		spv.cloneObj(cursor, standart_props);
-
-		if (!cursor.artist){
-			var guess_info = Mp3Search.guessArtist(cursor.track, msq && msq.artist);
-			if (guess_info.artist){
-				cursor.artist = guess_info.artist;
-				cursor.track = guess_info.track;
-			}
-		}
-
-
-
-		return cursor;
+		return makeSong(item);
 	},
 	findAudio: function(msq, opts) {
 		var
-			_this = this,
 			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		query = query.replace(/\'/g, '').replace(/\//g, ' ');
@@ -151,17 +135,7 @@ ProspMusicSearch.prototype = {
 		async_ans.then = function(cb, errorcb) {
 			olddone.call(this, function(r) {
 				if (!result){
-					var list = datamorph_map(r);
-					var music_list = [];
-
-					for (var i = 0; i < list.length; i++) {
-						var item = _this.makeSong(list[i], msq);
-						music_list.push(item);
-					}
-
-
-
-					result = music_list;
+					result = makeList(r, msq);
 				}
 				cb(result, 'mp3');
 
@@ -172,6 +146,32 @@ ProspMusicSearch.prototype = {
 	}
 };
 
+function makeList(r, msq) {
+	var list = datamorph_map(r);
+	var music_list = [];
+
+	for (var i = 0; i < list.length; i++) {
+		var item = makeSong(list[i], msq);
+		music_list.push(item);
+	}
+
+
+
+	return music_list;
+}
+
+
+function makeSong(cursor, msq){
+	if (!cursor.artist){
+		var guess_info = Mp3Search.guessArtist(cursor.track, msq && msq.artist);
+		if (guess_info.artist){
+			cursor.artist = guess_info.artist;
+			cursor.track = guess_info.track;
+		}
+	}
+
+	return cursor;
+}
 
 
 ProspApi.ProspMusicSearch = ProspMusicSearch;
