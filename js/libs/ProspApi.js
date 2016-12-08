@@ -118,7 +118,6 @@ ProspMusicSearch.prototype = {
 
 
 		var limit_value =  msq.limit || 30;
-		opts.cache_key = opts.cache_key || (query + '_' + limit_value);
 
 		var params_u = {
 			//results: limit_value,
