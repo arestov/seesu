@@ -72,33 +72,7 @@ ScMusicSearch.prototype = {
 	dmca_url: 'http://soundcloud.com/pages/dmca_policy',
 	preferred: null,
 	makeSongFile: function(item) {
-		return this.makeSong(item);
-	},
-	makeSong: function(cursor, msq){
-		var search_string = cursor.title;
-		var entity;
-		if (search_string){
-
-			var guess_info = Mp3Search.guessArtist(search_string, msq && msq.artist);
-
-			entity = {
-				artist		: htmlencoding.decode(guess_info.artist || cursor.user.permalink || ""),
-				track		: htmlencoding.decode(guess_info.track || search_string),
-				duration	: cursor.duration,
-				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + this.sc_api.key,
-				from		: 'soundcloud',
-				real_title	: cursor.title,
-				page_link	: cursor.permalink_url.replace(/^http\:/, 'https:'),
-				description : htmlencoding.decode(cursor.description) || false,
-				downloadable: cursor.downloadable,
-				_id			: cursor.id,
-				type: 'mp3',
-				media_type: 'mp3',
-			};
-
-
-		}
-		return entity;
+		return makeSong(item, this.sc_api.key);
 	},
 	findAudio: function(msq, opts) {
 		var
@@ -121,7 +95,7 @@ ScMusicSearch.prototype = {
 			if (r && r.length){
 				for (var i=0; i < r.length; i++) {
 					if (!r[i]) {continue;}
-					var ent = _this.makeSong(r[i], msq);
+					var ent = makeSong(r[i], msq, _this.sc_api.key);
 					if (ent){
 						if (!Mp3Search.hasMusicCopy(music_list,ent)){
 							music_list.push(ent);
@@ -135,6 +109,33 @@ ScMusicSearch.prototype = {
 		return extendPromise(result, async_ans);
 	}
 };
+
+function makeSong(cursor, msq, sc_api_key){
+	var search_string = cursor.title;
+	var entity;
+	if (search_string){
+
+		var guess_info = Mp3Search.guessArtist(search_string, msq && msq.artist);
+
+		entity = {
+			artist		: htmlencoding.decode(guess_info.artist || cursor.user.permalink || ""),
+			track		: htmlencoding.decode(guess_info.track || search_string),
+			duration	: cursor.duration,
+			link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + sc_api_key,
+			from		: 'soundcloud',
+			real_title	: cursor.title,
+			page_link	: cursor.permalink_url.replace(/^http\:/, 'https:'),
+			description : htmlencoding.decode(cursor.description) || false,
+			downloadable: cursor.downloadable,
+			_id			: cursor.id,
+			type: 'mp3',
+			media_type: 'mp3',
+		};
+
+
+	}
+	return entity;
+}
 
 ScApi.ScMusicSearch = ScMusicSearch;
 return ScApi;
