@@ -499,7 +499,7 @@ return {
         return;
 			}
 
-      var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers);
+      var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers, network_api);
       var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
 
       if (!supports_paging) {
