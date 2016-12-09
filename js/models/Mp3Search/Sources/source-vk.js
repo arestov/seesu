@@ -1,20 +1,11 @@
 define(function (require) {
 'use strict';
-var htmlencoding = require('js/common-libs/htmlencoding');
 var pv = require('pv');
+var htmlencoding = require('js/common-libs/htmlencoding');
+var QueryBase = require('./QueryBase');
 var createSource = require('./createSource');
-var LoadableList = require('../../LoadableList');
-
 
 var Query = pv.behavior({
-  'compx-nav_title': [['']],
-  requestFiles: function () {
-    if (this.getNesting('files')) {return;}
-    
-    var declr = this[ 'nest_req-files' ];
-    return this.requestNesting( declr, 'files' );
-  },
-  'nest_rqc-files': '^files/[:_id]',
   'nest_req-files': [
     [
       function (r) {
@@ -32,7 +23,7 @@ var Query = pv.behavior({
       }
     ]]
   ],
-}, LoadableList);
+}, QueryBase);
 
 
 function makeSong(cursor){

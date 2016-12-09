@@ -2,8 +2,8 @@ define(function (require) {
 'use strict';
 var spv = require('spv');
 var pv = require('pv');
+var QueryBase = require('./QueryBase');
 var createSource = require('./createSource');
-var LoadableList = require('../../LoadableList');
 var guessArtist = require('../guessArtist');
 var morph_helpers = require('js/libs/morph_helpers');
 
@@ -54,14 +54,6 @@ function makeSong(cursor, msq){
 }
 
 var Query = pv.behavior({
-  'compx-nav_title': [['']],
-	requestFiles: function () {
-    if (this.getNesting('files')) {return;}
-
-    var declr = this[ 'nest_req-files' ];
-    return this.requestNesting( declr, 'files' );
-  },
-  'nest_rqc-files': '^files/[:_id]',
   'nest_req-files': [
     [
       function (r) {
@@ -78,7 +70,7 @@ var Query = pv.behavior({
       }
     ]]
   ],
-}, LoadableList);
+}, QueryBase);
 
 return createSource(Query);
 });
