@@ -267,21 +267,6 @@ var hasMusicCopy = function (array, entity, from_position){
 				investg.addFile(music_file, file.from);
 			}
 		},
-		pushSomeResults: function(music_list) {
-			var allowed_files = [];
-			for (var i = 0; i < music_list.length; i++) {
-				var cur = music_list[i];
-				var file_id = cur.from + '_' + (cur._id || cur.link);
-				if (!this.files_ids[file_id]){
-					this.files_ids[file_id] = true;
-					allowed_files.push(cur);
-				}
-
-			}
-			var original_array = this.state('big_files_list ') || [];
-			original_array = original_array.concat(allowed_files);
-			pv.update(this, 'big_files_list ', original_array);
-		},
 		haveSearch: function(search_name){
 			var o = this.getMasterSlaveSearch(search_name);
 			return !!o.exist_slave || !!o.exitst_master_of_slave || !!o.exist_alone_master;

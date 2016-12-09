@@ -18,10 +18,6 @@ var FilesInvestg = spv.inh(pv.Model, {
     target.checked_files = {};
     target.mp3_search = target.map_parent;
 
-    target.createRelationsBinder();
-
-    target.lwch(target.map_parent, 'big_files_list', target.hndBigFilesList);
-
     target.head = target.head || {};
     target.msq = target.head.msq;
   },
@@ -77,19 +73,6 @@ var FilesInvestg = spv.inh(pv.Model, {
       return isDepend(state);
     }
   ],
-  createRelationsBinder: function() {
-    var _this = this;
-    this.bindRelation = function(callback) {
-      _this.wch(_this, 'must_load', callback);
-    };
-  },
-  hndBigFilesList: function(value) {
-    var array = value || [];
-    for (var i = 0; i < array.length; i++) {
-      this.delayFileCheck(array[i]);
-    }
-
-  },
   sub_pager: {
     item: [
       FilesBySource,
@@ -146,27 +129,6 @@ var FilesInvestg = spv.inh(pv.Model, {
         return h_best_f || s_complete;
       }
     ]
-  },
-  delayFileCheck: function(file) {
-    if (file.artist == this.msq.artist){
-      this.nextTick(function(target) {
-        target.checkFile(file);
-      });
-    }
-  },
-  checkFile: function(file) {
-    var search_name = file.from;
-    var file_id = file._id || file.link;
-    var checked = spv.getTargetField(this.checked_files, [search_name , file_id]);
-    if (!checked){
-      this.checked_files[search_name] = this.checked_files[search_name] || {};
-      this.checked_files[search_name][file_id] = true;
-      var qmi = this.mp3_search.setFileQMI(file, this.msq);
-
-      if (qmi !== -1 && qmi < 20){
-        this.map_parent.addFile(file, pvState(this, 'msq'));
-      }
-    }
   },
   addFile: function(music_file, search_name) {
     this.addFbS(search_name);
