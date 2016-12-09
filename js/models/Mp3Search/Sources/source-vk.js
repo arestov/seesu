@@ -57,5 +57,8 @@ function makeMusicList(r, msq) {
   return music_list;
 }
 
-return createSource(Query, 'https://vk.com/dmca');
+return pv.behavior({
+  'compx-ready': [['#vk_search_ready']],
+}, createSource(Query, 'https://vk.com/dmca'));
+
 });

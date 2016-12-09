@@ -117,6 +117,20 @@ var hasMusicCopy = function (array, entity, from_position){
 			});
 		}
 	},  {
+    'nest-all_sources': [
+      [
+        'sources/vk',
+        'sources/soundcloud',
+        'sources/pleer.net',
+      ]
+    ],
+    'nest_sel-ready_sources': {
+      from: 'all_sources',
+      where: {
+        '>ready': [['=', 'boolean'], [true]]
+      }
+    },
+
 		'compx-searches_pr': [['#mp3_search_order']],
     sub_page: {
   		'sources': {

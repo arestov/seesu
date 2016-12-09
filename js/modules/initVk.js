@@ -40,6 +40,10 @@ var initVk = function(su) {
 			music_connected = has_music_access;
 
 
+		if (music_connected) {
+			pvUpdate(su, 'vk_search_ready', true);
+		}
+
 		var vkapi = su.connectVKApi(vkt, has_music_access, true);
 
 
@@ -66,12 +70,17 @@ var initVk = function(su) {
 
 		su.vk_auth.on('settings-change', function(sts) {
 			if ((sts & 8)*1){
+				pvUpdate(su, 'vk_search_ready', true);
 				if (!music_connected){
 					music_connected = true;
+
 					su.start_page.mp3_search.add(vkapi.asearch, true);
 				}
 			} else{
+				pvUpdate(su, 'vk_search_ready', false);
 				if (music_connected){
+					music_connected = false;
+
 					su.start_page.mp3_search.remove(vkapi.asearch, true);
 				}
 			}

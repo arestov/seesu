@@ -57,6 +57,9 @@ function makeSong(cursor, msq, sc_api_key){
 	};
 }
 
-return createSource(Query, 'http://soundcloud.com/pages/dmca_policy');
-
+return pv.behavior({
+  'compx-ready': [[], function () {
+    return true;
+  }],
+}, createSource(Query, 'http://soundcloud.com/pages/dmca_policy'));
 });
