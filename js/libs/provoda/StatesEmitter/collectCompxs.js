@@ -43,6 +43,9 @@ var declr = function(comlx_name, cur) {
   item.watch_list = new Array(item.depends_on.length || 0);
 
   for (var i = 0; i < item.depends_on.length; i++) {
+    if (!item.depends_on[i]) {
+      throw new Error('state name should not be empty');
+    } 
     item.watch_list[i] = hp.getShortStateName(item.depends_on[i]);
   }
   return item;
