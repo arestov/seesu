@@ -28,24 +28,10 @@ var DurationGroup = pv.behavior({
 });
 
 var FilesBySource = spv.inh(pv.Model, {
-  init: function(target, opts, data) {
-    // this._super.apply(this, arguments);
-    var search_eng_name = data.head.search_name;
-    target.mp3_search = target.map_parent.map_parent;
-    target.search_name = search_eng_name;
-    target.search_eng = target.mp3_search.getSearchByName(search_eng_name);
-
-    target.query_string = pvState(target.map_parent, 'query_string');
-
-    target.updateManyStates({
-      'search_name': search_eng_name
-    });
-
+  init: function(target) {
     target.on('requests', function(requests) {
       this.map_parent.addRequests(requests);
     });
-    target.msq = target.head.msq;
-
     //cache
     //network
     //scope
