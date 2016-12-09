@@ -1,5 +1,8 @@
-define(['spv','js/models/Mp3Search/index', 'js/common-libs/htmlencoding'],function(spv, Mp3Search, htmlencoding) {
+define(function(require) {
 "use strict";
+var spv = require('spv');
+var guessArtist = require('js/models/Mp3Search/guessArtist');
+var htmlencoding = require('js/common-libs/htmlencoding');
 
 var toArrayByKeys = function(r) {
 	var result_list = [];
@@ -21,7 +24,7 @@ var hypem_tracks_morph = function(result_list) {
 			track: cur.title
 		};
 		if (!song_omo.artist){
-			song_omo = Mp3Search.guessArtist(cur.title);
+			song_omo = guessArtist(cur.title);
 		}
 		song_omo.image_url = cur.thumb_url;
 		song_omo.artist = song_omo.artist && song_omo.artist.replace(start_end_spaces, '');
@@ -148,7 +151,7 @@ return {
 			var artcard_artist = this.head.artist_name;
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
-				var song_data = Mp3Search.guessArtist(cur.title, artcard_artist);
+				var song_data = guessArtist(cur.title, artcard_artist);
 				if (!song_data || !song_data.artist){
 					if (this.allow_artist_guessing){
 						song_data = {
