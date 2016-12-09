@@ -579,7 +579,6 @@ var SeesuApp = spv.inh(AppModel, {
 
 		var lostAuth = function(vkapi) {
 			pvUpdate(_this, 'vk_search_ready', false);
-			_this.start_page.mp3_search.remove(vkapi.asearch);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
 				_this.vk_api = null;
@@ -601,7 +600,6 @@ var SeesuApp = spv.inh(AppModel, {
 
 		_this.setVkApi(vkapi, vk_token.user_id);
 		if (access){
-			_this.start_page.mp3_search.add(vkapi.asearch, true);
 			pvUpdate(_this, 'vk_search_ready', true);
 		}
 

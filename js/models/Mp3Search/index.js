@@ -15,7 +15,6 @@ var QueryMatchIndex = QMI.QueryMatchIndex;
 var setFileQMI = QMI.setFileQMI;
 var getFileQMI = QMI.getFileQMI;
 
-var pvUpdate = pv.update;
 var FilesSourceTuner = spv.inh(pv.Model, {
 	init: function(target, opts, data) {
 		target.updateManyStates(data);
@@ -77,44 +76,7 @@ function byBestSearchIndex(g,f, searches_pr){
 	}
 }
 
-var hasMusicCopy = function (array, entity, from_position){
-	var ess = /(^\s*)|(\s*$)/g;
-	if (!array.length) {return false;}
-
-	for (var i = from_position || 0, l = array.length; i < l; i++) {
-		if ((array[i].artist.replace(ess, '') == entity.artist.replace(ess, '')) && (array[i].track.replace(ess, '') == entity.track.replace(ess, '')) && (array[i].duration == entity.duration)) {
-			return true;
-		}
-	}
-};
-
-	var Mp3Search = spv.inh(pv.Model, {
-		init: function(target) {
-			// this._super.apply(this, arguments);
-
-			// this.app = opts.app;
-			target.se_list = [];
-			target.tools_by_name = {};
-			target.api_wrappers = {};
-
-			target.investgs = {};
-			target.investgs_by_artist = {};
-			target.files_ids = {};
-			target.pushed_files_by_artist = {};
-			target.tuners = {};
-			target.on('list-changed', function(list) {
-				var tools_by_name = {};
-				if (list) {
-					for (var i = 0; i < list.length; i++) {
-						var cur = list[i];
-						if (!cur.disabled) {
-							tools_by_name[cur.name] = true;
-						}
-					}
-				}
-			});
-		}
-	},  {
+	var Mp3Search = spv.inh(pv.Model, {},  {
     'nest-all_sources': [
       [
         'sources/vk',
@@ -182,22 +144,7 @@ var hasMusicCopy = function (array, entity, from_position){
 				false,
 				true);
 		},
-		'regfr-listchange': {
-			event_name: 'list-changed',
-			fn: function() {
-				if (this.se_list.length){
-					return this.se_list;
-				}
-			}
-		},
-		'chi-tuner': FilesSourceTuner,
-		getSourceTuner: function(search_name) {
-			if (!this.tuners[search_name]) {
-				var tuner = this.initChi('tuner', {search_name: search_name});
-				this.tuners[search_name] = tuner;
-			}
-			return this.tuners[search_name];
-		},
+
 		getQueryString: getQueryString,
 		sortMusicFilesArray: function (music_list, msq, time_limit) {
 		  sortMusicFilesArray(this, music_list, msq, time_limit);
@@ -213,57 +160,7 @@ var hasMusicCopy = function (array, entity, from_position){
 
 			});
 		},*/
-		newSearchInit: function(filter, search){
-			this.tools_by_name[filter] = search;
 
-
-			this.trigger('list-changed', this.se_list);
-			this.trigger('new-search', search, filter);
-
-
-			var wrapper = this.initChi('api_wrapper', null, null, null, {search_name: filter});
-			var core_list = this.getNesting('sources_core_list') || [];
-			core_list.push(wrapper);
-			this.updateNesting('sources_core_list', core_list);
-
-		},
-		'chi-api_wrapper': pv.Model,
-		getMasterSlaveSearch: function(filter){
-			var o = {
-				exist_slave: false,
-				exist_alone_master: false,
-				exitst_master_of_slave: false
-			};
-			var i;
-			for (i=0; i < this.se_list.length; i++) {
-				var cmp3s = this.se_list[i];
-				if (!cmp3s.disabled && cmp3s.name == filter){
-					if (cmp3s.slave){
-						if (!o.exist_slave){
-							o.exist_slave = cmp3s;
-							break;
-						}
-					}
-				}
-			}
-			for (i=0; i < this.se_list.length; i++) {
-				var cmp3s = this.se_list[i];
-				if (!cmp3s.disabled && cmp3s.name == filter){
-					if (!cmp3s.slave){
-						if (o.exist_slave){
-							if (o.exist_slave.preferred == cmp3s){
-								o.exitst_master_of_slave = cmp3s;
-							} else{
-								o.exist_alone_master = cmp3s;
-							}
-						} else{
-							o.exist_alone_master = cmp3s;
-						}
-					}
-				}
-			}
-			return o;
-		},
     addFile: function (file, msq) {
       if (!file.from) {
         throw new Error('file must have `from` value');
@@ -288,56 +185,6 @@ var hasMusicCopy = function (array, entity, from_position){
 				investg.addFile(music_file, file.from);
 			}
 		},
-		haveSearch: function(search_name){
-			var o = this.getMasterSlaveSearch(search_name);
-			return !!o.exist_slave || !!o.exitst_master_of_slave || !!o.exist_alone_master;
-		},
-		isNoMasterOfSlave: function(filter){
-			var o = this.getMasterSlaveSearch(filter);
-			return !!o.exist_slave && !o.exitst_master_of_slave;
-		},
-
-		addSearch: function(space, msearch){
-			this.spaces = this.spaces || {};
-			var spaces = this.spaces;
-
-			spaces[space] = msearch;
-		},
-		getSearchByName: function(tool_name) {
-			return this.tools_by_name[tool_name];
-		},
-		add: function(asearch, force){
-			var o = this.getMasterSlaveSearch(asearch.name);
-			if (o.exist_slave){
-				if (force || !o.exitst_master_of_slave){
-					if (o.exist_slave.preferred){
-						o.exist_slave.preferred.disabled = true;
-					}
-					this.se_list.push(asearch);
-					o.exist_slave.preferred = asearch;
-					this.newSearchInit(asearch.name, asearch);
-				}
-			} else if (o.exist_alone_master){
-				if (force){
-					o.exist_alone_master.disabled = true;
-					this.se_list.push(asearch);
-					this.newSearchInit(asearch.name, asearch);
-				}
-			} else{
-				this.se_list.push(asearch);
-				this.newSearchInit(asearch.name, asearch);
-			}
-		},
-		remove: function(msearch) {
-			var se_list = this.se_list;
-			this.se_list = spv.arrayExclude(this.se_list, msearch);
-			if (se_list.length != this.se_list){
-				this.trigger('list-changed', this.se_list);
-				this.updateNesting('sources_core_list', this.se_list);
-			}
-
-		}
-
 	});
 
 	Mp3Search.getSongFileModel = function(map_parent){
@@ -354,7 +201,6 @@ var hasMusicCopy = function (array, entity, from_position){
 
 	Mp3Search.setFileQMI = setFileQMI;
 	Mp3Search.getFileQMI = getFileQMI;
-	Mp3Search.hasMusicCopy = hasMusicCopy;
 	Mp3Search.guessArtist = guessArtist;
 	Mp3Search.QueryMatchIndex = QueryMatchIndex;
 

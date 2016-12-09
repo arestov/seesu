@@ -73,15 +73,11 @@ var initVk = function(su) {
 				pvUpdate(su, 'vk_search_ready', true);
 				if (!music_connected){
 					music_connected = true;
-
-					su.start_page.mp3_search.add(vkapi.asearch, true);
 				}
 			} else{
 				pvUpdate(su, 'vk_search_ready', false);
 				if (music_connected){
 					music_connected = false;
-
-					su.start_page.mp3_search.remove(vkapi.asearch, true);
 				}
 			}
 		});

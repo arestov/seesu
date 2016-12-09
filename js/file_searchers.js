@@ -13,19 +13,6 @@ return function (app, mp3_search, app_env, cache_ajax, resortQueue, addQueue) {
     init: addQueue
   }), app_env.cross_domain_allowed, cache_ajax);
 
-  mp3_search.add(new ScApi.ScMusicSearch({
-    api: app.sc_api,
-    mp3_search: mp3_search
-  }));
-
-  if (app_env.cross_domain_allowed) {
-		mp3_search.add(new ProspApi.ProspMusicSearch({
-			api: app.pleer_net,
-			mp3_search: mp3_search
-		}));
-	}
-
-
 	/*var exfm_api = new ExfmApi(new FuncsQueue({
 		time: [3500, 5000, 4],
 		resortQueue: resortQueue,
