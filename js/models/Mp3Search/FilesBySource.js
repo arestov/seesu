@@ -5,28 +5,8 @@ var spv = require('spv');
 var compareArray = spv.compareArray;
 var pvState = pv.state;
 var QMI = require('./QMI');
-var setFileQMI = QMI.setFileQMI;
 var getQueryString = QMI.getQueryString;
 var getAvg = require('./sortMusicFilesArray').getAvg;
-var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
-
-var getMatchedSongs = function(music_list, msq) {
-
-	var result = [];
-	if (!music_list) {
-		return result;
-	}
-
-	for (var i = 0; i < music_list.length; i++) {
-		var cur = music_list[i];
-		var qmi = setFileQMI(cur, msq);
-
-		if (qmi != -1){
-			result.push(cur);
-		}
-	}
-	return result;
-};
 
 function QMIKey(msq) {
   if (!msq) {return;}
@@ -78,15 +58,6 @@ var FilesBySource = spv.inh(pv.Model, {
   switchTunerVisibility: function() {
     var visible = this.getNesting('vis_tuner');
     pv.updateNesting(this, 'vis_tuner', ( visible ? null : this.getNesting('tuner') ) );
-  },
-  startSearch: function(opts) {
-    opts = opts || {};
-    if ((!this.state('search_complete') || this.state('search_fail') ) && !this.state('search_progress')){
-      return this.makeRequest(pvState(this, 'msq'), {
-        only_cache: opts.only_cache,
-        nocache: opts.nocache
-      });
-    }
   },
   addFile: function(music_file) {
     var injected_music_files = this.getNesting('injected_music_files') || [];
@@ -164,11 +135,6 @@ var FilesBySource = spv.inh(pv.Model, {
       }
     ]
   },
-  'stch-request_required': function(target, state) {
-    if (state) {
-      target.startSearch();
-    }
-  },
   'nest-search_query': ['#mp3_search/sources/[:search_name]/queries/[:artist_name],[:track_title]'],
   'compx-load_query': [
     ['request_required', 'search_query$exists'],
@@ -176,6 +142,12 @@ var FilesBySource = spv.inh(pv.Model, {
       return one && two;
     }
   ],
+
+  'compx-search_complete': [['@one:search_complete:search_query']],
+  'compx-search_fail': [['@one:search_fail:search_query']],
+  'compx-search_progress': [['@one:search_progress:search_query']],
+  'compx-has_request': [['@one:has_request:search_query']],
+
   'stch-load_query': function (target, state) {
     if (!state) {return;}
 
@@ -183,108 +155,6 @@ var FilesBySource = spv.inh(pv.Model, {
 		if (!request) {return;}
 
 		target.addRequest(request);
-  },
-  makeRequest: function(msq, opts) {
-    if (!this.search_eng || opts.only_cache || this.state('has_request')){
-      return;
-    }
-
-
-    var _this = this;
-    var used_successful;
-
-    used_successful = this.search_eng.findAudio(msq, {
-      nocache: opts.nocache,
-      bindRelation: this.map_parent.bindRelation
-    });
-
-    used_successful.queued_promise.then(function(){
-      _this.nextTick(function () {
-        pv.update(_this, 'search_progress', true);
-      });
-    });
-
-    function handle(music_list){
-      if (music_list instanceof Error) {
-        _this.updateManyStates({
-          search_result: null,
-          search_fail: true,
-
-          search_progress: false,
-          has_request: false,
-          search_complete: true
-        });
-      } else if (music_list instanceof pv.Model) {
-        throw new Error('broken!');
-        // pv.update(_this, 'search_fail', false);
-        //
-        // _this.wlch(music_list, '@items', 'search_result');
-        //
-        // _this.lwch(music_list, 'query_complete', function(state) {
-        // 	if (!state) {
-        // 		return;
-        // 	}
-        // 	_this.updateManyStates({
-        // 		search_complete: true,
-        // 		search_progress: false,
-        // 		has_request: false
-        // 	});
-        // });
-
-      } else {
-        var matched = getMatchedSongs(music_list, msq);
-        var list = new Array(matched.length);
-        _this.useMotivator(_this.mp3_search, function () {
-          for (var i = 0; i < matched.length; i++) {
-            var cur = routePathByModels(
-              _this.mp3_search,
-              'sources/' + pvState(_this, 'search_name') + '/files/' + matched[i]._id,
-              false,
-              true);
-            cur.updateManyStates(matched[i]);
-
-            list[i] = cur;
-          }
-        });
-
-        _this.updateNesting('requested_music_files', list);
-
-        _this.updateManyStates({
-          search_fail: false,
-
-          search_progress: false,
-          has_request: false,
-          search_complete: true
-        });
-      }
-    }
-
-    used_successful.then(function (music_list) {
-      _this.nextTick(function () {
-        handle(music_list);
-      })
-    }, function () {
-      _this.nextTick(function () {
-        _this.updateManyStates({
-          search_result: null,
-          search_fail: true,
-
-          search_progress: false,
-          has_request: false,
-          search_complete: true
-        });
-      });
-
-    });
-
-    var req;
-    if (used_successful){
-      req = used_successful;
-      this.addRequest(req);
-    }
-    pv.update(this, 'has_request', true);
-    return req;
-
   }
 });
 
