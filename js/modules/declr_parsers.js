@@ -173,9 +173,9 @@ return {
 		}
 	},
 	vk: {
+		parseTrack: parseVkTrack,
 		getTracksFn: function(field) {
 			return function(r) {
-				var vk_search = this.app.start_page.mp3_search.getSearchByName('vk');
 				var track_list = [];
 
 				var items = spv.getTargetField(r, field);
@@ -185,7 +185,7 @@ return {
 					track_list.push({
 						artist: htmlencoding.decode(cur.artist),
 						track: htmlencoding.decode(cur.title),
-						file: vk_search.makeSongFile(cur)
+						file: parseVkTrack(cur)
 					});
 				}
 				return track_list;
@@ -193,4 +193,22 @@ return {
 		}
 	}
 };
+
+
+function parseVkTrack(cursor) {
+  if (!cursor || !cursor.url) {
+    return;
+  }
+  return {
+    artist	: htmlencoding.decode(cursor.artist ? cursor.artist : cursor.audio.artist),
+    duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
+    link		: cursor.url ? cursor.url : cursor.audio.url,
+    track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
+    from		: 'vk',
+    downloadable: false,
+    _id			: cursor.owner_id + '_' + cursor.id,
+    type: 'mp3',
+    media_type: 'mp3'
+  };
+}
 });

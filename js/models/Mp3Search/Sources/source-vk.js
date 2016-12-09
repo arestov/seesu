@@ -1,9 +1,9 @@
 define(function (require) {
 'use strict';
 var pv = require('pv');
-var htmlencoding = require('js/common-libs/htmlencoding');
 var QueryBase = require('./QueryBase');
 var createSource = require('./createSource');
+var parseVkTrack = require('js/modules/declr_parsers').vk.parseTrack;
 
 var Query = pv.behavior({
   'nest_req-files': [
@@ -26,27 +26,10 @@ var Query = pv.behavior({
 }, QueryBase);
 
 
-function makeSong(cursor){
-  if (!cursor || !cursor.url) {
-    return;
-  }
-  return {
-    artist	: htmlencoding.decode(cursor.artist ? cursor.artist : cursor.audio.artist),
-    duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
-    link		: cursor.url ? cursor.url : cursor.audio.url,
-    track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
-    from		: 'vk',
-    downloadable: false,
-    _id			: cursor.owner_id + '_' + cursor.id,
-    type: 'mp3',
-    media_type: 'mp3'
-  };
-}
-
-function makeMusicList(r, msq) {
+function makeMusicList(r) {
   var music_list = [];
   for (var i=0, l = r.length; i < l; i++) {
-    var entity = makeSong(r[i], msq);
+    var entity = parseVkTrack(r[i]);
     if (!entity) {
       continue;
     }
