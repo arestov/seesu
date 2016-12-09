@@ -121,7 +121,7 @@ var hasMusicCopy = function (array, entity, from_position){
     sub_page: {
   		'sources': {
   			constr: Sources,
-  			title: [['']],
+  			title: [[]],
   		},
   	},
 		sub_pager: {

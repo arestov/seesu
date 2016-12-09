@@ -178,7 +178,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 	sub_page: {
 		'mp3_search': {
 			constr: Mp3Search,
-			title: [['']],
+			title: [[]],
 		},
 		'tags': {
 			constr: TagsList,

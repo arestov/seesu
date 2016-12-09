@@ -4,7 +4,7 @@ var pv = require('pv');
 var LoadableList = require('../../LoadableList');
 
 return pv.behavior({
-  'compx-nav_title': [['']],
+  'compx-nav_title': [[]],
 
   'compx-search_complete': [
     ['files$error', 'files$has_any'],

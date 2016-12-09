@@ -9,15 +9,15 @@ return pv.behavior({
   sub_page: {
     'vk': {
       constr: SourceVk,
-      title: [['']],
+      title: [[]],
     },
     'soundcloud': {
       constr: SourceSoundcloud,
-      title: [['']],
+      title: [[]],
     },
     'pleer.net': {
       constr: SourcePleer,
-      title: [['']],
+      title: [[]],
     }
   }
 });
