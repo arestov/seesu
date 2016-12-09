@@ -38,7 +38,6 @@ var FilesBySource = spv.inh(pv.Model, {
     target.query_string = pvState(target.map_parent, 'query_string');
 
     target.updateManyStates({
-      'dmca_url': target.search_eng && target.search_eng.dmca_url,
       'search_name': search_eng_name
     });
 
@@ -135,6 +134,8 @@ var FilesBySource = spv.inh(pv.Model, {
       }
     ]
   },
+  'nest-source': ['#mp3_search/sources/[:search_name]'],
+  'compx-dmca_url': [['@one:dmca_url:source']],
   'nest-search_query': ['#mp3_search/sources/[:search_name]/queries/[:artist_name],[:track_title]'],
   'compx-load_query': [
     ['request_required', 'search_query$exists'],

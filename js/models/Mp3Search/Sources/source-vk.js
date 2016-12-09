@@ -57,5 +57,5 @@ function makeMusicList(r, msq) {
   return music_list;
 }
 
-return createSource(Query);
+return createSource(Query, 'https://vk.com/dmca');
 });

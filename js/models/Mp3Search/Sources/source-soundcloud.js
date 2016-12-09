@@ -57,6 +57,6 @@ function makeSong(cursor, msq, sc_api_key){
 	};
 }
 
-return createSource(Query);
+return createSource(Query, 'http://soundcloud.com/pages/dmca_policy');
 
 });

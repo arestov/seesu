@@ -12,8 +12,14 @@ var BlankQuery = pv.behavior({
   },
 });
 
-return function (Query, File) {
+return function (Query, dmca_url, File) {
   return pv.behavior({
+    'compx-dmca_url': [
+      [''],
+      function () {
+        return dmca_url;
+      }
+    ],
     sub_pager: {
       type: {
         queries: 'query',

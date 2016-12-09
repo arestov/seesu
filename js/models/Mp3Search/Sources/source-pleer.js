@@ -72,5 +72,5 @@ var Query = pv.behavior({
   ],
 }, QueryBase);
 
-return createSource(Query);
+return createSource(Query, 'http://pleer.net/feedback');
 });
