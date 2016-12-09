@@ -96,7 +96,6 @@ var hasMusicCopy = function (array, entity, from_position){
 			target.se_list = [];
 			target.tools_by_name = {};
 			target.api_wrappers = {};
-			pvUpdate(target, 'tools_by_name', target.tools_by_name);
 
 			target.investgs = {};
 			target.investgs_by_artist = {};
@@ -113,7 +112,6 @@ var hasMusicCopy = function (array, entity, from_position){
 						}
 					}
 				}
-				pvUpdate(this, 'tools_by_name', tools_by_name);
 			});
 		}
 	},  {
@@ -124,13 +122,31 @@ var hasMusicCopy = function (array, entity, from_position){
         'sources/pleer.net',
       ]
     ],
-    'nest_sel-ready_sources': {
+    'nest_sel-sources_sorted_list': {
       from: 'all_sources',
       where: {
         '>ready': [['=', 'boolean'], [true]]
-      }
+      },
+      sort: [
+				['>search_name', 'searches_pr'],
+				function (one, two, base) {
+					return byBestSearchIndex(one, two, pvState(base, 'searches_pr'));
+				}
+			]
     },
+    'compx-tools_by_name': [
+      ['@search_name:sources_sorted_list'],
+      function (list) {
+        var index = {};
+        if (!list) {return index;}
 
+        for (var i = 0; i < list.length; i++) {
+          index[list[i]] = true;
+        }
+
+        return index;
+      }
+    ],
 		'compx-searches_pr': [['#mp3_search_order']],
     sub_page: {
   		'sources': {
@@ -210,15 +226,6 @@ var hasMusicCopy = function (array, entity, from_position){
 			core_list.push(wrapper);
 			this.updateNesting('sources_core_list', core_list);
 
-		},
-		'nest_sel-sources_sorted_list': {
-			from: 'sources_core_list',
-			sort: [
-				['>search_name', 'searches_pr'],
-				function (one, two, base) {
-					return byBestSearchIndex(one, two, pvState(base, 'searches_pr'));
-				}
-			]
 		},
 		'chi-api_wrapper': pv.Model,
 		getMasterSlaveSearch: function(filter){

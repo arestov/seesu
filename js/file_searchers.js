@@ -93,10 +93,12 @@ return function (app, mp3_search, app_env, cache_ajax, resortQueue, addQueue) {
     app.trackVar(4, 'search', string, 1);
   }, 300);
 
-  mp3_search.on('list-changed', function(list){
-    list = spv.filter(list, 'name').sort();
-    for (var i = 0; i < list.length; i++) {
-      list[i] = list[i].slice(0, 2);
+  app.lwch(mp3_search, 'tools_by_name', function (index) {
+    var list = [];
+    for (var name in index) {
+      if (!index.hasOwnProperty(name)) {continue;}
+
+      list.push(name.slice(0, 2));
     }
     reportSearchEngs(list.join(','));
   });
