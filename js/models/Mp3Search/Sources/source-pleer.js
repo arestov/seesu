@@ -72,8 +72,6 @@ var Query = pv.behavior({
   ],
 }, QueryBase);
 return pv.behavior({
-  'compx-ready': [[], function () {
-    return true;
-  }],
+  'compx-ready': [['#env.cross_domain_allowed']],
 }, createSource(Query, 'http://pleer.net/feedback'));
 });
