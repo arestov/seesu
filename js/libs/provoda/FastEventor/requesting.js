@@ -481,8 +481,19 @@ return {
       $has_any
       $all_loaded
       $loading
+      $waiting_queue
 
     */
+
+    if (request.queued_promise) {
+      var stopWaiting = function () {
+        _this.sputnik.updateState(nesting_name + '$waiting_queue', false);
+      };
+
+      _this.sputnik.updateState(nesting_name + '$waiting_queue', true);
+      request.queued_promise.then(stopWaiting, stopWaiting);
+    }
+
 
 
     request.then(function (response) {
