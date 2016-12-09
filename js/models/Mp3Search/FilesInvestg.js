@@ -14,12 +14,6 @@ var getQueryString = QMI.getQueryString;
 var FilesInvestg = spv.inh(pv.Model, {
   init: function(target) {
     target.sources = {};
-    target.sources_list = [];
-    target.checked_files = {};
-    target.mp3_search = target.map_parent;
-
-    target.head = target.head || {};
-    target.msq = target.head.msq;
   },
 }, {
   'compx-query_string': [['msq'], function (msq) {
