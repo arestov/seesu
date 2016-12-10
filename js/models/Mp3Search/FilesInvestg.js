@@ -81,7 +81,7 @@ var FilesInvestg = spv.inh(pv.Model, {
     from: '^>sources_sorted_list',
     map: '[:search_name]'
   },
-  'nest_cnt-sources_list': ['sources_list_mapped', 'sources_list_more'],
+  'nest_conj-sources_list': ['sources_list_mapped', 'sources_list_more'],
   addFbS: function(search_name) {
     if (!this.sources[search_name]){
       this.sources[search_name] = this.bindSource(search_name);

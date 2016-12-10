@@ -16,7 +16,7 @@ var NestCntDeclr = function(name, data) {
   }
 };
 
-var checkApi = checkPrefix('nest_cnt-', NestCntDeclr, '_chi_nest_cnt');
+var checkApi = checkPrefix('nest_conj-', NestCntDeclr, '_chi_nest_conj');
 
 return function check(self, props) {
   var cnts = checkApi(self, props);

@@ -5,7 +5,7 @@ var addFrom = require('./addFrom');
 var checkNesting = require('./checkNesting');
 var checkStates = require('./checkStates');
 var initNestSel = require('../dcl/nest_sel/init');
-var initNestConcat = require('../dcl/nest_cnt/init');
+var initNestConcat = require('../dcl/nest_conj/init');
 
 function init(self) {
   self.states_links = null;

@@ -63,7 +63,7 @@ var FilesBySource = spv.inh(pv.Model, {
 	'nest_sel-queried_music_files': {
 		from: 'search_query.files'
 	},
-  'nest_cnt-music_files_list': ['queried_music_files', 'requested_music_files', 'injected_music_files'],
+  'nest_conj-music_files_list': ['queried_music_files', 'requested_music_files', 'injected_music_files'],
   'compx-qmi_key': [['msq'], QMIKey],
   'nest_sel-best_music_files': {
     from: 'match_ratings',
