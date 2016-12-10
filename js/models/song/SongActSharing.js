@@ -93,7 +93,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
 			if (!state){return;}
 
 			this.useMotivator(this.friends_page, preloadStart);
-			this.searchFriends();
+			this.searchByQuery('');
 		});
 	}
 }, {
@@ -217,7 +217,7 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
 			if (!state){return;}
 
 			this.useMotivator(this.friends_page, preloadStart);
-			this.searchFriends();
+			this.searchByQuery('');
 		});
 	},
 }, {
@@ -299,7 +299,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
 		target.lwch(target, 'can_share', function(state) { //load
 			if (!state){return;}
 
-			this.searchFriends();
+			this.searchByQuery('');
 		});
 	}
 }, {
