@@ -1,9 +1,9 @@
 define(
-['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap', './models/Mp3Search/index',
+['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap',
 './libs/FuncsQueue', './LfmAuth',
 './models/AppModel', './models/comd', './models/StartPage', './libs/VkAuth', './libs/VkApi', './modules/initVk',
 './modules/PlayerSeesu', './models/invstg', 'cache_ajax', 'View', 'js/libs/localizer', './modules/route', './initAPIs'],
-function(spv, app_serv, pv, $, navi, BrowseMap, Mp3Search,
+function(spv, app_serv, pv, $, navi, BrowseMap,
 FuncsQueue, LfmAuth ,
 AppModel, comd, StartPage, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax, View, localize_dict, route, initAPIs) {
@@ -24,6 +24,7 @@ $.ajaxSetup({
 $.support.cors = true;
 
 var pvUpdate = pv.update;
+var pvState = pv.state;
 var chrome = window.chrome;
 var ChromeExtensionButtonView = spv.inh(View, {}, {
 	state_change: {
@@ -121,9 +122,9 @@ var SeesuApp = spv.inh(AppModel, {
 		}, 1000 * 60 * 2);
 
 		self.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
-		self.mp3_search = self.initChi('mp3_search', false, {
+		pvUpdate(self, 'mp3_search_order', {
 			vk: 5,
-			'pleer.com': 4,
+			'pleer.net': 4,
 			nigma: 1,
 			exfm: 0,
 			soundcloud: -5,
@@ -143,7 +144,10 @@ var SeesuApp = spv.inh(AppModel, {
 			}
 		);
 
-		initAPIs(self, app_serv, app_env, cache_ajax, resortQueue);
+		var addQueue = initAPIs(self, app_serv, app_env, cache_ajax, resortQueue);
+		self.addQueueFn = addQueue;
+		self.resortQueueFn = resortQueue;
+		self.cache_ajax = cache_ajax;
 
 		self.p = new PlayerSeesu(self);
 		self.player = self.p;
@@ -315,7 +319,6 @@ var SeesuApp = spv.inh(AppModel, {
 	'chi-vk_users': pv.Model,
 	'chi-vk_groups': pv.Model,
 	'chi-art_images': comd.LastFMArtistImagesSelector,
-	'chi-mp3_search': Mp3Search,
 	'chi-vk_auth': VkAuth,
 	'chi-lfm_auth': LfmAuth,
 	'chi-start__page': StartPage,
@@ -575,8 +578,7 @@ var SeesuApp = spv.inh(AppModel, {
 
 
 		var lostAuth = function(vkapi) {
-
-			_this.mp3_search.remove(vkapi.asearch);
+			pvUpdate(_this, 'vk_search_ready', false);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
 				_this.vk_api = null;
@@ -593,12 +595,12 @@ var SeesuApp = spv.inh(AppModel, {
 				lostAuth(vkapi);
 				initVk.checkDeadSavedToken(vk_token);
 			},
-			mp3_search: _this.mp3_search
+			mp3_search: _this.start_page.mp3_search
 		});
 
 		_this.setVkApi(vkapi, vk_token.user_id);
 		if (access){
-			_this.mp3_search.add(vkapi.asearch, true);
+			pvUpdate(_this, 'vk_search_ready', true);
 		}
 
 		if (vk_token.expires_in){
@@ -693,10 +695,9 @@ var SeesuApp = spv.inh(AppModel, {
 				if (!cur.media_type) {
 					cur.media_type = 'mp3';
 				}
-
-				this.mp3_search.addFileToInvestg(cur, cur);
+				this.start_page.mp3_search.addFile(cur, cur);
 				if (second_msq) {
-					this.mp3_search.addFileToInvestg(cur, second_msq);
+					this.start_page.mp3_search.addFile(cur, second_msq);
 				}
 			}
 

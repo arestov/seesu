@@ -1,6 +1,21 @@
-define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv', './Cloudcasts', './SeesuUser', 'pv', 'spv', '../modules/route', '../models/invstg'],
-function(BrowseMap, ArtCard, SongCard, TagsList, UserCard, MusicConductor, app_serv, Cloudcasts, SeesuUser, pv, spv, route, invstg) {
+define(function(require) {
 "use strict";
+var BrowseMap = require('js/libs/BrowseMap');
+var ArtCard = require('./ArtCard');
+var SongCard = require('./SongCard');
+var TagsList = require('./TagPage');
+var UserCard = require('./UserCard');
+var MusicConductor = require('./MusicConductor');
+var app_serv = require('app_serv');
+var Cloudcasts = require('./Cloudcasts');
+var SeesuUser = require('./SeesuUser');
+var pv = require('pv');
+var spv = require('spv');
+var route = require('../modules/route');
+var invstg = require('../models/invstg');
+var filesSearchers = require('../file_searchers');
+var Mp3Search = require('./Mp3Search/index');
+
 var app_env = app_serv.app_env;
 var complexEach = app_serv.complexEach;
 
@@ -34,6 +49,12 @@ var StartPage = spv.inh(BrowseMap.Model, {
 		pvUpdate(target, 'needs_search_from', true);
 		pvUpdate(target, 'nav_title', 'Seesu start page');
 		pvUpdate(target, 'nice_artist_hint', target.app.popular_artists[(Math.random()*10).toFixed(0)]);
+
+
+		// filesSearchers/
+		var mp3_search = BrowseMap.routePathByModels(target, 'mp3_search');
+		filesSearchers(target.app, mp3_search, app_env, target.app.cache_ajax, target.app.resortQueueFn, target.app.addQueueFn);
+		target.mp3_search = mp3_search;
 
 		target.app.s.susd.ligs.regCallback('start-page', function(resp){
 			if (!resp) {return;}
@@ -86,9 +107,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 		by_type: {
 			artist: [
 				ArtCard, null, {
-					artist_name: [function(arg){
-						return route.decodeURLPart(arg.split('/')[1]);
-					},'simple_name']
+					artist_name: 'by_slash.0'
 				}
 				/*
 				url_part: [['artist_name'], function(artist_name) {
@@ -98,14 +117,8 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			],
 			track: [
 				SongCard, null, {
-					artist_name: [function(raw_str) {
-						var last = route.decodeURLPart(raw_str.split('/')[1]);
-						return route.getCommaParts(last)[0];
-					}, 'simple_name'],
-					track_name: [function(raw_str) {
-						var last = route.decodeURLPart(raw_str.split('/')[1]);
-						return route.getCommaParts(last)[1];
-					}, 'simple_name'],
+					artist_name: 'by_comma.0',
+					track_name: 'by_comma.1',
 				}
 			],
 			user_current: [
@@ -163,6 +176,10 @@ var StartPage = spv.inh(BrowseMap.Model, {
 		}
 	},
 	sub_page: {
+		'mp3_search': {
+			constr: Mp3Search,
+			title: [[]],
+		},
 		'tags': {
 			constr: TagsList,
 			title: [['#locales.Pop-tags']],

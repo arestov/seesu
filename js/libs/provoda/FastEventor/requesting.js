@@ -6,7 +6,6 @@ var hex_md5 = require('hex_md5');
 var hp = require('../helpers');
 var spv = require('spv');
 var toBigPromise = require('js/modules/extendPromise').toBigPromise;
-var pvUpdate = require('../updateProxy').update;
 var countKeys = spv.countKeys;
 var getTargetField = spv.getTargetField;
 
@@ -417,6 +416,7 @@ return {
 		var is_main_list = nesting_name == this.sputnik.main_list_name;
 
 		this.sputnik.updateState('loading_nesting_' + nesting_name, true);
+    this.sputnik.updateState(nesting_name + '$loading', true);
 		if (is_main_list) {
 			this.sputnik.updateState('main_list_loading', true);
 		}
@@ -452,6 +452,7 @@ return {
 		function anyway() {
 			store.process = false;
 			_this.sputnik.updateState('loading_nesting_' + nesting_name, false);
+      _this.sputnik.updateState(nesting_name + '$loading', false);
 			if (is_main_list) {
 				_this.sputnik.updateState('main_list_loading', false);
 			}
@@ -472,6 +473,27 @@ return {
 			};
 			release.init_end = true;
 		}
+
+    /*
+      postfixes:
+
+      $error
+      $has_any
+      $all_loaded
+      $loading
+      $waiting_queue
+
+    */
+
+    if (request.queued_promise) {
+      var stopWaiting = function () {
+        _this.sputnik.updateState(nesting_name + '$waiting_queue', false);
+      };
+
+      _this.sputnik.updateState(nesting_name + '$waiting_queue', true);
+      request.queued_promise.then(stopWaiting, stopWaiting);
+    }
+
 
 
     request.then(function (response) {
@@ -497,23 +519,42 @@ return {
 
 			if (has_error){
 				store.error = true;
+        sputnik.updateState(nesting_name + "$error", true);
         return;
 			}
 
-      var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers);
+
+
+      var many_states = {};
+      many_states[nesting_name + "$error"] = null;
+      many_states[nesting_name + "$has_any"] = true;
+
+      var items = parse_items.call(sputnik, r, sputnik.head_props || clean_obj, morph_helpers, network_api);
       var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
 
       if (!supports_paging) {
         store.has_all_items = true;
-        sputnik.updateState("all_data_loaded", true);
+        if (is_main_list) {
+            sputnik.updateState("all_data_loaded", true);
+        }
+
+        many_states[nesting_name + "$all_loaded"] = true;
       } else {
         var has_more_data = hasMoreData(serv_data, limit_value, paging_opts, items);
 
         if (!has_more_data) {
           store.has_all_items = true;
-          sputnik.updateState("all_data_loaded", true);
+
+          if (is_main_list) {
+              sputnik.updateState("all_data_loaded", true);
+          }
+
+          many_states[nesting_name + "$all_loaded"] = true;
         }
       }
+
+      sputnik.updateManyStates(many_states);
+
       items = paging_opts.remainder ? items.slice( paging_opts.remainder ) : items;
 
       sputnik.insertDataAsSubitems(sputnik, nesting_name, items, serv_data, source_name);
@@ -531,9 +572,6 @@ return {
         has_data_holes ? paging_opts.page_limit : (items ? items.length : 0);
       //special logic where server send us page without few items. but it can be more pages available
       //so serv_data in this case is answer for question "Is more data available?"
-
-
-			pvUpdate(sputnik, nesting_name + '$length', sputnik.getLength(nesting_name));
 
       if (!side_data_parsers) {return;}
 

@@ -109,6 +109,12 @@ var StandartChange = function(node, opts, w_cache_subkey) {
 	//this.w_cache_key = node.pvprsd + '_' + node.pvprsd_inst + '*' + directive_name;
 
 };
+var calc = function (calculator, states) {
+	try { // FIXME
+		return calculator(states);
+	} catch (e) {}
+};
+
 StandartChange.prototype = {
 	changeValue: function(new_value, wwtch) {
 		removeFlowStep(wwtch.context, wwtch.w_cache_key);
@@ -121,7 +127,7 @@ StandartChange.prototype = {
 	},
 	checkFunc: function(states, wwtch, async_changes, current_motivator) {
 		abortFlowStep(wwtch.context, wwtch.w_cache_key);
-		var new_value = this.calculator(states);
+		var new_value = calc(this.calculator, states);
 		if (this.simplifyValue){
 			new_value = this.simplifyValue(new_value);
 		}

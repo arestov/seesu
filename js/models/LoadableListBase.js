@@ -1,5 +1,8 @@
 define(['js/libs/BrowseMap', 'spv', 'pv'], function(BrowseMap, spv, pv) {
 "use strict";
+var initDeclaredNestings = require('js/libs/provoda/initDeclaredNestings');
+var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
+
 var pvUpdate = pv.update;
 var getPath = pv.pathExecutor(function(chunkName, app, data) {
 	return data && data[chunkName];
@@ -154,7 +157,6 @@ return spv.inh(BrowseMap.Model, {
 			}
 			target.dataListChange(mlc_opts, items_list, nesting_name);
 		}
-		pvUpdate(target, nesting_name + '$length', target.getLength(nesting_name));
 
 	},
 	getRelativeRequestsGroups: function(space) {
@@ -283,11 +285,13 @@ return spv.inh(BrowseMap.Model, {
 		var md = this;
 		if (mentioned) {
 			if (mentioned.type == 'route') {
-				var pathObj = pv.getParsedPath(mentioned.value);
 				var app = this.app;
-				var path = getPath(pathObj, app, data);
-				var result = app.routePathByModels(path, pathObj.from_root ? app.start_page : md);
-				result.updateManyStates(data);
+				var result = getSPByPathTemplateAndData(app, this, mentioned.value, false, data);
+
+        this.useMotivator(result, function () {
+          result.updateManyStates(data);
+        });
+
 				return result;
 			}
 

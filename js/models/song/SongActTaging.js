@@ -16,7 +16,9 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
 }, {
 	'compx-artist': [['^^^artist']],
 	'compx-track': [['^^^track']],
-	'nest-tags_page': ['#catalog/[:artist]/tags', false, 'artist'],
+	'nest-tags_page': ['#catalog/[:artist]/tags', {
+		ask_for: 'artist',
+	}],
 	'compx-artist_tags': [['@one:simple_tags_list:tags_page']],
 	'effect-personal_tags': [
 		[

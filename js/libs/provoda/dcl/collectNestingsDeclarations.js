@@ -6,6 +6,35 @@ var declarationConstructor = require('../structure/constr_mention').declarationC
 var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
+var nestDcl = function (name, data) {
+  this.nesting_name = name;
+  this.subpages_names_list = declarationConstructor(data[0], 'nest-' + name);
+
+  this.ask_for = null;
+  this.idle_until = null;
+  this.preload_on = null;
+
+  if (!data[1] && !data[2]) {
+    return;
+  }
+
+  if (data[1] && typeof data[1] == 'object' && !data[2] ) {
+    this.ask_for = data[1].ask_for || null;
+    this.idle_until = data[1].idle_until || this.ask_for || null;
+    this.preload_on = data[1].preload_on || null;
+  } else {
+    console.warn('fix legacy `nest-` dcl', data[1], data[2]);
+    var preload = data[1];
+    this.preload_on = (preload === true ? 'mp_has_focus' : preload) || null;
+    this.idle_until = data[2] || null;
+  }
+  /*
+  ask_for
+  idle_until
+  load_on
+  */
+};
+
 return function(self, props) {
   var
     has_props = hasPrefixedProps(props),
@@ -25,12 +54,7 @@ return function(self, props) {
           real_name = getUnprefixed(prop);
           cur = self[prop];
           used_props[real_name] = true;
-          result.push({
-            nesting_name: real_name,
-            subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-            preload: cur[1],
-            init_state_name: cur[2]
-          });
+          result.push(new nestDcl(real_name, cur));
         }
       }
     }
@@ -42,12 +66,7 @@ return function(self, props) {
         }
         cur = self.nest[real_name];
         used_props[real_name] = true;
-        result.push({
-          nesting_name: real_name,
-          subpages_names_list: declarationConstructor(cur[0], 'nest-' + real_name),
-          preload: cur[1],
-          init_state_name: cur[2]
-        });
+        result.push(new nestDcl(real_name, cur));
       }
     }
 

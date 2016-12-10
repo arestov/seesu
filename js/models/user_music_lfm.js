@@ -31,7 +31,9 @@ var no_access_compx = {
 var auth_bh = {
 	'compx-has_no_access': no_access_compx,
 	'nest-pmd_switch': ['^'],
-	'nest-auth_part': [UserCardLFMLogin, true, 'for_current_user'],
+	'nest-auth_part': [UserCardLFMLogin, {
+	  ask_for: 'for_current_user'
+	}],
 
 	'compx-userid': [
 		['lfm_userid', '#lfm_userid', 'for_current_user'],
@@ -109,7 +111,9 @@ var LULA = spv.inh(BrowseMap.Model, {}, cloneObj({
 		lfm_image: 'lfm_img'
 	},
 	net_head: ['artist_name'],
-	'nest-all_time': ['all_time', true],
+	'nest-all_time': ['all_time', {
+	  preload_on: 'mp_has_focus',
+	}],
 
 	'compx-selected_image': {
 		depends_on: ['lfm_image'],
@@ -248,7 +252,9 @@ var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list':
 		[user_artists_sp],
 	'nest-preview_list':
-		[user_artists_sp, true],
+		[user_artists_sp, {
+		  preload_on: 'mp_has_focus',
+		}],
 	sub_page: {
 		'recommended': {
 			constr: RecommArtList,
@@ -334,7 +340,9 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list':
 		[user_tracks_sp],
 	'nest-preview_list':
-		[user_tracks_sp, true],
+		[user_tracks_sp, {
+		  preload_on: 'mp_has_focus',
+		}],
 	sub_page: {
 		'loved': {
 			constr: LfmLovedList,
@@ -420,7 +428,9 @@ var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list':
 		[user_albums_sp],
 	'nest-preview_list':
-		[user_albums_sp, true],
+		[user_albums_sp, {
+		  preload_on: 'mp_has_focus',
+		}],
 
 	sub_page: {
 		'recommended': {
@@ -520,7 +530,9 @@ var UserTag = spv.inh(BrowseMap.Model, {}, {
 	'nest-lists_list':
 		[user_tag_sp],
 	'nest-preview_list':
-		[user_tag_sp, true],
+		[user_tag_sp, {
+		  preload_on: 'mp_has_focus',
+		}],
 	sub_page: {
 		'tracks': {
 			constr: TaggedSongs,

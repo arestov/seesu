@@ -1,5 +1,5 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
-function(pv, spv, app_serv, BrowseMap, MfCor, SongActionsRow, SongBase){
+function(pv, spv, app_serv, BrowseMap, MfCorUsual, SongActionsRow, SongBase){
 "use strict";
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
@@ -13,6 +13,15 @@ var album_placeholder = {
 };
 
 var pvUpdate = pv.update;
+
+function handleFile(self, file) {
+  if (!file || !file.link) {
+    return null;
+  }
+
+  self.mp3_search.addFile(file, file);
+  return file;
+}
 
 	var app_env = app_serv.app_env;
 
@@ -64,12 +73,15 @@ var pvUpdate = pv.update;
 				still_init = false;
 			}
 
-			self.initStates();
+      omo.file = handleFile(self, omo.file);
+      omo.side_file = handleFile(self, omo.side_file);
 		}
 	}, {
 		network_data_as_states: false,
 		manual_states_init: true,
-		'nest-songcard': ['#tracks/[:artist],[:track]', false, 'can_load_songcard'],
+		'nest-songcard': ['#tracks/[:artist],[:track]', {
+			ask_for: 'can_load_songcard',
+		}],
 		'compx-$relation:songcard-for-active_song': [
 			['can_load_songcard', '@songcard'],
 			function(can_load_songcard, songcard) {
@@ -191,27 +203,20 @@ var pvUpdate = pv.update;
 				}
 			}
 		],
-		'nest-actionsrow': [SongActionsRow, false, 'mp_show'],
+		'nest-actionsrow': [SongActionsRow, {
+			idle_until: 'mp_show'
+		}],
 		getMFCore: function(){
 			this.initHeavyPart();
 			return this.mf_cor;
 		},
-		'chi-mf__cor': MfCor,
+		'chi-mf__cor_usual': MfCorUsual,
+		'chi-mf__cor_single': MfCorUsual.Single,
 		initHeavyPart: pv.getOCF('izheavy', function() {
 			var omo = this.omo;
 
-			if (omo.side_file && !omo.side_file.link) {
-				omo.side_file = null;
-			}
-			if (omo.side_file) {
-				this.mp3_search.addFileToInvestg(omo.side_file, omo.side_file);
-				omo.side_file = null;
-			}
-			if (omo.file && !omo.file.link) {
-				omo.file = null;
-			}
-
-			this.mf_cor = this.initChi('mf__cor', null, omo);
+			var chi = omo.file ? 'mf__cor_single' : 'mf__cor_usual';
+			this.mf_cor = this.initChi(chi, null, omo);
 
 			this.mf_cor
 				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())
@@ -221,9 +226,7 @@ var pvUpdate = pv.update;
 			pv.update(this, 'mf_cor', this.mf_cor);
 
 		}),
-		'compx-mf_cor_has_available_tracks': [
-			['@some:has_available_tracks:mf_cor']
-		],
+
 		'compx-play': [
 			['@one:play:current_mopla']
 		],
@@ -299,14 +302,14 @@ var pvUpdate = pv.update;
 
 		},
 		postToVKWall: function(uid){
-			var
-				data = {},
-				file = this.getMFCore().getVKFile();
+			var data = {};
+			var file = this.getMFCore().getVKFile();
+      var file_id = file && pv.state(file, '_id')
 			if (uid){
 				data.owner_id = uid;
 			}
-			if (file){
-				data.attachments = "audio" + file._id;
+			if (file_id){
+				data.attachments = "audio" + file_id;
 			}
 			data.message = this.state('nav_title') + " \n" + this.getShareUrl();
 			if (data.attachments){
@@ -432,6 +435,8 @@ var pvUpdate = pv.update;
 				return artist && (needs_states_connecting || is_important);
 			}
 		],
-		'nest-artist': ['#catalog/[:artist]', false, 'load_artcard']
+		'nest-artist': ['#catalog/[:artist]', {
+			ask_for: 'load_artcard',
+		}]
 	});
 });

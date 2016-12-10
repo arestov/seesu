@@ -487,6 +487,43 @@ var getFieldValueByRule = function(obj, rule){
 };
 
 
+spv.compareArray = function compareArray(one, two) {
+  if (!one || !two) {
+    if (!one && !two) {
+      return;
+    }
+    if (!one) {
+      return 1;
+    }
+    if (!two) {
+      return -1;
+    }
+  }
+  var max = Math.max(one.length, two.length);
+  for (var i = 0; i < max; i++) {
+    var value_one = one[i];
+    var value_two = two[i];
+    if (value_one === value_two) {
+      continue;
+    }
+
+    if (value_one == null && value_two == null) {
+      continue;
+    } else if (value_one == null) {
+      return 1;
+    } else if (value_two == null) {
+      return -1;
+    }
+
+    if (value_one > value_two) {
+      return 1;
+    }
+    if (value_one < value_two) {
+      return -1;
+    }
+  }
+};
+
 sortByRules = spv.sortByRules = function(a, b, rules){
 	if (a instanceof Object && b instanceof Object){
 		var shift = 0;
@@ -876,12 +913,10 @@ var extendTo = Class.extendTo;
 function extend(Class, params, propsArg) {
 	var parentNaming = Class.naming || stNaming;
 	var naming = params.naming || parentNaming;
-	var building = params.building || stBuilding;
-	var partWrapping = params.partWrapping || Class.partWrapping || stPartWrapping;
+	var building;
 
 	var initLength = false;
-
-	if (params.init) {
+  if (params.init) {
 		var init = params.init;
 		building = function(parentBuilder) {
 			return stPartWrapping(parentBuilder, init);
@@ -893,10 +928,9 @@ function extend(Class, params, propsArg) {
 			return stPartWrapping(preinit, parentBuilder);
 		};
 		initLength = preinit.length;
-	}
-
-	var parentBuilder = Class.builder;
-	var partBuilder = params.partBuilder;
+	} else {
+    building = stBuilding;
+  }
 
 	var passedProps = propsArg || params.props;
 	var props = typeof passedProps == 'function' ?
@@ -911,15 +945,32 @@ function extend(Class, params, propsArg) {
 		? wrapExtend(firstExtend, params.onExtend)
 		: firstExtend;
 
-
+  var parentMainBuilder = Class.inh_main_constr;
 	// building нужен что бы к родительской инициализации добавить какую-то конкретную новую
-	var currentBuilder = building(parentBuilder || empty);
-	var finalBuilder = partBuilder ? partWrapping(currentBuilder, partBuilder) : currentBuilder;
+	var mainConstructor = building(parentMainBuilder || empty);
 
-	var result = naming(finalBuilder);
+  var parentPostbuilder = Class.inh_post_constr;
+  var postConstructor = (function () {
+    if (!params.postInit) {
+      return parentPostbuilder;
+    } else if (!parentPostbuilder) {
+      return params.postInit;
+    }
+    // parent post init should always be the last in order
+    return stPartWrapping(params.postInit, parentPostbuilder);
+  })();
+
+  var finalConstructor = postConstructor
+    ? stPartWrapping(mainConstructor, postConstructor)
+    : mainConstructor;
+
+	var result = naming(finalConstructor);
 
 	if (initLength === false) {
-		initLength = currentBuilder.length;
+    initLength =
+      postConstructor
+        ? Math.max(mainConstructor.length, postConstructor.length)
+        : mainConstructor.length;
 	}
 
 	if (params.strict) {
@@ -935,9 +986,9 @@ function extend(Class, params, propsArg) {
 
 
 	result.naming = naming;
-	result.building = building;
-	result.partWrapping = partWrapping;
-	result.builder = finalBuilder;
+  result.inh_main_constr = mainConstructor;
+  result.inh_post_constr = postConstructor;
+	result.inh_constr = finalConstructor;
 	result.onExtend = onExtend;
 	result.initLength = Math.max(Class.initLength || initLength, initLength);
 
@@ -975,7 +1026,7 @@ function extend(Class, params, propsArg) {
 			result.legacy = naming(empty);
 			result.legacy.pureBase = result;
 			result.legacy.prototype = cloneObj(new PrototypeConstr(), result.prototype);
-			result.legacy.prototype.init = makeInit(result.builder);
+			result.legacy.prototype.init = makeInit(result.inh_constr);
 			result.legacy.prototype.constr_id = constr_id++;
 			result.legacy.prototype.constructor = result.legacy;
 			if (!params.skip_code_path) {
@@ -1470,13 +1521,12 @@ spv.coe = function(cb) {
 	return result;
 };
 
-var letter_regexp = /[\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
+var letter_regexp = /[^\u00C0-\u1FFF\u2C00-\uD7FF\w]/gi;
 //http://stackoverflow.com/questions/150033/regular-expression-to-match-non-english-characters#comment22322603_150078
 
 
 var hardTrim = function(string) {
-	var letters = string.match(letter_regexp);
-	return letters ? letters.join('').toLowerCase() : '';
+	return string.replace(letter_regexp, '').toLowerCase();
 };
 spv.hardTrim = hardTrim;
 

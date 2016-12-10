@@ -13,6 +13,7 @@ var initNestWatchers = require('./nest-watch/index').init;
 var checkNesting =  require('./nest-watch/index').checkNesting;
 var _requestsDeps = require('./Model/_requestsDeps');
 var onPropsExtend = require('./Model/onExtend');
+var pvUpdate = updateProxy.update;
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -68,7 +69,50 @@ var changeSourcesByApiNames = function(md, store) {
 	}
 };
 
+function postInitModel(self) {
+  // prefill own states before connecting relations
+  self.__initStates();
+
+  prsStCon.connect.parent(self);
+  prsStCon.connect.root(self);
+  prsStCon.connect.nesting(self);
+
+  if (self.nestings_declarations) {
+    self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
+  }
+
+  initNestWatchers(self);
+
+  if (self.__apis_$_usual && self.__apis_$_usual.length) {
+    for (var i = 0; i < self.__apis_$_usual.length; i++) {
+      var cur = self.__apis_$_usual[i];
+      self.useInterface(cur.name, cur.fn());
+    }
+  }
+
+  if (self.__api_root_dep_apis) {
+    for (var i = 0; i < self.__api_root_dep_apis.length; i++) {
+      var cur = self.__api_root_dep_apis[i];
+      var api = self.app._interfaces_using.used[cur]
+      self.useInterface('#' + cur, api);
+    }
+  }
+
+  if (self.__api_effects_$_index_by_apis && self.__api_effects_$_index_by_apis['self']) {
+    self.useInterface('self', self);
+  }
+}
+
 var modelInit = (function() {
+  function toServStates(self, states) {
+    if (!states) {return;}
+
+    if (!self.init_service_states) {
+      self.init_service_states = {};
+    }
+
+    cloneObj(self.init_service_states, states);
+  }
 	return function initModel(self, opts, data, params, more, states) {
 		self.current_motivator = self.current_motivator || (opts && opts._motivator);
 
@@ -115,18 +159,17 @@ var modelInit = (function() {
 
 		self.md_replacer = null;
 		self.mpx = null;
+    self._requests_deps = null;
+		self.shared_nest_sel_hands = null;
 
 		self.init_states = self.init_states || null;
 
+		self.init_service_states = null;
+
 		if (states || (data && data.states)) {
 
-			if (!self.init_states) {self.init_states = {};}
-
-			cloneObj(self.init_states, states);
-
-			if (data && data.states) {
-				cloneObj(self.init_states, data.states);
-			}
+			toServStates(self, states);
+      toServStates(self, data && data.states);
 			// pv.create must init init_states
 		}
 
@@ -142,9 +185,9 @@ var modelInit = (function() {
 			cloneObj(self.head, data.head);
 		}
 
+
 		if (self.network_data_as_states && data && data.network_states) {
-			if (!self.init_states) {self.init_states = {};}
-			cloneObj(self.init_states, data.network_states);
+      toServStates(self, data.network_states);
 
 			if (self.net_head) {
 				if (!self.head) {self.head = {};}
@@ -156,50 +199,24 @@ var modelInit = (function() {
 		}
 
 		if (self.head) {
-			if (!self.init_states) {self.init_states = {};}
-
-			cloneObj(self.init_states, self.head);
+      toServStates(self, self.head);
 		}
 
+    if (!self.init_service_states) {
+      return self;
+    }
 
+    for (var state_name in self.init_service_states) {
+      if (self.hasComplexStateFn(state_name)) {
+        delete self.init_service_states[state_name];
+      }
+    }
 
-		prsStCon.connect.parent(self);
-		prsStCon.connect.root(self);
-		prsStCon.connect.nesting(self);
+    self.init_states = self.init_states || {};
 
+    cloneObj(self.init_states, self.init_service_states);
+		self.init_service_states = null;
 
-
-		if (self.nestings_declarations) {
-			self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
-		}
-
-		self._requests_deps = null;
-
-		initNestWatchers(self);
-
-		if (!self.manual_states_init) {
-			self.initStates();
-		}
-
-
-		if (self.__apis_$_usual && self.__apis_$_usual.length) {
-			for (var i = 0; i < self.__apis_$_usual.length; i++) {
-				var cur = self.__apis_$_usual[i];
-				self.useInterface(cur.name, cur.fn());
-			}
-		}
-
-		if (self.__api_root_dep_apis) {
-			for (var i = 0; i < self.__api_root_dep_apis.length; i++) {
-				var cur = self.__api_root_dep_apis[i];
-				var api = self.app._interfaces_using.used[cur]
-				self.useInterface('#' + cur, api);
-			}
-		}
-
-		if (self.__api_effects_$_index_by_apis && self.__api_effects_$_index_by_apis['self']) {
-			self.useInterface('self', self);
-		}
 
 		return self;
 	};
@@ -213,6 +230,7 @@ var Model = spv.inh(StatesEmitter, {
 	},
 	onExtend: onPropsExtend,
 	init: modelInit,
+  postInit: postInitModel,
 	props: modelProps
 });
 
@@ -383,19 +401,27 @@ add({
 		}
 		this.init_states[state_name] = state_value;
 	},
-	initStates: function(more_states) {
+  initStates: function (more_states) {
+    if (!more_states) {
+      return;
+    }
+
+    if (this.init_states === false) {
+			throw new Error('states inited already, you can\'t init now');
+		}
+
+    if (!this.init_states) {
+      this.init_states = {};
+    }
+    cloneObj(this.init_states, more_states);
+  },
+	__initStates: function() {
 		if (this.init_states === false) {
 			throw new Error('states inited already, you can\'t init now');
 		}
 
-		if (more_states) {
-			if (!this.init_states) {
-				this.init_states = {};
-			}
-			cloneObj(this.init_states, more_states);
-		}
-
-		var changes_list = getComplexInitList(this) || this.init_states && [];
+		var changes_list = getComplexInitList(this) || [];
+		changes_list.push(true, '_provoda_id', this._provoda_id);
 
 		if (this.init_states) {
 			for (var state_name in this.init_states) {
@@ -410,6 +436,9 @@ add({
 				changes_list.push(true, state_name, this.init_states[state_name]);
 			}
 		}
+
+		prsStCon.prefill.parent(this, changes_list);
+		prsStCon.prefill.root(this, changes_list);
 
 		if (changes_list && changes_list.length) {
 			updateProxy(this, changes_list);
@@ -579,6 +608,13 @@ add({
 		if (!opts || !opts.skip_report){
 			this.sendCollectionChange(collection_name, array, old_value, removed);
 		}
+
+		var count = Array.isArray(array)
+			? array.length
+			: (array ? 1 : 0);
+
+		pvUpdate(this, collection_name + '$length', count);
+		pvUpdate(this, collection_name + '$exists', Boolean(count));
 
 		return this;
 	},

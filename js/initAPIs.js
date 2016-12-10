@@ -7,8 +7,6 @@ var FuncsQueue = require('./libs/FuncsQueue');
 var net_apis = require('./modules/net_apis');
 var SeesuServerAPI = require('./SeesuServerAPI');
 var ScApi = require('./libs/ScApi');
-var ProspApi = require('./libs/ProspApi');
-var torrent_searches = require('./modules/torrent_searches');
 
 var LastfmAPIExtended = require('./libs/LastfmAPIExtended');
 
@@ -33,6 +31,7 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 	self.lfm = lfm;
 	self.useInterface('lfm', lfm);
 	initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
+	return addQueue;
 };
 
 
@@ -156,22 +155,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
 	});
 
-
-
-
-
-	var reportSearchEngs = spv.debounce(function(string){
-		self.trackVar(4, 'search', string, 1);
-	}, 300);
-
-	self.mp3_search.on('list-changed', function(list){
-		list = spv.filter(list, 'name').sort();
-		for (var i = 0; i < list.length; i++) {
-			list[i] = list[i].slice(0, 2);
-		}
-		reportSearchEngs(list.join(','));
-	});
-
 	self.updateNesting('lfm_auth', self.lfm_auth);
 
 	if (self.lfm.username){
@@ -266,91 +249,15 @@ function moreApis(su, app_serv, app_env, cache_ajax, resortQueue, addQueue){
 		resortQueue: resortQueue,
 		init: addQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
-	su.mp3_search.add(new ScApi.ScMusicSearch({
-		api: su.sc_api,
-		mp3_search: su.mp3_search
-	}));
 
-
-	if (app_env.cross_domain_allowed) {
-		su.mp3_search.add(new ProspApi.ProspMusicSearch({
-			api: new ProspApi(new FuncsQueue({
-				time: [3500, 5000, 4],
-				resortQueue: resortQueue,
-				init: addQueue
-			}), app_env.cross_domain_allowed, cache_ajax),
-			mp3_search: su.mp3_search
-		}));
-	}
-
-	/*var exfm_api = new ExfmApi(new FuncsQueue({
-		time: [3500, 5000, 4],
-		resortQueue: resortQueue,
-		init: addQueue
-	}), app_env.cross_domain_allowed, cache_ajax);
-	su.exfm = exfm_api;
-
-	su.mp3_search.add(new ExfmApi.ExfmMusicSearch({
-		api: exfm_api,
-		mp3_search: su.mp3_search
-	}));
-	*/
-
-	if (app_env.nodewebkit) {
-		requirejs(['js/libs/TorrentsAudioSearch'], function(TorrentsAudioSearch) {
-			su.mp3_search.add(new TorrentsAudioSearch({
-				cache_ajax: cache_ajax,
-				queue: new FuncsQueue({
-					time: [100, 150, 4],
-					resortQueue: resortQueue,
-					init: addQueue
-				}),
-				mp3_search: su.mp3_search,
-				torrent_search: new torrent_searches.BtdiggTorrentSearch({
-					queue: new FuncsQueue({
-						time: [3500, 5000, 4],
-						resortQueue: resortQueue,
-						init: addQueue
-					}),
-					cache_ajax: cache_ajax,
-					mp3_search: su.mp3_search
-				})
-			}));
-
-		});
-	} else {
-		var allow_torrents = false || app_env.nodewebkit;
-
-		if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
-			if (app_env.torrents_support) {
-				su.mp3_search.add(new torrent_searches.BtdiggTorrentSearch({
-					queue: new FuncsQueue({
-						time: [3500, 5000, 4],
-						resortQueue: resortQueue,
-						init: addQueue
-					}),
-					cache_ajax: cache_ajax,
-					mp3_search: su.mp3_search
-				}));
-			} else if (app_env.cross_domain_allowed){
-				su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
-					cache_ajax: cache_ajax,
-					mp3_search: su.mp3_search
-				}));
-			} else {
-				su.mp3_search.add(new torrent_searches.googleTorrentSearch({
-					crossdomain: app_env.cross_domain_allowed,
-					mp3_search: su.mp3_search,
-					cache_ajax: cache_ajax
-				}));
-			}
-		}
-	}
 }
 
 
 function domPart(su, app_serv){
-	initVk(su);
+	su.nextTick(function () {
+		initVk(su);
+	});
+
 	su.checkUpdates();
 	var queue = new FuncsQueue({
 		time: [700]

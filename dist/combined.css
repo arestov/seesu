@@ -4455,7 +4455,15 @@ html.opera-extension{
 		.want_more_songs .mopla-item{
 			display: block;
 			}
-
+		.overstocked-part .mopla-item{
+			display: none;
+		}
+		.overstocked-part.show_overstocked .mopla-item {
+			display: block;
+		}
+		.overstocked-part .mopla-item.selected-mf {
+			display: block;
+		}
 		.mopla-item.selected-mf{
 			display: block;
 			overflow: hidden;
@@ -4564,7 +4572,7 @@ html.opera-extension{
 			cursor:pointer;
 			}
 		.theme--dark .selected-mf .mf-play-progress {
-				background-color:0;
+				background-color:#4f4f4f;
 		}
 
 		

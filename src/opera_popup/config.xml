@@ -29,7 +29,7 @@
 	<access subdomains="false" origin="http://ex.fm/" />
 	<access subdomains="false" origin="http://hypem.com/" />
 	<access subdomains="true" origin="http://hypem.net/" />
-	<access subdomains="true" origin="http://pleer.com/" />
+	<access subdomains="true" origin="http://pleer.net/" />
 
 	
 	<access subdomains="false" origin="http://api.discogs.com/" />

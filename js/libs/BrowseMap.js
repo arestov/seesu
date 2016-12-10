@@ -1,6 +1,5 @@
-define(['pv', 'spv', './provoda/structure/get_constr', './provoda/structure/flatStruc'], function(pv, spv, get_constr, flatStruc) {
+define(['pv', 'spv', './provoda/structure/get_constr', './provoda/structure/flatStruc', 'js/libs/morph_helpers'], function(pv, spv, get_constr, flatStruc, morph_helpers) {
 "use strict";
-
 var pvState = pv.state;
 var cloneObj = spv.cloneObj;
 var filter = spv.filter;
@@ -25,32 +24,29 @@ var BrowseMap = spv.inh(pv.Model, {
 			fn(this, opts, params);
 		};
 	},
-	building: function(fn) {
-		return function buildBrowseMap(obj, opts, params) {
-			fn(obj, opts);
-			obj.changes_group = null;
-			obj.grouping_changes = null;
-			obj.collecting_changes = null;
-			obj.current_level_num = null;
-			obj.nav_tree = null;
-			obj.onNavTitleChange = null;
-			obj.onNavUrlChange = null;
+	init: function(self, opts, params) {
+    self.changes_group = null;
+    self.grouping_changes = null;
+    self.collecting_changes = null;
+    self.current_level_num = null;
+    self.nav_tree = null;
+    self.onNavTitleChange = null;
+    self.onNavUrlChange = null;
 
 
 
-			obj.levels = [];
-			if (!params.start){
-				throw new Error('give me 0 index level (start screen)');
-			}
-			obj.mainLevelResident = params.start;
+    self.levels = [];
+    if (!params.start){
+      throw new Error('give me 0 index level (start screen)');
+    }
+    self.mainLevelResident = params.start;
 
 
-			obj.cha_counter = 0;
-			obj.chans_coll = [];
-			obj.residents = [];
+    self.cha_counter = 0;
+    self.chans_coll = [];
+    self.residents = [];
 
-		};
-	},
+  },
 	props: {
 	isGroupingChanges: function() {
 		return this.grouping_changes;
@@ -1308,8 +1304,11 @@ BrowseMap.routePathByModels = function(start_md, pth_string, need_constr, strict
 		return result;
 };
 
-function subPageType(type_obj, str) {
-	var parts = str.split('/');
+function slash(str) {
+	return str.split('/');
+}
+
+function subPageType(type_obj, parts) {
 	var target = type_obj[decodeURIComponent(parts[0])];
 	if (typeof target !== 'function') {
 		return target || null;
@@ -1318,9 +1317,11 @@ function subPageType(type_obj, str) {
 	return target(parts[1]);
 }
 
-var getSPOpts = function(md, sp_name) {
-	var parts = sp_name.split(':');
-
+var getSPOpts = function(md, sp_name, slashed, type) {
+	var normal_part = type ? slashed.slice(1) : slashed;
+	var by_colon = normal_part[0].split(':').map(decodeURIComponent);
+	var by_comma = normal_part[0].split(',').map(decodeURIComponent);
+	var by_slash = normal_part.map(decodeURIComponent);
 	return [
 		{
 			url_part: '/' + sp_name
@@ -1328,7 +1329,10 @@ var getSPOpts = function(md, sp_name) {
 		{
 			simple_name: sp_name,
 			decoded_name: decodeURIComponent(sp_name),
-			name_spaced: decodeURIComponent(parts[1])
+			name_spaced: by_colon[1],
+			by_comma: by_comma,
+			by_colon: by_colon,
+			by_slash: by_slash,
 		}];
 };
 
@@ -1473,81 +1477,77 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 			fn(this, opts, data, params, more, states);
 		};
 	},
-	building: function(parent) {
-		return function initBrowseMapModel(self, opts, data, params, more, states) {
-			if (!self.skip_map_init){
-				if (data) {
-					if (data['url_part']){
-						self.initState('url_part', data['url_part']);
-					}
-					if (data['nav_title']){
-						self.initState('nav_title', data['nav_title']);
-					}
-				}
-			}
+  init: function (self, opts, data) {
+    if (!self.skip_map_init){
+      if (data) {
+        if (data['url_part']){
+          self.initState('url_part', data['url_part']);
+        }
+        if (data['nav_title']){
+          self.initState('nav_title', data['nav_title']);
+        }
+      }
+    }
 
-			parent(self, opts, data, params, more, states);
+    self.lists_list = null;
+    // self.map_level_num = null;
+    self.head_props = self.head_props || null;
 
-			self.lists_list = null;
-			// self.map_level_num = null;
-			self.head_props = self.head_props || null;
-
-			/*
-				результат работы этого кода - это
-				1) установленное значение head_props
-				2) состояния url_part и nav_title
-				3) установленное значение sub_pa_params
+    /*
+      результат работы этого кода - это
+      1) установленное значение head_props
+      2) состояния url_part и nav_title
+      3) установленное значение sub_pa_params
 
 
-				использование data_by_hp подразумевает, что у родителя есть head_props
-				head_props могут быть собраны вручную, но в основном собирается с помощью hp_bound
-				hp_bound использует data и если будет ссылатся на родителя,
-					то sub_pa_params родителя, sub_pa_params может передаваться и непосредственно как data
+      использование data_by_hp подразумевает, что у родителя есть head_props
+      head_props могут быть собраны вручную, но в основном собирается с помощью hp_bound
+      hp_bound использует data и если будет ссылатся на родителя,
+        то sub_pa_params родителя, sub_pa_params может передаваться и непосредственно как data
 
-			*/
-
-
-			if (self.hp_bound && !data) {
-				throw new Error('pass data arg!');
-			} else {
-				if (self.head_props) {
-					console.log('already has head_props');
-				} else if (self.hp_bound) {
-
-					var complex_obj = {
-						'--data--': null
-					};
-
-					if (self.map_parent.sub_pa_params) {
-						cloneObj(complex_obj, self.map_parent.sub_pa_params);
-					}
-
-					complex_obj['--data--'] = data;
-
-					self.head_props = self.hp_bound(complex_obj);
-				}
-			}
-
-			opts = opts || {};
+    */
 
 
-			if (self.data_by_hp && typeof self.data_by_hp == 'function') {
-				self.sub_pa_params = self.data_by_hp(data);
-			}
+    if (self.hp_bound && !data) {
+      throw new Error('pass data arg!');
+    } else {
+      if (self.head_props) {
+        console.log('already has head_props');
+      } else if (self.hp_bound) {
+
+        var complex_obj = {
+          '--data--': null
+        };
+
+        if (self.map_parent.sub_pa_params) {
+          cloneObj(complex_obj, self.map_parent.sub_pa_params);
+        }
+
+        complex_obj['--data--'] = data;
+
+        self.head_props = self.hp_bound(complex_obj);
+      }
+    }
+
+    opts = opts || {};
+
+
+    if (self.data_by_hp && typeof self.data_by_hp == 'function') {
+      self.sub_pa_params = self.data_by_hp(data);
+    }
 
 
 
-			if (self.allow_data_init) {
-				self.updateManyStates(data);
-			}
+    if (self.allow_data_init) {
+      self.updateManyStates(data);
+    }
 
-			if (self.preview_nesting_source) {
-				self.on('child_change-' + self.preview_nesting_source, function(e) {
-					pv.updateNesting(this, 'preview_list', e.value);
-				});
-			}
-		};
-	}
+    if (self.preview_nesting_source) {
+      self.on('child_change-' + self.preview_nesting_source, function(e) {
+        pv.updateNesting(this, 'preview_list', e.value);
+      });
+    }
+  }
 }, {
 	network_data_as_states: true,
 	'__required-nav_title': true,
@@ -1614,7 +1614,7 @@ function getterSPI(){
 		return target;
 	};
 
-	var prepare = function(self, item, sp_name) {
+	var prepare = function(self, item, sp_name, slashed, type) {
 		var Constr = self._all_chi[item.key];
 		/*
 		hp_bound
@@ -1626,13 +1626,13 @@ function getterSPI(){
 		накладываем данные из урла
 		*/
 
-		var common_opts = getSPOpts(self, sp_name);
+		var common_opts = getSPOpts(self, sp_name, slashed, type);
 
 		var instance_data = getInitData(self, common_opts);
 		var dbu_declr = Constr.prototype.data_by_urlname;
 		var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
-		var data_by_urlname = dbu_declr && dbu_declr(common_opts[1]);
-		var head_by_urlname = hbu_declr && hbu_declr(common_opts[1]);
+		var data_by_urlname = dbu_declr && dbu_declr(common_opts[1], null, morph_helpers);
+		var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
 		if (head_by_urlname) {
 			instance_data.head = head_by_urlname;
 		}
@@ -1643,12 +1643,12 @@ function getterSPI(){
 
 	return function getSPI(self, sp_name) {
 		var item = self._sub_pages && self._sub_pages[sp_name];
-
+		var slashed = slash(sp_name);
 		if (item){
 			if (self.sub_pages && self.sub_pages[sp_name]){
 				return self.sub_pages[sp_name];
 			}
-			self.sub_pages[sp_name] = prepare(self, item, sp_name);
+			self.sub_pages[sp_name] = prepare(self, item, sp_name, slashed);
 			return self.sub_pages[sp_name];
 		}
 
@@ -1662,11 +1662,13 @@ function getterSPI(){
 				return self.sub_pages[key];
 			}
 
+			var type;
+
 			if (sub_pager.item) {
 				item = sub_pager.item;
 			} else {
 				var types = sub_pager.by_type;
-				var type = subPageType(sub_pager.type, sp_name);
+				type = subPageType(sub_pager.type, slashed);
 				if (type && !types[type]) {
 					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
 				}
@@ -1674,7 +1676,7 @@ function getterSPI(){
 				item = type && sub_pager.by_type[type];
 			}
 
-			var instance = item && prepare(self, item, sp_name);
+			var instance = item && prepare(self, item, sp_name, slashed, type);
 			if (instance) {
 				self.sub_pages[key] = instance;
 				return instance;
@@ -1705,7 +1707,7 @@ function getterSPIConstr(){
 				return sub_pager.item;
 			} else {
 				var types = sub_pager.by_type;
-				var type = subPageType(sub_pager.type, sp_name);
+				var type = subPageType(sub_pager.type, slash(sp_name));
 				if (type && !types[type]) {
 					throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
 				}

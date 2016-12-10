@@ -54,6 +54,14 @@ Mp3Search.QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 		}
 		*/
 		anyGood: function(file, query) {
+			/*
+			FIXME use hardTrimLimited instead of this.hardTrim;
+
+
+
+
+			*/
+
 			var artist_match = file.filepath.indexOf(query.artist) != -1 || file.torrent_name.indexOf(query.artist) != -1;
 			if (artist_match) {
 				if ( file.filename.indexOf(query.track) != -1) {

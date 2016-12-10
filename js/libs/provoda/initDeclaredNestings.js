@@ -38,6 +38,16 @@ var bindPreload = function(md, preload_state_name, nesting_name) {
 	});
 };
 
+var getValue = function (app, value) {
+	if (value) {
+		return app.encodeURLPart(value);
+	}
+
+	if (value === 0) {
+		return app.encodeURLPart(value);
+	}
+};
+
 var pathExecutor = function(getChunk) {
 	return function getPath(obj, app, arg1, arg2) {
 		if (obj.states) {
@@ -47,7 +57,7 @@ var pathExecutor = function(getChunk) {
 				var cur_state = obj.states[i];
 				if (cur_state) {
 					var chunk = getChunk(cur_state, app, arg1, arg2);
-					full_path += (chunk && app.encodeURLPart(chunk || '')) || 'null';
+					full_path += getValue(app, chunk) || 'null';
 				}
 			}
 			return full_path;
@@ -60,9 +70,12 @@ var getPath = pathExecutor(function(chunkName, app, md) {
 	return md._provoda_id && md.state(chunkName);
 });
 
-var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) {
-	var full_path = getPath(obj, app, md_for_urldata || md);
-	if (obj.from_root) {
+var getPathBySimpleData = pathExecutor(function(chunkName, app, data) {
+	return data && data[chunkName];
+});
+
+var followStringTemplate = function (app, md, obj, need_constr, full_path) {
+  if (obj.from_root) {
 		return app.routePathByModels(full_path, app.start_page, need_constr);
 	}
 	if (obj.from_parent) {
@@ -75,9 +88,12 @@ var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) 
 		}
 		return app.routePathByModels(full_path, target_md_start, need_constr);
 	}
+  return app.routePathByModels(full_path, md, need_constr);
+};
 
-	return app.routePathByModels(full_path, md, need_constr);
-
+var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) {
+	var full_path = getPath(obj, app, md_for_urldata || md);
+  return followStringTemplate(app, md, obj, need_constr, full_path);
 };
 
 
@@ -101,9 +117,14 @@ var isFromParent = function (first_char, string_template) {
 	};
 };
 
-var getParsedPath = spv.memorize(function(string_template) {
-
+var getParsedPath = spv.memorize(function(raw_string_template) {
+	var from_distant_model = raw_string_template.charAt(0) == '>';
+	var string_template = from_distant_model
+		? raw_string_template.slice(1)
+		: raw_string_template;
 	//example "#tracks/[:artist],[:track]"
+	//example ">^^tracks/[:artist],[:track]"
+	//example ">^"
 	var first_char = string_template.charAt(0);
 	var from_root = isFromRoot(first_char, string_template);
 	var from_parent = !from_root && isFromParent(first_char, string_template);
@@ -120,10 +141,11 @@ var getParsedPath = spv.memorize(function(string_template) {
 	}
 
 	if (!full_usable_string && !from_parent) {
-		throw new Error('path cannot be empty')
+		throw new Error('path cannot be empty');
 	}
 
 	return {
+		from_distant_model: from_distant_model,
 		from_root: Boolean(from_root),
 		from_parent: from_parent && from_parent.count,
 		clean_string_parts: clean_string_parts,
@@ -132,11 +154,15 @@ var getParsedPath = spv.memorize(function(string_template) {
 	};
 });
 
+
+var getSPByPathTemplateAndData = function (app, start_md, string_template, need_constr, data) {
+  var parsed_template = getParsedPath(string_template);
+  var full_path = getPathBySimpleData(parsed_template, app, data);
+  return followStringTemplate(app, start_md, parsed_template, need_constr, full_path);
+};
+
 var getSPByPathTemplate = function(app, start_md, string_template, need_constr, md_for_urldata) {
-
 	var parsed_template = getParsedPath(string_template);
-
-
 	return executeStringTemplate(app, start_md, parsed_template, need_constr, md_for_urldata);
 };
 
@@ -168,36 +194,34 @@ var initOneDeclaredNesting = function(md, el) {
 	nesting_name
 	subpages_names_list
 	preload
-	init_state_name
+	idle_until
 
 
 	subpages_names_list: ...cur[0]...,
 	preload: cur[1],
-	init_state_name: cur[2]
+	idle_until: cur[2]
 	*/
-	var preload_state_name = el.preload && (typeof el.preload == 'string' ? el.preload : 'mp_has_focus');
-
-	if (el.init_state_name) {
+	if (el.idle_until) {
 		var init_func = function(state) {
 
 			if (state) {
 				this.updateNesting(el.nesting_name, getSubpages( this, el ));
-				if (preload_state_name && this.state(preload_state_name)) {
+				if (el.preload_on && this.state(el.preload_on)) {
 					executePreload(this, el.nesting_name);
 				}
 
-				md.off('lgh_sch-' + el.init_state_name, init_func);
+				md.off('lgh_sch-' + el.idle_until, init_func);
 			}
 		};
 
-		md.on('lgh_sch-' + el.init_state_name, init_func);
+		md.on('lgh_sch-' + el.idle_until, init_func);
 
 	} else {
 		md.updateNesting(el.nesting_name, getSubpages( md, el ));
 	}
 
-	if (el.preload) {
-		bindPreload(md, preload_state_name, el.nesting_name);
+	if (el.preload_on) {
+		bindPreload(md, el.preload_on, el.nesting_name);
 	}
 
 };
@@ -211,12 +235,14 @@ var initDeclaredNestings = function(md) {
 initDeclaredNestings.getParsedPath = getParsedPath;
 initDeclaredNestings.getSubpages = getSubpages;
 initDeclaredNestings.pathExecutor = pathExecutor;
+initDeclaredNestings.executeStringTemplate = executeStringTemplate;
 
 
 initDeclaredNestings.getConstrByPath = function(app, md, string_template) {
 	return getSPByPathTemplate(app, md, string_template, true);
 };
 initDeclaredNestings.getSPByPathTemplate = getSPByPathTemplate;
+initDeclaredNestings.getSPByPathTemplateAndData = getSPByPathTemplateAndData;
 
 return initDeclaredNestings;
 });

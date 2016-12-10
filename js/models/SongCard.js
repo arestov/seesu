@@ -50,6 +50,9 @@ var parseVKPostSong = spv.mmap({
 			artist: 'artist',
 			track: 'title',
 			from: ['vk'],
+			_id: [function (cursor) {
+        return cursor.owner_id + '_' + cursor.id;
+			}, '^'],
 			media_type: ['mp3'],
 			duration: ['seconds', 'duration'],
 			link: 'url'
@@ -300,10 +303,17 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 			}];
 		}]
 	],
-	'nest-fans': ['fans', false, false],
-	'nest-cloudcasts': ['cloudcasts', false, 'wide_need'],
-	'nest-vk_posts': ['vk_posts', 'nest_need','nest_need'],
-	'nest-artist': ['#catalog/[:artist_name]', false, 'mp_has_focus'],
+	'nest-fans': ['fans'],
+	'nest-cloudcasts': ['cloudcasts', {
+	  idle_until: 'wide_need',
+	}],
+	'nest-vk_posts': ['vk_posts', {
+	  preload_on: 'nest_need',
+	  idle_until: 'nest_need',
+	}],
+	'nest-artist': ['#catalog/[:artist_name]', {
+	  idle_until: 'mp_has_focus',
+	}],
 
 	sub_page: {
 		'fans':{

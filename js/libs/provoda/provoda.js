@@ -106,8 +106,8 @@ pv = provoda = {
 		var behaviorFrom = declr_extend_from || pv.Model;
 		if (typeof named == 'object' || !declr.init) {
 			return spv.inh(behaviorFrom, {
-				naming: named.naming,
-				init: named.init,
+				naming: named && named.naming,
+				init: named && named.init,
 				props: declr
 			});
 		}
@@ -141,10 +141,6 @@ pv = provoda = {
 				}, model);
 			}
 
-		}
-
-		if (model.init_states) {
-			model.initStates();
 		}
 
 		return model;
@@ -217,6 +213,7 @@ var HModel = spv.inh(Model, {
 			new_state = !this.state('pmd_vswitched');
 		}
 		var pmd_switch = this.getNesting('pmd_switch');
+		if (!pmd_switch) {return;}
 
 		if (new_state){
 			if (!this.state('pmd_vswitched')){

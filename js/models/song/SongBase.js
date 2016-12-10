@@ -26,7 +26,7 @@ return spv.inh(BrowseMap.Model, {
 		self.rtn_request = null;
 		self.playable_info = null;
 
-		self.mp3_search = opts.app.mp3_search;
+		self.mp3_search = opts.app.start_page.mp3_search;
 		self.player = opts.app.player;
 
 		if (omo.track){
@@ -37,6 +37,17 @@ return spv.inh(BrowseMap.Model, {
 
 		self.artist = artist_name;
 		self.track = omo.track;
+
+		if (self.init_states) {
+			delete self.init_states.artist_name;
+			delete self.init_states.track_name;
+		}
+
+		if (self.head) {
+			delete self.head.artist_name;
+			delete self.head.track_name;
+		}
+
 
 		self.omo = omo;
 
@@ -54,6 +65,8 @@ return spv.inh(BrowseMap.Model, {
 
 	}
 }, {
+	'compx-track_name': [['track']],
+	'compx-artist_name': [['artist']],
 	'compx-track': [['track_name_provided']],
 	model_name: "song",
 	network_data_as_states: false,
@@ -127,37 +140,6 @@ return spv.inh(BrowseMap.Model, {
 				if (wapl){
 					return 'want_to_play';
 				}
-			}
-		},
-		'can-use-as-neighbour':{
-			depends_on: ['has_none_files_to_play', 'forbidden_by_copyrh'],
-			fn: function(h_nftp, forbidden_by_copyrh) {
-				if (forbidden_by_copyrh) {
-					return false;
-				}
-				if (h_nftp){
-					return false;
-				} else {
-					return true;
-				}
-
-			}
-		},
-		'has_none_files_to_play': {
-			depends_on: ['mf_cor', 'search_complete', 'track_name_not_found', 'mf_cor_has_available_tracks'],
-			fn: function(mf_cor, scomt, track_name_not_found, mf_cor_tracks) {
-				if (mf_cor && !mf_cor_tracks){
-					if (!mf_cor.isSearchAllowed()){
-						return true;
-					} else if (scomt){
-						return true;
-					}
-				}
-
-				if (track_name_not_found){
-					return true;
-				}
-				return false;
 			}
 		},
 		'$relation:next_preload_song-for-loaded_player_song': [
@@ -504,8 +486,42 @@ return spv.inh(BrowseMap.Model, {
 			target.map_parent.markAsPlayable();
 		}
 	},
+	'compx-can-use-as-neighbour': [
+		['has_none_files_to_play', 'forbidden_by_copyrh'],
+		function(h_nftp, forbidden_by_copyrh) {
+			if (forbidden_by_copyrh) {
+				return false;
+			}
+			if (h_nftp){
+				return false;
+			} else {
+				return true;
+			}
+
+		}
+	],
+	'compx-has_none_files_to_play': [
+		['mf_cor', 'search_complete', 'track_name_not_found', 'mf_cor_has_available_tracks'],
+		function(mf_cor, scomt, track_name_not_found, mf_cor_tracks) {
+			if (mf_cor && !mf_cor_tracks){
+				if (!mf_cor.isSearchAllowed()){
+					return true;
+				} else if (scomt){
+					return true;
+				}
+			}
+
+			if (track_name_not_found){
+				return true;
+			}
+			return false;
+		}
+	],
 	'compx-search_complete': [
 		['@one:search_complete:investg']
+	],
+	'compx-mf_cor_has_available_tracks': [
+		['@some:has_available_tracks:mf_cor']
 	],
 	'compx-playable': [
 		['@one:has_mp3_files:investg', '@one:has_available_tracks:mf_cor'],

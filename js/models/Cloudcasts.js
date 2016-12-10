@@ -130,7 +130,9 @@ var SongcardCloudcasts = spv.inh(BrowseMap.Model, {}, {
 	// 	this.sub_pa_params = sub_pa_params;
 	// 	this.initStates(data);
 	// },
-	'nest-lists_list': [song_cloudcasts_sps, true],
+	'nest-lists_list': [song_cloudcasts_sps, {
+		preload_on: 'mp_has_focus'
+	}],
 	model_name: 'songcard_cloudcasts',
 	sub_page: {
 		'new': {

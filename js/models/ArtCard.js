@@ -519,17 +519,45 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 			return init_ext || mp_has_focus;
 		}
 	],
-	'nest-tags_list': ['tags', false, 'ext_exposed'],
-	'nest-similar_artists': ['+similar', false, 'ext_exposed'],
+	'nest-tags_list': ['tags', {
+		idle_until: 'ext_exposed',
+	}],
+	'nest-similar_artists': ['+similar', {
+		idle_until: 'ext_exposed',
+	}],
 
-	'nest-top_songs': ['_', true, 'mp_has_focus'],
-	'nest-dgs_albums': ['albums', true, 'mp_has_focus'],
-	'nest-albums_list': ['albums_lfm', true, 'mp_has_focus'],
-	'nest-soundc_prof': ['soundcloud', true, 'mp_has_focus'],
-	'nest-soundc_likes': ['soundcloud_likes', true, 'mp_has_focus'],
-	'nest-hypem_new': ['fresh', true, 'mp_has_focus'],
-	'nest-hypem_fav': ['most_favorites', true, 'mp_has_focus'],
-	'nest-hypem_reblog': ['blogged', true, 'mp_has_focus'],
+	'nest-top_songs': ['_', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
+	'nest-dgs_albums': ['albums', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
+	'nest-albums_list': ['albums_lfm', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
+	'nest-soundc_prof': ['soundcloud', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
+	'nest-soundc_likes': ['soundcloud_likes', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
+	'nest-hypem_new': ['fresh', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
+	'nest-hypem_fav': ['most_favorites', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
+	'nest-hypem_reblog': ['blogged', {
+		idle_until: 'mp_has_focus',
+		preload_on: 'mp_has_focus',
+	}],
 
 	getTagsModel: function() {
 		return this.getSPI('tags', true);
