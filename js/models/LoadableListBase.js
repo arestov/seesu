@@ -116,11 +116,13 @@ return spv.inh(BrowseMap.Model, {
 		this.loadStart();
 	},
 	getLength: function(nesting_name) {
-		nesting_name = nesting_name || this.main_list_name;
+    if (!nesting_name) {
+      throw new Error('provide nesting_name');
+    }
 		return (this.loaded_nestings_items && this.loaded_nestings_items[ nesting_name ]) || 0;
 	},
 	loadStart: function() {
-		if (this.state('more_load_available') && !this.getLength()){
+		if (this.state('more_load_available') && !this.getLength(this.main_list_name)){
 			this.requestMoreData();
 		}
 	},
