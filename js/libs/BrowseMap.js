@@ -1,5 +1,11 @@
-define(['pv', 'spv', './provoda/structure/get_constr', './provoda/structure/flatStruc', 'js/libs/morph_helpers'], function(pv, spv, get_constr, flatStruc, morph_helpers) {
+define(function(require) {
 "use strict";
+var pv = require('pv');
+var spv = require('spv');
+var get_constr = require('./provoda/structure/get_constr');
+var flatStruc = require('./provoda/structure/flatStruc');
+var morph_helpers = require('js/libs/morph_helpers');
+
 var pvState = pv.state;
 var cloneObj = spv.cloneObj;
 var filter = spv.filter;
