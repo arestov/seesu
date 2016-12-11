@@ -917,8 +917,10 @@ var BrowseLevel = spv.inh(pv.Model, {
 			throw new Error('must have model name');
 		}
 
+    var pioneer = states['pioneer'];
+
 		self.ptree = [self];
-		self.rtree = [states['pioneer']];
+		self.rtree = [pioneer];
 
 		if (self.map_parent) {
 			self.ptree = self.ptree.concat(self.map_parent.ptree);
