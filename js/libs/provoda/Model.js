@@ -10,11 +10,10 @@ var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
 var initNestWatchers = require('./nest-watch/index').init;
-var checkNesting =  require('./nest-watch/index').checkNesting;
 var _requestsDeps = require('./Model/_requestsDeps');
 var onPropsExtend = require('./Model/onExtend');
 var initModel = require('./Model/init');
-var pvUpdate = updateProxy.update;
+var updateNesting = require('./Model/updateNesting');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -380,10 +379,6 @@ add({
 	}
 });
 
-var hasDot = spv.memorize(function(nesting_name) {
-	return nesting_name.indexOf('.') != -1;
-});
-
 add({
 	getRelativeRequestsGroups: function(space, only_models) {
 		var all_models = [];
@@ -420,85 +415,8 @@ add({
 	},
 
 	updateNesting: function(collection_name, array, opts, spec_data) {
-		if (hasDot(collection_name)){
-			throw new Error('remove "." (dot) from name');
-		}
-
-		var zdsv = this.zdsv;
-		if (zdsv) {
-			zdsv.abortFlowSteps('collch', collection_name);
-		}
-
-		if (Array.isArray(array)){
-			array = array.slice(0);
-		}
-		if (!this.children_models) {
-			this.children_models = {};
-		}
-
-		var old_value = this.children_models[collection_name];
-		this.children_models[collection_name] = array;
-
-		if (old_value && array) {
-			var arr1 = Array.isArray(old_value);
-			var arr2 = Array.isArray(array);
-			if (arr1 != arr2) {
-				throw new Error('nest type must be stable');
-			}
-		}
-
-		var removed = hp.getRemovedNestingItems(array, old_value);
-		checkNesting(this, collection_name, array, removed);
-		// !?
-
-
-
-		var full_ev_name = hp.getFullChilChEvName(collection_name);
-
-		var chch_cb_cs = this.evcompanion.getMatchedCallbacks(full_ev_name);
-
-		if (chch_cb_cs.length) {
-			if (!this.zdsv) {
-				this.zdsv = new StatesLabour(!!this.full_comlxs_index, this._has_stchs);
-				//debugger;
-			}
-			zdsv = this.zdsv;
-			var flow_steps = zdsv.createFlowStepsArray('collch', collection_name);
-
-
-			var event_obj = {
-				value: null,
-				old_value: null,
-				target: null,
-				nesting_name: collection_name
-			};
-			if (typeof opts == 'object'){
-				cloneObj(event_obj, opts);
-			}
-			//opts = opts || {};
-			event_obj.value = array;
-			event_obj.old_value = old_value;
-			event_obj.target = this;
-			//this.trigger(full_ev_name, event_obj);
-
-			this.evcompanion.triggerCallbacks(chch_cb_cs, false, false, full_ev_name, event_obj, flow_steps);
-
-			hp.markFlowSteps(flow_steps, 'collch', collection_name);
-
-		}
-
-		if (!opts || !opts.skip_report){
-			this.sendCollectionChange(collection_name, array, old_value, removed);
-		}
-
-		var count = Array.isArray(array)
-			? array.length
-			: (array ? 1 : 0);
-
-		pvUpdate(this, collection_name + '$length', count);
-		pvUpdate(this, collection_name + '$exists', Boolean(count));
-
-		return this;
+    updateNesting(this, collection_name, array, opts, spec_data);
+    return this;
 	},
 	sendCollectionChange: function(collection_name, array, old_value, removed) {
 		//this.removeDeadViews();
