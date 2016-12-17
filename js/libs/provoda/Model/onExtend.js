@@ -13,6 +13,7 @@ var checkModernNests = require('../dcl/nests/check');
 var checkPasses = require('../dcl/passes/check')
 var checkSubpager = require('../dcl/sub_pager/check');
 var collectSubpages = require('../dcl/sub_pager/collectSubpages');
+var checkProbe = require('../dcl/probe/check');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var checkNest = require('../dcl/nest/check');
@@ -96,6 +97,7 @@ return function(self, props, original, params) {
   checkSubpager(self, props);
 
   checkNests(self, props)
+  checkProbe(self, props);
 
   checkPasses(self, props)
 
