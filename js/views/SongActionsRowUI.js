@@ -6,6 +6,8 @@ var spv = require('spv');
 var etc_views = require('./etc_views');
 var SongActTaggingControl = require('./SongActTaggingControl');
 var View = require('View');
+var used_struc_bhv = require('./utils/used_struc').bhv;
+var ActionsRowUI = require('./common/ActionsRowUI');
 
 var pvUpdate = pv.update;
 var ShareSearchSection = spv.inh(View, {}, {
@@ -93,7 +95,8 @@ var ShareRowUI = spv.inh(View, {}, {
 	focusToInput: function() {
 		this.tpl.ancs['share_input'][0].focus();
 	},
-	"stch-active_view": function(target, state){
+	"stch-vis_con_appended": function(target, state){
+    // !!
 		if (state){
 			if (target.expand){
 				target.expand();
@@ -154,11 +157,45 @@ var ScrobbleRowUI = spv.inh(View, {}, {
 
 });
 
+var ArrowPart = spv.inh(ActionsRowUI, {}, {
+  // bindBase: function() {
+  //   debugger;
+  //   window.ee1 = this;
+  // },
+  '+states': {
+    'active_part': [
+      "compx", ['vis_con_appended', '^current_md$exists', 'url_part'],
+      function(vis_con_appended, parent_visible, url_part) {
+        return vis_con_appended && parent_visible && url_part && url_part.slice(1);
+      }
+    ],
+  },
+
+  getCurrentButton: function() {
+    var active_part = this.state('active_part');
+    if (active_part) {
+      return this.parent_view.parent_view.tpl.ancs['bt' + active_part];
+    }
+  }
+});
+
+var Probe = spv.inh(View, {}, spv.cloneObj({
+  children_views: {
+    current_md: {arrow: ArrowPart}
+  },
+	children_views_by_mn: {
+		current_md: {
+			'row-lastfm': ScrobbleRowUI,
+			'row-love': LoveRowUI,
+			'row-share': ShareRowUI,
+			'row-tag': SongActTaggingControl,
+			'row-playlist-add': SongActPlaylistingUI,
+		}
+	},
+}, used_struc_bhv));
 
 
-
-
-var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
+var SongActionsRowUI = spv.inh(ActionsRowUI, {}, {
 	dom_rp: true,
 	bindBase: function(){
 		this._super();
@@ -171,61 +208,8 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
 		function (mp_show_end) {
 			return mp_show_end;
 		}
-	],
-
-    "key_vol_hole_w": [
-      "compx",
-      ['vis_is_visible', 'vis_con_appended'],
-      function (visible, apd) {
-        if (visible && apd) {
-          return this.getBoxDemensionKey('volume-hole-width');
-        }
-      }
-    ],
-
-    "vis_volume-bar-max-width": [
-      "compx",
-      ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
-      function(vvh_w, v_bar_o_w, v_bar_w){
-        if (vvh_w){
-          return  vvh_w - ( v_bar_o_w - v_bar_w);
-        }
-
-      }
-    ],
-
-    "vis_volume": [
-      "compx",
-      ['volume', 'vis_volume-bar-max-width'],
-      function(volume_fac, vvb_mw){
-        if (typeof volume_fac =='undefined'){
-          return 'auto';
-        } else if (vvb_mw){
-          return Math.floor(volume_fac * vvb_mw) + 'px';
-        } else {
-          return (volume_fac * 100)  + '%';
-        }
-      }
-    ]
-  },
-
-  dom_rp: true,
-
-  bindBase: function(){
-    this._super();
-    this.createVolumeControl();
-  },
-
-	children_views_by_mn: {
-		context_parts: {
-			'row-lastfm': ScrobbleRowUI,
-			'row-love': LoveRowUI,
-			'row-share': ShareRowUI,
-			'row-tag': SongActTaggingControl,
-			'row-playlist-add': SongActPlaylistingUI,
-		}
+	]
 	},
-
 	getVHoleWidth: function() {
 		return this.tpl.ancs['v-hole'].width();
 	},

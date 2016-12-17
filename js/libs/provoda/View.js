@@ -147,6 +147,7 @@ var initView = function(target, view_otps, opts){
   nestBorrowInit(target);
 };
 
+
 var selectParent = function (view) {
   return view.parent_view
 }
@@ -199,7 +200,7 @@ var View = spv.inh(StatesEmitter, {
 
       var md_id = this.mpx._provoda_id;
       bwlev_view.RPCLegacy('followTo', md_id);
-    }
+    },
   },
   onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
     return onPropsExtend(md, props, original, params);
@@ -370,6 +371,8 @@ var View = spv.inh(StatesEmitter, {
       this.tpl = tpl;
     }
 
+    tpl.root_node_raw._provoda_view = this;
+
     return tpl;
   },
   addTemplatedWaypoint: function(wp_wrap) {
@@ -515,6 +518,10 @@ var View = spv.inh(StatesEmitter, {
       } else if (this.createBase){
         this.createBase();
       }
+    }
+
+    if (this.c) {
+      this.c._provoda_view = this;
     }
   },
   requestDetailesCreating: function() {

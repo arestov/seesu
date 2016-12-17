@@ -15,7 +15,7 @@ return function getBWlev(BrowseLevel, md, probe_name, parent_bwlev, map_level_nu
   var bwlev = create(BrowseLevel, {
     probe_name: probe_name,
     map_level_num: map_level_num,
-    model_name: md.model_name,
+    // model_name: md.model_name,
     pioneer: md
   }, {
     nestings: {
