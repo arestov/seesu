@@ -27,7 +27,7 @@ var TagAlbums = spv.inh(AlbumsList, {}, {
 
 	page_limit: 50,
 	'nest_req-albums_list': [
-		declr_parsers.lfm.getAlbums('topalbums'),
+		declr_parsers.lfm.getAlbums('albums'),
 		['lfm', 'get', function() {
 			return ['tag.getTopAlbums', {
 				tag: this.head.tag_name
@@ -111,7 +111,7 @@ var FreeTagSongs = spv.inh(SongsList, {}, {
 
 var TopTagSongs = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
-		declr_parsers.lfm.getTracks('toptracks'),
+		declr_parsers.lfm.getTracks('tracks'),
 		['lfm', 'get', function() {
 			return ['tag.getTopTracks', {
 				tag: this.head.tag_name
