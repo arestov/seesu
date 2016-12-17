@@ -39,7 +39,7 @@
 			width:200px;
 			}
 </style>
-<div class="addsong-to-playlist" pv-nest="context_parts for_model:row-playlist-add">
+<div class="addsong-to-playlist" pv-nest="current_md for_model:row-playlist-add">
   <h4><span class="lang localize-addsong ">add song to</span>:</h4>
   <div>
     <input type="search" class="playlist-query" autocomplete="off"
@@ -51,5 +51,5 @@
       }}"
     />
   </div>
-  <!--pv-replace sample_name:list_of_playlists pv-when:active_view-->
+  <!--pv-replace sample_name:list_of_playlists-->
 </div>
