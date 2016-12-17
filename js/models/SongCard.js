@@ -46,17 +46,17 @@ var parseVKPostSong = spv.mmap({
 	props_map: {
 		artist: 'artist',
 		track: 'title',
-		side_file: {
-			artist: 'artist',
-			track: 'title',
-			from: ['vk'],
-			_id: [function (cursor) {
-        return cursor.owner_id + '_' + cursor.id;
-			}, '^'],
-			media_type: ['mp3'],
-			duration: ['seconds', 'duration'],
-			link: 'url'
-		}
+		// side_file: {
+		// 	artist: 'artist',
+		// 	track: 'title',
+		// 	from: ['vk'],
+		// 	_id: [function (cursor) {
+    //     return cursor.owner_id + '_' + cursor.id;
+		// 	}, '^'],
+		// 	media_type: ['mp3'],
+		// 	duration: ['seconds', 'duration'],
+		// 	link: 'url'
+		// }
 	}
 }, morph_helpers);
 

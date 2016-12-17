@@ -19,15 +19,15 @@ var UserCard = spv.inh(BrowseMap.Model, {
 }, {
 	model_name: 'usercard',
 	sub_page: {
-		'vk:tracks': {
-			constr: user_music_vk.VkUserTracks,
-			title: [
-				['#locales.%site% tracks'],
-				function(state) {
-					return state && state.replace('%site%', 'vk.com');
-				}
-			]
-		},
+		// 'vk:tracks': {
+		// 	constr: user_music_vk.VkUserTracks,
+		// 	title: [
+		// 		['#locales.%site% tracks'],
+		// 		function(state) {
+		// 			return state && state.replace('%site%', 'vk.com');
+		// 		}
+		// 	]
+		// },
 		'vk:friends': {
 			constr: user_music_vk.VKFriendsList,
 			title: [
@@ -82,7 +82,7 @@ var UserCard = spv.inh(BrowseMap.Model, {
 		};
 
 
-		var networks_pages = ['vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		var networks_pages = ['vk:friends', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
 			result[cur.replace(':', '__')] = [cur];
@@ -100,10 +100,10 @@ var UserCard = spv.inh(BrowseMap.Model, {
 var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'vk_usercard',
 	sub_page: {
-		'tracks': {
-			constr: user_music_vk.VkUserTracks,
-			title: [['#locales.Tracks']]
-		},
+		// 'tracks': {
+		// 	constr: user_music_vk.VkUserTracks,
+		// 	title: [['#locales.Tracks']]
+		// },
 		'friends': {
 			constr: user_music_vk.VKFriendsList,
 			title: [['#locales.Friends']]
@@ -129,7 +129,7 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 	nest: (function() {
 		var result = {};
 
-		var networks_pages = ['friends', 'tracks'];
+		var networks_pages = ['friends'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
 			result[ 'vk__' + cur ] = [cur];

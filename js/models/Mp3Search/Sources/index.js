@@ -7,10 +7,10 @@ var SourcePleer = require('./source-pleer');
 
 return pv.behavior({
   sub_page: {
-    'vk': {
-      constr: SourceVk,
-      title: [[]],
-    },
+    // 'vk': {
+    //   constr: SourceVk,
+    //   title: [[]],
+    // },
     'soundcloud': {
       constr: SourceSoundcloud,
       title: [[]],

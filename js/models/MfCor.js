@@ -274,23 +274,8 @@ var MfCorBase = spv.inh(LoadableList, {
 			return !!has_any_data || (file && file.from == 'vk');
 		}
 	],
-	'stch-needs_vk_auth': function(target, state) {
-		if (state) {
-			target.notifier.addMessage('vk_audio_auth ');
-		} else {
-			target.notifier.removeMessage('vk_audio_auth ');
-		}
-
-		if (state) {
-
-		} else {
-			var vk_auth = target.getNesting('vk_auth');
-			if (vk_auth) {
-				pv.updateNesting(target, 'vk_auth', null);
-				vk_auth.die();
-			}
-
-		}
+	'stch-needs_vk_auth': function(target) {
+		target.notifier.removeMessage('vk_audio_auth');
 	},
 	'compx-few_sources': [
 		['sorted_completcs$length'],

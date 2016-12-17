@@ -189,7 +189,7 @@ return {
 					track_list.push({
 						artist: htmlencoding.decode(cur.artist),
 						track: htmlencoding.decode(cur.title),
-						file: parseVkTrack(cur)
+						// file: parseVkTrack(cur)
 					});
 				}
 				return track_list;

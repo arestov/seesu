@@ -79,7 +79,6 @@ function byBestSearchIndex(g,f, searches_pr){
 	var Mp3Search = spv.inh(pv.Model, {},  {
     'nest-all_sources': [
       [
-        'sources/vk',
         'sources/soundcloud',
         'sources/pleer.net',
       ]
