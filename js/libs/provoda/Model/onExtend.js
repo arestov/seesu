@@ -11,6 +11,7 @@ var checkNestSel = require('../dcl/nest_sel/check');
 var checkNestCnt = require('../dcl/nest_conj/check');
 var checkSubpager = require('../dcl/sub_pager/check');
 var collectSubpages = require('../dcl/sub_pager/collectSubpages');
+var checkProbe = require('../dcl/probe/check');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');
@@ -34,6 +35,7 @@ return function(self, props, original, params) {
   checkNestRqC(self, props);
   checkNestSel(self, props);
   checkNestCnt(self, props);
+  checkProbe(self, props);
 
 
 

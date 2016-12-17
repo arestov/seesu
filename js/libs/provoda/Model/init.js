@@ -45,6 +45,7 @@ return function initModel(self, opts, data, params, more, states) {
 
   self._participation_in_nesting = null;
   self._nestings_paths = null;
+  self._collected_probes = null;
 
 
   self.md_replacer = null;

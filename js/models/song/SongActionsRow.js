@@ -119,6 +119,12 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
     target.inited_parts = {};
   }
 }, {
+  'probe-song_action': {
+    main: ['nesting', {
+      place_of_current: 'action',
+      place_of_nav: null,
+    }],
+  },
   sub_page: parts_storage,
   'nest_posb-context_parts': constrs_names,
   'compx-parent_show': [['^mp_show']],
