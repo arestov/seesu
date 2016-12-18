@@ -11,9 +11,7 @@ var sortMusicFilesArray = require('./sortMusicFilesArray');
 var pvState = pv.state;
 var QMI = require('./QMI');
 var getQueryString = QMI.getQueryString;
-var QueryMatchIndex = QMI.QueryMatchIndex;
-var setFileQMI = QMI.setFileQMI;
-var getFileQMI = QMI.getFileQMI;
+var getQMSongIndex = QMI.getQMSongIndex;
 
 var FilesSourceTuner = spv.inh(pv.Model, {
 	init: function(target, opts, data) {
@@ -149,8 +147,6 @@ function byBestSearchIndex(g,f, searches_pr){
 		sortMusicFilesArray: function (music_list, msq, time_limit) {
 		  sortMusicFilesArray(this, music_list, msq, time_limit);
 		},
-		getFileQMI: getFileQMI,
-		setFileQMI: setFileQMI,
 		/*
 		getCache: function(sem, name){
 			return cache_ajax.get(name + 'mp3', sem.q, function(r){
@@ -179,7 +175,7 @@ function byBestSearchIndex(g,f, searches_pr){
       this.addFileToInvestg(file, cur, msq);
     },
 		addFileToInvestg: function(file, music_file, msq) {
-			var qmi = this.setFileQMI(file, msq);
+			var qmi = getQMSongIndex(msq, file);
 			if (qmi != -1) {
 				var investg = this.getFilesInvestg(msq);
 				investg.addFile(music_file, file.from);
@@ -199,10 +195,7 @@ function byBestSearchIndex(g,f, searches_pr){
 
 	};
 
-	Mp3Search.setFileQMI = setFileQMI;
-	Mp3Search.getFileQMI = getFileQMI;
 	Mp3Search.guessArtist = guessArtist;
-	Mp3Search.QueryMatchIndex = QueryMatchIndex;
 
 return Mp3Search;
 });

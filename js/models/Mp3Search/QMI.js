@@ -202,28 +202,10 @@ var getQMSongIndex= spv.memorize(function (msq, song) {
   return first_part + song.artist + song.track;
 });
 
-
-var setFileQMI = function(file, msq, Constr, force_rewrite) {
-	var query_string = getQueryString(msq);
-	file.query_match_index = file.query_match_index || {};
-	if (file.query_match_index[ query_string ] && !force_rewrite) {
-		return file.query_match_index[ query_string ];
-	}
-	file.query_match_index[ query_string.replace(/\./gi, '') ] = Constr ? ( new Constr(file, msq) * 1 ) : getQMSongIndex(msq, file);
-	return file.query_match_index[ query_string ];
-};
-
-var getFileQMI = function(file, msq) {
-	var query_string = getQueryString(msq);
-	return spv.getTargetField(file, [ 'query_match_index', query_string.replace(/\./gi, '') ]);
-};
-
 return {
   QueryMatchIndex: QueryMatchIndex,
   getQueryString: getQueryString,
   SongQueryMatchIndex: SongQueryMatchIndex,
-  setFileQMI: setFileQMI,
-  getFileQMI: getFileQMI,
   getQMSongIndex: getQMSongIndex,
 };
 
