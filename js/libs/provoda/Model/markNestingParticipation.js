@@ -90,45 +90,64 @@ function addPacp(owner, path_key, path_pacp) {
   AddToSet(set, path_pacp.md._provoda_id, path_pacp);
 }
 
+function startItem(owner, part) {
+  var path_key = part.nesting_name;
+  var path_pacp = new PathParticipation(path_key, [part.nesting_name], owner, part.md, [part.pos]);
+
+  addPacp(owner, path_key, path_pacp);
+}
+
+function startItemChildren(owner, part) {
+  if (!part.md._nestings_paths) {return;}
+
+  for (var path_key in part.md._nestings_paths) {
+    if (!part.md._nestings_paths.hasOwnProperty(path_key)) {continue;}
+
+    var arr = part.md._nestings_paths[path_key].list;
+    for (var i = 0; i < arr.length; i++) {
+      var path_pacp_chi = arr[i];
+      if (path_pacp_chi.pos.length > 4) {
+        continue;
+      }
+      var cur_key = part.nesting_name + '.' + path_key;
+      var cur = new PathParticipation(
+        cur_key,
+        [part.nesting_name].concat(path_pacp_chi.path),
+        owner,
+        path_pacp_chi.md,
+        [part.pos].concat(path_pacp_chi.pos)
+      );
+
+      addPacp(owner, cur_key, cur);
+
+      if (cur.pos.length > 3) {
+        debugger;
+      }
+
+    }
+
+    // var path_pacp_chi =
+  }
+}
+
 function startBubleUp(owner, part) {
   if (!part) {return;}
 
+  /*
+    1. collect for owner
+      a. cursor
+      b. items inside cursor
+    2. pass everyng to "parent" participation
 
-  var path_pacp = new PathParticipation(part.nesting_name, [part.nesting_name], owner, part.md, [part.pos]);
-  var path_key = part.nesting_name;
-  addPacp(owner, path_key, path_pacp);
 
-  if (part.md._nestings_paths) {
-    for (var path_key in part.md._nestings_paths) {
-      if (!part.md._nestings_paths.hasOwnProperty(path_key)) {continue;}
+    _nestings_paths should be updated when
+      a) new child added (owner's nesting)
+      b) child changed (owner's nesting nesting)
 
-      var arr = part.md._nestings_paths[path_key].list;
-      for (var i = 0; i < arr.length; i++) {
-        var path_pacp_chi = arr[i];
-        if (path_pacp_chi.pos.length > 4) {
-          continue;
-        }
-        var cur_key = part.nesting_name + '.' + path_key;
-        var cur = new PathParticipation(
-          cur_key,
-          [part.nesting_name].concat(path_pacp_chi.path),
-          owner,
-          path_pacp_chi.md,
-          [part.pos].concat(path_pacp_chi.pos)
-        );
-        addPacp(owner, cur_key, cur);
-        if (cur.pos.length > 3) {
-          debugger;
-        }
+  */
 
-      }
-
-      // var path_pacp_chi =
-    }
-  }
-
-  // take curent
-  // take children of current
+  startItem(owner, part);
+  startItemChildren(owner, part);
 
 }
 
