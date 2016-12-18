@@ -17,19 +17,19 @@
   },
   "node-remote": "https://arestov.github.io",
   "devDependencies": {
-    "autoprefixer": "^6.0.2",
-    "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-concat-css": "^2.2.0",
-    "gulp-file-include": "^0.13.7",
-    "gulp-foreach": "^0.1.0",
-    "gulp-postcss": "^6.0.0",
+    "autoprefixer": "6.0.2",
+    "gulp": "3.9.0",
+    "gulp-concat": "2.6.0",
+    "gulp-concat-css": "2.2.0",
+    "gulp-file-include": "0.14",
+    "gulp-foreach": "0.1.0",
+    "gulp-postcss": "6.0.0",
     "gulp-requirejs": "git://github.com/joshdover/gulp-requirejs-optimize.git#98a37cd722dd993a77c2af80e97d08acd1ac9692",
-    "gulp-requirejs-optimize": "^0.3.0",
-    "gulp-sourcemaps": "^1.5.2",
-    "gulp-util": "^3.0.7",
-    "gulp-zip": "^3.2.0",
-    "postcss": "^5.0.5",
-    "xmldom": "^0.1.19"
+    "gulp-requirejs-optimize": "1.0.0",
+    "gulp-sourcemaps": "1.5.2",
+    "gulp-util": "3.0.6",
+    "gulp-zip": "3.2.0",
+    "postcss": "5.0.5",
+    "xmldom": "0.1.19"
   }
 }
