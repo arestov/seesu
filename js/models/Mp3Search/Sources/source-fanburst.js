@@ -13,8 +13,9 @@ var Query = pv.behavior({
         var result = [];
         for (var i = 0; i < r.length; i++) {
           if (!r[i]) {continue;}
-
-          result.push(parseTrack(r[i], this.head.msq, api.client_id));
+          var file = parseTrack(r[i], this.head.msq, api.client_id);
+          if (!file) {continue;}
+          result.push(file);
         }
 
         return result;
@@ -35,6 +36,8 @@ var Query = pv.behavior({
 
 function parseTrack(item, msq, client_id) {
   var guess_info = guessArtist(item.title, msq && msq.artist);
+
+  if (!guess_info.artist || !guess_info.track) {return;}
 
   return {
     from: 'fanburst',
