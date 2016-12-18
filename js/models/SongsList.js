@@ -70,18 +70,6 @@ define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'
 		'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
 		'compx-pl-shuffle': [['#settings-pl-shuffle']],
 		'nest_rqc-songs-list': Song,
-		/*makeDataItem: function(obj) {
-			return this.extendSong(obj);
-		},
-		extendSong: function(omo){
-			if (!(omo instanceof Song)){
-				return this.initSi(Song,  omo, {
-					file: omo.file
-				});
-			} else{
-				return omo;
-			}
-		},*/
 		makeExternalPlaylist: function() {
 			var songs_list = this.getMainlist();
 			if (!songs_list.length){return false;}
