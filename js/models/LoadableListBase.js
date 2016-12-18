@@ -285,45 +285,44 @@ return spv.inh(BrowseMap.Model, {
 	makeItemByData: function(data, item_params, nesting_name) {
 		var mentioned = this._nest_rqc[nesting_name];
 		var md = this;
-		if (mentioned) {
-			if (mentioned.type == 'route') {
-				var app = this.app;
-				var result = getSPByPathTemplateAndData(app, this, mentioned.value, false, data);
-
-        this.useMotivator(result, function () {
-          result.updateManyStates(data);
-        });
-
-				return result;
-			}
-
-			var best_constr = this._all_chi[mentioned.key];
-
-
-			var netdata_as_states = best_constr.prototype.netdata_as_states;
-			var network_data_as_states = best_constr.prototype.network_data_as_states;
-
-			var data_po_pass;
-			if (network_data_as_states) {
-				if (netdata_as_states) {
-					data_po_pass = {
-						network_states: netdata_as_states(data)
-					};
-				} else {
-					data_po_pass = {
-						network_states: data
-					};
-				}
-
-			} else {
-				data_po_pass = data;
-			}
-
-			return this.initSi(best_constr, data_po_pass, item_params);
-
-		} else {
+		if (!mentioned) {
 			throw new Error('cant make item');
 		}
+
+		if (mentioned.type == 'route') {
+			var app = this.app;
+			var result = getSPByPathTemplateAndData(app, this, mentioned.value, false, data);
+
+			this.useMotivator(result, function () {
+				result.updateManyStates(data);
+			});
+
+			return result;
+		}
+
+		var best_constr = this._all_chi[mentioned.key];
+
+
+		var netdata_as_states = best_constr.prototype.netdata_as_states;
+		var network_data_as_states = best_constr.prototype.network_data_as_states;
+
+		var data_po_pass;
+		if (network_data_as_states) {
+			if (netdata_as_states) {
+				data_po_pass = {
+					network_states: netdata_as_states(data)
+				};
+			} else {
+				data_po_pass = {
+					network_states: data
+				};
+			}
+
+		} else {
+			data_po_pass = data;
+		}
+
+		return this.initSi(best_constr, data_po_pass, item_params);
 	},
 	findMustBePresentDataItem: function(obj, nesting_name) {
 		nesting_name = nesting_name || this.main_list_name;
