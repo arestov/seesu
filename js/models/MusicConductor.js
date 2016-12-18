@@ -171,11 +171,7 @@ var AllPlaces = spv.inh(BrowseMap.Model, {}, {
 		'artists': {
 			constr: AllPlacesArtistsLists,
 			title: [['#locales.Artists']]
-		}/*,
-		'blogs': {
-			constr: MusicBlog.BlogsConductor,
-			title: 'Blogs'
-		}*/
+		}
 	}
 });
 
