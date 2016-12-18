@@ -81,6 +81,7 @@ function byBestSearchIndex(g,f, searches_pr){
       [
         'sources/soundcloud',
         'sources/pleer.net',
+        'sources/fanburst',
       ]
     ],
     'nest_sel-sources_sorted_list': {

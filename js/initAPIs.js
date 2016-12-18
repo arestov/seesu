@@ -7,6 +7,7 @@ var FuncsQueue = require('./libs/FuncsQueue');
 var net_apis = require('./modules/net_apis');
 var SeesuServerAPI = require('./SeesuServerAPI');
 var ScApi = require('./libs/ScApi');
+var FanburstApi = require('./libs/FanburstApi');
 
 var LastfmAPIExtended = require('./libs/LastfmAPIExtended');
 
@@ -250,6 +251,11 @@ function moreApis(su, app_serv, app_env, cache_ajax, resortQueue, addQueue){
 		init: addQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
 
+	su.fanburst_api = new FanburstApi(app_serv.getPreloadedNK('fanburst_client_id'), new FuncsQueue({
+		time: [3500, 5000 , 4],
+		resortQueue: resortQueue,
+		init: addQueue
+	}), app_env.cross_domain_allowed, cache_ajax);
 }
 
 

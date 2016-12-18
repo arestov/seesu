@@ -3,6 +3,7 @@ define(function (require) {
 var pv = require('pv');
 var SourceVk = require('./source-vk');
 var SourceSoundcloud = require('./source-soundcloud');
+var SourceFanburst = require('./source-fanburst');
 var SourcePleer = require('./source-pleer');
 
 return pv.behavior({
@@ -17,6 +18,10 @@ return pv.behavior({
     },
     'pleer.net': {
       constr: SourcePleer,
+      title: [[]],
+    },
+    'fanburst': {
+      constr: SourceFanburst,
       title: [[]],
     }
   }
