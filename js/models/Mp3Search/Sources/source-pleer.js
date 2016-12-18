@@ -7,6 +7,10 @@ var createSource = require('./createSource');
 var guessArtist = require('../guessArtist');
 var morph_helpers = require('js/libs/morph_helpers');
 
+var redirect = function (link) {
+	return link.replace('pleer.com', 'pleer.net');
+};
+
 var datamorph_map = new spv.MorphMap({
 	is_array: true,
 	source: 'tracks',
@@ -16,14 +20,12 @@ var datamorph_map = new spv.MorphMap({
 		media_type: ['mp3'],
 
 		_id: 'id',
-		page_link: 'link',
+		page_link: [redirect, 'link'],
 		artist: [function (artist) {
 			return artist && (artist + '');
 		}, 'artist'],
 		track: 'track',
-		link: [function (link) {
-      return link.replace('pleer.com/', 'pleer.net/');
-		}, 'file'],
+		link: [redirect, 'file'],
 		duration: ['timestamp', 'length']
 	}
 }, morph_helpers);
