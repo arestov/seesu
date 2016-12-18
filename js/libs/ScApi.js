@@ -18,11 +18,11 @@ ScApi.prototype = {
 	source_name: 'soundcloud.com',
 	cache_namespace: "soundcloud_api",
 	thisOriginAllowed: true,
-	get: function(method, params, options) {
+	get: function(method, params_raw, options) {
 		if (!method) {return;}
 
     options = options || {};
-    params = params || {};
+    var params = params_raw ? spv.cloneObj({}, params_raw) : {};
 
     if (options && options.paging) {
       params.limit = options.paging.page_limit;
