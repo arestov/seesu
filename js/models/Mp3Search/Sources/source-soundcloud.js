@@ -3,6 +3,7 @@ define(function (require) {
 var pv = require('pv');
 var QueryBase = require('./QueryBase');
 var createSource = require('./createSource');
+var getQMSongIndex = require('../QMI').getQMSongIndex;
 var parseScTrack = require('js/modules/declr_parsers').soundcloud.parseTrack;
 
 var Query = pv.behavior({
@@ -10,11 +11,16 @@ var Query = pv.behavior({
     [
       function (r, _1, _2, api) {
         if (!r || !r.length) {return;}
+        var msq = this.head.msq;
         var result = [];
         for (var i = 0; i < r.length; i++) {
           if (!r[i]) {continue;}
+          var file = parseScTrack(r[i], msq, api.key);
 
-          result.push(parseScTrack(r[i], this.head.msq, api.key));
+          var qmi = getQMSongIndex(msq, file);
+          if (qmi == -1) {continue;}
+
+          result.push(file);
         }
 
         return result;
