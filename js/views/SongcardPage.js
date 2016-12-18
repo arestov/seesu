@@ -17,7 +17,6 @@ var SongcardPage = spv.inh(coct.SPView, {}, {
 	},
 	children_views: {
 		fans: coct.ImagedListPreview,
-		cloudcasts: coct.ImagedListPreview,
 		artist: ArtcardUI.ArtistInSongConstroller
 	}
 });

@@ -7,7 +7,6 @@ var TagsList = require('./TagPage');
 var UserCard = require('./UserCard');
 var MusicConductor = require('./MusicConductor');
 var app_serv = require('app_serv');
-var Cloudcasts = require('./Cloudcasts');
 var SeesuUser = require('./SeesuUser');
 var pv = require('pv');
 var spv = require('spv');
@@ -141,13 +140,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 					vk_userid: 'name_spaced'
 				}
 			],
-			cloudcast: [
-				Cloudcasts, [['key'], function(key) {
-					return 'Cloudcast ' + key;
-				}], {
-					key: 'simple_name'
-				}
-			]
 		},
 		type: {
 			catalog: 'artist',
@@ -158,7 +150,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 				}
 				return 'track';
 			},
-			cloudcasts: 'cloudcast',
 			users: (function(){
 				var spaces = spv.makeIndexByField(['lfm', 'vk', 'su']);
 				return function(name) {

@@ -96,8 +96,6 @@ var map_slice_by_model = {
 	songcard: SongcardPage,
 	justlists: coct.ListOfListsView,
 	vk_posts: coct.VKPostsView,
-	songcard_cloudcasts: coct.ListOfListsView,
-	cloudcasts_list: coct.ListOfListsView,
 	blogs_conductor: coct.ListOfListsView,
 	blogs_list: coct.ListOfListsView,
 	music_blog: coct.ListOfListsView,

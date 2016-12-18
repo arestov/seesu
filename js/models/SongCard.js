@@ -1,8 +1,8 @@
 define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
-'./user_music_lfm', './Cloudcasts', './LoadableListBase', './SongsList',
+'./user_music_lfm', './LoadableListBase', './SongsList',
 './SeesuListening', 'js/modules/declr_parsers'],
 function(pv, spv, app_serv, BrowseMap, morph_helpers,
-user_music_lfm, Cloudcasts, LoadableListBase, SongsList,
+user_music_lfm, LoadableListBase, SongsList,
 SeesuListening, declr_parsers) {
 'use strict';
 var complexEach = app_serv.complexEach;
@@ -304,9 +304,6 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 		}]
 	],
 	'nest-fans': ['fans'],
-	'nest-cloudcasts': ['cloudcasts', {
-	  idle_until: 'wide_need',
-	}],
 	'nest-vk_posts': ['vk_posts', {
 	  preload_on: 'nest_need',
 	  idle_until: 'nest_need',
@@ -319,10 +316,6 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 		'fans':{
 			constr: SongFansList,
 			title: [['#locales.Top fans']]
-		},
-		'cloudcasts': {
-			constr: Cloudcasts.SongcardCloudcasts,
-			title: [null, 'Cloudcasts']
 		},
 		'vk_posts': {
 			constr: VKPostsList,
