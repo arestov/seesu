@@ -83,11 +83,7 @@ var CloudcastsList = spv.inh(LoadableList, {}, {
 	// 	this.sub_pa_params = params;
 	// 	this.initStates(params);
 	// },
-	makeDataItem: function(data) {
-		var item = this.app.start_page.getSPI('cloudcasts/' + this.app.encodeURLPart(data.key), true);
-		item.addRawData(data);
-		return item;
-	},
+	'nest_rqc-list_items': '#cloudcasts/[:key]',
 	'nest_req-lists_list': [
 		[{
 			is_array: true,
