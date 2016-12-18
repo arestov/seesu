@@ -321,8 +321,6 @@ return spv.inh(BrowseMap.Model, {
 
 			return this.initSi(best_constr, data_po_pass, item_params);
 
-		} else if (this.makeDataItem){
-			return this.makeDataItem(data, item_params);
 		} else {
 			throw new Error('cant make item');
 		}
