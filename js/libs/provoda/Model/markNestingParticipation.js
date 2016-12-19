@@ -143,7 +143,7 @@ function startItem(owner, part) {
 }
 
 function startItemChild(owner, part, path_pacp_chi, path_id) {
-  if (path_pacp_chi.pos.length > 4) {
+  if (path_pacp_chi.path.length > 4) {
     return;
   }
   var cur_path_id = getPathIdByPathIdAndPrefix(part.nesting_name, path_id);
@@ -161,7 +161,7 @@ function startItemChild(owner, part, path_pacp_chi, path_id) {
   var pathp = getPathp(owner, cur_path_id, path_pacp_chi.md);
   pathp.pos = pos;
 
-  // if (pathp.pos.length > 3) {
+  // if (pathp.path.length > 3) {
   //   debugger;
   // }
 }
