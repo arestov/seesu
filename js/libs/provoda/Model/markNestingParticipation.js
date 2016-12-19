@@ -3,6 +3,33 @@ define(function(require){
 var spv = require('spv');
 var findAndRemoveItem = spv.findAndRemoveItem;
 
+var cache_by_ids = {};
+var count = 1;
+
+var getPathById= function(path_id) {
+  return cache_by_ids.hasOwnProperty(path_id) ? cache_by_ids[path_id] : null;
+};
+
+var getPathIdByNestingName = spv.memorize(function(nesting_name) {
+  var result = [nesting_name];
+  var path_id = ++count;
+  cache_by_ids[path_id] = result;
+  return path_id;
+});
+
+var getPathIdByPathIdAndPrefix = spv.memorize(function(nesting_name, base_path_id) {
+  var base = getPathById(base_path_id);
+  var copied = base.slice();
+  copied.unshift(nesting_name);
+
+  var path_id = ++count;
+  cache_by_ids[path_id] = copied;
+
+  return path_id;
+}, function (nesting_name, base_path_id) {
+  return nesting_name + '-' + base_path_id;
+});
+
 return function (md, nesting_name, added, removed) {
   if (removed) {
     if (Array.isArray(removed)) {
@@ -61,13 +88,12 @@ function unmark(md, nesting_name, cur) {
   return RemoveFromSet(cur._participation_in_nesting, key);
 }
 
-function PathParticipation(key, path, owner, md, pos) {
-  // debugger;
+function PathParticipation(key, owner, md, pos) {
   this.owner = owner;
   this.md = md;
   this.pos = pos;
   this.key = key;
-  this.path = path;
+  this.path = getPathById(key);
 
 }
 
@@ -76,7 +102,7 @@ function PathsParticipationSet() {
   this.list = [];
 }
 
-function addPacp(owner, path_id, path_pacp) {
+function ensurePathsSet(owner, path_id) {
   if (!owner._nestings_paths) {
     owner._nestings_paths = {};
   }
@@ -85,16 +111,59 @@ function addPacp(owner, path_id, path_pacp) {
     owner._nestings_paths[path_id] = new PathsParticipationSet();
   }
 
-  var set = owner._nestings_paths[path_id];
+  return owner._nestings_paths[path_id];
+}
 
+function hasPathp(owner, path_id, md) {
+  return owner._nestings_paths &&
+    owner._nestings_paths.hasOwnProperty(path_id) &&
+    isInSet(owner._nestings_paths[path_id], md._provoda_id);
+}
+
+function getPathp(owner, path_id, md) {
+  return hasPathp(owner, path_id, md) && owner._nestings_paths[path_id].index[md._provoda_id];
+}
+
+function addPacp(owner, path_id, path_pacp) {
+  var set = ensurePathsSet(owner, path_id);
   AddToSet(set, path_pacp.md._provoda_id, path_pacp);
 }
 
 function startItem(owner, part) {
-  var path_id = part.nesting_name;
-  var path_pacp = new PathParticipation(path_id, [part.nesting_name], owner, part.md, [part.pos]);
+  var path_id = getPathIdByNestingName(part.nesting_name);
 
-  addPacp(owner, path_id, path_pacp);
+  var pos = [part.pos];
+  if (!hasPathp(owner, path_id, part.md)) {
+    var path_pacp = new PathParticipation(path_id, owner, part.md, pos);
+    addPacp(owner, path_id, path_pacp);
+  }
+
+  var pathp = getPathp(owner, path_id, part.md);
+  pathp.pos = pos;
+}
+
+function startItemChild(owner, part, path_pacp_chi, path_id) {
+  if (path_pacp_chi.pos.length > 4) {
+    return;
+  }
+  var cur_path_id = getPathIdByPathIdAndPrefix(part.nesting_name, path_id);
+  var pos = [part.pos].concat(path_pacp_chi.pos);
+  if (!hasPathp(owner, cur_path_id, path_pacp_chi.md)) {
+    var cur = new PathParticipation(
+      cur_path_id,
+      owner,
+      path_pacp_chi.md,
+      pos
+    );
+    addPacp(owner, cur_path_id, cur);
+  }
+
+  var pathp = getPathp(owner, cur_path_id, path_pacp_chi.md);
+  pathp.pos = pos;
+
+  // if (pathp.pos.length > 3) {
+  //   debugger;
+  // }
 }
 
 function startItemChildren(owner, part) {
@@ -105,28 +174,8 @@ function startItemChildren(owner, part) {
 
     var arr = part.md._nestings_paths[path_id].list;
     for (var i = 0; i < arr.length; i++) {
-      var path_pacp_chi = arr[i];
-      if (path_pacp_chi.pos.length > 4) {
-        continue;
-      }
-      var cur_key = part.nesting_name + '.' + path_id;
-      var cur = new PathParticipation(
-        cur_key,
-        [part.nesting_name].concat(path_pacp_chi.path),
-        owner,
-        path_pacp_chi.md,
-        [part.pos].concat(path_pacp_chi.pos)
-      );
-
-      addPacp(owner, cur_key, cur);
-
-      if (cur.pos.length > 3) {
-        debugger;
-      }
-
+      startItemChild(owner, part, arr[i]);
     }
-
-    // var path_pacp_chi =
   }
 }
 
