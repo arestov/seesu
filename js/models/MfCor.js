@@ -159,18 +159,12 @@ var MfComplectSingle = spv.inh(MfComplectBase, {}, {
 
 
 function getSFM(mf_cor, file) {
-  if (file.constructor.name == 'MusicFile') {
-    return routePathByModels(
-      file,
-      'playable_files/' + mf_cor._provoda_id,
-      false,
-      true);
-  }
-  return mf_cor.getSFM(file);
+  return routePathByModels(
+    file,
+    'playable_files/' + mf_cor._provoda_id,
+    false,
+    true);
 }
-
-var file_id_counter = 0;
-
 
 var sources_map = {
 	'vk': 'https://vk.com',
@@ -194,7 +188,6 @@ var MfCorBase = spv.inh(LoadableList, {
 		self.player = null;
 		self.vk_auth_rqb = null;
 
-		self.sfs_models = {};
 		self.omo = omo;
 		self.mo = self.map_parent;
 		self.files_models = {};
@@ -305,18 +298,6 @@ var MfCorBase = spv.inh(LoadableList, {
 		return BrowseMap.routePathByModels(this, 'complects/' + source_name, false, true);
 	},
 	'nest-mp3_search': ['#mp3_search'],
-	getSFM: function(file) {
-
-		if (!file.hasOwnProperty('file_id')){
-			file.file_id = ++file_id_counter;
-		}
-		if ( !this.sfs_models[ file.file_id ] ) {
-			this.sfs_models[ file.file_id ] = Mp3Search.getSFM(this, file);
-		}
-		return this.sfs_models[ file.file_id ];
-
-
-	},
 	'compx-almost_loaded': [
 		['@loading_progress:current_mopla'],
 		function (array) {

@@ -4,7 +4,6 @@ var pv = require('pv');
 var spv = require('spv');
 var Sources = require('./Sources/index');
 var FilesInvestg = require('./FilesInvestg');
-var SongFileModel = require('./SongFileModel');
 var routePathByModels = require('js/libs/BrowseMap').routePathByModels;
 var guessArtist = require('./guessArtist');
 var sortMusicFilesArray = require('./sortMusicFilesArray');
@@ -182,18 +181,6 @@ function byBestSearchIndex(g,f, searches_pr){
 			}
 		},
 	});
-
-	Mp3Search.getSongFileModel = function(map_parent){
-		return map_parent.initSi(SongFileModel, null, {file:this});
-	};
-	Mp3Search.getSFM = function(map_parent, file) {
-		if (file.getSongFileModel) {
-			return file.getSongFileModel(map_parent);
-		} else {
-			return map_parent.initSi(SongFileModel, null, {file: file});
-		}
-
-	};
 
 	Mp3Search.guessArtist = guessArtist;
 
