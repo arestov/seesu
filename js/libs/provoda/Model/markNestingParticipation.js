@@ -174,7 +174,7 @@ function startItemChildren(owner, part) {
 
     var arr = part.md._nestings_paths[path_id].list;
     for (var i = 0; i < arr.length; i++) {
-      startItemChild(owner, part, arr[i]);
+      startItemChild(owner, part, arr[i], path_id);
     }
   }
 }
