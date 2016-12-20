@@ -158,7 +158,7 @@ gulp.task('opera_popup-zipped', ['opera_popup'], function () {
 		.pipe(gulp.dest('dist-envs'));
 });
 
-gulp.task('envs', ['chrome_app-zipped', 'chrome_popup-zipped', 'opera_popup-zipped']);
+gulp.task('envs', ['chrome_app-zipped', 'chrome_popup-zipped', 'opera_popup-zipped', 'webapp']);
 
 
 function chromeExtension(dest_env) {
