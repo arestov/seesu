@@ -4,25 +4,6 @@ function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, Loa
 var routePathByModels = BrowseMap.routePathByModels;
 var pvState = pv.state;
 var pvUpdate = pv.update;
-var MFCorVkLogin = spv.inh(comd.VkLoginB, {}, {
-	'compx-access_desc': [
-		['#locales.to-find-and-play', '#locales.music-files-from-vk'],
-		function(to_find, files) {
-			if (!to_find || !files) {return;}
-			return to_find + ' ' + files;
-		}
-	],
-	config: {
-		open_opts: {settings_bits: 8},
-		getNotf: function(target) {
-			return {
-				notf: target.map_parent.sf_notf,
-				readed: target.map_parent.vk_ntf_readed
-			};
-		}
-	}
-});
-
 
 var NotifyCounter = spv.inh(pv.Model, {
 	naming: function(fn) {
@@ -184,9 +165,7 @@ var MfCorBase = spv.inh(LoadableList, {
 		self.file = null;
 		self.notifier = null;
 		self.sf_notf = null;
-		self.vk_ntf_readed = null;
 		self.player = null;
-		self.vk_auth_rqb = null;
 
 		self.omo = omo;
 		self.mo = self.map_parent;
@@ -240,36 +219,6 @@ var MfCorBase = spv.inh(LoadableList, {
 			return state;
 		}
 	],
-	'compx-has_vk_tool': [
-		['@one:tools_by_name:mp3_search'],
-		function (tools) {
-			return !!tools && !!tools.vk;
-		}
-	],
-	'compx-needs_vk_auth': [
-		['has_vk_tool', 'has_any_vk_results'],
-		function (has_vk_tool, has_any_vk_results) {
-			return !has_vk_tool && !has_any_vk_results;
-		}
-	],
-	'nest-vk_auth': [MFCorVkLogin, {
-		ask_for: 'needs_vk_auth'
-	}],
-	'nest_sel-vk_source': {
-		from: 'sorted_completcs',
-    where: {
-      '>search_name': ['=', ['vk']]
-    }
-	},
-	'compx-has_any_vk_results': [
-		['@one:music_files$exists:vk_source', 'file'],
-		function (has_any_data, file) {
-			return !!has_any_data || (file && file.from == 'vk');
-		}
-	],
-	'stch-needs_vk_auth': function(target) {
-		target.notifier.removeMessage('vk_audio_auth');
-	},
 	'compx-few_sources': [
 		['sorted_completcs$length'],
 		function (length) {
@@ -379,9 +328,9 @@ var MfCorBase = spv.inh(LoadableList, {
 
 	complex_states: {
 		"must_be_expandable": {
-			depends_on: ['has_files', 'needs_vk_auth', 'few_sources', 'cant_play_music'],
-			fn: function(has_files, needs_vk_auth, fsrs, cant_play){
-				return !!(has_files || needs_vk_auth || fsrs || cant_play);
+			depends_on: ['has_files', 'few_sources', 'cant_play_music'],
+			fn: function(has_files, fsrs, cant_play){
+				return !!(has_files || fsrs || cant_play);
 			}
 		},
 
@@ -488,9 +437,6 @@ var MfCorBase = spv.inh(LoadableList, {
 
 		for (var i = 0; i < rd_msgs.length; i++) {
 			this.notifier.banMessage(rd_msgs[i]);
-			if (rd_msgs[i] == 'vk_audio_auth '){
-				this.vk_ntf_readed = true;
-			}
 		}
 		this.bindMessagesRecieving();
 	},
@@ -527,7 +473,7 @@ var MfCorBase = spv.inh(LoadableList, {
 
 	},
 	markMessagesReaded: function() {
-		this.sf_notf.markAsReaded('vk_audio_auth ');
+		// this.sf_notf.markAsReaded('vk_audio_auth ');
 	},
 	hndNtfRead: function(message_id) {
 		this.notifier.banMessage(message_id);
@@ -646,12 +592,6 @@ var MfCorBase = spv.inh(LoadableList, {
 
 	},
 	getVKFile: function(){
-		var file = this.state('current_mopla');
-		if (file && pvState(file, 'from') == 'vk'){
-			return file;
-		} else{
-			return this.getFirstFrom('vk');
-		}
 	},
   getFirstFrom: function(source_name) {
     var sorted_completcs = this.getNesting('sorted_completcs');
