@@ -140,6 +140,7 @@ function startItem(owner, nest_ppation) {
 
   var pathp = getPathp(owner, path_id, nest_ppation.md);
   pathp.pos = pos;
+  return pathp;
 }
 
 function startItemChild(owner, nest_ppation, path_pacp_chi, path_id) {
@@ -160,6 +161,8 @@ function startItemChild(owner, nest_ppation, path_pacp_chi, path_id) {
 
   var pathp = getPathp(owner, cur_path_id, path_pacp_chi.md);
   pathp.pos = pos;
+
+  return pathp;
 
   // if (pathp.path.length > 3) {
   //   debugger;
