@@ -129,25 +129,25 @@ function addPacp(owner, path_id, path_pacp) {
   AddToSet(set, path_pacp.md._provoda_id, path_pacp);
 }
 
-function startItem(owner, part) {
-  var path_id = getPathIdByNestingName(part.nesting_name);
+function startItem(owner, nest_ppation) {
+  var path_id = getPathIdByNestingName(nest_ppation.nesting_name);
 
-  var pos = [part.pos];
-  if (!hasPathp(owner, path_id, part.md)) {
-    var path_pacp = new PathParticipation(path_id, owner, part.md, pos);
+  var pos = [nest_ppation.pos];
+  if (!hasPathp(owner, path_id, nest_ppation.md)) {
+    var path_pacp = new PathParticipation(path_id, owner, nest_ppation.md, pos);
     addPacp(owner, path_id, path_pacp);
   }
 
-  var pathp = getPathp(owner, path_id, part.md);
+  var pathp = getPathp(owner, path_id, nest_ppation.md);
   pathp.pos = pos;
 }
 
-function startItemChild(owner, part, path_pacp_chi, path_id) {
+function startItemChild(owner, nest_ppation, path_pacp_chi, path_id) {
   if (path_pacp_chi.path.length > 4) {
     return;
   }
-  var cur_path_id = getPathIdByPathIdAndPrefix(part.nesting_name, path_id);
-  var pos = [part.pos].concat(path_pacp_chi.pos);
+  var cur_path_id = getPathIdByPathIdAndPrefix(nest_ppation.nesting_name, path_id);
+  var pos = [nest_ppation.pos].concat(path_pacp_chi.pos);
   if (!hasPathp(owner, cur_path_id, path_pacp_chi.md)) {
     var cur = new PathParticipation(
       cur_path_id,
@@ -179,8 +179,8 @@ function startItemChildren(owner, part) {
   }
 }
 
-function startBubleUp(owner, part) {
-  if (!part) {return;}
+function startBubleUp(owner, nest_ppation) {
+  if (!nest_ppation) {return;}
 
   /*
     1. collect for owner
@@ -195,8 +195,8 @@ function startBubleUp(owner, part) {
 
   */
 
-  startItem(owner, part);
-  startItemChildren(owner, part);
+  startItem(owner, nest_ppation);
+  startItemChildren(owner, nest_ppation);
 
 }
 
