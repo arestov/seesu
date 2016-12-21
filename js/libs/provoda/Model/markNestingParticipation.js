@@ -169,15 +169,15 @@ function startItemChild(owner, nest_ppation, path_pacp_chi, path_id) {
   // }
 }
 
-function startItemChildren(owner, part) {
-  if (!part.md._nestings_paths) {return;}
+function startItemChildren(owner, nest_ppation) {
+  if (!nest_ppation.md._nestings_paths) {return;}
 
-  for (var path_id in part.md._nestings_paths) {
-    if (!part.md._nestings_paths.hasOwnProperty(path_id)) {continue;}
+  for (var path_id in nest_ppation.md._nestings_paths) {
+    if (!nest_ppation.md._nestings_paths.hasOwnProperty(path_id)) {continue;}
 
-    var arr = part.md._nestings_paths[path_id].list;
+    var arr = nest_ppation.md._nestings_paths[path_id].list;
     for (var i = 0; i < arr.length; i++) {
-      startItemChild(owner, part, arr[i], path_id);
+      startItemChild(owner, nest_ppation, arr[i], path_id);
     }
   }
 }
