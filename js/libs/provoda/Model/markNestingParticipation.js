@@ -147,7 +147,9 @@ function prependPath(nest_ppation, path_pacp_chi) {
   if (path_pacp_chi.path.length > 4) {
     return;
   }
+
   var cur_path_id = getPathIdByPathIdAndPrefix(nest_ppation.nesting_name, path_pacp_chi.key);
+
   var pos = [nest_ppation.pos].concat(path_pacp_chi.pos);
   if (!hasPathp(nest_ppation.owner, cur_path_id, path_pacp_chi.md)) {
     var cur = new PathParticipation(
@@ -172,14 +174,21 @@ function prependPath(nest_ppation, path_pacp_chi) {
 function startItemChildren(owner, nest_ppation) {
   if (!nest_ppation.md._nestings_paths) {return;}
 
+  var list = [];
+
   for (var path_id in nest_ppation.md._nestings_paths) {
     if (!nest_ppation.md._nestings_paths.hasOwnProperty(path_id)) {continue;}
 
     var arr = nest_ppation.md._nestings_paths[path_id].list;
     for (var i = 0; i < arr.length; i++) {
-      prependPath(nest_ppation, arr[i]);
+      var item = prependPath(nest_ppation, arr[i]);
+      if (item) {
+        list.push(item);
+      }
     }
   }
+
+  return list;
 }
 
 function startBubleUp(owner, nest_ppation) {
@@ -198,9 +207,32 @@ function startBubleUp(owner, nest_ppation) {
 
   */
 
-  startItem(owner, nest_ppation);
-  startItemChildren(owner, nest_ppation);
+  var first = startItem(owner, nest_ppation);
+  var list = startItemChildren(owner, nest_ppation) || [];
+  list.unshift(first);
 
+  if (!owner._participation_in_nesting) {
+    return;
+  }
+
+  bubleUp(list);
+}
+
+function bubleUp(list) {
+  while (list.length) {
+    var cur = list.shift();
+    var np_set = cur.owner._participation_in_nesting;
+    if (!np_set || !np_set.list.length) {continue;}
+
+    for (var i = 0; i < np_set.list.length; i++) {
+      var nest_ppation = np_set.list[i];
+      var item = prependPath(nest_ppation, cur);
+      if (item) {
+        list.push(item);
+      }
+      // debugger;
+    }
+  }
 }
 
 function startBubleDown() {
