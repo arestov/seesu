@@ -143,23 +143,23 @@ function startItem(owner, nest_ppation) {
   return pathp;
 }
 
-function startItemChild(owner, nest_ppation, path_pacp_chi, path_id) {
+function prependPath(nest_ppation, path_pacp_chi) {
   if (path_pacp_chi.path.length > 4) {
     return;
   }
-  var cur_path_id = getPathIdByPathIdAndPrefix(nest_ppation.nesting_name, path_id);
+  var cur_path_id = getPathIdByPathIdAndPrefix(nest_ppation.nesting_name, path_pacp_chi.key);
   var pos = [nest_ppation.pos].concat(path_pacp_chi.pos);
-  if (!hasPathp(owner, cur_path_id, path_pacp_chi.md)) {
+  if (!hasPathp(nest_ppation.owner, cur_path_id, path_pacp_chi.md)) {
     var cur = new PathParticipation(
       cur_path_id,
-      owner,
+      nest_ppation.owner,
       path_pacp_chi.md,
       pos
     );
-    addPacp(owner, cur_path_id, cur);
+    addPacp(nest_ppation.owner, cur_path_id, cur);
   }
 
-  var pathp = getPathp(owner, cur_path_id, path_pacp_chi.md);
+  var pathp = getPathp(nest_ppation.owner, cur_path_id, path_pacp_chi.md);
   pathp.pos = pos;
 
   return pathp;
@@ -177,7 +177,7 @@ function startItemChildren(owner, nest_ppation) {
 
     var arr = nest_ppation.md._nestings_paths[path_id].list;
     for (var i = 0; i < arr.length; i++) {
-      startItemChild(owner, nest_ppation, arr[i], path_id);
+      prependPath(nest_ppation, arr[i]);
     }
   }
 }
