@@ -66,6 +66,9 @@ function NestParticipation(nesting_name, md, owner, pos) {
 }
 
 function mark(md, nesting_name, cur, pos) {
+  if (!cur._provoda_id) {
+    return;
+  }
   ensure(cur);
   var key = nesting_name + ' - ' + cur._provoda_id;
 
@@ -84,6 +87,9 @@ function mark(md, nesting_name, cur, pos) {
 }
 
 function unmark(md, nesting_name, cur) {
+  if (!cur._provoda_id) {
+    return;
+  }
   var key = nesting_name + ' - ' + cur._provoda_id;
   return RemoveFromSet(cur._participation_in_nesting, key);
 }
