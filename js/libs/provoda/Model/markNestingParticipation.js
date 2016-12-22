@@ -94,11 +94,16 @@ function unmark(md, nesting_name, cur) {
   return RemoveFromSet(cur._participation_in_nesting, key);
 }
 
+function getPathpId(md, key) {
+  return md._provoda_id + ':' + key;
+}
+
 function PathParticipation(key, owner, md, pos) {
   this.owner = owner;
   this.md = md;
   this.pos = pos;
   this.key = key;
+  this.id = getPathpId(md, key);
   this.path = getPathById(key);
 
 }
@@ -108,31 +113,28 @@ function PathsParticipationSet() {
   this.list = [];
 }
 
-function ensurePathsSet(owner, path_id) {
+function ensurePathsSet(owner) {
   if (!owner._nestings_paths) {
-    owner._nestings_paths = {};
+    owner._nestings_paths = new PathsParticipationSet();
   }
 
-  if (!owner._nestings_paths[path_id]) {
-    owner._nestings_paths[path_id] = new PathsParticipationSet();
-  }
-
-  return owner._nestings_paths[path_id];
+  return owner._nestings_paths;
 }
 
 function hasPathp(owner, path_id, md) {
+  var pathp_id = getPathpId(md, path_id);
   return owner._nestings_paths &&
-    owner._nestings_paths.hasOwnProperty(path_id) &&
-    isInSet(owner._nestings_paths[path_id], md._provoda_id);
+    isInSet(owner._nestings_paths, pathp_id);
 }
 
 function getPathp(owner, path_id, md) {
-  return hasPathp(owner, path_id, md) && owner._nestings_paths[path_id].index[md._provoda_id];
+  var pathp_id = getPathpId(md, path_id);
+  return hasPathp(owner, path_id, md) && owner._nestings_paths.index[pathp_id];
 }
 
-function addPacp(owner, path_id, path_pacp) {
-  var set = ensurePathsSet(owner, path_id);
-  AddToSet(set, path_pacp.md._provoda_id, path_pacp);
+function addPacp(owner, path_pacp) {
+  var set = ensurePathsSet(owner);
+  AddToSet(set, path_pacp.id, path_pacp);
 }
 
 function startItem(owner, nest_ppation) {
@@ -141,7 +143,7 @@ function startItem(owner, nest_ppation) {
   var pos = [nest_ppation.pos];
   if (!hasPathp(owner, path_id, nest_ppation.md)) {
     var path_pacp = new PathParticipation(path_id, owner, nest_ppation.md, pos);
-    addPacp(owner, path_id, path_pacp);
+    addPacp(owner, path_pacp);
   }
 
   var pathp = getPathp(owner, path_id, nest_ppation.md);
@@ -164,7 +166,7 @@ function prependPath(nest_ppation, path_pacp_chi) {
       path_pacp_chi.md,
       pos
     );
-    addPacp(nest_ppation.owner, cur_path_id, cur);
+    addPacp(nest_ppation.owner, cur);
   }
 
   var pathp = getPathp(nest_ppation.owner, cur_path_id, path_pacp_chi.md);
@@ -182,15 +184,11 @@ function startItemChildren(owner, nest_ppation) {
 
   var list = [];
 
-  for (var path_id in nest_ppation.md._nestings_paths) {
-    if (!nest_ppation.md._nestings_paths.hasOwnProperty(path_id)) {continue;}
-
-    var arr = nest_ppation.md._nestings_paths[path_id].list;
-    for (var i = 0; i < arr.length; i++) {
-      var item = prependPath(nest_ppation, arr[i]);
-      if (item) {
-        list.push(item);
-      }
+  for (var i = 0; i < nest_ppation.md._nestings_paths.list.length; i++) {
+    var cur = nest_ppation.md._nestings_paths.list[i];
+    var item = prependPath(nest_ppation, cur);
+    if (item) {
+      list.push(item);
     }
   }
 
