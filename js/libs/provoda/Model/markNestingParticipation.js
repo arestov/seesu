@@ -69,6 +69,11 @@ function mark(md, nesting_name, cur, pos) {
   if (!cur._provoda_id) {
     return;
   }
+
+  if (!isBubblingNeeded(cur)) {
+    return;
+  }
+
   ensure(cur);
   var key = nesting_name + ' - ' + cur._provoda_id;
 
@@ -90,6 +95,11 @@ function unmark(md, nesting_name, cur) {
   if (!cur._provoda_id) {
     return;
   }
+
+  if (!isBubblingNeeded(cur)) {
+    return;
+  }
+
   var key = nesting_name + ' - ' + cur._provoda_id;
   return RemoveFromSet(cur._participation_in_nesting, key);
 }
@@ -152,6 +162,10 @@ function startItem(owner, nest_ppation) {
 }
 
 function prependPath(nest_ppation, path_pacp_chi) {
+  if (!isBubblingNeeded(path_pacp_chi.md)) {
+    return;
+  }
+
   if (path_pacp_chi.path.length > 4) {
     return;
   }
@@ -278,6 +292,10 @@ function RemoveFromSet(set, key) {
   delete set.index[key];
   set.list = findAndRemoveItem(set.list, item);
   return item;
+}
+
+function isBubblingNeeded(md) {
+  return Boolean(md._probs);
 }
 
 });
