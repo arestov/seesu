@@ -18,6 +18,8 @@ var loadNestingsByStruc = require('../structure/reactions/loadNestingsByStruc');
 var loadAllByStruc = require('../structure/reactions/loadAllByStruc');
 var getModelSources = require('../structure/getModelSources');
 
+var watchAndCollectProbes = require('../dcl/probe/watch');
+
 var countKeys = spv.countKeys;
 var cloneObj = spv.cloneObj;
 
@@ -47,6 +49,7 @@ var BrowseLevel = spv.inh(Model, {
       self.rtree = self.rtree.concat(self.map_parent.rtree);
     }
 
+    watchAndCollectProbes(self, pioneer);
   }
 }, {
   getParentMapModel: function() {
