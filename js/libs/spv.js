@@ -1653,6 +1653,45 @@ spv.countKeys = function(obj, truthy) {
 	return count;
 };
 
+spv.set = (function() {
+	return {
+    contains: isInSet,
+    get: getFromSet,
+    add: AddToSet,
+    remove: RemoveFromSet,
+	}
+
+  function getFromSet(set, key) {
+    if (isInSet(set, key)) {return set.index[key];}
+  }
+
+  function isInSet(set, key) {
+    return set.index.hasOwnProperty(key);
+  }
+
+  function AddToSet(set, key, item) {
+    if (!item) {
+      throw new Error('cant\'t add nothing');
+    }
+
+    if (isInSet(set, key)) {return item;}
+
+    set.index[key] = item;
+    set.list.push(item);
+
+    return item;
+  }
+
+  function RemoveFromSet(set, key) {
+    var item = set.index[key];
+    if (!isInSet(set, key)) {return;}
+
+    delete set.index[key];
+    set.list = findAndRemoveItem(set.list, item);
+    return item;
+  }
+})();
+
 
 })();
 

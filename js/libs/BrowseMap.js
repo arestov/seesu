@@ -5,7 +5,6 @@ var spv = require('spv');
 var get_constr = require('./provoda/structure/get_constr');
 var flatStruc = require('./provoda/structure/flatStruc');
 var morph_helpers = require('js/libs/morph_helpers');
-
 var pvState = pv.state;
 var cloneObj = spv.cloneObj;
 var filter = spv.filter;
@@ -926,6 +925,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 			self.ptree = self.ptree.concat(self.map_parent.ptree);
 			self.rtree = self.rtree.concat(self.map_parent.rtree);
 		}
+
 	}
 }, {
 	getParentMapModel: function() {
