@@ -1,13 +1,29 @@
 define(function (require) {
 'use strict';
+var spv = require('spv');
+var add = spv.set.add;
 
-return function (includer_md, md) {
-  if (!md._probs) {
-    return;
+var run = require('./run');
+
+var CollectedProbes = function() {
+  this.list = [];
+  this.index = {};
+}
+
+return function (pathp) {
+  var path_owner_md = pathp.owner;
+  if (!pathp.md._probs) {return;}
+
+  if (!path_owner_md._collected_probes) {
+    path_owner_md._collected_probes = new CollectedProbes();
   }
 
-  if (!includer_md._collected_probes) {
+  add(path_owner_md._collected_probes, pathp.id, pathp);
 
+  if (!path_owner_md._probes_collectors) {return;}
+
+  for (var i = 0; i < path_owner_md._probes_collectors.list.length; i++) {
+    run(path_owner_md._probes_collectors.list[i], pathp);
   }
 
 };

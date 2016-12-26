@@ -2,6 +2,7 @@ define(function(require){
 'use strict';
 var spv = require('spv');
 var findAndRemoveItem = spv.findAndRemoveItem;
+var reportProbe = require('../dcl/probe/report');
 
 var cache_by_ids = {};
 var count = 1;
@@ -177,6 +178,8 @@ function prependPath(nest_ppation, path_pacp_chi) {
 
   var pathp = getPathp(nest_ppation.owner, cur_path_id, path_pacp_chi.md);
   pathp.pos = pos;
+
+  reportProbe(pathp);
 
   return pathp;
 
