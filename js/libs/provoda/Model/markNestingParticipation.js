@@ -70,10 +70,6 @@ function mark(md, nesting_name, cur, pos) {
     return;
   }
 
-  if (!isBubblingNeeded(cur)) {
-    return;
-  }
-
   ensure(cur);
   var key = nesting_name + ' - ' + cur._provoda_id;
 
@@ -93,10 +89,6 @@ function mark(md, nesting_name, cur, pos) {
 
 function unmark(md, nesting_name, cur) {
   if (!cur._provoda_id) {
-    return;
-  }
-
-  if (!isBubblingNeeded(cur)) {
     return;
   }
 
