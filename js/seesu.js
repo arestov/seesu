@@ -19,6 +19,7 @@ var View = require('View');
 var localize_dict = require('js/libs/localizer');
 var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
+var prepare = require('js/libs/provoda/structure/prepare');
 
 var app_env = app_serv.app_env;
 
@@ -727,5 +728,5 @@ var SeesuApp = spv.inh(AppModel, {
 
 });
 
-return pv.markStrucure(SeesuApp, SeesuApp);
+return prepare(SeesuApp);
 });
