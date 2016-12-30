@@ -1,6 +1,7 @@
 define(function (require) {
 'use strict';
 var spv = require('spv');
+var transportName = require('./transportName');
 
 var RunProbes = function () {
   this.list = [];
@@ -50,7 +51,7 @@ return function (bwlev, pathp) {
   for (var name in set.grouped) {
     if (!set.grouped.hasOwnProperty(name)) {continue;}
 
-    md.updateNesting('__run_probe_' + name, set.grouped[name]);
+    md.updateNesting(transportName(name), set.grouped[name]);
   }
 
 };

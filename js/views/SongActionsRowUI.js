@@ -160,6 +160,10 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
     this._super();
     this.createVolumeControl();
   },
+  'nest_probe-context_parts2': {
+    probe_name: 'song_action',
+    source: 'current_md'
+  },
   'compx-vis_is_visible': [['^mp_show_end'], function (value) {
     return Boolean(value);
   }],
@@ -202,33 +206,33 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
     }
   },
   "compx-key_vol_hole_w": [
-    ['vis_is_visible', 'vis_con_appended'],
-    function (visible, apd) {
-      if (visible && apd) {
-        return this.getBoxDemensionKey('volume-hole-width');
+      ['vis_is_visible', 'vis_con_appended'],
+      function (visible, apd) {
+        if (visible && apd) {
+          return this.getBoxDemensionKey('volume-hole-width');
+        }
       }
-    }
-  ],
+    ],
   "compx-vis_volume-bar-max-width": {
-    depends_on: ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
-    fn: function(vvh_w, v_bar_o_w, v_bar_w){
-      if (vvh_w){
-        return  vvh_w - ( v_bar_o_w - v_bar_w);
-      }
+      depends_on: ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
+      fn: function(vvh_w, v_bar_o_w, v_bar_w){
+        if (vvh_w){
+          return  vvh_w - ( v_bar_o_w - v_bar_w);
+        }
 
-    }
-  },
-  "compx-vis_volume": {
-    depends_on: ['volume', 'vis_volume-bar-max-width'],
-    fn: function(volume_fac, vvb_mw){
-      if (typeof volume_fac =='undefined'){
-        return 'auto';
-      } else if (vvb_mw){
-        return Math.floor(volume_fac * vvb_mw) + 'px';
-      } else {
-        return (volume_fac * 100)  + '%';
       }
-    }
+    },
+  "compx-vis_volume": {
+      depends_on: ['volume', 'vis_volume-bar-max-width'],
+      fn: function(volume_fac, vvb_mw){
+        if (typeof volume_fac =='undefined'){
+          return 'auto';
+        } else if (vvb_mw){
+          return Math.floor(volume_fac * vvb_mw) + 'px';
+        } else {
+          return (volume_fac * 100)  + '%';
+        }
+      }
   },
   createVolumeControl: function() {
     this.vol_cc = this.tpl.ancs['volume-control'];

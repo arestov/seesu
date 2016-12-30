@@ -6,10 +6,10 @@ var spv = require('spv');
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
-		return function Probe(opts, data, params, more, states) {
-			fn(this, opts, data, params, more, states);
-		};
-	},
+    return function Probe(opts, data, params, more, states) {
+      fn(this, opts, data, params, more, states);
+    };
+  },
 });
 
 return function prepare(root) {
