@@ -271,7 +271,7 @@ var flatStruc = spv.memorize(function flatStruc(md, struc) {
 return flatStruc;
 
 function flatSources(struc, parent_path) {
-  if (!struc) {return;}
+  if (!struc || !struc.main) {return;}
 
   var result_list = [];
 
@@ -306,7 +306,7 @@ function flatSources(struc, parent_path) {
       dep_id: dep_counter++,
       type: 'nesting',
       value: path,
-      limit: obj[name].main.limit,
+      limit: obj[name].main && obj[name].main.limit,
     });
 
     result_list.push.apply(result_list, flatSources(obj[name], path));

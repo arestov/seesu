@@ -93,7 +93,8 @@ var ShareRowUI = spv.inh(View, {}, {
   focusToInput: function() {
     this.tpl.ancs['share_input'][0].focus();
   },
-  "stch-active_view": function(target, state){
+  "stch-vis_con_appended": function(target, state){
+    // !!
     if (state){
       if (target.expand){
         target.expand();
@@ -150,8 +151,40 @@ var ScrobbleRowUI = spv.inh(View, {}, {
 
 });
 
+var ArrowPart = spv.inh(etc_views.ActionsRowUI, {}, {
+  // bindBase: function() {
+  //   debugger;
+  //   window.ee1 = this;
+  // },
+  'compx-active_part': [
+    ['vis_con_appended', '^current_md$exists', 'url_part'],
+    function(vis_con_appended, parent_visible, url_part) {
+      return vis_con_appended && parent_visible && url_part && url_part.slice(1);
+    }
+  ],
+  getCurrentButton: function() {
+    var active_part = this.state('active_part');
+    if (active_part) {
+      return this.parent_view.parent_view.tpl.ancs['bt' + active_part];
+    }
+  }
+});
 
-
+// __run_probe_song_action
+var Probe = spv.inh(View, {}, {
+  children_views: {
+    current_md: {arrow: ArrowPart}
+  },
+  children_views_by_mn: {
+    current_md: {
+      'row-lastfm': ScrobbleRowUI,
+      'row-love': LoveRowUI,
+      'row-share': ShareRowUI,
+      'row-tag': SongActTaggingControl,
+      'row-playlist-add': SongActPlaylistingUI,
+    }
+  },
+});
 
 
 var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
@@ -173,16 +206,9 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
       return mp_show_end;
     }
   ],
-  children_views_by_mn: {
-    context_parts: {
-      'row-lastfm': ScrobbleRowUI,
-      'row-love': LoveRowUI,
-      'row-share': ShareRowUI,
-      'row-tag': SongActTaggingControl,
-      'row-playlist-add': SongActPlaylistingUI,
-    }
+  children_views: {
+    __run_probe_song_action: Probe
   },
-
   getVHoleWidth: function() {
     return this.tpl.ancs['v-hole'].width();
   },
