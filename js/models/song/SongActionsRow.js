@@ -78,9 +78,7 @@ var LoveRow = spv.inh(comd.BaseCRow, {
   }
 }, {
   actionsrow_src: '^',
-  'nest-lfm_loveit': [LfmLoveIt, {
-    idle_until: 'active_view'
-  }],//ver important to not init this each song selected
+  'nest-lfm_loveit': [LfmLoveIt],
   model_name: 'row-love'
 });
 
