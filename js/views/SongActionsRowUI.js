@@ -192,19 +192,12 @@ var Probe = spv.inh(View, {}, {
 
 
 var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
-	'nest_probe-context_parts2': {
-		probe_name: 'song_action',
-		source: 'current_md'
+	dom_rp: true,
+	bindBase: function(){
+		this._super();
+		this.createVolumeControl();
 	},
   "+states": {
-    "vis_is_visible": [
-      "compx",
-      ['^mp_show_end'],
-      function (value) {
-		return Boolean(value);
-      }
-    ],
-
     "p_mpshe": [
       "compx",
 		['^mp_show_end'],
