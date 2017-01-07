@@ -12,6 +12,8 @@ var NestProbeDcl = function (name, data) {
 var checkNestProbes = checkPrefix('nest_probe-', NestProbeDcl, '_nest_probe');
 
 return function check(self, props) {
+  // kinda dead code
+
   var probes = checkNestProbes(self, props);
 
   if (!probes) {return;}
