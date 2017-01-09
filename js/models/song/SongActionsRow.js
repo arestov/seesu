@@ -122,6 +122,7 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
       place_of_current: 'action',
       place_of_nav: null,
     }],
+    steps_to_surface_limit: 1,
   },
   sub_page: parts_storage,
   'nest_posb-context_parts': constrs_names,
