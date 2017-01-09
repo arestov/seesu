@@ -2,6 +2,8 @@ define(function (require) {
 'use strict';
 var spv = require('spv');
 var transportName = require('./transportName');
+var initDeclaredNestings = require('../../initDeclaredNestings');
+var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 
 var RunProbes = function () {
   this.list = [];
@@ -38,6 +40,13 @@ return function (bwlev, pathp) {
       path: pathp.path,
       name: cur.name,
     });
+
+    var initial = cur.options && cur.options.initial;
+    if (initial) {
+      var subpage = getSPByPathTemplate(md.app, md, initial);
+      con.updateNesting('current_md', subpage);
+    }
+
     spv.set.add(set, key, con);
 
     set.grouped[cur.name] = set.grouped[cur.name] || [];
