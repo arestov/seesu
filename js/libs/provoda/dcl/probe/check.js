@@ -5,6 +5,7 @@ var ProbeDcl = function (name, data) {
   this.name = name;
   this.type = data.main[0];
   this.main = data.main;
+  this.steps_to_surface_limit = data.steps_to_surface_limit;
 };
 var checkApi = checkPrefix('probe-', ProbeDcl, '_probs');
 

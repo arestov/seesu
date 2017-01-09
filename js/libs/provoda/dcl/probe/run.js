@@ -58,6 +58,12 @@ return function (bwlev, pathp) {
 
 
 function canCreateProbe(bwlev, pathp, dcl) {
+  if (typeof dcl.steps_to_surface_limit !== 'undefined') {
+    if (pathp.path.length > dcl.steps_to_surface_limit) {
+      return false
+    }
+  }
+
   return true;
 }
 
