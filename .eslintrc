@@ -1,0 +1,33 @@
+{
+  "env": {
+    "node": true,
+    "amd": true
+  },
+  "globals": {
+    "window": false,
+    "requirejs": false,
+  },
+  "rules": {
+    "indent": [
+      0,
+      1,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "curly": 2,
+    "no-use-before-define": [
+      2,
+      {
+        "functions": false
+      }
+    ],
+    "no-undef": 2,
+    "no-unused-vars": 1,
+    "strict": [
+      2,
+      "function"
+    ],
+    "dot-notation": 0
+  }
+}
