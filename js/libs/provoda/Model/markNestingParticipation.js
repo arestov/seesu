@@ -151,6 +151,9 @@ function startItem(owner, nest_ppation) {
 
   var pathp = getPathp(owner, path_id, nest_ppation.md);
   pathp.pos = pos;
+
+  reportProbe(pathp);
+
   return pathp;
 }
 
