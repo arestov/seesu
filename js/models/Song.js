@@ -247,9 +247,6 @@ function handleFile(self, file) {
 				return "";
 			}
 		},
-		mlmDie: function() {
-			this.hideOnMap();
-		},
 		'compx-url_part': [
 			['^playlist_artist', 'artist', 'track'],
 			function (playlist_artist, artist, track) {

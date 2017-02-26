@@ -154,7 +154,6 @@ var AppModelBase = spv.inh(pv.Model, {
 			'destroy': function(change) {
 				var md = change.target.getMD();
 				var bwlev = change.bwlev.getMD();
-				md.mlmDie();
 				pv.update(md, 'mp_show', false);
 				pv.update(bwlev, 'mp_show', false);
 				complexBrowsing(bwlev, md,  false);

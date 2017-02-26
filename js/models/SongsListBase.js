@@ -495,7 +495,6 @@ return spv.inh(LoadableList, {
 			};
 		},
 		die: function(){
-			this.hideOnMap();
 			this._super();
 			for (var i = this.getMainlist().length - 1; i >= 0; i--){
 				this.getMainlist()[i].die();

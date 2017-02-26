@@ -481,7 +481,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		},
 		'destroy': function(change) {
 			var md = change.bwlev.getMD();
-		//	md.mlmDie();
 			this.setVMpshow(this.getStoredMpx(md), false);
 		}
 	},

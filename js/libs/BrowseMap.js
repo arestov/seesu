@@ -1588,12 +1588,6 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	getParentMapModel: function() {
 		return this.map_parent;
 	},
-	mlmDie: function(){
-		return;
-	},
-	hideOnMap: function() {
-		pv.update(this, 'mp_show', false);
-	},
 	setFullUrl: function(url) {
 		pv.update(this, 'mp_full_url ', url);
 	},

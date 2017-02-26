@@ -248,10 +248,6 @@ return spv.inh(BrowseMap.Model, {
 	simplify: function() {
 		return spv.cloneObj({}, this, false, ['track', 'artist']);
 	},
-
-	mlmDie: function() {
-
-	},
 	getFullName: function(artist, track, allow_short){
 		var n = '';
 		if (this.state('artist')){
