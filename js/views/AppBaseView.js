@@ -618,16 +618,22 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		return target_md;
 	},
 	'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
+    var mp_show_states = nesting_data.residents_struc.mp_show_states;
+    var transaction = nesting_data.transaction;
+    var old_transaction = old_nesting_data && old_nesting_data.transaction;
+
+    var bwlevs = nesting_data.residents_struc && nesting_data.residents_struc.bwlevs;
+    var mds = nesting_data.residents_struc.items;
 		var target_md;
-		var array = nesting_data.residents_struc && nesting_data.residents_struc.bwlevs;
-		var transaction_data = nesting_data.transaction;
-		array = this.getRendOrderedNesting(nesname, array) || array;
+
+
+		var array = this.getRendOrderedNesting(nesname, bwlevs) || bwlevs;
 		var i, cur;
 
-		var animation_data = this.readMapSliceAnimationData(transaction_data);
+		var animation_data = this.readMapSliceAnimationData(transaction);
 
 		for (i = array.length - 1; i >= 0; i--) {
-			var cur_md = nesting_data.residents_struc.items[i];
+			var cur_md = mds[i];
 			cur = array[i];
 
 			var dclr = pv.$v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
@@ -638,10 +644,10 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
 		//avoid nextTick method!
 
-		if (this.completely_rendered_once['map_slice'] && old_nesting_data && old_nesting_data.transaction.changes_number + 1 === nesting_data.transaction.changes_number){
-			if (transaction_data){
-				this.animateMapSlice(transaction_data, animation_data);
-				if (!transaction_data.bwlev){
+		if (this.completely_rendered_once['map_slice'] && old_transaction && old_transaction.changes_number + 1 === transaction.changes_number){
+			if (transaction){
+				this.animateMapSlice(transaction, animation_data);
+				if (!transaction.bwlev){
 					target_md = this.findBMapTarget(array);
 
 					if (target_md){
@@ -661,7 +667,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 			}
 			this.markAnimationStart(models, -1);
 			for (i = 0; i < array.length; i++) {
-				this.setVMpshow(this.getStoredMpx(array[i]), nesting_data.residents_struc.mp_show_states[i]);
+				this.setVMpshow(this.getStoredMpx(array[i]), mp_show_states[i]);
 			}
 			pv.update(this, 'current_lev_num', pv.state(target_md, 'map_level_num'), sync_opt);
 			this.markAnimationEnd(models, -1);
