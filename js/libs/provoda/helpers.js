@@ -6,6 +6,7 @@ var utils = require('./utils/index');
 var utils_simple = require('./utils/simple')
 var pvState = require('./utils/state');
 var stateGetter = require('./utils/stateGetter');
+var probeDiff = require('./probeDiff');
 var getEncodedState = utils.getEncodedState;
 var getShortStateName = utils.getShortStateName;
 
@@ -34,6 +35,7 @@ function getBwlevId(view) {
 }
 
 return {
+	probeDiff: probeDiff,
 	getRDep: (function() {
 		var getTargetName = spv.memorize(function getTargetName(state_name) {
 			return state_name.split( ':' )[ 1 ];

@@ -622,6 +622,8 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     var transaction = nesting_data.transaction;
     var old_transaction = old_nesting_data && old_nesting_data.transaction;
 
+    var diff = pv.hp.probeDiff(nesting_data.transaction.bwlev, old_nesting_data && old_nesting_data.transaction.bwlev, nesting_data.transaction.changes_number);
+
     var bwlevs = nesting_data.residents_struc && nesting_data.residents_struc.bwlevs;
     var mds = nesting_data.residents_struc.items;
 		var target_md;
@@ -630,7 +632,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		var array = this.getRendOrderedNesting(nesname, bwlevs) || bwlevs;
 		var i, cur;
 
-		var animation_data = this.readMapSliceAnimationData(transaction);
+		var animation_data = this.readMapSliceAnimationData(diff);
 
 		for (i = array.length - 1; i >= 0; i--) {
 			var cur_md = mds[i];
