@@ -15,7 +15,6 @@ var getNestingConstr = get_constr.getNestingConstr;
 var getDeclrConstr = get_constr.getDeclrConstr;
 
 /*
-исправить публичный freeze - нужен чтобы понимать что не нужно удалять а просто прятать из рендеринга
 поправить навигацию
 проверить работу истории
 поправить остатки wantSong
@@ -204,7 +203,7 @@ var BrowseMap = spv.inh(pv.Model, {
 	},
 	getLevel: function(num){
 		if (this.levels[num]){
-			return this.levels[num].free || this.levels[num].freezed;
+			return this.levels[num].free;
 		} else{
 			return false;
 		}
@@ -279,56 +278,13 @@ var BrowseMap = spv.inh(pv.Model, {
 			this.levels[num] = {};
 		}
 		var levcon = this.levels[num];
-		if (levcon.free && levcon.free != levcon.freezed){
+		if (levcon.free){
 			return levcon.free;
 		} else{
 
 			levcon.free = this.createLevel(num, parent_bwlev, resident);
 			return levcon.free;
 		}
-	},
-	freezeMapOfLevel : function(num){
-		var
-			i,
-			fresh_freeze = false,
-			l = Math.min(num, this.levels.length - 1);
-
-		this.startChangesGrouping('freezing');
-
-		for (i = l; i >= 0; i--){
-			var curf = this.levels[i];
-			if (curf){
-				if (curf.free){
-					if (curf.free != curf.freezed){
-						if (curf.freezed){ //removing old freezed
-							ba_die( curf.freezed );
-							curf.freezed.closed = false;
-							curf.freezed = null;
-						}
-						curf.freezed = curf.free;
-						ba_markAsFreezed( curf.freezed );
-						fresh_freeze = true;
-					}
-				}
-				curf.free = null;
-			}
-		}
-
-
-		//clearing if have too much levels !?!?!??!?!?!
-		if (l + 1 < this.levels.length -1) {
-			for (i= l + 1; i < this.levels.length; i++) {
-				var curd = this.levels[i];
-				if (curd.freezed){
-					curd.freezed.closed = false;
-					ba_die( curd.freezed );
-					curd.freezed = null;
-				}
-
-			}
-		}
-		this.finishChangesGrouping('freezing');
-		return fresh_freeze;
 	},
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
@@ -339,9 +295,7 @@ var BrowseMap = spv.inh(pv.Model, {
 	hideLevel: function(lev, exept, only_free){
 		if (lev){
 			if (!only_free){
-				if (lev.freezed && lev.freezed != exept){
-					ba_hide(lev.freezed);
-				}
+
 			}
 
 			this.hideFreeLevel(lev, exept);
@@ -809,10 +763,6 @@ var showMOnMap = function(map, model, bwlev, skip_detach) {
 				ba_sliceTillMe(bwlev);
 			}
 
-			if (!ba_isOpened(bwlev)){
-				// если заморожены - удаляем "незамороженное" и углубляемся до нужного уровня
-				ba_unfreeze(map, bwlev);
-			}
 			result = bwlev;
 		} else {
 			if (!model.model_name){
@@ -1791,25 +1741,8 @@ function ba__sliceTM(bwlev){ //private alike
 	}
 }
 
-function ba_unfreeze(map, bwlev) {
-	var just_started_zoomin = map.startChangesGrouping('zoom-in', true);
-
-	ba_show(bwlev);
-	map.current_level_num = bwlev.state('map_level_num');
-
-	if (just_started_zoomin){
-		map.finishChangesGrouping('zoom-in');
-	}
-}
-
 function ba_sliceTillMe(bwlev){
 	return ba__sliceTM(bwlev);
-}
-
-function ba_markAsFreezed(bwlev) {
-	var md = bwlev.getNesting('pioneer');
-	bwlev.closed = true;
-	pv.update(md, 'mp_freezed', true);
 }
 
 function ba_inUse(bwlev){
@@ -1824,14 +1757,6 @@ function ba_canReuse(bwlev) {
 	//если модель прикреплена к карте
 	return bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev));
 }
-
-
-BrowseMap.freeze = function ba_freeze(bwlev){
-	if (ba_isOpened(bwlev)){
-		bwlev.map.freezeMapOfLevel(bwlev.state('map_level_num'));
-	}
-};
-
 
 BrowseMap.getStruc = (function() {
 	var path = 'm_children.children.map_slice.main.m_children.children_by_mn.pioneer';
