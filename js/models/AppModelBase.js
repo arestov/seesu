@@ -220,10 +220,9 @@ var AppModelBase = spv.inh(pv.Model, {
 		};
 
 		return function(changes, models, bwlevs) {
-			var
-				i,
-				target_item,
-				all_changhes = spv.filter(changes.array, 'changes');
+			var i;
+			var target_item;
+			var all_changhes = spv.filter(changes.array, 'changes');
 
 			all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
 			//var models = spv.filter(all_changhes, 'target');
