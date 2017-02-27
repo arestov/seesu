@@ -67,11 +67,6 @@ var PlayerComplex = spv.inh(PlayerBase, {
 			var _this = this;
 			if (this.wanted_song !== mo){
 				removeCurrentWantedSong(this);
-				if (!this.c_song){
-					if (mo.map_parent.lev){
-						mo.map_parent.lev.freeze();
-					}
-				}
 				pv.update((this.wanted_song = mo), 'want_to_play', true);
 
 				var opts = mo.state('files_search');
@@ -158,14 +153,6 @@ var PlayerComplex = spv.inh(PlayerBase, {
 
 					if (this.nowPlaying){
 						this.nowPlaying(mo);
-					}
-
-					var bwlev = this.resolved.getNesting('bwlev');
-					var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, mo.map_parent);
-
-					if (pl_bwlev){
-						BrowseMap.freeze(pl_bwlev);
-						// pl_bwlev.freeze();
 					}
 
 					this.c_song = mo;

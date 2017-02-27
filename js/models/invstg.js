@@ -270,8 +270,6 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 	// init: function(opts) {
 	// 	this._super.apply(this, arguments);
 
-	// 	pv.update(this, 'mp_freezed', false);
-
 	// },
 	'compx-focused': [
 		['focused', 'mp_has_focus'],
