@@ -6,12 +6,7 @@ var baseNavUI = spv.inh(View, {}, {
 		sample_name: 'common-nav'
 	},
 
-	'compx-nav_clickable':{
-		depends_on: ['mp_stack', 'mp_has_focus'],
-		fn : function(mp_stack, mp_has_focus) {
-			return !mp_has_focus && ((mp_stack == Boolean(mp_stack)) || mp_stack == 'top');
-		}
-	},
+	'compx-nav_clickable': [['^nav_clickable']],
 	tpl_events:{
 		zoomOut: function() {
 			if (this.state('nav_clickable')){
@@ -39,4 +34,3 @@ return {
 	investgNavUI:investgNavUI
 };
 });
-

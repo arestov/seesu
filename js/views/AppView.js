@@ -182,7 +182,36 @@ var BrowseLevNavView = spv.inh(View, {}, {
 	'collch-pioneer': {
 		by_model_name: true,
 		place: 'c'
-	}
+	},
+	'compx-nav_clickable':{
+		depends_on: ['mp_stack', 'mp_has_focus'],
+		fn : function(mp_stack, mp_has_focus) {
+			return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
+		}
+	},
+	'compx-mp_stack': [
+		['$index', '$index_back', 'vmp_show'],
+		function (index, index_back, vmp_show) {
+			if (index == 0) {
+				return vmp_show && 'root';
+			}
+
+			if (index_back == 0) {
+				// title
+				return;
+			}
+
+			if (index_back == 1) {
+				return 'top';
+			}
+
+			if (index == 1) {
+				return 'bottom';
+			}
+
+			return 'middle';
+		}
+	]
 });
 
 var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {

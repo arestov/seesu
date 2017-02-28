@@ -31,18 +31,23 @@
   <body>
 	<div id="ui-samples" style="display:none">
 		
-<span class="brow_lev_nav" pv-class="hidden: !vmp_show"></span>
 <span
-	class="common-nav nav-item"
+	class="brow_lev_nav"
+	pv-class="
+		hidden: !vmp_show
+		stackked: {{ mp_stack == 'root' }}
+		stackk-top: {{ mp_stack == 'top' }}
+		stackk-bottom: {{ mp_stack == 'bottom' }}
+		stackk-middle: {{ mp_stack == 'middle' }}
+	"></span>
+<span
+	class="common-nav nav-item nav-usual"
 	pv-props="title:{{nav_title}}"
 	pv-events="click:zoomOut"
 	pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
 	pv-class="
 		nnav: !mp_has_focus
-		stack-top: {{ mp_stack == 'top' }}
-		stack-bottom: {{ mp_stack == 'bottom' }}
-		stack-middle: {{ mp_stack == 'middle' }}
 		nav_clickable: nav_clickable
 	"
 
@@ -50,7 +55,7 @@
 		pv-text="{{nav_title}}"
 	>&nbsp;</span><b></b></span>
 <span
-	class="search_page-nav nav-item nav-search_results"
+	class="search_page-nav nav-item nav-usual nav-search_results"
 	title="Search results"
 	pv-props="title:{{nav_title}}"
 	pv-events="click:zoomOut"
@@ -58,14 +63,11 @@
 
 	pv-class="
 		nnav: !mp_has_focus
-		stack-top: {{ mp_stack == 'top' }}
-		stack-bottom: {{ mp_stack == 'bottom' }}
-		stack-middle: {{ mp_stack == 'middle' }}
 		nav_clickable: nav_clickable
 	"
 	><b></b><span class="icon">&nbsp;</span></span>
 <span
-	class="start_page-nav nav-item nav-start"
+	class="start_page-nav nav-item nav-start nav-root"
 	title="Seesu start page"
 	pv-props="title:{{nav_title}}"
 	pv-events="click:zoomOut"
@@ -73,7 +75,6 @@
 
 	pv-class="
 		nav-button: !mp_has_focus
-		stacked: {{ mp_stack && (mp_stack == !!mp_stack) }}
 		nav_clickable: nav_clickable
 	"
 	><b></b><span class="icon">&nbsp;</span></span>
