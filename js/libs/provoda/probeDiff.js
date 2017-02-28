@@ -13,7 +13,7 @@ var getParents = function (mdrp) {
   return result;
 };
 
-var pathAsSteps = function (path) {
+var pathAsSteps = function (path, value) {
   if (!path) {return;}
   var result = new Array(path.length);
   for (var i = 0; i < path.length; i++) {
@@ -21,7 +21,7 @@ var pathAsSteps = function (path) {
 
     result[i] = {
       type: 'move-view',
-      value: true,
+      value: value,
       bwlev: cur.getMDReplacer(),
       target: cur.getNesting('pioneer').getMDReplacer()
     };
@@ -46,8 +46,8 @@ return function probeDiff(value, oldvalue, changes_number) {
     var curA = value_full_path[i];
     var curB = oldvalue_full_path[i];
     if (curA !== curB) {
-      value_path_to = value_full_path.slice(i).reverse();
-      oldvalue_path_from = oldvalue_full_path.slice(i);
+      oldvalue_path_from = oldvalue_full_path.slice(i).reverse();
+      value_path_to = value_full_path.slice(i);
       break;
     }
     common_parent = curA;
@@ -57,13 +57,16 @@ return function probeDiff(value, oldvalue, changes_number) {
   if (oldvalue_path_from && oldvalue_path_from.length) {
     changes_wrap.push({
       name: 'zoom-out',
-      changes: pathAsSteps(oldvalue_path_from)
+      changes: pathAsSteps(oldvalue_path_from, false)
     });
   }
-  changes_wrap.push({
-    name: 'zoom-in',
-    changes: pathAsSteps(value_path_to)
-  });
+  if (value_path_to && value_path_to.length) {
+    changes_wrap.push({
+      name: 'zoom-in',
+      changes: pathAsSteps(value_path_to, true)
+    });
+  }
+
 
   return {
     changes_number: changes_number,

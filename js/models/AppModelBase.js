@@ -23,13 +23,15 @@ var AppModelBase = spv.inh(pv.Model, {
 
 		pv.updateNesting(this, 'navigation', [start_page]);
 		pv.updateNesting(this, 'start_page', start_page);
+
 		this.map = new BrowseMap({app: this}, {start: this.start_page});
+
 		this.map
 			// .init(this.start_page)
 
-			.on('changes', function(changes, models, bwlevs) {
+			.on('changes', function(changes, models, bwlevs, bwlev) {
 				//console.log(changes);
-				this.animateMapChanges(changes, models, bwlevs);
+				this.animateMapChanges(changes, models, bwlevs, bwlev);
 			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
 				this.changeNavTree(nav_tree);
@@ -51,6 +53,10 @@ var AppModelBase = spv.inh(pv.Model, {
 						}
 					}
 				}, this.getContextOptsI());
+		}
+
+		if (!this.current_mp_bwlev) {
+			this.current_mp_bwlev = this.map.getCurrentLevel();
 		}
 
 		return this.map;
@@ -133,18 +139,24 @@ var AppModelBase = spv.inh(pv.Model, {
 				var bwlev = change.bwlev.getMD();
 
 				bindMMapStateChanges(md.app, md);
+				debugger;
 
-				var parent = change.target.getMD().getParentMapModel();
-				var bwlev_parent = change.bwlev.getMD().getParentMapModel();
-				if (parent){
-					pv.update(bwlev_parent, 'mp_has_focus', false);
-					pv.update(parent, 'mp_has_focus', false);
+				if (change.value) {
+					var parent = change.target.getMD().getParentMapModel();
+					var bwlev_parent = change.bwlev.getMD().getParentMapModel();
+					if (parent){
+						pv.update(bwlev_parent, 'mp_has_focus', false);
+						pv.update(parent, 'mp_has_focus', false);
+					}
 				}
+
+
 				pv.update(md, 'mp_show', change.value);
 				pv.update(bwlev, 'mp_show', change.value);
 				complexBrowsing(bwlev, md,  change.value);
 			},
 			'zoom-out': function(change) {
+				debugger;
 				var md = change.target.getMD();
 				var bwlev = change.bwlev.getMD();
 				pv.update(bwlev, 'mp_show', false);
@@ -219,10 +231,12 @@ var AppModelBase = spv.inh(pv.Model, {
 			return bwlev;
 		};
 
-		return function(changes, models, bwlevs) {
+		return function(_, models, bwlevs, bwlev) {
+			var diff = pv.hp.probeDiff(bwlev.getMDReplacer(), this.current_mp_bwlev && this.current_mp_bwlev.getMDReplacer(), _.changes_number);
+			var changes = diff;
 			var i;
-			var target_item;
 			var all_changhes = spv.filter(changes.array, 'changes');
+
 
 			all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
 			//var models = spv.filter(all_changhes, 'target');
@@ -237,15 +251,6 @@ var AppModelBase = spv.inh(pv.Model, {
 				}
 			}
 
-			for (i = changes.array.length - 1; i >= 0; i--) {
-				//вычисление модели, которая станет главной на экране
-				var cur = changes.array[i];
-				if (mapch_handlers[cur.name]){
-					var item = mapch_handlers[cur.name].call(null, cur.changes);
-					target_item = item;
-					break;
-				}
-			}
 			/*
 				подсветить/заменить текущий источник
 				проскроллить к источнику при отдалении
@@ -260,32 +265,27 @@ var AppModelBase = spv.inh(pv.Model, {
 			//}
 
 
-			if (target_item){
+			if (diff.target){
 				if (this.current_mp_md) {
 					pv.update(this.current_mp_md, 'mp_has_focus', false);
 				}
-				var target_md = this.current_mp_md = target_item.target.getMD();
+				var target_md = this.current_mp_md = diff.target.getMD();
 
-				this.current_mp_bwlev = depth(target_item.bwlev.getMD(), this.current_mp_bwlev);
+				this.current_mp_bwlev = depth(diff.bwlev.getMD(), this.current_mp_bwlev);
 
 				pv.update(target_md, 'mp_has_focus', true);
-				pv.update(target_item.bwlev.getMD(), 'mp_has_focus', true);
+				pv.update(diff.bwlev.getMD(), 'mp_has_focus', true);
 
 				pv.update(this, 'show_search_form', !!target_md.state('needs_search_from'));
 				pv.update(this, 'full_page_need', !!target_md.full_page_need);
 			//	pv.update(this, 'current_mp_md', target_md._provoda_id);
 				pv.updateNesting(this, 'current_mp_md', target_md);
-				pv.updateNesting(this, 'current_mp_bwlev', target_item.bwlev.getMD());
+				pv.updateNesting(this, 'current_mp_bwlev', diff.bwlev.getMD());
 				//pv.update(target_md, 'mp-highlight', false);
 
 
 			}
 
-
-			if (target_item){
-				changes.target = target_item && target_item.target;
-				changes.bwlev = target_item && target_item.bwlev;
-			}
 
 			var mp_show_wrap;
 			if (models){
