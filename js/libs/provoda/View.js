@@ -1628,6 +1628,7 @@ var View = spv.inh(StatesEmitter, {
 				view.current_motivator = this.current_motivator;
 
 				pvUpdate(view, '$index', counter);
+				pvUpdate(view, '$index_back', (array.length - 1) - counter);
 				pvUpdate(view, '$first', $first);
 				pvUpdate(view, '$last', $last);
 				pvUpdate(view, '$middle', !($first || $last));
