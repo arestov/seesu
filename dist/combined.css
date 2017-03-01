@@ -1916,24 +1916,20 @@ html.opera-extension{
 		}
 
 
-.stack-top,
 .stackk-top .nav-usual{
 	width:48px !important;
 	}
 
 
-.stack-middle, .stack-top, .stack-bottom,
 .stackk-middle .nav-usual, .stackk-top .nav-usual, .stackk-bottom .nav-usual{
 	margin-left:-42px;
 	}
 
 
-.stack-bottom, .stack-middle,
 .stackk-bottom .nav-usual, .stackk-middle .nav-usual{
 	max-width:15px;
 	}
 
-.stacked,
 .stackked .nav-root{
 	margin-right: 37px !important;
 
@@ -2063,7 +2059,6 @@ html.opera-extension{
 }
 @media (max-width:550px) {
 
-	.daddy .stack-top,
 	.daddy .stackk-top  .nav-usual{
 		width:30px;
 		}
