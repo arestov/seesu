@@ -14,10 +14,9 @@ return function LocalWatchRoot(md, nwatch, data) {
 		this.ordered_items_changed = 0;
 		this.one_item_mode = false;
 
-		this.state_handler = nwatch.state_handler;
+		// this.state_handler = nwatch.state_handler;
 		// this.zip_name = nwatch.zip_func;
 		this.distance = 0;
-		this.callback = nwatch.handler; // mainely for 'stch-'
 
 		this.state_handler = nwatch.handle_state_change;
 		// handle state change
