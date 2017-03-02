@@ -12,6 +12,10 @@ return function checkNesting(self, collection_name, array, removed) {
   var calls_flow = self._getCallsFlow();
   for (var i = 0; i < changed_nawchs.length; i++) {
     var cur = changed_nawchs[i];
+    if (!cur.nwatch.handler) {
+      continue;
+      // TODO if we don't have state_handler that we don't need order and preparations to keep order
+    }
     calls_flow.pushToFlow(null, cur.nwatch, null, array, handleEndItems, null, self.current_motivator);
   }
 };

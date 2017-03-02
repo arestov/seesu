@@ -152,7 +152,8 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
       }
     }
 
-    if (skip === 0) {
+    if (skip === 0 && subl_wtch.nwatch.handler) {
+      // TODO if we don't have state_handler that we don't need order and preparations to keep order
       var calls_flow = self._getCallsFlow();
       calls_flow.pushToFlow(null, subl_wtch.nwatch, null, null, handleEndItems, null, self.current_motivator);
     }
