@@ -7,7 +7,7 @@ var getStrucSources = BrowseMap.getStrucSources;
 var AppModelBase = spv.inh(pv.Model, {
 	init: function(target) {
 		target.binded_models = {};
-		target.navigation = [];
+		// target.navigation = [];
 		// target.map = ;
 		target.current_mp_md = null;
 		target.on('child_change-current_mp_md', function(e) {
@@ -19,27 +19,48 @@ var AppModelBase = spv.inh(pv.Model, {
 		target.views_strucs = {};
 	}
 }, {
+	'compx-full_url': [
+		['@url_part:navigation.pioneer'],
+		function (list) {
+			return list && list.join('');
+		}
+	],
+	'compx-doc_title': [
+		['@nav_title:navigation.pioneer'],
+		function (list) {
+			if (!list) {
+				return 'Seesu';
+			}
+			var as_first = list[list.length - 1];
+			var as_second = list[list.length - 2];
+			if (!as_second) {
+				return as_first;
+			}
+			return as_first + ' ← ' + as_second;
+		}
+	],
+	'effect-browser-location': [
+	  [
+	    ['#navi', 'self'], ['full_url'],
+	    function(navi, self, url) {
+				if (url == null) {return;}
+				var bwlev = self.getNesting('current_mp_bwlev');
+				navi.set(url, bwlev);
+				self.trackPage(bwlev.getNesting('pioneer').model_name);
+	    }
+	  ],
+	  [['doc_title']]
+	],
 	initMapTree: function(start_page, needs_url_history, navi) {
-
-		pv.updateNesting(this, 'navigation', [start_page]);
+		this.useInterface('navi', needs_url_history && navi);
+		pv.updateNesting(this, 'navigation', []);
 		pv.updateNesting(this, 'start_page', start_page);
 
 		this.map = new BrowseMap({app: this}, {start: this.start_page});
 
 		this.map
-			// .init(this.start_page)
-
 			.on('changes', function(changes, models, bwlevs, bwlev) {
-				//console.log(changes);
 				this.animateMapChanges(changes, models, bwlevs, bwlev);
-			}, this.getContextOptsI())
-			.on('map-tree-change', function(nav_tree) {
-				this.changeNavTree(nav_tree);
-			}, this.getContextOptsI())
-
-			.on('title-change', function(title) {
-				this.setDocTitle(title);
-
 			}, this.getContextOptsI());
 
 		if (navi) {
@@ -60,9 +81,6 @@ var AppModelBase = spv.inh(pv.Model, {
 		}
 
 		return this.map;
-	},
-	setDocTitle: function(title) {
-		pv.update(this, 'doc_title', title);
 	},
 	getBMapTravelFunc: function(func) {
 		return function() {
@@ -139,7 +157,7 @@ var AppModelBase = spv.inh(pv.Model, {
 				var bwlev = change.bwlev.getMD();
 
 				bindMMapStateChanges(md.app, md);
-				debugger;
+				// debugger;
 
 				if (change.value) {
 					var parent = change.target.getMD().getParentMapModel();
@@ -156,7 +174,7 @@ var AppModelBase = spv.inh(pv.Model, {
 				complexBrowsing(bwlev, md,  change.value);
 			},
 			'zoom-out': function(change) {
-				debugger;
+				// debugger;
 				var md = change.target.getMD();
 				var bwlev = change.bwlev.getMD();
 				pv.update(bwlev, 'mp_show', false);
@@ -231,7 +249,19 @@ var AppModelBase = spv.inh(pv.Model, {
 			return bwlev;
 		};
 
+		var getPioneer = function (bwlev) {
+			return bwlev.getNesting('pioneer');
+		};
+
 		return function(_, models, bwlevs, bwlev) {
+			pv.updateNesting(this, 'navigation', bwlevs);
+
+			var nav_tree = bwlevs.map(getPioneer);
+			this.nav_tree = nav_tree;
+			if (this.matchNav){
+				this.matchNav();
+			}
+
 			var diff = pv.hp.probeDiff(bwlev.getMDReplacer(), this.current_mp_bwlev && this.current_mp_bwlev.getMDReplacer(), _.changes_number);
 			var changes = diff;
 			var i;
@@ -258,11 +288,6 @@ var AppModelBase = spv.inh(pv.Model, {
 			*/
 
 			// var bwlevs = residents && spv.filter(residents, 'lev.bwlev');
-
-
-			//if (tree){
-				pv.updateNesting(this, 'navigation', bwlevs);
-			//}
 
 
 			if (diff.target){

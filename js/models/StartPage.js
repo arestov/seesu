@@ -46,7 +46,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 	init: function(target, opts) {
 		target.su = opts.app;
 		pvUpdate(target, 'needs_search_from', true);
-		pvUpdate(target, 'nav_title', 'Seesu start page');
+		pvUpdate(target, 'nav_title', 'Seesu');
 		pvUpdate(target, 'nice_artist_hint', target.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
 

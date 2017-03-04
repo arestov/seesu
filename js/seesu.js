@@ -166,19 +166,7 @@ var SeesuApp = spv.inh(AppModel, {
 
 		self.start_page = self.initChi('start__page');
 
-		self.initMapTree(self.start_page, app_env.needs_url_history, navi)
-			/*
-			.on('residents-tree', function() {
-
-			}, self.getContextOptsI())
-			.on('every-url-change', function(nv, ov, replace) {
-				if (replace){
-				}
-
-			}, {immediately: true})*/
-			.on('nav-change', function(nv){
-				self.trackPage(nv.md.model_name);
-			}, self.getContextOptsI());
+		self.initMapTree(self.start_page, app_env.needs_url_history, navi);
 
 
 		if (app_env.tizen_app){
