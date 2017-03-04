@@ -130,7 +130,12 @@ function checkNestWatchs(md, collection_name, array, removed) {
   }
 
   for (var i = 0; i < subl_wtchs.length; i++) {
-    handlePosition(subl_wtchs[i]);
+    var cur = subl_wtchs[i];
+    for (var key in cur.nwatch.model_groups) {
+      var sub_cur = cur.nwatch.model_groups[key];
+      handlePosition(sub_cur);
+    }
+
     handleNestingChange(subl_wtchs[i], (Array.isArray(array) || !array) ? array : [array], removed);
   }
 }
