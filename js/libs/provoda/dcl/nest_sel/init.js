@@ -16,7 +16,7 @@ function add(self, nwbase, dcl) {
   var path_template = start_point && getParsedPath(start_point);
   if (!path_template) {
     var lnw = new LocalWatchRoot(null, nwbase, new Hands(dcl));
-    addFrom(self, lnw, 0);
+    addFrom(self, lnw);
     return lnw;
   }
 
@@ -46,7 +46,7 @@ return function init(self) {
     var hands = deep_nwatch.data;
 		var dest_w = new NestSelector(self, dcl, hands);
 		if (dest_w.state_name) {
-			addFrom(self, dest_w, 0);
+			addFrom(self, dest_w);
 		}
 
     addHead(self, hands, dest_w);

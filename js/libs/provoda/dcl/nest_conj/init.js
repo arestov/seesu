@@ -11,7 +11,7 @@ return function init(self) {
     var cur = new NestConcat(self, self.nest_concat_nest_matches[i]);
 
     for (var jj = 0; jj < cur.lnwatches.length; jj++) {
-      addFrom(self, cur.lnwatches[jj], 0);
+      addFrom(self, cur.lnwatches[jj]);
     }
   }
 };
