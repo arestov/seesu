@@ -4,6 +4,13 @@ var spv = require('spv');
 var orderItems = require('./orderItems');
 
 var SublWtch = function SublWtch(nwatch, skip, md, parent) {
+  /*
+    SublWtch предназначен для наблюдения за вложенностями в модель,
+    к которой будет прикреплен этот самый SublWtch
+
+    nwatch в данном случае, это local nwatch
+    локальный корень состояния
+  */
   this.nwatch = nwatch;
   this.skip = skip;
   this.md = md;
@@ -129,6 +136,8 @@ function getKey(md, skip) {
 
 function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
   // задача кода:
+  // инициировать наблюдения за гнездом для нужной модели на основе nwatch и уровнем вложенности (skip)
+
   // установится для наблюдений за вложениями(1) и в конечном счёте за состояниями(2)
   // инвалидировать кеш для сброса результата
 
@@ -167,12 +176,21 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
     nwatch.model_groups = nwatch.model_groups || {};
     nwatch.model_groups[key] = subl_wtch;
 
+    /*
+    nwatch никуда не записывается, но записывается subl_wtch
+
+    subl_wtch записывается в корень локального состояния. в nwatch (lnwatch)
+    */
+
     if (self.children_models) {
       for (var nesting_name in self.children_models) {
         checkNestWatchs(self, nesting_name, self.children_models[nesting_name]);
       }
     }
-
+    /*
+    skip === 0 - значит, что последующие действия не могут происходить
+    внутри рекурсии добавления элементов. только в ее конце
+    */
     if (skip === 0 && subl_wtch.nwatch.handler) {
       // TODO if we don't have state_handler that we don't need order and preparations to keep order
       var calls_flow = self._getCallsFlow();
