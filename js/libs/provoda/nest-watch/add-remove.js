@@ -34,10 +34,30 @@ function handleNestingChange(subw, array) {
   subw.nwatch.ordered_items_changed = true;
 }
 
+var checkOneItemMode = function (subl_wtch, one) {
+  // return !!one;
+  subl_wtch.one_item_mode = !!one;
+
+  var one_item_mode = false;
+  for (var key in subl_wtch.nwatch.model_groups) {
+    if (!subl_wtch.nwatch.model_groups.hasOwnProperty(key)) {continue;}
+
+    var cur = subl_wtch.nwatch.model_groups[key];
+    one_item_mode = cur.one_item_mode;
+    if (!cur.one_item_mode) {
+      one_item_mode = false;
+      break;
+    }
+  }
+  return one_item_mode;
+};
+
+
 var removeNestWatchs = function(item, array, one) {
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			cur.nwatch.one_item_mode = !!one;
+      cur.nwatch.one_item_mode = checkOneItemMode(cur, one);
+
 			removeNestWatch(item, cur.nwatch, cur.skip + 1);
 
       markPosition(cur.nwatch, cur.skip, item, -1);
@@ -65,7 +85,8 @@ var addNestWatchs = function(item, array, one, num) {
   // one item and many nwatches
 	for (var i = 0; i < array.length; i++) {
 		var cur = array[i];
-		cur.nwatch.one_item_mode = !!one;
+    cur.nwatch.one_item_mode = checkOneItemMode(cur, one);
+
 		addNestWatch(item, cur.nwatch, cur.skip + 1, cur);
 
     markPosition(cur.nwatch, cur.skip, item, num);
