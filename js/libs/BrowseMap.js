@@ -7,7 +7,6 @@ var flatStruc = require('./provoda/structure/flatStruc');
 var morph_helpers = require('js/libs/morph_helpers');
 var pvState = pv.state;
 var cloneObj = spv.cloneObj;
-var filter = spv.filter;
 var countKeys = spv.countKeys;
 var collapseAll = spv.collapseAll;
 
@@ -33,7 +32,7 @@ var BrowseMap = spv.inh(pv.Model, {
     self.grouping_changes = null;
     self.collecting_changes = null;
     self.current_level_num = null;
-    self.nav_tree = null;
+    // self.nav_tree = null;
     self.onNavTitleChange = null;
     self.onNavUrlChange = null;
 
@@ -163,22 +162,6 @@ var BrowseMap = spv.inh(pv.Model, {
 		if (this.chans_coll.length){
 			this.zipChanges();
 
-			var all_changes = filter(this.chans_coll, 'changes');
-			var big_line = [];
-			for (var i = 0; i < all_changes.length; i++) {
-				big_line = big_line.concat(all_changes[i]);
-			}
-			var move_view_changes = filter(big_line, 'type', 'move-view');
-
-			for (var jj = 0; jj < move_view_changes.length; jj++) {
-				var cur = move_view_changes[jj];
-				if (jj == move_view_changes.length -1){
-					this.updateNav(cur.bwlev.getMD(), opts);
-				}
-			}
-
-
-
 			var bwlev = this.getCurrentLevel();
 
 			this.trigger('changes', {
@@ -187,9 +170,7 @@ var BrowseMap = spv.inh(pv.Model, {
 			}, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse(), bwlev);
 			this.chans_coll = [];
 			this.chans_coll.changes_number = ++this.cha_counter;
-
 		}
-
 	},
 	makeMainLevel: function(){
 		this.getFreeLevel(-1, false, this.mainLevelResident);
@@ -301,218 +282,6 @@ var BrowseMap = spv.inh(pv.Model, {
 			this.hideFreeLevel(lev, exept);
 
 		}
-	},
-	updateNav: (function(){
-		var stackNav = function(bwlev, stack_v) {
-			pv.update(bwlev, 'mp_stack', stack_v);
-			pv.update(bwlev.getNesting('pioneer'), 'mp_stack', stack_v);
-			return this;
-		};
-		return function(bwlev, urlop){
-			//hev
-			var lvls = bwlev.ptree;
-			var root = lvls[ lvls.length - 1 ]; //start_page
-			var exept_root = lvls.length - 1;
-			stackNav(bwlev, false);
-
-			var prev = lvls[1];
-			// lvls[0] is bwlev,
-			// lvls[1] is bwlev.map_parent;
-			if (prev && prev != root){
-				// this is top of stack, but only if we have "stack";
-				stackNav(prev, 'top');
-				stackNav(root, true);
-			} else {
-				stackNav(root, false);
-			}
-
-			for (var i = 2; i < exept_root; i++) {
-				stackNav(lvls[i],  i + 1 === exept_root ? 'bottom' : 'middle');
-			}
-
-			this.setNavTree(bwlev.ptree, urlop);
-		};
-	})(),
-	setNavTree: function(tree, urlop) {
-		var old_tree = this.nav_tree;
-
-		this.nav_tree = tree;
-
-		var url_changed = this.setCurrentURL(tree, old_tree, urlop);
-		this.setCurrentNav(tree[0].rtree, old_tree && old_tree[0].rtree, urlop);
-
-		// !!urlop.skip_url_change
-
-		if (url_changed){
-			var bwlev =  this.getCurrentLevel();
-			this.trigger('nav-change', {
-				url: url_changed.nv || "",
-				md:  bwlev && bwlev.getNesting('pioneer'),
-				map_level: bwlev
-			});
-		}
-
-		this.trigger("map-tree-change", tree[0].rtree, old_tree && old_tree[0].rtree);
-	},
-	getTitleNav: function(n) {
-		return n && n.slice(0, 2);
-	},
-	setCurrentNav: function(new_nav, old_nav) {
-		var _this = this;
-		if (!this.onNavTitleChange){
-			this.onNavTitleChange = function() {
-				var cur_nav = _this.getTitleNav(_this.nav_tree[0].rtree);
-				var s_num = cur_nav.indexOf(this);
-				if (s_num != -1){
-					_this.refreshTitle(s_num);
-				}
-			};
-		}
-		old_nav = this.getTitleNav(old_nav);
-
-
-		var i;
-
-		if (old_nav){
-			for (i = 0; i < old_nav.length; i++) {
-				old_nav[i].offTitleChange( this.onNavTitleChange); //unbind
-			}
-		}
-
-		new_nav = this.getTitleNav(new_nav);
-
-		for (i = 0; i < new_nav.length; i++) {
-			new_nav[i].onTitleChange(this.onNavTitleChange);
-		}
-
-		return this.setTitle(this.joinNavTitle(new_nav));
-	},
-	setTitle: function(new_title) {
-		var _this = this;
-		return sProp(this, 'cur_title', new_title, function(nv, ov) {
-			_this.trigger('title-change', nv, ov);
-		});
-	},
-	joinNavTitle: function(nav) {
-		var nav_t = [];
-		for (var i = 0; i < nav.length; i++) {
-			if (nav[i].getTitle){
-				nav_t.push(nav[i].getTitle());
-			}
-		}
-		return nav_t.join(' ← ');
-	},
-	refreshTitle: function() {
-		this.setTitle(this.joinNavTitle(this.getTitleNav(this.nav_tree[0].rtree)));
-		return this;
-	},
-	setCurrentURL: function(ptree, ptree_old, urlop) {
-		var new_tree = ptree[0].rtree;
-		var old_tree = ptree_old && ptree_old[0].rtree;
-
-		var _this = this;
-		if (!this.onNavUrlChange){
-			this.onNavUrlChange = function() {
-				var cur_nav = _this.nav_tree[0].rtree;
-				var s_num = cur_nav.indexOf(this);
-				if (s_num != -1){
-					_this.replaceURL(s_num);
-				}
-			};
-		}
-		var i;
-		if (old_tree){
-			for (i = 0; i < old_tree.length; i++) {
-				old_tree[i].off('state_change-url_part', this.onNavUrlChange); //unbind
-			}
-		}
-
-		for (i = 0; i < new_tree.length; i++) {
-			new_tree[i].on('state_change-url_part', this.onNavUrlChange, {
-				skip_reg: true
-			});
-		}
-		return this.setURL(this.joinNavURL(ptree), false, urlop);
-	},
-	joinNavURL: (function(){
-		var joinSubtree = function(array){
-			var url = "";
-			for (var i = array.length - 1; i >= 0; i--) {
-				var md = 	array[i];
-				var url_part = md.state('url_part');
-				// if (!url_part) {
-				// 	throw new Error('must be url');
-				// }
-				url += url_part || '';
-			}
-			return url;
-		};
-
-		return function(nav) {
-			var url = '';
-			var groups = getNavGroups(nav[0]);
-
-			/*
-				/users/me/lfm:neighbours#3:/users/lfm:kolczyk0
-			*/
-
-			var last = groups.pop();
-
-			url += joinSubtree(last);
-			// for (var i = last.length - 1; i >= 0; i--) {
-			// 	var cur = last[i];
-			// 	url.push(cur.state('url_part'));
-			// }
-
-			for (var i = groups.length - 1; i >= 0; i--) {
-				var distance = groups[i].length;
-				// var md = groups[i][0];
-				// var url_part = md.state('url_part');
-				// if (!url) {
-				// 	throw new Error('must be url');
-				// }
-				url += '#';
-
-
-				// url.push('#');
-
-				if (distance > 1) {
-					url += distance + ':';
-					// url.push();
-				}
-				url += joinSubtree(groups[i]);
-
-				//url.push(url_part);
-
-			}
-
-			return url;
-		};
-	})(),
-	setURL: function(url, replace, urlop) {
-		urlop = urlop || {};
-		var _this = this;
-		return sProp(this, 'cur_url', url, function(nv, ov) {
-			if (!urlop.skip_url_change){
-				_this.trigger('url-change', nv, ov || "", _this.getCurrentLevel(), replace || urlop.replace_url);
-			}
-			var bwlev = _this.getCurrentLevel();
-			_this.trigger(
-				'every-url-change',
-				{
-					url: nv,
-					map_level: bwlev,
-					md: bwlev && bwlev.getNesting('pioneer')
-				},
-				null,
-				replace
-			);
-
-		});
-	},
-	replaceURL: function() {
-		this.setURL(this.joinNavURL(this.nav_tree), true);
-		return this;
 	},
 	sliceDeepUntil: function(num){
 		var
@@ -940,7 +709,8 @@ var BrowseLevel = spv.inh(pv.Model, {
 	},
 	zoomOut: function() {
 		var pioneer = this.getNesting('pioneer');
-		if (pioneer.state('mp_stack') || (pioneer.state('mp_show') )) {
+		// FIXME: mp_show should be readed from bwlev, not model
+		if ((pioneer.state('mp_show') )) {
 			ba__sliceTM(this);
 		}
 	},
@@ -1543,12 +1313,6 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	},
 	getTitle: function() {
 		return this.state('nav_title');
-	},
-	onTitleChange: function(cb) {
-		return this.on('vip_state_change-nav_title', cb, {skip_reg: true, immediately: true});
-	},
-	offTitleChange: function(cb) {
-		return this.off('vip_state_change-nav_title', cb);
 	},
 	getURL: function() {
 		return '';
