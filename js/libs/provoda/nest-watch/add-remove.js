@@ -4,6 +4,13 @@ var spv = require('spv');
 var orderItems = require('./orderItems');
 
 var SublWtch = function SublWtch(nwatch, skip, md, parent) {
+  /*
+    SublWtch предназначен для наблюдения за вложенностями в модель,
+    к которой будет прикреплен этот самый SublWtch
+
+    nwatch в данном случае, это local nwatch
+    локальный корень состояния
+  */
   this.nwatch = nwatch;
   this.skip = skip;
   this.md = md;
@@ -28,6 +35,10 @@ function handlePosition(subw) {
 }
 
 function handleNestingChange(subw, array) {
+  // почему только в конце?
+  // потому что целевые модели или модели, содержащие целевые состояния находятся в конце
+  // и полный список состовляется только или конечных моделей
+
   if (subw.skip + 1 != subw.nwatch.selector.length) {return;}
 
   subw.models_list = array;
@@ -96,30 +107,36 @@ var addNestWatchs = function(item, array, one, num) {
 function checkNestWatchs(md, collection_name, array, removed) {
 	if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
   // console.log('match!', collection_name);
-  var nwats = md.nes_match_index[collection_name];
+  /* список subl_wtch (локальных элементов следящих за гнёздами) */
+  var subl_wtchs = md.nes_match_index[collection_name];
 
   if (Array.isArray(removed)) {
     for (var i = 0; i < removed.length; i++) {
       if (!removed[i]) {continue;}
-      removeNestWatchs(removed[i], nwats, false);
+      removeNestWatchs(removed[i], subl_wtchs, false);
     }
   } else if (removed){
-    removeNestWatchs(array, nwats, true);
+    removeNestWatchs(array, subl_wtchs, true);
   }
 
 
   if (Array.isArray(array)) {
     for (var i = 0; i < array.length; i++) {
       if (!array[i]) {continue;}
-      addNestWatchs(array[i], nwats, false, i);
+      addNestWatchs(array[i], subl_wtchs, false, i);
     }
   } else if(array) {
-    addNestWatchs(array, nwats, true, 0);
+    addNestWatchs(array, subl_wtchs, true, 0);
   }
 
-  for (var i = 0; i < nwats.length; i++) {
-    handlePosition(nwats[i]);
-    handleNestingChange(nwats[i], (Array.isArray(array) || !array) ? array : [array], removed);
+  for (var i = 0; i < subl_wtchs.length; i++) {
+    var cur = subl_wtchs[i];
+    for (var key in cur.nwatch.model_groups) {
+      var sub_cur = cur.nwatch.model_groups[key];
+      handlePosition(sub_cur);
+    }
+
+    handleNestingChange(subl_wtchs[i], (Array.isArray(array) || !array) ? array : [array], removed);
   }
 }
 
@@ -129,6 +146,8 @@ function getKey(md, skip) {
 
 function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
   // задача кода:
+  // инициировать наблюдения за гнездом для нужной модели на основе nwatch и уровнем вложенности (skip)
+
   // установится для наблюдений за вложениями(1) и в конечном счёте за состояниями(2)
   // инвалидировать кеш для сброса результата
 
@@ -161,18 +180,31 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
       self.nes_match_index[nesting_name] = [];
     }
 
+    if (skip !== 0 && nesting_name == 'pioneer') {
+      debugger;
+    }
+
     var subl_wtch = new SublWtch(nwatch, skip, self, parent_subl_wtch);
     self.nes_match_index[nesting_name].push(subl_wtch);
 
     nwatch.model_groups = nwatch.model_groups || {};
     nwatch.model_groups[key] = subl_wtch;
 
+    /*
+    nwatch никуда не записывается, но записывается subl_wtch
+
+    subl_wtch записывается в корень локального состояния. в nwatch (lnwatch)
+    */
+
     if (self.children_models) {
       for (var nesting_name in self.children_models) {
         checkNestWatchs(self, nesting_name, self.children_models[nesting_name]);
       }
     }
-
+    /*
+    skip === 0 - значит, что последующие действия не могут происходить
+    внутри рекурсии добавления элементов. только в ее конце
+    */
     if (skip === 0 && subl_wtch.nwatch.handler) {
       // TODO if we don't have state_handler that we don't need order and preparations to keep order
       var calls_flow = self._getCallsFlow();
@@ -201,12 +233,16 @@ function removeNestWatch(self, nwatch, skip) {
     if (noNesting(nwatch)) {
       nwatch.ordered_items = null;
     }
-    // console.log('full match!', this, nwa);
   } else {
     var nesting_name = nwatch.selector[skip];
     if (self.nes_match_index && self.nes_match_index[nesting_name]) {
-      self.nes_match_index[nesting_name] = spv.findAndRemoveItem(self.nes_match_index[nesting_name], nwatch);
-      // self.nes_match_index[nesting_name].remoVe();
+      // nes_match_index содержит только subl_wtchs, поэтому удалять из nes_match_index нужно subl_wtch
+      var key = getKey(self, skip);
+      var subl_wtch = nwatch.model_groups[key];
+      if (!subl_wtch) {
+        console.warn('there is no subl_wtch. should it be!?');
+      }
+      self.nes_match_index[nesting_name] = spv.findAndRemoveItem(self.nes_match_index[nesting_name].slice(), subl_wtch);
     }
   }
 
@@ -252,9 +288,17 @@ function removeNWatchFromSI(states_links, nwatch) {
 	}
 }
 
+function addRootNestWatch(self, nwatch) {
+  return addNestWatch(self, nwatch, 0);
+}
+
+function removeRootNestWatch(self, nwatch) {
+  removeNestWatch(self, nwatch, 0);
+}
+
 return {
-  addNestWatch: addNestWatch,
-  removeNestWatch: removeNestWatch,
+  addRootNestWatch: addRootNestWatch,
+  removeRootNestWatch: removeRootNestWatch,
   checkNestWatchs: checkNestWatchs,
 };
 

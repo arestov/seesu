@@ -30,11 +30,13 @@ function handleEndItems(motivator, _, lnwatch) {
 function checkChangedNestWatchs(md, collection_name) {
 	if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
   // console.log('match!', collection_name);
-  var nwats = md.nes_match_index[collection_name];
+
+  /* список subl_wtch (локальных элементов следящих за гнёздами) */
+  var subl_wtchs = md.nes_match_index[collection_name];
 
   var result = [];
-  for (var i = 0; i < nwats.length; i++) {
-    var cur = nwats[i];
+  for (var i = 0; i < subl_wtchs.length; i++) {
+    var cur = subl_wtchs[i];
     if (cur.nwatch.ordered_items_changed) {
       result.push(cur);
       // console.log(cur.selector, cur);

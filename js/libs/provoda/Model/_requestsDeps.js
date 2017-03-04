@@ -3,8 +3,8 @@ define(function(require){
 
 var hp = require('../helpers');
 var LocalWatchRoot = require('../nest-watch/LocalWatchRoot');
-var addNestWatch = require('../nest-watch/add-remove').addNestWatch;
-var removeNestWatch = require('../nest-watch/add-remove').removeNestWatch;
+var addRootNestWatch = require('../nest-watch/add-remove').addRootNestWatch;
+var removeRootNestWatch = require('../nest-watch/add-remove').removeRootNestWatch;
 var NestWatch = require('../nest-watch/NestWatch');
 var spv = require('spv');
 
@@ -129,7 +129,7 @@ var handleNesting = function(dep, req_dep, self) {
 
 		var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
 
-		addNestWatch(self, lo_ne_wa, 0);
+		addRootNestWatch(self, lo_ne_wa);
 		req_dep.anchor = lo_ne_wa;
 	} else {
 		watchRelated(self, dep, req_dep);
@@ -149,7 +149,7 @@ var unhandleNesting = function(dep, req_dep, self) {
 			return;
 		}
 
-		removeNestWatch(self, req_dep.anchor, 0);
+		removeRootNestWatch(self, req_dep.anchor);
 	} else {
 		unwatchRelated(self, dep, req_dep);
 	}

@@ -3,7 +3,7 @@ define(function(require) {
 var initDeclaredNestings = require('../../initDeclaredNestings');
 var getParsedPath = initDeclaredNestings.getParsedPath;
 var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
-var addNestWatch = require('../../nest-watch/add-remove').addNestWatch;
+var addRootNestWatch = require('../../nest-watch/add-remove').addRootNestWatch;
 
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');
@@ -16,7 +16,7 @@ function add(self, nwbase, dcl) {
   var path_template = start_point && getParsedPath(start_point);
   if (!path_template) {
     var lnw = new LocalWatchRoot(null, nwbase, new Hands(dcl));
-    addFrom(self, lnw, 0);
+    addFrom(self, lnw);
     return lnw;
   }
 
@@ -30,7 +30,7 @@ function add(self, nwbase, dcl) {
 
   if (!start_md.shared_nest_sel_hands[key]) {
     var lnw = new LocalWatchRoot(null, nwbase, new Hands(dcl));
-    addNestWatch(start_md, lnw, 0);
+    addRootNestWatch(start_md, lnw);
     start_md.shared_nest_sel_hands[key] = lnw;
   }
 
@@ -46,7 +46,7 @@ return function init(self) {
     var hands = deep_nwatch.data;
 		var dest_w = new NestSelector(self, dcl, hands);
 		if (dest_w.state_name) {
-			addFrom(self, dest_w, 0);
+			addFrom(self, dest_w);
 		}
 
     addHead(self, hands, dest_w);
