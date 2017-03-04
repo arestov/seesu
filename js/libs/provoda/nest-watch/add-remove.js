@@ -180,10 +180,6 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
       self.nes_match_index[nesting_name] = [];
     }
 
-    if (skip !== 0 && nesting_name == 'pioneer') {
-      debugger;
-    }
-
     var subl_wtch = new SublWtch(nwatch, skip, self, parent_subl_wtch);
     self.nes_match_index[nesting_name].push(subl_wtch);
 
