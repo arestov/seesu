@@ -107,30 +107,31 @@ var addNestWatchs = function(item, array, one, num) {
 function checkNestWatchs(md, collection_name, array, removed) {
 	if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
   // console.log('match!', collection_name);
-  var nwats = md.nes_match_index[collection_name];
+  /* список subl_wtch (локальных элементов следящих за гнёздами) */
+  var subl_wtchs = md.nes_match_index[collection_name];
 
   if (Array.isArray(removed)) {
     for (var i = 0; i < removed.length; i++) {
       if (!removed[i]) {continue;}
-      removeNestWatchs(removed[i], nwats, false);
+      removeNestWatchs(removed[i], subl_wtchs, false);
     }
   } else if (removed){
-    removeNestWatchs(array, nwats, true);
+    removeNestWatchs(array, subl_wtchs, true);
   }
 
 
   if (Array.isArray(array)) {
     for (var i = 0; i < array.length; i++) {
       if (!array[i]) {continue;}
-      addNestWatchs(array[i], nwats, false, i);
+      addNestWatchs(array[i], subl_wtchs, false, i);
     }
   } else if(array) {
-    addNestWatchs(array, nwats, true, 0);
+    addNestWatchs(array, subl_wtchs, true, 0);
   }
 
-  for (var i = 0; i < nwats.length; i++) {
-    handlePosition(nwats[i]);
-    handleNestingChange(nwats[i], (Array.isArray(array) || !array) ? array : [array], removed);
+  for (var i = 0; i < subl_wtchs.length; i++) {
+    handlePosition(subl_wtchs[i]);
+    handleNestingChange(subl_wtchs[i], (Array.isArray(array) || !array) ? array : [array], removed);
   }
 }
 
@@ -172,6 +173,10 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
     var nesting_name = nwatch.selector[skip];
     if (!self.nes_match_index[nesting_name]) {
       self.nes_match_index[nesting_name] = [];
+    }
+
+    if (skip !== 0 && nesting_name == 'pioneer') {
+      debugger;
     }
 
     var subl_wtch = new SublWtch(nwatch, skip, self, parent_subl_wtch);
