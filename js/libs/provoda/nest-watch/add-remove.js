@@ -35,6 +35,10 @@ function handlePosition(subw) {
 }
 
 function handleNestingChange(subw, array) {
+  // почему только в конце?
+  // потому что целевые модели или модели, содержащие целевые состояния находятся в конце
+  // и полный список состовляется только или конечных моделей
+
   if (subw.skip + 1 != subw.nwatch.selector.length) {return;}
 
   subw.models_list = array;
