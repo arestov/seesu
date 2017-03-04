@@ -223,7 +223,6 @@ function removeNestWatch(self, nwatch, skip) {
     if (noNesting(nwatch)) {
       nwatch.ordered_items = null;
     }
-    // console.log('full match!', this, nwa);
   } else {
     var nesting_name = nwatch.selector[skip];
     if (self.nes_match_index && self.nes_match_index[nesting_name]) {
@@ -234,7 +233,6 @@ function removeNestWatch(self, nwatch, skip) {
         console.warn('there is no subl_wtch. should it be!?');
       }
       self.nes_match_index[nesting_name] = spv.findAndRemoveItem(self.nes_match_index[nesting_name].slice(), subl_wtch);
-      // self.nes_match_index[nesting_name].remoVe();
     }
   }
 
