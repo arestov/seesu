@@ -3,7 +3,7 @@ define(function(require) {
 var initDeclaredNestings = require('../../initDeclaredNestings');
 var getParsedPath = initDeclaredNestings.getParsedPath;
 var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
-var addNestWatch = require('../../nest-watch/add-remove').addNestWatch;
+var addRootNestWatch = require('../../nest-watch/add-remove').addRootNestWatch;
 
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');
@@ -30,7 +30,7 @@ function add(self, nwbase, dcl) {
 
   if (!start_md.shared_nest_sel_hands[key]) {
     var lnw = new LocalWatchRoot(null, nwbase, new Hands(dcl));
-    addNestWatch(start_md, lnw, 0);
+    addRootNestWatch(start_md, lnw);
     start_md.shared_nest_sel_hands[key] = lnw;
   }
 

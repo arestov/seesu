@@ -270,9 +270,17 @@ function removeNWatchFromSI(states_links, nwatch) {
 	}
 }
 
+function addRootNestWatch(self, nwatch) {
+  return addNestWatch(self, nwatch, 0);
+}
+
+function removeRootNestWatch(self, nwatch) {
+  removeNestWatch(self, nwatch, 0);
+}
+
 return {
-  addNestWatch: addNestWatch,
-  removeNestWatch: removeNestWatch,
+  addRootNestWatch: addRootNestWatch,
+  removeRootNestWatch: removeRootNestWatch,
   checkNestWatchs: checkNestWatchs,
 };
 
