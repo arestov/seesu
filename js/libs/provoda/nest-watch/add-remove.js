@@ -227,7 +227,13 @@ function removeNestWatch(self, nwatch, skip) {
   } else {
     var nesting_name = nwatch.selector[skip];
     if (self.nes_match_index && self.nes_match_index[nesting_name]) {
-      self.nes_match_index[nesting_name] = spv.findAndRemoveItem(self.nes_match_index[nesting_name], nwatch);
+      // nes_match_index содержит только subl_wtchs, поэтому удалять из nes_match_index нужно subl_wtch
+      var key = getKey(self, skip);
+      var subl_wtch = nwatch.model_groups[key];
+      if (!subl_wtch) {
+        console.warn('there is no subl_wtch. should it be!?');
+      }
+      self.nes_match_index[nesting_name] = spv.findAndRemoveItem(self.nes_match_index[nesting_name].slice(), subl_wtch);
       // self.nes_match_index[nesting_name].remoVe();
     }
   }
