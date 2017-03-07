@@ -584,11 +584,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		};
 		setTimeout(completeAnimation, 16*21*4);
 		if (!animation_data){
-			//
-			this.markAnimationEnd(models, changes_number);
-			/*this.nextLocalTick(function() {
-
-			});*/
+			completeAnimation();
 		} else {
 			animation_data.lc.onTransitionEnd(completeAnimation);
 		}
