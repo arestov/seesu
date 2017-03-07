@@ -45,7 +45,6 @@ var BrowseMap = spv.inh(pv.Model, {
     self.mainLevelResident = params.start;
 
 
-    self.cha_counter = 0;
     self.chans_coll = [];
     self.residents = [];
 
@@ -166,10 +165,8 @@ var BrowseMap = spv.inh(pv.Model, {
 
 			this.trigger('changes', {
 				array: this.chans_coll,
-				changes_number: this.cha_counter
 			}, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse(), bwlev);
 			this.chans_coll = [];
-			this.chans_coll.changes_number = ++this.cha_counter;
 		}
 	},
 	makeMainLevel: function(){
