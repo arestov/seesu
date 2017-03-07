@@ -262,7 +262,7 @@ var AppModelBase = spv.inh(pv.Model, {
 				this.matchNav();
 			}
 
-			var diff = pv.hp.probeDiff(bwlev.getMDReplacer(), this.current_mp_bwlev && this.current_mp_bwlev.getMDReplacer(), _.changes_number);
+			var diff = pv.hp.probeDiff(bwlev.getMDReplacer(), this.current_mp_bwlev && this.current_mp_bwlev.getMDReplacer());
 			var changes = diff;
 			var i;
 			var all_changhes = spv.filter(changes.array, 'changes');
@@ -270,11 +270,9 @@ var AppModelBase = spv.inh(pv.Model, {
 
 			all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
 			//var models = spv.filter(all_changhes, 'target');
-			//this.animationMark(models, changes.changes_number);
 
 			for (i = 0; i < all_changhes.length; i++) {
 				var change = all_changhes[i];
-			//	change.changes_number = changes.changes_number;
 				var handler = model_mapch[change.type];
 				if (handler){
 					handler.call(null, change);
