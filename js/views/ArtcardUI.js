@@ -35,7 +35,7 @@ var ArtcardUI = spv.inh(View, {}, {
 
 		bio: function(target, text) {
 			if (text){
-				var safe_node = document.createElement('div');
+				var safe_node = window.document.createElement('div');
 				safe_node.innerHTML = text.replace(/([^\n])\n+/gi, '$1<br/><br/>');
 
 				$(safe_node).find('script').remove();
@@ -132,7 +132,7 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
 			return;
 		}
 		if (text){
-			var safe_node = document.createElement('div');
+			var safe_node = window.document.createElement('div');
 			safe_node.innerHTML = $.trim(text).replace(/([^\n])\n+/gi, '$1<br/><br/>');
 
 			$(safe_node).find('script').remove();
@@ -232,7 +232,7 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
 		target.photo_data.cool_photos = images;
 		target.dom_related_props.push('img_panorama');
 		if (images.length){
-			var fragment = document.createDocumentFragment();
+			var fragment = window.document.createDocumentFragment();
 
 			//var shuffled_images = [images.shift()];
 

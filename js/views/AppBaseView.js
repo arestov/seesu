@@ -218,7 +218,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		return this.els.scrolling_viewport;
 	},
 	scollNeeded: function() {
-		return document.body.scrollHeight > document.body.clientHeight;
+		return window.document.body.scrollHeight > window.document.body.clientHeight;
 	},
 	scrollTo: function(jnode, view_port, opts) {
 		if (!jnode){return false;}

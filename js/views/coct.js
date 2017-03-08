@@ -295,10 +295,10 @@ var AlbumsListPreview = spv.inh(ItemOfLL, {}, {
 
 var tagListChange = function(target, array) {
 	target.tpl.ancs.listc.empty();
-	var df = document.createDocumentFragment();
+	var df = window.document.createDocumentFragment();
 	for (var i = 0; i < array.length; i++) {
 		$(df).append(target.createTagLink(array[i].name));
-		$(df).append(document.createTextNode(" "));
+		$(df).append(window.document.createTextNode(" "));
 	}
 	target.tpl.ancs.listc.append(df);
 };

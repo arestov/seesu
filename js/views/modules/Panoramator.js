@@ -1,7 +1,7 @@
 define(['jquery'], function($){
 'use strict';
 
-var dom_style_obj = document.body.style;
+var dom_style_obj = window.document.body.style;
 var has_transform_prop;
 ['transform', '-o-transform', '-webkit-transform', '-moz-transform'].forEach(function(el) {
 	if (!has_transform_prop && el in dom_style_obj){
