@@ -9,7 +9,7 @@ var transportName = require('./transportName');
 var getProbeChange = function (toggle) {
   return function (target, bwlev_id, probe_name, value, probe_container_uri) {
     var app = target.app;
-    var container = probe_container_uri ? getSPByPathTemplate(app, target, probe_container_uri) : target
+    var container = probe_container_uri ? getSPByPathTemplate(app, target, probe_container_uri) : target;
     var subpage = getSPByPathTemplate(app, container, value);
 
     var probe_mds = container.getNesting(transportName(probe_name));
@@ -29,9 +29,8 @@ var getProbeChange = function (toggle) {
     } else {
       probe_md.updateNesting('current_md', subpage);
     }
-  }
-
-}
+  };
+};
 
 var updateProbe = getProbeChange();
 var toggleProbe = getProbeChange(true);
