@@ -24,17 +24,6 @@ var props = {
 		pv.update(this.start_page, 'can_expand', true);
 
 	},
-	infoGen: function(dp, c, base_string){
-		if (dp){
-			if (c.prev){
-				c.str += ', ';
-			}
-			c.str += base_string.replace('%s', dp);
-			if (!c.prev){
-				c.prev = true;
-			}
-		}
-	},
 	'compx-now_playing_text': [
 		['locales.now_playing', 'now_playing'],
 		function(lo_now_playing, now_playing) {
