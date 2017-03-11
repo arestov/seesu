@@ -45,35 +45,35 @@ var routePathByModels = function routePathByModels(start_md, pth_string, need_co
         }
         tree_parts_group.push(pth[i]);
         continue;
+      }
+
+      var path_full_string;
+      if (tree_parts_group){
+        path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
       } else {
-        var path_full_string;
-        if (tree_parts_group){
-          path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
-        } else {
-          path_full_string = pth[i];
-        }
-        tree_parts_group = null;
+        path_full_string = pth[i];
+      }
+      tree_parts_group = null;
 
-        if (need_constr) {
-          var Constr = getSPIConstr(cur_md, path_full_string);
-          if (!Constr) {
-            throw new Error('you must use supported path');
-          } else {
-            cur_md = Constr.prototype;
-            result = Constr;
-          }
-
+      if (need_constr) {
+        var Constr = getSPIConstr(cur_md, path_full_string);
+        if (!Constr) {
+          throw new Error('you must use supported path');
         } else {
-          var md = getSPI(cur_md, path_full_string);
-          if (md){
-            cur_md = md;
-            result = md;
-          } else if (strict) {
-            return null;
-          } else {
-            break;
-          }
+          cur_md = Constr.prototype;
+          result = Constr;
         }
+        continue;
+      }
+
+      var md = getSPI(cur_md, path_full_string);
+      if (md){
+        cur_md = md;
+        result = md;
+      } else if (strict) {
+        return null;
+      } else {
+        break;
       }
     }
     return result;
