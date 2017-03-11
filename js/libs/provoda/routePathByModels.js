@@ -8,75 +8,75 @@ var getSPIConstr = getterSPIConstr();
 
 var routePathByModels = function routePathByModels(start_md, pth_string, need_constr, strict) {
 
-    /*
-    catalog
-    users
-    tags
-    */
+  /*
+  catalog
+  users
+  tags
+  */
 
 
-    /*
-    #/catalog/The+Killers/_/Try me
-    #?q=be/tags/beautiful
-    #/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
-    #/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
-    #/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
-    #/recommendations/Beastie+boys/Phone+Call
-    #/loved/Beastie+boys/Phone+Call
-    #/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
-    #?q=be/directsearch/vk/345345
-    #/ds/vk/25325_2344446
-    http://www.lastfm.ru/music/65daysofstatic/+similar
-    */
-    var cleanPath = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ');/*.replace(/^\//,'')*/
-    if (!cleanPath) {
-      return start_md;
+  /*
+  #/catalog/The+Killers/_/Try me
+  #?q=be/tags/beautiful
+  #/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
+  #/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
+  #/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
+  #/recommendations/Beastie+boys/Phone+Call
+  #/loved/Beastie+boys/Phone+Call
+  #/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
+  #?q=be/directsearch/vk/345345
+  #/ds/vk/25325_2344446
+  http://www.lastfm.ru/music/65daysofstatic/+similar
+  */
+  var cleanPath = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ');/*.replace(/^\//,'')*/
+  if (!cleanPath) {
+    return start_md;
+  }
+  var pth = cleanPath.split('/');
+
+  var cur_md = start_md;
+  var result = cur_md;
+  var tree_parts_group = null;
+  for (var i = 0; i < pth.length; i++) {
+    var types = spv.getTargetField(cur_md, '_sub_pager.type');
+    if (types && types[pth[i]]){
+      if (!tree_parts_group){
+        tree_parts_group = [];
+      }
+      tree_parts_group.push(pth[i]);
+      continue;
     }
-    var pth = cleanPath.split('/');
 
-    var cur_md = start_md;
-    var result = cur_md;
-    var tree_parts_group = null;
-    for (var i = 0; i < pth.length; i++) {
-      var types = spv.getTargetField(cur_md, '_sub_pager.type');
-      if (types && types[pth[i]]){
-        if (!tree_parts_group){
-          tree_parts_group = [];
-        }
-        tree_parts_group.push(pth[i]);
-        continue;
-      }
-
-      var path_full_string;
-      if (tree_parts_group){
-        path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
-      } else {
-        path_full_string = pth[i];
-      }
-      tree_parts_group = null;
-
-      if (need_constr) {
-        var Constr = getSPIConstr(cur_md, path_full_string);
-        if (!Constr) {
-          throw new Error('you must use supported path');
-        } else {
-          cur_md = Constr.prototype;
-          result = Constr;
-        }
-        continue;
-      }
-
-      var md = getSPI(cur_md, path_full_string);
-      if (md){
-        cur_md = md;
-        result = md;
-      } else if (strict) {
-        return null;
-      } else {
-        break;
-      }
+    var path_full_string;
+    if (tree_parts_group){
+      path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
+    } else {
+      path_full_string = pth[i];
     }
-    return result;
+    tree_parts_group = null;
+
+    if (need_constr) {
+      var Constr = getSPIConstr(cur_md, path_full_string);
+      if (!Constr) {
+        throw new Error('you must use supported path');
+      } else {
+        cur_md = Constr.prototype;
+        result = Constr;
+      }
+      continue;
+    }
+
+    var md = getSPI(cur_md, path_full_string);
+    if (md){
+      cur_md = md;
+      result = md;
+    } else if (strict) {
+      return null;
+    } else {
+      break;
+    }
+  }
+  return result;
 }
 
 function slash(str) {
