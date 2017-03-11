@@ -156,8 +156,7 @@ var BrowseMap = spv.inh(pv.Model, {
 			this.chans_coll = zipped;
 		}
 	},
-	emitChanges: function(opts) {
-		opts = opts || {};
+	emitChanges: function() {
 		if (this.chans_coll.length){
 			this.zipChanges();
 
@@ -877,17 +876,6 @@ var getBWlev = function(md, parent_bwlev, map_level_num, map){
 	return bwlev;
 };
 
-var sProp = function(obj, prop_name, nv, cb) {
-	if (obj[prop_name] != nv){
-		var ov = obj[prop_name];
-		obj[prop_name] = nv;
-		if (cb) {
-			cb(nv, ov);
-		}
-		return {nv: nv, ov: ov};
-	}
-};
-
 var getDistantModel = function(md, distance){
 	var cur = md;
 	for (var i = 1; i < distance; i++) {
@@ -1454,18 +1442,6 @@ function ba_show(bwlev){
 		bwlev: bwlev.getMDReplacer(),
 		target: md.getMDReplacer(),
 		value: true
-	});
-}
-
-function ba_hide(bwlev){
-	if (!ba_inUse(bwlev)) {
-		return;
-	}
-	var md = bwlev.getNesting('pioneer');
-	bwlev.map.addChange({
-		type: 'zoom-out',
-		bwlev: bwlev.getMDReplacer(),
-		target: md.getMDReplacer()
 	});
 }
 
