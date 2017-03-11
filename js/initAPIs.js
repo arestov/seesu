@@ -69,7 +69,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 	};
 
 	self.once("vk-site-api", function() {
-		window.documentScrollSizeChangeHandler = function(height){
+		window.document.ScrollSizeChangeHandler = function(height){
 			window.VK.callMethod("resizeWindow", 800, Math.max(700, height));
 		};
 		self.vk_auth.trigger('vk-site-api', window.VK);

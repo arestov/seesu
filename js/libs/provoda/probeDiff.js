@@ -30,7 +30,7 @@ var pathAsSteps = function (path, value) {
   return result;
 };
 
-return function probeDiff(value, oldvalue, changes_number) {
+return function probeDiff(value, oldvalue) {
   var bwlev = value;
   var target = bwlev.getMD().getNesting('pioneer').getMDReplacer();
 
@@ -69,7 +69,6 @@ return function probeDiff(value, oldvalue, changes_number) {
 
 
   return {
-    changes_number: changes_number,
     bwlev: bwlev,
     target: target,
     value_full_path: value_full_path,

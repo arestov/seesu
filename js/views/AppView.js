@@ -539,7 +539,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			_this.els.search_form.find('#app_type').val(app_env.app_type);
 
 			_this.wrapStartScreen(this.els.start_screen);
-			$('#widget-url',d).val(location.href.replace('index.html', ''));
+			$('#widget-url',d).val(window.location.href.replace('index.html', ''));
 
 			if (app_env.bro.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
 
@@ -677,7 +677,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		}
 	},
 	preloadImage: function(src, alt, callback, place){
-		var image = document.createElement('img');
+		var image = window.document.createElement('img');
 		if (alt){
 			image.alt= alt;
 		}
@@ -717,7 +717,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
 
 	create_youtube_video: function(id){
-		var youtube_video = document.createElement('embed');
+		var youtube_video = window.document.createElement('embed');
 		if (!app_env.chrome_like_ext){
 			if (app_env.opera_widget){
 				youtube_video.setAttribute('wmode',"transparent");

@@ -218,7 +218,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		return this.els.scrolling_viewport;
 	},
 	scollNeeded: function() {
-		return document.body.scrollHeight > document.body.clientHeight;
+		return window.document.body.scrollHeight > window.document.body.clientHeight;
 	},
 	scrollTo: function(jnode, view_port, opts) {
 		if (!jnode){return false;}
@@ -473,7 +473,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 			if (parent){
 			//	parent.updateState('mp_has_focus', false);
 			}
-			//mpx.updateState(prop, changes_number);
 			this.setVMpshow(this.getStoredMpx(change.bwlev.getMD()), change.value);
 		},
 		'zoom-out': function(change) {
@@ -533,7 +532,15 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		var models = spv.filter(all_changhes, 'target');
 		var i, cur;
 
-		this.markAnimationStart(models, transaction_data.changes_number);
+		if (!this.changes_number) {
+			this.changes_number = 0;
+		}
+
+		this.changes_number++;
+
+		var changes_number = this.changes_number;
+
+		this.markAnimationStart(models, changes_number);
 
 		var doomed = needsDestroing(all_changhes);
 		for (i = doomed.length - 1; i >= 0; i--) {
@@ -542,7 +549,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
 		for (i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
-		//	change.changes_number = changes.changes_number;
 			var handler = this['model-mapch'][change.type];
 			if (handler){
 				handler.call(this, change);
@@ -574,15 +580,11 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		}
 		var _this = this;
 		var completeAnimation = function() {
-			_this.markAnimationEnd(models, transaction_data.changes_number);
+			_this.markAnimationEnd(models, changes_number);
 		};
 		setTimeout(completeAnimation, 16*21*4);
 		if (!animation_data){
-			//
-			this.markAnimationEnd(models, transaction_data.changes_number);
-			/*this.nextLocalTick(function() {
-
-			});*/
+			completeAnimation();
 		} else {
 			animation_data.lc.onTransitionEnd(completeAnimation);
 		}
@@ -622,7 +624,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     var transaction = nesting_data.transaction;
     var old_transaction = old_nesting_data && old_nesting_data.transaction;
 
-    var diff = pv.hp.probeDiff(nesting_data.transaction.bwlev, old_nesting_data && old_nesting_data.transaction.bwlev, nesting_data.transaction.changes_number);
+    var diff = pv.hp.probeDiff(nesting_data.transaction.bwlev, old_nesting_data && old_nesting_data.transaction.bwlev);
 
     var bwlevs = nesting_data.residents_struc && nesting_data.residents_struc.bwlevs;
     var mds = nesting_data.residents_struc.items;
@@ -646,7 +648,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
 		//avoid nextTick method!
 
-		if (this.completely_rendered_once['map_slice'] && old_transaction && old_transaction.changes_number + 1 === transaction.changes_number){
+		if (this.completely_rendered_once['map_slice']){
 			if (transaction){
 				this.animateMapSlice(transaction, animation_data);
 				if (!transaction.bwlev){
