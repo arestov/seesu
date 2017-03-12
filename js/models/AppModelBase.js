@@ -115,33 +115,6 @@ var AppModelBase = spv.inh(pv.Model, {
 			app.pushVDS(md);
 		};
 
-		var mapch_handlers = {
-			"zoom-in": function(array) {
-				var target;
-				for (var i = array.length - 1; i >= 0; i--) {
-					var cur = array[i];
-					if (cur.type == 'move-view' && cur.value){
-						target = cur;
-						break;
-					}
-
-				}
-				return target;
-			},
-			"zoom-out": function(array) {
-				var target;
-				for (var i = array.length - 1; i >= 0; i--) {
-					var cur = array[i];
-					if (cur.type == 'zoom-out' || cur.type == 'move-view'){//&& cur.value
-						target = cur;
-						break;
-					}
-
-				}
-				return target;
-			}
-		};
-
 		var complexBrowsing = function(bwlev, md, value) {
 			// map levels. without knowing which map
 			var obj = md.state('bmp_show');
