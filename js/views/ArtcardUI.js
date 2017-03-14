@@ -70,7 +70,7 @@ var SimilarsController = spv.inh(View, {}, {
 		'similars': {
 			showArtcardPage: function(e, node, scope) {
 				e.preventDefault();
-				this.root_view.showArtcardPage(scope.artist.name);
+				this.root_view.tpl_events.showArtcardPage.call(this.root_view, e, node, scope.artist.name);
 			}
 		}
 	}
