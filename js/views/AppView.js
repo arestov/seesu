@@ -500,6 +500,9 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 	tpl_events: {
 		showFullNavHelper: function() {
 			pv.update(this, 'nav_helper_full', true);
+		},
+		showArtcardPage: function (e, node, artist_name) {
+			this.RPCLegacy('showArtcardPage', artist_name);
 		}
 	},
 	buildNavHelper: function() {
@@ -743,7 +746,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 				e.preventDefault();
 
 				var artist_name = decodeURIComponent(link.replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-				_this.RPCLegacy('showArtcardPage', 'artist_name');
+				_this.root_view.showArtcardPage(artist_name);
 				_this.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
 			} else if (node.is('.bbcode_tag')){
 				e.preventDefault();

@@ -616,10 +616,6 @@ return spv.inh(BrowseMap.Model, {
 	getCurrentMopla: function(){
 		return this.getMFCore().getCurrentMopla();
 	},
-	showArtcardPage: function(artist_name) {
-		this.app.showArtcardPage(artist_name || this.artist);
-		this.app.trackEvent('Artist navigation', 'art card', artist_name || this.artist);
-	}
 
 });
 });

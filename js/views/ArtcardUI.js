@@ -70,7 +70,7 @@ var SimilarsController = spv.inh(View, {}, {
 		'similars': {
 			showArtcardPage: function(e, node, scope) {
 				e.preventDefault();
-				this.RPCLegacy('showArtcardPage', scope.artist.name);
+				this.root_view.showArtcardPage(scope.artist.name);
 			}
 		}
 	}

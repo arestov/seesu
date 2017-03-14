@@ -1280,14 +1280,14 @@
 					<div class="last-fm-scrobbling hidden" pv-nest="context_parts for_model:row-lastfm" pv-class="hidden: !active_view"></div>
 					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="hidden: !active_view">
 						<label class="song-row-label">
-							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
+							<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
 							<span class="lang localize-rept-song">Repeat playing song</span>
 						</label>
 
 					</div>
 					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-pl-shuffle" pv-class="hidden: !active_view">
 						<label class="song-row-label">
-							<input type="checkbox" pv-events="click::switchSetting:%checked%" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
+							<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
 							<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
 						</label>
 
@@ -1661,7 +1661,7 @@
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
-							pv-type="way-point" pv-events="click::view"
+							pv-type="way-point" pv-events="click:#showArtcardPage:%states%artist"
 							pv-class="
 								hidden: !text_title
 								searched-bordered: bordered
