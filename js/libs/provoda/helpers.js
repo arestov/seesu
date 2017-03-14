@@ -209,21 +209,38 @@ return {
 					var target_view;
 					//var view =
 
+					var rpc_method_name;
+
 					if (spv.startsWith(cb_data[1], '#')) {
 						target_view = view.root_view;
-						cb_data[1] = cb_data[1].slice(1);
+						rpc_method_name = cb_data[1].slice(1);
 					} else {
+						rpc_method_name = cb_data[1]
 						target_view = view;
 					}
-					if (cb_data[2]) {
-						var stringed_variable = cb_data[2].match(/\%(.*?)\%/);
-						if (stringed_variable) {
-							cb_data[2] = spv.getTargetField(e.node, stringed_variable[1]);
+					var argument;
+					var stringed_variable = cb_data[2] && cb_data[2].match(/\%(.*?)\%(.*)/);
+					if (!stringed_variable || !stringed_variable[2]) {
+						argument = cb_data[2];
+					} else {
+						var rest_part = stringed_variable[2];
+						switch (stringed_variable[1]) {
+							case "node": {
+								argument = spv.getTargetField(e.node, rest_part);
+								break;
+							}
+							case "event": {
+								argument = spv.getTargetField(e.event, rest_part);
+								break;
+							}
+							case "states": {
+								argument = pvState(target_view, rest_part)
+								break;
+							}
 						}
 					}
 
-					cb_data.shift();
-					target_view.handleTemplateRPC.apply(target_view, cb_data);
+					target_view.handleTemplateRPC.call(target_view, rpc_method_name, argument);
 
 				};
 			}
