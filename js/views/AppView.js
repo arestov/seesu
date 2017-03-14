@@ -25,15 +25,14 @@ var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 		}
 	},
 	changeFavicon: spv.debounce(function(state){
-		if (this.isAlive()){
-			if (state && this.favicon_states[state]){
-				changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
-			} else{
-				changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
-			}
-		}
+		if (!this.isAlive()){ return; }
 
-	},300),
+		if (state && this.favicon_states[state]){
+			changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
+		} else{
+			changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
+		}
+	}, 300),
 	favicon_states: {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
