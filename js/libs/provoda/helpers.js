@@ -191,37 +191,25 @@ return {
 						}
 					}
 
-					var localName = cb_data[0];
-
-					if (localName) {
-						if (!e.pv_repeat_context){
-							view.tpl_events[e.callback_name].call(view, e.event, e.node, cb_data);
-						} else {
-							view.tpl_r_events[e.pv_repeat_context][e.callback_name].call(view, e.event, e.node, e.scope);
-						}
-						return;
-					}
-
-					if (!cb_data[1]) {
-						return;
-					}
+					var isLocal = Boolean(cb_data[0])
+					var fnNameRaw = cb_data[0] || cb_data[1];
+					var argumentRaw = isLocal ? cb_data[1] : cb_data[2];
 
 					var target_view;
-					//var view =
+					var fnName;
+					var argument;
 
-					var rpc_method_name;
-
-					if (spv.startsWith(cb_data[1], '#')) {
+					if (spv.startsWith(fnNameRaw, '#')) {
 						target_view = view.root_view;
-						rpc_method_name = cb_data[1].slice(1);
+						fnName = fnNameRaw.slice(1);
 					} else {
-						rpc_method_name = cb_data[1]
+						fnName = fnNameRaw
 						target_view = view;
 					}
-					var argument;
-					var stringed_variable = cb_data[2] && cb_data[2].match(/\%(.*?)\%(.*)/);
+
+					var stringed_variable = argumentRaw && argumentRaw.match(/\%(.*?)\%(.*)/);
 					if (!stringed_variable || !stringed_variable[2]) {
-						argument = cb_data[2];
+						argument = argumentRaw;
 					} else {
 						var rest_part = stringed_variable[2];
 						switch (stringed_variable[1]) {
@@ -234,13 +222,22 @@ return {
 								break;
 							}
 							case "states": {
-								argument = pvState(target_view, rest_part)
+								argument = pvState(view, rest_part)
 								break;
 							}
 						}
 					}
 
-					target_view.handleTemplateRPC.call(target_view, rpc_method_name, argument);
+					if (!isLocal) {
+						target_view.handleTemplateRPC.call(target_view, fnName, argument);
+						return;
+					}
+
+					if (!e.pv_repeat_context){
+						target_view.tpl_events[fnName].call(target_view, e.event, e.node, argument);
+					} else {
+						target_view.tpl_r_events[e.pv_repeat_context][fnName].call(target_view, e.event, e.node, e.scope);
+					}
 
 				};
 			}
