@@ -28,9 +28,9 @@ var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 		if (!this.isAlive()){ return; }
 
 		if (state && this.favicon_states[state]){
-			changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
+			this.favicon_node = changeFaviconNode(this.d, this.favicon_node, this.favicon_states[state], 'image/png');
 		} else{
-			changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
+			this.favicon_node = changeFaviconNode(this.d, this.favicon_node, this.favicon_states['usual'], 'image/png');
 		}
 	}, 300),
 	favicon_states: {
@@ -39,9 +39,9 @@ var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	}
 });
 
-function changeFaviconNode(d, src, type) {
-	var link = d.createElement('link'),
-		oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
+function changeFaviconNode(d, oldLink, src, type) {
+	var link = d.createElement('link');
+	oldLink = oldLink || d.getElementById('dynamic-favicon');
 	link.id = 'dynamic-favicon';
 	link.rel = 'shortcut icon';
 	if (type){
@@ -50,7 +50,7 @@ function changeFaviconNode(d, src, type) {
 
 	link.href = src;
 	d.head.replaceChild(link, oldLink);
-	this.favicon_node = link;
+	return link;
 }
 
 
