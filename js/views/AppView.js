@@ -717,26 +717,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			return $("<span class='desc'></span>").text(app_serv.getRemainTimeText(rel.item.est, true));
 		}
 	},
-
-
-	create_youtube_video: function(id){
-		var youtube_video = window.document.createElement('embed');
-		if (!app_env.chrome_like_ext){
-			if (app_env.opera_widget){
-				youtube_video.setAttribute('wmode',"transparent");
-			} else if (app_env.opera_extension){
-				youtube_video.setAttribute('wmode',"opaque");
-			}
-		}
-
-
-		youtube_video.setAttribute('type',"application/x-shockwave-flash");
-		youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');
-		youtube_video.setAttribute('allowfullscreen',"true");
-		youtube_video.setAttribute('class',"you-tube-video");
-
-		return youtube_video;
-	},
 	bindLfmTextClicks: function(con) {
 		var _this = this;
 		con.on('click', 'a', function(e) {
