@@ -766,9 +766,6 @@ ArtCard = spv.inh(ArtCardBase, {}, {});
 var ArtistInArtl = spv.inh(ArtCardBase, {}, {
 	net_head: ['artist_name'],
 	skip_map_init: true,
-	showArtcard: function() {
-		this.app.showArtcardPage(this.head.artist_name);
-	}
 });
 
 var RandomSong = spv.inh(Song, {}, {
