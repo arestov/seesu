@@ -28,10 +28,6 @@ var artistSuggest = spv.inh(base.BaseSuggest, {
 	valueOf: function(){
 		return this.artist;
 	},
-	onView: function(){
-		this.app.showArtcardPage(this.artist, this.invstg);
-		this.app.trackEvent('Music search', this.q, "artist: " + this.artist );
-	}
 });
 
 var playlistSuggest = spv.inh(base.BaseSuggest, {
