@@ -1,5 +1,7 @@
-define(['pv', './coct', 'spv'], function(pv, coct, spv) {
-"use strict";
+define(function(require) {
+'use strict';
+var coct = require('./coct');
+var spv = require('spv');
 
 var TagPageView = spv.inh(coct.PageView, {}, {
 	base_tree: {
@@ -25,5 +27,3 @@ TagPageView.TagsListPage = TagsListPage;
 
 return TagPageView;
 });
-
-

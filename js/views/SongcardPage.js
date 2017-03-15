@@ -1,6 +1,11 @@
-define(['pv', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct', 'View'],
-function(pv, etc_views, app_serv, $, spv, ArtcardUI, coct, View) {
+define(function(require) {
 'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var ArtcardUI = require('./ArtcardUI');
+var coct = require('./coct');
+var View = require('View');
+
 var pvUpdate = pv.update;
 
 var SongcardPage = spv.inh(coct.SPView, {}, {

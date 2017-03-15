@@ -1,5 +1,10 @@
-define(['pv', 'app_serv', 'jquery', 'spv', 'View'], function(pv, app_serv, $, spv, View) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var $ = require('jquery');
+var spv = require('spv');
+var View = require('View');
+
 var pvUpdate = pv.update;
 var contextRow = function(container){
 	this.m = {

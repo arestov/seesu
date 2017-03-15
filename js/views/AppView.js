@@ -1,12 +1,30 @@
-define(['pv', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
-'./StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
-'./SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
-'./lul', './SongcardPage', './AppBaseView', './modules/WPBox', 'view_serv', 'View', './etc_views'],
-function(pv, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
-StartPageView, SearchPageView, ArtcardUI, ArtistListView,
-SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
-lul, SongcardPage, AppBaseView, WPBox, view_serv, View, etc_views) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var $ = require('jquery');
+var app_serv = require('app_serv');
+var FuncsQueue = require('js/libs/FuncsQueue');
+var nav = require('./nav');
+var coct = require('./coct');
+var uacq = require('./uacq');
+var StartPageView = require('./StartPageView');
+var SearchPageView = require('./SearchPageView');
+var ArtcardUI = require('./ArtcardUI');
+var ArtistListView = require('./ArtistListView');
+var SongsListView = require('./SongsListView');
+var UserCardPage = require('./UserCardPage');
+var MusicConductorPage = require('./MusicConductorPage');
+var TagPageView = require('./TagPageView');
+var YoutubeVideoView = require('./YoutubeVideoView');
+var lul = require('./lul');
+var SongcardPage = require('./SongcardPage');
+var AppBaseView = require('./AppBaseView');
+var WPBox = require('./modules/WPBox');
+var view_serv = require('view_serv');
+var View = require('View');
+var etc_views = require('./etc_views');
+
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
 

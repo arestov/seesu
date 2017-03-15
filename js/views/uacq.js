@@ -1,5 +1,8 @@
-define(['pv', 'jquery', 'app_serv', './coct', 'spv', 'View'], function(pv, $, app_serv, coct, spv, View) {
+define(function(require) {
 'use strict';
+var coct = require('./coct');
+var spv = require('spv');
+var View = require('View');
 
 var UserAcquaintanceView = spv.inh(View, {}, {
 	'compx-lo_accept_inv': [['#locales.accept-inv']]

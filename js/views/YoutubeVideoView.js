@@ -1,6 +1,10 @@
+define(function(require) {
+'use strict';
+var $ = require('jquery');
+var coct = require('./coct');
+var spv = require('spv');
+var app_serv = require('app_serv');
 
-define(['pv', 'jquery', './coct', 'spv', 'app_serv'], function(pv, $, coct, spv, app_serv) {
-"use strict";
 var app_env = app_serv.app_env;
 var YoutubeVideoView = spv.inh(coct.PageView, {}, {
 	full_page: true,

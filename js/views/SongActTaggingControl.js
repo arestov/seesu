@@ -1,5 +1,8 @@
-define(['./etc_views', 'jquery', 'app_serv', 'spv', 'pv', 'View'], function(etc_views, $, app_serv, spv, pv, View){
-"use strict";
+define(function(require) {
+'use strict';
+var etc_views = require('./etc_views');
+var spv = require('spv');
+var View = require('View');
 
 var addTag = function(e, node, scope) {
 	e.preventDefault();
