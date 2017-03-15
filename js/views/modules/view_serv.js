@@ -1,5 +1,10 @@
-define(['spv', 'env', 'localizer', 'jquery'], function(spv, env, localizer, $) {
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var env = require('env');
+var localizer = require('localizer');
+var $ = require('jquery');
+
 var serv = {};
 
 (function() {

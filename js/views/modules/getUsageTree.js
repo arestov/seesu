@@ -1,5 +1,7 @@
-define(['spv'], function(spv) {
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+
 var getTreeSample = function() {
 	return {
 		basetree: null,
