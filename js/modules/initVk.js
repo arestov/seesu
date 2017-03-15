@@ -1,5 +1,9 @@
-define(['app_serv', 'js/libs/VkAuth', 'jquery', 'pv'], function(app_serv, VkAuth, $, pv) {
-"use strict";
+define(function(require) {
+'use strict';
+var app_serv = require('app_serv');
+var VkAuth = require('js/libs/VkAuth');
+var pv = require('pv');
+
 var app_env = app_serv.app_env;
 
 var pvUpdate = pv.update;

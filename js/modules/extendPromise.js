@@ -1,5 +1,6 @@
-define(['Promise'], function(Promise) {
+define(function(require) {
 'use strict';
+var Promise = require('Promise');
 
 function extendPromise(promise, deferred) {
 	promise.queued_promise = deferred.queued_promise;

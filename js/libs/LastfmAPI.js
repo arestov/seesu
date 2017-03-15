@@ -1,5 +1,10 @@
-define(['jquery', 'spv', 'app_serv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5'], function($, spv, app_serv, aReq, wrapRequest, hex_md5) {
+define(function(require) {
 "use strict";
+var $ = require('jquery');
+var spv = require('spv');
+var aReq = require('js/modules/aReq');
+var wrapRequest = require('js/modules/wrapRequest');
+var hex_md5 = require('hex_md5');
 
 var LastfmAPI = function(){};
 spv.Class.extendTo(LastfmAPI, {
@@ -17,13 +22,13 @@ spv.Class.extendTo(LastfmAPI, {
 		this.cache_ajax = cache_ajax;
 		this.crossdomain = crossdomain;
 		if (!crossdomain){
-			var srvc = document.createElement('div'); $(srvc).css('display', 'none');
-			$(document).ready(function(){
-				$(document.body).append(srvc);
+			var srvc = window.document.createElement('div'); $(srvc).css('display', 'none');
+			$(window.document).ready(function(){
+				$(window.document.body).append(srvc);
 			});
 
-			var _i = document.createElement('iframe'); _i.width='30'; _i.height= '30';
-			var _f = document.createElement('form'); _f.method ='POST'; _f.action=this.api_path; srvc.appendChild(_f);
+			var _i = window.document.createElement('iframe'); _i.width='30'; _i.height= '30';
+			var _f = window.document.createElement('form'); _f.method ='POST'; _f.action=this.api_path; srvc.appendChild(_f);
 
 			this.post_serv = {
 				name: 'lfmpost',
@@ -33,7 +38,7 @@ spv.Class.extendTo(LastfmAPI, {
 				post: function(data,callback){
 					$(this.f).empty();
 					for (var a in data) {
-						var input = document.createElement('input');input.type='hidden';
+						var input = window.document.createElement('input');input.type='hidden';
 						input.name = a;
 						input.value = data[a];
 						this.f.appendChild(input);

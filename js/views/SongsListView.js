@@ -1,6 +1,12 @@
-define(['pv', 'jquery', './SongUI', './etc_views', './coct', 'spv', 'View'],
-function(pv, $, SongUI, etc_views, coct, spv, View) {
-	"use strict";
+define(function(require) {
+'use strict';
+var $ = require('jquery');
+var SongUI = require('./SongUI');
+var etc_views = require('./etc_views');
+var coct = require('./coct');
+var spv = require('spv');
+var View = require('View');
+
 	var PlaylistSettingsRowView = spv.inh(View, {}, {
 		"stch-dont_rept_pl": function(target, state) {
 			target.dont_rept_pl_chbx.prop('checked', !!state);

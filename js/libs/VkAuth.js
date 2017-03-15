@@ -1,5 +1,9 @@
-define(['pv', 'jquery', 'spv', 'hex_md5'], function(pv, $, spv, hex_md5){
+define(function(require){
 "use strict";
+var pv = require('pv');
+var $ = require('jquery');
+var spv = require('spv');
+var hex_md5 = require('hex_md5');
 
 var pvUpdate = pv.update;
 

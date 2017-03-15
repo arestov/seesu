@@ -191,32 +191,52 @@ return {
 						}
 					}
 
-					if (!cb_data[0] && cb_data[1]){
-						var target_view;
-						//var view =
+					var isLocal = Boolean(cb_data[0])
+					var fnNameRaw = cb_data[0] || cb_data[1];
+					var argumentRaw = isLocal ? cb_data[1] : cb_data[2];
 
-						if (spv.startsWith(cb_data[1], '#')) {
-							target_view = view.root_view;
-							cb_data[1] = cb_data[1].slice(1);
-						} else {
-							target_view = view;
-						}
-						if (cb_data[2]) {
-							var stringed_variable = cb_data[2].match(/\%(.*?)\%/);
-							if (stringed_variable) {
-								cb_data[2] = spv.getTargetField(e.node, stringed_variable[1]);
+					var target_view;
+					var fnName;
+					var argument;
+
+					if (spv.startsWith(fnNameRaw, '#')) {
+						target_view = view.root_view;
+						fnName = fnNameRaw.slice(1);
+					} else {
+						fnName = fnNameRaw
+						target_view = view;
+					}
+
+					var stringed_variable = argumentRaw && argumentRaw.match(/\%(.*?)\%(.*)/);
+					if (!stringed_variable || !stringed_variable[2]) {
+						argument = argumentRaw;
+					} else {
+						var rest_part = stringed_variable[2];
+						switch (stringed_variable[1]) {
+							case "node": {
+								argument = spv.getTargetField(e.node, rest_part);
+								break;
+							}
+							case "event": {
+								argument = spv.getTargetField(e.event, rest_part);
+								break;
+							}
+							case "states": {
+								argument = pvState(view, rest_part)
+								break;
 							}
 						}
+					}
 
-						cb_data.shift();
-						target_view.handleTemplateRPC.apply(target_view, cb_data);
+					if (!isLocal) {
+						target_view.handleTemplateRPC.call(target_view, fnName, argument);
+						return;
+					}
 
+					if (!e.pv_repeat_context){
+						target_view.tpl_events[fnName].call(target_view, e.event, e.node, argument);
 					} else {
-						if (!e.pv_repeat_context){
-							view.tpl_events[e.callback_name].call(view, e.event, e.node, cb_data);
-						} else {
-							view.tpl_r_events[e.pv_repeat_context][e.callback_name].call(view, e.event, e.node, e.scope);
-						}
+						target_view.tpl_r_events[e.pv_repeat_context][fnName].call(target_view, e.event, e.node, e.scope);
 					}
 
 				};

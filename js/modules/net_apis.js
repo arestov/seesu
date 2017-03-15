@@ -1,5 +1,10 @@
-define(['spv', './aReq', 'hex_md5', './wrapRequest'], function(spv, aReq, hex_md5, wrapRequest) {
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var aReq = require('./aReq');
+var hex_md5 = require('hex_md5');
+var wrapRequest = require('./wrapRequest');
+
 var GoogleSoundcloud = function() {};
 spv.Class.extendTo(GoogleSoundcloud, {
 	init: function(opts) {

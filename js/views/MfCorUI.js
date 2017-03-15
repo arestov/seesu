@@ -1,5 +1,11 @@
-define(['pv', 'jquery', 'spv', './etc_views', 'View'], function(pv, $, spv, etc_views, View) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var $ = require('jquery');
+var spv = require('spv');
+var etc_views = require('./etc_views');
+var View = require('View');
+
 var pvUpdate = pv.update;
 
 

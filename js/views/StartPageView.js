@@ -1,6 +1,10 @@
-define(['pv', 'spv', 'jquery', 'app_serv', './UserCardPreview', './coct'],
-function(pv, spv, $, app_serv, UserCardPreview, coct) {
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var $ = require('jquery');
+var UserCardPreview = require('./UserCardPreview');
+var coct = require('./coct');
+
 
 var finup = function(callback) {
 	callback.finup = true;

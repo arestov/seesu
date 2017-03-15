@@ -1,5 +1,12 @@
-define(['pv', 'jquery', './coct', './uacq', 'env', 'spv', 'View'], function(pv, $, coct, uacq, env, spv, View) {
-"use strict";
+define(function(require) {
+'use strict';
+var $ = require('jquery');
+var coct = require('./coct');
+var uacq = require('./uacq');
+var env = require('env');
+var spv = require('spv');
+var View = require('View');
+
 var app_env = env;
 
 var UserCardPage = spv.inh(coct.PageView, {}, {

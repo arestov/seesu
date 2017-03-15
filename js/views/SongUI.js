@@ -1,8 +1,14 @@
-define(['pv', 'spv', 'jquery', 'app_serv',
-'./SongActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
-function(pv, spv, $, app_serv,
-SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var $ = require('jquery');
+var SongActionsRowUI = require('./SongActionsRowUI');
+var MfCorUI = require('./MfCorUI');
+var ArtcardUI = require('./ArtcardUI');
+var SongcardPage = require('./SongcardPage');
+var coct = require('./coct');
+
 
 var SongViewBase = spv.inh(coct.SPView, {}, {
 	'compx-vmp_show': [

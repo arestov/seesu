@@ -1,5 +1,10 @@
-define(['js/LfmAuth', 'app_serv', '../comd', 'spv', 'pv'], function(LfmAuth, app_serv, comd, spv, pv) {
+define(function(require) {
 "use strict";
+var LfmAuth = require('js/LfmAuth');
+var comd = require('../comd');
+var spv = require('spv');
+var pv = require('pv');
+
 var pvUpdate = pv.update;
 
 var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {

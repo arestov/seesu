@@ -1,5 +1,9 @@
-define(['pv', 'spv', 'jquery', 'js/libs/BrowseMap', './../PlayRequest', 'Promise'], function(pv, spv, $, BrowseMap, PlayRequest, Promise) {
+define(function(require) {
 "use strict";
+var pv = require('pv');
+var spv = require('spv');
+var BrowseMap = require('js/libs/BrowseMap');
+var PlayRequest = require('./../PlayRequest');
 var isDepend = pv.utils.isDepend;
 
 var playRelative = function(mo, result) {
@@ -616,10 +620,6 @@ return spv.inh(BrowseMap.Model, {
 	getCurrentMopla: function(){
 		return this.getMFCore().getCurrentMopla();
 	},
-	showArtcardPage: function(artist_name) {
-		this.app.showArtcardPage(artist_name || this.artist);
-		this.app.trackEvent('Artist navigation', 'art card', artist_name || this.artist);
-	}
 
 });
 });

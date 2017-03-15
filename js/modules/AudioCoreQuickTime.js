@@ -1,5 +1,8 @@
-define(['spv', 'jquery'], function(spv, $) {
+define(function(require) {
 'use strict';
+var spv = require('spv');
+var $ = require('jquery');
+
 	var using_mime_type = "video/quicktime";
 	//"application/x-quicktimeplayer"
 
@@ -237,4 +240,3 @@ var a = document.createElement("object");a.onload = function(){console.log("load
 return AudioCoreQuickTime;
 
 });
-

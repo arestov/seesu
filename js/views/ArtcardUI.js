@@ -1,6 +1,14 @@
-define(['pv', 'jquery', './coct', 'app_serv', 'view_serv', './modules/Panoramator', 'spv', 'View'],
-function(pv, $, coct, app_serv, view_serv, Panoramator, spv, View) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var $ = require('jquery');
+var coct = require('./coct');
+var app_serv = require('app_serv');
+var view_serv = require('view_serv');
+var Panoramator = require('./modules/Panoramator');
+var spv = require('spv');
+var View = require('View');
+
 var app_env = app_serv.app_env;
 
 var ArtcardUI = spv.inh(View, {}, {
@@ -70,7 +78,7 @@ var SimilarsController = spv.inh(View, {}, {
 		'similars': {
 			showArtcardPage: function(e, node, scope) {
 				e.preventDefault();
-				this.RPCLegacy('showArtcardPage', scope.artist.name);
+				this.root_view.tpl_events.showArtcardPage.call(this.root_view, e, node, scope.artist.name);
 			}
 		}
 	}

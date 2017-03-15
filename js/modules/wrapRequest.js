@@ -1,5 +1,8 @@
-define(['jquery', 'Promise', './extendPromise'], function($, Promise, extendPromise) {
-"use strict";
+define(function(require) {
+'use strict';
+var $ = require('jquery');
+var Promise = require('Promise');
+var extendPromise = require('./extendPromise');
 
 var toBigPromise = extendPromise.toBigPromise;
 

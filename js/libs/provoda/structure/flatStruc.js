@@ -1,5 +1,9 @@
-define(['spv', '../helpers', './get_constr'], function(spv, hp, get_constr){
+define(function(require) {
 'use strict';
+var spv = require('spv');
+var hp = require('../helpers');
+var get_constr = require('./get_constr');
+
 
 var getEncodedState = hp.getEncodedState;
 var getNestingConstr = get_constr.getNestingConstr;
@@ -27,7 +31,7 @@ var preciseNesting = function(app, array, path, original_need) {
 	};
 };
 
-var checkNestingPath = function(app, md, dep, path, original_need) {
+function checkNestingPath(app, md, dep, path, original_need) {
 	var result = [];
 	var cur = md;
 
@@ -187,7 +191,7 @@ var getRelated = function(app, md, needed) {
 	return related;
 };
 
-var chechTreeStructure = function(app, md, dep) {
+function chechTreeStructure(app, md, dep) {
 	if (dep.type == 'state') {
 		var enc = getEncodedState(dep.value);
 		if (!enc) {

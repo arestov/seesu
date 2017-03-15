@@ -1,5 +1,10 @@
-define(['pv', 'app_serv', 'spv', '../PlayRequest'], function(pv, app_serv, spv, PlayRequest){
+define(function(require){
 "use strict";
+var pv = require('pv');
+var app_serv = require('app_serv');
+var spv = require('spv');
+var PlayRequest = require('../PlayRequest');
+
 var app_env = app_serv.app_env;
 
 var isStoped = function (play) {

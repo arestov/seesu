@@ -1,5 +1,7 @@
-define(['jquery'],function($){
+define(function(require) {
 'use strict';
+var $ = require('jquery');
+
 var create_jsonp_callback;
 (function(){
 	var jsonp_counter = 0;
@@ -12,7 +14,7 @@ var create_jsonp_callback;
 		return func_name;
 	};
 })();
-var async_script_support = "async" in document.createElement("script");
+var async_script_support = "async" in window.document.createElement("script");
 var xhr2_support = window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest());  //https://gist.github.com/1431660
 var aReq = function(options){
 	if (options.dataType != "jsonp"){
@@ -25,8 +27,12 @@ var aReq = function(options){
 		}
 		return $.ajax(options);
 	} else {
+		var img;
+		var unbindImage = function(){
+			img.onload = null;
+			img.onerror = null;
+		};
 		var
-			img,
 			script,
 			callback_func_name,
 			script_load_timeout,
@@ -88,10 +94,10 @@ var aReq = function(options){
 
 		var done;
 		var loadScript = function(){
-			script = document.createElement("script");
+			script = window.document.createElement("script");
 			script.async = true;
 			script.onload = function(){
-				//document.documentElement.firstChild.removeChild(script);
+				//window.document.window.documentElement.firstChild.removeChild(script);
 
 
 
@@ -100,18 +106,13 @@ var aReq = function(options){
 				deferred.reject();
 			};
 			script.src = full_url;
-			document.documentElement.firstChild.insertBefore(script, document.documentElement.firstChild.firstChild);
+			window.document.window.documentElement.firstChild.insertBefore(script, window.document.window.documentElement.firstChild.firstChild);
 		};
 
-
-		var unbindImage = function(){
-			img.onload = null;
-			img.onerror = null;
-		};
 		if (async_script_support){
 			loadScript();
 		} else if (options.resourceCachingAvailable){
-			img = document.createElement("img");
+			img = window.document.createElement("img");
 			var completeImage = function(){
 				if (!done){
 					done = true;

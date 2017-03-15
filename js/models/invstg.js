@@ -1,6 +1,13 @@
-define(['pv', 'js/modules/lfmhelp', 'app_serv', 'spv', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
-function(pv, lfmhelp, app_serv, spv, cache_ajax, hex_md5, lastfm_data, BrowseMap, base) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var lfmhelp = require('js/modules/lfmhelp');
+var app_serv = require('app_serv');
+var spv = require('spv');
+var cache_ajax = require('cache_ajax');
+var hex_md5 = require('hex_md5');
+var lastfm_data = require('js/lastfm_data');
+var base = require('./Investigation');
 var pvUpdate = pv.update;
 
 var suParseArtistsResults = function() {
@@ -28,10 +35,6 @@ var artistSuggest = spv.inh(base.BaseSuggest, {
 	valueOf: function(){
 		return this.artist;
 	},
-	onView: function(){
-		this.app.showArtcardPage(this.artist, this.invstg);
-		this.app.trackEvent('Music search', this.q, "artist: " + this.artist );
-	}
 });
 
 var playlistSuggest = spv.inh(base.BaseSuggest, {

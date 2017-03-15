@@ -1,6 +1,10 @@
-define(['spv', './libs/w_storage', './preloaded_nk', 'env'],
-function(spv, w_storage, preloaded_nk, env) {
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var w_storage = require('./libs/w_storage');
+var preloaded_nk = require('./preloaded_nk');
+var env = require('env');
+
 var app_serv = {};
 
 app_serv.getRemainTimeText = function(d, full, lo_will_get, lo_month, lo_time){

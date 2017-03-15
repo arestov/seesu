@@ -1,6 +1,13 @@
-define(['pv', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList', 'js/modules/declr_parsers'],
-function(pv, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList, declr_parsers){
+define(function(require) {
 'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var comd = require('./comd');
+var SongsList = require('./SongsList');
+var BrowseMap = require('js/libs/BrowseMap');
+var LoadableList = require('./LoadableList');
+var declr_parsers = require('js/modules/declr_parsers');
+
 var pvUpdate = pv.update;
 var cloneObj = spv.cloneObj;
 

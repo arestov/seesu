@@ -1,5 +1,8 @@
-define(['spv', 'jquery'], function(spv, $) {
+define(function(require) {
 'use strict';
+var spv = require('spv');
+var $ = require('jquery');
+
 	var createAObj = function() {
 		var au = window.document.createElement('object');
 			au.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
@@ -343,4 +346,3 @@ define(['spv', 'jquery'], function(spv, $) {
 	};
 return AudioCoreWmp;
 });
-

@@ -1,5 +1,6 @@
 var soundManager;
 (function() {
+'use strict';
 	var createSoundSample = function(cb) {
 		return {
 			multiShot: false,
@@ -37,7 +38,7 @@ var soundManager;
 		};
 	};
 
-	sm2internal = function(path, opts) {
+	window.sm2internal = function(path, opts) {
 		var _this = this;
 
 		var sendMsg = function() {
@@ -83,7 +84,7 @@ var soundManager;
 		this.def = $.Deferred();
 	};
 
-	sm2internal.prototype = {
+	window.sm2internal.prototype = {
 		subscribe: function(cb){
 			this.subr = cb;
 			return this;
@@ -190,4 +191,3 @@ var soundManager;
 		}
 	};
 })();
-

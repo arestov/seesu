@@ -1,6 +1,26 @@
-define(['spv', 'pv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/models/Mp3Search/index', 'js/modules/declr_parsers', './Song'],
-function(spv, pv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search, declr_parsers, Song){
-"use strict";
+define(function(require) {
+'use strict';
+	var spv = require('spv');
+
+	var pv = require('pv');
+
+	var app_serv = require('app_serv');
+
+	var FuncsStack = require('js/libs/FuncsStack');
+
+	var BrowseMap = require('js/libs/BrowseMap');
+
+	var LoadableList = require('./LoadableList');
+
+	var SongsList = require('./SongsList');
+
+	var htmlencoding = require('js/common-libs/htmlencoding');
+
+	var Mp3Search = require('js/models/Mp3Search/index');
+
+	var declr_parsers = require('js/modules/declr_parsers');
+
+	var Song = require('./Song');
 var ArtCard;
 var pvUpdate = pv.update;
 
@@ -766,9 +786,6 @@ ArtCard = spv.inh(ArtCardBase, {}, {});
 var ArtistInArtl = spv.inh(ArtCardBase, {}, {
 	net_head: ['artist_name'],
 	skip_map_init: true,
-	showArtcard: function() {
-		this.app.showArtcardPage(this.head.artist_name);
-	}
 });
 
 var RandomSong = spv.inh(Song, {}, {

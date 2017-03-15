@@ -1,5 +1,7 @@
-define(['jquery'], function($){
+define(function(require) {
 'use strict';
+var $ = require('jquery');
+
 
 var dom_style_obj = window.document.body.style;
 var has_transform_prop;

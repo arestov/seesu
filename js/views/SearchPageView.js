@@ -1,5 +1,8 @@
-define(['pv', 'spv', 'View'], function(pv, spv, View) {
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var View = require('View');
+
 var SearchPageView = spv.inh(View, {}, {
 	base_tree: {
 		sample_name: 'search_results-container'

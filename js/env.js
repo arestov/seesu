@@ -1,5 +1,6 @@
-define(['localizer'], function(localizer) {
+define(function(require) {
 'use strict';
+var localizer = require('localizer');
 
 var sviga = {};
 var localize= function(lang){
@@ -344,7 +345,7 @@ if (typeof console != 'object'){
 			output += map.charAt(63 & block >> 8 - idx % 1 * 8)
 		) {
 			charCode = input.charCodeAt(idx += 3/4);
-			if (charCode > 0xFF) throw INVALID_CHARACTER_ERR;
+			if (charCode > 0xFF) {throw INVALID_CHARACTER_ERR;}
 			block = block << 8 | charCode;
 		}
 		return output;
@@ -355,7 +356,7 @@ if (typeof console != 'object'){
 		object.atob || (
 		object.atob = function (input) {
 		input = input.replace(/=+$/, '')
-		if (input.length % 4 == 1) throw INVALID_CHARACTER_ERR;
+		if (input.length % 4 == 1) {throw INVALID_CHARACTER_ERR;}
 		for (
 			// initialize result and counters
 			var bc = 0, bs, buffer, idx = 0, output = '';

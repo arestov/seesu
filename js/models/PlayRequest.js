@@ -1,5 +1,7 @@
-define(['pv', 'spv'], function(pv, spv) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
 
 var pvUpdate = pv.update;
 

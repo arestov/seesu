@@ -1,6 +1,13 @@
-define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data', 'js/modules/declr_parsers', 'pv'],
-function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data, declr_parsers, pv){
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var SongsList = require('./SongsList');
+var ArtCard = require('./ArtCard');
+var BrowseMap = require('js/libs/BrowseMap');
+var lastfm_data = require('js/lastfm_data');
+var declr_parsers = require('js/modules/declr_parsers');
+var pv = require('pv');
+
 var parent_focus = [['^mp_has_focus']];
 var heavyInitReactn = function(target, state) {
 	if (state) {

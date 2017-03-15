@@ -1,7 +1,12 @@
-define(['pv', 'spv', 'app_serv', '../comd', 'js/LfmAuth',
-'./SongActPlaylisting', './SongActTaging', './SongActSharing'], function(pv, spv, app_serv, comd, LfmAuth,
-SongActPlaylisting, SongActTaging, SongActSharing){
+define(function(require){
 "use strict";
+var pv = require('pv');
+var spv = require('spv');
+var comd = require('../comd');
+var LfmAuth = require('js/LfmAuth');
+var SongActPlaylisting = require('./SongActPlaylisting');
+var SongActTaging = require('./SongActTaging');
+var SongActSharing = require('./SongActSharing');
 
 var pvUpdate = pv.update;
 

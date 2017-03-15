@@ -1,6 +1,12 @@
-define(['pv', 'spv', 'app_serv', '../invstg', '../comd', 'js/LfmAuth'],
-function(pv, spv, app_serv,  invstg, comd, LfmAuth) {
+define(function(require) {
 "use strict";
+var pv = require('pv');
+var spv = require('spv');
+var app_serv = require('app_serv');
+var invstg = require('../invstg');
+var comd = require('../comd');
+var LfmAuth = require('js/LfmAuth');
+
 var app_env = app_serv.app_env;
 var pvState = pv.state;
 

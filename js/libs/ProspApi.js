@@ -1,7 +1,9 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5'],
-function(spv, aReq, wrapRequest, hex_md5) {
+define(function(require) {
 "use strict";
-
+var spv = require('spv');
+var aReq = require('js/modules/aReq');
+var wrapRequest = require('js/modules/wrapRequest');
+var hex_md5 = require('hex_md5');
 /*
 
 artist: "Radio Killer"

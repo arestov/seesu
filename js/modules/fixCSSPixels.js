@@ -1,5 +1,9 @@
-define(['app_serv', 'jquery', 'spv'], function(app_serv, $, spv) {
-"use strict";
+define(function(require) {
+'use strict';
+var app_serv = require('app_serv');
+var $ = require('jquery');
+var spv = require('spv');
+
 	var createStyleSheet = function(href, sheet_string, root_font_size, string) {
 		var sheet = window.CSSOM.parse(sheet_string);
 		href = href || sheet.href;

@@ -1,5 +1,10 @@
-define(['pv', 'spv', 'app_serv', 'js/libs/morph_helpers', '../libs/BrowseMap'], function(pv, spv, app_serv, morph_helpers, BrowseMap){
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var morph_helpers = require('js/libs/morph_helpers');
+var BrowseMap = require('../libs/BrowseMap');
+
 var pvUpdate = pv.update;
 
 var CommonMessagesStore = spv.inh(pv.Eventor, {

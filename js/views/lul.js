@@ -1,5 +1,11 @@
-define(['pv', './coct', 'env', 'jquery', 'spv', 'View'], function(pv, coct, env, $, spv, View) {
-"use strict";
+define(function(require) {
+'use strict';
+var coct = require('./coct');
+var env = require('env');
+var $ = require('jquery');
+var spv = require('spv');
+var View = require('View');
+
 var app_env = env;
 var LULAPageVIew = spv.inh(View, {}, {
 	base_tree: {

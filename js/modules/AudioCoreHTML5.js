@@ -1,5 +1,7 @@
-define(['spv'],function(spv){
+define(function(require) {
 'use strict';
+var spv = require('spv');
+
 	var createAE = function(id, url, cb) {
 		var a = new Audio(url);
 		a.volume = 1;

@@ -1,5 +1,8 @@
-define(['./LoadableListBase', 'spv', 'pv'], function(LoadableListBase, spv, pv){
-"use strict";
+define(function(require) {
+'use strict';
+var LoadableListBase = require('./LoadableListBase');
+var spv = require('spv');
+var pv = require('pv');
 
 var LoadableList = spv.inh(LoadableListBase, {
 	naming: function(fn) {

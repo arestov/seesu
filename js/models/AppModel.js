@@ -1,5 +1,10 @@
-define(['./AppModelBase', 'spv', './SongsList', 'pv', '../libs/BrowseMap'], function(AppModelBase, spv, SongsList, pv, BrowseMap) {
+define(function(require) {
 "use strict";
+var AppModelBase = require('./AppModelBase');
+var spv = require('spv');
+var SongsList = require('./SongsList');
+var pv = require('pv');
+var BrowseMap = require('../libs/BrowseMap');
 
 var AppModel = spv.inh(AppModelBase, {}, (function(){
 var props = {

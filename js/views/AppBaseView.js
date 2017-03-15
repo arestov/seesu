@@ -1,6 +1,13 @@
-define(['pv', 'spv', 'jquery','./modules/filters', 'app_serv', './modules/getUsageTree', 'view_serv', 'View'],
-function(pv, spv, $, filters, app_serv, getUsageTree, view_serv, View){
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var $ = require('jquery');
+var filters = require('./modules/filters');
+var getUsageTree = require('./modules/getUsageTree');
+var view_serv = require('view_serv');
+var View = require('View');
+
 var css_transform = view_serv.css.transform;
 var transform_props = css_transform ? [css_transform] : [];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];

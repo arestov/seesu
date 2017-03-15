@@ -1,10 +1,14 @@
-define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', 'js/libs/morph_helpers',
-'./user_music_lfm', './LoadableListBase', './SongsList',
-'./SeesuListening', 'js/modules/declr_parsers'],
-function(pv, spv, app_serv, BrowseMap, morph_helpers,
-user_music_lfm, LoadableListBase, SongsList,
-SeesuListening, declr_parsers) {
+define(function(require) {
 'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var app_serv = require('app_serv');
+var morph_helpers = require('js/libs/morph_helpers');
+var user_music_lfm = require('./user_music_lfm');
+var LoadableListBase = require('./LoadableListBase');
+var SongsList = require('./SongsList');
+var SeesuListening = require('./SeesuListening');
+
 var complexEach = app_serv.complexEach;
 
 var pvUpdate = pv.update;

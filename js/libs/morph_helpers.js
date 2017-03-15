@@ -1,7 +1,7 @@
-define(['spv'], function(spv) {
+define(function(require) {
 "use strict";
 
-
+var spv = require('spv');
 
 var getLFMImageId = function(url) {
 	var url_parts = url.split(/\/+/);

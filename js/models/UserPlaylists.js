@@ -1,5 +1,9 @@
-define(['js/libs/BrowseMap', 'spv', './SongsList', 'pv'], function(BrowseMap, spv, SongsList, pv){
-"use strict";
+define(function(require) {
+'use strict';
+var BrowseMap = require('js/libs/BrowseMap');
+var spv = require('spv');
+var SongsList = require('./SongsList');
+var pv = require('pv');
 
 var ManualPlaylist = spv.inh(SongsList, {}, {});
 

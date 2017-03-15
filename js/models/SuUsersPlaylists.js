@@ -1,5 +1,9 @@
-define(['./UserPlaylists', 'app_serv', 'spv'], function(UserPlaylists, app_serv, spv){
-"use strict";
+define(function(require) {
+'use strict';
+var UserPlaylists = require('./UserPlaylists');
+var app_serv = require('app_serv');
+var spv = require('spv');
+
 var SuUsersPlaylists = spv.inh(UserPlaylists, {
 	init: function(target) {
 		target

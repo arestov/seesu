@@ -1,5 +1,8 @@
-define(['spv', 'jquery'], function(spv, $){
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var $ = require('jquery');
+
 var WPBox = function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
 	this.root_view = root_view;
 

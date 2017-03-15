@@ -1,5 +1,6 @@
-define(['./FuncsStack'], function(FuncsStack) {
+define(function(require) {
 	"use strict";
+	var FuncsStack = require('./FuncsStack');
 	var FuncsQueue;
 	var QueueFunc = function(queue, atom){
 		this.q = queue;

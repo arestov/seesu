@@ -1,5 +1,9 @@
-define(['pv', './comd', 'app_serv'], function(pv, comd, app_serv) {
+define(function(require) {
 'use strict';
+var pv = require('pv');
+var comd = require('./comd');
+var app_serv = require('app_serv');
+
 var pvUpdate = pv.update;
 
 var auth = pv.behavior({

@@ -1,6 +1,16 @@
-define(['app_serv', 'js/libs/BrowseMap', './LoadableList', 'spv', './SongsList', './ArtCard', 'js/LfmAuth', 'js/modules/declr_parsers', 'jquery', 'pv'],
-function(app_serv, BrowseMap, LoadableList, spv, SongsList, ArtCard, LfmAuth, declr_parsers, $, pv) {
-"use strict";
+define(function(require) {
+'use strict';
+var app_serv = require('app_serv');
+var BrowseMap = require('js/libs/BrowseMap');
+var LoadableList = require('./LoadableList');
+var spv = require('spv');
+var SongsList = require('./SongsList');
+var ArtCard = require('./ArtCard');
+var LfmAuth = require('js/LfmAuth');
+var declr_parsers = require('js/modules/declr_parsers');
+var $ = require('jquery');
+var pv = require('pv');
+
 var ArtistsList = ArtCard.ArtistsList;
 var AlbumsList = ArtCard.AlbumsList;
 

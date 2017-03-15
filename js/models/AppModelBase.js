@@ -1,5 +1,8 @@
-define(['pv', 'spv', '../libs/BrowseMap'], function(pv, spv, BrowseMap) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var BrowseMap = require('../libs/BrowseMap');
 
 var getStruc = BrowseMap.getStruc;
 var getStrucSources = BrowseMap.getStrucSources;
@@ -113,33 +116,6 @@ var AppModelBase = spv.inh(pv.Model, {
 			}
 			app.binded_models[md._provoda_id] = true;
 			app.pushVDS(md);
-		};
-
-		var mapch_handlers = {
-			"zoom-in": function(array) {
-				var target;
-				for (var i = array.length - 1; i >= 0; i--) {
-					var cur = array[i];
-					if (cur.type == 'move-view' && cur.value){
-						target = cur;
-						break;
-					}
-
-				}
-				return target;
-			},
-			"zoom-out": function(array) {
-				var target;
-				for (var i = array.length - 1; i >= 0; i--) {
-					var cur = array[i];
-					if (cur.type == 'zoom-out' || cur.type == 'move-view'){//&& cur.value
-						target = cur;
-						break;
-					}
-
-				}
-				return target;
-			}
 		};
 
 		var complexBrowsing = function(bwlev, md, value) {

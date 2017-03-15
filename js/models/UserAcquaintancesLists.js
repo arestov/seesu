@@ -1,5 +1,10 @@
-define(['pv', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(pv, app_serv, spv, BrowseMap){
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var app_serv = require('app_serv');
+var spv = require('spv');
+var BrowseMap = require('js/libs/BrowseMap');
+
 var pvUpdate = pv.update;
 var UserAcquaintance = spv.inh(pv.Model, {
 		init: function(target, opts, params) {

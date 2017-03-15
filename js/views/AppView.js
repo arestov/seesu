@@ -1,12 +1,30 @@
-define(['pv', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
-'./StartPageView', './SearchPageView', './ArtcardUI', './ArtistListView',
-'./SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
-'./lul', './SongcardPage', './AppBaseView', './modules/WPBox', 'view_serv', 'View', './etc_views'],
-function(pv, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
-StartPageView, SearchPageView, ArtcardUI, ArtistListView,
-SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
-lul, SongcardPage, AppBaseView, WPBox, view_serv, View, etc_views) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var $ = require('jquery');
+var app_serv = require('app_serv');
+var FuncsQueue = require('js/libs/FuncsQueue');
+var nav = require('./nav');
+var coct = require('./coct');
+var uacq = require('./uacq');
+var StartPageView = require('./StartPageView');
+var SearchPageView = require('./SearchPageView');
+var ArtcardUI = require('./ArtcardUI');
+var ArtistListView = require('./ArtistListView');
+var SongsListView = require('./SongsListView');
+var UserCardPage = require('./UserCardPage');
+var MusicConductorPage = require('./MusicConductorPage');
+var TagPageView = require('./TagPageView');
+var YoutubeVideoView = require('./YoutubeVideoView');
+var lul = require('./lul');
+var SongcardPage = require('./SongcardPage');
+var AppBaseView = require('./AppBaseView');
+var WPBox = require('./modules/WPBox');
+var view_serv = require('view_serv');
+var View = require('View');
+var etc_views = require('./etc_views');
+
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
 
@@ -24,34 +42,34 @@ var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 			}
 		}
 	},
-	changeFaviconNode: function(d, src, type) {
-		var link = d.createElement('link'),
-			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
-		link.id = 'dynamic-favicon';
-		link.rel = 'shortcut icon';
-		if (type){
-			link.type = type;
-		}
-
-		link.href = src;
-		d.head.replaceChild(link, oldLink);
-		this.favicon_node = link;
-	},
 	changeFavicon: spv.debounce(function(state){
-		if (this.isAlive()){
-			if (state && this.favicon_states[state]){
-				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
-			} else{
-				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
-			}
-		}
+		if (!this.isAlive()){ return; }
 
-	},300),
+		if (state && this.favicon_states[state]){
+			this.favicon_node = changeFaviconNode(this.d, this.favicon_node, this.favicon_states[state], 'image/png');
+		} else{
+			this.favicon_node = changeFaviconNode(this.d, this.favicon_node, this.favicon_states['usual'], 'image/png');
+		}
+	}, 300),
 	favicon_states: {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
 	}
 });
+
+function changeFaviconNode(d, oldLink, src, type) {
+	var link = d.createElement('link');
+	oldLink = oldLink || d.getElementById('dynamic-favicon');
+	link.id = 'dynamic-favicon';
+	link.rel = 'shortcut icon';
+	if (type){
+		link.type = type;
+	}
+
+	link.href = src;
+	d.head.replaceChild(link, oldLink);
+	return link;
+}
 
 
 var map_slice_by_model = {
@@ -500,6 +518,9 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 	tpl_events: {
 		showFullNavHelper: function() {
 			pv.update(this, 'nav_helper_full', true);
+		},
+		showArtcardPage: function (e, node, artist_name) {
+			this.RPCLegacy('showArtcardPage', artist_name);
 		}
 	},
 	buildNavHelper: function() {
@@ -714,26 +735,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			return $("<span class='desc'></span>").text(app_serv.getRemainTimeText(rel.item.est, true));
 		}
 	},
-
-
-	create_youtube_video: function(id){
-		var youtube_video = window.document.createElement('embed');
-		if (!app_env.chrome_like_ext){
-			if (app_env.opera_widget){
-				youtube_video.setAttribute('wmode',"transparent");
-			} else if (app_env.opera_extension){
-				youtube_video.setAttribute('wmode',"opaque");
-			}
-		}
-
-
-		youtube_video.setAttribute('type',"application/x-shockwave-flash");
-		youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');
-		youtube_video.setAttribute('allowfullscreen',"true");
-		youtube_video.setAttribute('class',"you-tube-video");
-
-		return youtube_video;
-	},
 	bindLfmTextClicks: function(con) {
 		var _this = this;
 		con.on('click', 'a', function(e) {
@@ -743,7 +744,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 				e.preventDefault();
 
 				var artist_name = decodeURIComponent(link.replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-				_this.RPCLegacy('showArtcardPage', 'artist_name');
+				_this.root_view.tpl_events.showArtcardPage.call(_this.root_view, null, null, artist_name);
 				_this.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
 			} else if (node.is('.bbcode_tag')){
 				e.preventDefault();

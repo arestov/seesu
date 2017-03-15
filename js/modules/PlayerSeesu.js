@@ -1,7 +1,13 @@
-define(['./PlayerComplex', 'app_serv', 'jquery', 'spv',
-'js/modules/AudioCoreHTML5', 'js/modules/AudioCoreWmp', 'js/modules/AudioCoreSm2Proxy'], function(PlayerComplex, app_serv, $, spv,
-AudioCoreHTML5, AudioCoreWmp, AudioCoreSm2Proxy){
+define(function(require) {
 'use strict';
+var PlayerComplex = require('./PlayerComplex');
+var app_serv = require('app_serv');
+var $ = require('jquery');
+var spv = require('spv');
+var AudioCoreHTML5 = require('js/modules/AudioCoreHTML5');
+var AudioCoreWmp = require('js/modules/AudioCoreWmp');
+var AudioCoreSm2Proxy = require('js/modules/AudioCoreSm2Proxy');
+
 var app_env = app_serv.app_env;
 var document = window.document;
 var navigator = window.navigator;

@@ -1,5 +1,7 @@
-define(['./coct', 'spv'], function(coct, spv) {
-"use strict";
+define(function(require) {
+'use strict';
+var coct = require('./coct');
+var spv = require('spv');
 
 var MusicConductorPage = spv.inh(coct.PageView, {}, {
 	base_tree: {

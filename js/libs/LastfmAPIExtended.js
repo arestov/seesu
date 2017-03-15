@@ -1,5 +1,7 @@
-define(['./LastfmAPI', 'spv', 'app_serv'], function(LastfmAPI) {
+define(function(require) {
 "use strict";
+var LastfmAPI = require('./LastfmAPI');
+
 var LastfmAPIExtended = function() {};
 LastfmAPI.extendTo(LastfmAPIExtended, {
 	init: function() {
