@@ -479,7 +479,7 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 
 };
 
-var showMOnMap = function(map, model, bwlev, skip_detach) {
+function showMOnMap(map, model, bwlev, skip_detach) {
 
 	var is_start = model.map_level_num == -1;
 
@@ -550,11 +550,11 @@ var showMOnMap = function(map, model, bwlev, skip_detach) {
 	//
 };
 
-var getBwlevFromParentBwlev = function(parent_bwlev, md) {
+function getBwlevFromParentBwlev(parent_bwlev, md) {
 	return parent_bwlev.children_bwlevs[md._provoda_id];
 };
 
-var getBwlevInParentBwlev = function(md, map) {
+function getBwlevInParentBwlev(md, map) {
 	if (!md.map_parent) {
 		if (map.mainLevelResident != md) {
 			throw new Error('root map_parent must be `map.mainLevelResident`');
@@ -852,7 +852,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 	}
 });
 
-var getBWlev = function(md, parent_bwlev, map_level_num, map){
+function getBWlev(md, parent_bwlev, map_level_num, map){
 	var cache = parent_bwlev && parent_bwlev.children_bwlevs;
 	var key = md._provoda_id;
 	var bwlev;
