@@ -1,5 +1,10 @@
-define(['pv', 'jquery', 'spv', 'hex_md5', 'app_serv'], function(pv, $, spv, hex_md5, app_serv){
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var $ = require('jquery');
+var spv = require('spv');
+var hex_md5 = require('hex_md5');
+var app_serv = require('app_serv');
 
 var pvUpdate = pv.update;
 var AsyncDataSteam = function(getDataFunc, freshness, interval, data){

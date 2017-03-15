@@ -1,13 +1,25 @@
-define(
-['spv', 'app_serv', 'pv', 'jquery', './libs/navi', './libs/BrowseMap',
-'./libs/FuncsQueue', './LfmAuth',
-'./models/AppModel', './models/comd', './models/StartPage', './libs/VkAuth', './libs/VkApi', './modules/initVk',
-'./modules/PlayerSeesu', './models/invstg', 'cache_ajax', 'View', 'js/libs/localizer', './modules/route', './initAPIs'],
-function(spv, app_serv, pv, $, navi, BrowseMap,
-FuncsQueue, LfmAuth ,
-AppModel, comd, StartPage, VkAuth, VkApi, initVk,
-PlayerSeesu, invstg, cache_ajax, View, localize_dict, route, initAPIs) {
+define(function(require) {
 'use strict';
+var spv = require('spv');
+var app_serv = require('app_serv');
+var pv = require('pv');
+var $ = require('jquery');
+var navi = require('./libs/navi');
+var BrowseMap = require('./libs/BrowseMap');
+var LfmAuth = require('./LfmAuth');
+var AppModel = require('./models/AppModel');
+var comd = require('./models/comd');
+var StartPage = require('./models/StartPage');
+var VkAuth = require('./libs/VkAuth');
+var VkApi = require('./libs/VkApi');
+var initVk = require('./modules/initVk');
+var PlayerSeesu = require('./modules/PlayerSeesu');
+var cache_ajax = require('cache_ajax');
+var View = require('View');
+var localize_dict = require('js/libs/localizer');
+var route = require('./modules/route');
+var initAPIs = require('./initAPIs');
+
 var app_env = app_serv.app_env;
 
 var resortSuQueue = function(su) {

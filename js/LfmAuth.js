@@ -1,5 +1,9 @@
-define(['pv', 'spv', 'app_serv', 'hex_md5'], function(pv, spv, app_serv, hex_md5) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var hex_md5 = require('hex_md5');
+
 var pvUpdate = pv.update;
 
 
