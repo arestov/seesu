@@ -1,5 +1,9 @@
-define(['../invstg', '../comd', 'pv', 'spv'], function(invstg, comd, pv, spv) {
+define(function(require) {
 "use strict";
+var invstg = require('../invstg');
+var comd = require('../comd');
+var pv = require('pv');
+var spv = require('spv');
 var SongActPlaylisting;
 
 var playlistSuggest = spv.inh(invstg.BaseSuggest, {

@@ -1,5 +1,9 @@
-define(['pv', 'spv', 'jquery', 'js/libs/BrowseMap', './../PlayRequest', 'Promise'], function(pv, spv, $, BrowseMap, PlayRequest, Promise) {
+define(function(require) {
 "use strict";
+var pv = require('pv');
+var spv = require('spv');
+var BrowseMap = require('js/libs/BrowseMap');
+var PlayRequest = require('./../PlayRequest');
 var isDepend = pv.utils.isDepend;
 
 var playRelative = function(mo, result) {
