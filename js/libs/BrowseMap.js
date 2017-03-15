@@ -855,27 +855,24 @@ var BrowseLevel = spv.inh(pv.Model, {
 function getBWlev(md, parent_bwlev, map_level_num, map){
 	var cache = parent_bwlev && parent_bwlev.children_bwlevs;
 	var key = md._provoda_id;
-	var bwlev;
-
-	if (!cache || !cache[key]) {
-		bwlev = pv.create(BrowseLevel, {
-			map_level_num: map_level_num,
-			model_name: md.model_name,
-			pioneer: md
-		}, {
-			nestings: {
-				pioneer: md,
-				map: map
-			}
-		}, parent_bwlev, md.app);
-
-		if (cache) {
-			cache[key] = bwlev;
-		}
-
-	} else {
-		bwlev = cache[key];
+	if (cache && cache[key]) {
+		return cache[key];
 	}
+
+	var bwlev = pv.create(BrowseLevel, {
+		map_level_num: map_level_num,
+		model_name: md.model_name,
+		pioneer: md
+	}, {
+		nestings: {
+			pioneer: md,
+			map: map
+		}
+	}, parent_bwlev, md.app);
+
+	if (cache) {
+		cache[key] = bwlev;
+	};
 
 	return bwlev;
 };
