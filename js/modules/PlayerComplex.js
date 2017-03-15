@@ -1,6 +1,9 @@
-define(['./PlayerBase', 'spv', 'pv', '../libs/BrowseMap'], function(PlayerBase, spv, pv, BrowseMap) {
+define(function(require) {
 'use strict';
-
+var PlayerBase = require('./PlayerBase');
+var spv = require('spv');
+var pv = require('pv');
+var BrowseMap = require('../libs/BrowseMap');
 
 var removeCurrentWantedSong = function(obj){
 	if (obj.wanted_song){

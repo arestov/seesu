@@ -1,5 +1,5 @@
 define(function(require) {
-"use strict";
+'use strict';
 var spv = require('spv');
 var htmlencoding = require('js/common-libs/htmlencoding');
 var guessArtist = require('js/models/Mp3Search/guessArtist');

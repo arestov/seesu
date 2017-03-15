@@ -1,5 +1,8 @@
-define(['pv', 'spv'], function(pv, spv) {
+define(function(require) {
 'use strict';
+var pv = require('pv');
+var spv = require('spv');
+
 /*
 
 var PlayerBase = function(){};

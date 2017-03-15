@@ -1,6 +1,7 @@
-define(['spv', 'jquery'], function(spv, $) {
+define(function(require) {
 'use strict';
-
+var spv = require('spv');
+var $ = require('jquery');
 
 
 var AudioCoreSm2Proxy = function(origin, path, opts) {

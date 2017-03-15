@@ -1,5 +1,9 @@
-define(['spv', 'jquery', 'cache_ajax'], function(spv, $, cache_ajax){
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var $ = require('jquery');
+var cache_ajax = require('cache_ajax');
+
 
 var parseArtistsResults = function(r){
 	var artists_results = [];

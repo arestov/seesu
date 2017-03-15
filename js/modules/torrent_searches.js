@@ -1,12 +1,18 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'jquery', 'js/common-libs/htmlencoding', 'js/models/SongFileModel'],
-function(spv, aReq, wrapRequest, hex_md5, $, htmlencoding, SongFileModel) {
-"use strict";
+define(function(require) {
+'use strict';
+var aReq = require('js/modules/aReq');
+var wrapRequest = require('js/modules/wrapRequest');
+var hex_md5 = require('hex_md5');
+var $ = require('jquery');
+var htmlencoding = require('js/common-libs/htmlencoding');
+var SongFileModel = require('js/models/SongFileModel');
+
 var getSongFileModel = function(map_parent) {
 	map_parent.initSi(SongFileModel.FileInTorrent, null, {file:this});
 };
 
 var getHTMLText = function(text) {
-	var safe_node = document.createElement('div');
+	var safe_node = window.document.createElement('div');
 	safe_node.innerHTML = text;
 	return $(safe_node).text();
 };
@@ -114,8 +120,6 @@ BtdiggTorrentSearch.prototype = {
 		type: "torrent"
 	},
 	send: function(query, options) {
-		var _this = this;
-
 		if (query) {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
@@ -164,7 +168,7 @@ BtdiggTorrentSearch.prototype = {
 			olddone.call(this, function(r) {
 				if (!result){
 					result = [];
-					var safe_node = document.createElement('html');
+					var safe_node = window.document.createElement('html');
 					safe_node.innerHTML = r.replace(/src\=/gi, 'none=');
 				//	debugger;
 					$(safe_node).find('.torrent_name').each(function() {
@@ -226,8 +230,6 @@ googleTorrentSearch.prototype = {
 		type: "torrent"
 	},
 	send: function(query, options) {
-		var _this = this;
-
 		if (query) {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
