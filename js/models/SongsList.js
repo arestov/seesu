@@ -1,5 +1,12 @@
-define(['pv', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase', 'spv'], function(pv, app_serv, LoadableList, comd, Song, SongsListBase, spv){
-	"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var app_serv = require('app_serv');
+var comd = require('./comd');
+var Song = require('./Song');
+var SongsListBase = require('./SongsListBase');
+var spv = require('spv');
+
 	var app_env = app_serv.app_env;
 	var escape = window.escape;
 

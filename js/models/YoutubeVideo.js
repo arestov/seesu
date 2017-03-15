@@ -1,5 +1,10 @@
-define(['js/libs/BrowseMap', 'app_serv', 'pv', 'spv'],function(BrowseMap, app_serv, pv, spv) {
-"use strict";
+define(function(require) {
+'use strict';
+var BrowseMap = require('js/libs/BrowseMap');
+var app_serv = require('app_serv');
+var pv = require('pv');
+var spv = require('spv');
+
 var pvUpdate = pv.update;
 var app_env = app_serv.app_env;
 var YoutubeVideo = spv.inh(BrowseMap.Model, {

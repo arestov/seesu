@@ -1,6 +1,12 @@
-define(['pv', 'spv', 'app_serv' ,'cache_ajax', 'js/modules/aReq', 'js/models/Mp3Search/index', './comd', './YoutubeVideo', './LoadableList', 'js/libs/BrowseMap'],
-function(pv, spv, app_serv, cache_ajax, aReq, Mp3Search, comd, YoutubeVideo, LoadableList, BrowseMap) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var aReq = require('js/modules/aReq');
+var YoutubeVideo = require('./YoutubeVideo');
+var LoadableList = require('./LoadableList');
+var BrowseMap = require('js/libs/BrowseMap');
+
 var routePathByModels = BrowseMap.routePathByModels;
 var pvState = pv.state;
 var pvUpdate = pv.update;

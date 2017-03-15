@@ -1,6 +1,12 @@
-define(['spv', 'app_serv','js/libs/BrowseMap', './ArtCard', './LoadableList', './SongsList', 'js/modules/declr_parsers', 'js/lastfm_data'],
-function(spv, app_serv, BrowseMap, ArtCard, LoadableList, SongsList, declr_parsers, lastfm_data){
-"use strict";
+define(function(require) {
+'use strict';
+var spv = require('spv');
+var BrowseMap = require('js/libs/BrowseMap');
+var ArtCard = require('./ArtCard');
+var LoadableList = require('./LoadableList');
+var SongsList = require('./SongsList');
+var declr_parsers = require('js/modules/declr_parsers');
+var lastfm_data = require('js/lastfm_data');
 
 var AlbumsList = ArtCard.AlbumsList;
 var ArtistsList = ArtCard.ArtistsList;

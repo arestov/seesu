@@ -1,10 +1,12 @@
-define(['pv', 'spv', 'app_serv', './comd',
-'js/libs/BrowseMap', './SongsList' , 'js/common-libs/htmlencoding',
-'./UserAcquaintancesLists', './SuUsersPlaylists', './user_music_lfm', './user_music_vk'],
-function(pv, spv, app_serv, comd,
-BrowseMap, SongsList, htmlencoding,
-UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, user_music_vk){
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var BrowseMap = require('js/libs/BrowseMap');
+var UserAcquaintancesLists = require('./UserAcquaintancesLists');
+var SuUsersPlaylists = require('./SuUsersPlaylists');
+var user_music_lfm = require('./user_music_lfm');
+var user_music_vk = require('./user_music_vk');
 
 var UserCard = spv.inh(BrowseMap.Model, {
 	init: function(target) {

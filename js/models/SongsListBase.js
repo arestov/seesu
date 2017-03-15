@@ -1,7 +1,8 @@
-define(['pv', 'spv', './LoadableList'], function(pv, spv, LoadableList){
-	"use strict";
-
-
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var LoadableList = require('./LoadableList');
 
 return spv.inh(LoadableList, {
 	init: function(target, opts){

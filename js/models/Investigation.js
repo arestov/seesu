@@ -1,5 +1,9 @@
-define(['pv', 'spv', 'js/libs/BrowseMap'],function(pv, spv, BrowseMap){
-	"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var BrowseMap = require('js/libs/BrowseMap');
+
 	var Investigation = spv.inh(BrowseMap.Model, {
 		init: function(self) {
 			self.names = {};
@@ -386,6 +390,3 @@ return {
 	SearchSection: SearchSection
 };
 });
-
-
-

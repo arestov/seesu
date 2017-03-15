@@ -1,5 +1,9 @@
-define(['js/libs/BrowseMap', 'spv', 'pv'], function(BrowseMap, spv, pv) {
-"use strict";
+define(function(require) {
+'use strict';
+var BrowseMap = require('js/libs/BrowseMap');
+var spv = require('spv');
+var pv = require('pv');
+
 var initDeclaredNestings = require('js/libs/provoda/initDeclaredNestings');
 var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
 

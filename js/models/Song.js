@@ -1,6 +1,12 @@
-define(['pv', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './song/SongActionsRow', './song/SongBase'],
-function(pv, spv, app_serv, BrowseMap, MfCorUsual, SongActionsRow, SongBase){
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var app_serv = require('app_serv');
+var MfCorUsual = require('./MfCor');
+var SongActionsRow = require('./song/SongActionsRow');
+var SongBase = require('./song/SongBase');
+
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
 	lfm_share_url_replacers[i] = {

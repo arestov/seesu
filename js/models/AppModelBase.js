@@ -1,5 +1,8 @@
-define(['pv', 'spv', '../libs/BrowseMap'], function(pv, spv, BrowseMap) {
-"use strict";
+define(function(require) {
+'use strict';
+var pv = require('pv');
+var spv = require('spv');
+var BrowseMap = require('../libs/BrowseMap');
 
 var getStruc = BrowseMap.getStruc;
 var getStrucSources = BrowseMap.getStrucSources;
