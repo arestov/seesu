@@ -1,5 +1,12 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/models/Mp3Search/index'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search) {
+define(function(require) {
 "use strict";
+var spv = require('spv');
+var aReq = require('js/modules/aReq');
+var wrapRequest = require('js/modules/wrapRequest');
+var hex_md5 = require('hex_md5');
+var htmlencoding = require('js/common-libs/htmlencoding');
+var Mp3Search = require('js/models/Mp3Search/index');
+
 
 //http://ex.fm/api/v3/song/search/rameau
 

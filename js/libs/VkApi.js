@@ -1,6 +1,12 @@
-define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'js/modules/extendPromise', 'hex_md5', 'js/common-libs/htmlencoding', 'js/models/Mp3Search/index', 'jquery'],
-function(spv, aReq, wrapRequest, extendPromise, hex_md5, htmlencoding, Mp3Search, $) {
+define(function(require) {
 "use strict";
+var spv = require('spv');
+var aReq = require('js/modules/aReq');
+var wrapRequest = require('js/modules/wrapRequest');
+var extendPromise = require('js/modules/extendPromise');
+var hex_md5 = require('hex_md5');
+var htmlencoding = require('js/common-libs/htmlencoding');
+var $ = require('jquery');
 
 var toBigPromise = extendPromise.toBigPromise;
 
