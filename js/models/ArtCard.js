@@ -578,23 +578,19 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 	getTagsModel: function() {
 		return this.getSPI('tags', true);
 	},
-	showTopTacks: function(track_name) {
-		var start_song;
-		if (track_name){
-			start_song = {
-				artist: this.head.artist_name,
-				track: track_name
-			};
+	getTopTacks: function(track_name) {
+		var pl = this.getTopTracks();
+		if (!track_name) {
+			return pl;
 		}
 
-		var pl = this.getTopTracks();
-		pl.showOnMap();
-		if (start_song){
-			var song = pl.findMustBePresentDataItem(start_song);
-			song.showOnMap();
-			pl.preloadStart();
-		}
-		return pl;
+		var start_song = {
+			artist: this.head.artist_name,
+			track: track_name
+		};
+
+		var song = pl.findMustBePresentDataItem(start_song);
+		return song;
 	},
 	//soundcloud_nickname
 	'compx-no_soundcloud_profile': [

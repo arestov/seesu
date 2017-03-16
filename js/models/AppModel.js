@@ -93,7 +93,7 @@ var props = {
 		},
 		showArtistAlbum: function(params){
 			var artcard = getArtcard(this, params.album_artist);
-			
+
 			var artist_name = params.album_artist || artcard.head.artist_name
 			var pl = artcard.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
 
@@ -142,18 +142,10 @@ var props = {
 			md.showOnMap();
 			return md;
 		},
-		showArtistTopTracks: function(artist, page_md, omo) {
-			var artcard = this.showArtcardPage(artist, page_md);
-
-			var track_name = omo && omo.track;
-			var pl = artcard.showTopTacks(track_name);
-
-			return pl;
-		},
 		showTopTacks: function(artist, track_name) {
-			var artcard = this.showArtcardPage(artist);
-			var pl = artcard.showTopTacks(track_name);
-			return pl;
+			var artcard = getArtcard(this, artist);
+			var target = artcard.getTopTacks(track_name);
+			target.showOnMap();
 		},
 	},
 	getVkUser: function(userid) {
