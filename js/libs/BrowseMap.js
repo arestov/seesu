@@ -675,37 +675,36 @@ var BrowseLevel = spv.inh(pv.Model, {
 		bwlev_children = bwlev_children.reverse();
 
 		if (!target_is_deep_child) {
-			md.requestPage();
-		} else {
-			var map = md.app.map;
+			return md.requestPage();
+		}
 
-			var aycocha = map.isCollectingChanges();
-			if (!aycocha){
-				map.startChangesCollecting();
+		var map = md.app.map;
+
+		var aycocha = map.isCollectingChanges();
+		if (!aycocha){
+			map.startChangesCollecting();
+		}
+
+		showMOnMap(map, pioneer, this);
+
+		var parent_bwlev = this;
+		for (var i = 0; i < bwlev_children.length; i++) {
+			if (!parent_bwlev) {
+				continue;
 			}
+			var cur_md = bwlev_children[i];
 
-			showMOnMap(map, pioneer, this);
-
-			var parent_bwlev = this;
-			for (var i = 0; i < bwlev_children.length; i++) {
-				if (!parent_bwlev) {
-					continue;
-				}
-				var cur_md = bwlev_children[i];
-
-				if (cur_md.state('has_no_access')) {
-					parent_bwlev = null;
-					cur_md.switchPmd();
-				} else {
-					parent_bwlev = map._goDeeper(cur_md, parent_bwlev);
-				}
-			}
-
-			if (!aycocha){
-				map.finishChangesCollecting();
+			if (cur_md.state('has_no_access')) {
+				parent_bwlev = null;
+				cur_md.switchPmd();
+			} else {
+				parent_bwlev = map._goDeeper(cur_md, parent_bwlev);
 			}
 		}
 
+		if (!aycocha){
+			map.finishChangesCollecting();
+		}
 	},
 	zoomOut: function() {
 		var pioneer = this.getNesting('pioneer');
