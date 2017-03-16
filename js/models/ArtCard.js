@@ -597,12 +597,8 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 		return pl;
 	},
 	showAlbum: function(params) {
-
-		if (!params.album_artist){
-			params.album_artist = this.head.artist_name;
-		}
-
-		var pl = this.getSPI('albums_lfm', true).getSPI(params.album_artist + ',' + params.album_name, true);
+		var artist_name = params.album_artist || this.head.artist_name
+		var pl = this.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
 
 		pl.showOnMap();
 		return pl;
