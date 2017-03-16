@@ -596,13 +596,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 		}
 		return pl;
 	},
-	showAlbum: function(params) {
-		var artist_name = params.album_artist || this.head.artist_name
-		var pl = this.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
-
-		pl.showOnMap();
-		return pl;
-	},
 	//soundcloud_nickname
 	'compx-no_soundcloud_profile': [
 		['soundcloud_profile__$complete', 'soundcloud_profile'],
