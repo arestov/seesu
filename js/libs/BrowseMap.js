@@ -672,11 +672,11 @@ var BrowseLevel = spv.inh(pv.Model, {
 			cur = cur.map_parent;
 		}
 
-		bwlev_children = bwlev_children.reverse();
-
 		if (!target_is_deep_child) {
 			return md.requestPage();
 		}
+
+		bwlev_children = bwlev_children.reverse();
 
 		var map = md.app.map;
 
