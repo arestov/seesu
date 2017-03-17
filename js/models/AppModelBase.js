@@ -72,11 +72,6 @@ var AppModelBase = spv.inh(pv.Model, {
 
 		return this.map;
 	},
-	getBMapTravelFunc: function(func) {
-		return function() {
-			return this.collectChanges(func, arguments);
-		};
-	},
 	changeNavTree: function(nav_tree) {
 		// this.nav_tree = spv.filter(nav_tree, 'resident');
 		this.nav_tree = nav_tree;
@@ -309,19 +304,6 @@ var AppModelBase = spv.inh(pv.Model, {
 
 		};
 	})(),
-	collectChanges: function(fn, args, opts) {
-		var aycocha = this.map.isCollectingChanges();
-		if (!aycocha){
-			this.map.startChangesCollecting(opts);
-		}
-
-		var result = fn.apply(this, args);
-
-		if (!aycocha){
-			this.map.finishChangesCollecting();
-		}
-		return result;
-	},
 	resortQueue: function(queue) {
 		if (queue){
 			queue.removePrioMarks();

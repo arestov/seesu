@@ -33,15 +33,8 @@ var BrowseMap = spv.inh(pv.Model, {
 	},
 	init: function(self, opts, params) {
 		self.bridge_bwlev = null;
-    self.changes_group = null;
-    self.grouping_changes = null;
-    self.collecting_changes = null;
     self.current_level_num = null;
     // self.nav_tree = null;
-    self.onNavTitleChange = null;
-    self.onNavUrlChange = null;
-
-
 
     self.levels = [];
     if (!params.start){
@@ -55,124 +48,6 @@ var BrowseMap = spv.inh(pv.Model, {
 
   },
 	props: {
-	isGroupingChanges: function() {
-		return this.grouping_changes;
-	},
-	startChangesGrouping: function(group_name, soft_allowed) {
-		if (this.grouping_changes){
-			if (!soft_allowed){
-				throw new Error('already grouping');
-			}
-
-		} else {
-			this.changes_group = {
-				name: group_name,
-				changes: []
-			};
-			this.grouping_changes = true;
-			return true;
-		}
-	},
-	finishChangesGrouping: function(group_name) {
-		if (!this.grouping_changes){
-			throw new Error('none to finish');
-		} else {
-			this.grouping_changes = false;
-			this.emitChangesGroup(group_name);
-		}
-	},
-	emitChangesGroup: function(group_name) {
-		if (this.changes_group.name != group_name){
-			throw new Error('wrong changes group name');
-		}
-		if (this.changes_group.changes.length){
-
-			this.chans_coll.push(this.changes_group);
-			this.changes_group = null;
-			if (!this.isCollectingChanges()){
-				this.emitChanges();
-			}
-		}
-	},
-	addChangeToGroup: function(change) {
-		if (this.grouping_changes){
-			this.changes_group.changes.push(change);
-		} else {
-			var last_group = this.chans_coll[this.chans_coll.length-1];
-			if (last_group && !last_group.name){
-				last_group.changes.push(change);
-			} else {
-				throw new Error('unknow changes');
-			}
-		}
-	},
-	isCollectingChanges: function() {
-		return !!this.collecting_changes;
-	},
-	startChangesCollecting: function(soft_allowed, opts) {
-		if (this.collecting_changes){
-			if (!soft_allowed){
-				throw new Error('already collecting');
-			}
-
-		} else {
-			this.collecting_changes = opts || {};
-			return true;
-
-		}
-	},
-	finishChangesCollecting: function() {
-		if (!this.collecting_changes){
-			throw new Error('none to finish');
-		} else {
-			var opts = this.collecting_changes;
-			this.collecting_changes = false;
-			this.emitChanges(opts);
-		}
-	},
-	addChange: function(change) {
-		this.addChangeToGroup(change);
-		if (!this.collecting_changes){
-			this.emitChanges();
-		}
-	},
-	zipChanges: function() {
-		var
-			cur,
-			prev,
-			zipped = [];
-
-		for (var i = 0; i < this.chans_coll.length; i++) {
-			if (cur){
-				if (!prev || cur.name != prev.name){
-					prev = cur;
-				}
-			}
-
-			cur = this.chans_coll[i];
-			if (prev && cur.name == prev.name){
-				prev.changes = prev.changes.concat(cur.changes);
-				prev.zipped=  true;
-			} else {
-				zipped.push(cur);
-			}
-		}
-		if (zipped.length < this.chans_coll.length){
-			this.chans_coll = zipped;
-		}
-	},
-	emitChanges: function() {
-		if (this.chans_coll.length){
-			this.zipChanges();
-
-			var bwlev = this.getCurrentLevel();
-
-			this.trigger('changes', {
-				array: this.chans_coll,
-			}, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse(), bwlev);
-			this.chans_coll = [];
-		}
-	},
 	makeMainLevel: function(){
 		this.getFreeLevel(-1, false, this.mainLevelResident);
 		return this;
@@ -194,7 +69,6 @@ var BrowseMap = spv.inh(pv.Model, {
 		return this.current_level_num;
 	},
 	setLevelPartActive: function(lp){
-		ba_show(lp);
 		this.current_level_num = lp.state('map_level_num');
 	},
 	_goDeeper: function(md, parent_bwlev){
@@ -238,11 +112,8 @@ var BrowseMap = spv.inh(pv.Model, {
 			target_lev = this.getFreeLevel(map_level_num, parent_lev, md);
 		// }
 
-		var just_started = this.startChangesGrouping('zoom-in');
 		this.setLevelPartActive(target_lev);
-		if (just_started){
-			this.finishChangesGrouping('zoom-in');
-		}
+
 		return target_lev;
 
 	},
@@ -269,7 +140,6 @@ var BrowseMap = spv.inh(pv.Model, {
 	},
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
-			ba_die(lev.free);
 			lev.free = null;
 		}
 	},
@@ -311,13 +181,10 @@ var BrowseMap = spv.inh(pv.Model, {
 	},
 	startNewBrowse: function(){
 
-		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
 
 		this.clearCurrent();
 		this.setLevelPartActive(this.getLevel(-1));
-		if (just_started_zoomout){
-			this.finishChangesGrouping('zoom-out');
-		}
+
 	}
 
 }});
@@ -446,12 +313,6 @@ var getLimitedParent = function(parent_bwlev, end_md){
 };
 
 var followFromTo = function(map, parent_bwlev, end_md) {
-	var aycocha = map.isCollectingChanges();
-
-	if (!aycocha){
-		map.startChangesCollecting();
-	}
-
 	var cutted_parents = getLimitedParent(parent_bwlev, end_md);
 
 	var result;
@@ -473,9 +334,6 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 		}
 	}
 
-	if (!aycocha){
-		map.finishChangesCollecting();
-	}
 	return result;
 };
 
@@ -486,12 +344,6 @@ function showMOnMap(map, model, bwlev, skip_detach) {
 	if (is_start) {
 		bwlev = map.getLevel(-1);
 	}
-
-	var aycocha = map.isCollectingChanges();
-	if (!aycocha){
-		map.startChangesCollecting();
-	}
-
 
 	var bwlev_parent = false;
 
@@ -542,9 +394,6 @@ function showMOnMap(map, model, bwlev, skip_detach) {
 		}
 	}
 
-	if (!aycocha){
-		map.finishChangesCollecting();
-	}
 	return result;
 	//
 };
@@ -680,11 +529,6 @@ var BrowseLevel = spv.inh(pv.Model, {
 
 		var map = md.app.map;
 
-		var aycocha = map.isCollectingChanges();
-		if (!aycocha){
-			map.startChangesCollecting();
-		}
-
 		showMOnMap(map, pioneer, this);
 
 		var last_called = null;
@@ -705,10 +549,6 @@ var BrowseLevel = spv.inh(pv.Model, {
 		}
 
 		changeBridge(last_called);
-
-		if (!aycocha){
-			map.finishChangesCollecting();
-		}
 	},
 	zoomOut: function() {
 		var pioneer = this.getNesting('pioneer');
@@ -894,11 +734,6 @@ BrowseMap.showInterest = function(map, interest) {
 		return showMOnMap(map, map.mainLevelResident);
 	}
 
-	var aycocha = map.isCollectingChanges();
-	if (!aycocha){
-		map.startChangesCollecting();
-	}
-
 	var first = interest.shift();
 	// first.md.lev fixme
 
@@ -918,9 +753,6 @@ BrowseMap.showInterest = function(map, interest) {
 
 	}
 
-	if (!aycocha){
-		map.finishChangesCollecting();
-	}
 	return parent_bwlev;
 };
 
@@ -1182,24 +1014,6 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	}
 });
 
-function ba_show(bwlev){
-	var md = bwlev.getNesting('pioneer');
-	bwlev.map.addChange({
-		type: 'move-view',
-		bwlev: bwlev.getMDReplacer(),
-		target: md.getMDReplacer(),
-		value: true
-	});
-}
-
-function ba_die(bwlev){
-	var md = bwlev.getNesting('pioneer');
-	bwlev.map.addChange({
-		type: 'destroy',
-		bwlev: bwlev.getMDReplacer(),
-		target: md.getMDReplacer()
-	});
-}
 
 function ba__sliceTM(bwlev){ //private alike
 	var map = bwlev.map;
@@ -1207,22 +1021,9 @@ function ba__sliceTM(bwlev){ //private alike
 	// if (current_level == bwlev){
 	// 	return;
 	// }
-	var aycocha = map.isCollectingChanges();
-	if (!aycocha){
-		map.startChangesCollecting();
-	}
 
-	var just_started = map.startChangesGrouping('zoom-out', true);
-	var result = map.sliceDeepUntil(bwlev.state('map_level_num')); ///////
-	if (just_started){
-		map.finishChangesGrouping('zoom-out');
-	}
+	return map.sliceDeepUntil(bwlev.state('map_level_num')); ///////
 
-	if (!aycocha){
-		map.finishChangesCollecting();
-	}
-
-	return result;
 }
 
 function ba_sliceTillMe(bwlev){

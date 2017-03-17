@@ -85,7 +85,6 @@ var props = {
 		}
 
 	},
-	bmap_travel: {
 		showArtcardPage: function(artist_name){
 			var md = getArtcard(this, artist_name);
 			md.showOnMap();
@@ -147,7 +146,6 @@ var props = {
 			var target = artcard.getTopTacks(track_name);
 			target.showOnMap();
 		},
-	},
 	getVkUser: function(userid) {
 		return this.start_page.getSPI('users/vk:' + encodeURIComponent(userid), true);
 	},
@@ -230,10 +228,7 @@ var props = {
 	}
 
 };
-var getBMapTravelFunc = AppModelBase.prototype.getBMapTravelFunc;
-for (var func_name in props.bmap_travel){
-	props[func_name] = getBMapTravelFunc(props.bmap_travel[func_name]);
-}
+
 return props;
 })());
 

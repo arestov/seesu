@@ -260,9 +260,6 @@ var SeesuApp = spv.inh(AppModel, {
 			// self.map.makeMainLevel();
 			navi.init(function(e){
 				var url = e.newURL;
-				self.map.startChangesCollecting({
-					skip_url_change: true
-				});
 
 				var state_from_history = navi.findHistory(e.newURL);
 				if (state_from_history){
@@ -272,7 +269,6 @@ var SeesuApp = spv.inh(AppModel, {
 					var bwlev = BrowseMap.showInterest(self.map, interest);
 					BrowseMap.changeBridge(bwlev);
 				}
-				self.map.finishChangesCollecting();
 			});
 			(function() {
 				var url = window.location && window.location.hash.replace(/^\#/,'');
