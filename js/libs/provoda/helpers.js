@@ -194,6 +194,7 @@ return {
 					var isLocal = Boolean(cb_data[0])
 					var fnNameRaw = cb_data[0] || cb_data[1];
 					var argumentRaw = isLocal ? cb_data[1] : cb_data[2];
+					var argumentRawAnything = isLocal ? cb_data.hasOwnProperty(1) : cb_data.hasOwnProperty(2);
 
 					var target_view;
 					var fnName;
@@ -229,6 +230,10 @@ return {
 					}
 
 					if (!isLocal) {
+						if (argument == null && !argumentRawAnything) {
+							target_view.handleTemplateRPC.call(target_view, fnName);
+							return;
+						}
 						target_view.handleTemplateRPC.call(target_view, fnName, argument);
 						return;
 					}
