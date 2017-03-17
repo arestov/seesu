@@ -32,6 +32,7 @@ var BrowseMap = spv.inh(pv.Model, {
 		};
 	},
 	init: function(self, opts, params) {
+		self.bridge_bwlev = null;
     self.changes_group = null;
     self.grouping_changes = null;
     self.collecting_changes = null;
@@ -298,6 +299,7 @@ var BrowseMap = spv.inh(pv.Model, {
 		//	throw new Error('fix nav!');
 			this.setLevelPartActive(target_lev);
 		}
+		return target_lev && target_lev.free;
 	},
 	clearCurrent: function() {
 		var current_num = this.getActiveLevelNum();
@@ -453,30 +455,29 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 
 	var cutted_parents = getLimitedParent(parent_bwlev, end_md);
 
+	var result;
+
 	if (cutted_parents) {
 		map.startNewBrowse();
 		var last_cutted_parentbw = BrowseMap.showInterest(map, cutted_parents);
-		map._goDeeper(end_md, last_cutted_parentbw);
-
+		result = map._goDeeper(end_md, last_cutted_parentbw);
 	} else {
 		// parent_bwlev.showOnMap();
 
 		var bwlev = getBwlevFromParentBwlev(parent_bwlev, end_md);
 
 		if (ba_canReuse(bwlev)) {
-			showMOnMap(map, end_md, bwlev);
+			result = showMOnMap(map, end_md, bwlev);
 		} else {
 			showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
-			map._goDeeper(end_md, parent_bwlev);
+			result = map._goDeeper(end_md, parent_bwlev);
 		}
-
-
 	}
 
 	if (!aycocha){
 		map.finishChangesCollecting();
 	}
-
+	return result;
 };
 
 function showMOnMap(map, model, bwlev, skip_detach) {
@@ -545,7 +546,6 @@ function showMOnMap(map, model, bwlev, skip_detach) {
 	if (!aycocha){
 		map.finishChangesCollecting();
 	}
-
 	return result;
 	//
 };
@@ -652,6 +652,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 	},
 	showOnMap: function() {
 		showMOnMap(this.map, this.getNesting('pioneer'), this);
+		changeBridge(this);
 	},
 	requestPage: function(id) {
 		var md = pv.getModelById(this, id);
@@ -687,6 +688,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 
 		showMOnMap(map, pioneer, this);
 
+		var last_called = null;
 		var parent_bwlev = this;
 		for (var i = 0; i < bwlev_children.length; i++) {
 			if (!parent_bwlev) {
@@ -699,8 +701,11 @@ var BrowseLevel = spv.inh(pv.Model, {
 				cur_md.switchPmd();
 			} else {
 				parent_bwlev = map._goDeeper(cur_md, parent_bwlev);
+				last_called = parent_bwlev;
 			}
 		}
+
+		changeBridge(last_called);
 
 		if (!aycocha){
 			map.finishChangesCollecting();
@@ -711,6 +716,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 		// FIXME: mp_show should be readed from bwlev, not model
 		if ((pioneer.state('mp_show') )) {
 			ba__sliceTM(this);
+			changeBridge(this);
 		}
 	},
 	followTo: function(id) {
@@ -719,8 +725,8 @@ var BrowseLevel = spv.inh(pv.Model, {
 			md = md.getRelativeModel();
 		}
 		// md.requestPage();
-		followFromTo(this.map, this, md);
-
+		var bwlev = followFromTo(this.map, this, md);
+		changeBridge(bwlev);
 	},
 	'stch-mpl_attached': function(target, state) {
 		var md = target.getNesting('pioneer');
@@ -1161,7 +1167,8 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		this.showOnMap();
 	},
 	showOnMap: function() {
-		showMOnMap(this.app.map, this);
+		var bwlev = showMOnMap(this.app.map, this);
+		changeBridge(bwlev);
 	},
 	getParentMapModel: function() {
 		return this.map_parent;
@@ -1210,7 +1217,7 @@ function ba__sliceTM(bwlev){ //private alike
 	}
 
 	var just_started = map.startChangesGrouping('zoom-out', true);
-	map.sliceDeepUntil(bwlev.state('map_level_num')); ///////
+	var result = map.sliceDeepUntil(bwlev.state('map_level_num')); ///////
 	if (just_started){
 		map.finishChangesGrouping('zoom-out');
 	}
@@ -1218,6 +1225,8 @@ function ba__sliceTM(bwlev){ //private alike
 	if (!aycocha){
 		map.finishChangesCollecting();
 	}
+
+	return result;
 }
 
 function ba_sliceTillMe(bwlev){
@@ -1300,6 +1309,13 @@ BrowseMap.getStruc = (function() {
 	return getStruc;
 })();
 
+
+function changeBridge(bwlev) {
+	bwlev.map.bridge_bwlev = bwlev;
+	bwlev.map.trigger('bridge-changed', bwlev);
+
+	return bwlev;
+}
 
 
 return BrowseMap;
