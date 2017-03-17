@@ -47,47 +47,49 @@ var BrowseMap = spv.inh(pv.Model, {
   },
 	props: {
 	makeMainLevel: function(){
-		var bwlev = this.createLevel(-1, false, this.mainLevelResident)
+		var bwlev = createLevel(-1, false, this.mainLevelResident, this);
 		this.start_bwlev = bwlev;
 		return this;
 	},
-	_goDeeper: function(md, parent_bwlev){
-		// без parent_bwlev нет контекста
-		if (!parent_bwlev) {
-			// будем искать parent_bwlev на основе прямой потомственности от уровня -1
-			parent_bwlev = getBwlevInParentBwlev(md.map_parent, this);
+}});
+
+function _goDeeper(map, md, parent_bwlev){
+	// без parent_bwlev нет контекста
+	if (!parent_bwlev) {
+		// будем искать parent_bwlev на основе прямой потомственности от уровня -1
+		parent_bwlev = getBwlevInParentBwlev(md.map_parent, map);
+	}
+
+	var parent_md = md.map_parent;
+
+	var target_lev;
+
+		var map_level_num;
+		if (parent_bwlev) {
+			map_level_num = parent_bwlev.state('map_level_num') + 1;
+		} else {
+			if (typeof md.map_level_num != 'number') {
+				throw new Error('md must have `map_level_num`');
+			}
+			map_level_num = md.map_level_num;
+		}
+		// нужно чтобы потом использовать все уровни-предки
+		var parent_lev = parent_bwlev;
+		if (!parent_lev && parent_md) {
+			throw new Error('`md.lev` prop dissalowed');
 		}
 
-		var parent_md = md.map_parent;
+		target_lev = createLevel(map_level_num, parent_lev, md, map);
 
-		var target_lev;
+	return target_lev;
 
-			var map_level_num;
-			if (parent_bwlev) {
-				map_level_num = parent_bwlev.state('map_level_num') + 1;
-			} else {
-				if (typeof md.map_level_num != 'number') {
-					throw new Error('md must have `map_level_num`');
-				}
-				map_level_num = md.map_level_num;
-			}
-			// нужно чтобы потом использовать все уровни-предки
-			var parent_lev = parent_bwlev;
-			if (!parent_lev && parent_md) {
-				throw new Error('`md.lev` prop dissalowed');
-			}
+};
 
-			target_lev = this.createLevel(map_level_num, parent_lev, md);
-
-		return target_lev;
-
-	},
-	createLevel: function(num, parent_bwlev, md){
-		var bwlev = getBWlev(md, parent_bwlev, num, this);
-		bwlev.map = this;
-		return bwlev;
-	},
-}});
+function createLevel(num, parent_bwlev, md, map) {
+	var bwlev = getBWlev(md, parent_bwlev, num, this);
+	bwlev.map = map;
+	return bwlev;
+}
 
 var limits = {
 	same_model_matches: 1,
@@ -216,7 +218,7 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 
 	if (cutted_parents) {
 		var last_cutted_parentbw = BrowseMap.showInterest(map, cutted_parents);
-		result = map._goDeeper(end_md, last_cutted_parentbw);
+		result = _goDeeper(map, end_md, last_cutted_parentbw);
 	} else {
 		// parent_bwlev.showOnMap();
 
@@ -226,7 +228,7 @@ var followFromTo = function(map, parent_bwlev, end_md) {
 			result = showMOnMap(map, end_md, bwlev);
 		} else {
 			showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
-			result = map._goDeeper(end_md, parent_bwlev);
+			result = _goDeeper(map, end_md, parent_bwlev);
 		}
 	}
 
@@ -275,7 +277,7 @@ function showMOnMap(map, model, bwlev) {
 				throw new Error('model must have model_name prop');
 			}
 			// this.bindMMapStateChanges(model, model.model_name);
-			result = map._goDeeper(model, bwlev && bwlev.map_parent);
+			result = _goDeeper(map, model, bwlev && bwlev.map_parent);
 		}
 	}
 
@@ -428,7 +430,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 				parent_bwlev = null;
 				cur_md.switchPmd();
 			} else {
-				parent_bwlev = map._goDeeper(cur_md, parent_bwlev);
+				parent_bwlev = _goDeeper(map, cur_md, parent_bwlev);
 				last_called = parent_bwlev;
 			}
 		}
@@ -630,7 +632,7 @@ BrowseMap.showInterest = function(map, interest) {
 		if (!distance) {throw new Error('must be distance: 1 or more');}
 		while (distance) {
 			var md = getDistantModel(interest[i].md, distance);
-			parent_bwlev = map._goDeeper(md, parent_bwlev);
+			parent_bwlev = _goDeeper(map, md, parent_bwlev);
 			distance--;
 		}
 
