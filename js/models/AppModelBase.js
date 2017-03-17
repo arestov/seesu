@@ -144,7 +144,7 @@ var AppModelBase = spv.inh(pv.Model, {
 					}
 				}
 
-
+				pv.update(bwlev, 'mpl_attached', !change.value);
 				pv.update(md, 'mp_show', change.value);
 				pv.update(bwlev, 'mp_show', change.value);
 				complexBrowsing(bwlev, md,  change.value);

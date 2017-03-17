@@ -252,7 +252,6 @@ var BrowseMap = spv.inh(pv.Model, {
 	createLevel: function(num, parent_bwlev, md){
 		var bwlev = getBWlev(md, parent_bwlev, num, this);
 		bwlev.map = this;
-		pv.update(bwlev, 'mpl_attached', true);
 		return bwlev;
 	},
 	getFreeLevel: function(num, parent_bwlev, resident){//goDeeper
@@ -1201,8 +1200,6 @@ function ba_die(bwlev){
 		bwlev: bwlev.getMDReplacer(),
 		target: md.getMDReplacer()
 	});
-	bwlev.getNesting('pioneer').trigger('mpl-detach');
-	pv.update(bwlev, 'mpl_attached', false);
 }
 
 function ba__sliceTM(bwlev){ //private alike
