@@ -86,8 +86,8 @@ var AppModelBase = spv.inh(pv.Model, {
 
 	},
 	showStartPage: function(){
-		//mainaly for hash url games
-		this.map.startNewBrowse();
+		var bwlev = BrowseMap.showInterest(this.map, []);
+		BrowseMap.changeBridge(bwlev);
 	},
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
