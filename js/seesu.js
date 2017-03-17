@@ -250,14 +250,7 @@ var SeesuApp = spv.inh(AppModel, {
 
 		}, 200);
 
-
-
-
-
-		self.map.makeMainLevel();
-
 		if (app_env.needs_url_history){
-			// self.map.makeMainLevel();
 			navi.init(function(e){
 				var url = e.newURL;
 

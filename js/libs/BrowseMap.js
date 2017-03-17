@@ -40,18 +40,12 @@ var BrowseMap = spv.inh(pv.Model, {
     }
     self.mainLevelResident = params.start;
 
-		self.start_bwlev = null;
+		self.start_bwlev = createLevel(-1, false, self.mainLevelResident, self);
     self.chans_coll = [];
     self.residents = [];
 
   },
-	props: {
-	makeMainLevel: function(){
-		var bwlev = createLevel(-1, false, this.mainLevelResident, this);
-		this.start_bwlev = bwlev;
-		return this;
-	},
-}});
+});
 
 function _goDeeper(map, md, parent_bwlev){
 	// без parent_bwlev нет контекста
