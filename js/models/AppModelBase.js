@@ -66,10 +66,6 @@ var AppModelBase = spv.inh(pv.Model, {
 				this.animateMapChanges(bwlev);
 			}, this.getContextOptsI());
 
-		if (!this.current_mp_bwlev) {
-			this.current_mp_bwlev = this.map.getCurrentLevel();
-		}
-
 		return this.map;
 	},
 	changeNavTree: function(nav_tree) {
