@@ -63,7 +63,7 @@ var AppModelBase = spv.inh(pv.Model, {
 
 		this.map
 			.on('changes', function(changes, models, bwlevs, bwlev) {
-				this.animateMapChanges(changes, models, bwlevs, bwlev);
+				this.animateMapChanges(bwlev);
 			}, this.getContextOptsI());
 
 		if (!this.current_mp_bwlev) {
@@ -216,10 +216,22 @@ var AppModelBase = spv.inh(pv.Model, {
 			return bwlev.getNesting('pioneer');
 		};
 
-		return function(_, models, bwlevs, bwlev) {
+		var branch = function (bwlev) {
+			var list = [];
+			var cur = bwlev;
+			while (cur) {
+				list.unshift(cur);
+				cur = cur.map_parent;
+			}
+			return list;
+		}
+
+		return function(bwlev) {
+			var bwlevs = branch(bwlev);
+			var models = bwlevs.map(getPioneer);
 			pv.updateNesting(this, 'navigation', bwlevs);
 
-			var nav_tree = bwlevs.map(getPioneer);
+			var nav_tree = models;
 			this.nav_tree = nav_tree;
 			if (this.matchNav){
 				this.matchNav();
