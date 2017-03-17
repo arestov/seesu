@@ -432,9 +432,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 		changeBridge(last_called);
 	},
 	zoomOut: function() {
-		var pioneer = this.getNesting('pioneer');
-		// FIXME: mp_show should be readed from bwlev, not model
-		if ((pioneer.state('mp_show') )) {
+		if (this.state('mp_show')) {
 			changeBridge(this);
 		}
 	},
