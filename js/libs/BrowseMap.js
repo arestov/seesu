@@ -891,8 +891,7 @@ var getDistantModel = function(md, distance){
 
 BrowseMap.showInterest = function(map, interest) {
 	if (!interest.length) {
-		showMOnMap(map, map.mainLevelResident);
-		return;
+		return showMOnMap(map, map.mainLevelResident);
 	}
 
 	var aycocha = map.isCollectingChanges();
