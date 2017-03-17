@@ -58,21 +58,10 @@ var BrowseMap = spv.inh(pv.Model, {
 			parent_bwlev = getBwlevInParentBwlev(md.map_parent, this);
 		}
 
-
-		// var cur_res = this.getCurrentResident();
-		// if (cur_res == md){
-		// 	// возврщаем bwlev
-		// 	return cur_res.lev.bwlev;
-		// }
-
 		var parent_md = md.map_parent;
 
 		var target_lev;
-		// if (md.lev && md.lev.canUse()){
-		// 	// есть ли на карте уровень для этой модели, который можно использовать повторно
-		// 	target_lev = md.lev;
-		// } else {
-			// reusing freezed;
+
 			var map_level_num;
 			if (parent_bwlev) {
 				map_level_num = parent_bwlev.state('map_level_num') + 1;
@@ -86,27 +75,19 @@ var BrowseMap = spv.inh(pv.Model, {
 			var parent_lev = parent_bwlev;
 			if (!parent_lev && parent_md) {
 				throw new Error('`md.lev` prop dissalowed');
-				// parent_lev = parent_md.lev;
 			}
 
 			target_lev = this.createLevel(map_level_num, parent_lev, md);
-		// }
 
 		return target_lev;
 
 	},
-	// goDeeper: function(md, parent_bwlev, bwlev){
-	// 	return this._goDeeper(md, parent_bwlev, bwlev);
-	// },
 	createLevel: function(num, parent_bwlev, md){
 		var bwlev = getBWlev(md, parent_bwlev, num, this);
 		bwlev.map = this;
 		return bwlev;
 	},
 }});
-
-// BrowseMap
-// .extendTo(BrowseMap, );
 
 var limits = {
 	same_model_matches: 1,
