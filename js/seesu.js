@@ -269,7 +269,8 @@ var SeesuApp = spv.inh(AppModel, {
 					state_from_history.data.showOnMap();
 				} else{
 					var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), self.start_page);
-					BrowseMap.showInterest(self.map, interest);
+					var bwlev = BrowseMap.showInterest(self.map, interest);
+					BrowseMap.changeBridge(bwlev);
 				}
 				self.map.finishChangesCollecting();
 			});
@@ -283,11 +284,13 @@ var SeesuApp = spv.inh(AppModel, {
 
 					});
 				} else {
-					BrowseMap.showInterest(self.map, []);
+					var bwlev = BrowseMap.showInterest(self.map, []);
+					BrowseMap.changeBridge(bwlev);
 				}
 			})();
 		} else {
-			BrowseMap.showInterest(self.map, []);
+			var bwlev = BrowseMap.showInterest(self.map, []);
+			BrowseMap.changeBridge(bwlev);
 		}
 
 		if (app_serv.app_env.nodewebkit) {

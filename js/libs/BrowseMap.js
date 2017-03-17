@@ -1313,6 +1313,6 @@ function changeBridge(bwlev) {
 	return bwlev;
 }
 
-
+BrowseMap.changeBridge = changeBridge;
 return BrowseMap;
 });

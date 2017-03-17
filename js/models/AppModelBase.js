@@ -62,7 +62,7 @@ var AppModelBase = spv.inh(pv.Model, {
 		this.map = new BrowseMap({app: this}, {start: this.start_page});
 
 		this.map
-			.on('changes', function(changes, models, bwlevs, bwlev) {
+			.on('bridge-changed', function(bwlev) {
 				this.animateMapChanges(bwlev);
 			}, this.getContextOptsI());
 
