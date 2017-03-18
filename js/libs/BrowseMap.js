@@ -32,297 +32,58 @@ var BrowseMap = spv.inh(pv.Model, {
 		};
 	},
 	init: function(self, opts, params) {
-    self.changes_group = null;
-    self.grouping_changes = null;
-    self.collecting_changes = null;
-    self.current_level_num = null;
+		self.bridge_bwlev = null;
     // self.nav_tree = null;
-    self.onNavTitleChange = null;
-    self.onNavUrlChange = null;
 
-
-
-    self.levels = [];
     if (!params.start){
       throw new Error('give me 0 index level (start screen)');
     }
     self.mainLevelResident = params.start;
 
-
+		self.start_bwlev = createLevel(-1, false, self.mainLevelResident, self);
     self.chans_coll = [];
     self.residents = [];
 
   },
-	props: {
-	isGroupingChanges: function() {
-		return this.grouping_changes;
-	},
-	startChangesGrouping: function(group_name, soft_allowed) {
-		if (this.grouping_changes){
-			if (!soft_allowed){
-				throw new Error('already grouping');
-			}
+});
 
-		} else {
-			this.changes_group = {
-				name: group_name,
-				changes: []
-			};
-			this.grouping_changes = true;
-			return true;
-		}
-	},
-	finishChangesGrouping: function(group_name) {
-		if (!this.grouping_changes){
-			throw new Error('none to finish');
-		} else {
-			this.grouping_changes = false;
-			this.emitChangesGroup(group_name);
-		}
-	},
-	emitChangesGroup: function(group_name) {
-		if (this.changes_group.name != group_name){
-			throw new Error('wrong changes group name');
-		}
-		if (this.changes_group.changes.length){
-
-			this.chans_coll.push(this.changes_group);
-			this.changes_group = null;
-			if (!this.isCollectingChanges()){
-				this.emitChanges();
-			}
-		}
-	},
-	addChangeToGroup: function(change) {
-		if (this.grouping_changes){
-			this.changes_group.changes.push(change);
-		} else {
-			var last_group = this.chans_coll[this.chans_coll.length-1];
-			if (last_group && !last_group.name){
-				last_group.changes.push(change);
-			} else {
-				throw new Error('unknow changes');
-			}
-		}
-	},
-	isCollectingChanges: function() {
-		return !!this.collecting_changes;
-	},
-	startChangesCollecting: function(soft_allowed, opts) {
-		if (this.collecting_changes){
-			if (!soft_allowed){
-				throw new Error('already collecting');
-			}
-
-		} else {
-			this.collecting_changes = opts || {};
-			return true;
-
-		}
-	},
-	finishChangesCollecting: function() {
-		if (!this.collecting_changes){
-			throw new Error('none to finish');
-		} else {
-			var opts = this.collecting_changes;
-			this.collecting_changes = false;
-			this.emitChanges(opts);
-		}
-	},
-	addChange: function(change) {
-		this.addChangeToGroup(change);
-		if (!this.collecting_changes){
-			this.emitChanges();
-		}
-	},
-	zipChanges: function() {
-		var
-			cur,
-			prev,
-			zipped = [];
-
-		for (var i = 0; i < this.chans_coll.length; i++) {
-			if (cur){
-				if (!prev || cur.name != prev.name){
-					prev = cur;
-				}
-			}
-
-			cur = this.chans_coll[i];
-			if (prev && cur.name == prev.name){
-				prev.changes = prev.changes.concat(cur.changes);
-				prev.zipped=  true;
-			} else {
-				zipped.push(cur);
-			}
-		}
-		if (zipped.length < this.chans_coll.length){
-			this.chans_coll = zipped;
-		}
-	},
-	emitChanges: function() {
-		if (this.chans_coll.length){
-			this.zipChanges();
-
-			var bwlev = this.getCurrentLevel();
-
-			this.trigger('changes', {
-				array: this.chans_coll,
-			}, bwlev.rtree.slice().reverse(), bwlev.ptree.slice().reverse(), bwlev);
-			this.chans_coll = [];
-		}
-	},
-	makeMainLevel: function(){
-		this.getFreeLevel(-1, false, this.mainLevelResident);
-		return this;
-	},
-	getCurrentLevel: function() {
-		return this.getLevel(this.getActiveLevelNum());
-	},
-	getCurrentResident: function() {
-		return this.getCurrentLevel().getNesting('pioneer');
-	},
-	getLevel: function(num){
-		if (this.levels[num]){
-			return this.levels[num].free;
-		} else{
-			return false;
-		}
-	},
-	getActiveLevelNum: function(){
-		return this.current_level_num;
-	},
-	setLevelPartActive: function(lp){
-		ba_show(lp);
-		this.current_level_num = lp.state('map_level_num');
-	},
-	_goDeeper: function(md, parent_bwlev){
-		// без parent_bwlev нет контекста
-		if (!parent_bwlev) {
-			// будем искать parent_bwlev на основе прямой потомственности от уровня -1
-			parent_bwlev = getBwlevInParentBwlev(md.map_parent, this);
-		}
-
-
-		// var cur_res = this.getCurrentResident();
-		// if (cur_res == md){
-		// 	// возврщаем bwlev
-		// 	return cur_res.lev.bwlev;
-		// }
-
-		var parent_md = md.map_parent;
-
-		var target_lev;
-		// if (md.lev && md.lev.canUse()){
-		// 	// есть ли на карте уровень для этой модели, который можно использовать повторно
-		// 	target_lev = md.lev;
-		// } else {
-			// reusing freezed;
-			var map_level_num;
-			if (parent_bwlev) {
-				map_level_num = parent_bwlev.state('map_level_num') + 1;
-			} else {
-				if (typeof md.map_level_num != 'number') {
-					throw new Error('md must have `map_level_num`');
-				}
-				map_level_num = md.map_level_num;
-			}
-			// нужно чтобы потом использовать все уровни-предки
-			var parent_lev = parent_bwlev;
-			if (!parent_lev && parent_md) {
-				throw new Error('`md.lev` prop dissalowed');
-				// parent_lev = parent_md.lev;
-			}
-
-			target_lev = this.getFreeLevel(map_level_num, parent_lev, md);
-		// }
-
-		var just_started = this.startChangesGrouping('zoom-in');
-		this.setLevelPartActive(target_lev);
-		if (just_started){
-			this.finishChangesGrouping('zoom-in');
-		}
-		return target_lev;
-
-	},
-	// goDeeper: function(md, parent_bwlev, bwlev){
-	// 	return this._goDeeper(md, parent_bwlev, bwlev);
-	// },
-	createLevel: function(num, parent_bwlev, md){
-		var bwlev = getBWlev(md, parent_bwlev, num, this);
-		bwlev.map = this;
-		pv.update(bwlev, 'mpl_attached', true);
-		return bwlev;
-	},
-	getFreeLevel: function(num, parent_bwlev, resident){//goDeeper
-		if (!this.levels[num]){
-			this.levels[num] = {};
-		}
-		var levcon = this.levels[num];
-		if (levcon.free){
-			return levcon.free;
-		} else{
-
-			levcon.free = this.createLevel(num, parent_bwlev, resident);
-			return levcon.free;
-		}
-	},
-	hideFreeLevel: function(lev, exept) {
-		if (lev.free && lev.free != exept){
-			ba_die(lev.free);
-			lev.free = null;
-		}
-	},
-	hideLevel: function(lev, exept, only_free){
-		if (lev){
-			if (!only_free){
-
-			}
-
-			this.hideFreeLevel(lev, exept);
-
-		}
-	},
-	sliceDeepUntil: function(num){
-		var
-			current_lev = this.getCurrentLevel(),
-			target_lev;
-
-		if (num < this.levels.length){
-			for (var i = this.levels.length-1; i > num; i--){
-				this.hideLevel(this.levels[i]);
-			}
-		}
-		target_lev = this.getLevel(num);
-		if (target_lev && target_lev != current_lev){
-		//	throw new Error('fix nav!');
-			this.setLevelPartActive(target_lev);
-		}
-	},
-	clearCurrent: function() {
-		var current_num = this.getActiveLevelNum();
-		if (current_num != -1){
-			for (var i = current_num; i >= 0; i--) {
-				this.hideLevel(this.levels[i]);
-
-			}
-		}
-	},
-	startNewBrowse: function(){
-
-		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
-
-		this.clearCurrent();
-		this.setLevelPartActive(this.getLevel(-1));
-		if (just_started_zoomout){
-			this.finishChangesGrouping('zoom-out');
-		}
+function _goDeeper(map, md, parent_bwlev){
+	// без parent_bwlev нет контекста
+	if (!parent_bwlev) {
+		// будем искать parent_bwlev на основе прямой потомственности от уровня -1
+		parent_bwlev = getBwlevInParentBwlev(md.map_parent, map);
 	}
 
-}});
+	var parent_md = md.map_parent;
 
-// BrowseMap
-// .extendTo(BrowseMap, );
+	var target_lev;
+
+		var map_level_num;
+		if (parent_bwlev) {
+			map_level_num = parent_bwlev.state('map_level_num') + 1;
+		} else {
+			if (typeof md.map_level_num != 'number') {
+				throw new Error('md must have `map_level_num`');
+			}
+			map_level_num = md.map_level_num;
+		}
+		// нужно чтобы потом использовать все уровни-предки
+		var parent_lev = parent_bwlev;
+		if (!parent_lev && parent_md) {
+			throw new Error('`md.lev` prop dissalowed');
+		}
+
+		target_lev = createLevel(map_level_num, parent_lev, md, map);
+
+	return target_lev;
+
+};
+
+function createLevel(num, parent_bwlev, md, map) {
+	var bwlev = getBWlev(md, parent_bwlev, num, this);
+	bwlev.map = map;
+	return bwlev;
+}
 
 var limits = {
 	same_model_matches: 1,
@@ -445,53 +206,36 @@ var getLimitedParent = function(parent_bwlev, end_md){
 };
 
 var followFromTo = function(map, parent_bwlev, end_md) {
-	var aycocha = map.isCollectingChanges();
-
-	if (!aycocha){
-		map.startChangesCollecting();
-	}
-
 	var cutted_parents = getLimitedParent(parent_bwlev, end_md);
 
-	if (cutted_parents) {
-		map.startNewBrowse();
-		var last_cutted_parentbw = BrowseMap.showInterest(map, cutted_parents);
-		map._goDeeper(end_md, last_cutted_parentbw);
+	var result;
 
+	if (cutted_parents) {
+		var last_cutted_parentbw = BrowseMap.showInterest(map, cutted_parents);
+		result = _goDeeper(map, end_md, last_cutted_parentbw);
 	} else {
 		// parent_bwlev.showOnMap();
 
 		var bwlev = getBwlevFromParentBwlev(parent_bwlev, end_md);
 
 		if (ba_canReuse(bwlev)) {
-			showMOnMap(map, end_md, bwlev);
+			result = showMOnMap(map, end_md, bwlev);
 		} else {
 			showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
-			map._goDeeper(end_md, parent_bwlev);
+			result = _goDeeper(map, end_md, parent_bwlev);
 		}
-
-
 	}
 
-	if (!aycocha){
-		map.finishChangesCollecting();
-	}
-
+	return result;
 };
 
-var showMOnMap = function(map, model, bwlev, skip_detach) {
+function showMOnMap(map, model, bwlev) {
 
 	var is_start = model.map_level_num == -1;
 
 	if (is_start) {
-		bwlev = map.getLevel(-1);
+		bwlev = map.start_bwlev;
 	}
-
-	var aycocha = map.isCollectingChanges();
-	if (!aycocha){
-		map.startChangesCollecting();
-	}
-
 
 	var bwlev_parent = false;
 
@@ -516,50 +260,35 @@ var showMOnMap = function(map, model, bwlev, skip_detach) {
 			if (!bwlev) {
 				bwlev = getBwlevFromParentBwlev(bwlev_parent, model);
 			}
-			if (!bwlev || !ba_inUse(bwlev)) {
-				ba_sliceTillMe(bwlev_parent);
-			}
 		}
-
 
 		if (model.state('has_no_access')) {
 			model.switchPmd();
 		} else if (ba_canReuse(bwlev) || is_start){//если модель прикреплена к карте
-
-			if (!skip_detach) {
-				// отсекаем всё более глубокое
-				// отсекать можно когда не будет отсетечно, что потом придётся прикреплять
-				ba_sliceTillMe(bwlev);
-			}
-
 			result = bwlev;
 		} else {
 			if (!model.model_name){
 				throw new Error('model must have model_name prop');
 			}
 			// this.bindMMapStateChanges(model, model.model_name);
-			result = map._goDeeper(model, bwlev && bwlev.map_parent);
+			result = _goDeeper(map, model, bwlev && bwlev.map_parent);
 		}
-	}
-
-	if (!aycocha){
-		map.finishChangesCollecting();
 	}
 
 	return result;
 	//
 };
 
-var getBwlevFromParentBwlev = function(parent_bwlev, md) {
+function getBwlevFromParentBwlev(parent_bwlev, md) {
 	return parent_bwlev.children_bwlevs[md._provoda_id];
 };
 
-var getBwlevInParentBwlev = function(md, map) {
+function getBwlevInParentBwlev(md, map) {
 	if (!md.map_parent) {
 		if (map.mainLevelResident != md) {
 			throw new Error('root map_parent must be `map.mainLevelResident`');
 		}
-		return map.levels[-1].free;
+		return map.start_bwlev;
 	}
 
 	var parent_bwlev = getBwlevInParentBwlev(md.map_parent, map);
@@ -652,6 +381,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 	},
 	showOnMap: function() {
 		showMOnMap(this.map, this.getNesting('pioneer'), this);
+		changeBridge(this);
 	},
 	requestPage: function(id) {
 		var md = pv.getModelById(this, id);
@@ -672,46 +402,38 @@ var BrowseLevel = spv.inh(pv.Model, {
 			cur = cur.map_parent;
 		}
 
+		if (!target_is_deep_child) {
+			return md.requestPage();
+		}
+
 		bwlev_children = bwlev_children.reverse();
 
-		if (!target_is_deep_child) {
-			md.requestPage();
-		} else {
-			var map = md.app.map;
+		var map = md.app.map;
 
-			var aycocha = map.isCollectingChanges();
-			if (!aycocha){
-				map.startChangesCollecting();
+		showMOnMap(map, pioneer, this);
+
+		var last_called = null;
+		var parent_bwlev = this;
+		for (var i = 0; i < bwlev_children.length; i++) {
+			if (!parent_bwlev) {
+				continue;
 			}
+			var cur_md = bwlev_children[i];
 
-			showMOnMap(map, pioneer, this);
-
-			var parent_bwlev = this;
-			for (var i = 0; i < bwlev_children.length; i++) {
-				if (!parent_bwlev) {
-					continue;
-				}
-				var cur_md = bwlev_children[i];
-
-				if (cur_md.state('has_no_access')) {
-					parent_bwlev = null;
-					cur_md.switchPmd();
-				} else {
-					parent_bwlev = map._goDeeper(cur_md, parent_bwlev);
-				}
-			}
-
-			if (!aycocha){
-				map.finishChangesCollecting();
+			if (cur_md.state('has_no_access')) {
+				parent_bwlev = null;
+				cur_md.switchPmd();
+			} else {
+				parent_bwlev = _goDeeper(map, cur_md, parent_bwlev);
+				last_called = parent_bwlev;
 			}
 		}
 
+		changeBridge(last_called);
 	},
 	zoomOut: function() {
-		var pioneer = this.getNesting('pioneer');
-		// FIXME: mp_show should be readed from bwlev, not model
-		if ((pioneer.state('mp_show') )) {
-			ba__sliceTM(this);
+		if (this.state('mp_show')) {
+			changeBridge(this);
 		}
 	},
 	followTo: function(id) {
@@ -720,8 +442,8 @@ var BrowseLevel = spv.inh(pv.Model, {
 			md = md.getRelativeModel();
 		}
 		// md.requestPage();
-		followFromTo(this.map, this, md);
-
+		var bwlev = followFromTo(this.map, this, md);
+		changeBridge(bwlev);
 	},
 	'stch-mpl_attached': function(target, state) {
 		var md = target.getNesting('pioneer');
@@ -852,30 +574,27 @@ var BrowseLevel = spv.inh(pv.Model, {
 	}
 });
 
-var getBWlev = function(md, parent_bwlev, map_level_num, map){
+function getBWlev(md, parent_bwlev, map_level_num, map){
 	var cache = parent_bwlev && parent_bwlev.children_bwlevs;
 	var key = md._provoda_id;
-	var bwlev;
-
-	if (!cache || !cache[key]) {
-		bwlev = pv.create(BrowseLevel, {
-			map_level_num: map_level_num,
-			model_name: md.model_name,
-			pioneer: md
-		}, {
-			nestings: {
-				pioneer: md,
-				map: map
-			}
-		}, parent_bwlev, md.app);
-
-		if (cache) {
-			cache[key] = bwlev;
-		}
-
-	} else {
-		bwlev = cache[key];
+	if (cache && cache[key]) {
+		return cache[key];
 	}
+
+	var bwlev = pv.create(BrowseLevel, {
+		map_level_num: map_level_num,
+		model_name: md.model_name,
+		pioneer: md
+	}, {
+		nestings: {
+			pioneer: md,
+			map: map
+		}
+	}, parent_bwlev, md.app);
+
+	if (cache) {
+		cache[key] = bwlev;
+	};
 
 	return bwlev;
 };
@@ -890,13 +609,7 @@ var getDistantModel = function(md, distance){
 
 BrowseMap.showInterest = function(map, interest) {
 	if (!interest.length) {
-		showMOnMap(map, map.mainLevelResident);
-		return;
-	}
-
-	var aycocha = map.isCollectingChanges();
-	if (!aycocha){
-		map.startChangesCollecting();
+		return showMOnMap(map, map.mainLevelResident);
 	}
 
 	var first = interest.shift();
@@ -911,16 +624,13 @@ BrowseMap.showInterest = function(map, interest) {
 		if (!distance) {throw new Error('must be distance: 1 or more');}
 		while (distance) {
 			var md = getDistantModel(interest[i].md, distance);
-			parent_bwlev = map._goDeeper(md, parent_bwlev);
+			parent_bwlev = _goDeeper(map, md, parent_bwlev);
 			distance--;
 		}
 
 
 	}
 
-	if (!aycocha){
-		map.finishChangesCollecting();
-	}
 	return parent_bwlev;
 };
 
@@ -1165,7 +875,8 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		this.showOnMap();
 	},
 	showOnMap: function() {
-		showMOnMap(this.app.map, this);
+		var bwlev = showMOnMap(this.app.map, this);
+		changeBridge(bwlev);
 	},
 	getParentMapModel: function() {
 		return this.map_parent;
@@ -1180,53 +891,6 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		return '';
 	}
 });
-
-function ba_show(bwlev){
-	var md = bwlev.getNesting('pioneer');
-	bwlev.map.addChange({
-		type: 'move-view',
-		bwlev: bwlev.getMDReplacer(),
-		target: md.getMDReplacer(),
-		value: true
-	});
-}
-
-function ba_die(bwlev){
-	var md = bwlev.getNesting('pioneer');
-	bwlev.map.addChange({
-		type: 'destroy',
-		bwlev: bwlev.getMDReplacer(),
-		target: md.getMDReplacer()
-	});
-	bwlev.getNesting('pioneer').trigger('mpl-detach');
-	pv.update(bwlev, 'mpl_attached', false);
-}
-
-function ba__sliceTM(bwlev){ //private alike
-	var map = bwlev.map;
-	// var current_level = map.getCurrentLevel();
-	// if (current_level == bwlev){
-	// 	return;
-	// }
-	var aycocha = map.isCollectingChanges();
-	if (!aycocha){
-		map.startChangesCollecting();
-	}
-
-	var just_started = map.startChangesGrouping('zoom-out', true);
-	map.sliceDeepUntil(bwlev.state('map_level_num')); ///////
-	if (just_started){
-		map.finishChangesGrouping('zoom-out');
-	}
-
-	if (!aycocha){
-		map.finishChangesCollecting();
-	}
-}
-
-function ba_sliceTillMe(bwlev){
-	return ba__sliceTM(bwlev);
-}
 
 function ba_inUse(bwlev){
 	return bwlev.state('mp_show');
@@ -1305,6 +969,13 @@ BrowseMap.getStruc = (function() {
 })();
 
 
+function changeBridge(bwlev) {
+	bwlev.map.bridge_bwlev = bwlev;
+	bwlev.map.trigger('bridge-changed', bwlev);
 
+	return bwlev;
+}
+
+BrowseMap.changeBridge = changeBridge;
 return BrowseMap;
 });

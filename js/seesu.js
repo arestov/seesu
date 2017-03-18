@@ -19,6 +19,7 @@ var View = require('View');
 var localize_dict = require('js/libs/localizer');
 var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
+var prepare = require('js/libs/provoda/structure/prepare');
 
 var app_env = app_serv.app_env;
 
@@ -249,28 +250,18 @@ var SeesuApp = spv.inh(AppModel, {
 
 		}, 200);
 
-
-
-
-
-		self.map.makeMainLevel();
-
 		if (app_env.needs_url_history){
-			// self.map.makeMainLevel();
 			navi.init(function(e){
 				var url = e.newURL;
-				self.map.startChangesCollecting({
-					skip_url_change: true
-				});
 
 				var state_from_history = navi.findHistory(e.newURL);
 				if (state_from_history){
 					state_from_history.data.showOnMap();
 				} else{
 					var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), self.start_page);
-					BrowseMap.showInterest(self.map, interest);
+					var bwlev = BrowseMap.showInterest(self.map, interest);
+					BrowseMap.changeBridge(bwlev);
 				}
-				self.map.finishChangesCollecting();
 			});
 			(function() {
 				var url = window.location && window.location.hash.replace(/^\#/,'');
@@ -282,11 +273,13 @@ var SeesuApp = spv.inh(AppModel, {
 
 					});
 				} else {
-					BrowseMap.showInterest(self.map, []);
+					var bwlev = BrowseMap.showInterest(self.map, []);
+					BrowseMap.changeBridge(bwlev);
 				}
 			})();
 		} else {
-			BrowseMap.showInterest(self.map, []);
+			var bwlev = BrowseMap.showInterest(self.map, []);
+			BrowseMap.changeBridge(bwlev);
 		}
 
 		if (app_serv.app_env.nodewebkit) {
@@ -727,5 +720,5 @@ var SeesuApp = spv.inh(AppModel, {
 
 });
 
-return pv.markStrucure(SeesuApp, SeesuApp);
+return prepare(SeesuApp);
 });

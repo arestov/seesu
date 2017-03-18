@@ -102,19 +102,7 @@ pv = provoda = {
 	},
 	update: updateProxy.update,
 	state: hp.state,
-	behavior: function(declr, declr_extend_from, named) {
-		var behaviorFrom = declr_extend_from || pv.Model;
-		if (typeof named == 'object' || !declr.init) {
-			return spv.inh(behaviorFrom, {
-				naming: named && named.naming,
-				init: named && named.init,
-				props: declr
-			});
-		}
-		var func = named || function() {};
-		behaviorFrom.extendTo(func, declr);
-		return func;
-	},
+	behavior: behavior,
 	create: function(Constr, states, params, map_parent, app) {
 		var BehaviorContr = Constr || pv.Model;
 		var opts = (app || map_parent) && {
@@ -147,6 +135,20 @@ pv = provoda = {
 	},
 	markStrucure: markStrucure
 };
+
+function behavior(declr, declr_extend_from, named) {
+  var behaviorFrom = declr_extend_from || pv.Model;
+  if (typeof named == 'object' || !declr.init) {
+    return spv.inh(behaviorFrom, {
+      naming: named && named.naming,
+      init: named && named.init,
+      props: declr
+    });
+  }
+  var func = named || function() {};
+  behaviorFrom.extendTo(func, declr);
+  return func;
+}
 
 function getHModel() {
 var HModel = spv.inh(Model, {

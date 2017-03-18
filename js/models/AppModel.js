@@ -5,6 +5,7 @@ var spv = require('spv');
 var SongsList = require('./SongsList');
 var pv = require('pv');
 var BrowseMap = require('../libs/BrowseMap');
+var routePathByModels = require('js/libs/provoda/routePathByModels');
 
 var AppModel = spv.inh(AppModelBase, {}, (function(){
 var props = {
@@ -84,16 +85,18 @@ var props = {
 		}
 
 	},
-	bmap_travel: {
-		showArtcardPage: function(artist){
-			var md = this.getArtcard(artist);
+		showArtcardPage: function(artist_name){
+			var md = getArtcard(this, artist_name);
 			md.showOnMap();
 			return md;
 		},
-		showArtistAlbum: function(params, page_md){
-			var artcard = this.showArtcardPage(params.album_artist, page_md);
-			var pl = artcard.showAlbum(params);
+		showArtistAlbum: function(params){
+			var artcard = getArtcard(this, params.album_artist);
 
+			var artist_name = params.album_artist || artcard.head.artist_name
+			var pl = artcard.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
+
+			pl.showOnMap();
 			return pl;
 		},
 		showNowPlaying: function(no_stat) {
@@ -138,20 +141,11 @@ var props = {
 			md.showOnMap();
 			return md;
 		},
-		showArtistTopTracks: function(artist, page_md, omo) {
-			var artcard = this.showArtcardPage(artist, page_md);
-
-			var track_name = omo && omo.track;
-			var pl = artcard.showTopTacks(track_name);
-
-			return pl;
-		},
 		showTopTacks: function(artist, track_name) {
-			var artcard = this.showArtcardPage(artist);
-			var pl = artcard.showTopTacks(track_name);
-			return pl;
+			var artcard = getArtcard(this, artist);
+			var target = artcard.getTopTacks(track_name);
+			target.showOnMap();
 		},
-	},
 	getVkUser: function(userid) {
 		return this.start_page.getSPI('users/vk:' + encodeURIComponent(userid), true);
 	},
@@ -234,12 +228,13 @@ var props = {
 	}
 
 };
-var getBMapTravelFunc = AppModelBase.prototype.getBMapTravelFunc;
-for (var func_name in props.bmap_travel){
-	props[func_name] = getBMapTravelFunc(props.bmap_travel[func_name]);
-}
+
 return props;
 })());
+
+function getArtcard(app, artist_name) {
+	return routePathByModels(app.start_page, 'catalog/' + encodeURIComponent(artist_name), false, true);
+}
 
 return AppModel;
 });

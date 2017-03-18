@@ -62,33 +62,11 @@ var AppModelBase = spv.inh(pv.Model, {
 		this.map = new BrowseMap({app: this}, {start: this.start_page});
 
 		this.map
-			.on('changes', function(changes, models, bwlevs, bwlev) {
-				this.animateMapChanges(changes, models, bwlevs, bwlev);
+			.on('bridge-changed', function(bwlev) {
+				this.animateMapChanges(bwlev);
 			}, this.getContextOptsI());
 
-		if (navi) {
-			this.map
-				.on('url-change', function(nu, ou, data, replace) {
-					if (needs_url_history){
-						if (replace){
-							navi.replace(ou, nu, data);
-						} else {
-							navi.set(nu, data);
-						}
-					}
-				}, this.getContextOptsI());
-		}
-
-		if (!this.current_mp_bwlev) {
-			this.current_mp_bwlev = this.map.getCurrentLevel();
-		}
-
 		return this.map;
-	},
-	getBMapTravelFunc: function(func) {
-		return function() {
-			return this.collectChanges(func, arguments);
-		};
 	},
 	changeNavTree: function(nav_tree) {
 		// this.nav_tree = spv.filter(nav_tree, 'resident');
@@ -99,8 +77,8 @@ var AppModelBase = spv.inh(pv.Model, {
 
 	},
 	showStartPage: function(){
-		//mainaly for hash url games
-		this.map.startNewBrowse();
+		var bwlev = BrowseMap.showInterest(this.map, []);
+		BrowseMap.changeBridge(bwlev);
 	},
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
@@ -144,7 +122,7 @@ var AppModelBase = spv.inh(pv.Model, {
 					}
 				}
 
-
+				pv.update(bwlev, 'mpl_attached', !change.value);
 				pv.update(md, 'mp_show', change.value);
 				pv.update(bwlev, 'mp_show', change.value);
 				complexBrowsing(bwlev, md,  change.value);
@@ -229,10 +207,22 @@ var AppModelBase = spv.inh(pv.Model, {
 			return bwlev.getNesting('pioneer');
 		};
 
-		return function(_, models, bwlevs, bwlev) {
+		var branch = function (bwlev) {
+			var list = [];
+			var cur = bwlev;
+			while (cur) {
+				list.unshift(cur);
+				cur = cur.map_parent;
+			}
+			return list;
+		}
+
+		return function(bwlev) {
+			var bwlevs = branch(bwlev);
+			var models = bwlevs.map(getPioneer);
 			pv.updateNesting(this, 'navigation', bwlevs);
 
-			var nav_tree = bwlevs.map(getPioneer);
+			var nav_tree = models;
 			this.nav_tree = nav_tree;
 			if (this.matchNav){
 				this.matchNav();
@@ -310,19 +300,6 @@ var AppModelBase = spv.inh(pv.Model, {
 
 		};
 	})(),
-	collectChanges: function(fn, args, opts) {
-		var aycocha = this.map.isCollectingChanges();
-		if (!aycocha){
-			this.map.startChangesCollecting(opts);
-		}
-
-		var result = fn.apply(this, args);
-
-		if (!aycocha){
-			this.map.finishChangesCollecting();
-		}
-		return result;
-	},
 	resortQueue: function(queue) {
 		if (queue){
 			queue.removePrioMarks();

@@ -462,11 +462,7 @@ var FreeArtistTracks = spv.inh(SongsList, {}, {
 	]
 });
 
-var ArtCardBase = spv.inh(BrowseMap.Model, {
-	init: function(target) {
-		target.albums_models = null;
-	}
-}, {
+var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'artcard',
 	getURL: function() {
 		return '/catalog/' + this.app.encodeURLPart(this.head.artist_name);
@@ -582,34 +578,19 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 	getTagsModel: function() {
 		return this.getSPI('tags', true);
 	},
-	showTopTacks: function(track_name) {
-		var start_song;
-		if (track_name){
-			start_song = {
-				artist: this.head.artist_name,
-				track: track_name
-			};
-		}
-
+	getTopTacks: function(track_name) {
 		var pl = this.getTopTracks();
-		pl.showOnMap();
-		if (start_song){
-			var song = pl.findMustBePresentDataItem(start_song);
-			song.showOnMap();
-			pl.preloadStart();
-		}
-		return pl;
-	},
-	showAlbum: function(params) {
-
-		if (!params.album_artist){
-			params.album_artist = this.head.artist_name;
+		if (!track_name) {
+			return pl;
 		}
 
-		var pl = this.getSPI('albums_lfm', true).getSPI(params.album_artist + ',' + params.album_name, true);
+		var start_song = {
+			artist: this.head.artist_name,
+			track: track_name
+		};
 
-		pl.showOnMap();
-		return pl;
+		var song = pl.findMustBePresentDataItem(start_song);
+		return song;
 	},
 	//soundcloud_nickname
 	'compx-no_soundcloud_profile': [
@@ -760,24 +741,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {
 		pv.updateNesting(this, 'top_songs', pl);
 		return pl;
 	},
-	getAlbum: function(params) {
-		if (!this.albums_models) {
-			this.albums_models = {};
-		}
-		var kystring = spv.stringifyParams({artist: params.album_artist, name: params.album_name}, false, '=', '&');
-		if (this.albums_models[kystring]){
-			return this.albums_models[kystring];
-		}
-
-		var pl = this.initSi(ArtistAlbumSongs, {
-			album_artist: params.album_artist,
-			album_name: params.album_name,
-			original_artist: this.head.artist_name
-		});
-
-		this.albums_models[kystring] = pl;
-		return pl;
-	}
 });
 
 
