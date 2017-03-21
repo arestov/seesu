@@ -4,21 +4,18 @@ var spv = require('spv');
 var add = spv.set.add;
 
 var run = require('./run');
+var PathParticipation =  require('../../Model/PathParticipation');
 
 var CollectedProbes = function() {
   this.list = [];
   this.index = {};
 }
 
-return function (pathp) {
+
+function report(pathp) {
   var path_owner_md = pathp.owner;
-  if (!pathp.md._probs) {return;}
 
-  if (!path_owner_md._collected_probes) {
-    path_owner_md._collected_probes = new CollectedProbes();
-  }
-
-  add(path_owner_md._collected_probes, pathp.id, pathp);
+  addProbe(pathp);
 
   if (!path_owner_md._probes_collectors) {return;}
 
@@ -28,4 +25,16 @@ return function (pathp) {
 
 };
 
+function addProbe(pathp) {
+  var path_owner_md = pathp.owner;
+
+  if (!pathp.md._probs) {return;}
+
+  if (!path_owner_md._collected_probes) {
+    path_owner_md._collected_probes = new CollectedProbes();
+  }
+
+  add(path_owner_md._collected_probes, pathp.id, pathp);
+}
+return report;
 });

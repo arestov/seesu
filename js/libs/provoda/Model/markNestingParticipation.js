@@ -3,35 +3,13 @@ define(function(require){
 var spv = require('spv');
 var findAndRemoveItem = spv.findAndRemoveItem;
 var reportProbe = require('../dcl/probe/report');
+var PathParticipation = require('./PathParticipation');
 
-var cache_by_ids = {};
-var count = 1;
+var getPathpId = PathParticipation.getPathpId;
+var getPathIdByNestingName = PathParticipation.getPathIdByNestingName;
+var getPathIdByPathIdAndPrefix = PathParticipation.getPathIdByPathIdAndPrefix;
 
-var getPathById= function(path_id) {
-  return cache_by_ids.hasOwnProperty(path_id) ? cache_by_ids[path_id] : null;
-};
-
-var getPathIdByNestingName = spv.memorize(function(nesting_name) {
-  var result = [nesting_name];
-  var path_id = ++count;
-  cache_by_ids[path_id] = result;
-  return path_id;
-});
-
-var getPathIdByPathIdAndPrefix = spv.memorize(function(nesting_name, base_path_id) {
-  var base = getPathById(base_path_id);
-  var copied = base.slice();
-  copied.unshift(nesting_name);
-
-  var path_id = ++count;
-  cache_by_ids[path_id] = copied;
-
-  return path_id;
-}, function (nesting_name, base_path_id) {
-  return nesting_name + '-' + base_path_id;
-});
-
-return function (md, nesting_name, added, removed) {
+return function markNestingParticipation(md, nesting_name, added, removed) {
   if (removed) {
     if (Array.isArray(removed)) {
       for (var i = 0; i < removed.length; i++) {
@@ -95,20 +73,6 @@ function unmark(md, nesting_name, cur) {
 
   var key = nesting_name + ' - ' + cur._provoda_id;
   return RemoveFromSet(cur._participation_in_nesting, key);
-}
-
-function getPathpId(md, key) {
-  return md._provoda_id + ':' + key;
-}
-
-function PathParticipation(key, owner, md, pos) {
-  this.owner = owner;
-  this.md = md;
-  this.pos = pos;
-  this.key = key;
-  this.id = getPathpId(md, key);
-  this.path = getPathById(key);
-
 }
 
 function PathsParticipationSet() {
