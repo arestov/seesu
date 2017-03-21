@@ -457,10 +457,10 @@ var BrowseLevel = spv.inh(pv.Model, {
 		['@one:map_slice_view_sources:pioneer'],
 	],
 	'compx-struc': [
-		['@one:struc:map'],
-		function(struc) {
-			if (!struc) {return;}
-			return BrowseMap.getStruc(this.getNesting('pioneer'), struc, this.app);
+		['#used_data_structure', '@pioneer'],
+		function(struc, pioneer) {
+			if (!struc || !pioneer) {return;}
+			return BrowseMap.getStruc(pioneer, struc, this.app);
 		}
 	],
 	'compx-to_init': [
