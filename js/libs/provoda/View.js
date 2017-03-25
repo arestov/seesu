@@ -208,19 +208,6 @@ var View = spv.inh(StatesEmitter, {
 	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
 		return onPropsExtend(md, props, original, params);
 	}),
-	'stch-map_slice_view_sources': function(target, state) {
-		if (!state) {
-			return;
-		}
-
-		var wrap_parent = target.parent_view;
-		var bwlev_parent = wrap_parent && wrap_parent.parent_view;
-		if (bwlev_parent && bwlev_parent.parent_view == target.root_view && target.parent_view.location_name == 'pioneer-all-sufficient-details') {
-			pvUpdate(target, 'view_sources', sources(state[0], state[1][target.nesting_space]));
-		} else if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {
-			pvUpdate(target, 'view_sources', sources(state[0], state[1][target.nesting_space]));
-		}
-	},
 	getStrucRoot: function() {
 		return this.root_view;
 	},

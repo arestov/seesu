@@ -41,8 +41,6 @@ var BrowseMap = spv.inh(pv.Model, {
     self.mainLevelResident = params.start;
 
 		self.start_bwlev = createLevel(-1, false, self.mainLevelResident, self);
-    self.chans_coll = [];
-    self.residents = [];
 
   },
 });
