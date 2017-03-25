@@ -25,6 +25,12 @@ var getDeclrConstr = get_constr.getDeclrConstr;
 генерируемые плейлисты
 
 */
+
+function setStartBwlev(self, mainLevelResident) {
+	self.mainLevelResident = mainLevelResident;
+	self.start_bwlev = createLevel(-1, false, self.mainLevelResident, self);
+}
+
 var BrowseMap = spv.inh(pv.Model, {
 	naming: function(fn) {
 		return function BrowseMap(opts, params) {
@@ -38,9 +44,7 @@ var BrowseMap = spv.inh(pv.Model, {
     if (!params.start){
       throw new Error('give me 0 index level (start screen)');
     }
-    self.mainLevelResident = params.start;
-
-		self.start_bwlev = createLevel(-1, false, self.mainLevelResident, self);
+		setStartBwlev(self, params.start);
 
   },
 });
