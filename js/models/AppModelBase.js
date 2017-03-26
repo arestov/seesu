@@ -59,7 +59,7 @@ var AppModelBase = spv.inh(pv.Model, {
 		pv.updateNesting(this, 'navigation', []);
 		pv.updateNesting(this, 'start_page', start_page);
 
-		this.map = new BrowseMap({app: this}, {start: this.start_page});
+		this.map = BrowseMap.hookRoot(this, this.start_page);
 
 		this.map
 			.on('bridge-changed', function(bwlev) {
@@ -325,7 +325,7 @@ var AppModelBase = spv.inh(pv.Model, {
 	knowViewingDataStructure: function(constr_id, used_data_structure) {
 		if (!this.used_data_structure) {
 			this.used_data_structure = used_data_structure;
-			pv.update(this.map, 'struc', used_data_structure);
+			pv.update(this.map, 'used_data_structure', used_data_structure);
 			pv.update(this, 'used_data_structure', used_data_structure);
 		}
 		//console.log(1313)
