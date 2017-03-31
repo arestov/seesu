@@ -41,14 +41,11 @@ var ViewLabour = function() {
 	this.detltree_depth = null;
 	this._states_set_processing = null;
 	this._collections_set_processing = null;
-	this.dclrs_fpckgs_is_clonned = false;
 	this.innesting_pos_current = null;
 	this.innest_prev_view = null;
 	this.innest_next_view = null;
 
 	this.demensions_key_start = null;
-
-	this.handled_expandable_dclrs = null;
 
 	this._anchor = null;
 	//this.innesting_pos_old = null;
@@ -65,15 +62,6 @@ var ViewLabour = function() {
 	this.undetailed_states = {};
 	this.undetailed_children_models = {};
 };
-var hndExpandViewTree = function(e) {
-	if (!e.value) {
-		return;
-	}
-	this.checkExpandableTree(e.type);
-
-};
-
-
 
 var stackEmergency = function(fn, eventor, args) {
 	return eventor._calls_flow.pushToFlow(fn, eventor, args);
@@ -148,13 +136,6 @@ var initView = function(target, view_otps, opts){
 	cloneObj(target._lbr.undetailed_states, target.mpx.states);
 	cloneObj(target._lbr.undetailed_states, target.mpx.vstates);
 	cloneObj(target._lbr.undetailed_children_models, target.mpx.nestings);
-
-	if (target.base_tree_expand_states) {
-		for (var i = 0; i < target.base_tree_expand_states.length; i++) {
-
-			target.on( hp.getSTEVNameDefault(target.base_tree_expand_states[i]) , hndExpandViewTree);
-		}
-	}
 
 	prsStCon.connect.parent(target);
 	prsStCon.connect.root(target);
@@ -422,7 +403,7 @@ var View = spv.inh(StatesEmitter, {
 			this.bindBase();
 		}
 	},
-		checkExpandableTree: function(state_name) {
+	checkExpandableTree: function() {
 		var i, cur, cur_config, has_changes = true, append_list = [];
 		while (this.base_skeleton && has_changes) {
 			has_changes = false;
@@ -433,7 +414,7 @@ var View = spv.inh(StatesEmitter, {
 					continue;
 				}
 				if (!cur.parent || cur.parent.handled) {
-					if (!cur_config.needs_expand_state || cur_config.needs_expand_state == state_name){
+					if (!cur_config.needs_expand_state){
 						cur.handled = true;
 						if (cur_config.sample_name) {
 							cur.node = this.root_view.getSample( cur_config.sample_name );
@@ -478,25 +459,6 @@ var View = spv.inh(StatesEmitter, {
 		if (!this.c && this.base_skeleton[0].node) {
 			this.c = this.base_skeleton[0].node;
 		}
-
-		if (state_name && this.dclrs_expandable) {
-			if (this.dclrs_expandable[state_name]) {
-				if (!this._lbr.handled_expandable_dclrs) {
-					this._lbr.handled_expandable_dclrs = {};
-				}
-				if (!this._lbr.handled_expandable_dclrs[state_name]) {
-					this._lbr.handled_expandable_dclrs[state_name] = true;
-					for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
-						this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
-					}
-
-					this.checkChildrenModelsRendering();
-					this.requestAll();
-				}
-
-			}
-		}
-
 
 		//если есть прикреплённый родитель и пришло время прикреплять (если оно должно было прийти)
 		//
@@ -1276,31 +1238,6 @@ var View = spv.inh(StatesEmitter, {
 
 		};
 	})(),
-	checkCollectionChange: function(nesname) {
-		if (!this.dclrs_fpckgs){
-			throw new Error('there is no declarations');
-		}
-		if (!this.dclrs_fpckgs[ '$ondemand-' + nesname ]){
-			throw new Error('there is no "$ondemand-" declaration for: ' + nesname);
-		}
-		if (this.dclrs_fpckgs.hasOwnProperty(nesname)){
-			throw new Error('constant declaration exist for nesting named "' + nesname + '"');
-		}
-
-		if (!this._lbr.dclrs_fpckgs_is_clonned){
-			this._lbr.dclrs_fpckgs_is_clonned = true;
-			var new_cache = {};
-			cloneObj(new_cache, this.dclrs_fpckgs);
-			this.dclrs_fpckgs = new_cache;
-		}
-
-
-		this.dclrs_fpckgs[nesname] = this.dclrs_fpckgs[ '$ondemand-' + nesname ];
-		if (this.children_models[nesname]){
-
-			this.collectionChange(this, nesname, this.children_models[nesname]);
-		}
-	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	stackCollectionChange: function() {
 		var args = new Array(arguments.length);
