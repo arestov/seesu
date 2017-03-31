@@ -159,17 +159,6 @@ var initView = function(target, view_otps, opts){
 	prsStCon.connect.root(target);
 };
 
-var sources = function (item_source, sources_list) {
-	var arr = [];
-	if (item_source) {
-		arr.push(item_source);
-	}
-	push.apply(arr, sources_list);
-
-	var index = spv.indexBy(arr);
-	return Object.keys(index);
-};
-
 var View = spv.inh(StatesEmitter, {
 	naming: function(fn) {
 		return function View(view_otps, opts) {
