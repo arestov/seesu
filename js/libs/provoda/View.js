@@ -9,6 +9,7 @@ var prsStCon =  require('./prsStCon');
 var StatesEmitter = require('./StatesEmitter');
 var PvTemplate = require('./PvTemplate');
 var onPropsExtend = require('./onExtendView');
+var selectCollectionChange = require('./View/selectCollectionChange');
 
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
@@ -1383,42 +1384,7 @@ var View = spv.inh(StatesEmitter, {
 		var old_value = target.children_models[nesname];
 		target.children_models[nesname] = items;
 
-		target.pvCollectionChange(nesname, items, removed);
-
-
-		var collch = target.dclrs_fpckgs && target.dclrs_fpckgs.hasOwnProperty(nesname) && target.dclrs_fpckgs[nesname];
-		if (typeof collch == 'function') {
-			target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
-		} else {
-			if (target.dclrs_selectors && target.dclrs_selectors.hasOwnProperty(nesname)) {
-				if (Array.isArray(items)) {
-					for (var i = 0; i < items.length; i++) {
-						var cur = items[i];
-						var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
-							nesname, cur.model_name, target.nesting_space);
-
-						if (!dclr) {
-							dclr = collch;
-						}
-
-						throw new Error('WHAT TO DO WITH old_value?');
-						// target.callCollectionChangeDeclaration(dclr, nesname, cur, old_value, removed);
-					}
-				} else {
-					var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
-							nesname, items.model_name, target.nesting_space);
-
-					if (!dclr) {
-						dclr = collch;
-					}
-					target.callCollectionChangeDeclaration(dclr, nesname, items, old_value, removed);
-				}
-			} else {
-				if (collch) {
-					target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
-				}
-			}
-		}
+		selectCollectionChange(target, nesname, items, removed, old_value);
 
 		target.checkDeadChildren();
 		return target;
