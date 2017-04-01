@@ -1653,12 +1653,28 @@ spv.countKeys = function(obj, truthy) {
 	return count;
 };
 
+spv.nil = function (arg) {
+	if (arg !== undefined && arg !== null) {
+		return false;
+	}
+
+	return true;
+}
+
 spv.set = (function() {
+
+	var Set = function () {
+	  this.list = [];
+	  this.index = {};
+	};
+
+
 	return {
     contains: isInSet,
     get: getFromSet,
     add: AddToSet,
     remove: RemoveFromSet,
+		create: create,
 	}
 
   function getFromSet(set, key) {
@@ -1690,6 +1706,10 @@ spv.set = (function() {
     set.list = spv.findAndRemoveItem(set.list, item);
     return item;
   }
+
+	function create() {
+		return new Set();
+	}
 })();
 
 
