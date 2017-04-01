@@ -6,6 +6,7 @@ var angbo = require('angbo');
 var sync_sender = require('./sync_sender');
 var MDProxy = require('./MDProxy');
 var hp = require('./helpers');
+var getModelById = require('./utils/getModelById');
 var views_proxies = require('./views_proxies');
 var SyncReceiver = require('./SyncReceiver');
 var Eventor = require('./Eventor');
@@ -62,9 +63,7 @@ pv = provoda = {
 			view = null;
 		})();
 	},
-	getModelById: function(related_md, id) {
-		return related_md._highway.models[id];
-	},
+	getModelById: getModelById,
 	setTplFilterGetFn: function(fn) {
 		angbo.getFilterFn = fn;
 	},
