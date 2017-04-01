@@ -1687,7 +1687,7 @@ spv.set = (function() {
     if (!isInSet(set, key)) {return;}
 
     delete set.index[key];
-    set.list = findAndRemoveItem(set.list, item);
+    set.list = spv.findAndRemoveItem(set.list, item);
     return item;
   }
 })();
