@@ -34,6 +34,7 @@ function ensure(cur) {
   if (!cur._participation_in_nesting) {
     cur._participation_in_nesting = spv.set.create();
   }
+  return cur._participation_in_nesting;
 }
 
 function NestParticipation(nesting_name, md, owner, pos) {
@@ -48,10 +49,8 @@ function mark(md, nesting_name, cur, pos) {
     return;
   }
 
-  ensure(cur);
+  var set = ensure(cur);
   var key = nesting_name + ' - ' + cur._provoda_id;
-
-  var set = cur._participation_in_nesting;
 
   if (!spv.set.contains(set, key)) {
     return spv.set.add(set, key, new NestParticipation(nesting_name, cur, md, pos));
