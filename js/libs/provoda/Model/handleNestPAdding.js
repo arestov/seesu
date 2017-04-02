@@ -86,6 +86,8 @@ function startBuble(owner, nest_ppation) {
 
 function bubleList(list) {
   // для каждой вовлеченности распространить её вдоль участий её владельца
+
+  // доводим "середину" + "началало" до "конец"+"середина"+"начало" до всех ползволенных вариантов конца
   while (list.length) {
     var cur = list.shift();
     var np_set = cur.owner._participation_in_nesting;
@@ -147,6 +149,8 @@ function startItemChildren(nest_ppation) {
   /*
   если элемент "участия" является владельцем "вовлеченностей", то необходимо
   вычислить/распространить их в сторону "участия"
+
+  дополняем существущие "начала" пути серединой
   */
 
   if (!nest_ppation.md._nestings_paths) {return;}
