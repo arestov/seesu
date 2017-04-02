@@ -9,6 +9,9 @@ var getPathIdByNestingName = PathParticipation.getPathIdByNestingName;
 var getPathIdByPathIdAndPrefix = PathParticipation.getPathIdByPathIdAndPrefix;
 
 return function handleAdding(md, nesting_name, item, pos) {
+  // md - хранитель
+  // nesting_name - грездо
+  // item - элемент гнезда
   startBuble(md, mark(md, nesting_name, item, pos));
 };
 
@@ -32,6 +35,13 @@ function mark(md, nesting_name, cur, pos) {
   }
 
   var set = ensure(cur);
+  /*
+
+  _participation_in_nesting.
+
+   хранит информацию о превставлении модели в качестве элементов различных грезд
+   "участие" (непосредственное участие)
+  */
   var key = nesting_name + ' - ' + cur._provoda_id;
 
   if (!spv.set.contains(set, key)) {
@@ -75,6 +85,7 @@ function startBuble(owner, nest_ppation) {
 }
 
 function bubleList(list) {
+  // для каждой вовлеченности распространить её вдоль участий её владельца
   while (list.length) {
     var cur = list.shift();
     var np_set = cur.owner._participation_in_nesting;
@@ -92,6 +103,8 @@ function bubleList(list) {
 }
 
 function prependPath(nest_ppation, path_pacp_chi) {
+  // распространяет информацию о вовлечении из глубины наружу
+
   if (!isBubblingNeeded(path_pacp_chi.md)) {
     return;
   }
@@ -131,6 +144,11 @@ function prependPath(nest_ppation, path_pacp_chi) {
 }
 
 function startItemChildren(owner, nest_ppation) {
+  /*
+  если элемент "участия" является владельцем "вовлеченностей", то необходимо
+  вычислить/распространить их в сторону "участия"
+  */
+
   if (!nest_ppation.md._nestings_paths) {return;}
 
   var list = [];
@@ -147,6 +165,10 @@ function startItemChildren(owner, nest_ppation) {
 }
 
 function startItem(owner, nest_ppation) {
+  /*
+  конвертировать "участие" во "вовлеченность"
+  */
+
   /*
   1. add item
   2. mark item's position
@@ -167,14 +189,6 @@ function startItem(owner, nest_ppation) {
   return pathp;
 }
 
-function ensurePathsSet(owner) {
-  if (!owner._nestings_paths) {
-    owner._nestings_paths = new PathsParticipationSet();
-  }
-
-  return owner._nestings_paths;
-}
-
 function hasPathp(owner, path_id, md) {
   var pathp_id = getPathpId(md, path_id);
   return owner._nestings_paths &&
@@ -187,18 +201,34 @@ function getPathp(owner, path_id, md) {
 }
 
 function addPacp(owner, path_pacp) {
+  // добавляет информацию о вовлечении
+
+  /*
+    информация об участии моделей в качестве вложенности проивольной глублины
+    в этой модели
+    "вовлечение" другой конец "участие". интересует место участия, его широта и владелец, а не участник
+  */
   var set = ensurePathsSet(owner);
   spv.set.add(set, path_pacp.id, path_pacp);
 }
 
-function isBubblingNeeded(md) {
-  return Boolean(md._probs);
+function ensurePathsSet(owner) {
+  if (!owner._nestings_paths) {
+    owner._nestings_paths = new PathsParticipationSet();
+  }
+  return owner._nestings_paths;
 }
 
 function PathsParticipationSet() {
   this.index = {};
   this.list = [];
 }
+
+function isBubblingNeeded(md) {
+  return Boolean(md._probs);
+}
+
+
 
 
 })
