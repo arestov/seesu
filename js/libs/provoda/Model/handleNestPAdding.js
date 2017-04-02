@@ -95,7 +95,7 @@ function bubleList(list) {
 
     for (var i = 0; i < np_set.list.length; i++) {
       var nest_ppation = np_set.list[i];
-      var item = prependPath(nest_ppation, cur);
+      var item = joinPaths(nest_ppation, cur);
       if (item) {
         list.push(item);
       }
@@ -104,7 +104,7 @@ function bubleList(list) {
   }
 }
 
-function prependPath(nest_ppation, path_pacp_chi) {
+function joinPaths(nest_ppation, path_pacp_chi) {
   // распространяет информацию о вовлечении из глубины наружу
 
   if (!isBubblingNeeded(path_pacp_chi.md)) {
@@ -159,7 +159,7 @@ function startItemChildren(nest_ppation) {
 
   for (var i = 0; i < nest_ppation.md._nestings_paths.list.length; i++) {
     var cur = nest_ppation.md._nestings_paths.list[i];
-    var item = prependPath(nest_ppation, cur);
+    var item = joinPaths(nest_ppation, cur);
     if (item) {
       list.push(item);
     }
