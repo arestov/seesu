@@ -255,22 +255,30 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
 }, {
+  'probe-map_slice2': {
+    main: ['nesting', {
+      place_of_current: 'action',
+      place_of_nav: null,
+      initial: '#/',
+    }],
+    steps_to_surface_limit: 1,
+  },
   "+states": {
     "app_lang": ["compx", ['env.lang']],
 
     "locales": [
       "compx",
-      ['app_lang'],
-      function(app_lang) {
-        var result = {};
-        for (var string in localize_dict) {
-          if (localize_dict[string]){
-            result[string] = localize_dict[string][app_lang] || localize_dict[string].original;
-          }
+    ['app_lang'],
+    function(app_lang) {
+      var result = {};
+      for (var string in localize_dict) {
+        if (localize_dict[string]){
+          result[string] = localize_dict[string][app_lang] || localize_dict[string].original;
         }
-        return result;
       }
-    ],
+      return result;
+    }
+  ],
 
     "lfm_auth_action": [
       "compx",
