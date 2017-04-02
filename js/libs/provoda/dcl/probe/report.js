@@ -29,8 +29,8 @@ report.reportZeroPath = reportZeroPath;
 
 function reportZeroPath(md) {
   if (!md._probs) {return;}
-   var pathp = getFakePathp(md);
-   addProbe(pathp);
+  var pathp = getFakePathp(md);
+  addProbe(pathp);
 }
 
 function addProbe(pathp) {
