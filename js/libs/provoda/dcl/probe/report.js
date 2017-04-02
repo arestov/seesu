@@ -25,6 +25,14 @@ function report(pathp) {
 
 };
 
+report.reportZeroPath = reportZeroPath;
+
+function reportZeroPath(md) {
+  if (!md._probs) {return;}
+   var pathp = getFakePathp(md);
+   addProbe(pathp);
+}
+
 function addProbe(pathp) {
   var path_owner_md = pathp.owner;
 
@@ -36,5 +44,12 @@ function addProbe(pathp) {
 
   add(path_owner_md._collected_probes, pathp.id, pathp);
 }
+function getFakePathp(md) {
+  // we don't need PathParticipation here. but we need PathParticipation's structure here;
+  return new PathParticipation(PathParticipation.zeroPath, md, md, -1);
+}
+
+
 return report;
+
 });

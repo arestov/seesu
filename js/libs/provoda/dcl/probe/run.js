@@ -11,7 +11,7 @@ var RunProbes = function () {
   this.grouped = {};
 };
 
-return function (bwlev, pathp) {
+return function run(bwlev, pathp) {
   var md = pathp.md;
   if (!md._run_probes) {
     md._run_probes = new RunProbes();
