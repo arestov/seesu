@@ -937,7 +937,7 @@ var View = spv.inh(StatesEmitter, {
 		return this.c;
 	},
 	getA: function(){
-		return this._lbr._anchor || (this._lbr._anchor = document.createComment(''));
+		return this._lbr._anchor || (this._lbr._anchor = window.document.createComment(''));
 
 		//document.createTextNode('')
 	},
@@ -1276,7 +1276,7 @@ var View = spv.inh(StatesEmitter, {
 
 		//	}
 			if (!pv_view.comment_anchor){
-				pv_view.comment_anchor = document.createComment('collch anchor for: ' + nesname + ", " + space_name);
+				pv_view.comment_anchor = window.document.createComment('collch anchor for: ' + nesname + ", " + space_name);
 				$(pv_view.node).before(pv_view.comment_anchor);
 			}
 
@@ -1643,7 +1643,7 @@ var View = spv.inh(StatesEmitter, {
 		var comt_id = view.view_id + '_' + type;
 		if (!complects[comt_id]){
 			var complect = {
-				fragt: document.createDocumentFragment(),
+				fragt: window.document.createDocumentFragment(),
 				view: view,
 				type: type
 			};
