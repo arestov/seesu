@@ -100,6 +100,11 @@ function prependPath(nest_ppation, path_pacp_chi) {
     return;
   }
 
+  /*
+  1. add item
+  2. mark item's position
+  */
+
   var cur_path_id = getPathIdByPathIdAndPrefix(nest_ppation.nesting_name, path_pacp_chi.key);
 
   var pos = [nest_ppation.pos].concat(path_pacp_chi.pos);
@@ -142,6 +147,10 @@ function startItemChildren(owner, nest_ppation) {
 }
 
 function startItem(owner, nest_ppation) {
+  /*
+  1. add item
+  2. mark item's position
+  */
   var path_id = getPathIdByNestingName(nest_ppation.nesting_name);
 
   var pos = [nest_ppation.pos];
