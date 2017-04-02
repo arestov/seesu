@@ -33,7 +33,7 @@ return function markNestingParticipation(md, nesting_name, added, removed) {
 
 function ensure(cur) {
   if (!cur._participation_in_nesting) {
-    cur._participation_in_nesting = new NestingParticipationSet();
+    cur._participation_in_nesting = spv.set.create();
   }
 }
 
@@ -54,11 +54,11 @@ function mark(md, nesting_name, cur, pos) {
 
   var set = cur._participation_in_nesting;
 
-  if (!isInSet(set, key)) {
-    return AddToSet(set, key, new NestParticipation(nesting_name, cur, md, pos));
+  if (!spv.set.contains(set, key)) {
+    return spv.set.add(set, key, new NestParticipation(nesting_name, cur, md, pos));
   }
 
-  var item = getFromSet(set, key);
+  var item = spv.set.get(set, key);
   if (item.pos == pos) {return;}
 
   item.pos = pos;
@@ -72,7 +72,7 @@ function unmark(md, nesting_name, cur) {
   }
 
   var key = nesting_name + ' - ' + cur._provoda_id;
-  return RemoveFromSet(cur._participation_in_nesting, key);
+  return spv.set.remove(cur._participation_in_nesting, key);
 }
 
 function PathsParticipationSet() {
@@ -91,7 +91,7 @@ function ensurePathsSet(owner) {
 function hasPathp(owner, path_id, md) {
   var pathp_id = getPathpId(md, path_id);
   return owner._nestings_paths &&
-    isInSet(owner._nestings_paths, pathp_id);
+    spv.set.contains(owner._nestings_paths, pathp_id);
 }
 
 function getPathp(owner, path_id, md) {
@@ -101,7 +101,7 @@ function getPathp(owner, path_id, md) {
 
 function addPacp(owner, path_pacp) {
   var set = ensurePathsSet(owner);
-  AddToSet(set, path_pacp.id, path_pacp);
+  spv.set.add(set, path_pacp.id, path_pacp);
 }
 
 function startItem(owner, nest_ppation) {
@@ -217,43 +217,6 @@ function bubleUp(list) {
 
 function startBubleDown() {
 
-}
-
-
-
-function NestingParticipationSet() {
-  this.index = {};
-  this.list = [];
-}
-
-function getFromSet(set, key) {
-  if (isInSet(set, key)) {return set.index[key];}
-}
-
-function isInSet(set, key) {
-  return set.index.hasOwnProperty(key);
-}
-
-function AddToSet(set, key, item) {
-  if (!item) {
-    throw new Error('cant\'t add nothing');
-  }
-
-  if (set.index.hasOwnProperty(key)) {return item;}
-
-  set.index[key] = item;
-  set.list.push(item);
-
-  return item;
-}
-
-function RemoveFromSet(set, key) {
-  var item = set.index[key];
-  if (!set.index.hasOwnProperty(key)) {return;}
-
-  delete set.index[key];
-  set.list = findAndRemoveItem(set.list, item);
-  return item;
 }
 
 function isBubblingNeeded(md) {
