@@ -136,7 +136,7 @@ function joinPaths(nest_ppation, path_pacp_chi) {
   var pathp = getPathp(nest_ppation.owner, cur_path_id, path_pacp_chi.md);
   pathp.pos = pos;
 
-  reportProbe(pathp);
+  reportChanged(pathp);
 
   return pathp;
 
@@ -188,7 +188,7 @@ function startItem(owner, nest_ppation) {
   var pathp = getPathp(owner, path_id, nest_ppation.md);
   pathp.pos = pos;
 
-  reportProbe(pathp);
+  reportChanged(pathp);
 
   return pathp;
 }
@@ -232,6 +232,9 @@ function isBubblingNeeded(md) {
   return Boolean(md._probs);
 }
 
+function reportChanged(path_inv) {
+  reportProbe(path_inv);
+}
 
 
 
