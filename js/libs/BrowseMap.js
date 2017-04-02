@@ -455,8 +455,9 @@ var BrowseLevel = spv.inh(pv.Model, {
 		['@one:map_slice_view_sources:pioneer'],
 	],
 	'compx-struc': [
-		['#used_data_structure', '@pioneer'],
-		function(struc, pioneer) {
+		['#used_data_structure', '@pioneer', 'map_level_num'],
+		function(struc, pioneer, num) {
+			if (num == -2) {return}
 			if (!struc || !pioneer) {return;}
 			return BrowseMap.getStruc(pioneer, struc, this.app);
 		}
@@ -974,6 +975,11 @@ function changeBridge(bwlev) {
 	return bwlev;
 }
 
+function hookRoot(rootmd) {
+	return createLevel(-2, null, rootmd, null);
+}
+
+BrowseMap.hookRoot = hookRoot;
 BrowseMap.changeBridge = changeBridge;
 return BrowseMap;
 });

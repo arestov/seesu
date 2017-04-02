@@ -291,6 +291,7 @@ var SeesuApp = spv.inh(AppModel, {
 	},
 
 }, {
+	model_name: 'app_root',
 	'compx-app_lang': [['env.lang']],
 	'compx-locales': [
 		['app_lang'],
