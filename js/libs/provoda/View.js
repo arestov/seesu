@@ -9,6 +9,7 @@ var prsStCon =  require('./prsStCon');
 var StatesEmitter = require('./StatesEmitter');
 var PvTemplate = require('./PvTemplate');
 var onPropsExtend = require('./onExtendView');
+var selectCollectionChange = require('./View/selectCollectionChange');
 
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
@@ -40,14 +41,11 @@ var ViewLabour = function() {
 	this.detltree_depth = null;
 	this._states_set_processing = null;
 	this._collections_set_processing = null;
-	this.dclrs_fpckgs_is_clonned = false;
 	this.innesting_pos_current = null;
 	this.innest_prev_view = null;
 	this.innest_next_view = null;
 
 	this.demensions_key_start = null;
-
-	this.handled_expandable_dclrs = null;
 
 	this._anchor = null;
 	//this.innesting_pos_old = null;
@@ -64,15 +62,6 @@ var ViewLabour = function() {
 	this.undetailed_states = {};
 	this.undetailed_children_models = {};
 };
-var hndExpandViewTree = function(e) {
-	if (!e.value) {
-		return;
-	}
-	this.checkExpandableTree(e.type);
-
-};
-
-
 
 var stackEmergency = function(fn, eventor, args) {
 	return eventor._calls_flow.pushToFlow(fn, eventor, args);
@@ -148,26 +137,8 @@ var initView = function(target, view_otps, opts){
 	cloneObj(target._lbr.undetailed_states, target.mpx.vstates);
 	cloneObj(target._lbr.undetailed_children_models, target.mpx.nestings);
 
-	if (target.base_tree_expand_states) {
-		for (var i = 0; i < target.base_tree_expand_states.length; i++) {
-
-			target.on( hp.getSTEVNameDefault(target.base_tree_expand_states[i]) , hndExpandViewTree);
-		}
-	}
-
 	prsStCon.connect.parent(target);
 	prsStCon.connect.root(target);
-};
-
-var sources = function (item_source, sources_list) {
-	var arr = [];
-	if (item_source) {
-		arr.push(item_source);
-	}
-	push.apply(arr, sources_list);
-
-	var index = spv.indexBy(arr);
-	return Object.keys(index);
 };
 
 var View = spv.inh(StatesEmitter, {
@@ -208,19 +179,6 @@ var View = spv.inh(StatesEmitter, {
 	onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
 		return onPropsExtend(md, props, original, params);
 	}),
-	'stch-map_slice_view_sources': function(target, state) {
-		if (!state) {
-			return;
-		}
-
-		var wrap_parent = target.parent_view;
-		var bwlev_parent = wrap_parent && wrap_parent.parent_view;
-		if (bwlev_parent && bwlev_parent.parent_view == target.root_view && target.parent_view.location_name == 'pioneer-all-sufficient-details') {
-			pvUpdate(target, 'view_sources', sources(state[0], state[1][target.nesting_space]));
-		} else if (target.parent_view.parent_view == target.root_view && target.parent_view.nesting_name == 'map_slice') {
-			pvUpdate(target, 'view_sources', sources(state[0], state[1][target.nesting_space]));
-		}
-	},
 	getStrucRoot: function() {
 		return this.root_view;
 	},
@@ -445,7 +403,7 @@ var View = spv.inh(StatesEmitter, {
 			this.bindBase();
 		}
 	},
-		checkExpandableTree: function(state_name) {
+	checkExpandableTree: function() {
 		var i, cur, cur_config, has_changes = true, append_list = [];
 		while (this.base_skeleton && has_changes) {
 			has_changes = false;
@@ -456,7 +414,7 @@ var View = spv.inh(StatesEmitter, {
 					continue;
 				}
 				if (!cur.parent || cur.parent.handled) {
-					if (!cur_config.needs_expand_state || cur_config.needs_expand_state == state_name){
+					if (!cur_config.needs_expand_state){
 						cur.handled = true;
 						if (cur_config.sample_name) {
 							cur.node = this.root_view.getSample( cur_config.sample_name );
@@ -501,25 +459,6 @@ var View = spv.inh(StatesEmitter, {
 		if (!this.c && this.base_skeleton[0].node) {
 			this.c = this.base_skeleton[0].node;
 		}
-
-		if (state_name && this.dclrs_expandable) {
-			if (this.dclrs_expandable[state_name]) {
-				if (!this._lbr.handled_expandable_dclrs) {
-					this._lbr.handled_expandable_dclrs = {};
-				}
-				if (!this._lbr.handled_expandable_dclrs[state_name]) {
-					this._lbr.handled_expandable_dclrs[state_name] = true;
-					for (i = 0; i < this.dclrs_expandable[state_name].length; i++) {
-						this.checkCollectionChange(this.dclrs_expandable[state_name][i]);
-					}
-
-					this.checkChildrenModelsRendering();
-					this.requestAll();
-				}
-
-			}
-		}
-
 
 		//если есть прикреплённый родитель и пришло время прикреплять (если оно должно было прийти)
 		//
@@ -937,7 +876,7 @@ var View = spv.inh(StatesEmitter, {
 		return this.c;
 	},
 	getA: function(){
-		return this._lbr._anchor || (this._lbr._anchor = document.createComment(''));
+		return this._lbr._anchor || (this._lbr._anchor = window.document.createComment(''));
 
 		//document.createTextNode('')
 	},
@@ -1276,7 +1215,7 @@ var View = spv.inh(StatesEmitter, {
 
 		//	}
 			if (!pv_view.comment_anchor){
-				pv_view.comment_anchor = document.createComment('collch anchor for: ' + nesname + ", " + space_name);
+				pv_view.comment_anchor = window.document.createComment('collch anchor for: ' + nesname + ", " + space_name);
 				$(pv_view.node).before(pv_view.comment_anchor);
 			}
 
@@ -1299,31 +1238,6 @@ var View = spv.inh(StatesEmitter, {
 
 		};
 	})(),
-	checkCollectionChange: function(nesname) {
-		if (!this.dclrs_fpckgs){
-			throw new Error('there is no declarations');
-		}
-		if (!this.dclrs_fpckgs[ '$ondemand-' + nesname ]){
-			throw new Error('there is no "$ondemand-" declaration for: ' + nesname);
-		}
-		if (this.dclrs_fpckgs.hasOwnProperty(nesname)){
-			throw new Error('constant declaration exist for nesting named "' + nesname + '"');
-		}
-
-		if (!this._lbr.dclrs_fpckgs_is_clonned){
-			this._lbr.dclrs_fpckgs_is_clonned = true;
-			var new_cache = {};
-			cloneObj(new_cache, this.dclrs_fpckgs);
-			this.dclrs_fpckgs = new_cache;
-		}
-
-
-		this.dclrs_fpckgs[nesname] = this.dclrs_fpckgs[ '$ondemand-' + nesname ];
-		if (this.children_models[nesname]){
-
-			this.collectionChange(this, nesname, this.children_models[nesname]);
-		}
-	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	stackCollectionChange: function() {
 		var args = new Array(arguments.length);
@@ -1407,42 +1321,7 @@ var View = spv.inh(StatesEmitter, {
 		var old_value = target.children_models[nesname];
 		target.children_models[nesname] = items;
 
-		target.pvCollectionChange(nesname, items, removed);
-
-
-		var collch = target.dclrs_fpckgs && target.dclrs_fpckgs.hasOwnProperty(nesname) && target.dclrs_fpckgs[nesname];
-		if (typeof collch == 'function') {
-			target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
-		} else {
-			if (target.dclrs_selectors && target.dclrs_selectors.hasOwnProperty(nesname)) {
-				if (Array.isArray(items)) {
-					for (var i = 0; i < items.length; i++) {
-						var cur = items[i];
-						var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
-							nesname, cur.model_name, target.nesting_space);
-
-						if (!dclr) {
-							dclr = collch;
-						}
-
-						throw new Error('WHAT TO DO WITH old_value?');
-						// target.callCollectionChangeDeclaration(dclr, nesname, cur, old_value, removed);
-					}
-				} else {
-					var dclr = $v.selecPoineertDeclr(target.dclrs_fpckgs, target.dclrs_selectors,
-							nesname, items.model_name, target.nesting_space);
-
-					if (!dclr) {
-						dclr = collch;
-					}
-					target.callCollectionChangeDeclaration(dclr, nesname, items, old_value, removed);
-				}
-			} else {
-				if (collch) {
-					target.callCollectionChangeDeclaration(collch, nesname, items, old_value, removed);
-				}
-			}
-		}
+		selectCollectionChange(target, nesname, items, removed, old_value);
 
 		target.checkDeadChildren();
 		return target;
@@ -1643,7 +1522,7 @@ var View = spv.inh(StatesEmitter, {
 		var comt_id = view.view_id + '_' + type;
 		if (!complects[comt_id]){
 			var complect = {
-				fragt: document.createDocumentFragment(),
+				fragt: window.document.createDocumentFragment(),
 				view: view,
 				type: type
 			};

@@ -19,16 +19,15 @@ var ShareSearchSection = spv.inh(View, {}, {
 		}
 		this.setVisState(state, new_value);
 	},
-	toggleVisStateTPL: function(e, node, data) {
-		var boolen = data[2];
-		this.toggleVisState(data[1], boolen);
+	toggleVisStateTPL: function(e, node, state_name, value) {
+		this.toggleVisState(state_name, value);
 	},
 	tpl_events:{
 		requestFullView: function() {
 			this.toggleVisState('full_view_mode', true);
 		},
-		toggleVisState: function(e, node, data) {
-			this.toggleVisStateTPL(e, node, data);
+		toggleVisState: function(e, node, state_name, value) {
+			this.toggleVisStateTPL(e, node, state_name, value);
 		}
 	}
 });

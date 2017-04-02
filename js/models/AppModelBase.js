@@ -59,7 +59,7 @@ var AppModelBase = spv.inh(pv.Model, {
 		pv.updateNesting(this, 'navigation', []);
 		pv.updateNesting(this, 'start_page', start_page);
 
-		this.map = new BrowseMap({app: this}, {start: this.start_page});
+		this.map = BrowseMap.hookRoot(this, this.start_page);
 
 		this.map
 			.on('bridge-changed', function(bwlev) {
@@ -93,7 +93,6 @@ var AppModelBase = spv.inh(pv.Model, {
 				return;
 			}
 			app.binded_models[md._provoda_id] = true;
-			app.pushVDS(md);
 		};
 
 		var complexBrowsing = function(bwlev, md, value) {
@@ -323,35 +322,12 @@ var AppModelBase = spv.inh(pv.Model, {
 		return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
 
 	},
-	pushVDS: (function() {
-		var getSources = spv.memorize(function(md, used_data_structure, app){
-			return getStrucSources(md, getStruc(md, used_data_structure, app));
-		}, function(md){
-			return md.constr_id;
-		});
-
-		return function(md) {
-			if (!this.used_data_structure) {
-				return;
-			}
-			var sources = getSources(md, this.used_data_structure);
-			pv.update(md, 'map_slice_view_sources', [md._network_source, sources]);
-		};
-	})(),
 	knowViewingDataStructure: function(constr_id, used_data_structure) {
 		if (!this.used_data_structure) {
 			this.used_data_structure = used_data_structure;
-			pv.update(this.map, 'struc', used_data_structure);
+			pv.update(this.map, 'used_data_structure', used_data_structure);
 			pv.update(this, 'used_data_structure', used_data_structure);
 		}
-
-		for (var i = 0; i < this.map.residents.length; i++) {
-			var cur = this.map.residents[i];
-			this.pushVDS(cur);
-
-		}
-
-
 		//console.log(1313)
 	}
 });

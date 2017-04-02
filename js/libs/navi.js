@@ -10,7 +10,7 @@ var bindLocationChange = function(hashchangeHandler) {
 		spv.addEvent(window, 'popstate', function(e){
 
 			if (!e.state){
-				var newhash = decodeURI(location.hash).replace(hash_start, '');
+				var newhash = decodeURI(window.location.hash).replace(hash_start, '');
 				if (typeof hashchangeHandler == 'function'){
 					hashchangeHandler({
 						newURL: newhash
@@ -27,10 +27,10 @@ var bindLocationChange = function(hashchangeHandler) {
 		});
 	} else if ('onhashchange' in window){
 		(function(){
-			var hash = decodeURI(location.hash).replace(hash_start, '');
+			var hash = decodeURI(window.location.hash).replace(hash_start, '');
 			spv.addEvent(window, 'hashchange', function(e){
 				e = e || window.Event;
-				var newhash = decodeURI(location.hash).replace(hash_start, '');
+				var newhash = decodeURI(window.location.hash).replace(hash_start, '');
 				if (newhash != hash){
 
 					if (typeof hashchangeHandler == 'function'){
@@ -47,9 +47,9 @@ var bindLocationChange = function(hashchangeHandler) {
 
 	} else{
 		(function(){
-			var hash = decodeURI(location.hash).replace(hash_start, '');
+			var hash = decodeURI(window.location.hash).replace(hash_start, '');
 			setInterval(function(){
-				var newhash = decodeURI(location.hash).replace(hash_start, '');
+				var newhash = decodeURI(window.location.hash).replace(hash_start, '');
 				if (newhash != hash){
 
 					if (typeof hashchangeHandler == 'function'){
@@ -71,10 +71,10 @@ var navi;
 	var getURLBase = function(){
 		if (url_base === null){
 			var cbase;
-			if (location.href.indexOf('#') > -1){
-				cbase = location.href.slice(0, location.href.indexOf('#'));
+			if (window.location.href.indexOf('#') > -1){
+				cbase = window.location.href.slice(0, window.location.href.indexOf('#'));
 			} else{
-				cbase = location.href;
+				cbase = window.location.href;
 			}
 			url_base = cbase;
 		}
@@ -108,7 +108,8 @@ var navi;
 			});
 		},
 		getUniqId: function(){
-			var uniq_tag = (uniq_tag = (this.counter++).toString(36)) && zerofy(uniq_tag.substring(uniq_tag.length-3, uniq_tag.length), 3);
+			var uniq_tag;
+			uniq_tag = (uniq_tag = (this.counter++).toString(36)) && zerofy(uniq_tag.substring(uniq_tag.length-3, uniq_tag.length), 3);
 			return uniq_tag;
 		},
 		setFakeURL: function(url){
@@ -161,7 +162,7 @@ var navi;
 							if (history_api){
 								window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
 							} else {
-								location.assign(getURLBase() + '#' + ud.uniq_url);
+								window.location.assign(getURLBase() + '#' + ud.uniq_url);
 							}
 						}
 
@@ -184,7 +185,7 @@ var navi;
 							if (history_api){
 								window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
 							} else {
-								location.replace(getURLBase() + '#' + ud.uniq_url);
+								window.location.replace(getURLBase() + '#' + ud.uniq_url);
 							}
 						}
 

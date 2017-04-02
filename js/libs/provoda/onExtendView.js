@@ -5,7 +5,6 @@ var cloneObj = spv.cloneObj;
 
 var checkApis = require('./StatesEmitter/checkApis');
 var collectCompxs = require('./StatesEmitter/collectCompxs');
-var collectBaseExtendStates = require('./dcl/collectBaseExtendStates');
 var collectSelectorsOfCollchs = require('./dcl/collectSelectorsOfCollchs');
 var collectCollectionChangeDeclarations = require('./dcl/collectCollectionChangeDeclarations');
 var changeChildrenViewsDeclarations = require('./dcl/changeChildrenViewsDeclarations');
@@ -51,7 +50,7 @@ return function(self, props, original) {
   checkApis(self, props);
 
 	collectStateChangeHandlers(self, props);
-	var collches_modified = collectCollectionChangeDeclarations(self, props);
+	collectCollectionChangeDeclarations(self, props);
 
 	collectSelectorsOfCollchs(self, props);
 
@@ -64,9 +63,6 @@ return function(self, props, original) {
 	var base_tree_mofified = props.hasOwnProperty('base_tree');
 	if (base_tree_mofified) {
 		self.base_tree_list = getBaseTreeCheckList(props.base_tree);
-	}
-	if (collches_modified || base_tree_mofified) {
-		collectBaseExtendStates(self);
 	}
 
 	changeChildrenViewsDeclarations(self, props);

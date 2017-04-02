@@ -90,7 +90,7 @@ window._gaq = window._gaq || [];
 
 	function initViews(appModel, proxies, win, can_die, need_exposed) {
 		//ui thread;
-		requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
+		requirejs(['js/views/AppView', 'pv', 'spv', 'js/libs/BrowseMap'], function(AppView, pv, spv, BrowseMap) {
 			appModel.updateLVTime(); // useless?
 
 			var proxies_space = Date.now();
@@ -108,7 +108,8 @@ window._gaq = window._gaq || [];
 			return;
 
 			function initMainView() {
-				var view = new AppView(options(), {d: doc, can_die: can_die});
+				window.root_bwlev = BrowseMap.hookRoot(mpx.md);
+				var view = new AppView(options(), {d: doc, can_die: can_die, bwlev: window.root_bwlev});
 				mpx.addView(view, 'root');
 				view.onDie(function() {
 					//views_proxies.removeSpaceById(proxies_space);

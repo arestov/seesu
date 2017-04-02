@@ -8,6 +8,8 @@ var getUsageTree = require('./modules/getUsageTree');
 var view_serv = require('view_serv');
 var View = require('View');
 
+var pvUpdate = pv.update;
+
 var css_transform = view_serv.css.transform;
 var transform_props = css_transform ? [css_transform] : [];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
@@ -882,6 +884,7 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 	onDomBuild: function() {
 		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
 		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
+		pvUpdate(this.opts.bwlev, 'view_structure', this.used_data_structure);
 		console.log(this.used_data_structure);
 
 	},
