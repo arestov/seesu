@@ -14,7 +14,6 @@ var _requestsDeps = require('./Model/_requestsDeps');
 var onPropsExtend = require('./Model/onExtend');
 var initModel = require('./Model/init');
 var updateNesting = require('./Model/updateNesting');
-var updateProbe = require('./dcl/probe/updateProbe');
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -381,12 +380,6 @@ add({
 });
 
 add({
-  updateProbe: function(bwlev_id, probe_name, value, probe_container_uri) {
-    updateProbe(this, bwlev_id, probe_name, value, probe_container_uri);
-  },
-  toggleProbe: function(bwlev_id, probe_name, value, probe_container_uri) {
-    updateProbe.toggleProbe(this, bwlev_id, probe_name, value, probe_container_uri);
-  },
   getRelativeRequestsGroups: function(space, only_models) {
     var all_models = [];
     var groups = [];
