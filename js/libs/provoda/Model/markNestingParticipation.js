@@ -1,7 +1,6 @@
 define(function(require){
 'use strict';
 var spv = require('spv');
-var findAndRemoveItem = spv.findAndRemoveItem;
 var reportProbe = require('../dcl/probe/report');
 var PathParticipation = require('./PathParticipation');
 
