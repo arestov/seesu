@@ -74,7 +74,7 @@ function startBuble(owner, nest_ppation) {
   */
 
   var first = startItem(owner, nest_ppation);
-  var list = startItemChildren(owner, nest_ppation) || [];
+  var list = startItemChildren(nest_ppation) || [];
   list.unshift(first);
 
   if (!owner._participation_in_nesting) {
@@ -143,7 +143,7 @@ function prependPath(nest_ppation, path_pacp_chi) {
   // }
 }
 
-function startItemChildren(owner, nest_ppation) {
+function startItemChildren(nest_ppation) {
   /*
   если элемент "участия" является владельцем "вовлеченностей", то необходимо
   вычислить/распространить их в сторону "участия"
