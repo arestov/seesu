@@ -19,6 +19,7 @@ var loadAllByStruc = require('../structure/reactions/loadAllByStruc');
 var getModelSources = require('../structure/getModelSources');
 
 var watchAndCollectProbes = require('../dcl/probe/watch');
+var updateProbe = require('../dcl/probe/updateProbe');
 
 var countKeys = spv.countKeys;
 var cloneObj = spv.cloneObj;
@@ -33,11 +34,14 @@ var BrowseLevel = spv.inh(Model, {
   },
   init: function(self, opts, data, params, more, states) {
     self.children_bwlevs = {};
-    self.model_name = states['model_name'];
 
-    if (!self.model_name) {
-      throw new Error('must have model name');
-    }
+    self._run_probes = null;
+
+    // self.model_name = states['model_name'];
+    //
+    // if (!self.model_name) {
+    // 	throw new Error('must have model name');
+    // }
 
     var pioneer = states['pioneer'];
 
@@ -48,10 +52,17 @@ var BrowseLevel = spv.inh(Model, {
       self.ptree = self.ptree.concat(self.map_parent.ptree);
       self.rtree = self.rtree.concat(self.map_parent.rtree);
     }
-	
+
     watchAndCollectProbes(self, pioneer);
   }
 }, {
+  updateProbe: function(target_id, probe_name, value, probe_container_uri) {
+    updateProbe(this, target_id, probe_name, value, probe_container_uri);
+  },
+  toggleProbe: function(target_id, probe_name, value, probe_container_uri) {
+    updateProbe.toggleProbe(this, target_id, probe_name, value, probe_container_uri);
+  },
+  model_name: 'bwlev',
   "+states": {
     "map_slice_view_sources": [
       "compx",

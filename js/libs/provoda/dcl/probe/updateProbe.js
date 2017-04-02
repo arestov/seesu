@@ -1,19 +1,25 @@
 define(function(require) {
 'use strict';
  // var getSPByPathTemplate = function(app, start_md, string_template, need_constr, md_for_urldata) {
-
+var spv = require('spv');
 var initDeclaredNestings = require('../../initDeclaredNestings');
 var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
-var transportName = require('./transportName');
+var getModelById = require('../../utils/getModelById');
 
 var getProbeChange = function (toggle) {
-  return function (target, bwlev_id, probe_name, value, probe_container_uri) {
-    var app = target.app;
+  return function (bwlev, target_id, probe_name, value, probe_container_uri) {
+    var app = bwlev.app;
+
+    var target = getModelById(bwlev, target_id);
     var container = probe_container_uri ? getSPByPathTemplate(app, target, probe_container_uri) : target;
     var subpage = getSPByPathTemplate(app, container, value);
 
-    var probe_mds = container.getNesting(transportName(probe_name));
-    var probe_md = probe_mds && probe_mds[0];
+
+    var set = bwlev._run_probes[probe_name];
+    var key = target_id;
+
+    // var probe_mds = bwlev.getNesting(transportName(probe_name));
+    var probe_md = spv.set.get(set, key);
     if (!probe_md) {
       return; // throw ?
     }

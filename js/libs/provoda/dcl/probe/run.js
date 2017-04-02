@@ -5,21 +5,13 @@ var transportName = require('./transportName');
 var initDeclaredNestings = require('../../initDeclaredNestings');
 var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 
-var RunProbes = function () {
-  this.list = [];
-  this.index = {};
-  this.grouped = {};
-};
-
 return function run(bwlev, pathp) {
   var md = pathp.md;
-  if (!md._run_probes) {
-    md._run_probes = new RunProbes();
+  if (!bwlev._run_probes) {
+    bwlev._run_probes = {};
   }
 
-  var set = md._run_probes;
   var app = bwlev.app;
-  var has_changes = false;
 
   for (var name in md._probs) {
     if (!md._probs.hasOwnProperty(name)) {continue;}
@@ -27,7 +19,13 @@ return function run(bwlev, pathp) {
 
     if (!canCreateProbe(bwlev, pathp, cur)) {continue;}
 
-    var key = name;
+    if (!bwlev._run_probes.hasOwnProperty(name)) {
+      bwlev._run_probes[name] = spv.set.create();
+    }
+
+    var set = bwlev._run_probes[name];
+
+    var key = md._provoda_id;
 
     // contains
     // get
@@ -39,6 +37,7 @@ return function run(bwlev, pathp) {
     var con = app.initChi('__probe', null, null, null, {
       path: pathp.path,
       name: cur.name,
+      owner_provoda_id: md._provoda_id,
     });
 
     var initial = cur.options && cur.options.initial;
@@ -49,20 +48,8 @@ return function run(bwlev, pathp) {
 
     spv.set.add(set, key, con);
 
-    set.grouped[cur.name] = set.grouped[cur.name] || [];
-    set.grouped[cur.name].push(con);
-
-    has_changes = true;
+    bwlev.updateNesting(transportName(name), set.list);
   }
-
-  if (!has_changes) {return;}
-
-  for (var name in set.grouped) {
-    if (!set.grouped.hasOwnProperty(name)) {continue;}
-
-    md.updateNesting(transportName(name), set.grouped[name]);
-  }
-
 };
 
 
