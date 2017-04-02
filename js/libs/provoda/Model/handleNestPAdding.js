@@ -9,7 +9,7 @@ var getPathIdByNestingName = PathParticipation.getPathIdByNestingName;
 var getPathIdByPathIdAndPrefix = PathParticipation.getPathIdByPathIdAndPrefix;
 
 return function handleAdding(md, nesting_name, item, pos) {
-  startBubleUp(md, mark(md, nesting_name, item, pos));
+  startBuble(md, mark(md, nesting_name, item, pos));
 };
 
 function NestParticipation(nesting_name, md, owner, pos) {
@@ -47,7 +47,7 @@ function mark(md, nesting_name, cur, pos) {
 }
 
 
-function startBubleUp(owner, nest_ppation) {
+function startBuble(owner, nest_ppation) {
   if (!nest_ppation) {return;}
 
   /*
@@ -71,10 +71,10 @@ function startBubleUp(owner, nest_ppation) {
     return;
   }
 
-  bubleUp(list);
+  bubleList(list);
 }
 
-function bubleUp(list) {
+function bubleList(list) {
   while (list.length) {
     var cur = list.shift();
     var np_set = cur.owner._participation_in_nesting;
