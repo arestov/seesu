@@ -12,23 +12,32 @@ return function markNestingParticipation(md, nesting_name, added, removed) {
   if (removed) {
     if (Array.isArray(removed)) {
       for (var i = 0; i < removed.length; i++) {
-        unmark(md, nesting_name, removed[i], i);
+        handleRemoving(md, nesting_name, removed[i], i);
       }
     } else {
-      unmark(md, nesting_name, removed, 0);
+      handleRemoving(md, nesting_name, removed, 0);
     }
   }
 
   if (added) {
     if (Array.isArray(added)) {
       for (var i = 0; i < added.length; i++) {
-        startBubleUp(md, mark(md, nesting_name, added[i], i));
+        handleAdding(md, nesting_name, added[i], i);
       }
     } else {
-      startBubleUp(md, mark(md, nesting_name, added, 0));
+      handleAdding(md, nesting_name, added, 0);
     }
   }
 };
+
+
+function handleRemoving(md, nesting_name, item, pos) {
+  unmark(md, nesting_name, item, pos);
+}
+
+function handleAdding(md, nesting_name, item, pos) {
+  startBubleUp(md, mark(md, nesting_name, item, pos));
+}
 
 function ensure(cur) {
   if (!cur._participation_in_nesting) {
