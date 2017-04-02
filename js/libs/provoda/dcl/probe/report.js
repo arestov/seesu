@@ -4,7 +4,7 @@ var spv = require('spv');
 var add = spv.set.add;
 
 var run = require('./run');
-var PathParticipation =  require('../../Model/PathParticipation');
+var PathInvolvement =  require('../../Model/PathInvolvement');
 
 var CollectedProbes = function() {
   this.list = [];
@@ -45,8 +45,8 @@ function addProbe(pathp) {
   add(path_owner_md._collected_probes, pathp.id, pathp);
 }
 function getFakePathp(md) {
-  // we don't need PathParticipation here. but we need PathParticipation's structure here;
-  return new PathParticipation(PathParticipation.zeroPath, md, md, -1);
+  // we don't need PathInvolvement here. but we need PathInvolvement's structure here;
+  return new PathInvolvement(PathInvolvement.zeroPath, md, md, -1);
 }
 
 

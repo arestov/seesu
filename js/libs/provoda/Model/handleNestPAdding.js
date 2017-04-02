@@ -2,11 +2,11 @@ define(function (require) {
 'use strict';
 var spv = require('spv');
 var reportProbe = require('../dcl/probe/report');
-var PathParticipation = require('./PathParticipation');
+var PathInvolvement = require('./PathInvolvement');
 
-var getPathpId = PathParticipation.getPathpId;
-var getPathIdByNestingName = PathParticipation.getPathIdByNestingName;
-var getPathIdByPathIdAndPrefix = PathParticipation.getPathIdByPathIdAndPrefix;
+var getPathpId = PathInvolvement.getPathpId;
+var getPathIdByNestingName = PathInvolvement.getPathIdByNestingName;
+var getPathIdByPathIdAndPrefix = PathInvolvement.getPathIdByPathIdAndPrefix;
 
 return function handleAdding(md, nesting_name, item, pos) {
   // md - хранитель
@@ -124,7 +124,7 @@ function prependPath(nest_ppation, path_pacp_chi) {
 
   var pos = [nest_ppation.pos].concat(path_pacp_chi.pos);
   if (!hasPathp(nest_ppation.owner, cur_path_id, path_pacp_chi.md)) {
-    var cur = new PathParticipation(
+    var cur = new PathInvolvement(
       cur_path_id,
       nest_ppation.owner,
       path_pacp_chi.md,
@@ -181,7 +181,7 @@ function startItem(owner, nest_ppation) {
 
   var pos = [nest_ppation.pos];
   if (!hasPathp(owner, path_id, nest_ppation.md)) {
-    var path_pacp = new PathParticipation(path_id, owner, nest_ppation.md, pos);
+    var path_pacp = new PathInvolvement(path_id, owner, nest_ppation.md, pos);
     addPacp(owner, path_pacp);
   }
 

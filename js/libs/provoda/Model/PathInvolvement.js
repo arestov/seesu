@@ -6,7 +6,7 @@ var count = 1;
 var zeroPath = 0;
 cache_by_ids[zeroPath] = [];
 
-function PathParticipation(key, owner, md, pos) {
+function PathInvolvement(key, owner, md, pos) {
   this.owner = owner;
   this.md = md;
   this.pos = pos;
@@ -43,11 +43,11 @@ var getPathIdByPathIdAndPrefix = spv.memorize(function(nesting_name, base_path_i
   return nesting_name + '-' + base_path_id;
 });
 
-PathParticipation.getPathpId = getPathpId;
-PathParticipation.getPathById = getPathById;
-PathParticipation.getPathIdByNestingName = getPathIdByNestingName;
-PathParticipation.getPathIdByPathIdAndPrefix = getPathIdByPathIdAndPrefix;
-PathParticipation.zeroPath = zeroPath;
+PathInvolvement.getPathpId = getPathpId;
+PathInvolvement.getPathById = getPathById;
+PathInvolvement.getPathIdByNestingName = getPathIdByNestingName;
+PathInvolvement.getPathIdByPathIdAndPrefix = getPathIdByPathIdAndPrefix;
+PathInvolvement.zeroPath = zeroPath;
 
-return PathParticipation;
+return PathInvolvement;
 });
