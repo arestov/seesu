@@ -152,13 +152,13 @@ function startItemChildren(nest_ppation) {
 
   дополняем существущие "начала" пути серединой
   */
-
-  if (!nest_ppation.md._nestings_paths) {return;}
+  var set = nest_ppation.md._nestings_paths;
+  if (!set) {return;}
 
   var list = [];
 
-  for (var i = 0; i < nest_ppation.md._nestings_paths.list.length; i++) {
-    var cur = nest_ppation.md._nestings_paths.list[i];
+  for (var i = 0; i < set.list.length; i++) {
+    var cur = set.list[i];
     var item = joinPaths(nest_ppation, cur);
     if (item) {
       list.push(item);
