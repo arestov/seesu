@@ -7,6 +7,6 @@ Seesu is a small mashup application which combines last.fm catalog with vk.com a
 
 h1. License
 
-Copyright (c) 2009—2014
+Copyright (c) 2009—2017
 "Gleb Arestov":http://arestov.me <gleb.arestov@gmail.com>
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
