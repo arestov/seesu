@@ -168,7 +168,7 @@ function getterSPI(){
     }
     cloneObj(instance_data, data_by_urlname);
 
-    return self.initSi(Constr, instance_data);
+    return self.initSi(Constr, instance_data, null, null, common_opts[0]);
   };
 
   return function getSPI(self, sp_name) {
