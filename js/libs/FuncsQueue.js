@@ -73,7 +73,7 @@ define(function(require) {
 		}
 		this.using_stat = [];
 		if (opts.init){
-			opts.init.call(this);
+			opts.init.call(this, this);
 		}
 	};
 

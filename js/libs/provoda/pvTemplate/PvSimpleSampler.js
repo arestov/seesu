@@ -65,9 +65,18 @@ var PvSimpleSampler = (function(){
 			}
 			for (var i = 0; i < config.sud_list.length; i++) {
 				var cur = config.sud_list[i];
-				if (bind_data.instructions[cur]) {
+        if (!bind_data.instructions[cur]) {
+          continue;
+        }
+
+        if (cur !== 'pv-props') {
 					push.apply(states_list, bind_data.instructions[cur].sfy_values);
-					//debugger;
+          continue;
+        }
+
+        for (var iii = 0; iii < bind_data.instructions['pv-props'].length; iii++) {
+          var sub_cur = bind_data.instructions['pv-props'][iii].sfy_values;
+          push.apply(states_list, sub_cur)
 				}
 			}
 		};
