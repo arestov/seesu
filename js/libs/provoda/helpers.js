@@ -75,15 +75,20 @@ return {
 	stateGetter: stateGetter,
 	getEncodedState: getEncodedState,
 	getNetApiByDeclr: function(send_declr, sputnik, app) {
-		var network_api;
 		var api_name = send_declr.api_name;
-		if (typeof api_name == 'string') {
-			network_api = spv.getTargetField(app || sputnik.app, api_name);
-		} else if (typeof api_name == 'function') {
-			network_api = api_name.call(sputnik);
+		if (typeof api_name == 'function') {
+			return api_name.call(sputnik);
 		}
 
-		return network_api;
+		if (typeof api_name !== 'string') {
+			return;
+		}
+
+		if (spv.startsWith(api_name, '#')) {
+			return (app || sputnik.app)._interfaces_using.used[api_name.replace('#', '')];
+		}
+
+    return sputnik._interfaces_using.used[api_name];
 	},
 	getPropsPrefixChecker: utils.getPropsPrefixChecker,
 	_groupMotive: function(fn) {
