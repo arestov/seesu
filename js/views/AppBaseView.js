@@ -197,32 +197,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		}
 
 	},
-	hideLevNum: function(num) {
-
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.addClass('inactive-page').removeClass('full-page');
-		}
-
-	},
-	showLevNum: function(num) {
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.removeClass('inactive-page').addClass('full-page');
-		}
-	},
-	removePageOverviewMark: function(num) {
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.removeClass('page-scheme');
-		}
-	},
-	addPageOverviewMark: function(num) {
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.addClass('page-scheme');
-		}
-	},
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
 	},
@@ -692,30 +666,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
 		//map_level_num
 		//md.map_level_num
-
-
-
-		/*
-		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
-		if (old_md){
-			target.hideLevNum(old_md.map_level_num);
-			if (!oved_now_active){
-				target.removePageOverviewMark(old_md.map_level_num-1);
-			}
-		}
-		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
-			target.hideLevNum(-1);
-		}
-
-		target.addPageOverviewMark(md.map_level_num - 1);
-		target.showLevNum(md.map_level_num);
-		if (oved_now_active){
-			target.removePageOverviewMark(old_md.map_level_num-1);
-		}
-
-		*/
-
-
 
 		/*
 		var highlight = md.state('mp-highlight');
