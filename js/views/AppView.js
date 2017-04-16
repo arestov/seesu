@@ -7,24 +7,14 @@ var app_serv = require('app_serv');
 var FuncsQueue = require('js/libs/FuncsQueue');
 var nav = require('./nav');
 var coct = require('./coct');
-var uacq = require('./uacq');
-var StartPageView = require('./StartPageView');
-var SearchPageView = require('./SearchPageView');
-var ArtcardUI = require('./ArtcardUI');
-var ArtistListView = require('./ArtistListView');
-var SongsListView = require('./SongsListView');
-var UserCardPage = require('./UserCardPage');
-var MusicConductorPage = require('./MusicConductorPage');
-var TagPageView = require('./TagPageView');
-var YoutubeVideoView = require('./YoutubeVideoView');
-var lul = require('./lul');
-var SongcardPage = require('./SongcardPage');
+
 var AppBaseView = require('./AppBaseView');
 var WPBox = require('./modules/WPBox');
 var view_serv = require('view_serv');
 var View = require('View');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
+var map_slice_by_model = require('./pages/index');
 
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
@@ -71,55 +61,6 @@ function changeFaviconNode(d, oldLink, src, type) {
 	d.head.replaceChild(link, oldLink);
 	return link;
 }
-
-
-var map_slice_by_model = {
-	$default: coct.ListOfListsView,
-	start_page : StartPageView,
-	invstg: SearchPageView,
-	artcard: ArtcardUI,
-	artslist: ArtistListView,
-	playlist: {
-		'main': SongsListView,
-		'all-sufficient-details': SongsListView.SongsListDetailedView,
-	},
-	vk_usercard: UserCardPage.VkUsercardPageView,
-	lfm_usercard: UserCardPage.LfmUsercardPageView,
-	usercard: UserCardPage,
-	allplaces: coct.SimpleListOfListsView,
-	mconductor: MusicConductorPage,
-	tag_page: TagPageView,
-	tagslist: TagPageView.TagsListPage,
-	user_playlists: coct.ListOfListsView,
-	songs_lists: coct.ListOfListsView,
-	artists_lists: coct.ListOfListsView,
-	сountries_list: coct.SimpleListOfListsView,
-	city_place: coct.SimpleListOfListsView,
-	cities_list: coct.SimpleListOfListsView,
-	country_place: coct.ListOfListsView,
-	tag_artists: coct.ListOfListsView,
-	tag_songs: coct.ListOfListsView,
-	youtube_video: YoutubeVideoView,
-	vk_users: UserCardPage.VkUsersPageView,
-	lfm_users: lul.LfmUsersPageView,
-	lfm_listened_artists: coct.ListOfListsView,
-	lfm_listened_tracks: coct.ListOfListsView,
-	lfm_listened_albums: coct.ListOfListsView,
-	lfm_listened_tags: lul.UserTagsPageView,
-	vk_users_tracks: coct.ListOfListsView,
-	lfm_user_tag: coct.ListOfListsView,
-	user_acqs_list: uacq.UserAcquaintancesListView,
-	albslist: coct.AlbumsListView,
-	lula: lul.LULAPageVIew,
-	lulas: lul.LULAsPageVIew,
-	songcard: SongcardPage,
-	justlists: coct.ListOfListsView,
-	vk_posts: coct.VKPostsView,
-	blogs_conductor: coct.ListOfListsView,
-	blogs_list: coct.ListOfListsView,
-	music_blog: coct.ListOfListsView,
-	app_news: coct.AppNewsView
-};
 
 var push = Array.prototype.push;
 
