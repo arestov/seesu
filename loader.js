@@ -90,11 +90,14 @@ window._gaq = window._gaq || [];
 
 	function initViews(appModel, proxies, win, can_die, need_exposed) {
 		//ui thread;
-		requirejs(['js/views/AppView', 'pv', 'spv', 'js/libs/BrowseMap'], function(AppView, pv, spv, BrowseMap) {
+		requirejs(
+			['js/views/AppView', 'js/views/RootBwlevView', 'pv', 'spv', 'js/libs/BrowseMap'],
+			function(AppView, createRootBwlevView, pv, spv, BrowseMap) {
 			appModel.updateLVTime(); // useless?
 
 			var proxies_space = Date.now();
-			proxies.addSpaceById(proxies_space, appModel);
+			window.root_bwlev = BrowseMap.hookRoot(appModel);
+			proxies.addSpaceById(proxies_space, window.root_bwlev);
 			var mpx = proxies.getMPX(proxies_space, appModel);
 			var doc = win.document;
 
@@ -108,8 +111,11 @@ window._gaq = window._gaq || [];
 			return;
 
 			function initMainView() {
-				window.root_bwlev = BrowseMap.hookRoot(mpx.md);
-				var view = new AppView(options(), {d: doc, can_die: can_die, bwlev: window.root_bwlev});
+				var mpx = proxies.getMPX(proxies_space, window.root_bwlev);
+
+				var RootView = createRootBwlevView(AppView);
+				var view = new RootView(options(false, mpx), {d: doc, can_die: can_die, bwlev: window.root_bwlev});
+
 				mpx.addView(view, 'root');
 				view.onDie(function() {
 					//views_proxies.removeSpaceById(proxies_space);
@@ -119,12 +125,12 @@ window._gaq = window._gaq || [];
 			}
 
 			function initExposedView() {
-				var exposed_view = new AppView.AppExposedView(options(true), {d: doc, can_die: can_die});
+				var exposed_view = new AppView.AppExposedView(options(true, mpx), {d: doc, can_die: can_die});
 				mpx.addView(exposed_view, 'exp_root');
 				exposed_view.requestAll();
 			}
 
-			function options(usual_flow) {
+			function options(usual_flow, mpx) {
 				return {
 					mpx: mpx,
 					proxies_space: proxies_space,

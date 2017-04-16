@@ -27,7 +27,7 @@ var Query = pv.behavior({
         return result;
       }
     ],
-    ['fanburst_api', [
+    ['#fanburst_api', [
       ['msq'],
       function(api, opts, msq) {
     		return api.get('tracks/search', {

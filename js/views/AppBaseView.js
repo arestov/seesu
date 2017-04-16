@@ -7,16 +7,12 @@ var filters = require('./modules/filters');
 var getUsageTree = require('./modules/getUsageTree');
 var view_serv = require('view_serv');
 var View = require('View');
+var readMapSliceAnimationData = require('./map_slice/readMapSliceAnimationData');
+var animateMapSlice = require('./map_slice/animateMapSlice');
 
 var pvUpdate = pv.update;
 
-var css_transform = view_serv.css.transform;
-var transform_props = css_transform ? [css_transform] : [];
-//['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
-var empty_transform_props = {};
-transform_props.forEach(function(el) {
-	empty_transform_props[el] = '';
-});
+
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 
 pv.setTplFilterGetFn(function(filter_name) {
@@ -71,11 +67,13 @@ var BrowserAppRootView = spv.inh(View, {}, {
 	dom_rp: true,
 	createDetails: function() {
 		this.root_view = this;
-		this.d = this.opts.d;
+		this.root_view.root_app_view = this;
+		var opts = this.opts || this.parent_view.opts;
+		this.d = opts.d;
 		this.dom_related_props.push('calls_flow');
 
 		var _this = this;
-		if (this.opts.can_die && spv.getDefaultView(this.d)){
+		if (opts.can_die && spv.getDefaultView(this.d)){
 			this.can_die = true;
 			this.checkLiveState = function() {
 				if (!spv.getDefaultView(_this.d)){
@@ -196,32 +194,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 			return this.getLevelContainer(num);
 		}
 
-	},
-	hideLevNum: function(num) {
-
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.addClass('inactive-page').removeClass('full-page');
-		}
-
-	},
-	showLevNum: function(num) {
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.removeClass('inactive-page').addClass('full-page');
-		}
-	},
-	removePageOverviewMark: function(num) {
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.removeClass('page-scheme');
-		}
-	},
-	addPageOverviewMark: function(num) {
-		var levc = this.getLevByNum(num);
-		if (levc){
-			levc.c.addClass('page-scheme');
-		}
 	},
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
@@ -387,92 +359,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		}
 		return target_in_parent;
 	},
-	getMapSliceChildInParenViewOLD: function(md) {
-		var parent_md = md.map_parent;
-
-
-		var parent_view = this.getMapSliceView(parent_md);
-		if (!parent_view){
-			return;
-		}
-		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
-		if (!target_in_parent){
-			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
-			target_in_parent = view && view[0];
-		}
-		return target_in_parent;
-	},
-	getNavOHeight: function() {
-		return this.els.navs.outerHeight();
-	},
-	getAMCWidth: function() {
-		return this.els.app_map_con.width();
-	},
-	getAMCOffset: function() {
-		return this.els.app_map_con.offset();
-	},
-	readMapSliceAnimationData: function(transaction_data) {
-		if (!transaction_data || !transaction_data.bwlev) {return;}
-
-		var target_md = transaction_data.bwlev.getMD();
-		var current_lev_num = pv.state(target_md, 'map_level_num');
-		var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in" && transaction_data.array[0].changes.length < 3;
-
-		if (!(can_animate && current_lev_num != -1 && one_zoom_in)) {return;}
-
-		var target_in_parent = this.getMapSliceChildInParenView(target_md, transaction_data.target.getMD());
-		if (!target_in_parent) {return;}
-
-		var targt_con = target_in_parent.getC();
-
-		// var offset_parent_node = targt_con.offsetParent();
-		var parent_offset = this.getBoxDemension(this.getAMCOffset, 'screens_offset');
-		// или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
-
-		// var offset = targt_con.offset(); //domread
-		var offset = target_in_parent.getBoxDemension(function() {
-			return targt_con.offset();
-		}, 'con_offset', target_in_parent._lbr.innesting_pos_current, this.state('window_height'), this.state('workarea_width'));
-
-		var width = target_in_parent.getBoxDemension(function() {
-			return targt_con.outerWidth();
-		}, 'con_width', this.state('window_height'), this.state('workarea_width'));
-
-		var height = target_in_parent.getBoxDemension(function() {
-			return targt_con.outerHeight();
-		}, 'con_height', this.state('window_height'), this.state('workarea_width'));
-
-
-		// var width = targt_con.outerWidth();  //domread
-		// var height = targt_con.outerHeight(); //domread
-
-		var top = offset.top - parent_offset.top;
-
-		var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
-		var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('workarea_width'));
-
-		var scale_x = width/con_width;
-		var scale_y = height/con_height;
-		var min_scale = Math.min(scale_x, scale_y);
-
-		var shift_x = width/2 - min_scale * con_width/2;
-		var shift_y = height/2 - min_scale * con_height/2;
-
-		var lc = this.getLevelContainer(current_lev_num);
-
-		var transform_values = {};
-		var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
-		transform_props.forEach(function(el) {
-			transform_values[el] = value;
-		});
-
-		// from small size (size of button) to size of viewport
-
-		return {
-			lc: lc,
-			transform_values: transform_values
-		};
-	},
 	setVMpshow: function(target_mpx, value) {
 		pv.mpx.update(target_mpx, 'vmp_show', value, sync_opt);
 	},
@@ -492,113 +378,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 			this.setVMpshow(this.getStoredMpx(md), false);
 		}
 	},
-	animateMapSlice: (function() {
-
-		var arrProtp = Array.prototype;
-		var concat = arrProtp.concat;
-		var concatArray = function(array_of_arrays) {
-			return concat.apply(arrProtp, array_of_arrays);
-		};
-
-		var inCache = function(cache, key) {
-			return cache.hasOwnProperty(key) && cache[key] !== false;
-		};
-
-		var needsDestroing = function(all_changhes) {
-			var destroy_insurance = {}, i, cur, target, pvid;
-			var result = [];
-
-			for (i = 0; i < all_changhes.length; i++) {
-				cur = all_changhes[i];
-				target = cur.bwlev.getMD();
-				pvid = target._provoda_id;
-				if (cur.type == 'destroy'){
-					destroy_insurance[pvid] = target;
-				} else {
-					destroy_insurance[pvid] = false;
-				}
-			}
-
-			for (i = all_changhes.length - 1; i >= 0; i--) {
-				cur = all_changhes[i];
-				target = cur.bwlev.getMD();
-				pvid = target._provoda_id;
-				if (cur.type == 'destroy'){
-					if (inCache(destroy_insurance, pvid)) {
-						destroy_insurance[pvid] = false;
-						result.unshift(target);
-					}
-				}
-			}
-
-			return result;
-		};
-
-
-	return function(transaction_data, animation_data) {
-		var all_changhes = spv.filter(transaction_data.array, 'changes');
-			all_changhes = concatArray(all_changhes);
-		var models = spv.filter(all_changhes, 'target');
-		var i, cur;
-
-		if (!this.changes_number) {
-			this.changes_number = 0;
-		}
-
-		this.changes_number++;
-
-		var changes_number = this.changes_number;
-
-		this.markAnimationStart(models, changes_number);
-
-		var doomed = needsDestroing(all_changhes);
-		for (i = doomed.length - 1; i >= 0; i--) {
-			this.removeChildViewsByMd(this.getStoredMpx(doomed[i]), 'map_slice');
-		}
-
-		for (i = 0; i < all_changhes.length; i++) {
-			var change = all_changhes[i];
-			var handler = this['model-mapch'][change.type];
-			if (handler){
-				handler.call(this, change);
-			}
-		}
-
-		if (transaction_data.bwlev){
-			var target_md = transaction_data.bwlev.getMD();
-			var current_lev_num = pv.state(target_md, 'map_level_num');
-
-			if (animation_data){
-				pv.update(this, 'disallow_animation', true, sync_opt);
-				animation_data.lc.c.css(animation_data.transform_values);
-				pv.update(this, 'disallow_animation', false, sync_opt);
-			}
-
-			pv.update(this, 'current_lev_num', current_lev_num, sync_opt);
-			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
-
-			if (animation_data && animation_data.lc){
-				animation_data.lc.c.height(); //заставляем всё пересчитать
-				animation_data.lc.c.css(empty_transform_props);
-				/*this.nextLocalTick(function() {
-
-				});*/
-				animation_data.lc.c.height(); //заставляем всё пересчитать
-			}
-
-		}
-		var _this = this;
-		var completeAnimation = function() {
-			_this.markAnimationEnd(models, changes_number);
-		};
-		setTimeout(completeAnimation, 16*21*4);
-		if (!animation_data){
-			completeAnimation();
-		} else {
-			animation_data.lc.onTransitionEnd(completeAnimation);
-		}
-	};
-	})(),
 	'collch-$spec_det-map_slice': {
 		is_wrapper_parent: '^',
 		space: 'detailed',
@@ -643,7 +422,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		var array = this.getRendOrderedNesting(nesname, bwlevs) || bwlevs;
 		var i, cur;
 
-		var animation_data = this.readMapSliceAnimationData(diff);
+		var animation_data = readMapSliceAnimationData(this, diff);
 
 		for (i = array.length - 1; i >= 0; i--) {
 			var cur_md = mds[i];
@@ -659,7 +438,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
 		if (this.completely_rendered_once['map_slice']){
 			if (transaction){
-				this.animateMapSlice(transaction, animation_data);
+				animateMapSlice(this, transaction, animation_data);
 				if (!transaction.bwlev){
 					target_md = this.findBMapTarget(array);
 
@@ -688,35 +467,10 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		}
 	},
 
-	transform_props: transform_props,
 	'stch-current_mp_bwlev': function(target) {
 
 		//map_level_num
 		//md.map_level_num
-
-
-
-		/*
-		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
-		if (old_md){
-			target.hideLevNum(old_md.map_level_num);
-			if (!oved_now_active){
-				target.removePageOverviewMark(old_md.map_level_num-1);
-			}
-		}
-		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
-			target.hideLevNum(-1);
-		}
-
-		target.addPageOverviewMark(md.map_level_num - 1);
-		target.showLevNum(md.map_level_num);
-		if (oved_now_active){
-			target.removePageOverviewMark(old_md.map_level_num-1);
-		}
-
-		*/
-
-
 
 		/*
 		var highlight = md.state('mp-highlight');
@@ -884,7 +638,8 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 	onDomBuild: function() {
 		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
 		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
-		pvUpdate(this.opts.bwlev, 'view_structure', this.used_data_structure);
+		var opts = this.opts || this.parent_view.opts;
+		pvUpdate(opts.bwlev, 'view_structure', this.used_data_structure);
 		console.log(this.used_data_structure);
 
 	},

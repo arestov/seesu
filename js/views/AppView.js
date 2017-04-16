@@ -7,26 +7,46 @@ var app_serv = require('app_serv');
 var FuncsQueue = require('js/libs/FuncsQueue');
 var nav = require('./nav');
 var coct = require('./coct');
-var uacq = require('./uacq');
-var StartPageView = require('./StartPageView');
-var SearchPageView = require('./SearchPageView');
-var ArtcardUI = require('./ArtcardUI');
-var ArtistListView = require('./ArtistListView');
-var SongsListView = require('./SongsListView');
-var UserCardPage = require('./UserCardPage');
-var MusicConductorPage = require('./MusicConductorPage');
-var TagPageView = require('./TagPageView');
-var YoutubeVideoView = require('./YoutubeVideoView');
-var lul = require('./lul');
-var SongcardPage = require('./SongcardPage');
+
 var AppBaseView = require('./AppBaseView');
 var WPBox = require('./modules/WPBox');
 var view_serv = require('view_serv');
 var View = require('View');
 var etc_views = require('./etc_views');
+var arrowsKeysNav = require('./utils/arrowsKeysNav');
+var map_slice_by_model = require('./pages/index');
 
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
+
+function initRootView(root_view) {
+	root_view.all_queues = [];
+	var addQueue = function() {
+		this.reverse_default_prio = true;
+		root_view.all_queues.push(this);
+		return this;
+	};
+	var resortQueue = function(queue) {
+		root_view.resortQueue(queue);
+	};
+
+	root_view.lfm_imgq = new FuncsQueue({
+		time: [700],
+		init: addQueue,
+		resortQueue: resortQueue
+	});
+	root_view.dgs_imgq = new FuncsQueue({
+		time: [1200],
+		init: addQueue,
+		resortQueue: resortQueue
+	});
+
+	root_view.dgs_imgq_alt = new FuncsQueue({
+		time: [250],
+		init: addQueue,
+		resortQueue: resortQueue
+	});
+}
 
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	location_name: 'exposed_root_view',
@@ -70,55 +90,6 @@ function changeFaviconNode(d, oldLink, src, type) {
 	d.head.replaceChild(link, oldLink);
 	return link;
 }
-
-
-var map_slice_by_model = {
-	$default: coct.ListOfListsView,
-	start_page : StartPageView,
-	invstg: SearchPageView,
-	artcard: ArtcardUI,
-	artslist: ArtistListView,
-	playlist: {
-		'main': SongsListView,
-		'all-sufficient-details': SongsListView.SongsListDetailedView,
-	},
-	vk_usercard: UserCardPage.VkUsercardPageView,
-	lfm_usercard: UserCardPage.LfmUsercardPageView,
-	usercard: UserCardPage,
-	allplaces: coct.SimpleListOfListsView,
-	mconductor: MusicConductorPage,
-	tag_page: TagPageView,
-	tagslist: TagPageView.TagsListPage,
-	user_playlists: coct.ListOfListsView,
-	songs_lists: coct.ListOfListsView,
-	artists_lists: coct.ListOfListsView,
-	сountries_list: coct.SimpleListOfListsView,
-	city_place: coct.SimpleListOfListsView,
-	cities_list: coct.SimpleListOfListsView,
-	country_place: coct.ListOfListsView,
-	tag_artists: coct.ListOfListsView,
-	tag_songs: coct.ListOfListsView,
-	youtube_video: YoutubeVideoView,
-	vk_users: UserCardPage.VkUsersPageView,
-	lfm_users: lul.LfmUsersPageView,
-	lfm_listened_artists: coct.ListOfListsView,
-	lfm_listened_tracks: coct.ListOfListsView,
-	lfm_listened_albums: coct.ListOfListsView,
-	lfm_listened_tags: lul.UserTagsPageView,
-	vk_users_tracks: coct.ListOfListsView,
-	lfm_user_tag: coct.ListOfListsView,
-	user_acqs_list: uacq.UserAcquaintancesListView,
-	albslist: coct.AlbumsListView,
-	lula: lul.LULAPageVIew,
-	lulas: lul.LULAsPageVIew,
-	songcard: SongcardPage,
-	justlists: coct.ListOfListsView,
-	vk_posts: coct.VKPostsView,
-	blogs_conductor: coct.ListOfListsView,
-	blogs_list: coct.ListOfListsView,
-	music_blog: coct.ListOfListsView,
-	app_news: coct.AppNewsView
-};
 
 var push = Array.prototype.push;
 
@@ -307,33 +278,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
 		_this.dom_related_props.push('favicon_node', 'wp_box');
 
-		this.all_queues = [];
-		var addQueue = function() {
-			this.reverse_default_prio = true;
-			_this.all_queues.push(this);
-			return this;
-		};
-		var resortQueue = function(queue) {
-			_this.resortQueue(queue);
-		};
-
-		this.lfm_imgq = new FuncsQueue({
-			time: [700],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-		this.dgs_imgq = new FuncsQueue({
-			time: [1200],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-
-		this.dgs_imgq_alt = new FuncsQueue({
-			time: [250],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-
+		initRootView(this);
 
 		this.on('vip_state_change-current_mp_md', function() {
 			var cwp = this.state('vis_current_wpoint');
@@ -364,24 +309,12 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
 	parts_builder: {
 		//samples
-		alb_prev_big: function() {
-			return this.els.ui_samples.children('.album_preview-big');
-		},
 		'people-list-item': function() {
 			return this.els.ui_samples.children('ul').children('.people-list-item');
 		},
 		'song-view': function() {
 			return this.els.ui_samples.children('ul').children('.song-view');
 		},
-		artcard: function() {
-			return this.els.ui_samples.children('.art_card');
-		},
-		lfm_authsampl: function() {
-			return this.els.ui_samples.children('.lfm-auth-module');
-		},
-		lfm_scrobling: function() {
-			return this.els.ui_samples.children('.scrobbling-switches');
-		}
 	},
 
 	buildWidthStreamer: function(target) {
@@ -599,7 +532,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 					}
 				}
 
-				_this.arrowsKeysNav(e);
+				arrowsKeysNav(_this, e);
 			};
 
 			$(d).on('keydown', kd_callback);
@@ -614,35 +547,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 				d = null;
 			});
 	}),
-	inputs_names: ['input'],
-	key_codes_map:{
-		'13': 'Enter',
-		'37': 'Left',
-		'39': 'Right',
-		'40': 'Down',
-		'63233': 'Down',
-		'38': 'Up',
-		'63232': 'Up'
-	},
-	arrowsKeysNav: function(e) {
-		var
-			key_name,
-			_key = e.keyCode;
-
-		var allow_pd;
-		if (this.inputs_names.indexOf(e.target.nodeName.toLowerCase()) == -1){
-			allow_pd = true;
-		}
-		key_name = this.key_codes_map[e.keyCode];
-
-		if (key_name && allow_pd){
-			e.preventDefault();
-		}
-		if (key_name){
-			//this.RPCLegacy('keyNav', key_name);
-			this.wp_box.wayPointsNav(key_name, e);
-		}
-	},
 	scrollToWP: function(cwp) {
 		if (cwp){
 			var cur_md_md = this.getNesting('current_mp_md');
@@ -665,75 +569,10 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		}
 	},
 
-	appendStyle: function(style_text){
-		//fixme - check volume ondomready
-		var style_node = this.d.createElement('style');
-			style_node.setAttribute('title', 'button_menu');
-			style_node.setAttribute('type', 'text/css');
-
-		if (!style_node.styleSheet){
-			style_node.appendChild(this.d.createTextNode(style_text));
-		} else{
-			style_node.styleSheet.cssText = style_text;
-		}
-
-		this.d.documentElement.firstChild.appendChild(style_node);
-
-	},
-	verticalAlign: function(img, opts){
-		//target_height, fix
-		var real_height = opts.real_height || (img.naturalHeight ||  img.height);
-		if (real_height){
-			var offset = (opts.target_height - real_height)/2;
-
-			if (offset){
-				if (opts.animate){
-					$(img).animate({'margin-top':  offset + 'px'}, opts.animate_time || 200);
-				} else {
-					$(img).css({'margin-top':  offset + 'px'});
-				}
-
-			}
-			return offset;
-		}
-	},
-	preloadImage: function(src, alt, callback, place){
-		var image = window.document.createElement('img');
-		if (alt){
-			image.alt= alt;
-		}
-
-		image.onload = function(){
-			if (callback){
-				callback(image);
-			}
-		};
-		if (place){
-			$(place).append(image);
-		}
-		image.src = src;
-		if (image.complete){
-			setTimeout(function(){
-				if (callback){
-					callback(image);
-				}
-			}, 10);
-
-		}
-		return image;
-	},
 	trackEvent: function() {
 		var args = Array.prototype.slice.apply(arguments);
 		args.unshift('trackEvent');
 		this.RPCLegacy.apply(this, args);
-	},
-	getAcceptedDesc: function(rel){
-		var link = rel.info.domain && ('https://vk.com/' + rel.info.domain);
-		if (link && rel.info.full_name){
-			return $('<a class="external"></a>').attr('href', link).text(rel.info.full_name);
-		}  else if (rel.item.est){
-			return $("<span class='desc'></span>").text(app_serv.getRemainTimeText(rel.item.est, true));
-		}
 	},
 	bindLfmTextClicks: function(con) {
 		var _this = this;
@@ -760,66 +599,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		});
 
 	},
-	loadImage: function(opts) {
-		if (opts.url){
-			var queue;
-			if (opts.url.indexOf('last.fm') != -1){
-				queue = this.lfm_imgq;
-			} else if (opts.url.indexOf('discogs.com') != -1) {
-				queue = this.dgs_imgq;
-			} else if (opts.url.indexOf('http://s.pixogs.com') != -1) {
-				queue = this.dgs_imgq_alt;
-			}
-			opts.timeout = opts.timeout || 40000;
-			opts.queue = opts.queue || queue;
-			return view_serv.loadImage(opts);
-		}
-	},
-	createNiceButton: function(position){
-		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');
-		var b = c.children('a');
-
-		if (position == 'left'){
-			c.addClass('bposition-l');
-		} else if (position == 'right'){
-			c.addClass('bposition-r');
-		}
-
-		var bb = {
-			c: c,
-			b: b,
-			_enabled: true,
-			enable: function(){
-				if (!this._enabled){
-					this.b.addClass('nicebutton').removeClass('disabledbutton');
-					this.b.data('disabled', false);
-					this._enabled = true;
-				}
-				return this;
-
-			},
-			disable: function(){
-				if (this._enabled){
-					this.b.removeClass('nicebutton').addClass('disabledbutton');
-					this.b.data('disabled', true);
-					this._enabled = false;
-				}
-				return this;
-			},
-			toggle: function(state){
-				if (typeof state != 'undefined'){
-					if (state){
-						this.enable();
-					} else {
-						this.disable();
-					}
-				}
-
-			}
-		};
-		bb.disable();
-		return bb;
-	}
 });
 
 AppView.AppExposedView = AppExposedView;

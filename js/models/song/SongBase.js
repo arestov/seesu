@@ -438,7 +438,7 @@ return spv.inh(BrowseMap.Model, {
 			},
 			[
 				['artist', 'track'],
-				['lfm', [
+				['#lfm', [
 					['artist', 'track'],
 					function(api, opts, artist_name, track_name) {
 						return api

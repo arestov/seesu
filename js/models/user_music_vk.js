@@ -94,7 +94,7 @@ var VkRecommendedTracks = spv.inh(VkSongList, {}, {
 		[declr_parsers.vk.getTracksFn('response'), function(r) {
 			return r && r.response && !!r.response.length;
 		}],
-		['vktapi', 'get', function() {
+		['#vktapi', 'get', function() {
 			return ['audio.getRecommendations', {
 				user_id: this.state('userid')
 			}];
@@ -111,7 +111,7 @@ var MyVkAudioList = spv.inh(VkSongList, {}, {
 				has_data_holes: [true]
 			}
 		}],
-		['vktapi', 'get', function() {
+		['#vktapi', 'get', function() {
 			return ['audio.get', {
 				oid: this.state('userid')
 			}];
@@ -166,7 +166,7 @@ var VKFriendsList = spv.inh(LoadableList, {}, cloneObj({
 				total: ['num', 'response.count']
 			}
 		}],
-		['vktapi', 'get', function() {
+		['#vktapi', 'get', function() {
 			return ['friends.get', {
 				user_id: this.state('userid'),
 				fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')

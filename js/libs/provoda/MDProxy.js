@@ -189,13 +189,13 @@ MDProxy.prototype = {
 		//(= this.views_index[complex_id] || []).push(v);
 		return this;
 	},
-	getRooConPresentation: function(root_view, mplev_view, get_ancestor, only_by_ancestor) {
+	getRooConPresentation: function(app_view, mplev_view, get_ancestor, only_by_ancestor) {
 		var views = this.getViews();
 		var cur;
 		if (!only_by_ancestor){
 			for (var i = 0; i < views.length; i++) {
 				cur = views[i];
-				if ( root_view.matchCildrenView( cur, false, 'map_slice' ) ) {
+				if (app_view.matchCildrenView( cur, false, 'map_slice' ) ) {
 					return cur;
 				}
 

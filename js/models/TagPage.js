@@ -21,7 +21,7 @@ var SimilarTags = spv.inh(LoadableList.TagsList, {}, {
 				name: null
 			}
 		}],
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['tag.getSimilar', {
 				tag: this.head.tag_name
 			}];
@@ -34,7 +34,7 @@ var TagAlbums = spv.inh(AlbumsList, {}, {
 	page_limit: 50,
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('albums'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['tag.getTopAlbums', {
 				tag: this.head.tag_name
 			}];
@@ -59,7 +59,7 @@ function getHypeTagName(tag_name) {
 var HypemTagPlaylist = spv.inh(SongsList.HypemPlaylist, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
+		['#hypem', 'get', function(opts) {
 			var path = '/playlist/tags/' + getHypeTagName(this.head.tag_name) + '/json/' + opts.paging.next_page +'/data.js';
 			return [path, this.send_params];
 		}]
@@ -104,7 +104,7 @@ var FreeTagSongs = spv.inh(SongsList, {}, {
 				}
 			}]]
 		],
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['playlist.fetch', {
 				playlistURL: 'lastfm://playlist/tag/' + this.head.tag_name + '/freetracks'
 			}];
@@ -118,7 +118,7 @@ var FreeTagSongs = spv.inh(SongsList, {}, {
 var TopTagSongs = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['tag.getTopTracks', {
 				tag: this.head.tag_name
 			}];
@@ -178,7 +178,7 @@ var WeekTagArtists = spv.inh(ArtistsList, {}, {
 	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('weeklyartistchart', true),
-		['lfm', 'get', function(opts) {
+		['#lfm', 'get', function(opts) {
 			return ['tag.getWeeklyArtistChart', this.getRqData(opts.paging)];
 		}]
 	]
@@ -194,7 +194,7 @@ var TagTopArtists = spv.inh(ArtistsList, {}, {
 	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists', true),
-		['lfm', 'get', function(opts) {
+		['#lfm', 'get', function(opts) {
 			return ['tag.getTopArtists', this.getRqData(opts.paging)];
 		}]
 	]
@@ -284,7 +284,7 @@ var TagsList = spv.inh(LoadableList.TagsList, {
 				name: null
 			}
 		}],
-		['lfm', 'get', function(opts) {
+		['#lfm', 'get', function(opts) {
 			return ['tag.getTopTags', {limit: opts.paging.page_limit}];
 		}]
 	],

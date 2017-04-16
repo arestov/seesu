@@ -4,6 +4,7 @@ var pv = require('pv');
 var $ = require('jquery');
 var spv = require('spv');
 var View = require('View');
+var createNiceButton = require('./modules/createNiceButton');
 
 var pvUpdate = pv.update;
 var contextRow = function(container){
@@ -195,7 +196,7 @@ var LfmLoginView = spv.inh(View, {}, {
 		target.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function () {
-		this.c = this.root_view.getSample('lfm_authsampl');
+		this.c = this.root_view.getSample('lfm-auth-module');
 		this.bindBase();
 	},
 	bindBase: function() {
@@ -224,7 +225,7 @@ var LfmLoveItView = spv.inh(LfmLoginView, {}, {
 		var _this = this;
 		var wrap = $('<div class="add-to-lfmfav"></div>');
 
-		this.nloveb = this.root_view.createNiceButton();
+		this.nloveb = createNiceButton();
 		this.nloveb.c.appendTo(wrap);
 		this.nloveb.b.click(function(){
 			if (_this.nloveb._enabled){
@@ -256,7 +257,7 @@ var LfmLoveItView = spv.inh(LfmLoginView, {}, {
 var LfmScrobbleView = spv.inh(LfmLoginView, {}, {
 	createBase: function(){
 		this._super();
-		this.scrobbling_switchers = this.root_view.getSample('lfm_scrobling').appendTo(this.c);
+		this.scrobbling_switchers = this.root_view.getSample('scrobbling-switches').appendTo(this.c);
 		this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
 		this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
 		var _this = this;

@@ -12,6 +12,7 @@ return function (app, mp3_search, app_env, cache_ajax, resortQueue, addQueue) {
     resortQueue: resortQueue,
     init: addQueue
   }), app_env.cross_domain_allowed, cache_ajax);
+  app.useInterface('pleer_net', app.pleer_net);
 
 	/*var exfm_api = new ExfmApi(new FuncsQueue({
 		time: [3500, 5000, 4],

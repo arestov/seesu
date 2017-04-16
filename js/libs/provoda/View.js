@@ -100,7 +100,7 @@ var initView = function(target, view_otps, opts){
 		target.root_view = view_otps.root_view;
 	}
 
-	target._highway = view_otps._highway || target.root_view._highway;
+	target._highway = view_otps._highway || target.parent_view._highway || target.root_view._highway;
 	target.view_id = target._highway.views_counter++;
 	target._calls_flow = target._highway.calls_flow;
 	target._local_calls_flow = target._highway.local_calls_flow;
@@ -124,7 +124,7 @@ var initView = function(target, view_otps, opts){
 	}
 
 	target.mpx = view_otps.mpx;
-	target.proxies_space = view_otps.proxies_space || null;
+	target.proxies_space = (target.parent_view && target.parent_view.proxies_space) || view_otps.proxies_space || null;
 
 	target.way_points = null;
 
@@ -243,7 +243,7 @@ var View = spv.inh(StatesEmitter, {
 		if (md.stream) {
 			return md.mpx;
 		} else {
-			return this._highway.views_proxies.getMPX(this.root_view.proxies_space, md);
+			return this._highway.views_proxies.getMPX(this.proxies_space || this.root_view.proxies_space, md);
 		}
 		//
 
@@ -785,7 +785,7 @@ var View = spv.inh(StatesEmitter, {
 	},
 	markAsDead: function(skip_md_call) {
 		var i = 0;
-		if (this.proxies_space) {
+		if (!this.parent_view && this.proxies_space) {
 			this._highway.views_proxies.removeSpaceById(this.proxies_space);
 		}
 		stackEmergency(this.remove, this, [this.getC(), this._lbr._anchor]);

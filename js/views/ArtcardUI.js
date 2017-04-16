@@ -54,7 +54,7 @@ var ArtcardUI = spv.inh(View, {}, {
 		}
 	},
 	base_tree: {
-		sample_name: 'artcard'
+		sample_name: 'art_card'
 	}
 });
 

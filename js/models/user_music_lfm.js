@@ -97,7 +97,7 @@ var auth_bh = {
 var LULATracks = spv.inh(SongsList, {}, cloneObj({
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['library.getTracks', {
 				user: this.state('userid'),
 				artist: this.head.artist_name
@@ -146,7 +146,7 @@ var UserArtists = spv.inh(LoadableList, {}, {
 // UserArtists.extendTo(LULAs, cloneObj({
 // 	'nest_req-artists': [
 // 		declr_parsers.lfm.getArtists('artists'),
-// 		['lfm', 'get', function() {
+// 		['#lfm', 'get', function() {
 // 			return ['library.getArtists', {
 // 				user: this.state('userid')
 // 			}];
@@ -159,7 +159,7 @@ var TopLUArt = spv.inh(UserArtists, {}, cloneObj({
 	'nest_rqc-artists': LULA,
 	'nest_req-artists': [
 		declr_parsers.lfm.getArtists('topartists'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getTopArtists', {
 				user: this.state('userid'),
 				period: this.head.timeword
@@ -174,7 +174,7 @@ var TopLUArt = spv.inh(UserArtists, {}, cloneObj({
 var TopUserTracks = spv.inh(SongsList, {}, cloneObj({
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getTopTracks', {
 				user: this.state('userid'),
 				period: this.head.timeword
@@ -191,7 +191,7 @@ var LfmLovedList = spv.inh(SongsList, {}, cloneObj({
 	'compx-access_desc': [['#locales.grant-love-lfm-access']],
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('lovedtracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getLovedTracks', {
 				user: this.state('userid')
 			}];
@@ -246,7 +246,7 @@ var RecommArtListForCurrentUser = spv.inh(RecommArtList, {}, {
 	'compx-loader_disallowed': null,
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('recommendations'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getRecommendedArtists', {
 				sk: this.app.lfm.sk
 			}];
@@ -335,7 +335,7 @@ var LfmRecentUserTracks = spv.inh(SongsList, {}, cloneObj({
 
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('recenttracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getRecentTracks', this.getRqData()];
 		}]
 	]
@@ -397,7 +397,7 @@ var UserNewReleases = spv.inh(AlbumsList, {}, cloneObj({
 	page_limit: 50,
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('albums'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getNewReleases', {
 				user: this.state('userid'),
 				userecs: this.recomms ? 1 : 0
@@ -419,7 +419,7 @@ var LfmUserTopAlbums = spv.inh(AlbumsList, {}, cloneObj({
 	},
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('topalbums'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getTopAlbums', {
 				user: this.state('userid'),
 				period: this.head.timeword
@@ -495,7 +495,7 @@ var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
 var TaggedSongs = spv.inh(SongsList, {}, cloneObj({
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('taggings.tracks', false, 'taggings'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getPersonalTags', {
 				user: this.state('userid'),
 				taggingtype: 'track',
@@ -508,7 +508,7 @@ var TaggedSongs = spv.inh(SongsList, {}, cloneObj({
 var TaggedArtists = spv.inh(ArtistsList, {}, cloneObj({
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('taggings.artists', false, 'taggings'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getPersonalTags', {
 				user: this.state('userid'),
 				taggingtype: 'artist',
@@ -523,7 +523,7 @@ var TaggedAlbums = spv.inh(AlbumsList, {}, cloneObj({
 	page_limit: 50,
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('taggings.albums', false, 'taggings'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getPersonalTags', {
 				user: this.state('userid'),
 				taggingtype: 'album',
@@ -576,7 +576,7 @@ var LfmUserTags = spv.inh(LoadableList, {}, cloneObj({
 				}
 			}
 		],
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getTopTags', {
 				user: this.state('userid')
 			}];
@@ -634,7 +634,7 @@ var LfmFriendsList = spv.inh(LfmUsersListOfUser, {}, {
 	},
 	'nest_req-list_items': [
 		declr_parsers.lfm.getUsers('friends'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getFriends', {
 				recenttracks: true,
 				user: this.state('userid')
@@ -650,7 +650,7 @@ var LfmNeighboursList = spv.inh(LfmUsersListOfUser, {}, {
 	},
 	'nest_req-list_items': [
 		declr_parsers.lfm.getUsers('neighbours'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['user.getNeighbours', this.getRqData()];
 		}]
 	]

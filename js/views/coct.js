@@ -5,6 +5,7 @@ var pv = require('pv');
 var $ = require('jquery');
 var etc_views = require('./etc_views');
 var View = require('View');
+var loadImage = require('./utils/loadImage');
 
 var pvUpdate = pv.update;
 
@@ -196,10 +197,10 @@ var AlbumsListPreviewItem = spv.inh(View, {}, {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			var node = target.c[0];
-			var req = target.root_view.loadImage({
-					url: url,
-					cache_allowed: true
-				});
+			var req = loadImage(target, {
+				url: url,
+				cache_allowed: true
+			});
 			req.then(function(){
 				node.src = url;
 			}, function(){
@@ -219,7 +220,7 @@ var ImageLoader = spv.inh(View, {}, {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			pvUpdate(target, 'queued_image$loading', true);
-			var req = target.root_view.loadImage({
+			var req = loadImage(target, {
 				url: url,
 				cache_allowed: true
 			});
@@ -249,14 +250,14 @@ var ImageLoader = spv.inh(View, {}, {
 
 var BigAlbumPreview = spv.inh(View, {}, {
 	base_tree: {
-		sample_name: 'alb_prev_big'
+		sample_name: 'album_preview-big'
 	},
 
 	'stch-selected_image': function(target, lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			var node = target.tpl.ancs.imgc[0];
-			var req = target.root_view.loadImage({
+			var req = loadImage(target, {
 					url: url,
 					cache_allowed: true
 				});

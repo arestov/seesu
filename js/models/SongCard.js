@@ -36,7 +36,7 @@ var SongFansList = spv.inh(user_music_lfm.LfmUsersList, {}, {
 	},
 	// 'nest_req-list_items': [
 	// 	declr_parsers.lfm.getUsers('topfans', true),
-	// 	['lfm', 'get', function() {
+	// 	['#lfm', 'get', function() {
 	// 		return ['track.getTopFans', this.getRqData()];
 	// 	}]
 	// ],
@@ -211,7 +211,7 @@ var VKPostsList = spv.inh(LoadableListBase, {
 				}]
 			]
 		],
-		['vktapi', 'get', function() {
+		['#vktapi', 'get', function() {
 			return ['newsfeed.search', {
 				q: this.head.artist_name + ' ' + this.head.track_name + ' has:audio',
 				extended: 1
@@ -300,7 +300,7 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 
 			}]
 		]],
-		['s', 'api', function() {
+		['#sus', 'api', function() {
 			return ['track.getListeners', {
 				artist: this.head.artist_name,
 				title: this.head.track_name
