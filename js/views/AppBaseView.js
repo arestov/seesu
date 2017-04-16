@@ -362,21 +362,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		}
 		return target_in_parent;
 	},
-	getMapSliceChildInParenViewOLD: function(md) {
-		var parent_md = md.map_parent;
-
-
-		var parent_view = this.getMapSliceView(parent_md);
-		if (!parent_view){
-			return;
-		}
-		var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
-		if (!target_in_parent){
-			var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
-			target_in_parent = view && view[0];
-		}
-		return target_in_parent;
-	},
 	getNavOHeight: function() {
 		return this.els.navs.outerHeight();
 	},
