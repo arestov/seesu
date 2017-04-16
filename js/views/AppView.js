@@ -630,14 +630,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		args.unshift('trackEvent');
 		this.RPCLegacy.apply(this, args);
 	},
-	getAcceptedDesc: function(rel){
-		var link = rel.info.domain && ('https://vk.com/' + rel.info.domain);
-		if (link && rel.info.full_name){
-			return $('<a class="external"></a>').attr('href', link).text(rel.info.full_name);
-		}  else if (rel.item.est){
-			return $("<span class='desc'></span>").text(app_serv.getRemainTimeText(rel.item.est, true));
-		}
-	},
 	bindLfmTextClicks: function(con) {
 		var _this = this;
 		con.on('click', 'a', function(e) {
