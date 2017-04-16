@@ -19,6 +19,35 @@ var map_slice_by_model = require('./pages/index');
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
 
+function initRootView(root_view) {
+	root_view.all_queues = [];
+	var addQueue = function() {
+		this.reverse_default_prio = true;
+		root_view.all_queues.push(this);
+		return this;
+	};
+	var resortQueue = function(queue) {
+		root_view.resortQueue(queue);
+	};
+
+	root_view.lfm_imgq = new FuncsQueue({
+		time: [700],
+		init: addQueue,
+		resortQueue: resortQueue
+	});
+	root_view.dgs_imgq = new FuncsQueue({
+		time: [1200],
+		init: addQueue,
+		resortQueue: resortQueue
+	});
+
+	root_view.dgs_imgq_alt = new FuncsQueue({
+		time: [250],
+		init: addQueue,
+		resortQueue: resortQueue
+	});
+}
+
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	location_name: 'exposed_root_view',
 	'stch-doc_title': function(target, title) {
@@ -249,33 +278,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
 		_this.dom_related_props.push('favicon_node', 'wp_box');
 
-		this.all_queues = [];
-		var addQueue = function() {
-			this.reverse_default_prio = true;
-			_this.all_queues.push(this);
-			return this;
-		};
-		var resortQueue = function(queue) {
-			_this.resortQueue(queue);
-		};
-
-		this.lfm_imgq = new FuncsQueue({
-			time: [700],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-		this.dgs_imgq = new FuncsQueue({
-			time: [1200],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-
-		this.dgs_imgq_alt = new FuncsQueue({
-			time: [250],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-
+		initRootView(this);
 
 		this.on('vip_state_change-current_mp_md', function() {
 			var cwp = this.state('vis_current_wpoint');
@@ -595,21 +598,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			}
 		});
 
-	},
-	loadImage: function(opts) {
-		if (opts.url){
-			var queue;
-			if (opts.url.indexOf('last.fm') != -1){
-				queue = this.lfm_imgq;
-			} else if (opts.url.indexOf('discogs.com') != -1) {
-				queue = this.dgs_imgq;
-			} else if (opts.url.indexOf('http://s.pixogs.com') != -1) {
-				queue = this.dgs_imgq_alt;
-			}
-			opts.timeout = opts.timeout || 40000;
-			opts.queue = opts.queue || queue;
-			return view_serv.loadImage(opts);
-		}
 	},
 });
 

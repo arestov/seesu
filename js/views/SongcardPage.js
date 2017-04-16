@@ -5,6 +5,7 @@ var spv = require('spv');
 var ArtcardUI = require('./ArtcardUI');
 var coct = require('./coct');
 var View = require('View');
+var loadImage = require('./utils/loadImage');
 
 var pvUpdate = pv.update;
 
@@ -43,7 +44,7 @@ var FanPreview = spv.inh(View, {}, {
 			if (url.lastIndexOf('.gif') == url.length - 4){
 				return;
 			}
-			var req = target.root_view.loadImage({
+			var req = loadImage(target, {
 				url: url,
 				cache_allowed: true
 			});
