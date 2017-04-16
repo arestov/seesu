@@ -67,11 +67,13 @@ var BrowserAppRootView = spv.inh(View, {}, {
 	dom_rp: true,
 	createDetails: function() {
 		this.root_view = this;
-		this.d = this.opts.d;
+		this.root_view.root_app_view = this;
+		var opts = this.opts || this.parent_view.opts;
+		this.d = opts.d;
 		this.dom_related_props.push('calls_flow');
 
 		var _this = this;
-		if (this.opts.can_die && spv.getDefaultView(this.d)){
+		if (opts.can_die && spv.getDefaultView(this.d)){
 			this.can_die = true;
 			this.checkLiveState = function() {
 				if (!spv.getDefaultView(_this.d)){
@@ -636,7 +638,8 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 	onDomBuild: function() {
 		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
 		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
-		pvUpdate(this.opts.bwlev, 'view_structure', this.used_data_structure);
+		var opts = this.opts || this.parent_view.opts;
+		pvUpdate(opts.bwlev, 'view_structure', this.used_data_structure);
 		console.log(this.used_data_structure);
 
 	},
