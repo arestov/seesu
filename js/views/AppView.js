@@ -364,24 +364,12 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
 	parts_builder: {
 		//samples
-		alb_prev_big: function() {
-			return this.els.ui_samples.children('.album_preview-big');
-		},
 		'people-list-item': function() {
 			return this.els.ui_samples.children('ul').children('.people-list-item');
 		},
 		'song-view': function() {
 			return this.els.ui_samples.children('ul').children('.song-view');
 		},
-		artcard: function() {
-			return this.els.ui_samples.children('.art_card');
-		},
-		lfm_authsampl: function() {
-			return this.els.ui_samples.children('.lfm-auth-module');
-		},
-		lfm_scrobling: function() {
-			return this.els.ui_samples.children('.scrobbling-switches');
-		}
 	},
 
 	buildWidthStreamer: function(target) {

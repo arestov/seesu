@@ -249,7 +249,7 @@ var ImageLoader = spv.inh(View, {}, {
 
 var BigAlbumPreview = spv.inh(View, {}, {
 	base_tree: {
-		sample_name: 'alb_prev_big'
+		sample_name: 'album_preview-big'
 	},
 
 	'stch-selected_image': function(target, lfm_wrap) {
