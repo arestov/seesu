@@ -4,6 +4,7 @@ var pv = require('pv');
 var $ = require('jquery');
 var spv = require('spv');
 var View = require('View');
+var createNiceButton = require('./modules/createNiceButton');
 
 var pvUpdate = pv.update;
 var contextRow = function(container){
@@ -224,7 +225,7 @@ var LfmLoveItView = spv.inh(LfmLoginView, {}, {
 		var _this = this;
 		var wrap = $('<div class="add-to-lfmfav"></div>');
 
-		this.nloveb = this.root_view.createNiceButton();
+		this.nloveb = createNiceButton();
 		this.nloveb.c.appendTo(wrap);
 		this.nloveb.b.click(function(){
 			if (_this.nloveb._enabled){
