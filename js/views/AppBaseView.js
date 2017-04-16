@@ -362,15 +362,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		}
 		return target_in_parent;
 	},
-	getNavOHeight: function() {
-		return this.els.navs.outerHeight();
-	},
-	getAMCWidth: function() {
-		return this.els.app_map_con.width();
-	},
-	getAMCOffset: function() {
-		return this.els.app_map_con.offset();
-	},
 	setVMpshow: function(target_mpx, value) {
 		pv.mpx.update(target_mpx, 'vmp_show', value, sync_opt);
 	},

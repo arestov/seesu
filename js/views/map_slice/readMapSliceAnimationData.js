@@ -7,6 +7,16 @@ var can_animate = view_serv.css.transform && view_serv.css.transition;
 var css_transform = view_serv.css.transform;
 var transform_props = css_transform ? [css_transform] : [];
 
+var getNavOHeight = function() {
+  return this.els.navs.outerHeight();
+};
+var getAMCWidth = function() {
+  return this.els.app_map_con.width();
+};
+var getAMCOffset = function() {
+  return this.els.app_map_con.offset();
+};
+
 return function readMapSliceAnimationData(view, transaction_data) {
   if (!transaction_data || !transaction_data.bwlev) {return;}
 
@@ -22,7 +32,7 @@ return function readMapSliceAnimationData(view, transaction_data) {
   var targt_con = target_in_parent.getC();
 
   // var offset_parent_node = targt_con.offsetParent();
-  var parent_offset = view.getBoxDemension(view.getAMCOffset, 'screens_offset');
+  var parent_offset = view.getBoxDemension(getAMCOffset, 'screens_offset');
   // или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
 
   // var offset = targt_con.offset(); //domread
@@ -44,8 +54,8 @@ return function readMapSliceAnimationData(view, transaction_data) {
 
   var top = offset.top - parent_offset.top;
 
-  var con_height = view.state('window_height') - view.getBoxDemension(view.getNavOHeight, 'navs_height'); //domread, can_be_cached
-  var con_width = view.getBoxDemension(view.getAMCWidth, 'screens_width', view.state('workarea_width'));
+  var con_height = view.state('window_height') - view.getBoxDemension(getNavOHeight, 'navs_height'); //domread, can_be_cached
+  var con_width = view.getBoxDemension(getAMCWidth, 'screens_width', view.state('workarea_width'));
 
   var scale_x = width/con_width;
   var scale_y = height/con_height;
