@@ -24,6 +24,7 @@ var WPBox = require('./modules/WPBox');
 var view_serv = require('view_serv');
 var View = require('View');
 var etc_views = require('./etc_views');
+var arrowsKeysNav = require('./utils/arrowsKeysNav');
 
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
@@ -587,7 +588,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 					}
 				}
 
-				_this.arrowsKeysNav(e);
+				arrowsKeysNav(_this, e);
 			};
 
 			$(d).on('keydown', kd_callback);
@@ -602,35 +603,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 				d = null;
 			});
 	}),
-	inputs_names: ['input'],
-	key_codes_map:{
-		'13': 'Enter',
-		'37': 'Left',
-		'39': 'Right',
-		'40': 'Down',
-		'63233': 'Down',
-		'38': 'Up',
-		'63232': 'Up'
-	},
-	arrowsKeysNav: function(e) {
-		var
-			key_name,
-			_key = e.keyCode;
-
-		var allow_pd;
-		if (this.inputs_names.indexOf(e.target.nodeName.toLowerCase()) == -1){
-			allow_pd = true;
-		}
-		key_name = this.key_codes_map[e.keyCode];
-
-		if (key_name && allow_pd){
-			e.preventDefault();
-		}
-		if (key_name){
-			//this.RPCLegacy('keyNav', key_name);
-			this.wp_box.wayPointsNav(key_name, e);
-		}
-	},
 	scrollToWP: function(cwp) {
 		if (cwp){
 			var cur_md_md = this.getNesting('current_mp_md');
