@@ -688,7 +688,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		}
 	},
 
-	transform_props: transform_props,
 	'stch-current_mp_bwlev': function(target) {
 
 		//map_level_num
