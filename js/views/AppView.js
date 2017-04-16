@@ -668,48 +668,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		this.d.documentElement.firstChild.appendChild(style_node);
 
 	},
-	verticalAlign: function(img, opts){
-		//target_height, fix
-		var real_height = opts.real_height || (img.naturalHeight ||  img.height);
-		if (real_height){
-			var offset = (opts.target_height - real_height)/2;
-
-			if (offset){
-				if (opts.animate){
-					$(img).animate({'margin-top':  offset + 'px'}, opts.animate_time || 200);
-				} else {
-					$(img).css({'margin-top':  offset + 'px'});
-				}
-
-			}
-			return offset;
-		}
-	},
-	preloadImage: function(src, alt, callback, place){
-		var image = window.document.createElement('img');
-		if (alt){
-			image.alt= alt;
-		}
-
-		image.onload = function(){
-			if (callback){
-				callback(image);
-			}
-		};
-		if (place){
-			$(place).append(image);
-		}
-		image.src = src;
-		if (image.complete){
-			setTimeout(function(){
-				if (callback){
-					callback(image);
-				}
-			}, 10);
-
-		}
-		return image;
-	},
 	trackEvent: function() {
 		var args = Array.prototype.slice.apply(arguments);
 		args.unshift('trackEvent');
@@ -763,51 +721,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			return view_serv.loadImage(opts);
 		}
 	},
-	createNiceButton: function(position){
-		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');
-		var b = c.children('a');
-
-		if (position == 'left'){
-			c.addClass('bposition-l');
-		} else if (position == 'right'){
-			c.addClass('bposition-r');
-		}
-
-		var bb = {
-			c: c,
-			b: b,
-			_enabled: true,
-			enable: function(){
-				if (!this._enabled){
-					this.b.addClass('nicebutton').removeClass('disabledbutton');
-					this.b.data('disabled', false);
-					this._enabled = true;
-				}
-				return this;
-
-			},
-			disable: function(){
-				if (this._enabled){
-					this.b.removeClass('nicebutton').addClass('disabledbutton');
-					this.b.data('disabled', true);
-					this._enabled = false;
-				}
-				return this;
-			},
-			toggle: function(state){
-				if (typeof state != 'undefined'){
-					if (state){
-						this.enable();
-					} else {
-						this.disable();
-					}
-				}
-
-			}
-		};
-		bb.disable();
-		return bb;
-	}
 });
 
 AppView.AppExposedView = AppExposedView;
