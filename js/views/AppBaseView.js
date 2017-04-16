@@ -7,6 +7,7 @@ var filters = require('./modules/filters');
 var getUsageTree = require('./modules/getUsageTree');
 var view_serv = require('view_serv');
 var View = require('View');
+var readMapSliceAnimationData = require('./map_slice/readMapSliceAnimationData');
 
 var pvUpdate = pv.update;
 
@@ -385,68 +386,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 	getAMCOffset: function() {
 		return this.els.app_map_con.offset();
 	},
-	readMapSliceAnimationData: function(transaction_data) {
-		if (!transaction_data || !transaction_data.bwlev) {return;}
-
-		var target_md = transaction_data.bwlev.getMD();
-		var current_lev_num = pv.state(target_md, 'map_level_num');
-		var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in" && transaction_data.array[0].changes.length < 3;
-
-		if (!(can_animate && current_lev_num != -1 && one_zoom_in)) {return;}
-
-		var target_in_parent = this.getMapSliceChildInParenView(target_md, transaction_data.target.getMD());
-		if (!target_in_parent) {return;}
-
-		var targt_con = target_in_parent.getC();
-
-		// var offset_parent_node = targt_con.offsetParent();
-		var parent_offset = this.getBoxDemension(this.getAMCOffset, 'screens_offset');
-		// или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
-
-		// var offset = targt_con.offset(); //domread
-		var offset = target_in_parent.getBoxDemension(function() {
-			return targt_con.offset();
-		}, 'con_offset', target_in_parent._lbr.innesting_pos_current, this.state('window_height'), this.state('workarea_width'));
-
-		var width = target_in_parent.getBoxDemension(function() {
-			return targt_con.outerWidth();
-		}, 'con_width', this.state('window_height'), this.state('workarea_width'));
-
-		var height = target_in_parent.getBoxDemension(function() {
-			return targt_con.outerHeight();
-		}, 'con_height', this.state('window_height'), this.state('workarea_width'));
-
-
-		// var width = targt_con.outerWidth();  //domread
-		// var height = targt_con.outerHeight(); //domread
-
-		var top = offset.top - parent_offset.top;
-
-		var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
-		var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('workarea_width'));
-
-		var scale_x = width/con_width;
-		var scale_y = height/con_height;
-		var min_scale = Math.min(scale_x, scale_y);
-
-		var shift_x = width/2 - min_scale * con_width/2;
-		var shift_y = height/2 - min_scale * con_height/2;
-
-		var lc = this.getLevelContainer(current_lev_num);
-
-		var transform_values = {};
-		var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
-		transform_props.forEach(function(el) {
-			transform_values[el] = value;
-		});
-
-		// from small size (size of button) to size of viewport
-
-		return {
-			lc: lc,
-			transform_values: transform_values
-		};
-	},
 	setVMpshow: function(target_mpx, value) {
 		pv.mpx.update(target_mpx, 'vmp_show', value, sync_opt);
 	},
@@ -617,7 +556,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 		var array = this.getRendOrderedNesting(nesname, bwlevs) || bwlevs;
 		var i, cur;
 
-		var animation_data = this.readMapSliceAnimationData(diff);
+		var animation_data = readMapSliceAnimationData(this, diff);
 
 		for (i = array.length - 1; i >= 0; i--) {
 			var cur_md = mds[i];
