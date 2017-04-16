@@ -26,7 +26,7 @@ var Query = pv.behavior({
         return result;
       }
     ],
-    ['sc_api', [
+    ['#sc_api', [
       ['msq'],
       function(api, opts, msq) {
     		return api.get('tracks', {

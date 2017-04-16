@@ -62,7 +62,7 @@ var Query = pv.behavior({
         return makeList(r, this.head.msq);
       }
     ],
-    ['pleer_net', [
+    ['#pleer_net', [
       ['msq'],
       function(api, opts, msq) {
     		return api.get('search', {

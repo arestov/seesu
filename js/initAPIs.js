@@ -88,6 +88,8 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 	});
 	self.vktapi = self.vk_open_api;
 
+	self.useInterface('vk_open_api', self.vk_open_api);
+	self.useInterface('vktapi', self.vktapi);
 
 	self.hypem = new net_apis.HypemApi();
 	self.hypem.init({
@@ -100,6 +102,8 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 			init: addQueue
 		})
 	});
+	self.useInterface('hypem', self.hypem);
+
 	self.goog_sc = new net_apis.GoogleSoundcloud();
 	self.goog_sc.init({
 		crossdomain: app_env.cross_domain_allowed,
@@ -110,6 +114,8 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 			init: addQueue
 		})
 	});
+	self.useInterface('goog_sc', self.goog_sc);
+
 	self.discogs = new net_apis.DiscogsApi();
 	self.discogs.init({
 		crossdomain: app_env.cross_domain_allowed,
@@ -123,6 +129,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 		key: app_serv.getPreloadedNK('dgs_key'),
 		secret: app_serv.getPreloadedNK('dgs_secret')
 	});
+	self.useInterface('discogs', self.discogs);
 
 	self.mixcloud = new net_apis.MixcloudApi();
 	self.mixcloud.init({
@@ -134,7 +141,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 			init: addQueue
 		})
 	});
-
+	self.useInterface('mixcloud', self.mixcloud);
 
 
 
@@ -250,12 +257,14 @@ function moreApis(su, app_serv, app_env, cache_ajax, resortQueue, addQueue){
 		resortQueue: resortQueue,
 		init: addQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
+	su.useInterface('sc_api', su.sc_api);
 
 	su.fanburst_api = new FanburstApi(app_serv.getPreloadedNK('fanburst_client_id'), new FuncsQueue({
 		time: [3500, 5000 , 4],
 		resortQueue: resortQueue,
 		init: addQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
+	su.useInterface('fanburst_api', su.fanburst_api);
 }
 
 

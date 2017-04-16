@@ -458,6 +458,9 @@ var SeesuApp = spv.inh(AppModel, {
 	setVkApi: function(vkapi, user_id) {
 		this.vk_api = vkapi;
 		this.vktapi = vkapi;
+		this.useInterface('vktapi', vkapi);
+		this.useInterface('vk_api', vkapi);
+
 		this.trigger('vk-api', vkapi, user_id);
 	},
 	createSearchPage: function() {
@@ -576,7 +579,9 @@ var SeesuApp = spv.inh(AppModel, {
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
 				_this.vk_api = null;
+				_this.useInterface('vk_api', null);
 				_this.vktapi = _this.vk_open_api;
+				_this.useInterface('vktapi', _this.vk_open_api);
 				_this.trigger('vk-api', null);
 			}
 

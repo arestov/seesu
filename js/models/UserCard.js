@@ -154,7 +154,7 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 					'selected_image.url': 'photo'
 				}
 			},
-			['vktapi', 'get', function() {
+			['#vktapi', 'get', function() {
 				return ['users.get', {
 					user_ids: [this.state('vk_userid')],
 					fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
@@ -255,7 +255,7 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
 					recenttrack: null
 				}
 			},
-			['lfm', 'get', function() {
+			['#lfm', 'get', function() {
 				return ['user.getInfo', {'user': this.state('lfm_userid')}];
 			}]
 		]

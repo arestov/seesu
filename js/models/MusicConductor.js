@@ -23,7 +23,7 @@ var AllPHypemLatestSongs = spv.inh(HypemPlaylist, {}, {
 
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
+		['#hypem', 'get', function(opts) {
 			var path = '/playlist/latest/all/json/' + opts.paging.next_page +'/data.js';
 			return [path, null];
 		}]
@@ -34,7 +34,7 @@ var AllPHypemLatestRemixesSongs = spv.inh(HypemPlaylist, {}, {
 
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
+		['#hypem', 'get', function(opts) {
 			var path = '/playlist/latest/remix/json/' + opts.paging.next_page +'/data.js';
 			return [path, null];
 		}]
@@ -45,7 +45,7 @@ var AllPHypemNowSongs = spv.inh(HypemPlaylist, {}, {
 
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
+		['#hypem', 'get', function(opts) {
 			var path = '/playlist/popular/3day/json/' + opts.paging.next_page +'/data.js';
 			return [path, null];
 		}]
@@ -56,7 +56,7 @@ var AllPHypemNowSongs = spv.inh(HypemPlaylist, {}, {
 // HypemPlaylist.extendTo(AllPHypemWeekSongs, {
 // 	'nest_req-songs-list': [
 // 		declr_parsers.hypem.tracks,
-// 		['hypem', 'get', function(opts) {
+// 		['#hypem', 'get', function(opts) {
 // 			var path = '/playlist/popular/lastweek/json/' + opts.paging.next_page +'/data.js';
 // 			return [path, null];
 // 		}]
@@ -66,7 +66,7 @@ var AllPHypemNowSongs = spv.inh(HypemPlaylist, {}, {
 var AllPSongsChart = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['chart.getTopTracks', null];
 		}]
 	]
@@ -75,7 +75,7 @@ var AllPSongsChart = spv.inh(SongsList, {}, {
 var AllPSongsHyped = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['chart.getHypedTracks', null];
 		}]
 	]
@@ -84,7 +84,7 @@ var AllPSongsHyped = spv.inh(SongsList, {}, {
 var AllPSongsLoved = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('tracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['chart.getLovedTracks', null];
 		}]
 	]
@@ -129,7 +129,7 @@ var AllPlacesSongsLists = spv.inh(BrowseMap.Model, {}, {
 var AllPArtistsHyped = spv.inh(ArtistsList, {}, {
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('artists'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['chart.getHypedArtists', null];
 		}]
 	]
@@ -138,7 +138,7 @@ var AllPArtistsHyped = spv.inh(ArtistsList, {}, {
 var AllPArtistsChart = spv.inh(ArtistsList, {}, {
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('artists'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['chart.getTopArtists', null];
 		}]
 	]
@@ -192,7 +192,7 @@ var metroP = function(md) {
 var CityAritstsTop = spv.inh(ArtistsList, {}, {
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getMetroArtistChart', metroP(this)];
 		}]
 	]
@@ -200,7 +200,7 @@ var CityAritstsTop = spv.inh(ArtistsList, {}, {
 var CityArtistsHype = spv.inh(ArtistsList, {}, {
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getMetroHypeArtistChart', metroP(this)];
 		}]
 	]
@@ -209,7 +209,7 @@ var CityArtistsUnique = spv.inh(ArtistsList, {}, {
 
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getMetroUniqueArtistChart', metroP(this)];
 		}]
 	]
@@ -240,7 +240,7 @@ var CityArtistsLists = spv.inh(BrowseMap.Model, {}, {
 var CitySongsTop = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getMetroTrackChart', metroP(this)];
 		}]
 	]
@@ -248,7 +248,7 @@ var CitySongsTop = spv.inh(SongsList, {}, {
 var CitySongsHype = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getMetroHypeTrackChart', metroP(this)];
 		}]
 	]
@@ -256,7 +256,7 @@ var CitySongsHype = spv.inh(SongsList, {}, {
 var CitySongsUnique = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getMetroUniqueTrackChart', metroP(this)];
 		}]
 	]
@@ -352,7 +352,7 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
 var CountryTopArtists = spv.inh(ArtistsList, {}, {
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('topartists'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getTopArtists', {
 				country: this.head.country_name
 			}];
@@ -362,7 +362,7 @@ var CountryTopArtists = spv.inh(ArtistsList, {}, {
 var CountryTopSongs = spv.inh(SongsList, {}, {
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['geo.getTopTracks', {
 				country: this.head.country_name
 			}];

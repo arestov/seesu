@@ -88,7 +88,7 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
 				}
 			}
 		],
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['album.getInfo', {'artist': this.playlist_artist, album : this.album_name}];
 		}]
 	]
@@ -119,7 +119,7 @@ var ArtistTagsList = spv.inh(LoadableList.TagsList, {}, {
 				name: null
 			}
 		}],
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['artist.getTopTags', {
 				artist: this.head.artist_name
 			}];
@@ -214,7 +214,7 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
 			return track_list;
 
 		}],
-		['discogs', 'get', function() {
+		['#discogs', 'get', function() {
 			var discogs_url;
 			if (this.release_type == 'master'){
 				discogs_url = '/masters/';
@@ -276,7 +276,7 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
 				total: ['num', 'items']
 			}
 		}],
-		['discogs', 'get', function() {
+		['#discogs', 'get', function() {
 			var artist_id = this.state('artist_id');
 			return ['/artists/' + artist_id + '/releases', null];
 		}]
@@ -288,7 +288,7 @@ var ArtistAlbums = spv.inh(AlbumsList, {}, {
 	page_limit: 50,
 	'nest_req-albums_list': [
 		declr_parsers.lfm.getAlbums('topalbums'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['artist.getTopAlbums', {
 				artist: this.head.artist_name
 			}];
@@ -314,7 +314,7 @@ var HypemArtistSeFreshSongs = spv.inh(SongsList.HypemPlaylist, {}, {
 	send_params: {},
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
+		['#hypem', 'get', function(opts) {
 			var path = '/playlist/search/' + this.head.artist_name + '/json/' + opts.paging.next_page +'/data.js';
 			return [path, this.send_params];
 		}]
@@ -327,7 +327,7 @@ var HypemArtistSeUFavSongs = spv.inh(SongsList.HypemPlaylist, {}, {
 	},
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
+		['#hypem', 'get', function(opts) {
 			var path = '/playlist/search/' + this.head.artist_name + '/json/' + opts.paging.next_page +'/data.js';
 			return [path, this.send_params];
 		}]
@@ -339,7 +339,7 @@ var HypemArtistSeBlogged = spv.inh(SongsList.HypemPlaylist, {}, {
 	},
 	'nest_req-songs-list': [
 		declr_parsers.hypem.tracks,
-		['hypem', 'get', function(opts) {
+		['#hypem', 'get', function(opts) {
 			var path = '/playlist/search/' + this.head.artist_name + '/json/' + opts.paging.next_page +'/data.js';
 			return [path, this.send_params];
 		}]
@@ -386,7 +386,7 @@ var SoundcloudArtcardSongs = spv.inh(SongsList, {}, {
 var SoundcloudArtistLikes = spv.inh(SoundcloudArtcardSongs, {}, {
 	'nest_req-songs-list': [
 		[declr_parsers.soundcloud.tracksFn, true],
-		['sc_api', 'get', function() {
+		['#sc_api', 'get', function() {
 			var artist_id = this.state('artist_id');
 			return ['users/' + artist_id + '/favorites', null];
 		}]
@@ -396,7 +396,7 @@ var SoundcloudArtistLikes = spv.inh(SoundcloudArtcardSongs, {}, {
 var SoundcloudArtistSongs = spv.inh(SoundcloudArtcardSongs, {}, {
 	'nest_req-songs-list': [
 		[declr_parsers.soundcloud.tracksFn, true],
-		['sc_api', 'get', function() {
+		['#sc_api', 'get', function() {
 			var artist_id = this.state('artist_id');
 			return ['users/' + artist_id + '/tracks', null];
 		}]
@@ -413,7 +413,7 @@ var TopArtistSongs = spv.inh(SongsList, {
 	playlist_type: 'artist',
 	'nest_req-songs-list': [
 		declr_parsers.lfm.getTracks('toptracks'),
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 				return ['artist.getTopTracks', {
 				artist: this.head.artist_name
 			}];
@@ -456,7 +456,7 @@ var FreeArtistTracks = spv.inh(SongsList, {}, {
 				return track_list;
 			}
 		],
-		['lfm', 'get', function() {
+		['#lfm', 'get', function() {
 			return ['artist.getPodcast', {artist: this.playlist_artist}];
 		}]
 	]
@@ -613,7 +613,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 					soundcloud_profile: matched && matched.id
 				};
 			},
-			['sc_api', 'get', function() {
+			['#sc_api', 'get', function() {
 				return ['users', {
 					q: this.head.artist_name
 				}];
@@ -638,7 +638,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 		// 	},
 		// 	[
 		// 		['soundcloud_matched'],
-		// 		['sc_api', 'get', function() {
+		// 		['#sc_api', 'get', function() {
 		// 			return ['resolve', {
 		// 				'_status_code_map[302]': 200,
 		// 				'_status_format': 'json',
@@ -653,7 +653,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 		// 		var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
 		// 		return [images];
 		// 	},
-		// 	['lfm', 'get', function() {
+		// 	['#lfm', 'get', function() {
 		// 		return ['artist.getImages', {'artist': this.head.artist_name }];
 		// 	}]
 		// ],
@@ -688,7 +688,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 					artists_list, psai.tags
 				];
 			},
-			['lfm', 'get', function() {
+			['#lfm', 'get', function() {
 				return ['artist.getInfo', {'artist': this.head.artist_name}];
 			}]
 		],
@@ -726,7 +726,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 				// };
 				//this.app.discogs.get('/database/search', {q: artist_name, type:"artist"}
 			},
-			['discogs', 'get', function() {
+			['#discogs', 'get', function() {
 				return ['/database/search', {q: this.head.artist_name, type:"artist" }];
 			}]
 
@@ -849,7 +849,7 @@ var SimilarArtists = spv.inh(ArtistsList, {
 	},
 	'nest_req-artists_list': [
 		declr_parsers.lfm.getArtists('similarartists', true),
-		['lfm', 'get', function(opts) {
+		['#lfm', 'get', function(opts) {
 			return ['artist.getSimilar', this.getRqData(opts.paging)];
 		}]
 	],
