@@ -26,9 +26,9 @@ var getDeclrConstr = get_constr.getDeclrConstr;
 
 */
 
-function setStartBwlev(self, mainLevelResident) {
+function setStartBwlev(probe_name, self, mainLevelResident) {
 	self.mainLevelResident = mainLevelResident;
-	self.start_bwlev = createLevel(-1, false, self.mainLevelResident, self);
+	self.start_bwlev = createLevel(probe_name, -1, false, self.mainLevelResident, self);
 }
 
 var BrowseMap = {};
@@ -59,14 +59,14 @@ function _goDeeper(map, md, parent_bwlev){
 			throw new Error('`md.lev` prop dissalowed');
 		}
 
-		target_lev = createLevel(map_level_num, parent_lev, md, map);
+		target_lev = createLevel(pvState(parent_lev, 'probe_name'), map_level_num, parent_lev, md, map);
 
 	return target_lev;
 
 };
 
-function createLevel(num, parent_bwlev, md, map) {
-	var bwlev = getBWlev(md, parent_bwlev, num, map);
+function createLevel(probe_name, num, parent_bwlev, md, map) {
+	var bwlev = getBWlev(md, probe_name, parent_bwlev, num, map);
 	bwlev.map = map;
 	return bwlev;
 }
@@ -448,11 +448,11 @@ var BrowseLevel = spv.inh(pv.Model, {
 		}
  	],
 	'compx-struc': [
-		['@one:used_data_structure:map', '@pioneer', 'map_level_num'],
-		function(struc, pioneer, num) {
+		['@one:used_data_structure:map', '@pioneer', 'map_level_num', 'probe_name'],
+		function(struc, pioneer, num, probe_name) {
 			if (num == -2) {return}
-			if (!struc || !pioneer) {return;}
-			return getUsageStruc(pioneer, 'map_slice', struc, this.app);
+			if (!struc || !pioneer || !probe_name) {return;}
+			return getUsageStruc(pioneer, probe_name, struc, this.app);
 		}
 	],
 	'compx-to_init': [
@@ -566,7 +566,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 	}
 });
 
-function getBWlev(md, parent_bwlev, map_level_num, map){
+function getBWlev(md, probe_name, parent_bwlev, map_level_num, map){
 	var cache = parent_bwlev && parent_bwlev.children_bwlevs;
 	var key = md._provoda_id;
 	if (cache && cache[key]) {
@@ -574,6 +574,7 @@ function getBWlev(md, parent_bwlev, map_level_num, map){
 	}
 
 	var bwlev = pv.create(BrowseLevel, {
+		probe_name: probe_name,
 		map_level_num: map_level_num,
 		model_name: md.model_name,
 		pioneer: md
@@ -808,9 +809,9 @@ function changeBridge(bwlev) {
 }
 
 function hookRoot(rootmd, start_page) {
-	var bwlev_root = createLevel(-2, null, rootmd, null);
+	var bwlev_root = createLevel('', -2, null, rootmd, null);
 	if (start_page) {
-		setStartBwlev(bwlev_root, start_page);
+		setStartBwlev('map_slice', bwlev_root, start_page);
 	}
 
 	return bwlev_root;
