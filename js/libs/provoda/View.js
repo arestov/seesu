@@ -155,7 +155,7 @@ var initView = function(target, view_otps, opts){
 
 var changeProbeUniversal = function (method) {
   return function () {
-  var bwlev_view = $v.getBwlevView(this);
+    var bwlev_view = $v.getBwlevView(this) || this.root_view.parent_view;
     bwlev_view.RPCLegacy.apply(
       bwlev_view, [method, this.mpx._provoda_id].concat(Array.prototype.slice.call(arguments, 2))
     );
