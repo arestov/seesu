@@ -440,8 +440,13 @@ var BrowseLevel = spv.inh(pv.Model, {
 		pv.update(md, 'mpl_attached', countKeys(obj, true));
 	},
 	'compx-map_slice_view_sources': [
-		['@one:map_slice_view_sources:pioneer'],
-	],
+		['struc', '@pioneer'],
+		function (struc, pioneer) {
+			if (!pioneer) {return;}
+
+			return [pioneer._network_source, getStrucSources(pioneer, struc)];
+		}
+ 	],
 	'compx-struc': [
 		['@one:used_data_structure:map', '@pioneer', 'map_level_num'],
 		function(struc, pioneer, num) {
@@ -649,7 +654,7 @@ BrowseMap.routePathByModels = routePathByModels;
 
 BrowseMap.getDeclrConstr = getDeclrConstr;
 
-BrowseMap.getStrucSources = function(md, struc) {
+function getStrucSources(md, struc) {
 	//console.log(struc);
 	var result = {};
 	for (var space_name in struc) {

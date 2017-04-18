@@ -4,8 +4,6 @@ var pv = require('pv');
 var spv = require('spv');
 var BrowseMap = require('../libs/BrowseMap');
 
-var getStruc = BrowseMap.getStruc;
-var getStrucSources = BrowseMap.getStrucSources;
 
 var AppModelBase = spv.inh(pv.Model, {
 	init: function(target) {
