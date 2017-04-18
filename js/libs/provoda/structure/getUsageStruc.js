@@ -7,10 +7,17 @@ var get_constr = require('./get_constr');
 var getNestingConstr = get_constr.getNestingConstr;
 var selecPoineertDeclr = hp.$v.selecPoineertDeclr;
 
-var path = 'm_children.children.map_slice.main.m_children.children_by_mn.pioneer';
+var general_path = 'm_children.children.%replace_by_switch_nesting_name%.main.m_children.children_by_mn.pioneer'.split('.');
+// usualy it will be 'm_children.children.map_slice.main.m_children.children_by_mn.pioneer';
+var getPath = spv.memorize(function (switch_nesting_name) {
+	var pth = general_path.slice();
+	pth[2] = switch_nesting_name;
+	return pth;
+});
+
 var children_path = 'm_children.children_by_mn.pioneer';
 
-return function getUsageStruc(md, used_data_structure, app) {
+return function getUsageStruc(md, switch_nesting_name, used_data_structure, app) {
 	var struc;
 
 	var model_name = md.model_name;
@@ -18,13 +25,15 @@ return function getUsageStruc(md, used_data_structure, app) {
 	var dclrs_fpckgs = used_data_structure.collch_dclrs;
 	var dclrs_selectors = used_data_structure.collch_selectors;
 
-	var bwlev_dclr = selecPoineertDeclr(dclrs_fpckgs, dclrs_selectors, 'map_slice', model_name, 'main', true);
+	var path = getPath(switch_nesting_name);
+
+	var bwlev_dclr = selecPoineertDeclr(dclrs_fpckgs, dclrs_selectors, switch_nesting_name, model_name, 'main', true);
 	if (!bwlev_dclr) {
 		var default_struc = spv.getTargetField(used_data_structure, path)[ '$default' ];
 		return spv.getTargetField(used_data_structure, path)[ model_name ] || default_struc;
 	}
 
-	var path_mod = 'm_children.children.map_slice.' + (bwlev_dclr.space || 'main');
+	var path_mod = 'm_children.children.' + switch_nesting_name + '.' + (bwlev_dclr.space || 'main');
 	//+ '.m_children.children_by_mn.pioneer';
 	var bwlev_struc = spv.getTargetField(used_data_structure, path_mod);
 	var bwlev_dclrs_fpckgs = bwlev_struc.collch_dclrs;

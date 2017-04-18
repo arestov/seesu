@@ -448,7 +448,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 		function(struc, pioneer, num) {
 			if (num == -2) {return}
 			if (!struc || !pioneer) {return;}
-			return getUsageStruc(pioneer, struc, this.app);
+			return getUsageStruc(pioneer, 'map_slice', struc, this.app);
 		}
 	],
 	'compx-to_init': [
