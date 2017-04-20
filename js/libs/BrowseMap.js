@@ -465,23 +465,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 	'stch-to_init': function(target, struc) {
 		if (!struc) {return;}
 
-		var md = target.getNesting('pioneer');
-		var idx = md.idx_nestings_declarations;
-		if (!idx) {return;}
-
-		var obj = struc.main.m_children.children;
-		for (var name in obj) {
-			var nesting_name = pv.hp.getRightNestingName(md, name);
-			var el = idx[nesting_name];
-			if (!el) {continue;}
-			if (el.init_state_name && (el.init_state_name !== 'mp_show' && el.init_state_name !== 'mp_has_focus')) {
-				continue;
-			}
-			if (md.getNesting(el.nesting_name)) {
-				continue;
-			}
-			md.updateNesting(el.nesting_name, pv.getSubpages( md, el ));
-		}
+		initNestingsByStruc(target.getNesting('pioneer'), struc);
 	},
 	'compx-to_load': [
 		['mp_dft', 'struc'],
@@ -493,25 +477,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 	'stch-to_load': function(target, struc) {
 		if (!struc) {return;}
 
-		var md = target.getNesting('pioneer');
-		var idx = md.idx_nestings_declarations;
-		if (!idx) {return;}
-
-		var obj = struc.main.m_children.children;
-		for (var name in obj) {
-			var nesting_name = pv.hp.getRightNestingName(md, name);
-			var el = idx[nesting_name];
-			if (!el) {continue;}
-
-			var item = pv.getSubpages( md, el );
-			if (Array.isArray(item) || !item.preloadStart) {
-				continue;
-			}
-			if (item.full_comlxs_index['preview_list'] || item.full_comlxs_index['preview_loading']) {
-				continue;
-			}
-			item.preloadStart();
-		}
+		loadNestingsByStruc(target.getNesting('pioneer'), struc);
 	},
 	'compx-struc_list': [['struc'], function(struc) {
 		if (!this.getNesting('pioneer') || !struc) {return;}
@@ -546,23 +512,7 @@ var BrowseLevel = spv.inh(pv.Model, {
 			return;
 		}
 
-		var md = target.getNesting('pioneer');
-
-		if (!obj.inactive) {
-			for (var i = 0; i < obj.list.length; i++) {
-				var cur = obj.list[i];
-				if (!cur) {continue;}
-				md.addReqDependence(obj.supervision, cur);
-			}
-
-		} else if (prev && prev.list){
-			for (var i = 0; i < prev.list.length; i++) {
-				var cur = prev.list[i];
-				if (!cur) {continue;}
-				md.removeReqDependence(obj.supervision, cur);
-			}
-		}
-
+		loadAllByStruc(target.getNesting('pioneer'), obj, prev);
 	}
 });
 
@@ -815,6 +765,68 @@ function hookRoot(rootmd, start_page) {
 	}
 
 	return bwlev_root;
+}
+
+function initNestingsByStruc(md, struc) {
+	if (!struc) {return;}
+
+	var idx = md.idx_nestings_declarations;
+	if (!idx) {return;}
+
+	var obj = struc.main.m_children.children;
+	for (var name in obj) {
+		var nesting_name = pv.hp.getRightNestingName(md, name);
+		var el = idx[nesting_name];
+		if (!el) {continue;}
+		if (el.init_state_name && (el.init_state_name !== 'mp_show' && el.init_state_name !== 'mp_has_focus')) {
+			continue;
+		}
+		if (md.getNesting(el.nesting_name)) {
+			continue;
+		}
+		md.updateNesting(el.nesting_name, pv.getSubpages( md, el ));
+	}
+}
+
+function loadNestingsByStruc(md, struc) {
+	if (!struc) {return;}
+
+	var idx = md.idx_nestings_declarations;
+	if (!idx) {return;}
+
+	var obj = struc.main.m_children.children;
+	for (var name in obj) {
+		var nesting_name = pv.hp.getRightNestingName(md, name);
+		var el = idx[nesting_name];
+		if (!el) {continue;}
+
+		var item = pv.getSubpages( md, el );
+		if (Array.isArray(item) || !item.preloadStart) {
+			continue;
+		}
+		if (item.full_comlxs_index['preview_list'] || item.full_comlxs_index['preview_loading']) {
+			continue;
+		}
+		item.preloadStart();
+	}
+}
+
+function loadAllByStruc(md, obj, prev) {
+	// obj.list is `struc`
+	if (!obj.inactive) {
+		for (var i = 0; i < obj.list.length; i++) {
+			var cur = obj.list[i];
+			if (!cur) {continue;}
+			md.addReqDependence(obj.supervision, cur);
+		}
+
+	} else if (prev && prev.list){
+		for (var i = 0; i < prev.list.length; i++) {
+			var cur = prev.list[i];
+			if (!cur) {continue;}
+			md.removeReqDependence(obj.supervision, cur);
+		}
+	}
 }
 
 BrowseMap.hookRoot = hookRoot;
