@@ -134,7 +134,7 @@ var branch = function (bwlev) {
   return list;
 }
 
-return function(app, bwlev) {
+ function animateMapChanges(app, bwlev) {
   var bwlevs = branch(bwlev);
   var models = bwlevs.map(getPioneer);
   updateNesting(app, 'navigation', bwlevs);
@@ -216,4 +216,26 @@ return function(app, bwlev) {
 
 
 };
+
+function changeZoomSimple(bwlev, value_raw) {
+  var value = Boolean(value_raw);
+  pvUpdate(bwlev, 'mp_show', value);
+  var md = bwlev.getNesting('pioneer');
+  complexBrowsing(bwlev, md,  value);
+};
+
+animateMapChanges.switchCurrentBwlev = switchCurrentBwlev;
+
+function switchCurrentBwlev(bwlev, prev) {
+  if (prev) {
+    changeZoomSimple(prev, false);
+  }
+  if (bwlev) {
+    changeZoomSimple(prev, true);
+  }
+
+  depth(bwlev, prev);
+}
+
+return animateMapChanges;
 });
