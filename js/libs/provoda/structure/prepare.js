@@ -15,6 +15,15 @@ var Probe = spv.inh(Model, {
   inti: function(self) {
     self.bwlevs = {};
   },
+  'compx-struc': [
+    ['@one:struc:owner_bwlev', 'name'],
+    function(struc, name) {
+      if (!struc) {return;}
+
+      console.log('---------Probe', name, struc.main.m_children.children);
+      return struc.main.m_children[name];
+    }
+  ]
 });
 
 BrowseLevel.prototype.BWL = BrowseLevel;
