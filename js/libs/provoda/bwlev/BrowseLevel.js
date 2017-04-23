@@ -57,10 +57,10 @@ var BrowseLevel = spv.inh(Model, {
   }
 }, {
   updateProbe: function(target_id, probe_name, value, probe_container_uri) {
-    updateProbe(this, target_id, probe_name, value, probe_container_uri);
+    updateProbe(BrowseLevel, this, target_id, probe_name, value, probe_container_uri);
   },
   toggleProbe: function(target_id, probe_name, value, probe_container_uri) {
-    updateProbe.toggleProbe(this, target_id, probe_name, value, probe_container_uri);
+    updateProbe.toggleProbe(BrowseLevel, this, target_id, probe_name, value, probe_container_uri);
   },
   model_name: 'bwlev',
   "+states": {
