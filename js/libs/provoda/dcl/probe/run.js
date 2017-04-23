@@ -40,6 +40,8 @@ return function run(bwlev, pathp) {
       owner_provoda_id: md._provoda_id,
     });
 
+    con.updateNesting('owner_bwlev', bwlev);
+
     var initial = cur.options && cur.options.initial;
     if (initial) {
       var subpage = getSPByPathTemplate(md.app, md, initial);
