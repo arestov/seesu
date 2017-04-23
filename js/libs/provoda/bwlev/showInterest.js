@@ -4,7 +4,7 @@ var _goDeeper = require('./_goDeeper');
 var showMOnMap = require('./showMOnMap');
 
 return function showInterest(map, interest) {
-	var BWL = map.constructor; // kinda hack?! TODO FIXME
+	var BWL = map.BWL; // kinda hack?! TODO FIXME
 
 	if (!interest.length) {
 		return showMOnMap(BWL, map, map.mainLevelResident);
