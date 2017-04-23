@@ -2,22 +2,20 @@ define(function(require) {
 "use strict";
 var pv = require('pv');
 var spv = require('spv');
+var changeBridge = require('./provoda/bwlev/changeBridge');
+var createLevel = require('./provoda/bwlev/createLevel');
+var BrowseLevel = require('./provoda/bwlev/BrowseLevel');
+var showMOnMap = require('./provoda/bwlev/showMOnMap');
+var showInterest = require('./provoda/bwlev/showInterest');
+var getBwlevFromParentBwlev = require('./provoda/bwlev/getBwlevFromParentBwlev');
 var get_constr = require('./provoda/structure/get_constr');
-var flatStruc = require('./provoda/structure/flatStruc');
-var routePathByModels = require('./provoda/routePathByModels');
-var getUsageStruc = require('./provoda/structure/getUsageStruc');
-var getModelSources = require('./provoda/structure/getModelSources');
-var initNestingsByStruc = require('./provoda/structure/reactions/initNestingsByStruc');
-var loadNestingsByStruc = require('./provoda/structure/reactions/loadNestingsByStruc');
-var loadAllByStruc = require('./provoda/structure/reactions/loadAllByStruc');
 
+var routePathByModels = require('./provoda/routePathByModels');
 
 var getSPIConstr = routePathByModels.getSPIConstr;
 var getSPI= routePathByModels.getSPI;
 
-var pvState = pv.state;
 var cloneObj = spv.cloneObj;
-var countKeys = spv.countKeys;
 
 var getDeclrConstr = get_constr.getDeclrConstr;
 
@@ -32,258 +30,10 @@ var getDeclrConstr = get_constr.getDeclrConstr;
 
 function setStartBwlev(probe_name, self, mainLevelResident) {
 	self.mainLevelResident = mainLevelResident;
-	self.start_bwlev = createLevel(probe_name, -1, false, self.mainLevelResident, self);
+	self.start_bwlev = createLevel(BrowseLevel, probe_name, -1, false, self.mainLevelResident, self);
 }
 
 var BrowseMap = {};
-
-function _goDeeper(map, md, parent_bwlev){
-	// без parent_bwlev нет контекста
-	if (!parent_bwlev) {
-		// будем искать parent_bwlev на основе прямой потомственности от уровня -1
-		parent_bwlev = getBwlevInParentBwlev(md.map_parent, map);
-	}
-
-	var parent_md = md.map_parent;
-
-	var target_lev;
-
-		var map_level_num;
-		if (parent_bwlev) {
-			map_level_num = parent_bwlev.state('map_level_num') + 1;
-		} else {
-			if (typeof md.map_level_num != 'number') {
-				throw new Error('md must have `map_level_num`');
-			}
-			map_level_num = md.map_level_num;
-		}
-		// нужно чтобы потом использовать все уровни-предки
-		var parent_lev = parent_bwlev;
-		if (!parent_lev && parent_md) {
-			throw new Error('`md.lev` prop dissalowed');
-		}
-
-		target_lev = createLevel(pvState(parent_lev, 'probe_name'), map_level_num, parent_lev, md, map);
-
-	return target_lev;
-
-};
-
-function createLevel(probe_name, num, parent_bwlev, md, map) {
-	var bwlev = getBWlev(md, probe_name, parent_bwlev, num, map);
-	bwlev.map = map;
-	return bwlev;
-}
-
-var limits = {
-	same_model_matches: 1,
-	big_steps: 4
-};
-
-var isBigStep = function(cur, cur_child) {
-	return cur.map_parent && cur.map_parent.getNesting('pioneer') != cur_child.map_parent;
-};
-
-var getNavGroups = function(bwlev) {
-	var cur_group = [];
-	var groups = [cur_group];
-
-	var cur = bwlev;
-	var cur_child = cur.getNesting('pioneer');
-	while (cur) {
-		cur_group.push(cur_child);
-
-		if (isBigStep(cur, cur_child)) {
-			cur_group = [];
-			groups.push(cur_group);
-		}
-
-		cur = cur.map_parent;
-		cur_child = cur && cur.getNesting('pioneer');
-	}
-	return groups;
-};
-
-
-var getEdgeSimilarModelPos = function(bwlev, model_name, limit) {
-	var edge_group_num = -1;
-	var groups_of_similar = 0;
-	var groups_count = 0;
-	var cur = bwlev;
-	var cur_child = cur.getNesting('pioneer');
-	while (cur) {
-		if (cur_child.model_name == model_name) {
-			if (edge_group_num != groups_count) {
-				edge_group_num = groups_count;
-				groups_of_similar++;
-				if (groups_of_similar == limit) {
-					break;
-				}
-			}
-		}
-
-		if (isBigStep(cur, cur_child)) {
-			groups_count++;
-		}
-
-		cur = cur.map_parent;
-		cur_child = cur && cur.getNesting('pioneer');
-	}
-	return groups_of_similar == limit ? edge_group_num : -1;
-};
-
-
-var countGroups = function(bwlev) {
-	var groups_count = 1;
-	var cur = bwlev;
-	var cur_child = cur.getNesting('pioneer');
-	while (cur) {
-
-		if (isBigStep(cur, cur_child)) {
-			groups_count++;
-		}
-
-		cur = cur.map_parent;
-		cur_child = cur && cur.getNesting('pioneer');
-	}
-	return groups_count;
-};
-
-
-function interestPart(group){
-	return {
-		md: group[0],
-		distance: group.length
-	};
-}
-
-var getLimitedParent = function(parent_bwlev, end_md){
-	var pioneer = parent_bwlev.getNesting('pioneer');
-	// var pre_mn = pioneer.model_name == end_md.model_name;
-	var pre_group = pioneer != end_md.map_parent;
-
-
-	// var cur = parent_bwlev;
-	// var cur_child = end_md;
-	// var counter = 0;
-
-	// var big_steps = 0;
-	// var same_model_matches = 0;
-
-	// var last_ok;
-
-	// var cut = false;
-
-
-	var groups_count = countGroups(parent_bwlev);
-	var all_groups_count = groups_count + (pre_group ? 1 : 0);
-
-
-	var similar_model_edge = getEdgeSimilarModelPos(parent_bwlev, end_md.model_name, 3);
-
-	if (all_groups_count > 3 || similar_model_edge != -1) {
-
-		var count_slice = 3 + ( pre_group ? -1 : 0 );
-		var sm_slice = similar_model_edge == -1 ? Infinity : similar_model_edge + 1;
-		var slice = Math.min(count_slice, sm_slice);
-		var groups = getNavGroups(parent_bwlev);
-		var sliced = groups.slice(0, slice);
-
-		return sliced.map(interestPart).reverse();
-	}
-
-	return false;
-};
-
-var followFromTo = function(map, parent_bwlev, end_md) {
-	var cutted_parents = getLimitedParent(parent_bwlev, end_md);
-
-	var result;
-
-	if (cutted_parents) {
-		var last_cutted_parentbw = BrowseMap.showInterest(map, cutted_parents);
-		result = _goDeeper(map, end_md, last_cutted_parentbw);
-	} else {
-		// parent_bwlev.showOnMap();
-
-		var bwlev = getBwlevFromParentBwlev(parent_bwlev, end_md);
-
-		if (ba_canReuse(bwlev)) {
-			result = showMOnMap(map, end_md, bwlev);
-		} else {
-			showMOnMap(map, parent_bwlev.getNesting('pioneer'), parent_bwlev);
-			result = _goDeeper(map, end_md, parent_bwlev);
-		}
-	}
-
-	return result;
-};
-
-function showMOnMap(map, model, bwlev) {
-
-	var is_start = model.map_level_num == -1;
-
-	if (is_start) {
-		bwlev = map.start_bwlev;
-	}
-
-	var bwlev_parent = false;
-
-	if (!is_start && (!bwlev || !ba_inUse(bwlev))){
-		// если модель не прикреплена к карте,
-		// то прежде чем что-то делать - находим и отображаем "родительску" модель
-		var parent_md;
-		if (bwlev) {
-			parent_md = bwlev.map_parent.getNesting('pioneer');
-		} else {
-			parent_md = model.map_parent;
-		}
-
-		bwlev_parent = showMOnMap(map, parent_md, bwlev && bwlev.map_parent, true);
-	}
-
-	var result = null;
-
-	if (bwlev_parent || bwlev_parent === false) {
-
-		if (bwlev_parent) {
-			if (!bwlev) {
-				bwlev = getBwlevFromParentBwlev(bwlev_parent, model);
-			}
-		}
-
-		if (model.state('has_no_access')) {
-			model.switchPmd();
-		} else if (ba_canReuse(bwlev) || is_start){//если модель прикреплена к карте
-			result = bwlev;
-		} else {
-			if (!model.model_name){
-				throw new Error('model must have model_name prop');
-			}
-			// this.bindMMapStateChanges(model, model.model_name);
-			result = _goDeeper(map, model, bwlev && bwlev.map_parent);
-		}
-	}
-
-	return result;
-	//
-};
-
-function getBwlevFromParentBwlev(parent_bwlev, md) {
-	return parent_bwlev.children_bwlevs[md._provoda_id];
-};
-
-function getBwlevInParentBwlev(md, map) {
-	if (!md.map_parent) {
-		if (map.mainLevelResident != md) {
-			throw new Error('root map_parent must be `map.mainLevelResident`');
-		}
-		return map.start_bwlev;
-	}
-
-	var parent_bwlev = getBwlevInParentBwlev(md.map_parent, map);
-	return getBwlevFromParentBwlev(parent_bwlev, md);
-};
 
 var getCommonBwlevParent = function(bwlev, md) {
 	var cur_bwlev = bwlev;
@@ -339,248 +89,7 @@ BrowseMap.getConnectedBwlev = function(bwlev, md) {
 
 BrowseMap.getBwlevFromParentBwlev = getBwlevFromParentBwlev;
 
-var BrowseLevel = spv.inh(pv.Model, {
-	strict: true,
-	naming: function(fn) {
-		return function BrowseLevel(opts, data, params, more, states) {
-			fn(this, opts, data, params, more, states);
-		};
-	},
-	init: function(self, opts, data, params, more, states) {
-		self.children_bwlevs = {};
-		self.model_name = states['model_name'];
-
-		if (!self.model_name) {
-			throw new Error('must have model name');
-		}
-
-    var pioneer = states['pioneer'];
-
-		self.ptree = [self];
-		self.rtree = [pioneer];
-
-		if (self.map_parent) {
-			self.ptree = self.ptree.concat(self.map_parent.ptree);
-			self.rtree = self.rtree.concat(self.map_parent.rtree);
-		}
-
-	}
-}, {
-	getParentMapModel: function() {
-		return this.map_parent;
-	},
-	showOnMap: function() {
-		showMOnMap(this.map, this.getNesting('pioneer'), this);
-		changeBridge(this);
-	},
-	requestPage: function(id) {
-		var md = pv.getModelById(this, id);
-		var pioneer = this.getNesting('pioneer');
-
-		var target_is_deep_child;
-
-		var cur = md;
-		var bwlev_children = [];
-
-		while (cur.map_parent) {
-			bwlev_children.push(cur);
-
-			if (cur.map_parent == pioneer) {
-				target_is_deep_child = true;
-				break;
-			}
-			cur = cur.map_parent;
-		}
-
-		if (!target_is_deep_child) {
-			return md.requestPage();
-		}
-
-		bwlev_children = bwlev_children.reverse();
-
-		var map = md.app.map;
-
-		showMOnMap(map, pioneer, this);
-
-		var last_called = null;
-		var parent_bwlev = this;
-		for (var i = 0; i < bwlev_children.length; i++) {
-			if (!parent_bwlev) {
-				continue;
-			}
-			var cur_md = bwlev_children[i];
-
-			if (cur_md.state('has_no_access')) {
-				parent_bwlev = null;
-				cur_md.switchPmd();
-			} else {
-				parent_bwlev = _goDeeper(map, cur_md, parent_bwlev);
-				last_called = parent_bwlev;
-			}
-		}
-
-		changeBridge(last_called);
-	},
-	zoomOut: function() {
-		if (this.state('mp_show')) {
-			changeBridge(this);
-		}
-	},
-	followTo: function(id) {
-		var md = pv.getModelById(this, id);
-		if (md.getRelativeModel) {
-			md = md.getRelativeModel();
-		}
-		// md.requestPage();
-		var bwlev = followFromTo(this.map, this, md);
-		changeBridge(bwlev);
-	},
-	'stch-mpl_attached': function(target, state) {
-		var md = target.getNesting('pioneer');
-		var obj = pvState(md, 'bmpl_attached');
-		obj = obj ? cloneObj({}, obj) : {};
-		obj[target._provoda_id] = state;
-		pv.update(md, 'bmpl_attached', obj);
-		pv.update(md, 'mpl_attached', countKeys(obj, true));
-	},
-	'compx-map_slice_view_sources': [
-		['struc', '@pioneer'],
-		function (struc, pioneer) {
-			if (!pioneer) {return;}
-
-			return [pioneer._network_source, getStrucSources(pioneer, struc)];
-		}
- 	],
-	'compx-struc': [
-		['@one:used_data_structure:map', '@pioneer', 'map_level_num', 'probe_name'],
-		function(struc, pioneer, num, probe_name) {
-			if (num == -2) {return}
-			if (!struc || !pioneer || !probe_name) {return;}
-			return getUsageStruc(pioneer, probe_name, struc, this.app);
-		}
-	],
-	'compx-to_init': [
-		['mp_dft', 'struc'],
-		function(mp_dft, struc) {
-			if (!mp_dft || mp_dft > 2 || !struc) {return;}
-			return struc;
-		}
-	],
-	'stch-to_init': function(target, struc) {
-		if (!struc) {return;}
-
-		initNestingsByStruc(target.getNesting('pioneer'), struc);
-	},
-	'compx-to_load': [
-		['mp_dft', 'struc'],
-		function(mp_dft, struc) {
-			if (!mp_dft || mp_dft > 1 || !struc) {return;}
-			return struc;
-		}
-	],
-	'stch-to_load': function(target, struc) {
-		if (!struc) {return;}
-
-		loadNestingsByStruc(target.getNesting('pioneer'), struc);
-	},
-	'compx-struc_list': [['struc'], function(struc) {
-		if (!this.getNesting('pioneer') || !struc) {return;}
-		return flatStruc(this.getNesting('pioneer'), struc);
-	}],
-	'compx-supervision': [
-		[], function () {
-			return {
-				needy: this,
-				store: {},
-				reqs: {},
-				is_active: {}
-			};
-		}
-	],
-	'compx-to_load_all': [
-		['mp_dft', 'struc_list', 'supervision'],
-		function(mp_dft, struc, supervision) {
-			return {
-				inactive: !mp_dft || mp_dft > 1 || !struc,
-				list: struc,
-				supervision: supervision
-			};
-		}
-	],
-	'stch-to_load_all': function(target, obj, prev) {
-		if (!obj.list) {
-			return;
-		}
-
-		if (obj.inactive == (prev && prev.inactive)) {
-			return;
-		}
-
-		loadAllByStruc(target.getNesting('pioneer'), obj, prev);
-	}
-});
-
-function getBWlev(md, probe_name, parent_bwlev, map_level_num, map){
-	var cache = parent_bwlev && parent_bwlev.children_bwlevs;
-	var key = md._provoda_id;
-	if (cache && cache[key]) {
-		return cache[key];
-	}
-
-	var bwlev = pv.create(BrowseLevel, {
-		probe_name: probe_name,
-		map_level_num: map_level_num,
-		model_name: md.model_name,
-		pioneer: md
-	}, {
-		nestings: {
-			pioneer: md,
-			map: map
-		}
-	}, parent_bwlev, md.app);
-
-	if (cache) {
-		cache[key] = bwlev;
-	};
-
-	return bwlev;
-};
-
-var getDistantModel = function(md, distance){
-	var cur = md;
-	for (var i = 1; i < distance; i++) {
-		cur = cur.map_parent;
-	}
-	return cur;
-};
-
-BrowseMap.showInterest = function(map, interest) {
-	if (!interest.length) {
-		return showMOnMap(map, map.mainLevelResident);
-	}
-
-	var first = interest.shift();
-	// first.md.lev fixme
-
-	var parent_bwlev = showMOnMap(first.md.app.map, first.md);
-
-	for (var i = 0; i < interest.length; i++) {
-		var cur = interest[i];
-
-		var distance = cur.distance;
-		if (!distance) {throw new Error('must be distance: 1 or more');}
-		while (distance) {
-			var md = getDistantModel(interest[i].md, distance);
-			parent_bwlev = _goDeeper(map, md, parent_bwlev);
-			distance--;
-		}
-
-
-	}
-
-	return parent_bwlev;
-};
-
+BrowseMap.showInterest = showInterest;
 
 var interest_part = /(\#(?:\d*\:)?)/gi;
 BrowseMap.getUserInterest = function(pth_string, start_md) {
@@ -608,17 +117,6 @@ BrowseMap.getUserInterest = function(pth_string, start_md) {
 BrowseMap.routePathByModels = routePathByModels;
 
 BrowseMap.getDeclrConstr = getDeclrConstr;
-
-function getStrucSources(md, struc) {
-	//console.log(struc);
-	var result = {};
-	for (var space_name in struc) {
-		result[space_name] = getModelSources(md.app, md, struc[space_name]);
-		//var cur = struc[space_name];
-	}
-	return result;
-	//console.log(md.model_name, md.constr_id, result);
-};
 
 BrowseMap.Model = spv.inh(pv.HModel, {
 	strict: true,
@@ -725,7 +223,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 		this.showOnMap();
 	},
 	showOnMap: function() {
-		var bwlev = showMOnMap(this.app.map, this);
+		var bwlev = showMOnMap(BrowseLevel, this.app.map, this);
 		changeBridge(bwlev);
 	},
 	getParentMapModel: function() {
@@ -742,28 +240,8 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 	}
 });
 
-function ba_inUse(bwlev){
-	return bwlev.state('mp_show');
-}
-
-function ba_isOpened(bwlev){
-	return !!bwlev.map && !bwlev.closed;
-}
-
-function ba_canReuse(bwlev) {
-	//если модель прикреплена к карте
-	return bwlev && (ba_inUse(bwlev) || !ba_isOpened(bwlev));
-}
-
-function changeBridge(bwlev) {
-	bwlev.map.bridge_bwlev = bwlev;
-	bwlev.map.trigger('bridge-changed', bwlev);
-
-	return bwlev;
-}
-
 function hookRoot(rootmd, start_page) {
-	var bwlev_root = createLevel('', -2, null, rootmd, null);
+	var bwlev_root = createLevel(BrowseLevel, '', -2, null, rootmd, null);
 	if (start_page) {
 		setStartBwlev('map_slice', bwlev_root, start_page);
 	}
