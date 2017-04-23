@@ -11,10 +11,10 @@ var Probe = spv.inh(Model, {
 			fn(this, opts, data, params, more, states);
 		};
 	},
-}, {
-  inti: function(self) {
+  init: function(self) {
     self.bwlevs = {};
   },
+}, {
   'compx-struc': [
     ['@one:struc:owner_bwlev', 'name'],
     function(struc, name) {
