@@ -30,7 +30,7 @@ return function followFromTo(BWL, map, parent_bwlev, end_md) {
 };
 
 
-var isBigStep = function(cur, cur_child) {
+function isBigStep(cur, cur_child) {
 	return cur.map_parent && cur.map_parent.getNesting('pioneer') != cur_child.map_parent;
 };
 
