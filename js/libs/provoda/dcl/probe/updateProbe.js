@@ -11,9 +11,6 @@ var getProbeChange = function (toggle) {
     var app = bwlev.app;
 
     var target = getModelById(bwlev, target_id);
-    var container = probe_container_uri ? getSPByPathTemplate(app, target, probe_container_uri) : target;
-    var subpage = getSPByPathTemplate(app, container, value);
-
 
     var set = bwlev._run_probes[probe_name];
     var key = target_id;
@@ -23,6 +20,10 @@ var getProbeChange = function (toggle) {
     if (!probe_md) {
       return; // throw ?
     }
+
+    var container = probe_container_uri ? getSPByPathTemplate(app, target, probe_container_uri) : target;
+    var subpage = getSPByPathTemplate(app, container, value);
+
 
     if (!toggle) {
       probe_md.updateNesting('current_md', subpage);
