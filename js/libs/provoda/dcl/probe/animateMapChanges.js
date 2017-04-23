@@ -231,7 +231,7 @@ function switchCurrentBwlev(bwlev, prev) {
     changeZoomSimple(prev, false);
   }
   if (bwlev) {
-    changeZoomSimple(prev, true);
+    changeZoomSimple(bwlev, true);
   }
 
   depth(bwlev, prev);
