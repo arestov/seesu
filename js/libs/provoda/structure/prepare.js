@@ -3,6 +3,7 @@ define(function (require) {
 var Model = require('../Model');
 var mark = require('./mark');
 var spv = require('spv');
+var BrowseLevel = require('../bwlev/BrowseLevel');
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
@@ -10,7 +11,13 @@ var Probe = spv.inh(Model, {
       fn(this, opts, data, params, more, states);
     };
   },
+}, {
+  inti: function(self) {
+    self.bwlevs = {};
+  },
 });
+
+BrowseLevel.prototype.BWL = BrowseLevel;
 
 return function prepare(root) {
   var augmented = spv.inh(root, {}, {
