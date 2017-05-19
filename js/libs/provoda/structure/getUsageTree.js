@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var spv = require('spv');
+var push = Array.prototype.push;
 
 var getTreeSample = function() {
 	return {
@@ -137,23 +138,7 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 
 	})(cur_view);
 
-	tree.states.compx_deps = (function(cur_view) {
-		if (!cur_view.full_comlxs_list) {
-			return [];
-		}
-
-		var result = [];
-
-		var compxs_itself = [];
-
-		for (var i = 0; i < cur_view.full_comlxs_list.length; i++) {
-			push.apply(result, cur_view.full_comlxs_list[i].depends_on);
-			compxs_itself.push(cur_view.full_comlxs_list[i].name);
-		}
-
-		return spv.collapseAll(spv.arrayExclude(result, compxs_itself));
-
-	})(cur_view);
+	tree.states.compx_deps = getCompxDeps(cur_view);
 
 
 	tree.merged_states = spv.collapseAll(tree.states.stch, tree.states.compx_deps);
@@ -346,5 +331,25 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 
 	return tree;
 };
+
+
+function getCompxDeps(cur_view) {
+	if (!cur_view.full_comlxs_list) {
+		return [];
+	}
+
+	var result = [];
+
+	var compxs_itself = [];
+
+	for (var i = 0; i < cur_view.full_comlxs_list.length; i++) {
+		push.apply(result, cur_view.full_comlxs_list[i].depends_on);
+		compxs_itself.push(cur_view.full_comlxs_list[i].name);
+	}
+
+	return spv.collapseAll(spv.arrayExclude(result, compxs_itself));
+
+}
+
 return getUsageTree;
 });
