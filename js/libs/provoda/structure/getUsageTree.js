@@ -144,100 +144,100 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 	tree.merged_states = spv.collapseAll(tree.states.stch, tree.states.compx_deps);
 
 	tree.basetree = (function(cur_view) {
-
-		if (cur_view.base_tree_list) {
-			var merged_tree = {
-				node_id: null,
-				children: null,
-				children_by_mn: null,
-				states: null,
-				controller_name: null
-			};
-
-			var i, cur;
-			var arr = [];
-
-			for (i = 0; i < cur_view.base_tree_list.length; i++) {
-				cur = cur_view.base_tree_list[i];
-
-
-				var sample_name = cur.sample_name;
-				if (!sample_name && cur.part_name && typeof cur_view.parts_builder[cur.part_name] == 'string') {
-					sample_name = cur_view.parts_builder[cur.part_name];
-				}
-
-				if (!sample_name) {
-					throw new Error('can\'t get sampler');
-				}
-				var sampler = root_view.getSampler(sample_name);
-
-				var structure_data = sampler.getStructure(cur.parse_as_tplpart);
-
-				if (!merged_tree.controller_name) {
-					merged_tree.controller_name = structure_data.controller_name;
-				}
-
-				arr.push(structure_data);
-				//cur_view.structure_data
-
-			}
-
-
-			var setUndefinedField = function(store, field_path, value) {
-				var current_value = spv.getTargetField(store, field_path);
-					if (!current_value) {
-						spv.setTargetField(store, field_path, value);
-					}
-			};
-			var nesting_name, nesting_space, field_path, model_name;
-
-			var tree_id = [];
-
-			for (i = 0; i < arr.length; i++) {
-				cur = arr[i];
-				tree_id.push(cur.node_id);
-				if (cur.states) {
-					if (!merged_tree.states) {
-						merged_tree.states = [];
-					}
-					push.apply(merged_tree.states, cur.states);
-				}
-
-				if (cur.children) {
-					if (!merged_tree.children) {
-						merged_tree.children = {};
-					}
-					for (nesting_name in cur.children) {
-						for (nesting_space in cur.children[nesting_name]) {
-							field_path = [nesting_name, nesting_space];
-							setUndefinedField(merged_tree.children, field_path, spv.getTargetField(cur.children, field_path));
-						}
-					}
-				}
-
-				if (cur.children_by_mn) {
-					if (!merged_tree.children_by_mn) {
-						merged_tree.children_by_mn = {};
-					}
-					for (nesting_name in cur.children_by_mn) {
-						if (!merged_tree.children_by_mn[nesting_name]) {
-							merged_tree.children_by_mn[nesting_name] = {};
-						}
-						for (model_name in cur.children_by_mn[nesting_name]) {
-							for (nesting_space in cur.children_by_mn[nesting_name][model_name]) {
-								field_path = [nesting_name, model_name, nesting_space];
-								setUndefinedField(merged_tree.children_by_mn, field_path, spv.getTargetField(cur.children_by_mn, field_path));
-							}
-						}
-					}
-				}
-			}
-			merged_tree.node_id = tree_id.join('&');
-			return merged_tree;
-
-		} else {
+		if (!cur_view.base_tree_list) {
 			return null;
 		}
+
+		var merged_tree = {
+			node_id: null,
+			children: null,
+			children_by_mn: null,
+			states: null,
+			controller_name: null
+		};
+
+		var i, cur;
+		var arr = [];
+
+		for (i = 0; i < cur_view.base_tree_list.length; i++) {
+			cur = cur_view.base_tree_list[i];
+
+
+			var sample_name = cur.sample_name;
+			if (!sample_name && cur.part_name && typeof cur_view.parts_builder[cur.part_name] == 'string') {
+				sample_name = cur_view.parts_builder[cur.part_name];
+			}
+
+			if (!sample_name) {
+				throw new Error('can\'t get sampler');
+			}
+			var sampler = root_view.getSampler(sample_name);
+
+			var structure_data = sampler.getStructure(cur.parse_as_tplpart);
+
+			if (!merged_tree.controller_name) {
+				merged_tree.controller_name = structure_data.controller_name;
+			}
+
+			arr.push(structure_data);
+			//cur_view.structure_data
+
+		}
+
+
+		var setUndefinedField = function(store, field_path, value) {
+			var current_value = spv.getTargetField(store, field_path);
+				if (!current_value) {
+					spv.setTargetField(store, field_path, value);
+				}
+		};
+		var nesting_name, nesting_space, field_path, model_name;
+
+		var tree_id = [];
+
+		for (i = 0; i < arr.length; i++) {
+			cur = arr[i];
+			tree_id.push(cur.node_id);
+			if (cur.states) {
+				if (!merged_tree.states) {
+					merged_tree.states = [];
+				}
+				push.apply(merged_tree.states, cur.states);
+			}
+
+			if (cur.children) {
+				if (!merged_tree.children) {
+					merged_tree.children = {};
+				}
+				for (nesting_name in cur.children) {
+					for (nesting_space in cur.children[nesting_name]) {
+						field_path = [nesting_name, nesting_space];
+						setUndefinedField(merged_tree.children, field_path, spv.getTargetField(cur.children, field_path));
+					}
+				}
+			}
+
+			if (cur.children_by_mn) {
+				if (!merged_tree.children_by_mn) {
+					merged_tree.children_by_mn = {};
+				}
+				for (nesting_name in cur.children_by_mn) {
+					if (!merged_tree.children_by_mn[nesting_name]) {
+						merged_tree.children_by_mn[nesting_name] = {};
+					}
+					for (model_name in cur.children_by_mn[nesting_name]) {
+						for (nesting_space in cur.children_by_mn[nesting_name][model_name]) {
+							field_path = [nesting_name, model_name, nesting_space];
+							setUndefinedField(merged_tree.children_by_mn, field_path, spv.getTargetField(cur.children_by_mn, field_path));
+						}
+					}
+				}
+			}
+		}
+		merged_tree.node_id = tree_id.join('&');
+		return merged_tree;
+
+
 
 	})(cur_view);
 
