@@ -236,6 +236,12 @@ function getCompxDeps(cur_view) {
 
 }
 
+var setUndefinedField = function(store, field_path, value) {
+	var current_value = spv.getTargetField(store, field_path);
+	if (!current_value) {
+		spv.setTargetField(store, field_path, value);
+	}
+};
 
 function getBaseTree(cur_view, root_view) {
 	if (!cur_view.base_tree_list) {
@@ -278,13 +284,6 @@ function getBaseTree(cur_view, root_view) {
 
 	}
 
-
-	var setUndefinedField = function(store, field_path, value) {
-		var current_value = spv.getTargetField(store, field_path);
-			if (!current_value) {
-				spv.setTargetField(store, field_path, value);
-			}
-	};
 	var nesting_name, nesting_space, field_path, model_name;
 
 	var tree_id = [];
