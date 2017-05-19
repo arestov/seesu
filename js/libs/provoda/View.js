@@ -8,7 +8,7 @@ var updateProxy = require('./updateProxy');
 var prsStCon =  require('./prsStCon');
 var StatesEmitter = require('./StatesEmitter');
 var PvTemplate = require('./PvTemplate');
-var onPropsExtend = require('./onExtendView');
+var onPropsExtend = require('./View/onExtend');
 var selectCollectionChange = require('./View/selectCollectionChange');
 
 var pvUpdate = updateProxy.update;
