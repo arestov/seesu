@@ -126,33 +126,21 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 			tree.collch_dclrs[dclr_name] = dclrs.solving;
 		}
 	}
+
 	tree.collch_selectors = cur_view.dclrs_selectors || null;
 
-	tree.states.stch = (function(cur_view) {
-
-		return (cur_view.stch_hs_list && cur_view.stch_hs_list.slice()) || [];
-
-	})(cur_view);
-
+	tree.states.stch = (cur_view.stch_hs_list && cur_view.stch_hs_list.slice()) || [];
 	tree.states.compx_deps = getCompxDeps(cur_view);
-
-
 	tree.merged_states = spv.collapseAll(tree.states.stch, tree.states.compx_deps);
-
 	tree.basetree = getBaseTree(cur_view);
-
 
 	if (tree.basetree && tree.basetree.states) {
 		tree.merged_states = spv.collapseAll(tree.merged_states, tree.basetree.states);
 	}
 
-
-
 	//создаём список для итерации по потомкам
 	//могут быть и basetree и конструкторы для одного nest и space а может быть только basetree или только конструктор
 	//нужно использовать всё
-
-
 
 	var children_list_index = {};
 	var children_list = [];
@@ -160,6 +148,7 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 	if (cur_view.children_views) {
 		iterateChildren(cur_view.children_views, bCh, children_list_index, children_list);
 	}
+
 	if (cur_view.children_views_by_mn) {
 		iterateChildrenByMN(cur_view.children_views_by_mn, bChByMN, children_list_index, children_list);
 	}
@@ -173,11 +162,7 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 		if (used_base.children_by_mn) {
 			iterateChildrenByMN(used_base.children_by_mn, bChByMN, children_list_index, children_list);
 		}
-
 	}
-
-
-
 
 	if (base_from_parent && base_from_parent.children) {
 		//debugger;
