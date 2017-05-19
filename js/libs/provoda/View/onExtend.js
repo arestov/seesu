@@ -13,6 +13,7 @@ var collectStateChangeHandlers = require('../dcl_view/v-collectStateChangeHandle
 var checkNestBorrow = require('../dcl_view/nest_borrow/check-dcl');
 var checkNestBorrowWatch = require('../dcl_view/nest_borrow/watch');
 var checkProbe = require('../dcl_view/probe/check-dcl');
+var checkProbeWatch = require('../dcl_view/probeWatch');
 
 var getBaseTreeCheckList = function(start) {
   var i, result = [];
@@ -84,5 +85,6 @@ return function(self, props, original) {
   }
 
   checkNestBorrowWatch(self, props)
+  checkProbeWatch(self, props)
 };
 });
