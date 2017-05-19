@@ -128,10 +128,6 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 	}
 	tree.collch_selectors = cur_view.dclrs_selectors || null;
 
-
-	var push = Array.prototype.push;
-
-
 	tree.states.stch = (function(cur_view) {
 
 		return (cur_view.stch_hs_list && cur_view.stch_hs_list.slice()) || [];
