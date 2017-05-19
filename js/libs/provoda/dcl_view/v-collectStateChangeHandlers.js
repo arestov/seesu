@@ -1,6 +1,6 @@
 define(function (require) {
 'use strict';
-var collectStateChangeHandlers = require('./collectStateChangeHandlers');
+var collectStateChangeHandlers = require('../dcl/collectStateChangeHandlers');
 
 return function(self, props) {
   var index = collectStateChangeHandlers(self, props);
