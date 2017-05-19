@@ -636,7 +636,7 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 		};
 	})(),
 	onDomBuild: function() {
-		this.used_data_structure = getUsageTree.call(this, getUsageTree, this);
+		this.used_data_structure = getUsageTree(this, this);
 		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
 		var opts = this.opts || this.parent_view.opts;
 		pvUpdate(opts.bwlev, 'view_structure', this.used_data_structure);

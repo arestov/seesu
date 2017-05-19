@@ -91,7 +91,7 @@ var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
 	}
 };
 
-var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root_constr_id) {
+var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_constr_id) {
 	/*
 	- collch
 	- pv-view внутри .tpl
@@ -109,7 +109,6 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 		шаблон, который задекларирован у потомка или шаблон, который родитель сам передаст потомку
 	}
 	*/
-	getUsageTree = getUsageTree || this.getUsageTree;
 
 	/*
 	собираем состояния из контроллера
@@ -120,26 +119,26 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 
 		// debugger;
 
-	for (var dclr_name in this.dclrs_fpckgs) {
-		var dclrs = this.dclrs_fpckgs[dclr_name];
+	for (var dclr_name in cur_view.dclrs_fpckgs) {
+		var dclrs = cur_view.dclrs_fpckgs[dclr_name];
 		if (dclrs.solving) {
 			tree.collch_dclrs[dclr_name] = dclrs.solving;
 		}
 	}
-	tree.collch_selectors = this.dclrs_selectors || null;
+	tree.collch_selectors = cur_view.dclrs_selectors || null;
 
 
 	var push = Array.prototype.push;
 
 
-	tree.states.stch = (function() {
+	tree.states.stch = (function(cur_view) {
 
-		return (this.stch_hs_list && this.stch_hs_list.slice()) || [];
+		return (cur_view.stch_hs_list && cur_view.stch_hs_list.slice()) || [];
 
-	}).call(this);
+	})(cur_view);
 
-	tree.states.compx_deps = (function() {
-		if (!this.full_comlxs_list) {
+	tree.states.compx_deps = (function(cur_view) {
+		if (!cur_view.full_comlxs_list) {
 			return [];
 		}
 
@@ -147,21 +146,21 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 
 		var compxs_itself = [];
 
-		for (var i = 0; i < this.full_comlxs_list.length; i++) {
-			push.apply(result, this.full_comlxs_list[i].depends_on);
-			compxs_itself.push(this.full_comlxs_list[i].name);
+		for (var i = 0; i < cur_view.full_comlxs_list.length; i++) {
+			push.apply(result, cur_view.full_comlxs_list[i].depends_on);
+			compxs_itself.push(cur_view.full_comlxs_list[i].name);
 		}
 
 		return spv.collapseAll(spv.arrayExclude(result, compxs_itself));
 
-	}).call(this);
+	})(cur_view);
 
 
 	tree.merged_states = spv.collapseAll(tree.states.stch, tree.states.compx_deps);
 
-	tree.basetree = (function() {
+	tree.basetree = (function(cur_view) {
 
-		if (this.base_tree_list) {
+		if (cur_view.base_tree_list) {
 			var merged_tree = {
 				node_id: null,
 				children: null,
@@ -173,13 +172,13 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 			var i, cur;
 			var arr = [];
 
-			for (i = 0; i < this.base_tree_list.length; i++) {
-				cur = this.base_tree_list[i];
+			for (i = 0; i < cur_view.base_tree_list.length; i++) {
+				cur = cur_view.base_tree_list[i];
 
 
 				var sample_name = cur.sample_name;
-				if (!sample_name && cur.part_name && typeof this.parts_builder[cur.part_name] == 'string') {
-					sample_name = this.parts_builder[cur.part_name];
+				if (!sample_name && cur.part_name && typeof cur_view.parts_builder[cur.part_name] == 'string') {
+					sample_name = cur_view.parts_builder[cur.part_name];
 				}
 
 				if (!sample_name) {
@@ -194,7 +193,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 				}
 
 				arr.push(structure_data);
-				//this.structure_data
+				//cur_view.structure_data
 
 			}
 
@@ -255,7 +254,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 			return null;
 		}
 
-	}).call(this);
+	})(cur_view);
 
 
 	if (tree.basetree && tree.basetree.states) {
@@ -273,11 +272,11 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 	var children_list_index = {};
 	var children_list = [];
 
-	if (this.children_views) {
-		iterateChildren(this.children_views, bCh, children_list_index, children_list);
+	if (cur_view.children_views) {
+		iterateChildren(cur_view.children_views, bCh, children_list_index, children_list);
 	}
-	if (this.children_views_by_mn) {
-		iterateChildrenByMN(this.children_views_by_mn, bChByMN, children_list_index, children_list);
+	if (cur_view.children_views_by_mn) {
+		iterateChildrenByMN(cur_view.children_views_by_mn, bChByMN, children_list_index, children_list);
 	}
 
 	var used_base = tree.basetree || base_from_parent;
@@ -300,8 +299,8 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 	}
 
 	var own_children = {
-		children: this.children_views,
-		children_by_mn: this.children_views_by_mn
+		children: cur_view.children_views,
+		children_by_mn: cur_view.children_views_by_mn
 	};
 
 	for (var i = 0; i < children_list.length; i++) {
@@ -314,7 +313,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 		var base_tree_chi = tree.basetree && spv.getTargetField(tree.basetree, cur);
 		if (tree.basetree) {
 			parent_basetree_chi = base_tree_chi;
-			chi_constr_id = this.constr_id;
+			chi_constr_id = cur_view.constr_id;
 		} else {
 			parent_basetree_chi = base_from_parent && spv.getTargetField(base_from_parent, cur);
 			chi_constr_id = base_root_constr_id;
@@ -325,7 +324,7 @@ var getUsageTree = function(getUsageTree, root_view, base_from_parent, base_root
 			: spv.getTargetField(own_children, cur);
 
 		if (constr) {
-			var struc = getUsageTree.call(constr.prototype, getUsageTree, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
+			var struc = getUsageTree(constr.prototype, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
 			spv.setTargetField(tree.constr_children, cur, struc);
 			spv.setTargetField(tree.m_children, cur, struc);
 		} else if (parent_basetree_chi) {
