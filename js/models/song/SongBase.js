@@ -404,7 +404,7 @@ return spv.inh(BrowseMap.Model, {
 			[
 				['can_load_random_lfm_track_name'],
 				[
-					'lfm', [
+					'#lfm', [
 						['artist', 'can_load_random_lfm_track_name'],
 						function(api, opts, artist_name) {
 							return api.get('artist.getTopTracks', {
