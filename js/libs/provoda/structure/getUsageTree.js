@@ -132,7 +132,7 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 	tree.states.stch = (cur_view.stch_hs_list && cur_view.stch_hs_list.slice()) || [];
 	tree.states.compx_deps = getCompxDeps(cur_view);
 	tree.merged_states = spv.collapseAll(tree.states.stch, tree.states.compx_deps);
-	tree.basetree = getBaseTree(cur_view);
+	tree.basetree = getBaseTree(cur_view, root_view);
 
 	if (tree.basetree && tree.basetree.states) {
 		tree.merged_states = spv.collapseAll(tree.merged_states, tree.basetree.states);
