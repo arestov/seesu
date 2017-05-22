@@ -56,6 +56,12 @@ var iterateChildrenByMN = function(children_by_mn, cb, arg1, arg2) {
 		}
 	}
 };
+
+function mutateTreeStoreForChild(tree, store, path, struc) {
+	spv.setTargetField(store, path, struc);
+	spv.setTargetField(tree.m_children, path, struc);
+}
+
 var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
 	var used_base = base_from_parent;
 	var children_list_index = {}, children_list = [];
@@ -78,8 +84,7 @@ var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
 
 		var struc = getTreeSample();
 
-		spv.setTargetField(tree.tree_children, cur, struc);
-		spv.setTargetField(tree.m_children, cur, struc);
+		mutateTreeStoreForChild(tree, tree.tree_children, cur, struc);
 		buildFreeChildren(struc, parent_basetree_chi, base_root_constr_id);
 		struc.base_from_parent = parent_basetree_chi;
 		struc.base_root_constr_id = base_root_constr_id;
@@ -195,12 +200,11 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 
 		if (constr) {
 			var struc = getUsageTree(constr.prototype, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
-			spv.setTargetField(tree.constr_children, cur, struc);
-			spv.setTargetField(tree.m_children, cur, struc);
+			mutateTreeStoreForChild(tree, tree.constr_children, cur, struc);
+
 		} else if (parent_basetree_chi) {
 			var struc = getTreeSample();
-			spv.setTargetField(tree.tree_children, cur, struc);
-			spv.setTargetField(tree.m_children, cur, struc);
+			mutateTreeStoreForChild(tree, tree.tree_children, cur, struc);
 			buildFreeChildren(struc, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
 			struc.base_from_parent = parent_basetree_chi;
 			struc.base_root_constr_id = chi_constr_id;
