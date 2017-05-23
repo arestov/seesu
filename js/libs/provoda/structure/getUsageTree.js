@@ -3,8 +3,13 @@ define(function(require) {
 var spv = require('spv');
 var push = Array.prototype.push;
 
-var getTreeSample = function() {
+var getTreeSample = function(full_key, key) {
+	if (!full_key || !key) {
+		throw new Error('full_key and key should be provided');
+	}
 	return {
+		key: key,
+		full_key: full_key,
 		basetree: null,
 		states: {
 			stch: [],
@@ -82,7 +87,7 @@ var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
 
 		var parent_basetree_chi = tree.basetree ? spv.getTargetField(tree.basetree, cur) : (base_from_parent && spv.getTargetField(base_from_parent, cur));
 
-		var struc = getTreeSample();
+		var struc = getTreeSample(tree.full_key.concat(cur), cur);
 
 		mutateTreeStoreForChild(tree, tree.tree_children, cur, struc);
 		buildFreeChildren(struc, parent_basetree_chi, base_root_constr_id);
@@ -97,7 +102,7 @@ var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
 	}
 };
 
-var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_constr_id) {
+var getUsageTree = function(full_key, key, cur_view, root_view, base_from_parent, base_root_constr_id) {
 	/*
 	- collch
 	- pv-view внутри .tpl
@@ -121,7 +126,7 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 	1) stch_hs
 	2)  full_comlxs_list
 	*/
-	var tree = getTreeSample();
+	var tree = getTreeSample(full_key, key);
 
 		// debugger;
 
@@ -199,11 +204,11 @@ var getUsageTree = function(cur_view, root_view, base_from_parent, base_root_con
 			: spv.getTargetField(own_children, cur);
 
 		if (constr) {
-			var struc = getUsageTree(constr.prototype, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
+			var struc = getUsageTree(full_key.concat(cur), cur, constr.prototype, root_view, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
 			mutateTreeStoreForChild(tree, tree.constr_children, cur, struc);
 
 		} else if (parent_basetree_chi) {
-			var struc = getTreeSample();
+			var struc = getTreeSample(full_key.concat(cur), cur);
 			mutateTreeStoreForChild(tree, tree.tree_children, cur, struc);
 			buildFreeChildren(struc, parent_basetree_chi, parent_basetree_chi && chi_constr_id);
 			struc.base_from_parent = parent_basetree_chi;

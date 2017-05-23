@@ -636,11 +636,11 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 		};
 	})(),
 	onDomBuild: function() {
-		this.used_data_structure = getUsageTree(this, this);
+		this.used_data_structure = getUsageTree([], [], this, this);
 		this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
 		var opts = this.opts || this.parent_view.opts;
 		pvUpdate(opts.bwlev, 'view_structure', this.used_data_structure);
-		console.log(this.used_data_structure);
+		console.log('used_data_structure', this.used_data_structure);
 
 	},
 	wrapStartScreen: function(start_screen) {
