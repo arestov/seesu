@@ -8,7 +8,7 @@ var updateProxy = require('./updateProxy');
 var prsStCon =  require('./prsStCon');
 var StatesEmitter = require('./StatesEmitter');
 var PvTemplate = require('./PvTemplate');
-var onPropsExtend = require('./onExtendView');
+var onPropsExtend = require('./View/onExtend');
 var selectCollectionChange = require('./View/selectCollectionChange');
 
 var pvUpdate = updateProxy.update;
@@ -86,6 +86,7 @@ var initView = function(target, view_otps, opts){
 
 	target.nesting_space = view_otps.nesting_space;
 	target.nesting_name = view_otps.nesting_name;
+	target.by_model_name = Boolean(view_otps.by_model_name);
 
 	if (target.base_tree_list) {
 		target.base_skeleton = getBaseTreeSkeleton(target.base_tree_list);
@@ -687,6 +688,7 @@ var View = spv.inh(StatesEmitter, {
 				location_name: child_name + '-' + view_space,
 				nesting_space: view_space,
 				nesting_name: child_name,
+				by_model_name: address_opts.by_model_name,
 				used_data_structure: used_data_structure
 			};
 

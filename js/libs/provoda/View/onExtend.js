@@ -3,12 +3,12 @@ define(function (require) {
 var spv = require('spv');
 var cloneObj = spv.cloneObj;
 
-var checkApis = require('./StatesEmitter/checkApis');
-var collectCompxs = require('./StatesEmitter/collectCompxs');
-var collectSelectorsOfCollchs = require('./dcl/collectSelectorsOfCollchs');
-var collectCollectionChangeDeclarations = require('./dcl/collectCollectionChangeDeclarations');
-var changeChildrenViewsDeclarations = require('./dcl/changeChildrenViewsDeclarations');
-var collectStateChangeHandlers = require('./dcl/v-collectStateChangeHandlers');
+var checkApis = require('../StatesEmitter/checkApis');
+var collectCompxs = require('../StatesEmitter/collectCompxs');
+var collectSelectorsOfCollchs = require('../dcl_view/collectSelectorsOfCollchs');
+var collectCollectionChangeDeclarations = require('../dcl_view/collectCollectionChangeDeclarations');
+var changeChildrenViewsDeclarations = require('../dcl_view/changeChildrenViewsDeclarations');
+var collectStateChangeHandlers = require('../dcl_view/v-collectStateChangeHandlers');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
