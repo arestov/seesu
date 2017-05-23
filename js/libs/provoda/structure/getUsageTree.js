@@ -23,6 +23,7 @@ var getTreeSample = function(full_key, key) {
 		},
 		tree_children: {},
 		m_children: {},
+		children_index: {},
 		merged_states: [],
 		base_from_parent: null,
 		base_root_constr_id: null,
@@ -65,6 +66,9 @@ var iterateChildrenByMN = function(children_by_mn, cb, arg1, arg2) {
 function mutateTreeStoreForChild(tree, store, path, struc) {
 	spv.setTargetField(store, path, struc);
 	spv.setTargetField(tree.m_children, path, struc);
+	tree.children_index[struc.full_key.join('.')] = struc;
+
+	spv.cloneObj(tree.children_index, struc.children_index);
 }
 
 var buildFreeChildren = function(tree, base_from_parent, base_root_constr_id) {
