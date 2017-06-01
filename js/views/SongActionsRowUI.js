@@ -6,6 +6,8 @@ var spv = require('spv');
 var etc_views = require('./etc_views');
 var SongActTaggingControl = require('./SongActTaggingControl');
 var View = require('View');
+var used_struc_bhv = require('./utils/used_struc').bhv;
+
 
 var pvUpdate = pv.update;
 var ShareSearchSection = spv.inh(View, {}, {
@@ -171,7 +173,7 @@ var ArrowPart = spv.inh(etc_views.ActionsRowUI, {}, {
 });
 
 // __run_probe_song_action
-var Probe = spv.inh(View, {}, {
+var Probe = spv.inh(View, {}, spv.cloneObj({
   children_views: {
     current_md: {arrow: ArrowPart}
   },
@@ -184,7 +186,7 @@ var Probe = spv.inh(View, {}, {
       'row-playlist-add': SongActPlaylistingUI,
     }
   },
-});
+}, used_struc_bhv));
 
 
 var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
