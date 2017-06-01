@@ -15,6 +15,7 @@ var View = require('View');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
 var map_slice_by_model = require('./pages/index');
+var used_struc_bhv = require('./utils/used_struc').bhv;
 
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
@@ -93,7 +94,7 @@ function changeFaviconNode(d, oldLink, src, type) {
 
 var push = Array.prototype.push;
 
-var BrowseLevView = spv.inh(View, {}, {
+var BrowseLevView = spv.inh(View, {}, spv.cloneObj({
 	children_views_by_mn: {
 		pioneer: map_slice_by_model
 	},
@@ -153,8 +154,8 @@ var BrowseLevView = spv.inh(View, {}, {
 				}
 			}
 		}
-	}
-});
+	},
+}, used_struc_bhv));
 
 
 var BrowseLevNavView = spv.inh(View, {}, {
