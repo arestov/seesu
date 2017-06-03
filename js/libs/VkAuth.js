@@ -36,7 +36,7 @@ function buildVkAuth(obj, opts) {
 	obj.on('vk-site-api', function(VK) {
 		var _this = this;
 		if (_this.vksite_app){
-			pvUpdate('settings_bits', this.vksite_settings);
+			pvUpdate(_this, 'settings_bits', this.vksite_settings);
 			VK.addCallback('onSettingsChanged', function(sts){
 				_this.vksite_settings = sts;
 				setTimeout(function() {
