@@ -4,6 +4,7 @@ var Model = require('../Model');
 var mark = require('./mark');
 var spv = require('spv');
 var BrowseLevel = require('../bwlev/BrowseLevel');
+var getUsageStruc = require('./getUsageStruc');
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
@@ -15,15 +16,27 @@ var Probe = spv.inh(Model, {
     self.bwlevs = {};
   },
 }, {
+  'stch-used_struc': function(self, value) {
+    console.log('GOT used_struc', value);
+  },
   'compx-struc': [
-    ['@one:struc:owner_bwlev', 'name'],
-    function(struc, name) {
-      if (!struc) {return;}
-
-      console.log('---------Probe', name, struc.main.m_children.children);
-      return struc.main.m_children[name];
-    }
-  ]
+		['used_struc', '@current_md', 'name'],
+		function(struc, pioneer, probe_name) {
+			// if (num == -2) {return}
+      debugger;
+			if (!struc || !pioneer || !probe_name) {return;}
+			return getUsageStruc(pioneer, probe_name, struc, this.app);
+		}
+	],
+  // 'compx-struc': [
+  //   ['@one:struc:owner_bwlev', 'name'],
+  //   function(struc, name) {
+  //     if (!struc) {return;}
+  //
+  //     console.log('---------Probe', name, struc.main.m_children.children);
+  //     return struc.main.m_children[name];
+  //   }
+  // ]
 });
 
 BrowseLevel.prototype.BWL = BrowseLevel;
