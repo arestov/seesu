@@ -10,7 +10,9 @@ var bhv = {
       return getViewPath(this).join('.');
     }
   ],
-
+  'stch-used_struc': function(self, value) {
+    self.RPCLegacy('updateState', 'used_struc', value);
+  },
   'compx-used_struc': [
     ['#view_structure', 'view_path'],
     function(view_structure, view_path) {
