@@ -216,11 +216,13 @@ function getterSPI(){
 
     if (self.subPager){
       var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);
-      if (Array.isArray(sub_page)) {
-        return init(self, sub_page[0], sub_page[1]);
-      } else {
-        return sub_page;
-      }
+      var instance = Array.isArray(sub_page)
+        ? init(self, sub_page[0], sub_page[1])
+        : sub_page;
+
+      self.sub_pages[sp_name] = instance;
+      return instance;
+
     }
   };
 }

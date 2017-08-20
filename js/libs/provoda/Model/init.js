@@ -26,7 +26,7 @@ return function initModel(self, opts, data, params, more, states) {
 
   self.sub_pages = null;
 
-  if (self._sub_pages || self._sub_pager){
+  if (self._sub_pages || self._sub_pager || self.subPager){
     self.sub_pages = {};
   }
 
