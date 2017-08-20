@@ -316,12 +316,13 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 			i;
 		var serplr;
 
+		var query = this.q || '';
 
-		if (':playlists'.match(spv.getStringPattern(this.q))){
+		if (':playlists'.match(spv.getStringPattern(query))){
 			this.setInactiveAll('section-playlist');
 			pl_sec = this.g('section-playlist');
 			pl_sec.setActive();
-			pl_sec.changeQuery(this.q);
+			pl_sec.changeQuery(query);
 
 
 			serplr = this.app.getPlaylists();
@@ -335,12 +336,12 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 
 			pl_sec.appendResults(pl_results);
 			pl_sec.renderSuggests(true);
-		} else if (!this.q.match(/^:/)){
+		} else if (!query.match(/^:/)){
 			this.setActiveAll('section-playlist');
 			//playlist search
 
 
-			serplr = this.app.getPlaylists(this.q);
+			serplr = this.app.getPlaylists(query);
 			if (serplr.length){
 				for (i = 0; i < serplr.length; i++) {
 					pl_results.push({
@@ -360,8 +361,8 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 			}
 
 			//===playlists search
-			this.searchOffline(this.q);
-			this.searchNetwork(this.q);
+			this.searchOffline(query);
+			this.searchNetwork(query);
 		}
 	},
 	searchOffline: spv.debounce(function(q){
