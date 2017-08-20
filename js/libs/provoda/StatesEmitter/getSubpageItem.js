@@ -55,16 +55,22 @@ return function getSubpageItem(cur, key) {
 			title: [[...]]
 		}
 		*/
-		if (!cur.title || typeof cur.title != 'object') {
+		if (!cur.constr.prototype['compx-nav_title'] && (!cur.title || typeof cur.title != 'object')) {
 			// title should be. in array or object presentation
 			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
 		}
 
-		item = subPageHeaded(spv.inh(cur.constr, {
-			skip_code_path: true
-		}, {
-			'compx-nav_title': cur.title
-		}), cur.head, key);
+		if (cur.title) {
+			item = subPageHeaded(spv.inh(cur.constr, {
+				skip_code_path: true
+			}, {
+				'compx-nav_title': cur.title
+			}), cur.head, key);
+		} else {
+			item = subPageHeaded(cur.constr, cur.head, key);
+		}
+
+
 	} else {
 		/* EXAMPLE
 		'sub_page-similar': SimilarTags

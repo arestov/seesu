@@ -128,7 +128,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
   init: function (self, opts, data) {
     if (!self.skip_map_init){
       if (data) {
-        if (data['url_part']){
+        if (data['url_part'] && !self.hasComplexStateFn('url_part')){
           self.initState('url_part', data['url_part']);
         }
         if (data['nav_title']){
