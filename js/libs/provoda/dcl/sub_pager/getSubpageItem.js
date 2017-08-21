@@ -12,6 +12,7 @@ var subPageHeaded = function(Constr, head, key, getKey) {
 		key: key,
 		constr: Constr,
 		byType: null,
+		can_be_reusable: null,
 		head: head,
 		getKey: getKey,
 		getHead: head && spv.mmap({
@@ -67,10 +68,15 @@ return function getSubpageItem(cur, key, byType) {
 		if (cur.title) {
 			extend['compx-nav_title'] = cur.title;
 		}
+		if (cur.reusable) {
+			extend['compx-$$reusable_url'] = cur.reusable;
+		}
 
 		item = subPageHeaded(spv.inh(cur.constr, {
 			skip_code_path: true
 		}, extend), cur.head, key, cur.getKey);
+
+		item.can_be_reusable = Boolean(cur.reusable);
 
 	} else {
 		/* EXAMPLE

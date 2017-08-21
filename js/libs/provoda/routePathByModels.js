@@ -6,7 +6,7 @@ var morph_helpers = require('js/libs/morph_helpers');
 var getSPI = getterSPI();
 var getSPIConstr = getterSPIConstr();
 
-var routePathByModels = function routePathByModels(start_md, pth_string, need_constr, strict) {
+var routePathByModels = function routePathByModels(start_md, pth_string, need_constr, strict, options) {
 
   /*
   catalog
@@ -66,7 +66,7 @@ var routePathByModels = function routePathByModels(start_md, pth_string, need_co
       continue;
     }
 
-    var md = getSPI(cur_md, path_full_string);
+    var md = getSPI(cur_md, path_full_string, options);
     if (md){
       cur_md = md;
       result = md;
@@ -197,9 +197,19 @@ function getterSPI(){
     return self.initSi(Constr, instance_data, null, null, common_opts[0]);
   };
 
-  return function getSPI(self, sp_name) {
+  return function getSPI(self, sp_name, options) {
+    var reuse = options && options.reuse;
+
     var item = selectRouteItem(self, sp_name);
     if (item) {
+      var can_be_reusable = item.can_be_reusable;
+      if (reuse && can_be_reusable && self._last_subpages[item.key]) {
+        var instance = self._last_subpages[item.key];
+        if (instance.state('$$reusable_url')) {
+          return instance;
+        }
+      }
+
       var getKey = item.getKey;
       var key = getKey ? getKey(decodeURIComponent(sp_name), sp_name) : sp_name;
 
@@ -211,6 +221,9 @@ function getterSPI(){
       if (instance) {
         watchSubPageKey(self, instance, key);
         self.sub_pages[key] = instance;
+        if (can_be_reusable) {
+          self._last_subpages[item.key] = instance;
+        }
         return instance;
       }
     }
