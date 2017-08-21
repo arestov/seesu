@@ -3,14 +3,16 @@ define(function (require) {
 
 var spv = require('spv');
 
-var subPageHeaded = function(Constr, head, key) {
+var subPageHeaded = function(Constr, head, key, getKey) {
 	if (!key) {
 		throw new Error('should be key');
 	}
+
 	return {
 		key: key,
 		constr: Constr,
 		head: head,
+		getKey: getKey,
 		getHead: head && spv.mmap({
 			props_map: head
 		})
@@ -65,9 +67,9 @@ return function getSubpageItem(cur, key) {
 				skip_code_path: true
 			}, {
 				'compx-nav_title': cur.title
-			}), cur.head, key);
+			}), cur.head, key, cur.getKey);
 		} else {
-			item = subPageHeaded(cur.constr, cur.head, key);
+			item = subPageHeaded(cur.constr, cur.head, key, cur.getKey);
 		}
 
 
