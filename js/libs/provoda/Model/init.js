@@ -2,6 +2,7 @@ define(function (require) {
 'use strict';
 
 var cloneObj = require('spv').cloneObj;
+var initSubPager = require('../dcl/sub_pager/init');
 
 return function initModel(self, opts, data, params, more, states) {
   self.current_motivator = self.current_motivator || (opts && opts._motivator);
@@ -24,11 +25,7 @@ return function initModel(self, opts, data, params, more, states) {
 
   self._calls_flow = self._highway.calls_flow;
 
-  self.sub_pages = null;
-
-  if (self._sub_pages || self._sub_pager || self.subPager){
-    self.sub_pages = {};
-  }
+  initSubPager(self);
 
   if (opts && opts.map_parent){
     self.map_parent = opts.map_parent;
