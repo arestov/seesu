@@ -184,14 +184,6 @@ function getterSPI(){
 
     var sub_pager = self._sub_pager;
     if (sub_pager) {
-      var decoded = decodeURIComponent(sp_name);
-      var getKey = sub_pager.key;
-      var key = getKey ? getKey(decoded, sp_name) : sp_name;
-
-      if (self.sub_pages && self.sub_pages[key]){
-        return self.sub_pages[key];
-      }
-
       var type;
 
       if (sub_pager.item) {
@@ -204,6 +196,13 @@ function getterSPI(){
         }
 
         item = type && sub_pager.by_type[type];
+      }
+
+      var getKey = item.getKey;
+      var key = getKey ? getKey(decodeURIComponent(sp_name), sp_name) : sp_name;
+
+      if (self.sub_pages && self.sub_pages[key]){
+        return self.sub_pages[key];
       }
 
       var instance = item && prepare(self, item, sp_name, slashed, type);
