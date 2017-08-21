@@ -6,7 +6,6 @@ var hp = require('./helpers');
 var updateProxy = require('./updateProxy');
 var StatesLabour = require('./StatesLabour');
 var Eventor = require('./Eventor');
-var addSubpage = require('./StatesEmitter/addSubpage');
 var useInterface = require('./StatesEmitter/useInterface');
 var onPropsExtend = require('./onExtendSE');
 
@@ -285,8 +284,6 @@ var StatesEmitter = spv.inh(Eventor, {
 	onExtend: onPropsExtend,
 	props: props
 });
-
-StatesEmitter.addSubpage = addSubpage;
 
 return StatesEmitter;
 });

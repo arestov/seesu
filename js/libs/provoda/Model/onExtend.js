@@ -3,13 +3,13 @@ define(function(require){
 
 var spv = require('spv');
 var checkApis = require('../StatesEmitter/checkApis');
-var checkSubpager = require('../StatesEmitter/checkSubpager');
-var collectSubpages = require('../StatesEmitter/collectSubpages');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var checkChi = require('../StatesEmitter/checkChi');
 var checkNestRqC = require('../StatesEmitter/checkNestRqC');
 var checkNestSel = require('../dcl/nest_sel/check');
 var checkNestCnt = require('../dcl/nest_conj/check');
+var checkSubpager = require('../dcl/sub_pager/check');
+var collectSubpages = require('../dcl/sub_pager/collectSubpages');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');

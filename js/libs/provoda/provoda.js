@@ -17,6 +17,7 @@ var updateProxy = require('./updateProxy');
 var initDeclaredNestings = require('./initDeclaredNestings');
 var markStrucure = require('./structure/mark');
 var create = require('./create');
+var addSubpage = require('./dcl/sub_pager/addSubpage');
 
 var provoda, pv;
 var pvUpdate = updateProxy.update;
@@ -91,7 +92,7 @@ pv = provoda = {
 	getParsedPath: initDeclaredNestings.getParsedPath,
 	getSubpages: initDeclaredNestings.getSubpages,
 	pathExecutor: initDeclaredNestings.pathExecutor,
-	addSubpage: StatesEmitter.addSubpage,
+	addSubpage: addSubpage,
 	updateNesting: function(md, nesting_name, nesting_value, opts, spec_data) {
 		md.updateNesting(nesting_name, nesting_value, opts, spec_data);
 	},
