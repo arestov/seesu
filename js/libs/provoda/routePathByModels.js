@@ -209,6 +209,7 @@ function getterSPI(){
 
       var instance = item && prepare(self, item, sp_name, slash(sp_name));
       if (instance) {
+        watchSubPageKey(self, instance, key);
         self.sub_pages[key] = instance;
         return instance;
       }
@@ -225,6 +226,7 @@ function getterSPI(){
         : sub_page;
 
       self.sub_pages[sp_name] = instance;
+      watchSubPageKey(self, instance, sp_name);
       return instance;
 
     }
@@ -247,6 +249,23 @@ function getterSPIConstr(){
       }
     }
   };
+}
+
+function watchSubPageKey(self, instance, key) {
+  if (!instance.hasComplexStateFn('url_part')) {
+    return;
+  }
+
+  var cur_key = key;
+
+  self.lwch(instance, 'url_part', function(value) {
+    if (self.sub_pages[cur_key] === instance) {
+      self.sub_pages[cur_key] = null;
+    }
+    self.sub_pages[value] = instance;
+    cur_key = value;
+  });
+
 }
 
 routePathByModels.getSPI = getSPI;
