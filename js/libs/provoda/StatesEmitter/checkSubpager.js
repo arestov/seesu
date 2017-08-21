@@ -33,7 +33,7 @@ return function checkSubpager(self, props) {
 		self._sub_pager.type = sub_pager.type;
 		self._sub_pager.by_type = {};
 		for (var type in sub_pager.by_type) {
-			var cur = self._sub_pager.by_type[type] = getSubpageItem(sub_pager.by_type[type], 'sub-pager-by_type-' + type);
+			var cur = self._sub_pager.by_type[type] = getSubpageItem(sub_pager.by_type[type], 'sub-pager-by_type-' + type, true);
 			self._chi_sub_pager[cur.key] = cur.constr;
 		}
 	}

@@ -11,6 +11,7 @@ var subPageHeaded = function(Constr, head, key, getKey) {
 	return {
 		key: key,
 		constr: Constr,
+		byType: null,
 		head: head,
 		getKey: getKey,
 		getHead: head && spv.mmap({
@@ -19,7 +20,7 @@ var subPageHeaded = function(Constr, head, key, getKey) {
 	};
 };
 
-return function getSubpageItem(cur, key) {
+return function getSubpageItem(cur, key, byType) {
 	var item;
 	if (Array.isArray(cur)) {
 		if (!cur[1] && !cur[2]) {
@@ -83,6 +84,8 @@ return function getSubpageItem(cur, key) {
 	if (prototype['__required-nav_title'] && !prototype.compx_check['nav_title']) {
 		throw new Error('sub_page shoud have `title`');
 	}
+
+	item.byType = Boolean(byType);
 
 	return item;
 };
