@@ -46,7 +46,7 @@ var AppModelBase = spv.inh(pv.Model, {
 	    function(navi, self, url) {
 				if (url == null) {return;}
 				var bwlev = self.getNesting('current_mp_bwlev');
-				navi.set(url, bwlev);
+				navi.update(url, bwlev);
 				self.trackPage(bwlev.getNesting('pioneer').model_name);
 	    }
 	  ],

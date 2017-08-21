@@ -190,6 +190,12 @@ var navi;
 
 			current_histate = history_obj;
 		},
+		update: function(url, data) {
+			if (current_histate && current_histate.data === data) {
+				return this._saveHistory(decodeURI(url), data, current_histate.url);
+			}
+			return this._saveHistory(decodeURI(url), data);
+		},
 		set: function(url, data){
 			this._saveHistory(decodeURI(url), data);
 		},
