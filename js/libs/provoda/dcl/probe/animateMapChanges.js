@@ -135,6 +135,11 @@ var branch = function (bwlev) {
 }
 
  function animateMapChanges(app, bwlev) {
+ var diff = probeDiff(bwlev.getMDReplacer(), app.current_mp_bwlev && app.current_mp_bwlev.getMDReplacer());
+ if (!diff.array || !diff.array.length) {
+   return;
+ }
+
   var bwlevs = branch(bwlev);
   var models = bwlevs.map(getPioneer);
   updateNesting(app, 'navigation', bwlevs);
@@ -145,7 +150,8 @@ var branch = function (bwlev) {
     app.matchNav();
   }
 
-  var diff = probeDiff(bwlev.getMDReplacer(), app.current_mp_bwlev && app.current_mp_bwlev.getMDReplacer());
+
+
   var changes = diff;
   var i;
   var all_changhes = spv.filter(changes.array, 'changes');
