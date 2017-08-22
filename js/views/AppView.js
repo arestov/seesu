@@ -179,6 +179,21 @@ var BrowseLevNavView = spv.inh(View, {}, {
 			return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
 		}
 	},
+	'compx-mp_stack_root_follower': [
+		['$index', '$index_back', 'vmp_show'],
+		function (index, index_back) {
+			if (index == 0) {
+				return;
+			}
+
+			if (index_back == 0) {
+				// title
+				return;
+			}
+
+			return index == 1;
+		}
+	],
 	'compx-mp_stack': [
 		['$index', '$index_back', 'vmp_show'],
 		function (index, index_back, vmp_show) {
