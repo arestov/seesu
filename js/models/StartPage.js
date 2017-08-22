@@ -80,7 +80,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 }, {
 	model_name: 'start_page',
 	zero_map_level: true,
-	'chi-invstg': invstg.SearchPage,
 	showPlaylists: function(){
 		this.app.search(':playlists');
 	},
@@ -104,6 +103,18 @@ var StartPage = spv.inh(BrowseMap.Model, {
 	},
 	sub_pager: {
 		by_type: {
+			search: {
+				head: {
+					query: 'by_slash.0',
+				},
+				constr: invstg.SearchPage,
+				reusable: [
+					['mp_detailed'],
+					function(det) {
+						return !det;
+					}
+				]
+			},
 			artist: [
 				ArtCard, null, {
 					artist_name: 'by_slash.0'
@@ -142,6 +153,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			],
 		},
 		type: {
+			search: 'search',
 			catalog: 'artist',
 			tracks: function(name) {
 				var parts = route.getCommaParts(name);

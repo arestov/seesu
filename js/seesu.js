@@ -20,6 +20,7 @@ var localize_dict = require('js/libs/localizer');
 var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
+var pvUpdate = pv.update;
 
 var app_env = app_serv.app_env;
 
@@ -36,8 +37,6 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
-var pvUpdate = pv.update;
-var pvState = pv.state;
 var chrome = window.chrome;
 var ChromeExtensionButtonView = spv.inh(View, {}, {
 	state_change: {
@@ -463,15 +462,6 @@ var SeesuApp = spv.inh(AppModel, {
 
 		this.trigger('vk-api', vkapi, user_id);
 	},
-	createSearchPage: function() {
-		// var sp = new invstg.SearchPage();
-		// sp.init({
-		// 	app: this,
-		// 	map_parent: this.start_page
-		// });
-		return this.start_page.initChi('invstg');
-	},
-
 	getPlaylists: function(query) {
 		var r = [],i;
 		if (this.gena){

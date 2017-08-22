@@ -271,18 +271,38 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 	// 	this._super.apply(this, arguments);
 
 	// },
+
+	'compx-shown': [
+		['mp_detailed', 'shown'],
+		function(mp_detailed, shown) {
+			return shown || mp_detailed;
+		}
+	],
+	'compx-url_part': [
+		['query'],
+		function(query) {
+			return '/search/' + encodeURIComponent(query);
+		}
+	],
 	'compx-focused': [
 		['focused', 'mp_has_focus'],
 		function (focused, mp_has_focus){
 			return focused || mp_has_focus;
 		}
 	],
-	'compx-mp_detailed': [
-		['mp_detailed', 'mp_show', 'focused', 'mp_has_focus'],
-		function (mp_detailed, mp_show, focused, mp_has_focus) {
-			return mp_detailed || (mp_show && focused && !mp_has_focus);
+	'compx-focus_loosed': [
+		['focus_loosed', 'focused', 'mp_has_focus'],
+		function(loosed, focused, mp_has_focus) {
+			return loosed || (focused && !mp_has_focus);
 		}
 	],
+	'compx-mp_detailed': [['focus_loosed']],
+	// 'compx-mp_detailed': [
+	// 	['mp_detailed', 'mp_show', 'focused', 'mp_has_focus'],
+	// 	function (mp_detailed, mp_show, focused, mp_has_focus) {
+	// 		return mp_detailed || (mp_show && focused && !mp_has_focus);
+	// 	}
+	// ],
 	'nest-section': [[PlaylistsSection, ArtistsSection, AlbumsSection, TagsSection, TracksSection]],
 	setItemForEnter: function() {
 
@@ -305,9 +325,6 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 		"Down": function() {
 			this.selectEnterItemBelow();
 		}
-	},
-	getURL: function() {
-		return '?q=' + encodeURIComponent(this.q || '');
 	},
 	searchf: function() {
 		var playlists = this.app.gena.playlists,
