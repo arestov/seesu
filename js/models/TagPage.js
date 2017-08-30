@@ -65,52 +65,52 @@ var HypemTagPlaylist = spv.inh(SongsList.HypemPlaylist, {}, {
 		}]
 	]
 });
-var Fav25HypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
-	send_params: {
-		fav_from: 25,
-		fav_to: 250
-	}
-});
-var Fav250HypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
-	send_params: {
-		fav_from: 250,
-		fav_to: 100000
-	}
-});
-
-var AllHypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
-});
-
-var FreeTagSongs = spv.inh(SongsList, {}, {
-	'nest_req-songs-list': [
-		[
-			{
-				is_array: true,
-				source: 'playlist.trackList.track',
-				props_map: {
-					artist: 'creator',
-					track: 'title',
-					lfm_img: ['lfm_image', 'image']
-				}
-			},
-			false,
-			[['files', {
-				is_array: true,
-				source: 'playlist.trackList.track',
-				props_map: {
-					artist: 'creator',
-					track: 'title',
-					link: 'location'
-				}
-			}]]
-		],
-		['#lfm', 'get', function() {
-			return ['playlist.fetch', {
-				playlistURL: 'lastfm://playlist/tag/' + this.head.tag_name + '/freetracks'
-			}];
-		}]
-	]
-});
+// var Fav25HypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
+// 	send_params: {
+// 		fav_from: 25,
+// 		fav_to: 250
+// 	}
+// });
+// var Fav250HypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
+// 	send_params: {
+// 		fav_from: 250,
+// 		fav_to: 100000
+// 	}
+// });
+//
+// var AllHypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
+// });
+//
+// var FreeTagSongs = spv.inh(SongsList, {}, {
+// 	'nest_req-songs-list': [
+// 		[
+// 			{
+// 				is_array: true,
+// 				source: 'playlist.trackList.track',
+// 				props_map: {
+// 					artist: 'creator',
+// 					track: 'title',
+// 					lfm_img: ['lfm_image', 'image']
+// 				}
+// 			},
+// 			false,
+// 			[['files', {
+// 				is_array: true,
+// 				source: 'playlist.trackList.track',
+// 				props_map: {
+// 					artist: 'creator',
+// 					track: 'title',
+// 					link: 'location'
+// 				}
+// 			}]]
+// 		],
+// 		['#lfm', 'get', function() {
+// 			return ['playlist.fetch', {
+// 				playlistURL: 'lastfm://playlist/tag/' + this.head.tag_name + '/freetracks'
+// 			}];
+// 		}]
+// 	]
+// });
 
 
 
@@ -129,8 +129,12 @@ var TopTagSongs = spv.inh(SongsList, {}, {
 
 
 var SongsLists = spv.inh(BrowseMap.Model, {}, {
-	'nest-lists_list': [['_', 'free', /*'trending_exfm', 'explore_exfm',*/
-			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'], {
+	'nest-lists_list': [[
+		'_',
+		// 'free',
+		/*'trending_exfm', 'explore_exfm',*/
+		// 'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'
+		], {
 				preload_on: 'mp_has_focus',
 			}],
 	model_name: 'tag_songs',
@@ -139,10 +143,10 @@ var SongsLists = spv.inh(BrowseMap.Model, {}, {
 			constr: TopTagSongs,
 			title: [['#locales.Top']]
 		},
-		'free': {
-			constr: FreeTagSongs,
-			title: [['#locales.Free-songs']]
-		},
+		// 'free': {
+		// 	constr: FreeTagSongs,
+		// 	title: [['#locales.Free-songs']]
+		// },
 	/*	'trending_exfm': {
 			constr: TrendingTagSongs,
 			title: [['#locales.Trending-songs-exfm']]
@@ -151,38 +155,38 @@ var SongsLists = spv.inh(BrowseMap.Model, {}, {
 			constr: ExplorableTagSongs,
 			title: [['#locales.Explore-songs-exfm']]
 		},*/
-		'blogged': {
-			constr: AllHypemTagSongs,
-			title: [['#locales.Blogged-all-hypem']]
-		},
-		'blogged?fav_from=25&fav_to=250': {
-			constr: Fav25HypemTagSongs,
-			title: [['#locales.Blogged-25-hypem']]
-		},
-		'blogged?fav_from=250&fav_to=100000': {
-			constr: Fav250HypemTagSongs,
-			title: [['#locales.Blogged-250-hypem']]
-		}
+		// 'blogged': {
+		// 	constr: AllHypemTagSongs,
+		// 	title: [['#locales.Blogged-all-hypem']]
+		// },
+		// 'blogged?fav_from=25&fav_to=250': {
+		// 	constr: Fav25HypemTagSongs,
+		// 	title: [['#locales.Blogged-25-hypem']]
+		// },
+		// 'blogged?fav_from=250&fav_to=100000': {
+		// 	constr: Fav250HypemTagSongs,
+		// 	title: [['#locales.Blogged-250-hypem']]
+		// }
 	}
 });
 
 
-var WeekTagArtists = spv.inh(ArtistsList, {}, {
-
-	page_limit: 130,
-	getRqData: function(paging_opts) {
-		return {
-			tag: this.head.tag_name,
-			limit: paging_opts.page_limit,
-		};
-	},
-	'nest_req-artists_list': [
-		declr_parsers.lfm.getArtists('weeklyartistchart', true),
-		['#lfm', 'get', function(opts) {
-			return ['tag.getWeeklyArtistChart', this.getRqData(opts.paging)];
-		}]
-	]
-});
+// var WeekTagArtists = spv.inh(ArtistsList, {}, {
+//
+// 	page_limit: 130,
+// 	getRqData: function(paging_opts) {
+// 		return {
+// 			tag: this.head.tag_name,
+// 			limit: paging_opts.page_limit,
+// 		};
+// 	},
+// 	'nest_req-artists_list': [
+// 		declr_parsers.lfm.getArtists('weeklyartistchart', true),
+// 		['#lfm', 'get', function(opts) {
+// 			return ['tag.getWeeklyArtistChart', this.getRqData(opts.paging)];
+// 		}]
+// 	]
+// });
 
 var TagTopArtists = spv.inh(ArtistsList, {}, {
 	page_limit: 130,
@@ -201,7 +205,10 @@ var TagTopArtists = spv.inh(ArtistsList, {}, {
 });
 
 var ArtistsLists = spv.inh(BrowseMap.Model, {}, {
-	'nest-lists_list': [['_', 'week'], {
+	'nest-lists_list': [[
+		'_',
+		// 'week'
+	], {
 		preload_on: 'mp_has_focus',
 	}],
 	model_name: 'tag_artists',
@@ -210,10 +217,10 @@ var ArtistsLists = spv.inh(BrowseMap.Model, {}, {
 			constr: TagTopArtists,
 			title: [['#locales.Top']]
 		},
-		'week': {
-			constr: WeekTagArtists,
-			title: [['#locales.Week-chart']]
-		}
+		// 'week': {
+		// 	constr: WeekTagArtists,
+		// 	title: [['#locales.Week-chart']]
+		// }
 	}
 });
 
