@@ -1932,7 +1932,11 @@ html.opera-extension{
 
 .stackked .nav-root{
 	margin-right: 37px !important;
+}
 
+.stackk-root-follower .nav-usual {
+	/* -42px + 37px */
+	margin-left: -5px;
 }
 
 .not-as-application .navs .nav-title{
