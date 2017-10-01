@@ -255,9 +255,9 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			target.toggleBodyClass(state, 'deep-sandbox');
 		},
 
-		"search_query": function(target, state) {
-			target.search_input.val(state || '');
-		}
+		// "search_query": function(target, state) {
+		// 	target.search_input.val(state || '');
+		// }
 
 	},
 

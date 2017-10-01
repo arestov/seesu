@@ -69,7 +69,14 @@
 	}
 
 </style>
-<form id="search" name="search" action='/o' method="get" class="" pv-class="hidden: !show_search_form">
+<form
+	id="search"
+	name="search"
+	action='/o'
+	method="get"
+	class=""
+	pv-class="hidden: !show_search_form"
+>
   <!-- google stat for custom search in browsers -->
   <div>
     <input type="hidden" name="utm_source" value="web_app" id="app_type">
@@ -79,10 +86,15 @@
   <!-- / google stat -->
   <p id="search-p">
     <label>
-      <span class='main_search_label lang localize-search-big' pv-class="hidden: search_query">Search artists, albums, songs, tags</span>
-      <span class="inpt"><input
-        type="search" name="q" id="q" size="50"  autocomplete="off"
-        pv-type="{{show_search_form && 'way-point'}}" /></span>
+      <span class='main_search_label lang localize-search-big' pv-class="hidden: query_value">Search artists, albums, songs, tags</span>
+      <span class="inpt">
+				<input
+	        type="search" name="q" id='q' size="50"  autocomplete="off"
+	        pv-type="{{show_search_form && 'way-point'}}"
+					pv-events="input::updateState:query_value:%node%value"
+					pv-props="value:{{query_face}}"
+				/>
+			</span>
 
     </label>
 

@@ -711,7 +711,7 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
 		this.selectKeyNodes();
 		this.buildNav();
 		this.buildSearchForm();
-		this.handleSearchForm(this.els.search_form);
+		this.handleSearchForm(this.els.search_form.parent().parent());
 	}),
 	onDomBuild: function() {
 		this._super();
@@ -726,7 +726,6 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
 	handleSearchForm: function(form_node) {
 		var tpl = this.createTemplate(form_node);
 		this.tpls.push(tpl);
-
 	},
 	buildNav: function() {
 		var justhead = this.els.navs;
@@ -751,29 +750,29 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
 
 		this.search_input = this.els.search_input = search_input;
 		this.dom_related_props.push('search_input');
-
-		var _this = this;
-
-		search_input.on('keyup change input', spv.throttle(function() {
-			var input_value = this.value;
-			_this.overrideStateSilently('search_query', input_value);
-			_this.RPCLegacy('search', input_value);
-		}, 100));
-
-		search_input.on('keyup', spv.throttle(function(e) {
-			if (e.keyCode == 13) {
-				_this.RPCLegacy('refreshSearchRequest', Date.now());
-			}
-		}, 100));
-
-		search_input.on('activate_waypoint', function() {
-			search_input.focus();
-		});
-
-		this.onDie(function() {
-			search_input.off();
-			search_input = null;
-		});
+		//
+		// var _this = this;
+		//
+		// search_input.on('keyup change input', spv.throttle(function() {
+		// 	var input_value = this.value;
+		// 	_this.overrideStateSilently('search_query', input_value);
+		// 	_this.RPCLegacy('search', input_value);
+		// }, 100));
+		//
+		// search_input.on('keyup', spv.throttle(function(e) {
+		// 	if (e.keyCode == 13) {
+		// 		_this.RPCLegacy('refreshSearchRequest', Date.now());
+		// 	}
+		// }, 100));
+		//
+		// search_input.on('activate_waypoint', function() {
+		// 	search_input.focus();
+		// });
+		//
+		// this.onDie(function() {
+		// 	search_input.off();
+		// 	search_input = null;
+		// });
 	}
 });
 

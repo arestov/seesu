@@ -37,7 +37,7 @@ var StartPageView = spv.inh(coct.SPView, {}, {
 	},
 
 	tickCheckFocus: function() {
-		if (this.isAlive()){
+		if (this.isAlive() && this.root_view.search_input[0]){
 			this.root_view.search_input[0].focus();
 			this.root_view.search_input[0].select();
 		}

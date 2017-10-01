@@ -20,6 +20,7 @@ var localize_dict = require('js/libs/localizer');
 var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
+var SearchQueryModel = require('./models/SearchQueryModel');
 var pvUpdate = pv.update;
 
 var app_env = app_serv.app_env;
@@ -309,6 +310,7 @@ var SeesuApp = spv.inh(AppModel, {
 			pvUpdate(target, 'lfm_userid', target.lfm.username);
 		}
 	},
+	'nest-search_criteria': [SearchQueryModel],
 	'chi-vk_users': pv.Model,
 	'chi-vk_groups': pv.Model,
 	'chi-art_images': comd.LastFMArtistImagesSelector,
