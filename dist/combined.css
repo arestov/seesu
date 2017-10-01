@@ -5341,76 +5341,76 @@ html.opera-extension{
 								background-image: url(../i/equalaizer.gif);
 							}
 						
-          #search{
-          	padding-top:1rem;
+            #search{
+            	padding-top:1rem;
 
-          	}
+            	}
 
-          #search {
-          	margin: 0 auto;
-          	}
+            #search {
+            	margin: 0 auto;
+            	}
 
-          #search #q{
-          	box-sizing:border-box;
+            #search #q{
+            	box-sizing:border-box;
 
-          	padding: 2px 0;
+            	padding: 2px 0;
 
-          	width:100%;
-          	height:2.3rem;
+            	width:100%;
+            	height:2.3rem;
 
-          	-webkit-appearance: none;
-          }
+            	-webkit-appearance: none;
+            }
 
-          #q.surf_nav{
-          	color:transparent;
-          }
+            #q.surf_nav{
+            	color:transparent;
+            }
 
-          .theme--dark #q.surf_nav{
-          	color:#fff;
+            .theme--dark #q.surf_nav{
+            	color:#fff;
 
-          }
+            }
 
-          #search #search-p{
-          	overflow:hidden;
-          	margin:10px 0 5px;
-          	position: relative;
-          	}
-          	.main_search_label{
-          		float:left;
-          		margin-right:0.34rem;
+            #search #search-p{
+            	overflow:hidden;
+            	margin:10px 0 5px;
+            	position: relative;
+            	}
+            	.main_search_label{
+            		float:left;
+            		margin-right:0.34rem;
 
-          		line-height: 1.5em;
-          		font-style:normal;
-          		font-size: 1rem;
-          	}
-          		#search-p .main_search_label {
-          			padding-top:0.2rem;
-          			position: absolute;
-          			top: 0.4rem;
-          			left: 0.4rem;
-          			z-index: 2;
-          			color:transparent;
-          		}
-          		.theme--dark #search-p .main_search_label{
-          	color:#777;
+            		line-height: 1.5em;
+            		font-style:normal;
+            		font-size: 1rem;
+            	}
+            		#search-p .main_search_label {
+            			padding-top:0.2rem;
+            			position: absolute;
+            			top: 0.4rem;
+            			left: 0.4rem;
+            			z-index: 2;
+            			color:transparent;
+            		}
+            		.theme--dark #search-p .main_search_label{
+            	color:#777;
 
-          }
-          	#search #search-p label span.loading{
-          		position: relative;
-          	}
-          	#search #search-p label span.loading:after{
-          		left:auto;
-          		right:0;
-          		top:50%;
-          		margin-top: -0.6rem;
-          	}
-          	#search #search-p label span.inpt{
-          		display:block;
-          		overflow:hidden;
-          		padding:0.14rem;
-          	}
+            }
+            	#search #search-p label span.loading{
+            		position: relative;
+            	}
+            	#search #search-p label span.loading:after{
+            		left:auto;
+            		right:0;
+            		top:50%;
+            		margin-top: -0.6rem;
+            	}
+            	#search #search-p label span.inpt{
+            		display:block;
+            		overflow:hidden;
+            		padding:0.14rem;
+            	}
 
-          
+            
             .start-screen{
             	padding-bottom:1.5rem;
             	}

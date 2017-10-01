@@ -1989,29 +1989,43 @@
 
 				<div class="app_map_con">
 				<div class="shared-parts">
-          
-          <form id="search" name="search" action='/o' method="get" class="" pv-class="hidden: !show_search_form">
-            <!-- google stat for custom search in browsers -->
-            <div>
-              <input type="hidden" name="utm_source" value="web_app" id="app_type">
-              <input type="hidden" name="utm_medium" value="form search">
-              <input type="hidden" name="utm_campaign" value="application">
-            </div>
-            <!-- / google stat -->
-            <p id="search-p">
-              <label>
-                <span class='main_search_label lang localize-search-big' pv-class="hidden: search_query">Search artists, albums, songs, tags</span>
-                <span class="inpt"><input
-                  type="search" name="q" id="q" size="50"  autocomplete="off"
-                  pv-type="{{show_search_form && 'way-point'}}" /></span>
+          <div pv-nest="search_criteria">
+            
+            <form
+            	id="search"
+            	name="search"
+            	action='/o'
+            	method="get"
+            	class=""
+            	pv-class="hidden: !show_search_form"
+            >
+              <!-- google stat for custom search in browsers -->
+              <div>
+                <input type="hidden" name="utm_source" value="web_app" id="app_type">
+                <input type="hidden" name="utm_medium" value="form search">
+                <input type="hidden" name="utm_campaign" value="application">
+              </div>
+              <!-- / google stat -->
+              <p id="search-p">
+                <label>
+                  <span class='main_search_label lang localize-search-big' pv-class="hidden: query_value">Search artists, albums, songs, tags</span>
+                  <span class="inpt">
+            				<input
+            	        type="search" name="q" id='q' size="50"  autocomplete="off"
+            	        pv-type="{{show_search_form && 'way-point'}}"
+            					pv-events="input::updateState:query_value:%node%value"
+            					pv-props="value:{{query_face}}"
+            				/>
+            			</span>
 
-              </label>
+                </label>
 
-            </p>
+              </p>
 
 
-          </form>
+            </form>
 
+          </div>
 				</div>
 				<div
 					id="root_level"
