@@ -10,12 +10,13 @@ var coct = require('./coct');
 
 var AppBaseView = require('./AppBaseView');
 var WPBox = require('./modules/WPBox');
-var view_serv = require('view_serv');
 var View = require('View');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
 var map_slice_by_model = require('./pages/index');
 var used_struc_bhv = require('./utils/used_struc').bhv;
+
+var View = require('View');
 
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
@@ -48,6 +49,22 @@ function initRootView(root_view) {
 		resortQueue: resortQueue
 	});
 }
+
+
+var SearchCriteriaView = spv.inh(View, {}, {
+	'compx-startpage_autofocus': [['^startpage_autofocus']],
+	'stch-startpage_autofocus': function(target, value) {
+		if (!value) {
+			return;
+		}
+
+		target.nextLocalTick(target.tickCheckFocus);
+	},
+	tickCheckFocus: function() {
+		this.tpl.ancs['search_face'][0].focus();
+	},
+});
+
 
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	location_name: 'exposed_root_view',
@@ -233,7 +250,8 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			main: BrowseLevView,
 			detailed: BrowseLevView
 		},
-		navigation: BrowseLevNavView
+		navigation: BrowseLevNavView,
+		search_criteria: SearchCriteriaView,
 	},
 	controllers: {
 		auth_vk: etc_views.VkLoginUI,
@@ -406,7 +424,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		var offset_top;
 
 		var recheckFunc = function(){
-			if (typeof documentScrollSizeChangeHandler == 'function'){
+			if (typeof window.documentScrollSizeChangeHandler == 'function'){
 				var newsize = detectSize(getCurrentNode());
 
 				if (oldsize != newsize){
@@ -414,7 +432,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 						var offset = $(getCurrentNode()).offset();
 						offset_top = (offset && offset.top) || 0;
 					}
-					documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+					window.documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
 				}
 
 			}

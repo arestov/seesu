@@ -2012,6 +2012,7 @@
                   <span class="inpt">
             				<input
             	        type="search" name="q" id='q' size="50"  autocomplete="off"
+            	        pv-anchor="search_face"
             	        pv-type="{{show_search_form && 'way-point'}}"
             					pv-events="input::updateState:query_value:%node%value"
             					pv-props="value:{{query_face}}"
@@ -2054,7 +2055,7 @@
                   id='hint-query'
                   class="hint-query js-serv"
                   pv-text="{{nice_artist_hint}}"
-                  pv-anchor='hint-query'
+                  pv-type="way-point"
                   pv-events="click::requestSearchHint mouseout::changeSearchHint">The Beatles</a>
 
               </p>

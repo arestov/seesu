@@ -11,36 +11,11 @@ var finup = function(callback) {
 	return callback;
 };
 
-
 var StartPageView = spv.inh(coct.SPView, {}, {
 	createDetails: function(){
-
 		this.els = this.root_view.els;
 		this.c = this.els.start_screen;
 		this.createTemplate();
-
-
-		this.addWayPoint(this.tpl.ancs['hint-query'], {
-			//simple_check: true
-		});
-
-
-		var _this = this;
-		var checkFocus = function(state) {
-			if (state){
-				_this.nextLocalTick(_this.tickCheckFocus);
-			}
-		};
-		this.on('state_change-autofocus', function(e) {
-			checkFocus(e.value);
-		}, {immediately: true});
-	},
-
-	tickCheckFocus: function() {
-		if (this.isAlive() && this.root_view.search_input[0]){
-			this.root_view.search_input[0].focus();
-			this.root_view.search_input[0].select();
-		}
 	},
 	'collch-muco': true,
 	'collch-pstuff': true,
@@ -50,6 +25,9 @@ var StartPageView = spv.inh(coct.SPView, {}, {
 			main: UserCardPreview
 		},
 		tags: coct.ListPreview
+	},
+	'stch-autofocus': function(target, value) {
+		target.parent_view.parent_view.updateState('startpage_autofocus', value);
 	},
 	'compx-autofocus': {
 		depends_on: ['mp_show_end', 'mp_has_focus'],
