@@ -93,7 +93,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 	rpc_legacy: {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');
-			this.app.search(artist);
+			this.app.getNesting('search_criteria').updateState('query_value', artist);
 			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 			this.app.trackEvent('Navigation', 'hint artist');
 		},

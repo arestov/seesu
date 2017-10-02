@@ -696,11 +696,6 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
 	'stch-root-lev-search-form': function(target, state) {
 		target.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
-	'stch-show_search_form': function(target, state) {
-		if (!state){
-			target.search_input[0].blur();
-		}
-	},
 	remove: function() {
 		this._super();
 
