@@ -245,13 +245,17 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		}
 	},*/
 	'sel-coll-map_slice/song': '$spec_det-map_slice',
+	'nest_borrow-search_criteria': [
+		'^search_criteria',
+		SearchCriteriaView
+	],
 	children_views: {
 		map_slice: {
 			main: BrowseLevView,
 			detailed: BrowseLevView
 		},
 		navigation: BrowseLevNavView,
-		search_criteria: SearchCriteriaView,
+		// search_criteria: SearchCriteriaView,
 	},
 	controllers: {
 		auth_vk: etc_views.VkLoginUI,

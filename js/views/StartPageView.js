@@ -17,6 +17,7 @@ var StartPageView = spv.inh(coct.SPView, {}, {
 		this.c = this.els.start_screen;
 		this.createTemplate();
 	},
+	'nest_borrow-search_criteria': ['^^^search_criteria'],
 	'collch-muco': true,
 	'collch-pstuff': true,
 	'collch-tags': true,

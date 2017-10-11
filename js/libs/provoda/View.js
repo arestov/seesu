@@ -10,6 +10,9 @@ var StatesEmitter = require('./StatesEmitter');
 var PvTemplate = require('./PvTemplate');
 var onPropsExtend = require('./View/onExtend');
 var selectCollectionChange = require('./View/selectCollectionChange');
+var nestBorrowInit = require('./dcl_view/nest_borrow/init');
+var nestBorrowDestroy = require('./dcl_view/nest_borrow/destroy');
+var nestBorrowCheckChange = require('./dcl_view/nest_borrow/check-change');
 
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
@@ -140,6 +143,8 @@ var initView = function(target, view_otps, opts){
 
 	prsStCon.connect.parent(target);
 	prsStCon.connect.root(target);
+
+	nestBorrowInit(target);
 };
 
 var View = spv.inh(StatesEmitter, {
@@ -867,6 +872,7 @@ var View = spv.inh(StatesEmitter, {
 		if (!this._lbr.marked_as_dead){
 			$(this.getC()).remove();
 			this.markAsDead(opts && opts.skip_md_call);
+			nestBorrowDestroy(this);
 			this._lbr.marked_as_dead = true;
 		}
 		return this;
@@ -1326,6 +1332,7 @@ var View = spv.inh(StatesEmitter, {
 		selectCollectionChange(target, nesname, items, removed, old_value);
 
 		target.checkDeadChildren();
+		nestBorrowCheckChange(target, nesname, items, rold_value, removed);
 		return target;
 	},
 	removeViewsByMds: function(array, nesname, space) {

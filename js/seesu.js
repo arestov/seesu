@@ -134,7 +134,6 @@ var SeesuApp = spv.inh(AppModel, {
 			}*/
 		}, 1000 * 60 * 2);
 
-		self.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		pvUpdate(self, 'mp3_search_order', {
 			vk: 5,
 			'pleer.net': 4,
@@ -292,6 +291,9 @@ var SeesuApp = spv.inh(AppModel, {
 
 }, {
 	model_name: 'app_root',
+	BWLev: {
+		'nest-search_criteria': [SearchQueryModel],
+	},
 	'compx-app_lang': [['env.lang']],
 	'compx-locales': [
 		['app_lang'],
@@ -310,7 +312,6 @@ var SeesuApp = spv.inh(AppModel, {
 			pvUpdate(target, 'lfm_userid', target.lfm.username);
 		}
 	},
-	'nest-search_criteria': [SearchQueryModel],
 	'chi-vk_users': pv.Model,
 	'chi-vk_groups': pv.Model,
 	'chi-art_images': comd.LastFMArtistImagesSelector,

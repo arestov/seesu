@@ -47,8 +47,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 		target.su = opts.app;
 		pvUpdate(target, 'needs_search_from', true);
 		pvUpdate(target, 'nav_title', 'Seesu');
-		pvUpdate(target, 'nice_artist_hint', target.app.popular_artists[(Math.random()*10).toFixed(0)]);
-
 
 		// filesSearchers/
 		var mp3_search = BrowseMap.routePathByModels(target, 'mp3_search');
@@ -90,17 +88,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 	'nest-muco': ['conductor'],
 	'nest-tags': ['tags'],
 	'nest-news': ['news'],
-	rpc_legacy: {
-		requestSearchHint: function() {
-			var artist = this.state('nice_artist_hint');
-			this.app.getNesting('search_criteria').updateState('query_value', artist);
-			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
-			this.app.trackEvent('Navigation', 'hint artist');
-		},
-		changeSearchHint: function() {
-			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
-		}
-	},
 	sub_pager: {
 		by_type: {
 			search: {

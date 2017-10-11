@@ -9,6 +9,8 @@ var collectSelectorsOfCollchs = require('../dcl_view/collectSelectorsOfCollchs')
 var collectCollectionChangeDeclarations = require('../dcl_view/collectCollectionChangeDeclarations');
 var changeChildrenViewsDeclarations = require('../dcl_view/changeChildrenViewsDeclarations');
 var collectStateChangeHandlers = require('../dcl_view/v-collectStateChangeHandlers');
+var checkNestBorrow = require('../dcl_view/nest_borrow/check-dcl');
+var checkNestBorrowWatch = require('../dcl_view/nest_borrow/watch');
 
 var getBaseTreeCheckList = function(start) {
 	var i, result = [];
@@ -47,6 +49,7 @@ var getBaseTreeCheckList = function(start) {
 };
 
 return function(self, props, original) {
+	checkNestBorrow(self, props);
   checkApis(self, props);
 
 	collectStateChangeHandlers(self, props);
@@ -78,5 +81,7 @@ return function(self, props, original) {
 		cloneObj(self.tpl_r_events, original.tpl_r_events);
 		cloneObj(self.tpl_r_events, props.tpl_r_events);
 	}
+
+	checkNestBorrowWatch(self, props)
 };
 });
