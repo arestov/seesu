@@ -322,12 +322,12 @@ function domPart(su, app_serv){
 				if (!data) {
 					return;
 				}
-				if (data.last_ver && data.last_ver > seesu_version && data.package_url) {
+				if (data.last_ver && data.last_ver > su.version && data.package_url) {
 					var dir_files = global.require('fs').readdirSync(
 						global.require('path').resolve(global.require('nw.gui').App.manifest.main, '..')
 					);
 					if (dir_files.indexOf('.git') == -1) {
-						global.require('nodejs/update-receiver')(data.package_url, seesu_version);
+						global.require('nodejs/update-receiver')(data.package_url, su.version);
 					}
 
 					//var
