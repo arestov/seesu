@@ -52,6 +52,11 @@ function initRootView(root_view) {
 
 
 var SearchCriteriaView = spv.inh(View, {}, {
+	tpl_events: {
+		preventSubmit: function (e) {
+			e.preventDefault();
+		}
+	},
 	'compx-startpage_autofocus': [['^startpage_autofocus']],
 	'stch-startpage_autofocus': function(target, value) {
 		if (!value) {
@@ -528,7 +533,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
 			_this.checkSizeDetector();
 			_this.nextTick(_this.buildWidthStreamer);
-			_this.els.search_form.find('#app_type').val(app_env.app_type);
 
 			_this.wrapStartScreen(this.els.start_screen);
 			$('#widget-url',d).val(window.location.href.replace('index.html', ''));

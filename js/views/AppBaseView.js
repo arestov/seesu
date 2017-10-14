@@ -693,9 +693,6 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
 	'stch-full_page_need': function(target, state) {
 		target.els.screens.toggleClass('full_page_need', !!state);
 	},
-	'stch-root-lev-search-form': function(target, state) {
-		target.els.search_form.toggleClass('root-lev-search-form', !!state);
-	},
 	remove: function() {
 		this._super();
 
@@ -705,16 +702,15 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
 	buildAppDOM: spv.precall(AppBaseView.WebAppView.prototype.buildAppDOM, function() {
 		this.selectKeyNodes();
 		this.buildNav();
-		this.buildSearchForm();
-		this.handleSearchForm(this.els.search_form.parent().parent());
+		this.handleSearchForm($('#search', this.d).parent().parent());
 	}),
 	onDomBuild: function() {
 		this._super();
 		this.c.addClass('app-loaded');
-		var ext_search_query = this.els.search_input.val();
+		// var ext_search_query = this.els.search_input.val();
 		//must be before start_page view set its value to search_input
 		this.RPCLegacy('checkUserInput', {
-			ext_search_query: ext_search_query
+			// ext_search_query: ext_search_query
 		});
 
 	},
@@ -736,39 +732,6 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
 
 		return this.nav;
 	},
-	buildSearchForm: function() {
-		var search_form = $('#search', this.d);
-		this.els.search_form = search_form;
-
-		search_form.submit(function(){return false;});
-		var search_input =  $('#q', search_form);
-
-		this.search_input = this.els.search_input = search_input;
-		this.dom_related_props.push('search_input');
-		//
-		// var _this = this;
-		//
-		// search_input.on('keyup change input', spv.throttle(function() {
-		// 	var input_value = this.value;
-		// 	_this.overrideStateSilently('search_query', input_value);
-		// 	_this.RPCLegacy('search', input_value);
-		// }, 100));
-		//
-		// search_input.on('keyup', spv.throttle(function(e) {
-		// 	if (e.keyCode == 13) {
-		// 		_this.RPCLegacy('refreshSearchRequest', Date.now());
-		// 	}
-		// }, 100));
-		//
-		// search_input.on('activate_waypoint', function() {
-		// 	search_input.focus();
-		// });
-		//
-		// this.onDie(function() {
-		// 	search_input.off();
-		// 	search_input = null;
-		// });
-	}
 });
 
 AppBaseView.WebComplexTreesView = WebComplexTreesView;
