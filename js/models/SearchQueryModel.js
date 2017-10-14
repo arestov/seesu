@@ -14,6 +14,12 @@ return spv.inh(pv.Model, {
     pvUpdate(self, 'nice_artist_hint', popular_artists[(Math.random()*10).toFixed(0)]);
   }
 }, {
+  'compx-is_start': [
+    ['^selected__name'],
+    function (selected__name) {
+      return selected__name === 'start_page';
+    }
+  ],
   'compx-show_search_form': [['#show_search_form']],
   'stch-query_value': function(target, value) {
     target.updateState('query_face', value);

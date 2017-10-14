@@ -293,6 +293,12 @@ var SeesuApp = spv.inh(AppModel, {
 	model_name: 'app_root',
 	BWLev: {
 		'nest-search_criteria': [SearchQueryModel],
+		'compx-show_search_form': [
+			['@one:needs_search_from:selected__md'],
+			function(needs_search_from) {
+				return needs_search_from;
+			}
+		],
 	},
 	'compx-app_lang': [['env.lang']],
 	'compx-locales': [
