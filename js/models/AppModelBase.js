@@ -41,7 +41,7 @@ var AppModelBase = spv.inh(pv.Model, {
 	],
 	'effect-browser-location': [
 	  [
-	    ['#navi', 'self'], ['full_url'],
+	    ['navi', 'self'], ['full_url'],
 	    function(navi, self, url) {
 				if (url == null) {return;}
 				var bwlev = self.getNesting('current_mp_bwlev');
