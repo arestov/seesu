@@ -75,8 +75,6 @@ function initMapTree(app, start_page, needs_url_history, navi) {
 	pv.updateNesting(app, 'navigation', []);
 	pv.updateNesting(app, 'start_page', start_page);
 
-	app.map = BrowseMap.hookRoot(app, app.start_page);
-
 	app.map
 		.on('bridge-changed', function(bwlev) {
 			animateMapChanges(app, bwlev);
@@ -86,6 +84,8 @@ function initMapTree(app, start_page, needs_url_history, navi) {
 };
 
 function initBrowsing(app) {
+	app.map = BrowseMap.hookRoot(app, app.start_page);
+
 	var map = initMapTree(app, app.start_page, app_env.needs_url_history, navi);
 
 
