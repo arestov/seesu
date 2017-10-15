@@ -310,8 +310,8 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 	complex_states: {
 		"needs_search_from": {
 			depends_on: ['mp_detailed'],
-			fn: function(mp_detailed) {
-				return !mp_detailed;
+			fn: function() {
+				return true;
 			}
 		}
 	},
