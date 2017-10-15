@@ -6,6 +6,7 @@ var BrowseMap = require('./libs/BrowseMap');
 var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
 var app_serv = require('app_serv');
 
+var pvUpdate = pv.update;
 var app_env = app_serv.app_env;
 
 function initMapTree(app, start_page, needs_url_history, navi) {
@@ -21,6 +22,13 @@ function initMapTree(app, start_page, needs_url_history, navi) {
 	return app.map;
 };
 
+function handleQuery(map, md) {
+	if (!md || md.model_name !== 'invstg') {return;}
+
+	var search_criteria = map.getNesting('search_criteria');
+	pvUpdate(search_criteria, 'query_face', md.state('query'));
+}
+
 
 return function initBrowsing(app) {
 	var map = BrowseMap.hookRoot(app, app.start_page);
@@ -35,10 +43,12 @@ return function initBrowsing(app) {
 			var state_from_history = navi.findHistory(e.newURL);
 			if (state_from_history){
 				state_from_history.data.showOnMap();
+				handleQuery(map, state_from_history.data.getNesting('pioneer'));
 			} else{
 				var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), app.start_page);
 				var bwlev = BrowseMap.showInterest(map, interest);
 				BrowseMap.changeBridge(bwlev);
+				handleQuery(map, bwlev.getNesting('pioneer'));
 			}
 		});
 		(function() {
