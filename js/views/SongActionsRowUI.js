@@ -139,20 +139,14 @@ var LoveRowUI = spv.inh(View, {}, {
 	children_views: {
 		lfm_loveit: etc_views.LfmLoveItView
 	},
-	'collch-$ondemand-lfm_loveit': {
-		place: 'c',
-		needs_expand_state: 'active_view'
-	}
+	'collch-lfm_loveit': 'c',
 });
 
 var ScrobbleRowUI = spv.inh(View, {}, {
 	children_views: {
 		lfm_scrobble: etc_views.LfmScrobbleView
 	},
-	'collch-$ondemand-lfm_scrobble': {
-		place: 'c',
-		needs_expand_state: 'active_view'
-	}
+	'collch-lfm_scrobble': 'c',
 
 });
 

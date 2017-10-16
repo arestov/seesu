@@ -510,16 +510,21 @@
 		<div class="vk_pthgs">
 			<div pv-nest="vk__friends" class="preview_area" pv-class="access-request:pmd_vswitched">
 				<!--pv-replace sample_name:imp-area_for_button-->
-				<div pv-when="pmd_vswitched" class="pl-auth-con" pv-nest="auth_part controller:auth_vk">
-					<!--pv-replace sample_name:vk_login-->
+				<div pv-when="pmd_vswitched">
+					<div class="pl-auth-con" pv-nest="auth_part controller:auth_vk">
+						<!--pv-replace sample_name:vk_login-->
+					</div>
+
 				</div>
 			</div>
 		</div>
 
 		<div class="lfm_preview_block preview_area" pv-class="access-request:pmd_vswitched">
 			<!--pv-replace sample_name:imp-area_for_button-->
-			<div pv-when="pmd_vswitched" class="pl-auth-con" pv-nest="auth_part controller:auth_lfm">
-				<!--pv-replace sample_name:lfm-auth-module-->
+			<div pv-when="pmd_vswitched">
+				<div class="pl-auth-con" pv-nest="auth_part controller:auth_lfm">
+					<!--pv-replace sample_name:lfm-auth-module-->
+				</div>
 			</div>
 		</div>
 
@@ -1117,180 +1122,194 @@
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
 
-					
-					<div class="addsong-to-playlist hidden" pv-nest="context_parts for_model:row-playlist-add" pv-class="hidden: !active_view">
-					  <h4><span class="lang localize-addsong ">add song to</span>:</h4>
-					  <div>
-					    <input type="search" class="playlist-query" autocomplete="off"
-					      pv-events="{{
-					        keyup:input_search
-					        change:input_search
-					        search:input_search
-					        mousemove:input_search
-					      }}"
-					    />
-					  </div>
-					  <!--pv-replace sample_name:list_of_playlists pv-when:active_view-->
-					</div>
-
-					
-					
-					
-					
-					<div class="share-song hidden" pv-nest="context_parts for_model:row-share" pv-class="hidden: !active_view">
-					  <input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
-					  <div
-					    class="shareb-base  users-list"
-					    pv-anchor="vk_share_b">
-
-					    <div class="shareb-con">
-
-					      <div >
-
-					        <div class="">
-					          <input type="text" pv-anchor="vk_share_search">
-					        </div>
-
-					        <div pv-nest="searcher">
-
-					          <div pv-nest="section for_model:section-vk-users" class="vk_share">
-					            <div class="vk_auth" pv-anchor="vk_auth"></div>
-					            <div pv-class="hidden: needs_vk_auth">
-					              <div>
-					                <div class="share_header_wrap">
-					                  <h3 class="vk_share_header lang localize-post-song"></h3>
-					                  <div class="post-to-my-vk-wall" pv-class="hidden: !own_photo" pv-events="click::postToVKWall" pv-type="way-point">
-					                    <img pv-props="src: {{own_photo}}">
-					                    <span class="lang localize-to-own-wall"></span>
-					                  </div>
-					                </div>
-
-					                <div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
-					              </div>
-					              <div class="details_switch_block">
-					                <span class="desc">vk.com</span>
-
-					                <div class="details_switch" >
-					                  <div
-					                    class="min_details"
-					                    pv-class="active: !vis_full_view_mode"
-					                    pv-events="click:toggleVisState:full_view_mode::">
-					                    <span class="icon"></span>
-					                  </div>
-					                  <div
-					                    class="max_details"
-					                    pv-class="active: vis_full_view_mode"
-					                    pv-events="click:toggleVisState:full_view_mode:true">
-					                    <span class="icon"></span>
-					                  </div>
-					                </div>
-					              </div>
-
-					              <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
-					                <div class="song_acting_vk_search protect_clicks  details_for_switcher ">
-					                  <ul>
-					                    <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-					                      <a>
-					                        <img pv-props="src:{{photo}}">
-					                        <span pv-text="{{text_title}}" class="text_part"></span>
-					                      </a>
-					                    </li>
-					                  </ul>
-					                  <div class="clicks_protecter" pv-events="click:requestFullView"></div>
-					                </div>
-					              </div>
-					            </div>
-
-
-
-
-					          </div>
-
-					          <div pv-anchor="lfm_auth_con"></div>
-					          <div pv-nest="section for_model:section-lfm-user"
-					            class="lfm_share"
-					            pv-class="hidden: !can_share">
-					            <ul >
-					              <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-					                <a>
-					                  <img src="" alt=""
-
-					                    pv-props=
-					                    "src: {{
-					                    (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
-					                    || selected_image.url
-					                    }}">
-					                  <span pv-text="{{text_title}}" class="text_part"></span>
-					                </a>
-					              </li>
-					            </ul>
-					          </div>
-					          <div pv-nest="section for_model:section-lfm-friends"
-					            class="lfm_share"
-					            pv-class="hidden: !can_share"
-
-					          >
-					            <div class="details_switch_block">
-					              <span class="desc">last.fm</span>
-
-					              <div class="details_switch" >
-					                <div
-					                  class="min_details"
-					                  pv-class="active: !vis_full_view_mode"
-					                  pv-events="click:toggleVisState:full_view_mode::">
-					                  <span class="icon"></span>
-					                </div>
-					                <div
-					                  class="max_details"
-					                  pv-class="active: vis_full_view_mode"
-					                  pv-events="click:toggleVisState:full_view_mode:true">
-					                  <span class="icon"></span>
-					                </div>
-					              </div>
-					            </div>
-
-					            <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
-					              <div class="song_acting_lfm_search protect_clicks details_for_switcher" >
-					                <ul >
-					                  <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-					                    <a>
-					                      <img pv-props="
-					                          src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
-					                        ">
-
-					                      <span pv-text="{{text_title}}" class="text_part"></span>
-					                    </a>
-					                  </li>
-					                </ul>
-					                <div class="clicks_protecter" pv-events="click:requestFullView"></div>
-					              </div>
-					            </div>
-					          </div>
-					        </div>
-
-
-
-					      </div>
-					    </div>
-					  </div>
-					</div>
-
-					<div class="love-song hidden" pv-nest="context_parts for_model:row-love" pv-class="hidden: !active_view"></div>
-					<div class="song-tagging hidden" pv-nest="context_parts for_model:row-tag" pv-class="hidden: !active_view"></div>
-					<div class="last-fm-scrobbling hidden" pv-nest="context_parts for_model:row-lastfm" pv-class="hidden: !active_view"></div>
-					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-repeat-song" pv-class="hidden: !active_view">
-						<label class="song-row-label">
-							<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
-							<span class="lang localize-rept-song">Repeat playing song</span>
-						</label>
+					<div pv-when="active_part === 'row-playlist-add'">
+						
+						<div class="addsong-to-playlist" pv-nest="context_parts for_model:row-playlist-add">
+						  <h4><span class="lang localize-addsong ">add song to</span>:</h4>
+						  <div>
+						    <input type="search" class="playlist-query" autocomplete="off"
+						      pv-events="{{
+						        keyup:input_search
+						        change:input_search
+						        search:input_search
+						        mousemove:input_search
+						      }}"
+						    />
+						  </div>
+						  <!--pv-replace sample_name:list_of_playlists pv-when:active_view-->
+						</div>
 
 					</div>
-					<div class="simple_row_setting hidden" pv-nest="context_parts for_model:row-pl-shuffle" pv-class="hidden: !active_view">
-						<label class="song-row-label">
-							<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
-							<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
-						</label>
 
+					<div class="share-song" pv-when="active_part === 'row-share'">
+						
+						
+						
+						
+
+						<div pv-nest="context_parts for_model:row-share">
+						  <input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
+						  <div
+						    class="shareb-base  users-list"
+						    pv-anchor="vk_share_b">
+
+						    <div class="shareb-con">
+
+						      <div >
+
+						        <div class="">
+						          <input type="text" pv-anchor="vk_share_search">
+						        </div>
+
+						        <div pv-nest="searcher">
+
+						          <div pv-nest="section for_model:section-vk-users" class="vk_share">
+						            <div class="vk_auth" pv-anchor="vk_auth"></div>
+						            <div pv-class="hidden: needs_vk_auth">
+						              <div>
+						                <div class="share_header_wrap">
+						                  <h3 class="vk_share_header lang localize-post-song"></h3>
+						                  <div class="post-to-my-vk-wall" pv-class="hidden: !own_photo" pv-events="click::postToVKWall" pv-type="way-point">
+						                    <img pv-props="src: {{own_photo}}">
+						                    <span class="lang localize-to-own-wall"></span>
+						                  </div>
+						                </div>
+
+						                <div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
+						              </div>
+						              <div class="details_switch_block">
+						                <span class="desc">vk.com</span>
+
+						                <div class="details_switch" >
+						                  <div
+						                    class="min_details"
+						                    pv-class="active: !vis_full_view_mode"
+						                    pv-events="click:toggleVisState:full_view_mode::">
+						                    <span class="icon"></span>
+						                  </div>
+						                  <div
+						                    class="max_details"
+						                    pv-class="active: vis_full_view_mode"
+						                    pv-events="click:toggleVisState:full_view_mode:true">
+						                    <span class="icon"></span>
+						                  </div>
+						                </div>
+						              </div>
+
+						              <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+						                <div class="song_acting_vk_search protect_clicks  details_for_switcher ">
+						                  <ul>
+						                    <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+						                      <a>
+						                        <img pv-props="src:{{photo}}">
+						                        <span pv-text="{{text_title}}" class="text_part"></span>
+						                      </a>
+						                    </li>
+						                  </ul>
+						                  <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+						                </div>
+						              </div>
+						            </div>
+
+
+
+
+						          </div>
+
+						          <div pv-anchor="lfm_auth_con"></div>
+						          <div pv-nest="section for_model:section-lfm-user"
+						            class="lfm_share"
+						            pv-class="hidden: !can_share">
+						            <ul >
+						              <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+						                <a>
+						                  <img src="" alt=""
+
+						                    pv-props=
+						                    "src: {{
+						                    (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+						                    || selected_image.url
+						                    }}">
+						                  <span pv-text="{{text_title}}" class="text_part"></span>
+						                </a>
+						              </li>
+						            </ul>
+						          </div>
+						          <div pv-nest="section for_model:section-lfm-friends"
+						            class="lfm_share"
+						            pv-class="hidden: !can_share"
+
+						          >
+						            <div class="details_switch_block">
+						              <span class="desc">last.fm</span>
+
+						              <div class="details_switch" >
+						                <div
+						                  class="min_details"
+						                  pv-class="active: !vis_full_view_mode"
+						                  pv-events="click:toggleVisState:full_view_mode::">
+						                  <span class="icon"></span>
+						                </div>
+						                <div
+						                  class="max_details"
+						                  pv-class="active: vis_full_view_mode"
+						                  pv-events="click:toggleVisState:full_view_mode:true">
+						                  <span class="icon"></span>
+						                </div>
+						              </div>
+						            </div>
+
+						            <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+						              <div class="song_acting_lfm_search protect_clicks details_for_switcher" >
+						                <ul >
+						                  <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+						                    <a>
+						                      <img pv-props="
+						                          src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
+						                        ">
+
+						                      <span pv-text="{{text_title}}" class="text_part"></span>
+						                    </a>
+						                  </li>
+						                </ul>
+						                <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+						              </div>
+						            </div>
+						          </div>
+						        </div>
+
+
+
+						      </div>
+						    </div>
+						  </div>
+						</div>
+
+					</div>
+					<div class="love-song" pv-when="active_part === 'row-love'">
+						<div pv-nest="context_parts for_model:row-love"></div>
+					</div>
+					<div class="song-tagging" pv-when="active_part === 'row-tag'">
+						<div pv-nest="context_parts for_model:row-tag"></div>
+					</div>
+					<div class="last-fm-scrobbling" pv-when="active_part === 'row-lastfm'">
+						<div pv-nest="context_parts for_model:row-lastfm"></div>
+					</div>
+					<div class="simple_row_setting" pv-when="active_part === 'row-repeat-song'">
+						<div pv-nest="context_parts for_model:row-repeat-song">
+							<label class="song-row-label">
+								<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
+								<span class="lang localize-rept-song">Repeat playing song</span>
+							</label>
+						</div>
+					</div>
+					<div class="simple_row_setting" pv-when="active_part === 'row-pl-shuffle'">
+						<div pv-nest="context_parts for_model:row-pl-shuffle">
+							<label class="song-row-label">
+								<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
+								<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
+							</label>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -2009,7 +2028,7 @@
               <!-- / google stat -->
               <p id="search-p">
                 <label>
-                  <span class='main_search_label lang localize-search-big' pv-class="hidden: query_value">Search artists, albums, songs, tags</span>
+                  <span class='main_search_label lang localize-search-big' pv-class="hidden: query_face">Search artists, albums, songs, tags</span>
                   <span class="inpt">
             				<input
             	        type="search" name="q" size="50"  autocomplete="off"
