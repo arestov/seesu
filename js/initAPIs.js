@@ -282,7 +282,7 @@ function domPart(su, app_serv){
 			if (!data) {
 				return;
 			}
-			pv.update(su.start_page.getNesting('news'), 'news_list', StartPage.AppNews.converNews(data));
+			pv.update(su, 'news_list', StartPage.AppNews.converNews(data));
 		});
 	});
 	queue.add(function() {
