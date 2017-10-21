@@ -75,14 +75,30 @@ var patching_directives = {
 var patching_directives_list = getIndexList(patching_directives);
 
 var patchNode = function(node, struc_store, directives_data, getSample, opts) {
+  var instructions = directives_data && directives_data.instructions;
+
+  if (instructions) {
+    if (instructions['pv-when'] && instructions['pv-nest']) {
+      throw new Error('do not use pv-when and pv-nest on same node');
+      /*
+         1 - it's not osbiois what should be handled 1st
+         2 - there is bug:
+          when pv-when is true it appends node,
+          pv-nest remove it. clone it.
+          so when pv-when is false it tries to remove wrong node
+      */
+    }
+
+  }
+
 	for (var i = 0; i < patching_directives_list.length; i++) {
 		var cur = patching_directives_list[i];
-		if (!directives_data || !directives_data.instructions[cur]) {
+		if (!directives_data || !instructions[cur]) {
 			continue;
 		}
 		// cur
 		// node, params, getSample, opts
-		var result = patching_directives[cur].call(null, node, directives_data.instructions[cur], getSample, opts);
+		var result = patching_directives[cur].call(null, node, instructions[cur], getSample, opts);
 		if (!result) {
 			return;
 		}

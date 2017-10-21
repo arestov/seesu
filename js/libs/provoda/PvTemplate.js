@@ -191,7 +191,7 @@ var hndPVRepeat = function(new_fv, states) {
 		}
 		full_pv_context += field_name;
 
-		var fragt = document.createDocumentFragment();
+		var fragt = window.document.createDocumentFragment();
 
 		for (var i = 0; i < collection.length; i++) {
 			var scope = {};
@@ -280,11 +280,16 @@ var indexPvView = function(item, index) {
 			storage = {index: {}};
 			spv.setTargetField(index, field, storage);
 		}
-		if (!storage.first){
-			storage.first = item;
-			storage.comment_anchor = document.createComment('collch anchor for: ' + real_name + ", " + space + ' (by_model_name)');
-			$(item.node).before(storage.comment_anchor);
+		if (storage.index[item.for_model]) {
+			throw new Error("you can't have multiple `by_model` views");
+			// not implemented yet. so don't use it;
 		}
+
+		item.comment_anchor = window.document.createComment(
+			'collch anchor for: ' + real_name + ", " + item.for_model + ' (by_model_name)'
+		);
+		$(item.node).before(item.comment_anchor);
+
 		//cur.sampler
 		item.original_node = item.node;
 		//cur.sampler =
@@ -497,7 +502,7 @@ spv.Class.extendTo(PvTemplate, {
 				calculator = data.calculator,
 				sfy_values = data.sfy_values;
 
-			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
+			var comment_anchor = window.document.createComment('pv-repeat anchor for: ' + expression);
 			$(node).after(comment_anchor).detach();
 			var repeat_data = {
 				array: null

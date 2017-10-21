@@ -100,7 +100,20 @@ var spv = require('spv');
 		play: function() {
 
 			this.requireAE();
-			this.a.play();
+			var audio = this.a;
+			var promise = this.a.play();
+			this.a.play_promise = promise;
+			if (!promise) {
+				return;
+			}
+
+			var rem = function() {
+				if (audio.play_promise === promise) {
+					audio.play_promise = null;
+				}
+			}
+
+			promise.then(rem, rem);
 		},
 		load: function() {
 
@@ -120,7 +133,19 @@ var spv = require('spv');
 		},
 		pause: function() {
 			//this.a.loadme = false;
-			this.a.pause();
+			var audio = this.a;
+
+			if (!audio.play_promise) {
+				audio.pause();
+				return;
+			}
+
+			var self = this;
+			audio.play_promise.then(function() {
+				if (self.a === audio) {
+					audio.pause();
+				}
+			});
 		},
 		setVolume: function(vol, fac) {
 			if (fac){
@@ -131,6 +156,18 @@ var spv = require('spv');
 
 		},
 		setPosition: function(pos, fac) {
+			/*
+			0 = HAVE_NOTHING - no information whether or not the audio/video is ready
+			1 = HAVE_METADATA - metadata for the audio/video is ready
+			2 = HAVE_CURRENT_DATA - data for the current playback position is available, but not enough data to play next frame/millisecond
+			3 = HAVE_FUTURE_DATA - data for the current and at least the next frame is available
+			4 = HAVE_ENOUGH_DATA - enough data available to start playing
+			*/
+
+			if (this.a.readyState < 2) {
+				return;
+			}
+
 			var target_pos;
 			var available;
 			var possible_position;

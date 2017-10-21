@@ -1,6 +1,6 @@
 define(function () {
 'use strict';
-var getParents = function (mdrp) {
+var getTree = function (mdrp) {
   var result = [];
   if (!mdrp) {
     return result;
@@ -30,28 +30,28 @@ var pathAsSteps = function (path, value) {
   return result;
 };
 
-return function probeDiff(value, oldvalue) {
-  var bwlev = value;
-  var target = bwlev.getMD().getNesting('pioneer').getMDReplacer();
-
-  var value_full_path = getParents(value);
-  var oldvalue_full_path = getParents(oldvalue);
-
-  var common_parent = null;
-  var value_path_to = null;
-  var oldvalue_path_from = null;
-
+function getClosestStep(value_full_path, oldvalue_full_path) {
   var length = Math.max(value_full_path.length, oldvalue_full_path.length);
   for (var i = 0; i < length; i++) {
     var curA = value_full_path[i];
     var curB = oldvalue_full_path[i];
     if (curA !== curB) {
-      oldvalue_path_from = oldvalue_full_path.slice(i).reverse();
-      value_path_to = value_full_path.slice(i);
-      break;
+      return i;
     }
-    common_parent = curA;
   }
+}
+
+return function probeDiff(value, oldvalue) {
+  var bwlev = value;
+  var target = bwlev.getMD().getNesting('pioneer').getMDReplacer();
+
+  var value_full_path = getTree(value);
+  var oldvalue_full_path = getTree(oldvalue);
+
+  var closest_step = getClosestStep(value_full_path, oldvalue_full_path);
+  var value_path_to = closest_step != null && value_full_path.slice(closest_step);;
+  var oldvalue_path_from = closest_step != null && oldvalue_full_path.slice(closest_step).reverse();
+  var common_step = closest_step != null && value_full_path[closest_step - 1];
 
   var changes_wrap = [];
   if (oldvalue_path_from && oldvalue_path_from.length) {
@@ -73,7 +73,7 @@ return function probeDiff(value, oldvalue) {
     target: target,
     value_full_path: value_full_path,
     oldvalue_full_path: oldvalue_full_path,
-    common_parent: common_parent,
+    common_step: common_step,
     array: changes_wrap,
   };
 };

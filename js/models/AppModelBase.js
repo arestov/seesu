@@ -3,7 +3,6 @@ define(function(require) {
 var pv = require('pv');
 var spv = require('spv');
 var BrowseMap = require('../libs/BrowseMap');
-var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
 
 var AppModelBase = spv.inh(pv.Model, {
 	init: function(target) {
@@ -42,30 +41,16 @@ var AppModelBase = spv.inh(pv.Model, {
 	],
 	'effect-browser-location': [
 	  [
-	    ['#navi', 'self'], ['full_url'],
+	    ['navi', 'self'], ['full_url'],
 	    function(navi, self, url) {
 				if (url == null) {return;}
 				var bwlev = self.getNesting('current_mp_bwlev');
-				navi.set(url, bwlev);
+				navi.update(url, bwlev);
 				self.trackPage(bwlev.getNesting('pioneer').model_name);
 	    }
 	  ],
 	  [['doc_title']]
 	],
-	initMapTree: function(start_page, needs_url_history, navi) {
-		this.useInterface('navi', needs_url_history && navi);
-		pv.updateNesting(this, 'navigation', []);
-		pv.updateNesting(this, 'start_page', start_page);
-
-		this.map = BrowseMap.hookRoot(this, this.start_page);
-
-		this.map
-			.on('bridge-changed', function(bwlev) {
-				animateMapChanges(this, bwlev);
-			}, this.getContextOptsI());
-
-		return this.map;
-	},
 	changeNavTree: function(nav_tree) {
 		// this.nav_tree = spv.filter(nav_tree, 'resident');
 		this.nav_tree = nav_tree;

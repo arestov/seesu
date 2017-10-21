@@ -61,7 +61,7 @@ window._gaq = window._gaq || [];
 			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
 	}
-	requirejs(['su', 'pv', 'env'], function(SeesuApp, pv, env) {
+	requirejs(['su', 'pv', 'env', 'js/initBrowsing'], function(SeesuApp, pv, env, initBrowsing) {
 		//app thread;
 		var views_proxies = new pv.views_proxies.Proxies();
 		window.views_proxies = views_proxies;
@@ -77,8 +77,10 @@ window._gaq = window._gaq || [];
 			}
 		}, seesu_version);
 
+		window.root_bwlev = initBrowsing(window.appModel);
+
 		if (need_ui) {
-			initViews(window.appModel, views_proxies, window, false, true);
+			initViews(window.root_bwlev, window.appModel, views_proxies, window, false, true);
 		}
 	});
 
@@ -88,16 +90,15 @@ window._gaq = window._gaq || [];
 		});
 	}
 
-	function initViews(appModel, proxies, win, can_die, need_exposed) {
+	function initViews(root_bwlev, appModel, proxies, win, can_die, need_exposed) {
 		//ui thread;
 		requirejs(
-			['js/views/AppView', 'js/views/RootBwlevView', 'pv', 'spv', 'js/libs/BrowseMap'],
-			function(AppView, createRootBwlevView, pv, spv, BrowseMap) {
+			['js/views/AppView', 'js/views/RootBwlevView', 'pv', 'spv'],
+			function(AppView, createRootBwlevView, pv, spv) {
 			appModel.updateLVTime(); // useless?
 
 			var proxies_space = Date.now();
-			window.root_bwlev = BrowseMap.hookRoot(appModel);
-			proxies.addSpaceById(proxies_space, window.root_bwlev);
+			proxies.addSpaceById(proxies_space, root_bwlev);
 			var mpx = proxies.getMPX(proxies_space, appModel);
 			var doc = win.document;
 
@@ -111,10 +112,10 @@ window._gaq = window._gaq || [];
 			return;
 
 			function initMainView() {
-				var mpx = proxies.getMPX(proxies_space, window.root_bwlev);
+				var mpx = proxies.getMPX(proxies_space, root_bwlev);
 
 				var RootView = createRootBwlevView(AppView);
-				var view = new RootView(options(false, mpx), {d: doc, can_die: can_die, bwlev: window.root_bwlev});
+				var view = new RootView(options(false, mpx), {d: doc, can_die: can_die, bwlev: root_bwlev});
 
 				mpx.addView(view, 'root');
 				view.onDie(function() {

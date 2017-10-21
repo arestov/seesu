@@ -10,11 +10,13 @@ var coct = require('./coct');
 
 var AppBaseView = require('./AppBaseView');
 var WPBox = require('./modules/WPBox');
-var view_serv = require('view_serv');
 var View = require('View');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
 var map_slice_by_model = require('./pages/index');
+var used_struc_bhv = require('./utils/used_struc').bhv;
+
+var View = require('View');
 
 var app_env = app_serv.app_env;
 var pvUpdate = pv.update;
@@ -47,6 +49,27 @@ function initRootView(root_view) {
 		resortQueue: resortQueue
 	});
 }
+
+
+var SearchCriteriaView = spv.inh(View, {}, {
+	tpl_events: {
+		preventSubmit: function (e) {
+			e.preventDefault();
+		}
+	},
+	'compx-startpage_autofocus': [['^startpage_autofocus']],
+	'stch-startpage_autofocus': function(target, value) {
+		if (!value) {
+			return;
+		}
+
+		target.nextLocalTick(target.tickCheckFocus);
+	},
+	tickCheckFocus: function() {
+		this.tpl.ancs['search_face'][0].focus();
+	},
+});
+
 
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
 	location_name: 'exposed_root_view',
@@ -93,7 +116,7 @@ function changeFaviconNode(d, oldLink, src, type) {
 
 var push = Array.prototype.push;
 
-var BrowseLevView = spv.inh(View, {}, {
+var BrowseLevView = spv.inh(View, {}, spv.cloneObj({
 	children_views_by_mn: {
 		pioneer: map_slice_by_model
 	},
@@ -153,8 +176,8 @@ var BrowseLevView = spv.inh(View, {}, {
 				}
 			}
 		}
-	}
-});
+	},
+}, used_struc_bhv));
 
 
 var BrowseLevNavView = spv.inh(View, {}, {
@@ -178,6 +201,21 @@ var BrowseLevNavView = spv.inh(View, {}, {
 			return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
 		}
 	},
+	'compx-mp_stack_root_follower': [
+		['$index', '$index_back', 'vmp_show'],
+		function (index, index_back) {
+			if (index == 0) {
+				return;
+			}
+
+			if (index_back == 0) {
+				// title
+				return;
+			}
+
+			return index == 1;
+		}
+	],
 	'compx-mp_stack': [
 		['$index', '$index_back', 'vmp_show'],
 		function (index, index_back, vmp_show) {
@@ -212,12 +250,17 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		}
 	},*/
 	'sel-coll-map_slice/song': '$spec_det-map_slice',
+	'nest_borrow-search_criteria': [
+		'^search_criteria',
+		SearchCriteriaView
+	],
 	children_views: {
 		map_slice: {
 			main: BrowseLevView,
 			detailed: BrowseLevView
 		},
-		navigation: BrowseLevNavView
+		navigation: BrowseLevNavView,
+		// search_criteria: SearchCriteriaView,
 	},
 	controllers: {
 		auth_vk: etc_views.VkLoginUI,
@@ -239,9 +282,9 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 			target.toggleBodyClass(state, 'deep-sandbox');
 		},
 
-		"search_query": function(target, state) {
-			target.search_input.val(state || '');
-		}
+		// "search_query": function(target, state) {
+		// 	target.search_input.val(state || '');
+		// }
 
 	},
 
@@ -390,7 +433,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 		var offset_top;
 
 		var recheckFunc = function(){
-			if (typeof documentScrollSizeChangeHandler == 'function'){
+			if (typeof window.documentScrollSizeChangeHandler == 'function'){
 				var newsize = detectSize(getCurrentNode());
 
 				if (oldsize != newsize){
@@ -398,7 +441,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 						var offset = $(getCurrentNode()).offset();
 						offset_top = (offset && offset.top) || 0;
 					}
-					documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+					window.documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
 				}
 
 			}
@@ -490,7 +533,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
 			_this.checkSizeDetector();
 			_this.nextTick(_this.buildWidthStreamer);
-			_this.els.search_form.find('#app_type').val(app_env.app_type);
 
 			_this.wrapStartScreen(this.els.start_screen);
 			$('#widget-url',d).val(window.location.href.replace('index.html', ''));

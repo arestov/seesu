@@ -6,10 +6,11 @@ var BrowseMap = require('js/libs/BrowseMap');
 
 	var Investigation = spv.inh(BrowseMap.Model, {
 		init: function(self) {
+			self.q = self.state('query') || self.init_states.query;
+
 			self.names = {};
 			self.enter_items = false;
 			self.setInactiveAll();
-			pv.update(self, 'url_part', self.getURL());
 
 			self.on('child_change-section', function(e) {
 				this.names = {};
@@ -170,7 +171,6 @@ var BrowseMap = require('js/libs/BrowseMap');
 				pv.update(this, 'query', q);
 				this.changeResultsCounter();
 				this.doEverythingForQuery();
-				pv.update(this, 'url_part', this.getURL());
 			}
 
 		},

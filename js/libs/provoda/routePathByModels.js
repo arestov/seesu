@@ -6,7 +6,7 @@ var morph_helpers = require('js/libs/morph_helpers');
 var getSPI = getterSPI();
 var getSPIConstr = getterSPIConstr();
 
-var routePathByModels = function routePathByModels(start_md, pth_string, need_constr, strict) {
+var routePathByModels = function routePathByModels(start_md, pth_string, need_constr, strict, options) {
 
   /*
   catalog
@@ -66,7 +66,7 @@ var routePathByModels = function routePathByModels(start_md, pth_string, need_co
       continue;
     }
 
-    var md = getSPI(cur_md, path_full_string);
+    var md = getSPI(cur_md, path_full_string, options);
     if (md){
       cur_md = md;
       result = md;
@@ -92,8 +92,34 @@ function subPageType(type_obj, parts) {
   return target(parts[1]);
 }
 
-function getSPOpts(md, sp_name, slashed, type) {
-  var normal_part = type ? slashed.slice(1) : slashed;
+function selectRouteItem(self, sp_name) {
+  if (self._sub_pages && self._sub_pages[sp_name]) {
+    return self._sub_pages[sp_name];
+  }
+
+  var sub_pager = self._sub_pager;
+  if (sub_pager) {
+    if (sub_pager.item) {
+      return sub_pager.item;
+    } else {
+      var types = sub_pager.by_type;
+      var type = subPageType(sub_pager.type, slash(sp_name));
+      if (type && !types[type]) {
+        throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
+      }
+      if (type) {
+        return sub_pager.by_type[type];
+      }
+    }
+  }
+
+  if (self.subPager){
+    console.warn('`subPager` is legacy. (there is no proper way to get `constr`, only `instance`). so get rid of `subPager`');
+  }
+}
+
+function getSPOpts(md, sp_name, slashed, byType) {
+  var normal_part = byType ? slashed.slice(1) : slashed;
   var by_colon = normal_part[0].split(':').map(decodeURIComponent);
   var by_comma = normal_part[0].split(',').map(decodeURIComponent);
   var by_slash = normal_part.map(decodeURIComponent);
@@ -144,7 +170,7 @@ function getterSPI(){
     return target;
   };
 
-  var prepare = function(self, item, sp_name, slashed, type) {
+  var prepare = function(self, item, sp_name, slashed) {
     var Constr = self._all_chi[item.key];
     /*
     hp_bound
@@ -156,7 +182,7 @@ function getterSPI(){
     накладываем данные из урла
     */
 
-    var common_opts = getSPOpts(self, sp_name, slashed, type);
+    var common_opts = getSPOpts(self, sp_name, slashed, item.byType);
 
     var instance_data = getInitData(self, common_opts);
     var dbu_declr = Constr.prototype.data_by_urlname;
@@ -171,84 +197,58 @@ function getterSPI(){
     return self.initSi(Constr, instance_data, null, null, common_opts[0]);
   };
 
-  return function getSPI(self, sp_name) {
-    var item = self._sub_pages && self._sub_pages[sp_name];
-    var slashed = slash(sp_name);
-    if (item){
-      if (self.sub_pages && self.sub_pages[sp_name]){
-        return self.sub_pages[sp_name];
+  return function getSPI(self, sp_name, options) {
+    var reuse = options && options.reuse;
+
+    var item = selectRouteItem(self, sp_name);
+    if (item) {
+      var can_be_reusable = item.can_be_reusable;
+      if (reuse && can_be_reusable && self._last_subpages[item.key]) {
+        var instance = self._last_subpages[item.key];
+        if (instance.state('$$reusable_url')) {
+          return instance;
+        }
       }
-      self.sub_pages[sp_name] = prepare(self, item, sp_name, slashed);
-      return self.sub_pages[sp_name];
-    }
 
-    var sub_pager = self._sub_pager;
-    if (sub_pager) {
-      var decoded = decodeURIComponent(sp_name);
-      var getKey = sub_pager.key;
-      var key = getKey ? getKey(decoded, sp_name) : sp_name;
+      var getKey = item.getKey;
+      var key = getKey ? getKey(decodeURIComponent(sp_name), sp_name) : sp_name;
 
-      if (self.sub_pages && self.sub_pages[key]){
+      if (self.sub_pages && self.sub_pages[key]) {
         return self.sub_pages[key];
       }
 
-      var type;
-
-      if (sub_pager.item) {
-        item = sub_pager.item;
-      } else {
-        var types = sub_pager.by_type;
-        type = subPageType(sub_pager.type, slashed);
-        if (type && !types[type]) {
-          throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
-        }
-
-        item = type && sub_pager.by_type[type];
-      }
-
-      var instance = item && prepare(self, item, sp_name, slashed, type);
+      var instance = item && prepare(self, item, sp_name, slash(sp_name));
       if (instance) {
+        watchSubPageKey(self, instance, key);
         self.sub_pages[key] = instance;
+        if (can_be_reusable) {
+          self._last_subpages[item.key] = instance;
+        }
         return instance;
       }
-
     }
 
     if (self.subPager){
-      var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);
-      if (Array.isArray(sub_page)) {
-        return init(self, sub_page[0], sub_page[1]);
-      } else {
-        return sub_page;
+      if (self.sub_pages[sp_name]) {
+        return self.sub_pages[sp_name];
       }
+
+      var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);
+      var instance = Array.isArray(sub_page)
+        ? init(self, sub_page[0], sub_page[1])
+        : sub_page;
+
+      self.sub_pages[sp_name] = instance;
+      watchSubPageKey(self, instance, sp_name);
+      return instance;
+
     }
   };
 }
 
 function getterSPIConstr(){
-  var select = function(self, sp_name) {
-    if (self._sub_pages && self._sub_pages[sp_name]) {
-      return self._sub_pages[sp_name];
-    }
-
-    var sub_pager = self._sub_pager;
-    if (sub_pager) {
-      if (sub_pager.item) {
-        return sub_pager.item;
-      } else {
-        var types = sub_pager.by_type;
-        var type = subPageType(sub_pager.type, slash(sp_name));
-        if (type && !types[type]) {
-          throw new Error('unexpected type: ' + type + ', expecting: ' + Object.keys(type));
-        }
-        if (type) {
-          return sub_pager.by_type[type];
-        }
-      }
-    }
-  };
   return function(self, sp_name) {
-    var item = select(self, sp_name);
+    var item = selectRouteItem(self, sp_name);
     if (item) {
       return self._all_chi[item.key];
     }
@@ -262,6 +262,23 @@ function getterSPIConstr(){
       }
     }
   };
+}
+
+function watchSubPageKey(self, instance, key) {
+  if (!instance.hasComplexStateFn('url_part')) {
+    return;
+  }
+
+  var cur_key = key;
+
+  self.lwch(instance, 'url_part', function(value) {
+    if (self.sub_pages[cur_key] === instance) {
+      self.sub_pages[cur_key] = null;
+    }
+    self.sub_pages[value] = instance;
+    cur_key = value;
+  });
+
 }
 
 routePathByModels.getSPI = getSPI;

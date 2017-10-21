@@ -9,6 +9,7 @@ var showMOnMap = require('./provoda/bwlev/showMOnMap');
 var showInterest = require('./provoda/bwlev/showInterest');
 var getBwlevFromParentBwlev = require('./provoda/bwlev/getBwlevFromParentBwlev');
 var get_constr = require('./provoda/structure/get_constr');
+var prepare = require('js/libs/provoda/structure/prepare');
 
 var routePathByModels = require('./provoda/routePathByModels');
 
@@ -128,7 +129,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
   init: function (self, opts, data) {
     if (!self.skip_map_init){
       if (data) {
-        if (data['url_part']){
+        if (data['url_part'] && !self.hasComplexStateFn('url_part')){
           self.initState('url_part', data['url_part']);
         }
         if (data['nav_title']){
@@ -241,7 +242,8 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 });
 
 function hookRoot(rootmd, start_page) {
-	var bwlev_root = createLevel(BrowseLevel, '', -2, null, rootmd, null);
+	var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(BrowseLevel, {}, rootmd.BWLev)) : BrowseLevel;
+	var bwlev_root = createLevel(CurBrowseLevel, '', -2, null, rootmd, null);
 	if (start_page) {
 		setStartBwlev('map_slice', bwlev_root, start_page);
 	}

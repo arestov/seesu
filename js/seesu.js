@@ -4,8 +4,6 @@ var spv = require('spv');
 var app_serv = require('app_serv');
 var pv = require('pv');
 var $ = require('jquery');
-var navi = require('./libs/navi');
-var BrowseMap = require('./libs/BrowseMap');
 var LfmAuth = require('./LfmAuth');
 var AppModel = require('./models/AppModel');
 var comd = require('./models/comd');
@@ -20,6 +18,9 @@ var localize_dict = require('js/libs/localizer');
 var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
+var SearchQueryModel = require('./models/SearchQueryModel');
+
+var pvUpdate = pv.update;
 
 var app_env = app_serv.app_env;
 
@@ -36,8 +37,6 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
-var pvUpdate = pv.update;
-var pvState = pv.state;
 var chrome = window.chrome;
 var ChromeExtensionButtonView = spv.inh(View, {}, {
 	state_change: {
@@ -67,6 +66,7 @@ var OperaExtensionButtonView = spv.inh(View, {}, {
 		}
 	}
 });
+
 
 var SeesuApp = spv.inh(AppModel, {
 	naming: function(fn) {
@@ -134,7 +134,6 @@ var SeesuApp = spv.inh(AppModel, {
 			}*/
 		}, 1000 * 60 * 2);
 
-		self.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		pvUpdate(self, 'mp3_search_order', {
 			vk: 5,
 			'pleer.net': 4,
@@ -178,9 +177,6 @@ var SeesuApp = spv.inh(AppModel, {
 		}
 
 		self.start_page = self.initChi('start__page');
-
-		self.initMapTree(self.start_page, app_env.needs_url_history, navi);
-
 
 		if (app_env.tizen_app){
 			//https://developer.tizen.org/
@@ -250,38 +246,6 @@ var SeesuApp = spv.inh(AppModel, {
 
 		}, 200);
 
-		if (app_env.needs_url_history){
-			navi.init(function(e){
-				var url = e.newURL;
-
-				var state_from_history = navi.findHistory(e.newURL);
-				if (state_from_history){
-					state_from_history.data.showOnMap();
-				} else{
-					var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), self.start_page);
-					var bwlev = BrowseMap.showInterest(self.map, interest);
-					BrowseMap.changeBridge(bwlev);
-				}
-			});
-			(function() {
-				var url = window.location && window.location.hash.replace(/^\#/,'');
-				if (url){
-					self.on('handle-location', function() {
-						navi.hashchangeHandler({
-							newURL: url
-						}, true);
-
-					});
-				} else {
-					var bwlev = BrowseMap.showInterest(self.map, []);
-					BrowseMap.changeBridge(bwlev);
-				}
-			})();
-		} else {
-			var bwlev = BrowseMap.showInterest(self.map, []);
-			BrowseMap.changeBridge(bwlev);
-		}
-
 		if (app_serv.app_env.nodewebkit) {
 			pv.update(self, 'disallow_seesu_listeners', true);
 		}
@@ -292,6 +256,15 @@ var SeesuApp = spv.inh(AppModel, {
 
 }, {
 	model_name: 'app_root',
+	BWLev: {
+		'nest-search_criteria': [SearchQueryModel],
+		'compx-show_search_form': [
+			['@one:needs_search_from:selected__md'],
+			function(needs_search_from) {
+				return needs_search_from;
+			}
+		],
+	},
 	'compx-app_lang': [['env.lang']],
 	'compx-locales': [
 		['app_lang'],
@@ -463,15 +436,6 @@ var SeesuApp = spv.inh(AppModel, {
 
 		this.trigger('vk-api', vkapi, user_id);
 	},
-	createSearchPage: function() {
-		// var sp = new invstg.SearchPage();
-		// sp.init({
-		// 	app: this,
-		// 	map_parent: this.start_page
-		// });
-		return this.start_page.initChi('invstg');
-	},
-
 	getPlaylists: function(query) {
 		var r = [],i;
 		if (this.gena){

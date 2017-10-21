@@ -131,17 +131,15 @@
 </style>
 <div class="complex-page_material start-screen"
   id="start-screen" pv-foreign>
-
-  <p class="search-desc">
-    <span class="lang localize-trysearches desc">try to search</span>
-    <a
-      id='hint-query'
-      class="hint-query js-serv"
-      pv-text="{{nice_artist_hint}}"
-      pv-anchor='hint-query'
-      pv-events="click::requestSearchHint mouseout::changeSearchHint">The Beatles</a>
-
-  </p>
+	<p pv-nest="search_criteria" class="search-desc search-form-desc">
+		<span class="lang localize-trysearches desc">try to search</span>
+		<a
+			id='hint-query'
+			class="hint-query js-serv"
+			pv-text="{{nice_artist_hint}}"
+			pv-type="way-point"
+			pv-events="click::requestSearchHint mouseout::changeSearchHint">The Beatles</a>
+	</p>
   <div
     class="block-for-startpage start-page-messages"
     pv-anchor="start-page-messages">

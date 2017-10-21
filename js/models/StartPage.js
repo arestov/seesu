@@ -39,6 +39,7 @@ var converNews = function(list) {
 
 var AppNews = spv.inh(BrowseMap.Model, {}, {
 	model_name: 'app_news',
+	'compx-news_list': [['#news_list']],
 });
 AppNews.converNews = converNews;
 
@@ -47,8 +48,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 		target.su = opts.app;
 		pvUpdate(target, 'needs_search_from', true);
 		pvUpdate(target, 'nav_title', 'Seesu');
-		pvUpdate(target, 'nice_artist_hint', target.app.popular_artists[(Math.random()*10).toFixed(0)]);
-
 
 		// filesSearchers/
 		var mp3_search = BrowseMap.routePathByModels(target, 'mp3_search');
@@ -80,7 +79,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 }, {
 	model_name: 'start_page',
 	zero_map_level: true,
-	'chi-invstg': invstg.SearchPage,
 	showPlaylists: function(){
 		this.app.search(':playlists');
 	},
@@ -91,19 +89,20 @@ var StartPage = spv.inh(BrowseMap.Model, {
 	'nest-muco': ['conductor'],
 	'nest-tags': ['tags'],
 	'nest-news': ['news'],
-	rpc_legacy: {
-		requestSearchHint: function() {
-			var artist = this.state('nice_artist_hint');
-			this.app.search(artist);
-			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
-			this.app.trackEvent('Navigation', 'hint artist');
-		},
-		changeSearchHint: function() {
-			pvUpdate(this, 'nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
-		}
-	},
 	sub_pager: {
 		by_type: {
+			search: {
+				head: {
+					query: 'by_slash.0',
+				},
+				constr: invstg.SearchPage,
+				reusable: [
+					['mp_detailed'],
+					function(det) {
+						return !det;
+					}
+				]
+			},
 			artist: [
 				ArtCard, null, {
 					artist_name: 'by_slash.0'
@@ -142,6 +141,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
 			],
 		},
 		type: {
+			search: 'search',
 			catalog: 'artist',
 			tracks: function(name) {
 				var parts = route.getCommaParts(name);

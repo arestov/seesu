@@ -427,14 +427,14 @@ var CountriesList = spv.inh(BrowseMap.Model, {
 	model_name: 'сountries_list',
 	'nest_posb-lists_list': ['{country_name}'],
 	sub_pager: {
-		item: [
-			CountryPlace,
-			[['country_name']],
-			{
+		item: {
+			head: {
 				country_name: [spv.capitalize.fn, 'decoded_name']
-			}
-		],
-		key: spv.capitalize.fn
+			},
+			constr: CountryPlace,
+			title: [['country_name']],
+			getKey: spv.capitalize.fn,
+		},
 	}
 });
 

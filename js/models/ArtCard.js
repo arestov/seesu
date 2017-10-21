@@ -763,7 +763,7 @@ var RandomSong = spv.inh(Song, {}, {
 var ArtistsListPlaylist = spv.inh(SongsList, {}, {
 	'nest_rqc-songs-list': RandomSong,
 	page_limit: null,
-	items_comparing_props: [['artist_name', 'artist_name']],
+	// items_comparing_props: [['artist_name', 'artist_name']],
 	'compx-has_data_loader': [
 		['^has_data_loader'],
 		function(state) {

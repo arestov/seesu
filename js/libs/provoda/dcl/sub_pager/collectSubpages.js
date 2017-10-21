@@ -2,7 +2,7 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var hp = require('../helpers');
+var hp = require('../../helpers');
 var getSubpageItem = require('./getSubpageItem');
 
 var getUnprefixed = spv.getDeprefixFunc( 'sub_page-' );

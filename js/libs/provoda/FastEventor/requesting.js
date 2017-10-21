@@ -458,6 +458,11 @@ return {
 			}
 		}
 
+		function handleError() {
+			_this.sputnik.updateState(nesting_name + "$error", true);
+			anyway();
+		}
+
 		onPromiseFail(request, function(){
 			store.error = true;
 		});
@@ -506,7 +511,7 @@ return {
 			}
 
     }, function () {
-      _this.sputnik.nextTick(anyway, null, false, initiator);
+      _this.sputnik.nextTick(handleError, null, false, initiator);
 			if (release) {
 				_this.sputnik.nextTick(release, null, false, initiator);
 			}

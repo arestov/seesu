@@ -8,7 +8,7 @@
 	margin: 0 auto;
 	}
 
-#search #q{
+.main-search-input{
 	box-sizing:border-box;
 
 	padding: 2px 0;
@@ -19,11 +19,11 @@
 	-webkit-appearance: none;
 }
 
-#q.surf_nav{
+.main-search-input.surf_nav{
 	color:transparent;
 }
 
-.theme--dark #q.surf_nav{
+.theme--dark .main-search-input.surf_nav{
 	color:#fff;
 
 }
@@ -69,7 +69,15 @@
 	}
 
 </style>
-<form id="search" name="search" action='/o' method="get" class="" pv-class="hidden: !show_search_form">
+<form
+	id="search"
+	name="search"
+	action='/o'
+	method="get"
+	class=""
+	pv-class="hidden: !show_search_form"
+	pv-events="submit:preventSubmit"
+>
   <!-- google stat for custom search in browsers -->
   <div>
     <input type="hidden" name="utm_source" value="web_app" id="app_type">
@@ -79,10 +87,17 @@
   <!-- / google stat -->
   <p id="search-p">
     <label>
-      <span class='main_search_label lang localize-search-big' pv-class="hidden: search_query">Search artists, albums, songs, tags</span>
-      <span class="inpt"><input
-        type="search" name="q" id="q" size="50"  autocomplete="off"
-        pv-type="{{show_search_form && 'way-point'}}" /></span>
+      <span class='main_search_label lang localize-search-big' pv-class="hidden: query_face">Search artists, albums, songs, tags</span>
+      <span class="inpt">
+				<input
+	        type="search" name="q" size="50"  autocomplete="off"
+					class="main-search-input"
+	        pv-anchor="search_face"
+	        pv-type="{{show_search_form && 'way-point'}}"
+					pv-events="input::updateState:query_value:%node%value"
+					pv-props="value:{{query_face}}"
+				/>
+			</span>
 
     </label>
 

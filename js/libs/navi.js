@@ -136,68 +136,65 @@ var navi;
 		_saveHistory: function(url, data, old_url){
 
 			var fakeud = this.getURLData(this.fake_current_url);
-			var replace;
-
-			if (old_url){
-
-				var oldud = this.getURLData(old_url);
-					replace = fakeud.clear_url == oldud.clear_url;
-			}
+			var replace = old_url && fakeud.clear_url == this.getURLData(old_url).clear_url;
 
 			var ud = this.getURLData(url);
-			if ((fakeud.clear_url !=  ud.clear_url) || replace){
-				if (!this.states_index[ud.uniq_url]){
-					this.setFakeURL(ud.uniq_url);
-					var history_obj = {
-						url: ud.clear_url,
-						data: data,
-						num: 0
-					};
-					this.states_index[ud.uniq_url] = history_obj;
-					if (!replace){
-						history_obj.num = history_array.length;
-						history_array[history_obj.num] = history_obj;
+			if ((fakeud.clear_url ==  ud.clear_url) && !replace) {
+				return;
+			}
 
-						if (!this.disallow_native_history){
-							if (history_api){
-								window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
-							} else {
-								window.location.assign(getURLBase() + '#' + ud.uniq_url);
-							}
-						}
+			if (this.states_index[ud.uniq_url]) {
+				return;
+			}
 
+			this.setFakeURL(ud.uniq_url);
+			var history_obj = {
+				url: ud.clear_url,
+				data: data,
+				num: 0
+			};
+			this.states_index[ud.uniq_url] = history_obj;
 
+			if (!replace){
+				history_obj.num = history_array.length;
+				history_array[history_obj.num] = history_obj;
 
-
+				if (!this.disallow_native_history){
+					if (history_api){
+						window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
 					} else {
-
-						var num = (current_histate && current_histate.num);
-						if (typeof num != 'number'){
-							num = history_array.length;//must be zero
-							//if (num !== 0){
-								//console.log(fakeud, ud, history_obj);
-							//}
-						}
-						history_array.length = num + 1;
-						history_array[num] = history_obj;
-
-						if (!this.disallow_native_history){
-							if (history_api){
-								window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
-							} else {
-								window.location.replace(getURLBase() + '#' + ud.uniq_url);
-							}
-						}
-
-
-
+						window.location.assign(getURLBase() + '#' + ud.uniq_url);
 					}
-					current_histate = history_obj;
+				}
+				current_histate = history_obj;
+				return;
+			}
 
+			var num = (current_histate && current_histate.num);
+			if (typeof num != 'number'){
+				num = history_array.length;//must be zero
+				//if (num !== 0){
+					//console.log(fakeud, ud, history_obj);
+				//}
+			}
+			history_array.length = num + 1;
+			history_array[num] = history_obj;
+
+			if (!this.disallow_native_history){
+				if (history_api){
+					window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+				} else {
+					window.location.replace(getURLBase() + '#' + ud.uniq_url);
 				}
 			}
 
-
+			current_histate = history_obj;
+		},
+		update: function(url, data) {
+			if (current_histate && current_histate.data === data) {
+				return this._saveHistory(decodeURI(url), data, current_histate.url);
+			}
+			return this._saveHistory(decodeURI(url), data);
 		},
 		set: function(url, data){
 			this._saveHistory(decodeURI(url), data);

@@ -327,14 +327,15 @@ a.track_name_loading .song-track-name,
 .theme--dark .desc{
 	color:#999;
 }
+
 .search-desc {
 	display: none;
 	font-size:0.9rem;
 }
-
 .full-page .search-desc{
 	display: block;
 }
+
 #update-star{
 	position:relative;
 	bottom:-4px;
