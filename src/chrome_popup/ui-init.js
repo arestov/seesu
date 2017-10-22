@@ -24,15 +24,20 @@ if (!need_ui) {
 	return;
 }
 
-initViews(cbp.requirejs, cbp.appModel, cbp.views_proxies, window, true);
+var requirejs = cbp.requirejs;
+var root_bwlev = cbp.root_bwlev;
 
-function initViews(requirejs, appModel, proxies, win, can_die, need_exposed) {
+initViews(root_bwlev, cbp.appModel, cbp.views_proxies, window, true);
+
+function initViews(root_bwlev, appModel, proxies, win, can_die, need_exposed) {
 	//ui thread;
-	requirejs(['js/views/AppView', 'pv', 'spv'], function(AppView, pv, spv) {
+	requirejs(
+		['js/views/AppView', 'js/views/RootBwlevView', 'pv', 'spv'],
+		function(AppView, createRootBwlevView, pv, spv) {
 		appModel.updateLVTime(); // useless?
 
 		var proxies_space = Date.now();
-		proxies.addSpaceById(proxies_space, appModel);
+		proxies.addSpaceById(proxies_space, root_bwlev);
 		var mpx = proxies.getMPX(proxies_space, appModel);
 		var doc = win.document;
 
@@ -46,7 +51,11 @@ function initViews(requirejs, appModel, proxies, win, can_die, need_exposed) {
 		return;
 
 		function initMainView() {
-			var view = new AppView(options(), {d: doc, can_die: can_die});
+			var mpx = proxies.getMPX(proxies_space, root_bwlev);
+
+			var RootView = createRootBwlevView(AppView);
+			var view = new RootView(options(false, mpx), {d: doc, can_die: can_die, bwlev: root_bwlev});
+
 			mpx.addView(view, 'root');
 			view.onDie(function() {
 				//views_proxies.removeSpaceById(proxies_space);
@@ -56,12 +65,12 @@ function initViews(requirejs, appModel, proxies, win, can_die, need_exposed) {
 		}
 
 		function initExposedView() {
-			var exposed_view = new AppView.AppExposedView(options(true), {d: doc, can_die: can_die});
+			var exposed_view = new AppView.AppExposedView(options(true, mpx), {d: doc, can_die: can_die});
 			mpx.addView(exposed_view, 'exp_root');
 			exposed_view.requestAll();
 		}
 
-		function options(usual_flow) {
+		function options(usual_flow, mpx) {
 			return {
 				mpx: mpx,
 				proxies_space: proxies_space,
