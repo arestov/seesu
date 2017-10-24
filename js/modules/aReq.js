@@ -97,7 +97,7 @@ var aReq = function(options){
 			script = window.document.createElement("script");
 			script.async = true;
 			script.onload = function(){
-				//window.document.window.documentElement.firstChild.removeChild(script);
+				//window.document.documentElement.firstChild.removeChild(script);
 
 
 
@@ -106,7 +106,7 @@ var aReq = function(options){
 				deferred.reject();
 			};
 			script.src = full_url;
-			window.document.window.documentElement.firstChild.insertBefore(script, window.document.window.documentElement.firstChild.firstChild);
+			window.document.documentElement.firstChild.insertBefore(script, window.document.documentElement.firstChild.firstChild);
 		};
 
 		if (async_script_support){
