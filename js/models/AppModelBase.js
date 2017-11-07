@@ -3,6 +3,8 @@ define(function(require) {
 var pv = require('pv');
 var spv = require('spv');
 var BrowseMap = require('../libs/BrowseMap');
+var joinNavURL = require('js/libs/provoda/bwlev/joinNavURL');
+
 
 var AppModelBase = spv.inh(pv.Model, {
 	init: function(target) {
@@ -20,9 +22,9 @@ var AppModelBase = spv.inh(pv.Model, {
 	}
 }, {
 	'compx-full_url': [
-		['@url_part:navigation.pioneer'],
-		function (list) {
-			return list && list.join('');
+		['@url_part:navigation.pioneer', '@navigation'],
+		function (nil, list) {
+			return list && joinNavURL(list);
 		}
 	],
 	'compx-doc_title': [

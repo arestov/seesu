@@ -5,6 +5,8 @@ var showInterest = require('./showInterest')
 var _goDeeper = require('./_goDeeper')
 var getBwlevFromParentBwlev = require('./getBwlevFromParentBwlev')
 var showMOnMap = require('./showMOnMap')
+var isBigStep = require('./isBigStep');
+var getNavGroups = require('./getNavGroups');
 
 var limits = {
 	same_model_matches: 1,
@@ -30,9 +32,6 @@ return function followFromTo(BWL, map, parent_bwlev, end_md) {
 };
 
 
-function isBigStep(cur, cur_child) {
-	return cur.map_parent && cur.map_parent.getNesting('pioneer') != cur_child.map_parent;
-};
 
 
 function getLimitedParent(parent_bwlev, end_md){
@@ -71,26 +70,6 @@ function getLimitedParent(parent_bwlev, end_md){
 	}
 
 	return false;
-};
-
-function getNavGroups(bwlev) {
-	var cur_group = [];
-	var groups = [cur_group];
-
-	var cur = bwlev;
-	var cur_child = cur.getNesting('pioneer');
-	while (cur) {
-		cur_group.push(cur_child);
-
-		if (isBigStep(cur, cur_child)) {
-			cur_group = [];
-			groups.push(cur_group);
-		}
-
-		cur = cur.map_parent;
-		cur_child = cur && cur.getNesting('pioneer');
-	}
-	return groups;
 };
 
 
