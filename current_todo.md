@@ -20,15 +20,16 @@
 },
 
 'compx-'
-'states': {
+'+states': {
   'daa': [
-    'compx', ['asd', 'asdf'],
+    'compx',
+    ['asd', 'asdf'],
     function (asd, asdf) {
 
     }
   ],
   'raw_data': [
-    'effect', ['window'],
+    '->[]', ['window'],
     function(update, window) {
 
     }
@@ -39,7 +40,8 @@
 'nests': {
   ''
 },
-
+->[] (affect)
+[]-> (effect)
 
 'sub_page-'
 'probe-'
