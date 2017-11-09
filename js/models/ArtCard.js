@@ -467,15 +467,12 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 	getURL: function() {
 		return '/catalog/' + this.app.encodeURLPart(this.head.artist_name);
 	},
-	complex_states: {
+	'compx-nav_title': [['artist_name']],
 
-		nav_title: [['artist_name']],
-
-		'selected_image': {
-			depends_on: ['lfm_image', 'lfm_img', 'profile_image'],
-			fn: function(lfmi_wrap, lfm_img, pi_wrap) {
-				return pi_wrap || lfm_img || lfmi_wrap;
-			}
+	'compx-selected_image': {
+		depends_on: ['lfm_image', 'lfm_img', 'profile_image'],
+		fn: function(lfmi_wrap, lfm_img, pi_wrap) {
+			return pi_wrap || lfm_img || lfmi_wrap;
 		}
 	},
 	'compx-available_images': [

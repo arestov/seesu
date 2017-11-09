@@ -99,12 +99,10 @@ var TrackImages  = spv.inh(ImagesPack, {
 		target.wlch(params.artmd, 'image-to-use', 'artist_image');
 	}
 }, {
-	complex_states: {
-		'image-to-use': {
-			depends_on: ['best_image', 'just_image', 'artist_image'],
-			fn: function(bei, jui, arti){
-				return bei || jui || arti;
-			}
+	'compx-image-to-use': {
+		depends_on: ['best_image', 'just_image', 'artist_image'],
+		fn: function(bei, jui, arti){
+			return bei || jui || arti;
 		}
 	}
 });
@@ -114,12 +112,10 @@ var ArtistImages = spv.inh(ImagesPack, {
 		target.artist_name = params.artist_name;
 	}
 }, {
-	complex_states: {
-		'image-to-use': {
-			depends_on: ['best_image', 'just_image'],
-			fn: function(bei, jui){
-				return bei || jui;
-			}
+	'compx-image-to-use': {
+		depends_on: ['best_image', 'just_image'],
+		fn: function(bei, jui){
+			return bei || jui;
 		}
 	}
 });

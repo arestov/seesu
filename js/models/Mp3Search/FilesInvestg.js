@@ -96,34 +96,32 @@ var FilesInvestg = spv.inh(pv.Model, {
   bindSource: function(name) {
     return routePathByModels(this, name, false, true);
   },
-  complex_states: {
-    'exsrc_incomplete': [
-      ['exsrc_has_request', 'exsrc_search_complete'],
-      function(exsrc_has_request, exsrc_search_complete) {
-        return exsrc_has_request && !exsrc_search_complete;
-      }
-    ],
+  'compx-exsrc_incomplete': [
+    ['exsrc_has_request', 'exsrc_search_complete'],
+    function(exsrc_has_request, exsrc_search_complete) {
+      return exsrc_has_request && !exsrc_search_complete;
+    }
+  ],
 
 
-    'legacy-files-search': [
-      ['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
-      function(h_best_f, h_files, h_mp3_files, s_complete, exsrc_incomplete) {
-        return {
-          have_best_tracks: h_best_f,
-          have_tracks: h_files,
-          have_mp3_tracks: h_mp3_files,
-          exsrc_incomplete: exsrc_incomplete,
-          search_complete: s_complete
-        };
-      }
-    ],
-    'search_ready_to_use': [
-      ['has_best_files', 'search_complete'],
-      function(h_best_f, s_complete) {
-        return h_best_f || s_complete;
-      }
-    ]
-  },
+  'compx-legacy-files-search': [
+    ['has_best_files', 'has_files', 'has_mp3_files', 'search_complete', 'exsrc_incomplete'],
+    function(h_best_f, h_files, h_mp3_files, s_complete, exsrc_incomplete) {
+      return {
+        have_best_tracks: h_best_f,
+        have_tracks: h_files,
+        have_mp3_tracks: h_mp3_files,
+        exsrc_incomplete: exsrc_incomplete,
+        search_complete: s_complete
+      };
+    }
+  ],
+  'compx-search_ready_to_use': [
+    ['has_best_files', 'search_complete'],
+    function(h_best_f, s_complete) {
+      return h_best_f || s_complete;
+    }
+  ],
   addFile: function(music_file, search_name) {
     this.addFbS(search_name);
     this.sources[search_name].addFile(music_file);

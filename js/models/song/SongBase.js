@@ -92,116 +92,114 @@ return spv.inh(BrowseMap.Model, {
 	'stch-mf_cor_current_mopla': function(target, state) {
 		target.updateNesting('current_mopla', state);
 	},
-	complex_states: {
-		'needs_states_connecting': [
-			['^active_use']
-		],
-		'mf_cor_current_mopla': [
-			['@one:current_mopla:mf_cor']
-		],
-		'file_almost_loaded': [
-			['@every:almost_loaded:mf_cor']
-		],
-		'one_artist_playlist': {
-			depends_on: ['playlist_type'],
-			fn: function(playlist_type) {
-				return playlist_type == 'artist';
-			}
-		},
-		'selected_image': {
-			depends_on: ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
-			fn: function(lfm_i, ext_lfm, just_url, album_image) {
-				return album_image || lfm_i || just_url || ext_lfm;
-			}
-		},
-		'song_title': {
-			depends_on: ['artist', 'track'],
-			fn: function(artist, track){
-				return this.getFullName(artist, track);
-			}
-		},
-		'nav_short_title': {
-			depends_on: ['artist', 'track'],
-			fn: function(artist, track) {
-				return this.getFullName(artist, track, true);
-			}
-		},
-		'nav_title': {
-			depends_on: ['artist', 'track'],
-			fn: function(artist, track){
-				return this.getFullName(artist, track);
-			}
-		},
-		is_important: {
-			depends_on: ['mp_show', 'player_song', 'want_to_play'],
-			fn: function(mp_show, player_song, wapl){
-				if (mp_show){
-					return 'mp_show';
-				}
-				if (player_song){
-					return 'player_song';
-				}
-				if (wapl){
-					return 'want_to_play';
-				}
-			}
-		},
-		'$relation:next_preload_song-for-loaded_player_song': [
-			['player_song', 'related_next_preload_song', 'file_almost_loaded'],
-			function(player_song, related_next_preload_song, file_almost_loaded) {
-				return player_song && file_almost_loaded && related_next_preload_song;
-			}
-		],
-		'$relation:next_preload_song-for-mp_show': [
-			['mp_show', 'related_next_preload_song'],
-			function(mp_show, related_next_preload_song) {
-				return mp_show && related_next_preload_song;
-			}
-		],
-		'$relation:next_preload_song-for-player_song': [
-			['player_song', 'related_next_preload_song'],
-			function(player_song, related_next_preload_song) {
-				return player_song && related_next_preload_song;
-			}
-		],
-		'$relation:next_preload_song-for-very_wanted_play': [
-			['want_to_play', 'related_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
-			function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
-				return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
-			}
-		],
-		'need_files': [
-			[ 'mp_show', 'want_to_play', 'next_preload_song-for-mp_show', 'next_preload_song-for-player_song', 'next_preload_song-for-very_wanted_play'],
-			function(mp_show, want_to_play, n_show, n_player_song, n_vvsong) {
-				return mp_show || want_to_play || isDepend(n_show) || isDepend(n_player_song) || isDepend(n_vvsong);
-			}
-			/*
-
-			необходимо искать файлы для композиций в следующих состояниях:
-
-				показываемая
-				желанная для воспроизведения
-
-				следующая по порядку воспроизведения (но не визуальному порядку)
-					для воспроизводимой
-					отображаемой
-					для желанной, но недоступной в %желанном% плейлисте
-
-			*/
-		],
-		'preload_current_file': [
-			['next_preload_song-for-loaded_player_song'],
-			function(n_loaded_psong) {
-				return isDepend(n_loaded_psong);
-			}
-		],
-		'load_current_file': [
-			['player_song'],
-			function(player_song) {
-				return !!player_song;
-			}
-		]
+	'compx-needs_states_connecting': [
+		['^active_use']
+	],
+	'compx-mf_cor_current_mopla': [
+		['@one:current_mopla:mf_cor']
+	],
+	'compx-file_almost_loaded': [
+		['@every:almost_loaded:mf_cor']
+	],
+	'compx-one_artist_playlist': {
+		depends_on: ['playlist_type'],
+		fn: function(playlist_type) {
+			return playlist_type == 'artist';
+		}
 	},
+	'compx-selected_image': {
+		depends_on: ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
+		fn: function(lfm_i, ext_lfm, just_url, album_image) {
+			return album_image || lfm_i || just_url || ext_lfm;
+		}
+	},
+	'compx-song_title': {
+		depends_on: ['artist', 'track'],
+		fn: function(artist, track){
+			return this.getFullName(artist, track);
+		}
+	},
+	'compx-nav_short_title': {
+		depends_on: ['artist', 'track'],
+		fn: function(artist, track) {
+			return this.getFullName(artist, track, true);
+		}
+	},
+	'compx-nav_title': {
+		depends_on: ['artist', 'track'],
+		fn: function(artist, track){
+			return this.getFullName(artist, track);
+		}
+	},
+	'compx-is_important': {
+		depends_on: ['mp_show', 'player_song', 'want_to_play'],
+		fn: function(mp_show, player_song, wapl){
+			if (mp_show){
+				return 'mp_show';
+			}
+			if (player_song){
+				return 'player_song';
+			}
+			if (wapl){
+				return 'want_to_play';
+			}
+		}
+	},
+	'compx-$relation:next_preload_song-for-loaded_player_song': [
+		['player_song', 'related_next_preload_song', 'file_almost_loaded'],
+		function(player_song, related_next_preload_song, file_almost_loaded) {
+			return player_song && file_almost_loaded && related_next_preload_song;
+		}
+	],
+	'compx-$relation:next_preload_song-for-mp_show': [
+		['mp_show', 'related_next_preload_song'],
+		function(mp_show, related_next_preload_song) {
+			return mp_show && related_next_preload_song;
+		}
+	],
+	'compx-$relation:next_preload_song-for-player_song': [
+		['player_song', 'related_next_preload_song'],
+		function(player_song, related_next_preload_song) {
+			return player_song && related_next_preload_song;
+		}
+	],
+	'compx-$relation:next_preload_song-for-very_wanted_play': [
+		['want_to_play', 'related_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
+		function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
+			return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
+		}
+	],
+	'compx-need_files': [
+		[ 'mp_show', 'want_to_play', 'next_preload_song-for-mp_show', 'next_preload_song-for-player_song', 'next_preload_song-for-very_wanted_play'],
+		function(mp_show, want_to_play, n_show, n_player_song, n_vvsong) {
+			return mp_show || want_to_play || isDepend(n_show) || isDepend(n_player_song) || isDepend(n_vvsong);
+		}
+		/*
+
+		необходимо искать файлы для композиций в следующих состояниях:
+
+			показываемая
+			желанная для воспроизведения
+
+			следующая по порядку воспроизведения (но не визуальному порядку)
+				для воспроизводимой
+				отображаемой
+				для желанной, но недоступной в %желанном% плейлисте
+
+		*/
+	],
+	'compx-preload_current_file': [
+		['next_preload_song-for-loaded_player_song'],
+		function(n_loaded_psong) {
+			return isDepend(n_loaded_psong);
+		}
+	],
+	'compx-load_current_file': [
+		['player_song'],
+		function(player_song) {
+			return !!player_song;
+		}
+	],
 	'stch-$relation:next_preload_song-for-mp_show': pv.getRDep('$relation:next_preload_song-for-mp_show'),
 	'stch-$relation:next_preload_song-for-player_song': pv.getRDep('$relation:next_preload_song-for-player_song'),
 	'stch-$relation:next_preload_song-for-very_wanted_play': pv.getRDep('$relation:next_preload_song-for-very_wanted_play'),

@@ -307,12 +307,10 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 	setItemForEnter: function() {
 
 	},
-	complex_states: {
-		"needs_search_from": {
-			depends_on: ['mp_detailed'],
-			fn: function() {
-				return true;
-			}
+	"compx-needs_search_from": {
+		depends_on: ['mp_detailed'],
+		fn: function() {
+			return true;
 		}
 	},
 	key_name_nav: {

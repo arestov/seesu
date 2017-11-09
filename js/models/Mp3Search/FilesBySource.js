@@ -103,23 +103,21 @@ var FilesBySource = spv.inh(pv.Model, {
       '>unavailable': [['=', 'boolean'], [false]]
     }
   },
-  complex_states: {
-    'request_required': [
-      ['disable_search', '^must_load'],
-      function(disabled, must_load) {
-        return !disabled && must_load;
-      }
-    ],
-    'has_mp3_files': [['mp3files$exists']],
-    'has_best_files': [['best_music_files$exists']],
-    'has_files': [['music_files_list$exists']],
-    'has_any_data': [
-      ['has_files', 'search_complete'],
-      function (has_files, search_complete) {
-        return !!has_files || !!search_complete;
-      }
-    ]
-  },
+  'compx-request_required': [
+    ['disable_search', '^must_load'],
+    function(disabled, must_load) {
+      return !disabled && must_load;
+    }
+  ],
+  'compx-has_mp3_files': [['mp3files$exists']],
+  'compx-has_best_files': [['best_music_files$exists']],
+  'compx-has_files': [['music_files_list$exists']],
+  'compx-has_any_data': [
+    ['has_files', 'search_complete'],
+    function (has_files, search_complete) {
+      return !!has_files || !!search_complete;
+    }
+  ],
   'nest-source': ['#mp3_search/sources/[:search_name]'],
   'compx-dmca_url': [['@one:dmca_url:source']],
   'nest-search_query': ['#mp3_search/sources/[:search_name]/queries/[:artist_name],[:track_title]'],

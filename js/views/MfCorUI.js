@@ -83,52 +83,50 @@ var SongFileModelUI = spv.inh(View, {}, {
 			pvUpdate(target, 'vis_progress-c-width', 0);
 		}
 	},
-	complex_states: {
-		"can-progress": {
-			depends_on: ['^^vis_is_visible', 'vis_con_appended', 'selected'],
-			fn: function(vis, apd, sel){
-				var can = vis && apd && sel;
-				return can;
+	"compx-can-progress": {
+		depends_on: ['^^vis_is_visible', 'vis_con_appended', 'selected'],
+		fn: function(vis, apd, sel){
+			var can = vis && apd && sel;
+			return can;
+		}
+	},
+	'compx-vis_wp_usable': [['^^want_more_songs']],
+	'compx-key-progress-c-width': [
+		['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
+		function (can, p_wmss, workarea_width, must_be_expandable) {
+			if (can) {
+				return this.getBoxDemensionKey('progress_c-width', workarea_width, !!p_wmss, !!must_be_expandable);
+			} else {
+				return false;
 			}
-		},
-		'vis_wp_usable': [['^^want_more_songs']],
-		'key-progress-c-width': [
-			['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
-			function (can, p_wmss, workarea_width, must_be_expandable) {
-				if (can) {
-					return this.getBoxDemensionKey('progress_c-width', workarea_width, !!p_wmss, !!must_be_expandable);
-				} else {
-					return false;
-				}
-			}
-		],
+		}
+	],
 
-		"vis_loading_p": {
-			depends_on: ['vis_progress-c-width', 'loading_progress'],
-			fn: function(width, factor){
-				if (factor) {
-					if (width){
-						return Math.floor(factor * width) + 'px';
-					} else {
-						return (factor * 100) + '%';
-					}
+	"compx-vis_loading_p": {
+		depends_on: ['vis_progress-c-width', 'loading_progress'],
+		fn: function(width, factor){
+			if (factor) {
+				if (width){
+					return Math.floor(factor * width) + 'px';
 				} else {
-					return 'auto';
+					return (factor * 100) + '%';
 				}
+			} else {
+				return 'auto';
 			}
-		},
-		"vis_playing_p": {
-			depends_on: ['vis_progress-c-width', 'playing_progress'],
-			fn: function(width, factor){
-				if (factor) {
-					if (width){
-						return Math.floor(factor * width) + 'px';
-					} else {
-						return (factor * 100) + '%';
-					}
+		}
+	},
+	"compx-vis_playing_p": {
+		depends_on: ['vis_progress-c-width', 'playing_progress'],
+		fn: function(width, factor){
+			if (factor) {
+				if (width){
+					return Math.floor(factor * width) + 'px';
 				} else {
-					return 'auto';
+					return (factor * 100) + '%';
 				}
+			} else {
+				return 'auto';
 			}
 		}
 	},

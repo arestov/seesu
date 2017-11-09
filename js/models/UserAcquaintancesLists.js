@@ -24,44 +24,42 @@ var UserAcquaintance = spv.inh(pv.Model, {
 		pvUpdate(target, 'accepted', params.accepted);
 	}
 }, {
-	complex_states: {
-		userlink: {
-			depends_on: ['accepted', 'user_info'],
-			fn: function(accepted, user_info) {
-				if (accepted){
-					if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
-						return {
-							href: '#/users/vk:' + user_info.uid,
-							text: user_info.full_name
-						};
-					}
+	'compx-userlink': {
+		depends_on: ['accepted', 'user_info'],
+		fn: function(accepted, user_info) {
+			if (accepted){
+				if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
+					return {
+						href: '#/users/vk:' + user_info.uid,
+						text: user_info.full_name
+					};
 				}
 			}
-		},
-		after_accept_desc: {
-			depends_on: [
-				'accepted', 'remainded_date', 'userlink',
-				'#locales.wget-link', '#locales.attime', '#locales'
-			],
-			fn: function(
-					accepted, remainded_date, userlink,
-					lo_will_get, lo_time, locales
-				) {
-				if (!lo_will_get || !lo_time || !locales) {return;}
-				if (accepted && !userlink){
-					var d = new Date(remainded_date);
-					var lo_month = locales['m'+(d.getMonth()+1)];
-					return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
-				}
+		}
+	},
+	'compx-after_accept_desc': {
+		depends_on: [
+			'accepted', 'remainded_date', 'userlink',
+			'#locales.wget-link', '#locales.attime', '#locales'
+		],
+		fn: function(
+				accepted, remainded_date, userlink,
+				lo_will_get, lo_time, locales
+			) {
+			if (!lo_will_get || !lo_time || !locales) {return;}
+			if (accepted && !userlink){
+				var d = new Date(remainded_date);
+				var lo_month = locales['m'+(d.getMonth()+1)];
+				return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
+			}
 
-			}
-		},
-		needs_accept_b: {
-			depends_on: ['accepted', 'current_user_is_sender'],
-			fn: function(accepted, current_user_is_sender) {
-				if (!accepted && !current_user_is_sender){
-					return true;
-				}
+		}
+	},
+	'compx-needs_accept_b': {
+		depends_on: ['accepted', 'current_user_is_sender'],
+		fn: function(accepted, current_user_is_sender) {
+			if (!accepted && !current_user_is_sender){
+				return true;
 			}
 		}
 	},
