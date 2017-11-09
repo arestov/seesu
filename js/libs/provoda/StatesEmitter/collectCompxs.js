@@ -73,17 +73,6 @@ var collectCompxs1part = function(self, props) {
   }
 };
 
-var collectCompxs2part = function(self) {
-  self._build_cache_compx_many = {};
-  for (var comlx_name in self.complex_states){
-    var cur = self.complex_states[comlx_name];
-    if (!cur) {continue;}
-
-    var item = declr(comlx_name, cur);
-    self._build_cache_compx_many[comlx_name] = item;
-  }
-};
-return function(self, props) {
 
 var makeWatchIndex = function(full_comlxs_list) {
   var full_comlxs_index = {};
@@ -104,26 +93,16 @@ var makeWatchIndex = function(full_comlxs_list) {
 
 
   var part1 = hasPrefixedProps(props);
-  var part2 = self.hasOwnProperty('complex_states');
-  var need_recalc = part1 || part2;
+  var need_recalc = part1;
 
   if (!need_recalc){
     return;
-  }
-
-  for (var prop in props.complex_states) {
-    if (props['compx-' + prop]) {
-      throw new Error('can`t be (in one layer) compx in both `complex_states` and "compx-"' + prop);
-    }
   }
 
   if (part1) {
     collectCompxs1part(self, props);
   }
 
-  if (part2) {
-    collectCompxs2part(self);
-  }
 
   var compx_check = {};
   var full_comlxs_list = [];
@@ -132,14 +111,6 @@ var makeWatchIndex = function(full_comlxs_list) {
     compx_check[key_name_one] = self._build_cache_compx_one[key_name_one];
     full_comlxs_list.push(compx_check[key_name_one]);
   }
-
-  for (var key_name_many in self._build_cache_compx_many) {
-    if (compx_check[key_name_many]) {continue;}
-
-    compx_check[key_name_many] = self._build_cache_compx_many[key_name_many];
-    full_comlxs_list.push(compx_check[key_name_many]);
-  }
-
 
   self.compx_check = compx_check;
   self.full_comlxs_list = full_comlxs_list;
