@@ -85,5 +85,3 @@ define(function(){
 
 	return w_storage;
 });
-
-
