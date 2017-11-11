@@ -74,6 +74,25 @@ var collectCompxs1part = function(self, props) {
 };
 
 
+var collectBuildParts = function(self) {
+  var compx_check = {};
+  var full_comlxs_list = [];
+
+  for (var key_name_one in self._build_cache_compx_one) {
+    compx_check[key_name_one] = self._build_cache_compx_one[key_name_one];
+    full_comlxs_list.push(compx_check[key_name_one]);
+  }
+
+
+  for (var key_name_one in self._dcl_cache__compx) {
+    compx_check[key_name_one] = self._dcl_cache__compx[key_name_one];
+    full_comlxs_list.push(compx_check[key_name_one]);
+  }
+
+  self.compx_check = compx_check;
+  self.full_comlxs_list = full_comlxs_list;
+}
+
 var makeWatchIndex = function(full_comlxs_list) {
   var full_comlxs_index = {};
   var i, jj, cur, state_name;
@@ -91,9 +110,31 @@ var makeWatchIndex = function(full_comlxs_list) {
   return full_comlxs_index;
 }
 
+var extendTyped = function(self, typed_state_dcls) {
+  var result = spv.cloneObj(null, self._dcl_cache__compx) || {};
+
+  var extending_part = {};
+
+  for (var name in typed_state_dcls) {
+    if (!typed_state_dcls.hasOwnProperty(name)) {
+      continue;
+    }
+    extending_part[name] = declr(name, typed_state_dcls[name]);
+  }
+
+  result = spv.cloneObj(result, extending_part);
+
+  self._dcl_cache__compx = result;
+};
+
+return function(self, props, typed_state_dcls) {
+  var typed_part = typed_state_dcls && typed_state_dcls['compx'];
+  if (typed_part) {
+    extendTyped(self, typed_part);
+  }
 
   var part1 = hasPrefixedProps(props);
-  var need_recalc = part1;
+  var need_recalc = part1 || typed_part;
 
   if (!need_recalc){
     return;
@@ -103,20 +144,10 @@ var makeWatchIndex = function(full_comlxs_list) {
     collectCompxs1part(self, props);
   }
 
-
-  var compx_check = {};
-  var full_comlxs_list = [];
-
-  for (var key_name_one in self._build_cache_compx_one) {
-    compx_check[key_name_one] = self._build_cache_compx_one[key_name_one];
-    full_comlxs_list.push(compx_check[key_name_one]);
-  }
-
-  self.compx_check = compx_check;
-  self.full_comlxs_list = full_comlxs_list;
+  collectBuildParts(self);
   self.full_comlxs_index = makeWatchIndex(self.full_comlxs_list);
 
-  collectStatesConnectionsProps(self, full_comlxs_list);
+  collectStatesConnectionsProps(self, self.full_comlxs_list);
 
   return true;
 };

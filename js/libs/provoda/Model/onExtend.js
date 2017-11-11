@@ -2,6 +2,7 @@ define(function(require){
 'use strict';
 
 var spv = require('spv');
+var getTypedDcls = require('../dcl-h/getTypedDcls');
 var checkApis = require('../StatesEmitter/checkApis');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var checkChi = require('../StatesEmitter/checkChi');
@@ -19,13 +20,14 @@ var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'
 
 var check = /initStates/gi;
 return function(self, props, original, params) {
+  var typed_state_dcls = getTypedDcls(props['+states']);
 
-  checkApis(self, props);
+  checkApis(self, props, typed_state_dcls);
 
 	changeDataMorphDeclarations(self, props);
 	collectStateChangeHandlers(self, props);
 
-	collectCompxs(self, props);
+	collectCompxs(self, props, typed_state_dcls);
 	collectSubpages(self, props);
 	checkSubpager(self, props);
 	checkChi(self, props);
