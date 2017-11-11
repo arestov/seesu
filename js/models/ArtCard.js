@@ -467,21 +467,39 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 	getURL: function() {
 		return '/catalog/' + this.app.encodeURLPart(this.head.artist_name);
 	},
-	'compx-nav_title': [['artist_name']],
+	'+states': {
+		'nav_title': ['compx', ['artist_name']],
 
-	'compx-selected_image': {
-		depends_on: ['lfm_image', 'lfm_img', 'profile_image'],
-		fn: function(lfmi_wrap, lfm_img, pi_wrap) {
-			return pi_wrap || lfm_img || lfmi_wrap;
-		}
+		'selected_image': [
+			'compx',
+			['lfm_image', 'lfm_img', 'profile_image'],
+			function(lfmi_wrap, lfm_img, pi_wrap) {
+				return pi_wrap || lfm_img || lfmi_wrap;
+			},
+		],
+		'available_images': [
+			'compx',
+			['selected_image', 'images'],
+			function (selected_image, images) {
+				return images || (selected_image && [selected_image]);
+			}
+		],
+		'ext_exposed': [
+			'compx',
+			['init_ext', 'mp_has_focus'],
+			function(init_ext, mp_has_focus) {
+				return init_ext || mp_has_focus;
+			}
+		],
+		//soundcloud_nickname
+		'no_soundcloud_profile': [
+			'compx',
+			['soundcloud_profile__$complete', 'soundcloud_profile'],
+			function(two_complete, two) {
+				return two_complete && !two;
+			}
+		],
 	},
-	'compx-available_images': [
-		['selected_image', 'images'],
-		function (selected_image, images) {
-			return images || (selected_image && [selected_image]);
-		}
-	],
-
 	sub_page: {
 		'_': {
 			constr: TopArtistSongs,
@@ -526,12 +544,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 			title: [['#locales.Most Reblogged']]
 		}
 	},
-	'compx-ext_exposed': [
-		['init_ext', 'mp_has_focus'],
-		function(init_ext, mp_has_focus) {
-			return init_ext || mp_has_focus;
-		}
-	],
 	'nest-tags_list': ['tags', {
 		idle_until: 'ext_exposed',
 	}],
@@ -589,13 +601,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 		var song = pl.findMustBePresentDataItem(start_song);
 		return song;
 	},
-	//soundcloud_nickname
-	'compx-no_soundcloud_profile': [
-		['soundcloud_profile__$complete', 'soundcloud_profile'],
-		function(two_complete, two) {
-			return two_complete && !two;
-		}
-	],
+
 	req_map: [
 		[
 			['soundcloud_matched', 'soundcloud_profile'],
