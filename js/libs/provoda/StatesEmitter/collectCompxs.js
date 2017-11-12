@@ -127,8 +127,7 @@ var extendTyped = function(self, typed_state_dcls) {
   self._dcl_cache__compx = result;
 };
 
-return function(self, props, typed_state_dcls) {
-  var typed_part = typed_state_dcls && typed_state_dcls['compx'];
+return function(self, props, typed_part) {
   if (typed_part) {
     extendTyped(self, typed_part);
   }

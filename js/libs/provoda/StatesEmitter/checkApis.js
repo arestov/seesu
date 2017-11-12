@@ -224,16 +224,16 @@ var usualApis = function (obj) {
   return result;
 };
 
-var doCopy = function (item, self, props) {
+var doCopy = function (item, self, props, typed_state_dcls) {
   for (var i = 0; i < item.compxes.length; i+=2) {
     var name = item.compxes[ i ];
     var deps = item.compxes[ i + 1 ];
-
-    self['compx-' + name] = props['compx-' + name] = deps;
+    typed_state_dcls['compx'] = typed_state_dcls['compx'] || {};
+    typed_state_dcls['compx'][name] = deps;
   }
 };
 
-var getDepsToInsert = function (source, self, props) {
+var getDepsToInsert = function (source, self, props, typed_state_dcls) {
   if (!source) {return;}
 
   for (var name in source) {
@@ -242,7 +242,7 @@ var getDepsToInsert = function (source, self, props) {
     var cur = source[name];
     if (!cur.compxes) {continue;}
 
-    doCopy(cur, self, props);
+    doCopy(cur, self, props, typed_state_dcls);
   }
 };
 
@@ -266,13 +266,13 @@ function rootApis(obj) {
   return result.length ? result : null;
 }
 
-return function checkApis(self, props) {
+return function checkApis(self, props, typed_state_dcls) {
   var apis = checkApi(self, props);
   // var states = checkApiState(self, props);
   var effects = checkEffect(self, props);
 
-  getDepsToInsert(apis, self, props);
-  getDepsToInsert(effects, self, props);
+  getDepsToInsert(apis, self, props, typed_state_dcls);
+  getDepsToInsert(effects, self, props, typed_state_dcls);
 
   self.__apis_$_index = indexByDepName(apis) || self.__apis_$_index;
   self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;

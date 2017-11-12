@@ -20,14 +20,14 @@ var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp'
 
 var check = /initStates/gi;
 return function(self, props, original, params) {
-  var typed_state_dcls = getTypedDcls(props['+states']);
+  var typed_state_dcls = getTypedDcls(props['+states']) || {};
 
   checkApis(self, props, typed_state_dcls);
 
-	changeDataMorphDeclarations(self, props);
-	collectStateChangeHandlers(self, props);
+	changeDataMorphDeclarations(self, props, typed_state_dcls);
+	collectStateChangeHandlers(self, props, typed_state_dcls);
 
-	collectCompxs(self, props, typed_state_dcls);
+	collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
 	collectSubpages(self, props);
 	checkSubpager(self, props);
 	checkChi(self, props);
