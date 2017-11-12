@@ -46,7 +46,11 @@ return function getSubpageItem(cur, key, byType) {
 			*/
 
 			var instance = cur[1] ? spv.inh(cur[0], {}, {
-				'compx-nav_title': cur[1]
+        '+states': {
+          nav_title: [
+            'compx'
+          ].concat(cur[1])
+        }
 			}) : cur[0];
 			item = subPageHeaded(instance, cur[2], key);
 		}
@@ -59,22 +63,25 @@ return function getSubpageItem(cur, key, byType) {
 			title: [[...]]
 		}
 		*/
-		if (!cur.constr.prototype['compx-nav_title'] && (!cur.title || typeof cur.title != 'object')) {
+
+		if (!cur.constr.prototype.compx_check['nav_title'] && (!cur.title || typeof cur.title != 'object')) {
 			// title should be. in array or object presentation
 			throw new Error('keep code clean: use short `sub_page` declaration if you do not have special title');
 		}
 
 		var extend = {};
 		if (cur.title) {
-			extend['compx-nav_title'] = cur.title;
+			extend['nav_title'] = ['compx'].concat(cur.title);
 		}
 		if (cur.reusable) {
-			extend['compx-$$reusable_url'] = cur.reusable;
+			extend['$$reusable_url'] = ['compx'].concat(cur.reusable);
 		}
 
 		item = subPageHeaded(spv.inh(cur.constr, {
 			skip_code_path: true
-		}, extend), cur.head, key, cur.getKey);
+		}, {
+      '+states': extend
+    }), cur.head, key, cur.getKey);
 
 		item.can_be_reusable = Boolean(cur.reusable);
 
