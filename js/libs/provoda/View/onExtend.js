@@ -3,6 +3,7 @@ define(function (require) {
 var spv = require('spv');
 var cloneObj = spv.cloneObj;
 
+var getTypedDcls = require('../dcl-h/getTypedDcls');
 var checkApis = require('../StatesEmitter/checkApis');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var collectSelectorsOfCollchs = require('../dcl_view/collectSelectorsOfCollchs');
@@ -49,15 +50,17 @@ var getBaseTreeCheckList = function(start) {
 };
 
 return function(self, props, original) {
-	checkNestBorrow(self, props);
-  checkApis(self, props);
+  var typed_state_dcls = getTypedDcls(props['+states']) || {};
 
-	collectStateChangeHandlers(self, props);
+	checkNestBorrow(self, props);
+  checkApis(self, props, typed_state_dcls);
+
+	collectStateChangeHandlers(self, props, typed_state_dcls);
 	collectCollectionChangeDeclarations(self, props);
 
 	collectSelectorsOfCollchs(self, props);
 
-	collectCompxs(self, props);
+	collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
 
 	if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
 		self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
