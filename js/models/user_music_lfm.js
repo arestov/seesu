@@ -91,7 +91,7 @@ var auth_bh = {
 
 //LULA - LfmUserLibraryArtist
 //непосредственно список композиций артиста, которые слушал пользователь
-var LULATracks = spv.inh(SongsList, {}, cloneObj({
+var LULATracks = spv.inh(SongsList, {}, pv.mergeBhv({
   'nest_req-songs-list': [
     declr_parsers.lfm.getTracks('tracks'),
     ['#lfm', 'get', function() {
@@ -108,7 +108,7 @@ var slashPrefix = function(src) {
 };
 
 //artist, один артист с треками
-var LULA = spv.inh(BrowseMap.Model, {}, cloneObj({
+var LULA = spv.inh(BrowseMap.Model, {}, pv.mergeBhv({
   model_name: 'lula',
   netdata_as_states: {
     url_part: [slashPrefix, 'artist'],
@@ -149,7 +149,7 @@ var UserArtists = spv.inh(LoadableList, {}, {
 
 // }, auth_bh));
 
-var TopLUArt = spv.inh(UserArtists, {}, cloneObj({
+var TopLUArt = spv.inh(UserArtists, {}, pv.mergeBhv({
   'nest_rqc-artists': LULA,
   'nest_req-artists': [
     declr_parsers.lfm.getArtists('topartists'),
@@ -165,7 +165,7 @@ var TopLUArt = spv.inh(UserArtists, {}, cloneObj({
   }
 }, auth_bh));
 
-var TopUserTracks = spv.inh(SongsList, {}, cloneObj({
+var TopUserTracks = spv.inh(SongsList, {}, pv.mergeBhv({
   'nest_req-songs-list': [
     declr_parsers.lfm.getTracks('toptracks'),
     ['#lfm', 'get', function() {
@@ -181,7 +181,7 @@ var TopUserTracks = spv.inh(SongsList, {}, cloneObj({
 }, auth_bh));
 
 
-var LfmLovedList = spv.inh(SongsList, {}, cloneObj({
+var LfmLovedList = spv.inh(SongsList, {}, pv.mergeBhv({
   'compx-access_desc': [['#locales.grant-love-lfm-access']],
   'nest_req-songs-list': [
     declr_parsers.lfm.getTracks('lovedtracks'),
@@ -193,7 +193,7 @@ var LfmLovedList = spv.inh(SongsList, {}, cloneObj({
   ]
 }, auth_bh));
 
-var RecommArtList = spv.inh(ArtistsList, {}, cloneObj({
+var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
   page_limit: 30,
   'compx-access_desc': [['#locales.lastfm-reccoms-access']],
   'compx-loader_disallowed': [
@@ -314,7 +314,7 @@ LfmUserArtists.LfmUserArtistsForCU = spv.inh(LfmUserArtists, {}, {
 
 
 
-var LfmRecentUserTracks = spv.inh(SongsList, {}, cloneObj({
+var LfmRecentUserTracks = spv.inh(SongsList, {}, pv.mergeBhv({
   getRqData: function() {
     if (!this.slice_time_end){
       this.slice_time_end = (new Date()/1000).toFixed();
@@ -386,7 +386,7 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 });
 
 
-var UserNewReleases = spv.inh(AlbumsList, {}, cloneObj({
+var UserNewReleases = spv.inh(AlbumsList, {}, pv.mergeBhv({
   'compx-access_desc': [['#locales.lastfm-reccoms-access']],
   page_limit: 50,
   'nest_req-albums_list': [
@@ -407,7 +407,7 @@ var RecommNewReleases = spv.inh(UserNewReleases, {}, {
 });
 
 
-var LfmUserTopAlbums = spv.inh(AlbumsList, {}, cloneObj({
+var LfmUserTopAlbums = spv.inh(AlbumsList, {}, pv.mergeBhv({
   head_by_urlname: {
     timeword: 'name_spaced'
   },
@@ -486,7 +486,7 @@ var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
 
 
 
-var TaggedSongs = spv.inh(SongsList, {}, cloneObj({
+var TaggedSongs = spv.inh(SongsList, {}, pv.mergeBhv({
   'nest_req-songs-list': [
     declr_parsers.lfm.getTracks('taggings.tracks', false, 'taggings'),
     ['#lfm', 'get', function() {
@@ -499,7 +499,7 @@ var TaggedSongs = spv.inh(SongsList, {}, cloneObj({
   ]
 }, auth_bh));
 
-var TaggedArtists = spv.inh(ArtistsList, {}, cloneObj({
+var TaggedArtists = spv.inh(ArtistsList, {}, pv.mergeBhv({
   'nest_req-artists_list': [
     declr_parsers.lfm.getArtists('taggings.artists', false, 'taggings'),
     ['#lfm', 'get', function() {
@@ -513,7 +513,7 @@ var TaggedArtists = spv.inh(ArtistsList, {}, cloneObj({
 }, auth_bh));
 
 
-var TaggedAlbums = spv.inh(AlbumsList, {}, cloneObj({
+var TaggedAlbums = spv.inh(AlbumsList, {}, pv.mergeBhv({
   page_limit: 50,
   'nest_req-albums_list': [
     declr_parsers.lfm.getAlbums('taggings.albums', false, 'taggings'),
@@ -553,7 +553,7 @@ var UserTag = spv.inh(BrowseMap.Model, {}, {
   }
 });
 
-var LfmUserTags = spv.inh(LoadableList, {}, cloneObj({
+var LfmUserTags = spv.inh(LoadableList, {}, pv.mergeBhv({
   model_name: 'lfm_listened_tags',
   main_list_name: 'tags',
   page_limit: 3000,
@@ -602,7 +602,7 @@ var LfmUsersList = spv.inh(LoadableList, {}, {
   page_limit: 200
 });
 
-var LfmUsersListOfUser = spv.inh(LfmUsersList, {}, cloneObj({}, auth_bh));
+var LfmUsersListOfUser = spv.inh(LfmUsersList, {}, pv.mergeBhv({}, auth_bh));
 
 var LfmFriendsList = spv.inh(LfmUsersListOfUser, {}, {
   beforeReportChange: function(list) {

@@ -18,6 +18,7 @@ var initDeclaredNestings = require('./initDeclaredNestings');
 var markStrucure = require('./structure/mark');
 var create = require('./create');
 var addSubpage = require('./dcl/sub_pager/addSubpage');
+var mergeBhv = require('./mergeBhv');
 
 var provoda, pv;
 var pvUpdate = updateProxy.update;
@@ -105,7 +106,8 @@ pv = provoda = {
   state: hp.state,
   behavior: behavior,
   create: create,
-  markStrucure: markStrucure
+  markStrucure: markStrucure,
+  mergeBhv: mergeBhv,
 };
 
 function behavior(declr, declr_extend_from, named) {

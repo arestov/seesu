@@ -84,7 +84,7 @@ var auth_bh = {
   }
 };
 
-var VkSongList = spv.inh(SongsList, {}, cloneObj({}, auth_bh));
+var VkSongList = spv.inh(SongsList, {}, pv.mergeBhv({}, auth_bh));
 
 var VkRecommendedTracks = spv.inh(VkSongList, {}, {
   'nest_req-songs-list': [
