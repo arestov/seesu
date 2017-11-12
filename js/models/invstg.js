@@ -307,12 +307,9 @@ var SearchPage = spv.inh(base.Investigation, {}, {
   setItemForEnter: function() {
 
   },
-  "compx-needs_search_from": {
-    depends_on: ['mp_detailed'],
-    fn: function() {
-      return true;
-    }
-  },
+  "compx-needs_search_from": [['mp_detailed'], function() {
+    return true;
+  }],
   key_name_nav: {
     'Enter': function() {
       this.pressEnter();

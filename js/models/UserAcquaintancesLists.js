@@ -24,9 +24,9 @@ var UserAcquaintance = spv.inh(pv.Model, {
     pvUpdate(target, 'accepted', params.accepted);
   }
 }, {
-  'compx-userlink': {
-    depends_on: ['accepted', 'user_info'],
-    fn: function(accepted, user_info) {
+  'compx-userlink': [
+    ['accepted', 'user_info'],
+    function(accepted, user_info) {
       if (accepted){
         if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
           return {
@@ -36,33 +36,30 @@ var UserAcquaintance = spv.inh(pv.Model, {
         }
       }
     }
-  },
-  'compx-after_accept_desc': {
-    depends_on: [
-      'accepted', 'remainded_date', 'userlink',
-      '#locales.wget-link', '#locales.attime', '#locales'
-    ],
-    fn: function(
-        accepted, remainded_date, userlink,
-        lo_will_get, lo_time, locales
-      ) {
-      if (!lo_will_get || !lo_time || !locales) {return;}
-      if (accepted && !userlink){
-        var d = new Date(remainded_date);
-        var lo_month = locales['m'+(d.getMonth()+1)];
-        return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
-      }
-
+  ],
+  'compx-after_accept_desc': [[
+    'accepted', 'remainded_date', 'userlink',
+    '#locales.wget-link', '#locales.attime', '#locales'
+  ], function(
+      accepted, remainded_date, userlink,
+      lo_will_get, lo_time, locales
+    ) {
+    if (!lo_will_get || !lo_time || !locales) {return;}
+    if (accepted && !userlink){
+      var d = new Date(remainded_date);
+      var lo_month = locales['m'+(d.getMonth()+1)];
+      return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
     }
-  },
-  'compx-needs_accept_b': {
-    depends_on: ['accepted', 'current_user_is_sender'],
-    fn: function(accepted, current_user_is_sender) {
+
+  }],
+  'compx-needs_accept_b': [
+    ['accepted', 'current_user_is_sender'],
+    function(accepted, current_user_is_sender) {
       if (!accepted && !current_user_is_sender){
         return true;
       }
     }
-  },
+  ],
 
   acceptInvite: function() {
     var _this = this;
@@ -94,23 +91,23 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
   model_name: 'user_acqs_list',
   'chi-item': UserAcquaintance,
   'compx-current_user': [['#su_userid']],
-  'compx-wait_me_desc': {
-    depends_on: ['@every:accepted:acqs_from_someone', '#locales.if-you-accept-one-i', '#locales.will-get-link'],
-    fn: function(not_wait_me, accept_desc, get_desc) {
+  'compx-wait_me_desc': [
+    ['@every:accepted:acqs_from_someone', '#locales.if-you-accept-one-i', '#locales.will-get-link'],
+    function(not_wait_me, accept_desc, get_desc) {
       if (!not_wait_me && accept_desc && get_desc){
         return accept_desc + ' ' + get_desc;
       }
     }
-  },
-  'compx-wait_someone_desc': {
-    depends_on: ['@every:accepted:acqs_from_me'],
-    fn: function(not_wait_someone, accept_desc, get_desc) {
+  ],
+  'compx-wait_someone_desc': [
+    ['@every:accepted:acqs_from_me'],
+    function(not_wait_someone, accept_desc, get_desc) {
       if (!not_wait_someone && accept_desc && get_desc){
         return accept_desc + ' ' + get_desc;
       }
 
     }
-  },
+  ],
   bindDataSteams: function() {
     if (this.data_st_binded){
       return;

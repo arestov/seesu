@@ -55,12 +55,12 @@ var ListPreviewLine = spv.inh(View, {}, {
   expandBase: function() {
     this.setVisState('img_allowed', this.extended_viewing);
   },
-  'compx-selected_title': {
-    depends_on: ['nav_title', 'nav_short_title'],
-    fn: function(title, short_title) {
+  'compx-selected_title': [
+    ['nav_title', 'nav_short_title'],
+    function(title, short_title) {
       return short_title || title;
     }
-  }
+  ]
 });
 
 
@@ -83,12 +83,12 @@ var SPView = spv.inh(View, {}, {
       return vmp_show;
     }
   ],
-  'compx-mp_show_end': {
-    depends_on: ['^mp_show_end'],
-    fn: function(mp_show_end) {
+  'compx-mp_show_end': [
+    ['^mp_show_end'],
+    function(mp_show_end) {
       return mp_show_end;
     }
-  }
+  ]
 });
 
 var PageView = spv.inh(SPView, {}, {

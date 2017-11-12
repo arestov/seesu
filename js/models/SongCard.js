@@ -223,12 +223,12 @@ var isDepend = pv.utils.isDepend;
 
 var SongCard = spv.inh(LoadableListBase, {}, {
   model_name: 'songcard',
-  'compx-nav_title': {
-    depends_on: ['artist_name', 'track_name'],
-    fn: function(artist_name, track_name) {
+  'compx-nav_title': [
+    ['artist_name', 'track_name'],
+    function(artist_name, track_name) {
       return artist_name + ' - ' + track_name;
     }
-  },
+  ],
   'compx-nest_need': [
     ['need_for_song', 'songcard-for-active_song'],
     function(need_for_song, for_asong) {

@@ -28,12 +28,12 @@ var SongcardPage = spv.inh(coct.SPView, {}, {
 });
 
 var FanPreview = spv.inh(View, {}, {
-  'compx-can_use_image':{
-    depends_on: ['vis_image_loaded', 'selected_image'],
-    fn: function(vis_image_loaded, selected_image) {
+  'compx-can_use_image':[
+    ['vis_image_loaded', 'selected_image'],
+    function(vis_image_loaded, selected_image) {
       return !!(vis_image_loaded && selected_image);
     }
-  },
+  ],
   'stch-selected_image': function(target, state) {
     var image_node = target.tpl.ancs['user-image'];
     image_node.src = '';

@@ -163,9 +163,9 @@ var BrowseLevView = spv.inh(View, {}, spv.cloneObj({
   // 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
   'sel-coll-pioneer': '$spec_common-pioneer',
 
-  'compx-mp_show_end': {
-    depends_on: ['animation_started', 'animation_completed', 'vmp_show'],
-    fn: function(animation_started, animation_completed, vmp_show) {
+  'compx-mp_show_end': [
+    ['animation_started', 'animation_completed', 'vmp_show'],
+    function(animation_started, animation_completed, vmp_show) {
       if (!animation_started){
         return vmp_show;
       } else {
@@ -176,7 +176,7 @@ var BrowseLevView = spv.inh(View, {}, spv.cloneObj({
         }
       }
     }
-  },
+  ],
 }, used_struc_bhv));
 
 
@@ -195,12 +195,12 @@ var BrowseLevNavView = spv.inh(View, {}, {
     by_model_name: true,
     place: 'c'
   },
-  'compx-nav_clickable':{
-    depends_on: ['mp_stack', 'mp_has_focus'],
-    fn : function(mp_stack, mp_has_focus) {
+  'compx-nav_clickable':[
+    ['mp_stack', 'mp_has_focus'],
+    function(mp_stack, mp_has_focus) {
       return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
     }
-  },
+  ],
   'compx-mp_stack_root_follower': [
     ['$index', '$index_back', 'vmp_show'],
     function (index, index_back) {

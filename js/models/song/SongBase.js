@@ -101,39 +101,39 @@ return spv.inh(BrowseMap.Model, {
   'compx-file_almost_loaded': [
     ['@every:almost_loaded:mf_cor']
   ],
-  'compx-one_artist_playlist': {
-    depends_on: ['playlist_type'],
-    fn: function(playlist_type) {
+  'compx-one_artist_playlist': [
+    ['playlist_type'],
+    function(playlist_type) {
       return playlist_type == 'artist';
     }
-  },
-  'compx-selected_image': {
-    depends_on: ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
-    fn: function(lfm_i, ext_lfm, just_url, album_image) {
+  ],
+  'compx-selected_image': [
+    ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
+    function(lfm_i, ext_lfm, just_url, album_image) {
       return album_image || lfm_i || just_url || ext_lfm;
     }
-  },
-  'compx-song_title': {
-    depends_on: ['artist', 'track'],
-    fn: function(artist, track){
+  ],
+  'compx-song_title': [
+    ['artist', 'track'],
+    function(artist, track){
       return this.getFullName(artist, track);
     }
-  },
-  'compx-nav_short_title': {
-    depends_on: ['artist', 'track'],
-    fn: function(artist, track) {
+  ],
+  'compx-nav_short_title': [
+    ['artist', 'track'],
+    function(artist, track) {
       return this.getFullName(artist, track, true);
     }
-  },
-  'compx-nav_title': {
-    depends_on: ['artist', 'track'],
-    fn: function(artist, track){
+  ],
+  'compx-nav_title': [
+    ['artist', 'track'],
+    function(artist, track){
       return this.getFullName(artist, track);
     }
-  },
-  'compx-is_important': {
-    depends_on: ['mp_show', 'player_song', 'want_to_play'],
-    fn: function(mp_show, player_song, wapl){
+  ],
+  'compx-is_important': [
+    ['mp_show', 'player_song', 'want_to_play'],
+    function(mp_show, player_song, wapl){
       if (mp_show){
         return 'mp_show';
       }
@@ -144,7 +144,7 @@ return spv.inh(BrowseMap.Model, {
         return 'want_to_play';
       }
     }
-  },
+  ],
   'compx-$relation:next_preload_song-for-loaded_player_song': [
     ['player_song', 'related_next_preload_song', 'file_almost_loaded'],
     function(player_song, related_next_preload_song, file_almost_loaded) {

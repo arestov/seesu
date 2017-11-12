@@ -115,12 +115,12 @@ var ShareRowUI = spv.inh(View, {}, {
 });
 
 var SongActPlaylistingUI = spv.inh(View, {}, {
-  'compx-need_creation_button':{
-    depends_on: ['query', 'has_full_match'],
-    fn: function(query, has_full_match) {
+  'compx-need_creation_button':[
+    ['query', 'has_full_match'],
+    function(query, has_full_match) {
       return query && !has_full_match;
     }
-  },
+  ],
   tpl_events: {
     input_search: spv.debounce(function(e, node) {
       this.RPCLegacy('search', node.value);
@@ -209,18 +209,18 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
       }
     }
   ],
-  "compx-vis_volume-bar-max-width": {
-    depends_on: ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
-    fn: function(vvh_w, v_bar_o_w, v_bar_w){
+  "compx-vis_volume-bar-max-width": [
+    ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
+    function(vvh_w, v_bar_o_w, v_bar_w){
       if (vvh_w){
         return  vvh_w - ( v_bar_o_w - v_bar_w);
       }
 
     }
-  },
-  "compx-vis_volume": {
-    depends_on: ['volume', 'vis_volume-bar-max-width'],
-    fn: function(volume_fac, vvb_mw){
+  ],
+  "compx-vis_volume": [
+    ['volume', 'vis_volume-bar-max-width'],
+    function(volume_fac, vvb_mw){
       if (typeof volume_fac =='undefined'){
         return 'auto';
       } else if (vvb_mw){
@@ -229,7 +229,7 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
         return (volume_fac * 100)  + '%';
       }
     }
-  },
+  ],
   createVolumeControl: function() {
     this.vol_cc = this.tpl.ancs['volume-control'];
 

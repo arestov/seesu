@@ -33,12 +33,12 @@ var TagsList = spv.inh(LoadableList, {}, {
   addItemToDatalist: function(obj, silent) {
     this.addTag(obj, silent);
   },
-  'compx-simple_tags_list': {
-    depends_on: ['tags_list', 'preview_list'],
-    fn: function(tag_list, preview_list){
+  'compx-simple_tags_list': [
+    ['tags_list', 'preview_list'],
+    function(tag_list, preview_list){
       return tag_list || preview_list;
     }
-  },
+  ],
   setPreview: function(list) {
     pv.update(this, 'preview_list', list);
   },

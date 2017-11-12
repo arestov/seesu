@@ -116,20 +116,20 @@ var HypemPlaylist = spv.inh(SongsList, {
 }, {
   'compx-possible_loader_disallowing': [['#locales.Hypem-cant-load']],
   page_limit: 20,
-  'compx-loader_disallowing_desc': {
-    depends_on: ['loader_disallowed', 'possible_loader_disallowing'],
-    fn: function(disallowed, desc) {
+  'compx-loader_disallowing_desc': [
+    ['loader_disallowed', 'possible_loader_disallowing'],
+    function(disallowed, desc) {
       if (disallowed){
         return desc;
       }
     }
-  },
-  'compx-loader_disallowed': {
-    depends_on: ['browser_can_load'],
-    fn: function(can_load) {
+  ],
+  'compx-loader_disallowed': [
+    ['browser_can_load'],
+    function(can_load) {
       return !can_load;
     }
-  }
+  ]
 });
 SongsList.HypemPlaylist = HypemPlaylist;
 return SongsList;

@@ -111,23 +111,23 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
       title: [['#locales.Friends']]
     }
   },
-  'compx-big_desc': {
-    depends_on: ['first_name', 'last_name'],
-    fn: function(first_name, last_name){
+  'compx-big_desc': [
+    ['first_name', 'last_name'],
+    function(first_name, last_name){
       return [first_name, last_name].join(' ');
     }
-  },
+  ],
   'compx-p_nav_title': [
     ['vk_userid'],
     function(vk_userid) {
       return 'Vk.com user: ' + vk_userid;
     }],
-  'compx-nav_title': {
-    depends_on: ['big_desc', 'p_nav_title'],
-    fn: function(big_desc, p_nav_title){
+  'compx-nav_title': [
+    ['big_desc', 'p_nav_title'],
+    function(big_desc, p_nav_title){
       return big_desc || p_nav_title;
     }
-  },
+  ],
   nest: (function() {
     var result = {};
 

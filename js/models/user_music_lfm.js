@@ -31,12 +31,9 @@ var UserCardLFMLogin = spv.inh(LfmAuth.LfmLogin, {}, {
   ]
 });
 
-var no_access_compx = {
-  depends_on: ['userid'],
-  fn: function(userid) {
-    return !userid;
-  }
-};
+var no_access_compx = [['userid'], function(userid) {
+  return !userid;
+}];
 
 var auth_bh = {
   'compx-has_no_access': no_access_compx,
@@ -125,12 +122,9 @@ var LULA = spv.inh(BrowseMap.Model, {}, cloneObj({
     preload_on: 'mp_has_focus',
   }],
 
-  'compx-selected_image': {
-    depends_on: ['lfm_image'],
-    fn: function(lfm_i) {
-      return lfm_i;
-    }
-  },
+  'compx-selected_image': [['lfm_image'], function(lfm_i) {
+    return lfm_i;
+  }],
   'sub_page-all_time': [LULATracks, [null, 'All Time']]
 }, auth_bh));
 

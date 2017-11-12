@@ -83,13 +83,13 @@ var SongFileModelUI = spv.inh(View, {}, {
       pvUpdate(target, 'vis_progress-c-width', 0);
     }
   },
-  "compx-can-progress": {
-    depends_on: ['^^vis_is_visible', 'vis_con_appended', 'selected'],
-    fn: function(vis, apd, sel){
+  "compx-can-progress": [
+    ['^^vis_is_visible', 'vis_con_appended', 'selected'],
+    function(vis, apd, sel){
       var can = vis && apd && sel;
       return can;
     }
-  },
+  ],
   'compx-vis_wp_usable': [['^^want_more_songs']],
   'compx-key-progress-c-width': [
     ['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
@@ -102,9 +102,9 @@ var SongFileModelUI = spv.inh(View, {}, {
     }
   ],
 
-  "compx-vis_loading_p": {
-    depends_on: ['vis_progress-c-width', 'loading_progress'],
-    fn: function(width, factor){
+  "compx-vis_loading_p": [
+    ['vis_progress-c-width', 'loading_progress'],
+    function(width, factor){
       if (factor) {
         if (width){
           return Math.floor(factor * width) + 'px';
@@ -115,10 +115,10 @@ var SongFileModelUI = spv.inh(View, {}, {
         return 'auto';
       }
     }
-  },
-  "compx-vis_playing_p": {
-    depends_on: ['vis_progress-c-width', 'playing_progress'],
-    fn: function(width, factor){
+  ],
+  "compx-vis_playing_p": [
+    ['vis_progress-c-width', 'playing_progress'],
+    function(width, factor){
       if (factor) {
         if (width){
           return Math.floor(factor * width) + 'px';
@@ -129,7 +129,7 @@ var SongFileModelUI = spv.inh(View, {}, {
         return 'auto';
       }
     }
-  },
+  ],
   base_tree: {
     sample_name: 'song-file'
   },
@@ -257,12 +257,12 @@ var ComplectPionerView = spv.inh(View, {}, {
 
 
 var SongFileModelUIOverstock = spv.inh(SongFileModelUI, {}, {
-  'compx-vis_wp_usable': {
-    depends_on: ['^^want_more_songs', '^show_overstocked'],
-    fn: function(pp_wmss, p_show_overstock) {
+  'compx-vis_wp_usable': [
+    ['^^want_more_songs', '^show_overstocked'],
+    function(pp_wmss, p_show_overstock) {
       return pp_wmss && p_show_overstock;
     }
-  },
+  ],
 })
 
 
@@ -314,12 +314,12 @@ var MfCorUI = spv.inh(View, {}, {
   // 	});
   // 	this.addWayPoint(this.tpl.ancs.more_songs_b);
   // },
-  'compx-vis_is_visible':{
-    'depends_on': ['^^^mp_show_end'],
-    fn: function(mp_show_end) {
+  'compx-vis_is_visible':[
+    ['^^^mp_show_end'],
+    function(mp_show_end) {
       return !!mp_show_end;
     }
-  },
+  ],
   // base_tree: {
   // 	sample_name: 'moplas-block'
   // }

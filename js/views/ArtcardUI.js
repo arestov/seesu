@@ -106,9 +106,9 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
       target.setVisState('wamo_info', false);
     }
   },
-  'compx-infb_text': {
-    depends_on: ['artist_name', 'playcount', 'listeners', 'bio', '#locales.more-ab-info'],
-    fn: function(artist, playcount, listeners, bio, lo_more) {
+  'compx-infb_text': [
+    ['artist_name', 'playcount', 'listeners', 'bio', '#locales.more-ab-info'],
+    function(artist, playcount, listeners, bio, lo_more) {
       if (!lo_more) {
         return;
       }
@@ -119,10 +119,10 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
         return lo_more.replace('%s', artist);
       }
     }
-  },
-  'compx-usable_artist_image': {
-    depends_on: ['selected_image', 'vis_cool_photos'],
-    fn: function(img, cph) {
+  ],
+  'compx-usable_artist_image': [
+    ['selected_image', 'vis_cool_photos'],
+    function(img, cph) {
       if (!cph){
         var postfix = '';
         if (app_env.opera_widget){
@@ -133,7 +133,7 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
         return false;
       }
     }
-  },
+  ],
   'stch-bio': function(target, text) {
     var bioc = target.tpl.ancs['artbio'];
     if (!bioc){
@@ -151,14 +151,14 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
 
     }
   },
-  'compx-pvm_key':{
-    depends_on: ['^mp_show_end','mp_has_focus'],
-    fn: function(parent_viewing_mode, focus) {
+  'compx-pvm_key':[
+    ['^mp_show_end','mp_has_focus'],
+    function(parent_viewing_mode, focus) {
       if (parent_viewing_mode){
         return focus ? 1 : 2;
       }
     }
-  },
+  ],
   getPamoramaWidth: function() {
     return this.img_panorama.checkViewportWidth();
   },
@@ -189,9 +189,9 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
     return this.getBoxDemensionByKey(this.getPamoramaLiftWidth, this.state('panorama_lift_width_key'));
   },
 
-  'compx-panorama_lift_width_key':{
-    depends_on: ['panorama', 'artist_name', 'images_combination', '#window_height', 'pvm_key'],
-    fn: function(panorama,artist_name, images_combination, window_height, pvm_key) {
+  'compx-panorama_lift_width_key':[
+    ['panorama', 'artist_name', 'images_combination', '#window_height', 'pvm_key'],
+    function(panorama,artist_name, images_combination, window_height, pvm_key) {
       if (!panorama || !artist_name || !images_combination || !pvm_key){
         return;
       }
@@ -200,7 +200,7 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
       //ширина лифта  зависит от артиста, комбинации загруженных картинок, высоты экрана + состояния mp-show
 
     }
-  },
+  ],
   // 'stch-panorama_lift_width': function(target, state) {
   // 	if (state && target.img_panorama){
   // 		//this.img_panorama.setTotalWidth(state);

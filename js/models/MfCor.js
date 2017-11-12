@@ -332,20 +332,20 @@ var MfCorBase = spv.inh(LoadableList, {
     }]
   ],
 
-  "compx-must_be_expandable": {
-    depends_on: ['has_files', 'few_sources', 'cant_play_music'],
-    fn: function(has_files, fsrs, cant_play){
+  "compx-must_be_expandable": [
+    ['has_files', 'few_sources', 'cant_play_music'],
+    function(has_files, fsrs, cant_play){
       return !!(has_files || fsrs || cant_play);
     }
-  },
+  ],
 
 
-  'compx-user_preferred': {
-    depends_on: ["selected_mopla_to_use", "almost_selected_mopla"],
-    fn: function(selected_mopla_to_use, almost_selected_mopla) {
+  'compx-user_preferred': [
+    ["selected_mopla_to_use", "almost_selected_mopla"],
+    function(selected_mopla_to_use, almost_selected_mopla) {
       return selected_mopla_to_use || almost_selected_mopla;
     }
-  },
+  ],
   'compx-can_play': [
     ['mopla_to_use'],
     function(mopla) {
@@ -353,30 +353,30 @@ var MfCorBase = spv.inh(LoadableList, {
     }
   ],
 
-  'compx-mopla_to_use': {
-    depends_on: ["user_preferred", "default_mopla"],
-    fn: function(user_preferred, default_mopla){
+  'compx-mopla_to_use': [
+    ["user_preferred", "default_mopla"],
+    function(user_preferred, default_mopla){
       return user_preferred || default_mopla;
     }
-  },
-  'compx-has_available_tracks': {
-    depends_on: ['mopla_to_use'],
-    fn: function(mopla_to_use) {
+  ],
+  'compx-has_available_tracks': [
+    ['mopla_to_use'],
+    function(mopla_to_use) {
       return !!mopla_to_use;
     }
-  },
-  'compx-current_mopla': {
-    depends_on: ["used_mopla", "mopla_to_use"],
-    fn: function(used_mopla, mopla_to_use) {
+  ],
+  'compx-current_mopla': [
+    ["used_mopla", "mopla_to_use"],
+    function(used_mopla, mopla_to_use) {
       return used_mopla || mopla_to_use;
     }
-  },
-  'compx-mopla_to_preload': {
-    depends_on: ['search_ready', '^player_song', '^preload_current_file', 'current_mopla'],
-    fn: function(search_ready, player_song, preload_current_file, current_mopla){
+  ],
+  'compx-mopla_to_preload': [
+    ['search_ready', '^player_song', '^preload_current_file', 'current_mopla'],
+    function(search_ready, player_song, preload_current_file, current_mopla){
       return search_ready && (player_song || preload_current_file) && current_mopla;
     }
-  },
+  ],
   'stch-unavailable@sorted_completcs.moplas_list': function(target, state, old_state, source) {
     if (state) {
       target.checkMoplas(source.item);

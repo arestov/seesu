@@ -99,12 +99,12 @@ var TrackImages  = spv.inh(ImagesPack, {
     target.wlch(params.artmd, 'image-to-use', 'artist_image');
   }
 }, {
-  'compx-image-to-use': {
-    depends_on: ['best_image', 'just_image', 'artist_image'],
-    fn: function(bei, jui, arti){
+  'compx-image-to-use': [
+    ['best_image', 'just_image', 'artist_image'],
+    function(bei, jui, arti){
       return bei || jui || arti;
     }
-  }
+  ]
 });
 
 var ArtistImages = spv.inh(ImagesPack, {
@@ -112,12 +112,12 @@ var ArtistImages = spv.inh(ImagesPack, {
     target.artist_name = params.artist_name;
   }
 }, {
-  'compx-image-to-use': {
-    depends_on: ['best_image', 'just_image'],
-    fn: function(bei, jui){
+  'compx-image-to-use': [
+    ['best_image', 'just_image'],
+    function(bei, jui){
       return bei || jui;
     }
-  }
+  ]
 });
 
 var LastFMArtistImagesSelector = spv.inh(pv.Model, {

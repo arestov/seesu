@@ -47,48 +47,48 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
   'compx-access_desc': [['#locales.lastfm-tagging-access']],
   comma_regx: /\s*\,\s*/,
   comma_regx_end: /\s*\,\s*$/,
-  'compx-possible_tags':{
-    depends_on: ['user_tags_string'],
-    fn: function(user_tags_string) {
+  'compx-possible_tags':[
+    ['user_tags_string'],
+    function(user_tags_string) {
       if (!user_tags_string) {return [];}
       return (user_tags_string && spv.getExistingItems(user_tags_string.trim().split(this.comma_regx))).slice(0, 10) || [];
     }
-  },
-  'compx-petags': {
-    depends_on: ['personal_tags'],
-    fn: function(personal_tags) {
+  ],
+  'compx-petags': [
+    ['personal_tags'],
+    function(personal_tags) {
       return spv.filter(personal_tags, 'name');
     }
-  },
-  'compx-petags_result':{
-    depends_on: ['petags', 'petags_fixed'],
-    fn: function(petags, petags_fixed) {
+  ],
+  'compx-petags_result':[
+    ['petags', 'petags_fixed'],
+    function(petags, petags_fixed) {
       return petags_fixed || petags;
     }
-  },
-  'compx-tags_toadd': {
-    depends_on: ['petags_result', 'possible_tags'],
-    fn: function(petags_result, possible_tags) {
+  ],
+  'compx-tags_toadd': [
+    ['petags_result', 'possible_tags'],
+    function(petags_result, possible_tags) {
       return spv.arrayExclude(possible_tags, petags_result);
     }
-  },
-  'compx-tags_toremove': {
-    depends_on: ['petags_result', 'possible_tags'],
-    fn: function(petags_result, possible_tags) {
+  ],
+  'compx-tags_toremove': [
+    ['petags_result', 'possible_tags'],
+    function(petags_result, possible_tags) {
       return spv.arrayExclude(petags_result, possible_tags);
 
     }
-  },
-  'compx-has_changes': {
-    depends_on: ['tags_toadd', 'tags_toremove'],
-    fn: function(tags_toadd, tags_toremove) {
+  ],
+  'compx-has_changes': [
+    ['tags_toadd', 'tags_toremove'],
+    function(tags_toadd, tags_toremove) {
       return !!((tags_toadd && tags_toadd.length) || (tags_toremove && tags_toremove.length));
     }
-  },
-  'compx-canload_personal': {
-    depends_on: ['#lfm_userid', 'active_view'],
-    fn: spv.hasEveryArgs
-  },
+  ],
+  'compx-canload_personal': [
+    ['#lfm_userid', 'active_view'],
+    spv.hasEveryArgs
+  ],
   saveTagsChanges: function() {
     var _this = this;
     var tags_toremove = this.state('tags_toremove');

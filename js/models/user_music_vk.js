@@ -25,12 +25,9 @@ var VkAudioLogin = spv.inh(comd.VkLoginB, {}, {
   ]
 });
 
-var no_access_compx = {
-  depends_on: ['userid'],
-  fn: function(userid) {
-    return !userid;
-  }
-};
+var no_access_compx = [['userid'], function(userid) {
+  return !userid;
+}];
 
 var auth_bh = {
   'compx-has_no_access': no_access_compx,

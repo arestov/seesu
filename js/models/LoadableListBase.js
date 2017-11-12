@@ -69,12 +69,12 @@ return spv.inh(BrowseMap.Model, {
       this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
     }
   },
-  'compx-list_loading': {
-    depends_on: ['main_list_loading', 'preview_loading', 'id_searching'],
-    fn: function(main_list_loading, prevw_loading, id_searching) {
+  'compx-list_loading': [
+    ['main_list_loading', 'preview_loading', 'id_searching'],
+    function(main_list_loading, prevw_loading, id_searching) {
       return main_list_loading || prevw_loading || id_searching;
     }
-  },
+  ],
   'compx-can_load_data': [
     ['has_data_loader', 'loader_disallowed', 'has_no_access'],
     function(has_data_loader, loader_disallowed, has_no_access) {
@@ -87,12 +87,12 @@ return spv.inh(BrowseMap.Model, {
       return can_load_data && !all_data_loaded;
     }
   ],
-  'compx-more_load_available': {
-    depends_on: ['can_load_more', "list_loading"],
-    fn: function(can_load_more, list_loading) {
+  'compx-more_load_available': [
+    ['can_load_more', "list_loading"],
+    function(can_load_more, list_loading) {
       return can_load_more && !list_loading;
     }
-  },
+  ],
   handleNetworkSideData: function(target, source_name, ns, data) {
     target.app.handleNetworkSideData(source_name, ns, data, target);
   },

@@ -353,14 +353,14 @@ var ActionsRowUI = spv.inh(View, {}, {
       pvUpdate(target, 'arrow_parent_offset', target.getBoxDemensionByKey(target.getArPaOffset, state));
     }
   },
-  'compx-arrow_pos':{
-    depends_on: ['button_owidth', 'button_offset', 'arrow_parent_offset'],
-    fn: function(button_width, button_offset, parent_offset) {
+  'compx-arrow_pos':[
+    ['button_owidth', 'button_offset', 'arrow_parent_offset'],
+    function(button_width, button_offset, parent_offset) {
       if (button_offset && parent_offset){
         return ((button_offset.left + button_width/2) - parent_offset.left) + 'px';
       }
     }
-  }
+  ]
 });
 
 

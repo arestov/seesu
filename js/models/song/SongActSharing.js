@@ -232,12 +232,12 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
     this.searchFriends();
   },
   'compx-can_search': [['can_share']],
-  'compx-can_share':{
-    depends_on: ['^^active_view', '#lfm_userid'],
-    fn: function(active_view, lfm_userid) {
+  'compx-can_share':[
+    ['^^active_view', '#lfm_userid'],
+    function(active_view, lfm_userid) {
       return lfm_userid && active_view;
     }
-  },
+  ],
   searchFriends: function(){
     var list = this.getNesting('friends') || [];
     var query = this.state('query');
@@ -314,12 +314,12 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
     this.changeQuery(query);
     this.searchOneUser();
   },
-  'compx-can_share':{
-    depends_on: ['^^active_view', '#lfm_userid'],
-    fn: function(active_view, lfm_userid) {
+  'compx-can_share':[
+    ['^^active_view', '#lfm_userid'],
+    function(active_view, lfm_userid) {
       return lfm_userid && active_view;
     }
-  },
+  ],
   searchOneUser: spv.debounce(function() {
     var _this = this;
 

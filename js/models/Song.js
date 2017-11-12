@@ -155,12 +155,12 @@ function handleFile(self, file) {
 
       }
     ],
-    'compx-has_full_title':{
-      depends_on: ['artist', 'track'],
-      fn: function(artist_name, track_name) {
+    'compx-has_full_title':[
+      ['artist', 'track'],
+      function(artist_name, track_name) {
         return artist_name && track_name;
       }
-    },
+    ],
     'compx-available_images': [
       ['artist_images', 'album_image'],
       function (artist_images, album_image) {
@@ -179,24 +179,24 @@ function handleFile(self, file) {
         return arr;
       }
     ],
-    'compx-can_load_songcard':{
-      depends_on:['can_expand', 'has_full_title'],
-      fn: function(can_expand, has_full_title) {
+    'compx-can_load_songcard':[
+      ['can_expand', 'has_full_title'],
+      function(can_expand, has_full_title) {
         return can_expand && has_full_title;
       }
-    },
-    'compx-can_load_baseinfo': {
-      depends_on: ['can_expand', 'has_nested_artist'],
-      fn: function(can_expand, hna) {
+    ],
+    'compx-can_load_baseinfo': [
+      ['can_expand', 'has_nested_artist'],
+      function(can_expand, hna) {
         return can_expand && hna;
       }
-    },
-    'compx-can_load_images': {
-      depends_on: ['artist', 'can_expand', 'has_nested_artist'],
-      fn: function(artist, can_expand, hna) {
+    ],
+    'compx-can_load_images': [
+      ['artist', 'can_expand', 'has_nested_artist'],
+      function(artist, can_expand, hna) {
         return artist && can_expand && hna;
       }
-    },
+    ],
     'compx-can_expand': [
       ['files_search', 'marked_as', 'mp_show'],
       function(files_search, marked_as, mp_show) {

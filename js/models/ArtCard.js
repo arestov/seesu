@@ -49,18 +49,18 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
   }
 }, {
   network_data_as_states: false,
-  'compx-can_hide_artist_name': {
-    depends_on: ['album_artist', 'original_artist'],
-    fn: function(alb_artist, orgn_artist) {
+  'compx-can_hide_artist_name': [
+    ['album_artist', 'original_artist'],
+    function(alb_artist, orgn_artist) {
       return alb_artist == orgn_artist;
     }
-  },
-  'compx-selected_image': {
-    depends_on: ['lfm_img', 'lfm_image', 'profile_image'],
-    fn: function(lfm_img, lfmi_wrap, pi_wrap) {
+  ],
+  'compx-selected_image': [
+    ['lfm_img', 'lfm_image', 'profile_image'],
+    function(lfm_img, lfmi_wrap, pi_wrap) {
       return pi_wrap || lfm_img || lfmi_wrap;
     }
-  },
+  ],
   getURLPart: function(params, app){
     if (params.album_artist == params.original_artist){
       return app.encodeURLPart(params.album_name);
@@ -161,18 +161,18 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
     });
   }
 }, {
-  'compx-can_hide_artist_name': {
-    depends_on: ['album_artist', 'original_artist'],
-    fn: function(alb_artist, orgn_artist) {
+  'compx-can_hide_artist_name': [
+    ['album_artist', 'original_artist'],
+    function(alb_artist, orgn_artist) {
       return alb_artist == orgn_artist;
     }
-  },
-  'compx-selected_image': {
-    depends_on: ['lfm_image', 'profile_image', 'image_url'],
-    fn: function(lfmi_wrap, pi_wrap, image_url) {
+  ],
+  'compx-selected_image': [
+    ['lfm_image', 'profile_image', 'image_url'],
+    function(lfmi_wrap, pi_wrap, image_url) {
       return pi_wrap || lfmi_wrap || image_url;
     }
-  },
+  ],
   getAlbumURL: function() {
     return '';
   },
@@ -247,20 +247,20 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
   'compx-possible_loader_disallowing': [['#locales.no-dgs-id']],
   'compx-profile_searching': [['^discogs_id__loading']],
   'compx-artist_id':[['^discogs_id']],
-  'compx-loader_disallowing_desc': {
-    depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
-    fn: function(searching, disallowed, desc) {
+  'compx-loader_disallowing_desc': [
+    ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
+    function(searching, disallowed, desc) {
       if (disallowed && !searching){
         return desc;
       }
     }
-  },
-  'compx-loader_disallowed': {
-    depends_on: ['artist_id'],
-    fn: function(artist_id) {
+  ],
+  'compx-loader_disallowed': [
+    ['artist_id'],
+    function(artist_id) {
       return !artist_id;
     }
-  },
+  ],
   page_limit: 50,
   manual_previews: false,
   'nest_rqc-albums_list': DiscogsAlbumSongs,
@@ -368,20 +368,20 @@ var SoundcloudArtcardSongs = spv.inh(SongsList, {}, {
       }
     }
   ],
-  'compx-loader_disallowing_desc': {
-    depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
-    fn: function(searching, disallowed, desc) {
+  'compx-loader_disallowing_desc': [
+    ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
+    function(searching, disallowed, desc) {
       if (disallowed && !searching){
         return desc;
       }
     }
-  },
-  'compx-loader_disallowed': {
-    depends_on: ['artist_id'],
-    fn: function(artist_id) {
+  ],
+  'compx-loader_disallowed': [
+    ['artist_id'],
+    function(artist_id) {
       return !artist_id;
     }
-  }
+  ]
 });
 var SoundcloudArtistLikes = spv.inh(SoundcloudArtcardSongs, {}, {
   'nest_req-songs-list': [

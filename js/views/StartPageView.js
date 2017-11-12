@@ -30,12 +30,12 @@ var StartPageView = spv.inh(coct.SPView, {}, {
   'stch-autofocus': function(target, value) {
     target.parent_view.parent_view.updateState('startpage_autofocus', value);
   },
-  'compx-autofocus': {
-    depends_on: ['mp_show_end', 'mp_has_focus'],
-    fn: function(shw_end, focus) {
+  'compx-autofocus': [
+    ['mp_show_end', 'mp_has_focus'],
+    function(shw_end, focus) {
       return focus && shw_end;
     }
-  },
+  ],
   'compx-lo_at_page': [[]],
   'compx-ask_rating_help': [['ask-rating-help', '#locales.at-this-page', '#locales.ask-rating-help'], function(link, lo_at_page, text) {
     return link && lo_at_page && {
