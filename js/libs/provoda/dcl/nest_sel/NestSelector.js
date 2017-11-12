@@ -36,27 +36,27 @@ function Hands(dcl) {
 
 var count = 1;
 var NestSelector = function (md, declr) {
-	this.num = 'nsel-' + (count++);
-	this.md = md;
-	this.declr = declr;
+  this.num = 'nsel-' + (count++);
+  this.md = md;
+  this.declr = declr;
 
   this.items_changed = null;
-	// this.waiting_chd_count = false;
+  // this.waiting_chd_count = false;
 
   this.state_name = declr.deps.base.all.list;
   this.short_state_name = declr.deps.base.all.shorts;
 
-	this.item_cond_index = (declr.selectFn && declr.deps.base.cond) ? {} : null;
-	this.base_states = null;
+  this.item_cond_index = (declr.selectFn && declr.deps.base.cond) ? {} : null;
+  this.base_states = null;
 
-	if (declr.selectFn && declr.deps.base.all.list) {
-		var base_states = {};
-		for (var i = 0; i < declr.deps.base.all.list.length; i++) {
-			var cur = declr.deps.base.all.list[i];
-			base_states[cur] = pvState(md, cur);
-		}
-		this.base_states = base_states;
-	}
+  if (declr.selectFn && declr.deps.base.all.list) {
+    var base_states = {};
+    for (var i = 0; i < declr.deps.base.all.list.length; i++) {
+      var cur = declr.deps.base.all.list[i];
+      base_states[cur] = pvState(md, cur);
+    }
+    this.base_states = base_states;
+  }
 
 };
 
@@ -73,42 +73,42 @@ NestSelector.handleRemoving = handleRemoving;
 NestSelector.rerun = rerun;
 
 function handleChdDestState(motivator, fn, head, args) {
-	// input - changed "dest" state
-	// expected - invalidated all item conditions, rerunned query, updated nesting
+  // input - changed "dest" state
+  // expected - invalidated all item conditions, rerunned query, updated nesting
   var hands = head.hands;
-	if (!hands.declr.selectFn) {
-		return runHeadFilter(motivator, head, hands);
-	}
+  if (!hands.declr.selectFn) {
+    return runHeadFilter(motivator, head, hands);
+  }
 
-	var state_name = args[0];
-	var value = args[1];
+  var state_name = args[0];
+  var value = args[1];
 
-	var states = head.base_states;
-	states[state_name] = value;
-	var base = hands.dcl.deps.base;
-	if (base.cond && base.cond.index[state_name] === true) {
-		head.item_cond_index = {};
-	}
+  var states = head.base_states;
+  states[state_name] = value;
+  var base = hands.dcl.deps.base;
+  if (base.cond && base.cond.index[state_name] === true) {
+    head.item_cond_index = {};
+  }
 
-	runHeadFilter(motivator, head, hands);
+  runHeadFilter(motivator, head, hands);
 }
 
 function handleChdDeepState(motivator, _, lnwatch, args) {
-	// input - changed "deep source" state
-	// expected - invalidated one item condition, rerunned query, updated nesting
-	var state_name = args[0];
-	var value = args[1];
-	var md = args[3];
+  // input - changed "deep source" state
+  // expected - invalidated one item condition, rerunned query, updated nesting
+  var state_name = args[0];
+  var value = args[1];
+  var md = args[3];
 
   var hands = lnwatch.data;
 
-	var _provoda_id = md._provoda_id;
-	var states = hands.deep_item_states_index[_provoda_id];
-	states[state_name] = value;
-	hands.deep_item_states_index[_provoda_id] = states;
+  var _provoda_id = md._provoda_id;
+  var states = hands.deep_item_states_index[_provoda_id];
+  states[state_name] = value;
+  hands.deep_item_states_index[_provoda_id] = states;
 
-	var deep = hands.dcl.deps.deep;
-	if (deep.cond && deep.cond.index[state_name] === true) {
+  var deep = hands.dcl.deps.deep;
+  if (deep.cond && deep.cond.index[state_name] === true) {
 
     if (hands.can_filter_here) {
       delete hands.item_cond_index[_provoda_id];
@@ -119,47 +119,47 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
         delete head.item_cond_index[_provoda_id];
       }
     }
-	}
+  }
   if (hands.can_sort_here && deep.sort && deep.sort.index[state_name] === true) {
     hands.items_sorted = null;
   }
 
-	runFilter(motivator, hands);
+  runFilter(motivator, hands);
 }
 
 function rerun(motivator, _, lnwatch) {
-	runFilter(motivator, lnwatch.data);
+  runFilter(motivator, lnwatch.data);
 }
 
 function checkCondition(head, hands, _provoda_id) {
-	var deep_states = hands.deep_item_states_index[_provoda_id];
-	var base_states = head.base_states;
-	var args_schema = head.declr.args_schema;
+  var deep_states = hands.deep_item_states_index[_provoda_id];
+  var base_states = head.base_states;
+  var args_schema = head.declr.args_schema;
 
-	var args = new Array(args_schema.length);
-	for (var i = 0; i < args_schema.length; i++) {
-		var cur = args_schema[i];
-		var value;
-		switch (cur.type) {
-			case 'deep':
-				value = deep_states[cur.name];
-				break;
-			case 'base':
-				value = base_states[cur.name];
-				break;
-			default:
-				throw new Error('unknow type dep type');
-		}
-		args[i] = value;
-	}
-	return Boolean(head.declr.selectFn.apply(null, args));
+  var args = new Array(args_schema.length);
+  for (var i = 0; i < args_schema.length; i++) {
+    var cur = args_schema[i];
+    var value;
+    switch (cur.type) {
+      case 'deep':
+        value = deep_states[cur.name];
+        break;
+      case 'base':
+        value = base_states[cur.name];
+        break;
+      default:
+        throw new Error('unknow type dep type');
+    }
+    args[i] = value;
+  }
+  return Boolean(head.declr.selectFn.apply(null, args));
 }
 
 function keyFromCache(head, hands, cache, key) {
   if (!cache.hasOwnProperty(key)) {
-		cache[key] = checkCondition(head, hands, key);
-	}
-	return cache[key];
+    cache[key] = checkCondition(head, hands, key);
+  }
+  return cache[key];
 }
 
 function isFine(md, head, hands) {
@@ -168,32 +168,32 @@ function isFine(md, head, hands) {
 }
 
 function switchDistant(do_switch, base, deep) {
-	return do_switch ? deep : base;
+  return do_switch ? deep : base;
 }
 
 function getFiltered(head, hands) {
   if (!hands.items) {return;}
   var dcl = head.declr;
   var cond_base = dcl.deps.base.cond;
-	var cond_deep = dcl.deps.deep.cond;
+  var cond_deep = dcl.deps.deep.cond;
   if (!(cond_base && cond_base.list) && !(cond_deep && cond_deep.list)) {
     return hands.items;
   }
 
   var result = [];
 
-	for (var i = 0; i < hands.items.length; i++) {
-		var cur = hands.items[i];
-		if (isFine(cur, head, hands)) {
-			result.push(cur);
-		}
-	}
+  for (var i = 0; i < hands.items.length; i++) {
+    var cur = hands.items[i];
+    if (isFine(cur, head, hands)) {
+      result.push(cur);
+    }
+  }
 
-	return result;
+  return result;
 }
 
 function getReadyItems(head, hands, filtered) {
-	var dcl = head.declr;
+  var dcl = head.declr;
 
   if (!dcl.map) {
     return filtered;
@@ -253,20 +253,20 @@ function getFilteredAndSorted(head, hands) {
 }
 
 function runHeadFilter(motivator, head, hands) {
-	// item_cond_index
-	// deep_item_states_index
-	// base_states
+  // item_cond_index
+  // deep_item_states_index
+  // base_states
 
   var sorted = getFilteredAndSorted(head, hands);
-	var result = getReadyItems(head, hands, sorted);
+  var result = getReadyItems(head, hands, sorted);
 
-	var md = head.md;
-	var old_motivator = md.current_motivator;
-	md.current_motivator = motivator;
-	md.updateNesting(head.declr.dest_name, result);
-	md.current_motivator = old_motivator;
+  var md = head.md;
+  var old_motivator = md.current_motivator;
+  md.current_motivator = motivator;
+  md.updateNesting(head.declr.dest_name, result);
+  md.current_motivator = old_motivator;
 
-	return result;
+  return result;
 }
 
 function runFilter(motivator, hands) {
@@ -276,50 +276,50 @@ function runFilter(motivator, hands) {
 }
 
 function handleChdCount(motivator, _, lnwatch, __, items) {
-	// input - changed list order or length
-	// expected - rerunned query, updated nesting
+  // input - changed list order or length
+  // expected - rerunned query, updated nesting
 
-	var hands = lnwatch.data;
-	hands.items = items;
-	runFilter(motivator, hands);
+  var hands = lnwatch.data;
+  hands.items = items;
+  runFilter(motivator, hands);
 }
 
 function handleAdding(md, lnwatch, skip) {
-	// input - signal of added to list item
-	// expected - prepared item state cache
+  // input - signal of added to list item
+  // expected - prepared item state cache
 
-	if (skip !== lnwatch.selector.length) {return;}
+  if (skip !== lnwatch.selector.length) {return;}
 
 
-	var hands = lnwatch.data;
+  var hands = lnwatch.data;
   if (hands.can_filter_here) {
     hands.items_filtered = null;
   }
 
   var declr = hands.dcl;
-	var _provoda_id = md._provoda_id;
+  var _provoda_id = md._provoda_id;
 
-	var states = {};
-	var deep = declr.deps.deep;
-	for (var i = 0; i < deep.cond.list.length; i++) {
-		var cur = deep.cond.list[i];
-		states[cur] = pvState(md, cur);
-	}
-	hands.deep_item_states_index[_provoda_id] = states;
+  var states = {};
+  var deep = declr.deps.deep;
+  for (var i = 0; i < deep.cond.list.length; i++) {
+    var cur = deep.cond.list[i];
+    states[cur] = pvState(md, cur);
+  }
+  hands.deep_item_states_index[_provoda_id] = states;
 }
 
 function handleRemoving(md, lnwatch, skip) {
-	// input - signal of removed item form list
-	// expected - removed item state cache
+  // input - signal of removed item form list
+  // expected - removed item state cache
 
-	if (skip !== lnwatch.selector.length) {return;}
+  if (skip !== lnwatch.selector.length) {return;}
 
-	var hands = lnwatch.data;
+  var hands = lnwatch.data;
   if (hands.can_filter_here) {
     hands.items_filtered = null;
   }
-	var _provoda_id = md._provoda_id;
-	delete hands.deep_item_states_index[_provoda_id];
+  var _provoda_id = md._provoda_id;
+  delete hands.deep_item_states_index[_provoda_id];
 }
 
 return NestSelector;

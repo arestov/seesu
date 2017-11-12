@@ -24,44 +24,44 @@ return function(self, props, original, params) {
 
   checkApis(self, props, typed_state_dcls);
 
-	changeDataMorphDeclarations(self, props, typed_state_dcls);
-	collectStateChangeHandlers(self, props, typed_state_dcls);
+  changeDataMorphDeclarations(self, props, typed_state_dcls);
+  collectStateChangeHandlers(self, props, typed_state_dcls);
 
-	collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
-	collectSubpages(self, props);
-	checkSubpager(self, props);
-	checkChi(self, props);
-	checkNestRqC(self, props);
-	checkNestSel(self, props);
+  collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
+  collectSubpages(self, props);
+  checkSubpager(self, props);
+  checkChi(self, props);
+  checkNestRqC(self, props);
+  checkNestSel(self, props);
   checkNestCnt(self, props);
 
 
 
-	if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
-		self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
-	}
+  if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
+    self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
+  }
 
-	collectNestingsDeclarations(self, props);
+  collectNestingsDeclarations(self, props);
 
-	for (var i = 0; i < xxxx_morph_props.length; i++) {
-		// если есть декларации - парсим, делаем функции
-		// на вход функции - одна структура, на выход - другая
-		var cur = xxxx_morph_props[i];
-		var cur_name = Array.isArray(cur) ? cur[0] : cur;
-		var subfield = Array.isArray(cur) && cur[1];
-		if (props.hasOwnProperty(cur_name)) {
-			if (typeof self[cur_name] != 'function' && self[cur_name] !== true) {
-				var obj = {
-					props_map: self[cur_name]
-				};
-				if (subfield) {
-					obj.source = subfield;
-				}
-				self[cur_name] = spv.mmap(obj);
-			}
+  for (var i = 0; i < xxxx_morph_props.length; i++) {
+    // если есть декларации - парсим, делаем функции
+    // на вход функции - одна структура, на выход - другая
+    var cur = xxxx_morph_props[i];
+    var cur_name = Array.isArray(cur) ? cur[0] : cur;
+    var subfield = Array.isArray(cur) && cur[1];
+    if (props.hasOwnProperty(cur_name)) {
+      if (typeof self[cur_name] != 'function' && self[cur_name] !== true) {
+        var obj = {
+          props_map: self[cur_name]
+        };
+        if (subfield) {
+          obj.source = subfield;
+        }
+        self[cur_name] = spv.mmap(obj);
+      }
 
-		}
-	}
+    }
+  }
 
   var init = params && params.init || props.init;
   if (init) {

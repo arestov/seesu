@@ -6,20 +6,20 @@ var wrapRequest = require('js/modules/wrapRequest');
 var hex_md5 = require('hex_md5');
 
 var ScApi = function(key, queue, crossdomain, cache_ajax) {
-	this.queue = queue;
-	this.key = key;
-	this.crossdomain = crossdomain;
-	this.cache_ajax = cache_ajax;
+  this.queue = queue;
+  this.key = key;
+  this.crossdomain = crossdomain;
+  this.cache_ajax = cache_ajax;
 };
 
 ScApi.prototype = {
-	errors_fields: [],
-	constructor: ScApi,
-	source_name: 'soundcloud.com',
-	cache_namespace: "soundcloud_api",
-	thisOriginAllowed: true,
-	get: function(method, params_raw, options) {
-		if (!method) {return;}
+  errors_fields: [],
+  constructor: ScApi,
+  source_name: 'soundcloud.com',
+  cache_namespace: "soundcloud_api",
+  thisOriginAllowed: true,
+  get: function(method, params_raw, options) {
+    if (!method) {return;}
 
     options = options || {};
     var params = params_raw ? spv.cloneObj({}, params_raw) : {};
@@ -58,7 +58,7 @@ ScApi.prototype = {
     });
 
     return wrap_def.complex;
-	}
+  }
 };
 
 return ScApi;

@@ -60,9 +60,9 @@ var FilesBySource = spv.inh(pv.Model, {
       ],
     }
   },
-	'nest_sel-queried_music_files': {
-		from: 'search_query.files'
-	},
+  'nest_sel-queried_music_files': {
+    from: 'search_query.files'
+  },
   'nest_conj-music_files_list': ['queried_music_files', 'requested_music_files', 'injected_music_files'],
   'compx-qmi_key': [['msq'], QMIKey],
   'nest_sel-best_music_files': {
@@ -137,9 +137,9 @@ var FilesBySource = spv.inh(pv.Model, {
     if (!state) {return;}
 
     var request = target.getNesting('search_query').requestFiles();
-		if (!request) {return;}
+    if (!request) {return;}
 
-		target.addRequest(request);
+    target.addRequest(request);
   }
 });
 

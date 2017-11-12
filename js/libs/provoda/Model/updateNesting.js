@@ -9,7 +9,7 @@ var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 
 var hasDot = spv.memorize(function(nesting_name) {
-	return nesting_name.indexOf('.') != -1;
+  return nesting_name.indexOf('.') != -1;
 });
 
 return function updateNesting(self, collection_name, array, opts, spec_data) {

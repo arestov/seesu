@@ -168,16 +168,16 @@ var assign = function(typed_state_dcls, nest_declr) {
 };
 
 var changeSources = function(store, send_declr) {
-	var api_name = send_declr.api_name;
-	if (typeof api_name == 'string') {
-		store.api_names.push(api_name);
-	} else {
-		var network_api = api_name.call();
-		if (!network_api.source_name) {
-			throw new Error('no source_name');
-		}
-		store.sources_names.push(network_api.source_name);
-	}
+  var api_name = send_declr.api_name;
+  if (typeof api_name == 'string') {
+    store.api_names.push(api_name);
+  } else {
+    var network_api = api_name.call();
+    if (!network_api.source_name) {
+      throw new Error('no source_name');
+    }
+    store.sources_names.push(network_api.source_name);
+  }
 };
 
 return function(self, props, typed_state_dcls) {

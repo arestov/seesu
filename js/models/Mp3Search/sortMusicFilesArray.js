@@ -22,17 +22,17 @@ function getAvg(arr) {
 }
 
 var getAverageDurations = function(mu_array, time_limit, qmi_index){
-	var r = {};
-	var filtr = function(value){
-		if (value && value > time_limit){
-			return true;
-		}
-	};
-	for (var a in qmi_index){
-		var durs = spv.filter(spv.filter(qmi_index[a], 'duration', filtr), "duration");
-		r[a] = getAvg(durs);
-	}
-	return r;
+  var r = {};
+  var filtr = function(value){
+    if (value && value > time_limit){
+      return true;
+    }
+  };
+  for (var a in qmi_index){
+    var durs = spv.filter(spv.filter(qmi_index[a], 'duration', filtr), "duration");
+    r[a] = getAvg(durs);
+  }
+  return r;
 };
 
  function sortMusicFilesArray(mp3_search, music_list, msq, time_limit) {

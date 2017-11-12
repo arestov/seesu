@@ -14,77 +14,77 @@ var checkNestBorrow = require('../dcl_view/nest_borrow/check-dcl');
 var checkNestBorrowWatch = require('../dcl_view/nest_borrow/watch');
 
 var getBaseTreeCheckList = function(start) {
-	var i, result = [];
-	var chunks_counter = 0;
-	var all_items = [null, start];
+  var i, result = [];
+  var chunks_counter = 0;
+  var all_items = [null, start];
 
-	while (all_items.length) {
-
-
-		var cur_parent = all_items.shift();
-		var cur = all_items.shift();
-
-		cur.parent = cur_parent;
-		cur.chunk_num = chunks_counter;
-
-		if (cur.children_by_selector) {
-			for (i = cur.children_by_selector.length - 1; i >= 0; i--) {
-				all_items.push( cur, cur.children_by_selector[i] );
-			}
-		}
-
-		if (cur.children_by_anchor) {
-			for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
-				all_items.push( cur, cur.children_by_anchor[i] );
-			}
-
-		}
-
-		result.push( cur );
-		chunks_counter++;
+  while (all_items.length) {
 
 
-	}
-	return result;
+    var cur_parent = all_items.shift();
+    var cur = all_items.shift();
+
+    cur.parent = cur_parent;
+    cur.chunk_num = chunks_counter;
+
+    if (cur.children_by_selector) {
+      for (i = cur.children_by_selector.length - 1; i >= 0; i--) {
+        all_items.push( cur, cur.children_by_selector[i] );
+      }
+    }
+
+    if (cur.children_by_anchor) {
+      for (i = cur.children_by_anchor.length - 1; i >= 0; i--) {
+        all_items.push( cur, cur.children_by_anchor[i] );
+      }
+
+    }
+
+    result.push( cur );
+    chunks_counter++;
+
+
+  }
+  return result;
 
 };
 
 return function(self, props, original) {
   var typed_state_dcls = getTypedDcls(props['+states']) || {};
 
-	checkNestBorrow(self, props);
+  checkNestBorrow(self, props);
   checkApis(self, props, typed_state_dcls);
 
-	collectStateChangeHandlers(self, props, typed_state_dcls);
-	collectCollectionChangeDeclarations(self, props);
+  collectStateChangeHandlers(self, props, typed_state_dcls);
+  collectCollectionChangeDeclarations(self, props);
 
-	collectSelectorsOfCollchs(self, props);
+  collectSelectorsOfCollchs(self, props);
 
-	collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
+  collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
 
-	if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
-		self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
-	}
+  if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
+    self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
+  }
 
-	var base_tree_mofified = props.hasOwnProperty('base_tree');
-	if (base_tree_mofified) {
-		self.base_tree_list = getBaseTreeCheckList(props.base_tree);
-	}
+  var base_tree_mofified = props.hasOwnProperty('base_tree');
+  if (base_tree_mofified) {
+    self.base_tree_list = getBaseTreeCheckList(props.base_tree);
+  }
 
-	changeChildrenViewsDeclarations(self, props);
+  changeChildrenViewsDeclarations(self, props);
 
-	if (props.tpl_events) {
-		self.tpl_events = {};
-		cloneObj(self.tpl_events, original.tpl_events);
-		cloneObj(self.tpl_events, props.tpl_events);
-	}
+  if (props.tpl_events) {
+    self.tpl_events = {};
+    cloneObj(self.tpl_events, original.tpl_events);
+    cloneObj(self.tpl_events, props.tpl_events);
+  }
 
-	if (props.tpl_r_events) {
-		self.tpl_r_events = {};
-		cloneObj(self.tpl_r_events, original.tpl_r_events);
-		cloneObj(self.tpl_r_events, props.tpl_r_events);
-	}
+  if (props.tpl_r_events) {
+    self.tpl_r_events = {};
+    cloneObj(self.tpl_r_events, original.tpl_r_events);
+    cloneObj(self.tpl_r_events, props.tpl_r_events);
+  }
 
-	checkNestBorrowWatch(self, props)
+  checkNestBorrowWatch(self, props)
 };
 });

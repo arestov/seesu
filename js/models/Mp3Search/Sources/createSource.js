@@ -15,8 +15,8 @@ var BlankQuery = pv.behavior({
 return function (Query, dmca_url, File) {
   return pv.behavior({
     head_by_urlname: {
-  		search_name: 'by_slash.0'
-  	},
+      search_name: 'by_slash.0'
+    },
     'compx-dmca_url': [
       [],
       function () {

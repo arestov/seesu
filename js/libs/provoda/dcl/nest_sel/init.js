@@ -38,19 +38,19 @@ function add(self, nwbase, dcl) {
 }
 
 return function init(self) {
-	if (!self.nest_sel_nest_matches) {return;}
+  if (!self.nest_sel_nest_matches) {return;}
 
-	for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
-		var dcl = self.nest_sel_nest_matches[i];
+  for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {
+    var dcl = self.nest_sel_nest_matches[i];
     var deep_nwatch = add(self, dcl.nwbase, dcl);
     var hands = deep_nwatch.data;
-		var dest_w = new NestSelector(self, dcl, hands);
-		if (dest_w.state_name) {
-			addFrom(self, dest_w);
-		}
+    var dest_w = new NestSelector(self, dcl, hands);
+    if (dest_w.state_name) {
+      addFrom(self, dest_w);
+    }
 
     addHead(self, hands, dest_w);
-	}
+  }
 
 };
 });

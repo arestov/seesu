@@ -4,11 +4,11 @@ var getCachedPVData = require('./getCachedPVData');
 var patchNode = require('./patchNode');
 
 function getCommentPVData(cur_node, struc_store, getSample) {
-	return getCachedPVData(cur_node, struc_store, true, getSample);
+  return getCachedPVData(cur_node, struc_store, true, getSample);
 }
 
 function getPVData(cur_node, struc_store, getSample) {
-	return getCachedPVData(cur_node, struc_store, false, getSample);
+  return getCachedPVData(cur_node, struc_store, false, getSample);
 }
 
 

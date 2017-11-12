@@ -28,7 +28,7 @@ function handleEndItems(motivator, _, lnwatch) {
 }
 
 function checkChangedNestWatchs(md, collection_name) {
-	if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
+  if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
   // console.log('match!', collection_name);
 
   /* список subl_wtch (локальных элементов следящих за гнёздами) */

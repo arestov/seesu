@@ -24,27 +24,27 @@ return function check(self, props) {
 
   self.nest_concat_nest_matches = [];
 
-	for (var res in cnts) {
-		self.nest_concat_nest_matches.push(cnts[res]);
-	}
+  for (var res in cnts) {
+    self.nest_concat_nest_matches.push(cnts[res]);
+  }
 };
 
 function handleChdCount(motivator, _, lnwatch, __, items) {
-	var cnt = lnwatch.data.cnt;
-	cnt.items[lnwatch.data.index] = items;
-	runConcat(motivator, cnt);
+  var cnt = lnwatch.data.cnt;
+  cnt.items[lnwatch.data.index] = items;
+  runConcat(motivator, cnt);
 }
 
 function runConcat(motivator, cnt) {
-	var result = concatItems(cnt);
+  var result = concatItems(cnt);
 
-	var md = cnt.md;
-	var old_motivator = md.current_motivator;
-	md.current_motivator = motivator;
-	md.updateNesting(cnt.dcl.dest_name, result);
-	md.current_motivator = old_motivator;
+  var md = cnt.md;
+  var old_motivator = md.current_motivator;
+  md.current_motivator = motivator;
+  md.updateNesting(cnt.dcl.dest_name, result);
+  md.current_motivator = old_motivator;
 
-	return result;
+  return result;
 }
 
 

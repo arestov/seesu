@@ -29,7 +29,7 @@ var Query = pv.behavior({
     ['#sc_api', [
       ['msq'],
       function(api, opts, msq) {
-    		return api.get('tracks', {
+        return api.get('tracks', {
           filter:'streamable,downloadable',
           q: msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || '')),
           limit: 30,

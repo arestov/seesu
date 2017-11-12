@@ -77,35 +77,35 @@ function calcsReady(highway) {
 fetchData.getWatchStruct = getWatchStruct;
 
 function getWatchStruct(schema) {
-	// in:
-	// {
-	//   states: [],
-	//   nestings: {
-	//     artists: {
-	//       states: [],
-	//       nesting: {}
-	//     }
-	//   }
-	// }
+  // in:
+  // {
+  //   states: [],
+  //   nestings: {
+  //     artists: {
+  //       states: [],
+  //       nesting: {}
+  //     }
+  //   }
+  // }
 
-	// out:
-	// struc.main.merged_states
-	// struc.main.m_children.children
+  // out:
+  // struc.main.merged_states
+  // struc.main.m_children.children
 
-	var nestings = {};
-	for (var nesting_name in schema.nestings) {
-		nestings[nesting_name] = getWatchStruct(schema.nestings[nesting_name]);
-	}
+  var nestings = {};
+  for (var nesting_name in schema.nestings) {
+    nestings[nesting_name] = getWatchStruct(schema.nestings[nesting_name]);
+  }
 
-	return {
-		main: {
+  return {
+    main: {
       limit: schema.limit,
-			merged_states: schema.states || [],
-			m_children: {
-				children: nestings
-			}
-		}
-	};
+      merged_states: schema.states || [],
+      m_children: {
+        children: nestings
+      }
+    }
+  };
 }
 
 return fetchData;

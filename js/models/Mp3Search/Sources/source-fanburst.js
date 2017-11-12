@@ -30,7 +30,7 @@ var Query = pv.behavior({
     ['#fanburst_api', [
       ['msq'],
       function(api, opts, msq) {
-    		return api.get('tracks/search', {
+        return api.get('tracks/search', {
           query: msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || '')),
           per_page: 30,
           offset: 0,

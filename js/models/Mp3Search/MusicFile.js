@@ -9,7 +9,7 @@ var getQMSongIndex = QMI.getQMSongIndex;
 
 var Match = pv.behavior({
   'compx-searches_pr': [['#mp3_search_order']],
-	'compx-duration': [['^duration']],
+  'compx-duration': [['^duration']],
   'compx-index_value': [
     ['msq', '^artist', '^track', '^description'],
     function (msq, artist, track, description) {
@@ -51,15 +51,15 @@ var Match = pv.behavior({
       return [index_value == -1 ? Infinity : index_value, search_order, duration_diff];
     }
   ],
-	'compx-allow_grouping': [
-		['index_value'],
-		function (value) {
-			return typeof value == 'number' && value != -1;
-		}
-	],
-	'nest-match_group': ['#mp3_search/lookups/[:artist_name],[:track_title]/[:search_name]/duration_groups/[:index_value]', {
-		ask_for: 'allow_grouping'
-	}]
+  'compx-allow_grouping': [
+    ['index_value'],
+    function (value) {
+      return typeof value == 'number' && value != -1;
+    }
+  ],
+  'nest-match_group': ['#mp3_search/lookups/[:artist_name],[:track_title]/[:search_name]/duration_groups/[:index_value]', {
+    ask_for: 'allow_grouping'
+  }]
 });
 
 var SongFileModel = pv.behavior({
@@ -79,11 +79,11 @@ var SongFileModel = pv.behavior({
 });
 
 var MusicFile = spv.inh(pv.Model, {
-	naming: function(fn) {
-		return function MusicFile(opts, data, params, more, states) {
-			fn(this, opts, data, params, more, states);
-		};
-	}
+  naming: function(fn) {
+    return function MusicFile(opts, data, params, more, states) {
+      fn(this, opts, data, params, more, states);
+    };
+  }
 }, {
   sub_pager: {
     type: {
