@@ -139,7 +139,7 @@ var VkUserTracks = spv.inh(BrowseMap.Model, {}, {
   }
 });
 
-var VKFriendsList = spv.inh(LoadableList, {}, cloneObj({
+var VKFriendsList = spv.inh(LoadableList, {}, pv.mergeBhv({
   main_list_name: 'list_items',
   model_name: 'vk_users',
   page_limit: 200,

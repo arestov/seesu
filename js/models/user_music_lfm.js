@@ -137,7 +137,7 @@ var UserArtists = spv.inh(LoadableList, {}, {
 });
 
 // var LULAs = function() {};//artists, список артистов
-// UserArtists.extendTo(LULAs, cloneObj({
+// UserArtists.extendTo(LULAs, pv.mergeBhv({
 // 	'nest_req-artists': [
 // 		declr_parsers.lfm.getArtists('artists'),
 // 		['#lfm', 'get', function() {
