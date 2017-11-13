@@ -116,7 +116,7 @@ function changeFaviconNode(d, oldLink, src, type) {
 
 var push = Array.prototype.push;
 
-var BrowseLevView = spv.inh(View, {}, spv.cloneObj({
+var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
   children_views_by_mn: {
     pioneer: map_slice_by_model
   },
