@@ -81,8 +81,8 @@ var patchNode = function(node, struc_store, directives_data, getSample, opts) {
     if (instructions['pv-when'] && instructions['pv-nest']) {
       throw new Error('do not use pv-when and pv-nest on same node');
       /*
-         1 - it's not osbiois what should be handled 1st
-         2 - there is bug:
+        1 - it's not osbiois what should be handled 1st
+        2 - there is bug:
           when pv-when is true it appends node,
           pv-nest remove it. clone it.
           so when pv-when is false it tries to remove wrong node
@@ -91,82 +91,82 @@ var patchNode = function(node, struc_store, directives_data, getSample, opts) {
 
   }
 
-	for (var i = 0; i < patching_directives_list.length; i++) {
-		var cur = patching_directives_list[i];
-		if (!directives_data || !instructions[cur]) {
-			continue;
-		}
-		// cur
-		// node, params, getSample, opts
-		var result = patching_directives[cur].call(null, node, instructions[cur], getSample, opts);
-		if (!result) {
-			return;
-		}
+  for (var i = 0; i < patching_directives_list.length; i++) {
+    var cur = patching_directives_list[i];
+    if (!directives_data || !instructions[cur]) {
+      continue;
+    }
+    // cur
+    // node, params, getSample, opts
+    var result = patching_directives[cur].call(null, node, instructions[cur], getSample, opts);
+    if (!result) {
+      return;
+    }
 
-		if (!result.directives_data && !result.pvprsd) {
-			throw new Error('should be directives_data');
-		}
-		if (result.directives_data) {
-			setStrucKey(result, struc_store, result.directives_data);
-		}
-		return result;
-	}
+    if (!result.directives_data && !result.pvprsd) {
+      throw new Error('should be directives_data');
+    }
+    if (result.directives_data) {
+      setStrucKey(result, struc_store, result.directives_data);
+    }
+    return result;
+  }
 };
 
 function makePvWhen(anchor, expression, getSample, sample_node) {
-	// debugger;
-	return new StandartChange(anchor, {
-		data: {
-			sample_node: sample_node,
-			getSample: getSample
-		},
-		simplifyValue: function(value) {
-			return !!value;
-		},
-		statement: expression,
-		getValue: function(node, data) {
-			return node.pvwhen_content;
-			// debugger
-		},
-		setValue: function(node, new_value, old_value, wwtch) {
-			if (new_value && !node.pvwhen_content) {
-				node.pvwhen_content = true;
-				var root_node;
-				var tpl  = wwtch.context;
-				if (wwtch.data.getSample) {
-					root_node = wwtch.data.getSample();
-				} else {
-					if (!wwtch.data.sampler) {
+  // debugger;
+  return new StandartChange(anchor, {
+    data: {
+      sample_node: sample_node,
+      getSample: getSample
+    },
+    simplifyValue: function(value) {
+      return !!value;
+    },
+    statement: expression,
+    getValue: function(node, data) {
+      return node.pvwhen_content;
+      // debugger
+    },
+    setValue: function(node, new_value, old_value, wwtch) {
+      if (new_value && !node.pvwhen_content) {
+        node.pvwhen_content = true;
+        var root_node;
+        var tpl  = wwtch.context;
+        if (wwtch.data.getSample) {
+          root_node = wwtch.data.getSample();
+        } else {
+          if (!wwtch.data.sampler) {
             var PvSimpleSampler = require('./PvSimpleSampler');
-						wwtch.data.sampler = new PvSimpleSampler(wwtch.data.sample_node, tpl.struc_store, tpl.getSample);
-					}
-					root_node = wwtch.data.sampler.getClone();
-				}
+            wwtch.data.sampler = new PvSimpleSampler(wwtch.data.sample_node, tpl.struc_store, tpl.getSample);
+          }
+          root_node = wwtch.data.sampler.getClone();
+        }
 
-				wwtch.root_node = root_node;
+        wwtch.root_node = root_node;
 
-				$(node).after(root_node);
-				var all_chunks = wwtch.context.parseAppended(root_node);
+        $(node).after(root_node);
+        var all_chunks = wwtch.context.parseAppended(root_node);
 
-				wwtch.destroyer = function() {
-					node.pvwhen_content = false;
-					$(wwtch.root_node).remove();
-					for (var i = 0; i < all_chunks.length; i++) {
-						all_chunks[i].dead = true;
-					}
-					wwtch.context.checkChunks();
-				};
+        wwtch.destroyer = function() {
+          node.pvwhen_content = false;
+          $(wwtch.root_node).remove();
+          for (var i = 0; i < all_chunks.length; i++) {
+            all_chunks[i].dead = true;
+          }
+          wwtch.context.checkChunks();
+        };
 
-				wwtch.context.pvTreeChange(this.current_motivator);
+        wwtch.context.pvTreeChange(this.current_motivator);
 
-				// debugger
-			} else if (!new_value && node.pvwhen_content) {
-				wwtch.destroyer();
-			}
-			//	this.setValue(wwtch.node, new_value, old_value, wwtch);
+        // debugger
+      } else if (!new_value && node.pvwhen_content) {
+        wwtch.destroyer();
+      }
+      //	this.setValue(wwtch.node, new_value, old_value, wwtch);
 
-		}
-	}, 'pv-when');
+    }
+  }, 'pv-when');
 }
 return patchNode;
 });

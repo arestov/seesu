@@ -14,68 +14,68 @@ return function (app, mp3_search, app_env, cache_ajax, resortQueue, addQueue) {
   }), app_env.cross_domain_allowed, cache_ajax);
   app.useInterface('pleer_net', app.pleer_net);
 
-	/*var exfm_api = new ExfmApi(new FuncsQueue({
-		time: [3500, 5000, 4],
-		resortQueue: resortQueue,
-		init: addQueue
-	}), app_env.cross_domain_allowed, cache_ajax);
-	app.exfm = exfm_api;
+  /*var exfm_api = new ExfmApi(new FuncsQueue({
+    time: [3500, 5000, 4],
+    resortQueue: resortQueue,
+    init: addQueue
+  }), app_env.cross_domain_allowed, cache_ajax);
+  app.exfm = exfm_api;
 
-	mp3_search.add(new ExfmApi.ExfmMusicSearch({
-		api: exfm_api,
-		mp3_search: mp3_search
-	}));
-	*/
+  mp3_search.add(new ExfmApi.ExfmMusicSearch({
+    api: exfm_api,
+    mp3_search: mp3_search
+  }));
+  */
   if (app_env.nodewebkit) {
-		// requirejs(['js/libs/TorrentsAudioSearch'], function(TorrentsAudioSearch) {
-		// 	mp3_search.add(new TorrentsAudioSearch({
-		// 		cache_ajax: cache_ajax,
-		// 		queue: new FuncsQueue({
-		// 			time: [100, 150, 4],
-		// 			resortQueue: resortQueue,
-		// 			init: addQueue
-		// 		}),
-		// 		mp3_search: mp3_search,
-		// 		torrent_search: new torrent_searches.BtdiggTorrentSearch({
-		// 			queue: new FuncsQueue({
-		// 				time: [3500, 5000, 4],
-		// 				resortQueue: resortQueue,
-		// 				init: addQueue
-		// 			}),
-		// 			cache_ajax: cache_ajax,
-		// 			mp3_search: mp3_search
-		// 		})
-		// 	}));
+    // requirejs(['js/libs/TorrentsAudioSearch'], function(TorrentsAudioSearch) {
+    // 	mp3_search.add(new TorrentsAudioSearch({
+    // 		cache_ajax: cache_ajax,
+    // 		queue: new FuncsQueue({
+    // 			time: [100, 150, 4],
+    // 			resortQueue: resortQueue,
+    // 			init: addQueue
+    // 		}),
+    // 		mp3_search: mp3_search,
+    // 		torrent_search: new torrent_searches.BtdiggTorrentSearch({
+    // 			queue: new FuncsQueue({
+    // 				time: [3500, 5000, 4],
+    // 				resortQueue: resortQueue,
+    // 				init: addQueue
+    // 			}),
+    // 			cache_ajax: cache_ajax,
+    // 			mp3_search: mp3_search
+    // 		})
+    // 	}));
     //
-		// });
-	} else {
-		// var allow_torrents = false || app_env.nodewebkit;
+    // });
+  } else {
+    // var allow_torrents = false || app_env.nodewebkit;
     //
-		// if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
-		// 	if (app_env.torrents_support) {
-		// 		mp3_search.add(new torrent_searches.BtdiggTorrentSearch({
-		// 			queue: new FuncsQueue({
-		// 				time: [3500, 5000, 4],
-		// 				resortQueue: resortQueue,
-		// 				init: addQueue
-		// 			}),
-		// 			cache_ajax: cache_ajax,
-		// 			mp3_search: mp3_search
-		// 		}));
-		// 	} else if (app_env.cross_domain_allowed){
-		// 		mp3_search.add(new torrent_searches.isohuntTorrentSearch({
-		// 			cache_ajax: cache_ajax,
-		// 			mp3_search: mp3_search
-		// 		}));
-		// 	} else {
-		// 		mp3_search.add(new torrent_searches.googleTorrentSearch({
-		// 			crossdomain: app_env.cross_domain_allowed,
-		// 			mp3_search: mp3_search,
-		// 			cache_ajax: cache_ajax
-		// 		}));
-		// 	}
-		// }
-	}
+    // if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
+    // 	if (app_env.torrents_support) {
+    // 		mp3_search.add(new torrent_searches.BtdiggTorrentSearch({
+    // 			queue: new FuncsQueue({
+    // 				time: [3500, 5000, 4],
+    // 				resortQueue: resortQueue,
+    // 				init: addQueue
+    // 			}),
+    // 			cache_ajax: cache_ajax,
+    // 			mp3_search: mp3_search
+    // 		}));
+    // 	} else if (app_env.cross_domain_allowed){
+    // 		mp3_search.add(new torrent_searches.isohuntTorrentSearch({
+    // 			cache_ajax: cache_ajax,
+    // 			mp3_search: mp3_search
+    // 		}));
+    // 	} else {
+    // 		mp3_search.add(new torrent_searches.googleTorrentSearch({
+    // 			crossdomain: app_env.cross_domain_allowed,
+    // 			mp3_search: mp3_search,
+    // 			cache_ajax: cache_ajax
+    // 		}));
+    // 	}
+    // }
+  }
 
   var reportSearchEngs = spv.debounce(function(string){
     app.trackVar(4, 'search', string, 1);

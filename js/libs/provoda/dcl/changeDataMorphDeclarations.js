@@ -162,27 +162,26 @@ var doIndex = function(list, value) {
   return result;
 };
 
-var assign = function(md, props, nest_declr) {
-  var key = 'compx-' + nest_declr.state_dep;
-  md[key] = props[key] = [nest_declr.dependencies, spv.hasEveryArgs];
+var assign = function(typed_state_dcls, nest_declr) {
+  typed_state_dcls['compx'] = typed_state_dcls['compx'] || {};
+  typed_state_dcls['compx'][nest_declr.state_dep] = [nest_declr.dependencies, spv.hasEveryArgs];
 };
 
 var changeSources = function(store, send_declr) {
-	var api_name = send_declr.api_name;
-	if (typeof api_name == 'string') {
-		store.api_names.push(api_name);
-	} else {
-		var network_api = api_name.call();
-		if (!network_api.source_name) {
-			throw new Error('no source_name');
-		}
-		store.sources_names.push(network_api.source_name);
-	}
+  var api_name = send_declr.api_name;
+  if (typeof api_name == 'string') {
+    store.api_names.push(api_name);
+  } else {
+    var network_api = api_name.call();
+    if (!network_api.source_name) {
+      throw new Error('no source_name');
+    }
+    store.sources_names.push(network_api.source_name);
+  }
 };
 
-return function(self, props) {
-  var i, cur;
-
+return function(self, props, typed_state_dcls) {
+  var i;
 
   var has_changes = false;
 
@@ -247,7 +246,7 @@ return function(self, props) {
           continue;
         }
 
-        assign(self, props, cur_nest);
+        assign(typed_state_dcls, cur_nest);
 
         if (!is_main) {
           continue;
@@ -259,7 +258,7 @@ return function(self, props) {
   }
 
   if (props.hasOwnProperty('main_list_nest_req') && main_list_nest_req && main_list_nest_req.nest_name !== props.main_list_name) {
-    assign(self, props, main_list_nest_req.original);
+    assign(typed_state_dcls, main_list_nest_req.original);
     self['nest_req-' + main_list_nest_req.nest_name] = main_list_nest_req.original;
   }
 

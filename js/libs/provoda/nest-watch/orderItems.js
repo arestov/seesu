@@ -29,7 +29,7 @@ return function orderItems(lnwatch) {
 };
 
 function compareComplexOrder(item_one, item_two) {
-	var cur_one = item_one;
+  var cur_one = item_one;
   var cur_two = item_two;
 
   while (cur_one || cur_two) {
@@ -38,24 +38,24 @@ function compareComplexOrder(item_one, item_two) {
 
     if (typeof num_one == 'undefined' && typeof num_two == 'undefined'){
       // should not be possible
-			return;
-		}
-		if (typeof num_one == 'undefined'){
+      return;
+    }
+    if (typeof num_one == 'undefined'){
       // should not be possible
-			// __[1, 2] vs [1, 2, 3] => __[1, 2], [1, 2, 3]
-			return -1;
-		}
-		if (typeof num_two == 'undefined'){
+      // __[1, 2] vs [1, 2, 3] => __[1, 2], [1, 2, 3]
+      return -1;
+    }
+    if (typeof num_two == 'undefined'){
       // should not be possible
-			// __[1, 2, 3] vs [1, 2] => [1, 2], __[1, 2, 3]
-			return 1;
-		}
+      // __[1, 2, 3] vs [1, 2] => [1, 2], __[1, 2, 3]
+      return 1;
+    }
     if (num_one > num_two){
-			return 1;
-		}
-		if (num_one < num_two){
-			return -1;
-		}
+      return 1;
+    }
+    if (num_one < num_two){
+      return -1;
+    }
 
     cur_one = cur_one.parent;
     cur_two = cur_two.parent;

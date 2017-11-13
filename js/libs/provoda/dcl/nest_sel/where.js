@@ -24,29 +24,29 @@ return function (self, where) {
 };
 
 function isForDeep(name) {
-	return startsWith(name, ">") && name.slice(1);
+  return startsWith(name, ">") && name.slice(1);
 }
 
 function getArgsSchema(list) {
-	var args_schema = [];
-	for (var i = 0; i < list.length; i++) {
-		var cur = list[i];
-		var state_name = isForDeep(cur);
-		if (state_name) {
-			args_schema.push({
-				type: 'deep',
-				name: state_name
-			});
+  var args_schema = [];
+  for (var i = 0; i < list.length; i++) {
+    var cur = list[i];
+    var state_name = isForDeep(cur);
+    if (state_name) {
+      args_schema.push({
+        type: 'deep',
+        name: state_name
+      });
 
-		} else {
-			args_schema.push({
-				type: 'base',
-				name: cur
-			});
+    } else {
+      args_schema.push({
+        type: 'base',
+        name: cur
+      });
 
-		}
-	}
-	return args_schema;
+    }
+  }
+  return args_schema;
 }
 
 function getOperatorFn(operator, convert) {

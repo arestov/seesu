@@ -3,11 +3,11 @@ define(function(require) {
 var getCachedPVData = require('./getCachedPVData');
 
 function getCommentPVData(cur_node, struc_store, getSample) {
-	return getCachedPVData(cur_node, struc_store, true, getSample);
+  return getCachedPVData(cur_node, struc_store, true, getSample);
 }
 
 function getPVData(cur_node, struc_store, getSample) {
-	return getCachedPVData(cur_node, struc_store, false, getSample);
+  return getCachedPVData(cur_node, struc_store, false, getSample);
 }
 
 return function parse(start_node, struc_store, getSample, opts) {

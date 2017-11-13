@@ -29,7 +29,7 @@ var Query = pv.behavior({
     ['#sc_api', [
       ['msq'],
       function(api, opts, msq) {
-    		return api.get('tracks', {
+        return api.get('tracks', {
           filter:'streamable,downloadable',
           q: msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || '')),
           limit: 30,
@@ -41,8 +41,14 @@ var Query = pv.behavior({
 }, QueryBase);
 
 return pv.behavior({
-  'compx-ready': [[], function () {
-    return true;
-  }],
+  "+states": {
+    "ready": [
+      "compx",
+      [],
+      function () {
+        return true;
+      }
+    ]
+  }
 }, createSource(Query, 'http://soundcloud.com/pages/dmca_policy'));
 });

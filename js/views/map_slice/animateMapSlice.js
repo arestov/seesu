@@ -11,7 +11,7 @@ var transform_props = css_transform ? [css_transform] : [];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
 var empty_transform_props = {};
 transform_props.forEach(function(el) {
-	empty_transform_props[el] = '';
+  empty_transform_props[el] = '';
 });
 
 var arrProtp = Array.prototype;

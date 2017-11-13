@@ -137,7 +137,7 @@ var branch = function (bwlev) {
  function animateMapChanges(app, bwlev) {
  var diff = probeDiff(bwlev.getMDReplacer(), app.current_mp_bwlev && app.current_mp_bwlev.getMDReplacer());
  if (!diff.array || !diff.array.length) {
-   return;
+  return;
  }
 
   var bwlevs = branch(bwlev);

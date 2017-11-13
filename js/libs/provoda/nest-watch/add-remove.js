@@ -65,14 +65,14 @@ var checkOneItemMode = function (subl_wtch, one) {
 
 
 var removeNestWatchs = function(item, array, one) {
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
+    for (var i = 0; i < array.length; i++) {
+      var cur = array[i];
       cur.nwatch.one_item_mode = checkOneItemMode(cur, one);
 
-			removeNestWatch(item, cur.nwatch, cur.skip + 1);
+      removeNestWatch(item, cur.nwatch, cur.skip + 1);
 
       markPosition(cur.nwatch, cur.skip, item, -1);
-		}
+    }
 };
 
 function noNesting(nwatch) {
@@ -94,18 +94,18 @@ function markPosition(nwatch, skip, md, num) {
 
 var addNestWatchs = function(item, array, one, num) {
   // one item and many nwatches
-	for (var i = 0; i < array.length; i++) {
-		var cur = array[i];
+  for (var i = 0; i < array.length; i++) {
+    var cur = array[i];
     cur.nwatch.one_item_mode = checkOneItemMode(cur, one);
 
-		addNestWatch(item, cur.nwatch, cur.skip + 1, cur);
+    addNestWatch(item, cur.nwatch, cur.skip + 1, cur);
 
     markPosition(cur.nwatch, cur.skip, item, num);
-	}
+  }
 };
 
 function checkNestWatchs(md, collection_name, array, removed) {
-	if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
+  if (!md.nes_match_index || !md.nes_match_index[collection_name]) {return;}
   // console.log('match!', collection_name);
   /* список subl_wtch (локальных элементов следящих за гнёздами) */
   var subl_wtchs = md.nes_match_index[collection_name];
@@ -251,37 +251,37 @@ function removeNestWatch(self, nwatch, skip) {
 
 
 function addNWOne(states_links, state_name, nwatch) {
-	if (!states_links[state_name]) {
-		states_links[state_name] = [];
-	}
-	states_links[state_name].push(nwatch);
+  if (!states_links[state_name]) {
+    states_links[state_name] = [];
+  }
+  states_links[state_name].push(nwatch);
 }
 
 function addNWatchToStatesIndex(states_links, nwatch) {
-	if (Array.isArray(nwatch.short_state_name)) {
-		for (var i = 0; i < nwatch.short_state_name.length; i++) {
-			addNWOne(states_links, nwatch.short_state_name[i], nwatch);
-		}
-	} else {
-		addNWOne(states_links, nwatch.short_state_name, nwatch);
-	}
+  if (Array.isArray(nwatch.short_state_name)) {
+    for (var i = 0; i < nwatch.short_state_name.length; i++) {
+      addNWOne(states_links, nwatch.short_state_name[i], nwatch);
+    }
+  } else {
+    addNWOne(states_links, nwatch.short_state_name, nwatch);
+  }
 }
 
 function removeOne(states_links, state_name, nwatch) {
-	if (!states_links[state_name]) {
-		return;
-	}
-	states_links[state_name] = spv.findAndRemoveItem(states_links[state_name], nwatch);
+  if (!states_links[state_name]) {
+    return;
+  }
+  states_links[state_name] = spv.findAndRemoveItem(states_links[state_name], nwatch);
 }
 
 function removeNWatchFromSI(states_links, nwatch) {
-	if (Array.isArray(nwatch.short_state_name)) {
-		for (var i = 0; i < nwatch.short_state_name.length; i++) {
-			removeOne(states_links, nwatch.short_state_name[i], nwatch);
-		}
-	} else {
-		removeOne(states_links, nwatch.short_state_name, nwatch);
-	}
+  if (Array.isArray(nwatch.short_state_name)) {
+    for (var i = 0; i < nwatch.short_state_name.length; i++) {
+      removeOne(states_links, nwatch.short_state_name[i], nwatch);
+    }
+  } else {
+    removeOne(states_links, nwatch.short_state_name, nwatch);
+  }
 }
 
 function addRootNestWatch(self, nwatch) {

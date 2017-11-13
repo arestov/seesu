@@ -11,11 +11,11 @@ var scope_generators_p = directives_parsers.scope_generators_p;
 
 
 function getCommentPVData(cur_node, struc_store, getSample) {
-	return getCachedPVData(cur_node, struc_store, true, getSample);
+  return getCachedPVData(cur_node, struc_store, true, getSample);
 }
 
 function getPVData(cur_node, struc_store, getSample) {
-	return getCachedPVData(cur_node, struc_store, false, getSample);
+  return getCachedPVData(cur_node, struc_store, false, getSample);
 }
 
 var createPvNest = scope_generators_p['pv-nest'];

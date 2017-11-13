@@ -4,72 +4,76 @@ define(function(require) {
 var selecPoineertDeclr = require('js/libs/provoda/structure/selecPoineertDeclr');
 
 var bhv = {
-	'compx-view_path': [
-		['_provoda_id'],
-		function() {
-			return getViewPath(this).join('.');
-		}
-	],
+  "+states": {
+    "view_path": [
+      "compx",
+      ['_provoda_id'],
+      function() {
+        return getViewPath(this).join('.');
+      }
+    ],
 
-	'compx-used_struc': [
-		['#view_structure', 'view_path'],
-		function(view_structure, view_path) {
-			if (!view_structure || !view_path) {
-				return;
-			}
+    "used_struc": [
+      "compx",
+      ['#view_structure', 'view_path'],
+      function(view_structure, view_path) {
+        if (!view_structure || !view_path) {
+          return;
+        }
 
-			return view_structure.children_index[view_path];
-		}
-	]
+        return view_structure.children_index[view_path];
+      }
+    ]
+  }
 }
 
 function getDcl(cur) {
-	var parent_view = cur.parent_view;
-	if (!parent_view || !parent_view.dclrs_fpckgs || !parent_view.dclrs_selectors) {
-		return;
-	}
+  var parent_view = cur.parent_view;
+  if (!parent_view || !parent_view.dclrs_fpckgs || !parent_view.dclrs_selectors) {
+    return;
+  }
 
-	return selecPoineertDeclr(
-		parent_view.dclrs_fpckgs,
-		parent_view.dclrs_selectors,
-		cur.nesting_name,
-		cur.mpx.md.model_name,
-		parent_view.nesting_space,
-		true
-	);
+  return selecPoineertDeclr(
+    parent_view.dclrs_fpckgs,
+    parent_view.dclrs_selectors,
+    cur.nesting_name,
+    cur.mpx.md.model_name,
+    parent_view.nesting_space,
+    true
+  );
 }
 
 function getKey(cur, by_model_name) {
-	return by_model_name
-		? ['children_by_mn', cur.nesting_name, cur.mpx.md.model_name, cur.nesting_space]
-		: ['children', cur.nesting_name, cur.nesting_space];
+  return by_model_name
+    ? ['children_by_mn', cur.nesting_name, cur.mpx.md.model_name, cur.nesting_space]
+    : ['children', cur.nesting_name, cur.nesting_space];
 }
 
 function getViewPath(view) {
-	var cur = view;
+  var cur = view;
 
-	var path = [];
+  var path = [];
 
-	while (cur) {
-		if (!cur.root_view || cur === cur.root_view) {
-			break;
-		}
+  while (cur) {
+    if (!cur.root_view || cur === cur.root_view) {
+      break;
+    }
 
-		// var dcl = getDcl(cur);
-		// console.log('dcl!!!', dcl)
+    // var dcl = getDcl(cur);
+    // console.log('dcl!!!', dcl)
 
-		var key = getKey(cur, cur.by_model_name);
-		path.unshift.apply(path, key);
+    var key = getKey(cur, cur.by_model_name);
+    path.unshift.apply(path, key);
 
-		cur = cur.parent_view;
+    cur = cur.parent_view;
 
-	}
+  }
 
-	return path;
+  return path;
 }
 
 return {
-	bhv: bhv,
+  bhv: bhv,
 }
 
 });

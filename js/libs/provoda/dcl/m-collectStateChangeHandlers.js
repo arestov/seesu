@@ -6,14 +6,14 @@ var NestWatch = require('../nest-watch/NestWatch');
 var collectStateChangeHandlers = require('./collectStateChangeHandlers');
 
 var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
-	if (string.indexOf('@') == -1) {
-		return false;
-	}
-	var parts = string.split('@');
-	return {
-		state: parts[0],
-		selector: parts[1].split('.')
-	};
+  if (string.indexOf('@') == -1) {
+    return false;
+  }
+  var parts = string.split('@');
+  return {
+    state: parts[0],
+    selector: parts[1].split('.')
+  };
 });
 
 return function(self, props) {

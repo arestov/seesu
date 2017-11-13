@@ -25,21 +25,21 @@ var getAll = function(node) {
 };
 
 return function buildClone(onode, struc_store, sample_id) {
-	var cloned = onode.cloneNode(true);
+  var cloned = onode.cloneNode(true);
 
-	var all_onodes = getAll(onode);
-	var all_cnodes = getAll(cloned);
+  var all_onodes = getAll(onode);
+  var all_cnodes = getAll(cloned);
 
-	if (all_onodes.length !== all_cnodes.length){
-		throw new Error('something wrong');
-	}
+  if (all_onodes.length !== all_cnodes.length){
+    throw new Error('something wrong');
+  }
 
-	for (var i = 0; i < all_onodes.length; i++) {
-		all_cnodes[i].pvprsd = all_onodes[i].pvprsd;
-		all_cnodes[i].pvprsd_inst = getNodeInstanceCount(all_onodes[i].pvprsd, struc_store);
-		all_cnodes[i].pv_sample_id = sample_id;
-	}
+  for (var i = 0; i < all_onodes.length; i++) {
+    all_cnodes[i].pvprsd = all_onodes[i].pvprsd;
+    all_cnodes[i].pvprsd_inst = getNodeInstanceCount(all_onodes[i].pvprsd, struc_store);
+    all_cnodes[i].pv_sample_id = sample_id;
+  }
 
-	return cloned;
+  return cloned;
 };
 });

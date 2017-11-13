@@ -107,10 +107,10 @@ var specialCharEntities = {
   '>': '&gt'
 };
 var specialChars = {
-	'amp': '&',
-	'quot': '"',
-	'lt': '<',
-	'gt': '>'
+  'amp': '&',
+  'quot': '"',
+  'lt': '<',
+  'gt': '>'
 }
 var entityRegExp = /&([#a-z0-9]+);/gi;
 var specialCharRegExp = /[&"<>]/g;
@@ -131,9 +131,9 @@ function entityToChar(s, name) {
   }
   var specialChar;
   if (!code){
-	if (specialChars[name]){
-		specialChar = specialChars[name];
-	}
+  if (specialChars[name]){
+    specialChar = specialChars[name];
+  }
   }
   return code ? String.fromCharCode(code) : (specialChar || s);
 }

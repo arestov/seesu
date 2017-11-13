@@ -14,15 +14,20 @@ var BlankQuery = pv.behavior({
 
 return function (Query, dmca_url, File) {
   return pv.behavior({
+    "+states": {
+      "dmca_url": [
+        "compx",
+        [],
+        function () {
+          return dmca_url;
+        }
+      ]
+    },
+
     head_by_urlname: {
-  		search_name: 'by_slash.0'
-  	},
-    'compx-dmca_url': [
-      [],
-      function () {
-        return dmca_url;
-      }
-    ],
+      search_name: 'by_slash.0'
+    },
+
     sub_pager: {
       type: {
         queries: 'query',

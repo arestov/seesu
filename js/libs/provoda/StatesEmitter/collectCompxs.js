@@ -45,7 +45,7 @@ var declr = function(comlx_name, cur) {
   for (var i = 0; i < item.depends_on.length; i++) {
     if (!item.depends_on[i]) {
       throw new Error('state name should not be empty');
-    } 
+    }
     item.watch_list[i] = hp.getShortStateName(item.depends_on[i]);
   }
   return item;
@@ -72,76 +72,86 @@ var collectCompxs1part = function(self, props) {
     }
   }
 };
-var collectCompxs2part = function(self) {
-  self._build_cache_compx_many = {};
-  for (var comlx_name in self.complex_states){
-    var cur = self.complex_states[comlx_name];
-    if (!cur) {continue;}
 
-    var item = declr(comlx_name, cur);
-    self._build_cache_compx_many[comlx_name] = item;
+
+var collectBuildParts = function(self) {
+  var compx_check = {};
+  var full_comlxs_list = [];
+
+  for (var key_name_one in self._build_cache_compx_one) {
+    compx_check[key_name_one] = self._build_cache_compx_one[key_name_one];
+    full_comlxs_list.push(compx_check[key_name_one]);
   }
+
+
+  for (var key_name_one in self._dcl_cache__compx) {
+    compx_check[key_name_one] = self._dcl_cache__compx[key_name_one];
+    full_comlxs_list.push(compx_check[key_name_one]);
+  }
+
+  self.compx_check = compx_check;
+  self.full_comlxs_list = full_comlxs_list;
+}
+
+var makeWatchIndex = function(full_comlxs_list) {
+  var full_comlxs_index = {};
+  var i, jj, cur, state_name;
+  for (i = 0; i < full_comlxs_list.length; i++) {
+    cur = full_comlxs_list[i];
+    for (jj = 0; jj < cur.watch_list.length; jj++) {
+      state_name = cur.watch_list[jj];
+      if (state_name === cur.name) {continue;}
+      if (!full_comlxs_index[state_name]) {
+        full_comlxs_index[state_name] = [];
+      }
+      full_comlxs_index[state_name].push(cur);
+    }
+  }
+  return full_comlxs_index;
+}
+
+var extendTyped = function(self, typed_state_dcls) {
+  var result = spv.cloneObj(null, self._dcl_cache__compx) || {};
+
+  var extending_part = {};
+
+  for (var name in typed_state_dcls) {
+    if (!typed_state_dcls.hasOwnProperty(name)) {
+      continue;
+    }
+    extending_part[name] = declr(name, typed_state_dcls[name]);
+  }
+
+  result = spv.cloneObj(result, extending_part);
+
+  self._dcl_cache__compx = result;
 };
-return function(self, props) {
+
+return function(self, props, typed_part) {
+  if (typed_part) {
+    extendTyped(self, typed_part);
+  }
 
   var part1 = hasPrefixedProps(props);
-  var part2 = self.hasOwnProperty('complex_states');
-  var need_recalc = part1 || part2;
+  var need_recalc = part1 || typed_part;
 
   if (!need_recalc){
     return;
-  }
-
-  var compx_check = {};
-  self.full_comlxs_list = [];
-  self.full_comlxs_index = {};
-
-  for (var prop in props.complex_states) {
-    if (props['compx-' + prop]) {
-      throw new Error('can`t be (in one layer) compx in both `complex_states` and "compx-"' + prop);
-    }
   }
 
   if (part1) {
     collectCompxs1part(self, props);
   }
 
-  if (part2) {
-    collectCompxs2part(self);
-  }
+  collectBuildParts(self);
+  self.full_comlxs_index = makeWatchIndex(self.full_comlxs_list);
 
-  for (var key_name_one in self._build_cache_compx_one) {
-    compx_check[key_name_one] = self._build_cache_compx_one[key_name_one];
-    self.full_comlxs_list.push(compx_check[key_name_one]);
-  }
-
-  for (var key_name_many in self._build_cache_compx_many) {
-    if (compx_check[key_name_many]) {continue;}
-
-    compx_check[key_name_many] = self._build_cache_compx_many[key_name_many];
-    self.full_comlxs_list.push(compx_check[key_name_many]);
-  }
-
-
-  self.compx_check = compx_check;
-  var i, jj, cur, state_name;
-  for (i = 0; i < self.full_comlxs_list.length; i++) {
-    cur = self.full_comlxs_list[i];
-    for (jj = 0; jj < cur.watch_list.length; jj++) {
-      state_name = cur.watch_list[jj];
-      if (state_name === cur.name) {continue;}
-      if (!self.full_comlxs_index[state_name]) {
-        self.full_comlxs_index[state_name] = [];
-      }
-      self.full_comlxs_index[state_name].push(cur);
-    }
-  }
-  collectStatesConnectionsProps(self);
+  collectStatesConnectionsProps(self, self.full_comlxs_list);
 
   return true;
 };
 
-function collectStatesConnectionsProps(self) {
+function collectStatesConnectionsProps(self, full_comlxs_list) {
   /*
   'compx-some_state': [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
 
@@ -159,8 +169,8 @@ function collectStatesConnectionsProps(self) {
   var states_of_nesting = {};
   var states_of_root = {};
 
-  for (var i = 0; i < self.full_comlxs_list.length; i++) {
-    var cur = self.full_comlxs_list[i];
+  for (var i = 0; i < full_comlxs_list.length; i++) {
+    var cur = full_comlxs_list[i];
 
     for (var jj = 0; jj < cur.depends_on.length; jj++) {
       var state_name = cur.depends_on[jj];
