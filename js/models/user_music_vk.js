@@ -12,17 +12,25 @@ var pvUpdate = pv.update;
 var cloneObj = spv.cloneObj;
 
 var VkAudioLogin = spv.inh(comd.VkLoginB, {}, {
-  'compx-access_desc': [['#locales.to-play-vk-audio']],
+  "+states": {
+    "access_desc": [
+      "compx",
+      ['#locales.to-play-vk-audio']
+    ],
+
+    "active": [
+      "compx",
+      ['has_session', '@one:requested_by:auth'],
+      function(has_session, requested_by) {
+        return has_session && requested_by == this._provoda_id;
+      }
+    ]
+  },
+
   beforeRequest: function() {
     var auth = this.getNesting('auth');
     pvUpdate(auth, 'requested_by', this._provoda_id);
-  },
-  'compx-active': [
-    ['has_session', '@one:requested_by:auth'],
-    function(has_session, requested_by) {
-      return has_session && requested_by == this._provoda_id;
-    }
-  ]
+  }
 });
 
 var no_access_compx = [['userid'], function(userid) {
@@ -30,26 +38,46 @@ var no_access_compx = [['userid'], function(userid) {
 }];
 
 var auth_bh = {
-  'compx-has_no_access': no_access_compx,
+  "+states": {
+    "has_no_access": //check this compx
+    ["compx"].concat(no_access_compx),
+
+    "userid": [
+      "compx",
+      ['vk_userid', '#vk_userid', 'for_current_user'],
+      function(vk_userid, cur_vk_userid, for_current_user) {
+        return (for_current_user ? cur_vk_userid : vk_userid) || null;
+      }
+    ],
+
+    "has_vk_auth": [
+      "compx",
+      ['for_current_user', '@one:has_session:auth_part'],
+      function(for_current_user, sess) {
+        return for_current_user && sess;
+      }
+    ],
+
+    "parent_focus": [
+      "compx",
+      ['^mp_has_focus']
+    ],
+
+    "acess_ready": [
+      "compx",
+      ['has_no_access', '@one:active:auth_part'],
+      function(no_access, active_auth) {
+        return !no_access && active_auth;
+      }
+    ]
+  },
+
   'nest-pmd_switch': ['^'],
+
   'nest-auth_part': [VkAudioLogin, {
     ask_for: 'for_current_user'
   }],
 
-  'compx-userid': [
-    ['vk_userid', '#vk_userid', 'for_current_user'],
-    function(vk_userid, cur_vk_userid, for_current_user) {
-      return (for_current_user ? cur_vk_userid : vk_userid) || null;
-    }
-  ],
-  'compx-has_vk_auth': [
-    ['for_current_user', '@one:has_session:auth_part'],
-    function(for_current_user, sess) {
-      return for_current_user && sess;
-    }
-  ],
-
-  'compx-parent_focus': [['^mp_has_focus']],
   'stch-has_vk_auth': function(target, state) {
     if (state) {
       // если появилась авторизация,
@@ -57,6 +85,7 @@ var auth_bh = {
       target.switchPmd(false);
     }
   },
+
   'stch-parent_focus': function(target, state) {
     if (!state) {
       // если обзорная страница потеряла фокус,
@@ -64,18 +93,13 @@ var auth_bh = {
       target.switchPmd(false);
     }
   },
+
   'stch-vk_userid': function(target, state) {
     if (state) {
       target.updateNesting('auth_part', null);
     }
   },
 
-  'compx-acess_ready': [
-    ['has_no_access', '@one:active:auth_part'],
-    function(no_access, active_auth) {
-      return !no_access && active_auth;
-    }
-  ],
   'stch-acess_ready': function(target, state) {
     if (state) {
       target.loadStart();

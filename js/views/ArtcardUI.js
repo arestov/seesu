@@ -85,7 +85,85 @@ var SimilarsController = spv.inh(View, {}, {
 });
 
 var ArtistInSongConstroller = spv.inh(View, {}, {
+  "+states": {
+    "parent_vmp_show": [
+      "compx",
+      ['^vmp_show'],
+      function(vmp_show) {
+        return vmp_show;
+      }
+    ],
+
+    "infb_text": [
+      "compx",
+      ['artist_name', 'playcount', 'listeners', 'bio', '#locales.more-ab-info'],
+      function(artist, playcount, listeners, bio, lo_more) {
+        if (!lo_more) {
+          return;
+        }
+        if (!artist){
+          return;
+        }
+        if (playcount || listeners || bio){
+          return lo_more.replace('%s', artist);
+        }
+      }
+    ],
+
+    "usable_artist_image": [
+      "compx",
+      ['selected_image', 'vis_cool_photos'],
+      function(img, cph) {
+        if (!cph){
+          var postfix = '';
+          if (app_env.opera_widget){
+            postfix = '?somer=' + Math.random();
+          }
+          return !!img && (img + postfix);
+        } else {
+          return false;
+        }
+      }
+    ],
+
+    "pvm_key": [
+      "compx",
+      ['^mp_show_end','mp_has_focus'],
+      function(parent_viewing_mode, focus) {
+        if (parent_viewing_mode){
+          return focus ? 1 : 2;
+        }
+      }
+    ],
+
+    "key-panorama_width": [
+      "compx",
+      ['panorama', '#workarea_width', 'pvm_key'],
+      function (panorama, workarea_width, pvm_key) {
+        if (panorama && pvm_key){
+          //ширина иллюминатора - от ширины экрана + состояния mp-show
+          return this.getBoxDemensionKey('panorama_width', workarea_width, pvm_key);
+        }
+      }
+    ],
+
+    "panorama_lift_width_key": [
+      "compx",
+      ['panorama', 'artist_name', 'images_combination', '#window_height', 'pvm_key'],
+      function(panorama,artist_name, images_combination, window_height, pvm_key) {
+        if (!panorama || !artist_name || !images_combination || !pvm_key){
+          return;
+        }
+
+        return this.getBoxDemensionKey('panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
+        //ширина лифта  зависит от артиста, комбинации загруженных картинок, высоты экрана + состояния mp-show
+
+      }
+    ]
+  },
+
   dom_rp: true,
+
   children_views:{
     tags_list: TagsController,
     similar_artists: SimilarsController
@@ -95,45 +173,13 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
     this.photo_data = {};
     this.dom_related_props.push('photo_data');
   },
-  'compx-parent_vmp_show': [
-    ['^vmp_show'],
-    function(vmp_show) {
-      return vmp_show;
-    }
-  ],
+
   'stch-parent_vmp_show': function(target, state) {
     if (!state) {
       target.setVisState('wamo_info', false);
     }
   },
-  'compx-infb_text': [
-    ['artist_name', 'playcount', 'listeners', 'bio', '#locales.more-ab-info'],
-    function(artist, playcount, listeners, bio, lo_more) {
-      if (!lo_more) {
-        return;
-      }
-      if (!artist){
-        return;
-      }
-      if (playcount || listeners || bio){
-        return lo_more.replace('%s', artist);
-      }
-    }
-  ],
-  'compx-usable_artist_image': [
-    ['selected_image', 'vis_cool_photos'],
-    function(img, cph) {
-      if (!cph){
-        var postfix = '';
-        if (app_env.opera_widget){
-          postfix = '?somer=' + Math.random();
-        }
-        return !!img && (img + postfix);
-      } else {
-        return false;
-      }
-    }
-  ],
+
   'stch-bio': function(target, text) {
     var bioc = target.tpl.ancs['artbio'];
     if (!bioc){
@@ -151,68 +197,45 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
 
     }
   },
-  'compx-pvm_key':[
-    ['^mp_show_end','mp_has_focus'],
-    function(parent_viewing_mode, focus) {
-      if (parent_viewing_mode){
-        return focus ? 1 : 2;
-      }
-    }
-  ],
+
   getPamoramaWidth: function() {
     return this.img_panorama.checkViewportWidth();
   },
+
   'stch-key-panorama_width': function(target, state) {
     if (state) {
       pv.update(target, 'panorama_width', target.getBoxDemensionByKey(target.getPamoramaWidth, state));
     }
   },
-  'compx-key-panorama_width': [
-    ['panorama', '#workarea_width', 'pvm_key'],
-    function (panorama, workarea_width, pvm_key) {
-      if (panorama && pvm_key){
-        //ширина иллюминатора - от ширины экрана + состояния mp-show
-        return this.getBoxDemensionKey('panorama_width', workarea_width, pvm_key);
-      }
-    }
-  ],
 
   'stch-panorama_width': function(target, state) {
     if (state && target.img_panorama){
       target.img_panorama.setViewportWidth(state);
     }
   },
+
   getPamoramaLiftWidth: function() {
     return this.img_panorama.checkTotalWidth();
   },
+
   getFastPamoramaLiftWidth: function() {
     return this.getBoxDemensionByKey(this.getPamoramaLiftWidth, this.state('panorama_lift_width_key'));
   },
 
-  'compx-panorama_lift_width_key':[
-    ['panorama', 'artist_name', 'images_combination', '#window_height', 'pvm_key'],
-    function(panorama,artist_name, images_combination, window_height, pvm_key) {
-      if (!panorama || !artist_name || !images_combination || !pvm_key){
-        return;
-      }
-
-      return this.getBoxDemensionKey('panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
-      //ширина лифта  зависит от артиста, комбинации загруженных картинок, высоты экрана + состояния mp-show
-
-    }
-  ],
   // 'stch-panorama_lift_width': function(target, state) {
   // 	if (state && target.img_panorama){
   // 		//this.img_panorama.setTotalWidth(state);
   // 	}
   // },
   img_sample: $('<img class="artist_image hidden" alt=""/>'),
+
   updatePanoramaIMGs: function(collection, images_combination, img_panorama) {
     img_panorama.setCollection(collection, true);
     //this.img_panorama.setTotalWidth(this.img_panorama.checkTotalWidth());
 
     pv.update(this, 'images_combination', images_combination);
   },
+
   'stch-images': function(target, images) {
     if (!images || !images.length){
       return;
@@ -334,6 +357,7 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
       //target.nextLocalTick(checkPanoramaSize);
     }
   },
+
   tpl_events: {
     showMoreInfo: function(e) {
       var cst = this.state('vis_wamo_info');

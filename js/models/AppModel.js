@@ -9,6 +9,18 @@ var routePathByModels = require('js/libs/provoda/routePathByModels');
 
 var AppModel = spv.inh(AppModelBase, {}, (function(){
 var props = {
+  "+states": {
+    "now_playing_text": [
+      "compx",
+      ['locales.now_playing', 'now_playing'],
+      function(lo_now_playing, now_playing) {
+        if (!lo_now_playing || !now_playing) {return '';}
+
+        return lo_now_playing + ': ' + now_playing;
+      }
+    ]
+  },
+
   checkUserInput: function(opts) {
     if (opts.ext_search_query) {
       this.search(opts.ext_search_query);
@@ -30,26 +42,21 @@ var props = {
     pv.update(this.start_page, 'can_expand', true);
 
   },
-  'compx-now_playing_text': [
-    ['locales.now_playing', 'now_playing'],
-    function(lo_now_playing, now_playing) {
-      if (!lo_now_playing || !now_playing) {return '';}
 
-      return lo_now_playing + ': ' + now_playing;
-    }
-  ],
   nowPlaying: function(mo) {
     pv.update(this, 'now_playing', mo.getTitle());
     this.current_playing = mo;
     this.matchNav();
     this.updatePlayedListsHistory(mo);
   },
+
   matchNav: function() {
     if (this.current_playing){
       pv.update(this, 'viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
     }
 
   },
+
   updatePlayedListsHistory: function(mo) {
     var array = this.getNesting('played_playlists');
     if (!array) {
@@ -68,15 +75,19 @@ var props = {
     pv.updateNesting(this, 'played_playlists', array);
     pv.update(this, 'played_playlists_length', array.length);
   },
+
   playing: function() {
     pv.update(this, 'playing', true);
   },
+
   notPlaying: function() {
     pv.update(this, 'playing', false);
   },
+
   createSonglist: function(map_parent, params) {
     return this.initSi(SongsList, params);
   },
+
   keyNav: function(key_name) {
     var md = this.map.getCurMapL().getNesting('pioneer');
     if (md.key_name_nav){
@@ -85,65 +96,76 @@ var props = {
     }
 
   },
-    showArtcardPage: function(artist_name){
-      var md = getArtcard(this, artist_name);
-      md.showOnMap();
-      return md;
-    },
-    showArtistAlbum: function(params){
-      var artcard = getArtcard(this, params.album_artist);
 
-      var artist_name = params.album_artist || artcard.head.artist_name
-      var pl = artcard.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
+  showArtcardPage: function(artist_name){
+    var md = getArtcard(this, artist_name);
+    md.showOnMap();
+    return md;
+  },
 
-      pl.showOnMap();
-      return pl;
-    },
-    showNowPlaying: function(no_stat) {
-      var resolved = this.p.resolved;
-      var bwlev = resolved.getNesting('bwlev');
-      var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, this.p.c_song.map_parent);
-      pl_bwlev.followTo(this.p.c_song._provoda_id);
-      // this.p.c_song.showOnMap();
-      if (!no_stat){
-        this.trackEvent('Navigation', 'now playing');
-      }
-    },
-    showResultsPage: function(query){
-      // если нет элемента или элемент не отображается
-      // если элемента нет или в элемент детализировали
-      var invstg = routePathByModels(this.start_page, 'search/', false, true, {reuse: true});
-      invstg.changeQuery(query);
-      invstg.showOnMap();
-      return invstg;
-    },
-    show_tag: function(tag){
-      var md = this.routePathByModels('tags/' + tag );
+  showArtistAlbum: function(params){
+    var artcard = getArtcard(this, params.album_artist);
 
-      md.showOnMap();
-      return md;
-    },
-    showTopTacks: function(artist, track_name) {
-      var artcard = getArtcard(this, artist);
-      var target = artcard.getTopTacks(track_name);
-      target.showOnMap();
-    },
+    var artist_name = params.album_artist || artcard.head.artist_name
+    var pl = artcard.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
+
+    pl.showOnMap();
+    return pl;
+  },
+
+  showNowPlaying: function(no_stat) {
+    var resolved = this.p.resolved;
+    var bwlev = resolved.getNesting('bwlev');
+    var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, this.p.c_song.map_parent);
+    pl_bwlev.followTo(this.p.c_song._provoda_id);
+    // this.p.c_song.showOnMap();
+    if (!no_stat){
+      this.trackEvent('Navigation', 'now playing');
+    }
+  },
+
+  showResultsPage: function(query){
+    // если нет элемента или элемент не отображается
+    // если элемента нет или в элемент детализировали
+    var invstg = routePathByModels(this.start_page, 'search/', false, true, {reuse: true});
+    invstg.changeQuery(query);
+    invstg.showOnMap();
+    return invstg;
+  },
+
+  show_tag: function(tag){
+    var md = this.routePathByModels('tags/' + tag );
+
+    md.showOnMap();
+    return md;
+  },
+
+  showTopTacks: function(artist, track_name) {
+    var artcard = getArtcard(this, artist);
+    var target = artcard.getTopTacks(track_name);
+    target.showOnMap();
+  },
+
   getVkUser: function(userid) {
     return this.start_page.getSPI('users/vk:' + encodeURIComponent(userid), true);
   },
+
   getLastfmUser: function(username) {
     return this.start_page.getSPI('users/lfm:' + encodeURIComponent(username), true);
   },
+
   getSongcard: function(artist_name, track_name) {
     if (!artist_name || !track_name){
       return false;
     }
     return this.start_page.getSPI('tracks/' + this.joinCommaParts([artist_name, track_name]), true);
   },
+
   getArtcard: function(artist_name) {
 
     return this.start_page.getSPI('catalog/' + encodeURIComponent(artist_name), true);
   },
+
   // search: function(query){
   // 	var old_v = this.state('search_query');
   // 	if (query != old_v){
@@ -208,7 +230,6 @@ var props = {
     }
 
   }
-
 };
 
 return props;

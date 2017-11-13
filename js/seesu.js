@@ -255,43 +255,65 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
 }, {
-  model_name: 'app_root',
-  BWLev: {
-    'nest-search_criteria': [SearchQueryModel],
-    'compx-show_search_form': [
-      ['@one:needs_search_from:selected__md'],
-      function(needs_search_from) {
-        return needs_search_from;
+  "+states": {
+    "app_lang": ["compx", ['env.lang']],
+
+    "locales": [
+      "compx",
+      ['app_lang'],
+      function(app_lang) {
+        var result = {};
+        for (var string in localize_dict) {
+          if (localize_dict[string]){
+            result[string] = localize_dict[string][app_lang] || localize_dict[string].original;
+          }
+        }
+        return result;
       }
     ],
-  },
-  'compx-app_lang': [['env.lang']],
-  'compx-locales': [
-    ['app_lang'],
-    function(app_lang) {
-      var result = {};
-      for (var string in localize_dict) {
-        if (localize_dict[string]){
-          result[string] = localize_dict[string][app_lang] || localize_dict[string].original;
-        }
+
+    "lfm_auth_action": [
+      "compx",
+      ['@one:session:lfm_auth', 'lfm_auth_request'],
+      function (sess, action) {
+        return sess && action;
       }
-      return result;
-    }
-  ],
+    ]
+  },
+
+  model_name: 'app_root',
+
+  BWLev: {
+    "+states": {
+      "show_search_form": [
+        "compx",
+        ['@one:needs_search_from:selected__md'],
+        function(needs_search_from) {
+          return needs_search_from;
+        }
+      ]
+    },
+
+    'nest-search_criteria': [SearchQueryModel]
+  },
+
   'stch-session@lfm_auth': function(target, state) {
     if (state) {
       pvUpdate(target, 'lfm_userid', target.lfm.username);
     }
   },
+
   'chi-vk_users': pv.Model,
   'chi-vk_groups': pv.Model,
   'chi-art_images': comd.LastFMArtistImagesSelector,
   'chi-vk_auth': VkAuth,
   'chi-lfm_auth': LfmAuth,
   'chi-start__page': StartPage,
+
   tickStat: function(data_array) {
     window._gaq.push(data_array);
   },
+
   watchVKCharacter: function(md, key, result_state) {
     var store, character_id;
 
@@ -306,6 +328,7 @@ var SeesuApp = spv.inh(AppModel, {
     md.wlch(store, character_id, result_state);
 
   },
+
   migrateStorage: function(ver){
     if (!ver){
       var lfm_scrobbling_enabled = app_serv.store('lfm_scrobbling_enabled');
@@ -326,27 +349,26 @@ var SeesuApp = spv.inh(AppModel, {
     }
     return this;
   },
+
   supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume', 'files_sources', 'pl-shuffle'],
+
   letAppKnowSetting: function(name, value){
     this.settings[name] = value;
     pv.update(this, 'settings-' + name, value);
     //this.trigger('settings-' + name, value);
   },
+
   'stch-settings-volume': function(target, state) {
     target.p.volume_fac = state;
   },
-  'compx-lfm_auth_action': [
-    ['@one:session:lfm_auth', 'lfm_auth_request'],
-    function (sess, action) {
-      return sess && action;
-    }
-  ],
+
   'stch-lfm_auth_action': function (target, state) {
     if (state) {
       state.act();
       pvUpdate(target, 'lfm_auth_request', null);
     }
   },
+
   storeSetting: function(name, value){
     clearTimeout(this.settings_timers[name]);
 
@@ -355,6 +377,7 @@ var SeesuApp = spv.inh(AppModel, {
     }, 333);
 
   },
+
   setSetting: function(name, value){
     if (this.supported_settings.indexOf(name) != -1){
       this.letAppKnowSetting(name, value);
@@ -365,16 +388,21 @@ var SeesuApp = spv.inh(AppModel, {
 
 
   },
+
   showPlaylists: function() {
     this.search(':playlists');
   },
-  fs: {},//fast search
+
+  //fast search
+  fs: {},
+
   env: app_env,
   server_url: 'http://seesu.me/',
   encodeURLPart: route.encodeURLPart,
   decodeURLPart: route.decodeURLPart,
   joinCommaParts: route.joinCommaParts,
   getCommaParts: route.getCommaParts,
+
   app_pages: {
     chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi/reviews",
     chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko/reviews",
@@ -393,7 +421,9 @@ var SeesuApp = spv.inh(AppModel, {
       pageTracker._trackEvent.apply(pageTracker, args);
     });
   },
+
   'rootv_field': ['mpx', 'views_index', 'root', 'length'],
+
   trackPage:function(page_name){
     this.current_page = page_name;
 
@@ -408,6 +438,7 @@ var SeesuApp = spv.inh(AppModel, {
     }
 
   },
+
   checkPageTracking: function() {
     if (this.app_view_id && this.last_page_tracking_data){
       this.trackStat.call(this, this.last_page_tracking_data);
@@ -415,6 +446,7 @@ var SeesuApp = spv.inh(AppModel, {
 
     }
   },
+
   trackTime: function(){
     var args = Array.prototype.slice.call(arguments);
     var current_page = this.current_page || '(nonono)';
@@ -423,11 +455,13 @@ var SeesuApp = spv.inh(AppModel, {
       pageTracker._trackTiming.apply(pageTracker, args);
     });
   },
+
   trackVar: function(){
     var args = Array.prototype.slice.call(arguments);
     args.unshift('_setCustomVar');
     this.trackStat.call(this, args);
   },
+
   setVkApi: function(vkapi, user_id) {
     this.vk_api = vkapi;
     this.vktapi = vkapi;
@@ -436,6 +470,7 @@ var SeesuApp = spv.inh(AppModel, {
 
     this.trigger('vk-api', vkapi, user_id);
   },
+
   getPlaylists: function(query) {
     var r = [],i;
     if (this.gena){
@@ -456,10 +491,12 @@ var SeesuApp = spv.inh(AppModel, {
     }
     return r;
   },
+
   attachUI: function(app_view_id) {
     this.app_view_id = app_view_id;
     this.checkPageTracking();
   },
+
   detachUI: function(app_view_id) {
     if (this.p && this.p.c_song){
       this.showNowPlaying(true);
@@ -468,7 +505,9 @@ var SeesuApp = spv.inh(AppModel, {
       this.app_view_id = null;
     }
   },
+
   vkappid: 2271620,
+
   getAuthAndTransferVKInfo: function(vk_api, user_id) {
     if (!user_id){
       throw new Error('want to get photo but have not user id :(');
@@ -503,9 +542,11 @@ var SeesuApp = spv.inh(AppModel, {
         }
       });
   },
+
   getPhotoFromVK: function() {
     this.getAuthAndTransferVKInfo(this.vk_api, this.s.vk_id);
   },
+
   getVKFriends: function(){
     var _this = this;
     if (!this.vk_api){
@@ -523,9 +564,11 @@ var SeesuApp = spv.inh(AppModel, {
       });
 
   },
+
   updateLVTime: function() {
     this.last_view_time = new Date() * 1;
   },
+
   vkSessCode: function(vk_t_raw) {
     if (vk_t_raw){
       var vk_token = new VkAuth.VkTokenAuth(this.vkappid, vk_t_raw);
@@ -534,6 +577,7 @@ var SeesuApp = spv.inh(AppModel, {
       this.vk_auth.trigger('full-ready', true);
     }
   },
+
   connectVKApi: function(vk_token, access, not_save) {
     var _this = this;
 
@@ -576,6 +620,7 @@ var SeesuApp = spv.inh(AppModel, {
     }
     return vkapi;
   },
+
   createLFMFile: function(artist, track_name, link) {
     return {
       link: link,
@@ -585,6 +630,7 @@ var SeesuApp = spv.inh(AppModel, {
       media_type: 'mp3',
     };
   },
+
   checkUpdates: function(){
     var _this = this;
 
@@ -616,6 +662,7 @@ var SeesuApp = spv.inh(AppModel, {
 
     });
   },
+
   nsd_handlers: {
     su_users: function(list) {
       var app = this;
@@ -668,6 +715,7 @@ var SeesuApp = spv.inh(AppModel, {
 
     }
   },
+
   handleNetworkSideData: function(source_name, ns, data, md) {
     if (this.nsd_handlers[ns]) {
       this.nsd_handlers[ns].call(this, data, source_name, md);
@@ -676,6 +724,7 @@ var SeesuApp = spv.inh(AppModel, {
     }
 
   },
+
   suggestNavHelper: function() {
     this.showNowPlaying();
     if (this.state('played_playlists_length') > 1) {
@@ -684,10 +733,10 @@ var SeesuApp = spv.inh(AppModel, {
 
 
   },
+
   closeNavHelper: function() {
     pv.update(this, 'nav_helper_is_needed', false);
   }
-
 });
 
 return prepare(SeesuApp);

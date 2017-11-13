@@ -197,10 +197,14 @@ var BrowseMap = require('js/libs/BrowseMap');
   });
 
   var BaseSectionButton = spv.inh(BaseSuggest, {}, {
-    'compx-button_text': [['^button_text']],
+    "+states": {
+      "button_text": ["compx", ['^button_text']]
+    },
+
     show: function(){
       pv.update(this, 'disabled', false);
     },
+
     hide: function(){
       pv.update(this, 'disabled', true);
       this.setInactive();

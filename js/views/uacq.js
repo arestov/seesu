@@ -5,15 +5,31 @@ var spv = require('spv');
 var View = require('View');
 
 var UserAcquaintanceView = spv.inh(View, {}, {
-  'compx-lo_accept_inv': [['#locales.accept-inv']]
+  "+states": {
+    "lo_accept_inv": [
+      "compx",
+      ['#locales.accept-inv']
+    ]
+  }
 });
 
 var UserAcquaintancesListView = spv.inh(coct.PageView, {}, {
-  'compx-lo_from_people': [['#locales.rels-people-you']],
-  'compx-lo_from_you': [['#locales.rels-you-people']],
+  "+states": {
+    "lo_from_people": [
+      "compx",
+      ['#locales.rels-people-you']
+    ],
+
+    "lo_from_you": [
+      "compx",
+      ['#locales.rels-you-people']
+    ]
+  },
+
   base_tree: {
     sample_name: 'relations_page'
   },
+
   children_views: {
     acqs_from_someone: UserAcquaintanceView,
     acqs_from_me: UserAcquaintanceView

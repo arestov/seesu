@@ -52,12 +52,19 @@ function initRootView(root_view) {
 
 
 var SearchCriteriaView = spv.inh(View, {}, {
+  "+states": {
+    "startpage_autofocus": [
+      "compx",
+      ['^startpage_autofocus']
+    ]
+  },
+
   tpl_events: {
     preventSubmit: function (e) {
       e.preventDefault();
     }
   },
-  'compx-startpage_autofocus': [['^startpage_autofocus']],
+
   'stch-startpage_autofocus': function(target, value) {
     if (!value) {
       return;
@@ -65,9 +72,10 @@ var SearchCriteriaView = spv.inh(View, {}, {
 
     target.nextLocalTick(target.tickCheckFocus);
   },
+
   tickCheckFocus: function() {
     this.tpl.ancs['search_face'][0].focus();
-  },
+  }
 });
 
 
@@ -117,12 +125,32 @@ function changeFaviconNode(d, oldLink, src, type) {
 var push = Array.prototype.push;
 
 var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
+  "+states": {
+    "mp_show_end": [
+      "compx",
+      ['animation_started', 'animation_completed', 'vmp_show'],
+      function(animation_started, animation_completed, vmp_show) {
+        if (!animation_started){
+          return vmp_show;
+        } else {
+          if (animation_started == animation_completed){
+            return vmp_show;
+          } else {
+            return false;
+          }
+        }
+      }
+    ]
+  },
+
   children_views_by_mn: {
     pioneer: map_slice_by_model
   },
+
   base_tree: {
     sample_name: 'browse_lev_con'
   },
+
   'stch-map_slice_view_sources': function(target, state) {
     if (state) {
       if (target.location_name == 'map_slice-detailed') {
@@ -139,10 +167,12 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
 
     }
   },
+
   'collch-$spec_common-pioneer': {
     by_model_name: true,
     place: 'tpl.ancs.con'
   },
+
   'collch-$spec_det-pioneer': {
     space: 'all-sufficient-details',
     by_model_name: true,
@@ -152,6 +182,7 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
   'collch-$spec_noplace-pioneer': {
     by_model_name: true
   },
+
   // 'collch-$spec_wrapped-pioneer': {
   // 	is_wrapper_parent: '^',
   // 	space: 'all-sufficient-details',
@@ -159,31 +190,71 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
   // 	place: 'tpl.ancs.con'
   // },
   'sel-coll-pioneer//detailed':'$spec_det-pioneer',
-  'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',
-  // 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
-  'sel-coll-pioneer': '$spec_common-pioneer',
 
-  'compx-mp_show_end': [
-    ['animation_started', 'animation_completed', 'vmp_show'],
-    function(animation_started, animation_completed, vmp_show) {
-      if (!animation_started){
-        return vmp_show;
-      } else {
-        if (animation_started == animation_completed){
-          return vmp_show;
-        } else {
-          return false;
-        }
-      }
-    }
-  ],
+  'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',
+
+  // 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
+  'sel-coll-pioneer': '$spec_common-pioneer'
 }, used_struc_bhv));
 
 
 var BrowseLevNavView = spv.inh(View, {}, {
+  "+states": {
+    "nav_clickable": [
+      "compx",
+      ['mp_stack', 'mp_has_focus'],
+      function(mp_stack, mp_has_focus) {
+        return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
+      }
+    ],
+
+    "mp_stack_root_follower": [
+      "compx",
+      ['$index', '$index_back', 'vmp_show'],
+      function (index, index_back) {
+        if (index == 0) {
+          return;
+        }
+
+        if (index_back == 0) {
+          // title
+          return;
+        }
+
+        return index == 1;
+      }
+    ],
+
+    "mp_stack": [
+      "compx",
+      ['$index', '$index_back', 'vmp_show'],
+      function (index, index_back, vmp_show) {
+        if (index == 0) {
+          return vmp_show && 'root';
+        }
+
+        if (index_back == 0) {
+          // title
+          return;
+        }
+
+        if (index_back == 1) {
+          return 'top';
+        }
+
+        if (index == 1) {
+          return 'bottom';
+        }
+
+        return 'middle';
+      }
+    ]
+  },
+
   base_tree: {
     sample_name: 'brow_lev_nav'
   },
+
   children_views_by_mn: {
     pioneer: {
       $default: nav.baseNavUI,
@@ -191,54 +262,11 @@ var BrowseLevNavView = spv.inh(View, {}, {
       invstg: nav.investgNavUI
     }
   },
+
   'collch-pioneer': {
     by_model_name: true,
     place: 'c'
-  },
-  'compx-nav_clickable':[
-    ['mp_stack', 'mp_has_focus'],
-    function(mp_stack, mp_has_focus) {
-      return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
-    }
-  ],
-  'compx-mp_stack_root_follower': [
-    ['$index', '$index_back', 'vmp_show'],
-    function (index, index_back) {
-      if (index == 0) {
-        return;
-      }
-
-      if (index_back == 0) {
-        // title
-        return;
-      }
-
-      return index == 1;
-    }
-  ],
-  'compx-mp_stack': [
-    ['$index', '$index_back', 'vmp_show'],
-    function (index, index_back, vmp_show) {
-      if (index == 0) {
-        return vmp_show && 'root';
-      }
-
-      if (index_back == 0) {
-        // title
-        return;
-      }
-
-      if (index_back == 1) {
-        return 'top';
-      }
-
-      if (index == 1) {
-        return 'bottom';
-      }
-
-      return 'middle';
-    }
-  ]
+  }
 });
 
 var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {

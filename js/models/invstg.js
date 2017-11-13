@@ -71,45 +71,72 @@ var seesuSection = spv.inh(base.SearchSection, {
 
   }
 }, {
-  'compx-button_text': [
-    ['any_results', 'query', '#locales.fine-more', '#locales.to-search', 'results_desc_yes', 'results_desc_no'],
-    function(have_results, q, lo_fine_more, lo_to_search, results_desc_yes, results_desc_no) {
-      if (!lo_fine_more || !lo_to_search) {return;}
+  "+states": {
+    "button_text": [
+      "compx",
+      ['any_results', 'query', '#locales.fine-more', '#locales.to-search', 'results_desc_yes', 'results_desc_no'],
+      function(have_results, q, lo_fine_more, lo_to_search, results_desc_yes, results_desc_no) {
+        if (!lo_fine_more || !lo_to_search) {return;}
 
-      if (have_results) {
-        return (lo_fine_more || 'find more') + ' «' + q + '» ' + results_desc_yes;
-      } else {
-        return (lo_to_search || 'Search ') + ( q ? ('«' + q + '» ') : "" ) + results_desc_no;
+        if (have_results) {
+          return (lo_fine_more || 'find more') + ' «' + q + '» ' + results_desc_yes;
+        } else {
+          return (lo_to_search || 'Search ') + ( q ? ('«' + q + '» ') : "" ) + results_desc_no;
+        }
       }
-    }
-  ],
+    ],
 
-  no_results_text: true,
-  'compx-no_results_text': [
-    ['#locales.nothing-found', 'has_no_results'],
-    function(desc, no_results) {
-      return no_results && desc;
-    }
-  ]
+    "no_results_text": [
+      "compx",
+      ['#locales.nothing-found', 'has_no_results'],
+      function(desc, no_results) {
+        return no_results && desc;
+      }
+    ]
+  },
+
+  no_results_text: true
 });
 
 var PlaylistsSection = spv.inh(base.SearchSection, {}, {
-  'compx-section_title': [['#locales.playlists']],
+  "+states": {
+    "section_title": [
+      "compx",
+      ['#locales.playlists']
+    ]
+  },
+
   model_name: 'section-playlist',
   resItem: playlistSuggest
 });
 
 var ArtistsSection = spv.inh(seesuSection, {}, {
-  'compx-section_title': [['#locales.Artists']],
+  "+states": {
+    "section_title": [
+      "compx",
+      ['#locales.Artists']
+    ],
+
+    "results_desc_yes": [
+      "compx",
+      ['#locales.oartists']
+    ],
+
+    "results_desc_no": [
+      "compx",
+      ['#locales.in-artists']
+    ]
+  },
+
   model_name: 'section-artist',
-  'compx-results_desc_yes': [['#locales.oartists']],
-  'compx-results_desc_no':  [['#locales.in-artists']],
+
   loadMore: function() {
     var q = this.r.query;
     if (q) {
       lfmhelp.getLastfmSuggests(this.app, 'artist.search', {artist: q}, q, this, suParseArtistsResults, true);
     }
   },
+
   resItem: artistSuggest
 });
 
@@ -154,11 +181,24 @@ var trackSuggest = spv.inh(base.BaseSuggest, {
 
 
 var TracksSection = spv.inh(seesuSection, {}, {
-  'compx-section_title': [['#locales.Tracks']],
-  model_name: 'section-track',
+  "+states": {
+    "section_title": [
+      "compx",
+      ['#locales.Tracks']
+    ],
 
-  'compx-results_desc_yes': [['#locales.otracks']],
-  'compx-results_desc_no':  [['#locales.in-tracks']],
+    "results_desc_yes": [
+      "compx",
+      ['#locales.otracks']
+    ],
+
+    "results_desc_no": [
+      "compx",
+      ['#locales.in-tracks']
+    ]
+  },
+
+  model_name: 'section-track',
 
   loadMore: function() {
     var q = this.r.query;
@@ -166,6 +206,7 @@ var TracksSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'track.search', {track: q}, q, this, suParseTracksResults, true);
     }
   },
+
   resItem: trackSuggest
 });
 
@@ -196,11 +237,24 @@ var tagSuggest = spv.inh(base.BaseSuggest, {
 
 
 var TagsSection = spv.inh(seesuSection, {}, {
-  'compx-section_title': [['#locales.Tags']],
-  model_name: 'section-tag',
+  "+states": {
+    "section_title": [
+      "compx",
+      ['#locales.Tags']
+    ],
 
-  'compx-results_desc_yes': [['#locales.otags']] ,
-  'compx-results_desc_no':  [['#locales.in-tags']],
+    "results_desc_yes": [
+      "compx",
+      ['#locales.otags']
+    ],
+
+    "results_desc_no": [
+      "compx",
+      ['#locales.in-tags']
+    ]
+  },
+
+  model_name: 'section-tag',
 
   loadMore: function() {
     var q = this.r.query;
@@ -208,6 +262,7 @@ var TagsSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'tag.search', {tag: q}, q, this, suParseTagsResults, true);
     }
   },
+
   resItem: tagSuggest
 });
 
@@ -245,11 +300,24 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
 });
 
 var AlbumsSection = spv.inh(seesuSection, {}, {
-  'compx-section_title': [['#locales.Albums']],
-  model_name: 'section-album',
+  "+states": {
+    "section_title": [
+      "compx",
+      ['#locales.Albums']
+    ],
 
-  'compx-results_desc_yes': [['#locales.oalbums']],
-  'compx-results_desc_no':  [['#locales.in-albums']],
+    "results_desc_yes": [
+      "compx",
+      ['#locales.oalbums']
+    ],
+
+    "results_desc_no": [
+      "compx",
+      ['#locales.in-albums']
+    ]
+  },
+
+  model_name: 'section-album',
 
   loadMore: function() {
     var q = this.r.query;
@@ -257,46 +325,83 @@ var AlbumsSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'album.search', {'album': q}, q, this, suParseAlbumsResults, true);
     }
   },
+
   resItem: albumSuggest
 });
 
 var SearchPage = spv.inh(base.Investigation, {}, {
-  // init: function(){
-  // 	this._super.apply(this, arguments);
-  // 	pv.update(this, 'mp_detailed', false);
-  // },
+  "+states": {
+    // init: function(){
+    // 	this._super.apply(this, arguments);
+    // 	pv.update(this, 'mp_detailed', false);
+    // },
 
 
-  // init: function(opts) {
-  // 	this._super.apply(this, arguments);
+    // init: function(opts) {
+    // 	this._super.apply(this, arguments);
 
-  // },
+    // },
 
-  'compx-shown': [
-    ['mp_detailed', 'shown'],
-    function(mp_detailed, shown) {
-      return shown || mp_detailed;
-    }
-  ],
-  'compx-url_part': [
-    ['query'],
-    function(query) {
-      return '/search/' + encodeURIComponent(query);
-    }
-  ],
-  'compx-focused': [
-    ['focused', 'mp_has_focus'],
-    function (focused, mp_has_focus){
-      return focused || mp_has_focus;
-    }
-  ],
-  'compx-focus_loosed': [
-    ['focus_loosed', 'focused', 'mp_has_focus'],
-    function(loosed, focused, mp_has_focus) {
-      return loosed || (focused && !mp_has_focus);
-    }
-  ],
-  'compx-mp_detailed': [['focus_loosed']],
+    "shown": [
+      "compx",
+      ['mp_detailed', 'shown'],
+      function(mp_detailed, shown) {
+        return shown || mp_detailed;
+      }
+    ],
+
+    "url_part": [
+      "compx",
+      ['query'],
+      function(query) {
+        return '/search/' + encodeURIComponent(query);
+      }
+    ],
+
+    "focused": [
+      "compx",
+      ['focused', 'mp_has_focus'],
+      function (focused, mp_has_focus){
+        return focused || mp_has_focus;
+      }
+    ],
+
+    "focus_loosed": [
+      "compx",
+      ['focus_loosed', 'focused', 'mp_has_focus'],
+      function(loosed, focused, mp_has_focus) {
+        return loosed || (focused && !mp_has_focus);
+      }
+    ],
+
+    "mp_detailed": ["compx", ['focus_loosed']],
+
+    "needs_search_from": [
+      "compx",
+      ['mp_detailed'],
+      function() {
+        return true;
+      }
+    ],
+
+    "nav_title": [
+      "compx",
+      ['query', '#locales.Search-resuls'],
+      function(text, original) {
+        if (!original) {
+          return;
+        }
+        if (text){
+          return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
+        } else{
+          var usual_text = original.replace(this.query_regexp, '');
+          var cap = usual_text.charAt(0).toLocaleUpperCase();
+          return cap + usual_text.slice(1);
+        }
+      }
+    ]
+  },
+
   // 'compx-mp_detailed': [
   // 	['mp_detailed', 'mp_show', 'focused', 'mp_has_focus'],
   // 	function (mp_detailed, mp_show, focused, mp_has_focus) {
@@ -304,12 +409,11 @@ var SearchPage = spv.inh(base.Investigation, {}, {
   // 	}
   // ],
   'nest-section': [[PlaylistsSection, ArtistsSection, AlbumsSection, TagsSection, TracksSection]],
+
   setItemForEnter: function() {
 
   },
-  "compx-needs_search_from": [['mp_detailed'], function() {
-    return true;
-  }],
+
   key_name_nav: {
     'Enter': function() {
       this.pressEnter();
@@ -321,6 +425,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
       this.selectEnterItemBelow();
     }
   },
+
   searchf: function() {
     var playlists = this.app.gena.playlists,
       pl_results = [],
@@ -377,6 +482,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
       this.searchNetwork(query);
     }
   },
+
   searchOffline: spv.debounce(function(q){
     var tags = this.g('section-tag');
     var r = this.searchTags(q);
@@ -386,6 +492,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
     }
 
   },150),
+
   searchTags: function(q){
     var tags_results = [];
 
@@ -397,6 +504,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
     }
     return tags_results;
   },
+
   searchNetwork: (app_serv.app_env.cross_domain_allowed && false) ?
     function(q){
       var _this = this;
@@ -434,22 +542,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'track.search', {track: q}, q, this.g('section-track'), suParseTracksResults);
       lfmhelp.getLastfmSuggests(this.app, 'tag.search', {tag: q}, q, this.g('section-tag'), suParseTagsResults);
       lfmhelp.getLastfmSuggests(this.app, 'album.search', {album: q}, q, this.g('section-album'), suParseAlbumsResults);
-    }, 400),
-  'compx-nav_title': [
-    ['query', '#locales.Search-resuls'],
-    function(text, original) {
-      if (!original) {
-        return;
-      }
-      if (text){
-        return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
-      } else{
-        var usual_text = original.replace(this.query_regexp, '');
-        var cap = usual_text.charAt(0).toLocaleUpperCase();
-        return cap + usual_text.slice(1);
-      }
-    }
-  ]
+    }, 400)
 });
 
 

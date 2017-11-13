@@ -72,10 +72,72 @@ var FileInTorrentUI = spv.inh(View, {},{
   }
 });
 var SongFileModelUI = spv.inh(View, {}, {
+  "+states": {
+    "can-progress": [
+      "compx",
+      ['^^vis_is_visible', 'vis_con_appended', 'selected'],
+      function(vis, apd, sel){
+        var can = vis && apd && sel;
+        return can;
+      }
+    ],
+
+    "vis_wp_usable": [
+      "compx",
+      ['^^want_more_songs']
+    ],
+
+    "key-progress-c-width": [
+      "compx",
+      ['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
+      function (can, p_wmss, workarea_width, must_be_expandable) {
+        if (can) {
+          return this.getBoxDemensionKey('progress_c-width', workarea_width, !!p_wmss, !!must_be_expandable);
+        } else {
+          return false;
+        }
+      }
+    ],
+
+    "vis_loading_p": [
+      "compx",
+      ['vis_progress-c-width', 'loading_progress'],
+      function(width, factor){
+        if (factor) {
+          if (width){
+            return Math.floor(factor * width) + 'px';
+          } else {
+            return (factor * 100) + '%';
+          }
+        } else {
+          return 'auto';
+        }
+      }
+    ],
+
+    "vis_playing_p": [
+      "compx",
+      ['vis_progress-c-width', 'playing_progress'],
+      function(width, factor){
+        if (factor) {
+          if (width){
+            return Math.floor(factor * width) + 'px';
+          } else {
+            return (factor * 100) + '%';
+          }
+        } else {
+          return 'auto';
+        }
+      }
+    ]
+  },
+
   dom_rp: true,
+
   getProgressWidth: function() {
     return this.tpl.ancs['progress_c'].width();
   },
+
   'stch-key-progress-c-width': function(target, state) {
     if (state) {
       pvUpdate(target, 'vis_progress-c-width', target.getBoxDemensionByKey(target.getProgressWidth, state));
@@ -83,56 +145,11 @@ var SongFileModelUI = spv.inh(View, {}, {
       pvUpdate(target, 'vis_progress-c-width', 0);
     }
   },
-  "compx-can-progress": [
-    ['^^vis_is_visible', 'vis_con_appended', 'selected'],
-    function(vis, apd, sel){
-      var can = vis && apd && sel;
-      return can;
-    }
-  ],
-  'compx-vis_wp_usable': [['^^want_more_songs']],
-  'compx-key-progress-c-width': [
-    ['can-progress', '^^want_more_songs', '#workarea_width', '^^must_be_expandable'],
-    function (can, p_wmss, workarea_width, must_be_expandable) {
-      if (can) {
-        return this.getBoxDemensionKey('progress_c-width', workarea_width, !!p_wmss, !!must_be_expandable);
-      } else {
-        return false;
-      }
-    }
-  ],
 
-  "compx-vis_loading_p": [
-    ['vis_progress-c-width', 'loading_progress'],
-    function(width, factor){
-      if (factor) {
-        if (width){
-          return Math.floor(factor * width) + 'px';
-        } else {
-          return (factor * 100) + '%';
-        }
-      } else {
-        return 'auto';
-      }
-    }
-  ],
-  "compx-vis_playing_p": [
-    ['vis_progress-c-width', 'playing_progress'],
-    function(width, factor){
-      if (factor) {
-        if (width){
-          return Math.floor(factor * width) + 'px';
-        } else {
-          return (factor * 100) + '%';
-        }
-      } else {
-        return 'auto';
-      }
-    }
-  ],
   base_tree: {
     sample_name: 'song-file'
   },
+
   expandBase: function() {
 
 
@@ -218,6 +235,7 @@ var SongFileModelUI = spv.inh(View, {}, {
     });
 
   },
+
   tpl_events: {
     'selectFile': function() {
       if (!this.state('selected')){
@@ -257,21 +275,31 @@ var ComplectPionerView = spv.inh(View, {}, {
 
 
 var SongFileModelUIOverstock = spv.inh(SongFileModelUI, {}, {
-  'compx-vis_wp_usable': [
-    ['^^want_more_songs', '^show_overstocked'],
-    function(pp_wmss, p_show_overstock) {
-      return pp_wmss && p_show_overstock;
-    }
-  ],
+  "+states": {
+    "vis_wp_usable": [
+      "compx",
+      ['^^want_more_songs', '^show_overstocked'],
+      function(pp_wmss, p_show_overstock) {
+        return pp_wmss && p_show_overstock;
+      }
+    ]
+  }
 })
 
 
 
 var mfComplectUI = spv.inh(View, {}, {
-  'compx-want_more_songs': [['^want_more_songs']],
+  "+states": {
+    "want_more_songs": [
+      "compx",
+      ['^want_more_songs']
+    ]
+  },
+
   children_views: {
     'pioneer': ComplectPionerView
   },
+
   children_views_by_mn: {
     moplas_list_start: {
       'file-torrent-promise': FileIntorrentPromiseUI,
@@ -284,10 +312,12 @@ var mfComplectUI = spv.inh(View, {}, {
       'file-http': SongFileModelUIOverstock
     }
   },
+
   'collch-moplas_list_start': {
     place: 'tpl.ancs.listc-start',
     by_model_name: true
   },
+
   'collch-moplas_list_end': {
     place: 'tpl.ancs.listc-end',
     by_model_name: true
@@ -296,33 +326,38 @@ var mfComplectUI = spv.inh(View, {}, {
 
 
 var MfCorUI = spv.inh(View, {}, {
+  "+states": {
+    // 'collch-yt_videos': 'tpl.ancs.video_list',
+    // bindBase: function() {
+    // 	//this.createTemplate();
+    // 	var _this = this;
+    // 	this.tpl.ancs.more_songs_b.click(function() {
+    // 		_this.RPCLegacy('switchMoreSongsView');
+    // 	});
+    // 	this.addWayPoint(this.tpl.ancs.more_songs_b);
+    // },
+    // base_tree: {
+    // 	sample_name: 'moplas-block'
+    // }
+    "vis_is_visible": [
+      "compx",
+      ['^^^mp_show_end'],
+      function(mp_show_end) {
+        return !!mp_show_end;
+      }
+    ]
+  },
+
   children_views:{
     notifier: notifyCounterUI,
     vk_auth: etc_views.VkLoginUI,
     sorted_completcs: mfComplectUI
   },
+
   'collch-vk_auth': {
     place: 'tpl.ancs.messages_c',
     strict: true
-  },
-  // 'collch-yt_videos': 'tpl.ancs.video_list',
-  // bindBase: function() {
-  // 	//this.createTemplate();
-  // 	var _this = this;
-  // 	this.tpl.ancs.more_songs_b.click(function() {
-  // 		_this.RPCLegacy('switchMoreSongsView');
-  // 	});
-  // 	this.addWayPoint(this.tpl.ancs.more_songs_b);
-  // },
-  'compx-vis_is_visible':[
-    ['^^^mp_show_end'],
-    function(mp_show_end) {
-      return !!mp_show_end;
-    }
-  ],
-  // base_tree: {
-  // 	sample_name: 'moplas-block'
-  // }
+  }
 });
 
 return MfCorUI;

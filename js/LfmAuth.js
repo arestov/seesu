@@ -20,19 +20,33 @@ var LfmLogin = spv.inh(pv.Model, {
     return target;
   }
 }, {
+  "+states": {
+    "has_session": ["compx", [
+      '@one:session:auth'
+    ]],
+
+    "data_wait": [
+      "compx",
+      ['@one:data_wait:auth']
+    ],
+
+    "default_access_desc": [
+      "compx",
+      ['#locales.to-get-access']
+    ],
+
+    "request_description": [
+      "compx",
+      ['access_desc', 'default_access_desc', '#locales.lfm-auth-invitation'],
+      function(desc, default_desc, invite) {
+        var text = desc || default_desc;
+        return text ? text + " " + invite : "";
+      }
+    ]
+  },
+
   model_name: 'auth_block_lfm',
-  'compx-has_session': [[
-    '@one:session:auth'
-  ]],
-  'compx-data_wait':[['@one:data_wait:auth']],
-  'compx-default_access_desc': [['#locales.to-get-access']],
-  'compx-request_description': [
-    ['access_desc', 'default_access_desc', '#locales.lfm-auth-invitation'],
-    function(desc, default_desc, invite) {
-      var text = desc || default_desc;
-      return text ? text + " " + invite : "";
-    }
-  ],
+
   useCode: function(auth_code){
     if (this.bindAuthCallback){
       this.bindAuthCallback();
@@ -40,12 +54,14 @@ var LfmLogin = spv.inh(pv.Model, {
     this.auth.setToken(auth_code);
 
   },
+
   requestAuth: function(opts) {
     if (this.beforeRequest){
       this.beforeRequest();
     }
     this.auth.requestAuth(opts);
   },
+
   switchView: function(){
     pvUpdate(this, 'active', !this.state('active'));
   }
@@ -57,17 +73,30 @@ var LfmScrobble = spv.inh(LfmLogin, {
     pvUpdate(target, 'active', true);
   }
 }, {
-  'compx-scrobbling':[['#settings-lfm-scrobbling']],
-  'compx-access_desc': [['#locales.lastfm-scrobble-access']],
+  "+states": {
+    "scrobbling": [
+      "compx",
+      ['#settings-lfm-scrobbling']
+    ],
+
+    "access_desc": [
+      "compx",
+      ['#locales.lastfm-scrobble-access']
+    ]
+  },
+
   beforeRequest: function() {
     this.bindAuthCallback();
   },
+
   act: function () {
     this.app.setSetting('lfm-scrobbling', true);
   },
+
   bindAuthCallback: function(){
     pvUpdate(this.app, 'lfm_auth_request', this);
   },
+
   setScrobbling: function(state) {
     this.app.setSetting('lfm-scrobbling', state);
     //this.auth.setScrobbling(state);
@@ -86,10 +115,33 @@ var LfmAuth = spv.inh(pv.Model, {
 
   },
 }, {
+  "+states": {
+    "data_wait": [
+      "compx",
+      ['requested_once', 'session'],
+      function (once, session) {
+        return once && !session;
+      }
+    ],
+
+    "requested_once": [
+      "compx",
+      ['requested_once', 'requested'],
+      function (once, req) {
+        return Boolean(once || req);
+      }
+    ],
+
+    "bridge_key": [
+      "compx",
+      ['auth_data.bridgekey']
+    ]
+  },
 
   requestAuth: function() {
     pvUpdate(this, 'requested', Date.now());
   },
+
   login: function(r, callback){
     this.api.sk = r.session.key;
     this.api.username = r.session.name;
@@ -97,6 +149,7 @@ var LfmAuth = spv.inh(pv.Model, {
     this.api.stSet('lfmsk', this.api.sk, true);
     if (callback){callback();}
   },
+
   getInitAuthData: function(){
     var o = {};
     o.link = 'http://www.last.fm/api/auth/?api_key=' + this.api.apikey ;
@@ -109,18 +162,7 @@ var LfmAuth = spv.inh(pv.Model, {
     o.link += '&cb=' + encodeURIComponent(link_tag);
     return o;
   },
-  'compx-data_wait': [
-    ['requested_once', 'session'],
-    function (once, session) {
-      return once && !session;
-    }
-  ],
-  'compx-requested_once': [
-    ['requested_once', 'requested'],
-    function (once, req) {
-      return Boolean(once || req);
-    }
-  ],
+
   'stch-requested': function (target, state) {
     if (!state) {
       return;
@@ -128,12 +170,11 @@ var LfmAuth = spv.inh(pv.Model, {
 
     target.updateState('auth_data', target.getInitAuthData());
   },
-  'compx-bridge_key': [
-    ['auth_data.bridgekey']
-  ],
+
   'api-window': function () {
     return window;
   },
+
   'api-bridge': [
     'requested_once',
     ['window'],
@@ -141,6 +182,7 @@ var LfmAuth = spv.inh(pv.Model, {
       return window.document.createElement('iframe');
     }
   ],
+
   'state-token': [
     ['window', 'bridge'],
     function (update, win, bridge) {
@@ -153,6 +195,7 @@ var LfmAuth = spv.inh(pv.Model, {
       });
     }
   ],
+
   'state-_bridge_ready': [
     ['window', 'bridge'],
     function (update, win, bridge) {
@@ -165,6 +208,7 @@ var LfmAuth = spv.inh(pv.Model, {
       });
     }
   ],
+
   'effect-started_bridge': [
     [
       ['bridge', 'window'], 'bridge_url',
@@ -176,6 +220,7 @@ var LfmAuth = spv.inh(pv.Model, {
     ],
     ['bridge_url'],
   ],
+
   'effect-prepared_bridge': [
     [
       'bridge', 'bridge_key',
@@ -185,6 +230,7 @@ var LfmAuth = spv.inh(pv.Model, {
     ],
     [['_bridge_ready', 'bridge_key'], ['started_bridge']]
   ],
+
   'effect-asked_permission': [
     [
       'self', 'auth_data',
@@ -194,13 +240,16 @@ var LfmAuth = spv.inh(pv.Model, {
     ],
     ['auth_data', 'prepared_bridge']
   ],
+
   'stch-token': function (target, token) {
     target.setToken(token);
   },
+
   setToken: function(token){
     this.newtoken = token;
     this.try_to_login();
   },
+
   get_lfm_token: function(){
     var _this = this;
     this.api.get('auth.getToken', false, {nocache: true})
@@ -208,6 +257,7 @@ var LfmAuth = spv.inh(pv.Model, {
         _this.newtoken = r.token;
       });
   },
+
   try_to_login: function(callback){
     var _this = this;
     if (!_this.newtoken) {

@@ -306,14 +306,16 @@ var CityPlace = spv.inh(BrowseMap.Model, {}, {
 
 
 var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
+  "+states": {
+    "parent_focus": //check this compx
+    ["compx"].concat(parent_focus)
+  },
+
   model_name: 'cities_list',
-
-  'compx-parent_focus': parent_focus,
   'stch-parent_focus': heavyInitReactn,
-
   'stch-mp_has_focus': heavyInitReactn,
-
   data_by_hp: true,
+
   heavyInit: function() {
     if (this.heavy_inited){
       return;
@@ -332,7 +334,9 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
 
     pv.updateNesting(this, 'lists_list', lists_list);
   },
+
   'nest_posb-lists_list': ['{city_name},{country_name}'],
+
   //'nest-lists_list': [],
   sub_pager: {
     item: [
@@ -371,20 +375,24 @@ var CountryTopSongs = spv.inh(SongsList, {}, {
 });
 
 var CountryPlace = spv.inh(BrowseMap.Model, {}, {
+  "+states": {
+    "parent_focus": //check this compx
+    ["compx"].concat(parent_focus)
+  },
+
   model_name: 'country_place',
-
-  'compx-parent_focus': parent_focus,
   'stch-parent_focus': heavyInitReactn,
-
   'stch-mp_has_focus': heavyInitReactn,
 
   'nest-lists_list':[ ['artists_top', 'songs_top', 'cities'], {
     idle_until: 'mp_alhf',
   }],
+
   'nest-pwis':[ ['artists_top', 'songs_top'], {
     preload_on: 'mp_has_focus',
     idle_until: 'mp_alhf',
   }],
+
   sub_page: {
     'songs_top': {
       constr: CountryTopSongs,
@@ -404,6 +412,7 @@ var CountryPlace = spv.inh(BrowseMap.Model, {}, {
       ]
     }
   },
+
   heavyInit: function() {
     if (this.heavy_inited){
       return;
@@ -441,48 +450,60 @@ var CountriesList = spv.inh(BrowseMap.Model, {
 
 
 MusicConductor = spv.inh(BrowseMap.Model, {}, {
-  model_name: 'mconductor',
-  'compx-can_expand': [
-    ['^can_expand'],
-    function (can_expand) {
-      return can_expand;
-    }
-  ],
-  'compx-can_load_previews': [
-    ['^mp_has_focus'],
-    function(parent_focus) {
-      return !!parent_focus;
-    }
-  ],
-  'compx-preview_images': [
-    ['@selected_image:preview_playlists.songs-list'],
-    function(images) {
-      if (!images) {return;}
-
-      var index = {};
-      var result = [];
-
-      for (var i = 0; i < images.length; i++) {
-        var cur = images[i];
-        if (!cur) {continue;}
-
-        var id = cur.lfm_id || cur.url;
-        if (index.hasOwnProperty(id)) {continue;}
-        index[id] = true;
-
-        result.push(cur);
+  "+states": {
+    "can_expand": [
+      "compx",
+      ['^can_expand'],
+      function (can_expand) {
+        return can_expand;
       }
+    ],
 
-      return result;
-    }
-  ],
+    "can_load_previews": [
+      "compx",
+      ['^mp_has_focus'],
+      function(parent_focus) {
+        return !!parent_focus;
+      }
+    ],
+
+    "preview_images": [
+      "compx",
+      ['@selected_image:preview_playlists.songs-list'],
+      function(images) {
+        if (!images) {return;}
+
+        var index = {};
+        var result = [];
+
+        for (var i = 0; i < images.length; i++) {
+          var cur = images[i];
+          if (!cur) {continue;}
+
+          var id = cur.lfm_id || cur.url;
+          if (index.hasOwnProperty(id)) {continue;}
+          index[id] = true;
+
+          result.push(cur);
+        }
+
+        return result;
+      }
+    ]
+  },
+
+  model_name: 'mconductor',
+
   'nest-preview_playlists': [['world/songs/topnow_hypem', 'world/songs/_'], {
     preload_on: 'can_load_previews',
   }],
+
   'nest-preview_list':
     [['world/songs', 'world/songs/topnow_hypem', 'world/songs/_', 'world/artists', 'world']],
+
   'nest-allpas': ['world'],
   'nest-сountries': ['сountries'],
+
   sub_page: {
     сountries: {
       title: [['#locales.Countries']],

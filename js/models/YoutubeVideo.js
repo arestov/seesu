@@ -22,23 +22,30 @@ var YoutubeVideo = spv.inh(BrowseMap.Model, {
     pvUpdate(target, 'url_part', '/youtube/' + params.yt_id);
   }
 }, {
+  "+states": {
+    "triple": [
+      "compx",
+      ['previews'],
+      function(previews) {
+        if (previews && previews.start && previews.middle &&  previews.end) {
+          return [previews.start, previews.middle, previews.end];
+          // return previews;
+        }
+      }
+    ]
+  },
+
   model_name: 'youtube_video',
+
   'stch-mp_has_focus': function(target, state) {
     if (state) {
       target.app.trackEvent('Navigation', 'youtube video');
       target.map_parent.pause();
     }
   },
-  'compx-triple': [
-    ['previews'],
-    function(previews) {
-      if (previews && previews.start && previews.middle &&  previews.end) {
-        return [previews.start, previews.middle, previews.end];
-        // return previews;
-      }
-    }
-  ],
+
   full_page_need: true,
+
   requestVideo: function() {
     var cant_show = this.state('cant_show');
     var link = 'http://www.youtube.com/watch?v=' + this.state('yt_id');

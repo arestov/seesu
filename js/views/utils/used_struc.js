@@ -4,23 +4,27 @@ define(function(require) {
 var selecPoineertDeclr = require('js/libs/provoda/structure/selecPoineertDeclr');
 
 var bhv = {
-  'compx-view_path': [
-    ['_provoda_id'],
-    function() {
-      return getViewPath(this).join('.');
-    }
-  ],
-
-  'compx-used_struc': [
-    ['#view_structure', 'view_path'],
-    function(view_structure, view_path) {
-      if (!view_structure || !view_path) {
-        return;
+  "+states": {
+    "view_path": [
+      "compx",
+      ['_provoda_id'],
+      function() {
+        return getViewPath(this).join('.');
       }
+    ],
 
-      return view_structure.children_index[view_path];
-    }
-  ]
+    "used_struc": [
+      "compx",
+      ['#view_structure', 'view_path'],
+      function(view_structure, view_path) {
+        if (!view_structure || !view_path) {
+          return;
+        }
+
+        return view_structure.children_index[view_path];
+      }
+    ]
+  }
 }
 
 function getDcl(cur) {

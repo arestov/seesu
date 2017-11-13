@@ -11,13 +11,17 @@ var coct = require('./coct');
 
 
 var SongViewBase = spv.inh(coct.SPView, {}, {
-  'compx-vmp_show': [
-    ['^^vmp_show', 'bmp_show', '^^map_level_num'],
-    function(vmp_show, bmp_show, map_level_num) {
-      return bmp_show && bmp_show[map_level_num + 1] && vmp_show;
-      // return vmp_show;
-    }
-  ],
+  "+states": {
+    "vmp_show": [
+      "compx",
+      ['^^vmp_show', 'bmp_show', '^^map_level_num'],
+      function(vmp_show, bmp_show, map_level_num) {
+        return bmp_show && bmp_show[map_level_num + 1] && vmp_show;
+        // return vmp_show;
+      }
+    ]
+  },
+
   tpl_events: {
     showSong: function(e) {
       e.preventDefault();
@@ -33,10 +37,24 @@ var SongViewBase = spv.inh(coct.SPView, {}, {
 });
 
 var SongUI = spv.inh(SongViewBase, {}, {
+  "+states": {
+    "mp_show_end": ["compx", ['^mp_show_end']],
+
+    "must_expand": [
+      "compx",
+      ['can_expand', 'vmp_show', 'vis_can_expand'],
+      function(can_expand, vmp_show, vis_can_expand) {
+        return can_expand || vmp_show || vis_can_expand;
+      }
+    ]
+  },
+
   canUseDeepWaypoints: function() {
     return !!this.state('vmp_show');
   },
+
   dom_rp: true,
+
   state_change : {
     "vmp_show": function(target, opts, old_opts) {
       if (opts){
@@ -46,15 +64,7 @@ var SongUI = spv.inh(SongViewBase, {}, {
       }
     }
   },
-  'compx-mp_show_end': [
-    ['^mp_show_end']
-  ],
-  'compx-must_expand': [
-    ['can_expand', 'vmp_show', 'vis_can_expand'],
-    function(can_expand, vmp_show, vis_can_expand) {
-      return can_expand || vmp_show || vis_can_expand;
-    }
-  ],
+
   deactivate: function(){
 
     var acts_row = this.getMdChild('actionsrow');
@@ -64,14 +74,17 @@ var SongUI = spv.inh(SongViewBase, {}, {
 
     this.getMdChild('mf_cor').collapseExpanders();
   },
+
   children_views: {
     actionsrow: SongActionsRowUI,
     mf_cor: MfCorUI,
     artist: ArtcardUI.ArtistInSongConstroller,
     songcard: SongcardPage.SongcardController
   },
+
   activate: function(){
   },
+
   parts_builder: {
     context: 'track-context',
     mf_cor_con: function() {
@@ -81,6 +94,7 @@ var SongUI = spv.inh(SongViewBase, {}, {
       return div;
     }
   },
+
   base_tree: {
     sample_name: 'song-view',
     // children_by_selector: [{

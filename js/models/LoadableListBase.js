@@ -48,59 +48,76 @@ return spv.inh(BrowseMap.Model, {
     }
   }
 }, {
+  "+states": {
+    "$needs_load": [
+      "compx",
+      ['more_load_available', 'mp_has_focus'],
+      function (can_more, focus) {
+        return Boolean(focus && can_more);
+      }
+    ],
+
+    "list_loading": [
+      "compx",
+      ['main_list_loading', 'preview_loading', 'id_searching'],
+      function(main_list_loading, prevw_loading, id_searching) {
+        return main_list_loading || prevw_loading || id_searching;
+      }
+    ],
+
+    "can_load_data": [
+      "compx",
+      ['has_data_loader', 'loader_disallowed', 'has_no_access'],
+      function(has_data_loader, loader_disallowed, has_no_access) {
+        return has_data_loader && !loader_disallowed  && !has_no_access;
+      }
+    ],
+
+    "can_load_more": [
+      "compx",
+      ['can_load_data', 'all_data_loaded'],
+      function(can_load_data, all_data_loaded) {
+        return can_load_data && !all_data_loaded;
+      }
+    ],
+
+    "more_load_available": [
+      "compx",
+      ['can_load_more', "list_loading"],
+      function(can_load_more, list_loading) {
+        return can_load_more && !list_loading;
+      }
+    ]
+  },
+
   hndCheckPreviews: function(e) {
     if (!e.skip_report){
       pv.updateNesting(this, this.preview_mlist_name, e.value);
     }
   },
-  'compx-$needs_load': [
-    ['more_load_available', 'mp_has_focus'],
-    function (can_more, focus) {
-      return Boolean(focus && can_more);
-    }
-  ],
+
   'stch-$needs_load': function (target, state) {
     if (state) {
       target.preloadStart();
     }
   },
+
   bindStaCons: function() {
     if (!this.manual_previews){
       this.on('child_change-' + this.main_list_name, this.hndCheckPreviews);
     }
   },
-  'compx-list_loading': [
-    ['main_list_loading', 'preview_loading', 'id_searching'],
-    function(main_list_loading, prevw_loading, id_searching) {
-      return main_list_loading || prevw_loading || id_searching;
-    }
-  ],
-  'compx-can_load_data': [
-    ['has_data_loader', 'loader_disallowed', 'has_no_access'],
-    function(has_data_loader, loader_disallowed, has_no_access) {
-      return has_data_loader && !loader_disallowed  && !has_no_access;
-    }
-  ],
-  'compx-can_load_more': [
-    ['can_load_data', 'all_data_loaded'],
-    function(can_load_data, all_data_loaded) {
-      return can_load_data && !all_data_loaded;
-    }
-  ],
-  'compx-more_load_available': [
-    ['can_load_more', "list_loading"],
-    function(can_load_more, list_loading) {
-      return can_load_more && !list_loading;
-    }
-  ],
+
   handleNetworkSideData: function(target, source_name, ns, data) {
     target.app.handleNetworkSideData(source_name, ns, data, target);
   },
+
   main_list_name: 'lists_list',
   preview_mlist_name: 'preview_list',
   preview_nesting_source: null,
   getMainListChangeOpts: function() {},
   page_limit: 30,
+
   getPagingInfo: function(nesting_name, limit) {
     var page_limit = limit || this.page_limit || this.map_parent.page_limit;
     var length = this.getLength(nesting_name);
@@ -116,20 +133,24 @@ return spv.inh(BrowseMap.Model, {
       next_page: next_page
     };
   },
+
   preloadStart: function() {
     this.loadStart();
   },
+
   getLength: function(nesting_name) {
     if (!nesting_name) {
       throw new Error('provide nesting_name');
     }
     return (this.loaded_nestings_items && this.loaded_nestings_items[ nesting_name ]) || 0;
   },
+
   loadStart: function() {
     if (this.state('more_load_available') && !this.getLength(this.main_list_name)){
       this.requestMoreData();
     }
   },
+
   requestMoreData: function(nesting_name) {
     nesting_name = nesting_name || this.main_list_name;
     if (this[ 'nest_req-' + nesting_name ]) {
@@ -165,6 +186,7 @@ return spv.inh(BrowseMap.Model, {
     }
 
   },
+
   getRelativeRequestsGroups: function(space) {
     var main_models = this.getNesting(this.main_list_name);
     if (!main_models || !main_models.length){
@@ -186,6 +208,7 @@ return spv.inh(BrowseMap.Model, {
       return groups;
     }
   },
+
   dataListChange: function(mlc_opts, items, nesting_name) {
     nesting_name = nesting_name || this.main_list_name;
     var array = this.loadable_lists && this.loadable_lists[nesting_name];
@@ -199,6 +222,7 @@ return spv.inh(BrowseMap.Model, {
     }
     pv.updateNesting(this, nesting_name, array, mlc_opts);
   },
+
   compareItemWithObj: function(item, data) {
     if (!this.items_comparing_props) {
       return;
@@ -213,6 +237,7 @@ return spv.inh(BrowseMap.Model, {
     }
     return true;
   },
+
   compareItemsWithObj: function(array, omo, soft) {
     for (var i = 0; i < array.length; i++) {
       if (this.compareItemWithObj(array[i], omo, soft)){
@@ -220,9 +245,11 @@ return spv.inh(BrowseMap.Model, {
       }
     }
   },
+
   addItemToDatalist: function(obj, silent, item_params, nesting_name) {
     return this.addDataItem(obj, silent, nesting_name, item_params);
   },
+
   addDataItem: function(obj, skip_changes, nesting_name, item_params) {
     nesting_name = nesting_name || this.main_list_name;
     if (!this.loadable_lists) {
@@ -277,6 +304,7 @@ return spv.inh(BrowseMap.Model, {
     }
     return item;
   },
+
   getMainlist: function() {
     if (!this.loadable_lists) {
       this.loadable_lists = {};
@@ -286,6 +314,7 @@ return spv.inh(BrowseMap.Model, {
     }
     return this.loadable_lists[ this.main_list_name ];
   },
+
   makeItemByData: function(data, item_params, nesting_name) {
     var mentioned = this._nest_rqc[nesting_name];
     var md = this;
@@ -328,11 +357,13 @@ return spv.inh(BrowseMap.Model, {
 
     return this.initSi(best_constr, data_po_pass, item_params);
   },
+
   findMustBePresentDataItem: function(obj, nesting_name) {
     nesting_name = nesting_name || this.main_list_name;
     var matched = this.compareItemsWithObj(this.getNesting( nesting_name ), obj);
     return matched || this.injectExcessDataItem(obj, nesting_name);
   },
+
   injectExcessDataItem: function(obj, nesting_name) {
     nesting_name = nesting_name || this.main_list_name;
     if (this.isDataInjValid && !this.isDataInjValid(obj)){
@@ -381,6 +412,8 @@ return spv.inh(BrowseMap.Model, {
       });
     }
   },
+
+  // :auth things
   requestPage: function() {
     if (!this.state('has_no_access')){
       this.loadStart();
@@ -390,9 +423,5 @@ return spv.inh(BrowseMap.Model, {
       this.switchPmd();
     }
   }
-
-
-  // :auth things
-
 });
 });

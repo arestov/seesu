@@ -18,17 +18,22 @@ var pvUpdate = pv.update;
 var cloneObj = spv.cloneObj;
 //
 var UserCardLFMLogin = spv.inh(LfmAuth.LfmLogin, {}, {
-  'compx-access_desc': [['^access_desc']],
+  "+states": {
+    "access_desc": ["compx", ['^access_desc']],
+
+    "active": [
+      "compx",
+      ['has_session', '@one:requested_by:auth'],
+      function(has_session, requested_by) {
+        return has_session && requested_by == this._provoda_id;
+      }
+    ]
+  },
+
   beforeRequest: function() {
     var auth = this.getNesting('auth');
     pvUpdate(auth, 'requested_by', this._provoda_id);
-  },
-  'compx-active': [
-    ['has_session', '@one:requested_by:auth'],
-    function(has_session, requested_by) {
-      return has_session && requested_by == this._provoda_id;
-    }
-  ]
+  }
 });
 
 var no_access_compx = [['userid'], function(userid) {
@@ -36,26 +41,46 @@ var no_access_compx = [['userid'], function(userid) {
 }];
 
 var auth_bh = {
-  'compx-has_no_access': no_access_compx,
+  "+states": {
+    "has_no_access": //check this compx
+    ["compx"].concat(no_access_compx),
+
+    "userid": [
+      "compx",
+      ['lfm_userid', '#lfm_userid', 'for_current_user'],
+      function(lfm_userid, cur_lfm_userid, for_current_user) {
+        return (for_current_user ? cur_lfm_userid : lfm_userid) || null;
+      }
+    ],
+
+    "has_lfm_auth": [
+      "compx",
+      ['for_current_user', '@one:has_session:auth_part'],
+      function(for_current_user, sess) {
+        return for_current_user && sess;
+      }
+    ],
+
+    "parent_focus": [
+      "compx",
+      ['^mp_has_focus']
+    ],
+
+    "acess_ready": [
+      "compx",
+      ['has_no_access', '@one:active:auth_part'],
+      function(no_access, active_auth) {
+        return !no_access && active_auth;
+      }
+    ]
+  },
+
   'nest-pmd_switch': ['^'],
+
   'nest-auth_part': [UserCardLFMLogin, {
     ask_for: 'for_current_user'
   }],
 
-  'compx-userid': [
-    ['lfm_userid', '#lfm_userid', 'for_current_user'],
-    function(lfm_userid, cur_lfm_userid, for_current_user) {
-      return (for_current_user ? cur_lfm_userid : lfm_userid) || null;
-    }
-  ],
-  'compx-has_lfm_auth': [
-    ['for_current_user', '@one:has_session:auth_part'],
-    function(for_current_user, sess) {
-      return for_current_user && sess;
-    }
-  ],
-
-  'compx-parent_focus': [['^mp_has_focus']],
   'stch-has_lfm_auth': function(target, state) {
     if (state) {
       // если появилась авторизация,
@@ -63,6 +88,7 @@ var auth_bh = {
       target.switchPmd(false);
     }
   },
+
   'stch-parent_focus': function(target, state) {
     if (!state) {
       // если обзорная страница потеряла фокус,
@@ -70,17 +96,13 @@ var auth_bh = {
       target.switchPmd(false);
     }
   },
+
   'stch-lfm_userid': function(target, state) {
     if (state) {
       target.updateNesting('auth_part', null);
     }
   },
-  'compx-acess_ready': [
-    ['has_no_access', '@one:active:auth_part'],
-    function(no_access, active_auth) {
-      return !no_access && active_auth;
-    }
-  ],
+
   'stch-acess_ready': function(target, state) {
     if (state) {
       target.loadStart();
@@ -109,7 +131,18 @@ var slashPrefix = function(src) {
 
 //artist, один артист с треками
 var LULA = spv.inh(BrowseMap.Model, {}, pv.mergeBhv({
+  "+states": {
+    "selected_image": [
+      "compx",
+      ['lfm_image'],
+      function(lfm_i) {
+        return lfm_i;
+      }
+    ]
+  },
+
   model_name: 'lula',
+
   netdata_as_states: {
     url_part: [slashPrefix, 'artist'],
     nav_title: 'artist',
@@ -117,23 +150,26 @@ var LULA = spv.inh(BrowseMap.Model, {}, pv.mergeBhv({
     playcount: null,
     lfm_image: 'lfm_img'
   },
+
   net_head: ['artist_name'],
+
   'nest-all_time': ['all_time', {
     preload_on: 'mp_has_focus',
   }],
 
-  'compx-selected_image': [['lfm_image'], function(lfm_i) {
-    return lfm_i;
-  }],
   'sub_page-all_time': [LULATracks, [null, 'All Time']]
 }, auth_bh));
 
 
 var UserArtists = spv.inh(LoadableList, {}, {
+  "+states": {
+    "has_no_access": //check this compx
+    ["compx"].concat(no_access_compx)
+  },
+
   model_name: 'lulas',
   main_list_name: 'artists',
-  'nest_rqc-artists': LULA,
-  'compx-has_no_access': no_access_compx
+  'nest_rqc-artists': LULA
 });
 
 // var LULAs = function() {};//artists, список артистов
@@ -182,7 +218,13 @@ var TopUserTracks = spv.inh(SongsList, {}, pv.mergeBhv({
 
 
 var LfmLovedList = spv.inh(SongsList, {}, pv.mergeBhv({
-  'compx-access_desc': [['#locales.grant-love-lfm-access']],
+  "+states": {
+    "access_desc": [
+      "compx",
+      ['#locales.grant-love-lfm-access']
+    ]
+  },
+
   'nest_req-songs-list': [
     declr_parsers.lfm.getTracks('lovedtracks'),
     ['#lfm', 'get', function() {
@@ -194,14 +236,23 @@ var LfmLovedList = spv.inh(SongsList, {}, pv.mergeBhv({
 }, auth_bh));
 
 var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
+  "+states": {
+    "access_desc": [
+      "compx",
+      ['#locales.lastfm-reccoms-access']
+    ],
+
+    "loader_disallowed": [
+      "compx",
+      ['loader_disallowed'],
+      function() {
+        return !app_serv.app_env.cross_domain_allowed;
+      }
+    ]
+  },
+
   page_limit: 30,
-  'compx-access_desc': [['#locales.lastfm-reccoms-access']],
-  'compx-loader_disallowed': [
-    ['loader_disallowed'],
-    function() {
-      return !app_serv.app_env.cross_domain_allowed;
-    }
-  ],
+
   'nest_req-artists_list': [
     [function(xml) {
       var data_list = [];
@@ -237,7 +288,11 @@ var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
 }, auth_bh));
 
 var RecommArtListForCurrentUser = spv.inh(RecommArtList, {}, {
-  'compx-loader_disallowed': null,
+  "+states": {
+    "loader_disallowed": //check this compx
+    ["compx"].concat(null)
+  },
+
   'nest_req-artists_list': [
     declr_parsers.lfm.getArtists('recommendations'),
     ['#lfm', 'get', function() {
@@ -387,8 +442,15 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 
 
 var UserNewReleases = spv.inh(AlbumsList, {}, pv.mergeBhv({
-  'compx-access_desc': [['#locales.lastfm-reccoms-access']],
+  "+states": {
+    "access_desc": [
+      "compx",
+      ['#locales.lastfm-reccoms-access']
+    ]
+  },
+
   page_limit: 50,
+
   'nest_req-albums_list': [
     declr_parsers.lfm.getAlbums('albums'),
     ['#lfm', 'get', function() {

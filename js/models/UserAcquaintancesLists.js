@@ -24,42 +24,48 @@ var UserAcquaintance = spv.inh(pv.Model, {
     pvUpdate(target, 'accepted', params.accepted);
   }
 }, {
-  'compx-userlink': [
-    ['accepted', 'user_info'],
-    function(accepted, user_info) {
-      if (accepted){
-        if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
-          return {
-            href: '#/users/vk:' + user_info.uid,
-            text: user_info.full_name
-          };
+  "+states": {
+    "userlink": [
+      "compx",
+      ['accepted', 'user_info'],
+      function(accepted, user_info) {
+        if (accepted){
+          if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
+            return {
+              href: '#/users/vk:' + user_info.uid,
+              text: user_info.full_name
+            };
+          }
         }
       }
-    }
-  ],
-  'compx-after_accept_desc': [[
-    'accepted', 'remainded_date', 'userlink',
-    '#locales.wget-link', '#locales.attime', '#locales'
-  ], function(
-      accepted, remainded_date, userlink,
-      lo_will_get, lo_time, locales
-    ) {
-    if (!lo_will_get || !lo_time || !locales) {return;}
-    if (accepted && !userlink){
-      var d = new Date(remainded_date);
-      var lo_month = locales['m'+(d.getMonth()+1)];
-      return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
-    }
+    ],
 
-  }],
-  'compx-needs_accept_b': [
-    ['accepted', 'current_user_is_sender'],
-    function(accepted, current_user_is_sender) {
-      if (!accepted && !current_user_is_sender){
-        return true;
+    "after_accept_desc": ["compx", [
+      'accepted', 'remainded_date', 'userlink',
+      '#locales.wget-link', '#locales.attime', '#locales'
+    ], function(
+        accepted, remainded_date, userlink,
+        lo_will_get, lo_time, locales
+      ) {
+      if (!lo_will_get || !lo_time || !locales) {return;}
+      if (accepted && !userlink){
+        var d = new Date(remainded_date);
+        var lo_month = locales['m'+(d.getMonth()+1)];
+        return app_serv.getRemainTimeText(d, true, lo_will_get, lo_month, lo_time);
       }
-    }
-  ],
+
+    }],
+
+    "needs_accept_b": [
+      "compx",
+      ['accepted', 'current_user_is_sender'],
+      function(accepted, current_user_is_sender) {
+        if (!accepted && !current_user_is_sender){
+          return true;
+        }
+      }
+    ]
+  },
 
   acceptInvite: function() {
     var _this = this;
@@ -88,26 +94,34 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
     });
   }
 }, {
+  "+states": {
+    "current_user": ["compx", ['#su_userid']],
+
+    "wait_me_desc": [
+      "compx",
+      ['@every:accepted:acqs_from_someone', '#locales.if-you-accept-one-i', '#locales.will-get-link'],
+      function(not_wait_me, accept_desc, get_desc) {
+        if (!not_wait_me && accept_desc && get_desc){
+          return accept_desc + ' ' + get_desc;
+        }
+      }
+    ],
+
+    "wait_someone_desc": [
+      "compx",
+      ['@every:accepted:acqs_from_me'],
+      function(not_wait_someone, accept_desc, get_desc) {
+        if (!not_wait_someone && accept_desc && get_desc){
+          return accept_desc + ' ' + get_desc;
+        }
+
+      }
+    ]
+  },
+
   model_name: 'user_acqs_list',
   'chi-item': UserAcquaintance,
-  'compx-current_user': [['#su_userid']],
-  'compx-wait_me_desc': [
-    ['@every:accepted:acqs_from_someone', '#locales.if-you-accept-one-i', '#locales.will-get-link'],
-    function(not_wait_me, accept_desc, get_desc) {
-      if (!not_wait_me && accept_desc && get_desc){
-        return accept_desc + ' ' + get_desc;
-      }
-    }
-  ],
-  'compx-wait_someone_desc': [
-    ['@every:accepted:acqs_from_me'],
-    function(not_wait_someone, accept_desc, get_desc) {
-      if (!not_wait_someone && accept_desc && get_desc){
-        return accept_desc + ' ' + get_desc;
-      }
 
-    }
-  ],
   bindDataSteams: function() {
     if (this.data_st_binded){
       return;
@@ -121,6 +135,7 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
       _this.replaceChildrenArray('acqs_from_someone', r.done);
     });
   },
+
   replaceChildrenArray: function(array_name, new_array) {
     if (!this.state('current_user')){
       throw new Error('there is no current_user!');
@@ -153,6 +168,7 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
     pv.updateNesting(this, array_name, concated);
 
   },
+
   removeChildren: function(array_name) {
     var array = this.getNesting(array_name) || [];
     for (var i = 0; i < array.length; i++) {

@@ -60,8 +60,14 @@ function parseTrack(item, msq, client_id) {
 }
 
 return pv.behavior({
-  'compx-ready': [[], function () {
-    return true;
-  }],
+  "+states": {
+    "ready": [
+      "compx",
+      [],
+      function () {
+        return true;
+      }
+    ]
+  }
 }, createSource(Query, 'http://soundcloud.com/pages/dmca_policy'));
 });

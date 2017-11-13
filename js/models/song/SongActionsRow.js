@@ -15,16 +15,25 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
     target.song = target.map_parent.mo;
   }
 }, {
-  'compx-access_desc': [['#locales.lastfm-loveit-access']],
+  "+states": {
+    "access_desc": [
+      "compx",
+      ['#locales.lastfm-loveit-access']
+    ]
+  },
+
   beforeRequest: function() {
     this.bindAuthCallback();
   },
+
   act: function () {
     this.makeLove();
   },
+
   bindAuthCallback: function(){
     pvUpdate(this.app, 'lfm_auth_request', this);
   },
+
   makeLove: function() {
 
     if (this.app.lfm.sk){
@@ -82,18 +91,32 @@ var ScrobbleRow = spv.inh(comd.BaseCRow, {}, {
 });
 
 var ShuffleListRow = spv.inh(comd.BaseCRow, {}, {
+  "+states": {
+    "pl_shuffle": [
+      "compx",
+      ['#settings-pl-shuffle']
+    ]
+  },
+
   actionsrow_src: '^',
-  'compx-pl_shuffle': [['#settings-pl-shuffle']],
   model_name: 'row-pl-shuffle',
+
   switchSetting: function(state) {
     this.app.setSetting('pl-shuffle', state);
   }
 });
 
 var RepeatSongRow = spv.inh(comd.BaseCRow, {}, {
+  "+states": {
+    "rept_song": [
+      "compx",
+      ['#settings-rept-song']
+    ]
+  },
+
   actionsrow_src: '^',
-  'compx-rept_song': [['#settings-rept-song']],
   model_name: 'row-repeat-song',
+
   switchSetting: function(state) {
     this.app.setSetting('rept-song', state);
   }
@@ -119,20 +142,31 @@ var SongActionsRow = spv.inh(comd.PartsSwitcher, {
     target.inited_parts = {};
   }
 }, {
+  "+states": {
+    "parent_show": ["compx", ['^mp_show']],
+
+    "volume": [
+      "compx",
+      ['#settings-volume'],
+      function (fac) {
+        return fac && fac[0]/fac[1];
+      }
+    ]
+  },
+
   sub_page: parts_storage,
   'nest_posb-context_parts': constrs_names,
-  'compx-parent_show': [['^mp_show']],
+
   'stch-parent_show': function (target, state) {
     if (!state) {
       target.hideAll();
     }
   },
-  'compx-volume': [['#settings-volume'], function (fac) {
-    return fac && fac[0]/fac[1];
-  }],
+
   sendVolume: function(vol) {
     this.app.setSetting('volume', vol);
   },
+
   setVolume: function(fac) {
     if (!fac){
       return;

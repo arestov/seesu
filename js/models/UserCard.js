@@ -19,7 +19,18 @@ var UserCard = spv.inh(BrowseMap.Model, {
     target.app.gena.on('playlists-change', hasPlaylistCheck);
   }
 }, {
+  "+states": {
+    "can_expand": [
+      "compx",
+      ['^can_expand', 'for_current_user'],
+      function(can_expand, for_current_user) {
+        return for_current_user && can_expand;
+      }
+    ]
+  },
+
   model_name: 'usercard',
+
   sub_page: {
     // 'vk:tracks': {
     // 	constr: user_music_vk.VkUserTracks,
@@ -74,6 +85,7 @@ var UserCard = spv.inh(BrowseMap.Model, {
       title: [['#locales.Albums']]
     }
   },
+
   nest: (function() {
     var result = {
       'user-playlists': ['playlists'],
@@ -91,16 +103,37 @@ var UserCard = spv.inh(BrowseMap.Model, {
     }
 
     return result;
-  })(),
-  'compx-can_expand': [
-    ['^can_expand', 'for_current_user'],
-    function(can_expand, for_current_user) {
-      return for_current_user && can_expand;
-    }
-  ]
+  })()
 });
 var VkUserCard = spv.inh(BrowseMap.Model, {}, {
+  "+states": {
+    "big_desc": [
+      "compx",
+      ['first_name', 'last_name'],
+      function(first_name, last_name){
+        return [first_name, last_name].join(' ');
+      }
+    ],
+
+    "p_nav_title": [
+      "compx",
+      ['vk_userid'],
+      function(vk_userid) {
+        return 'Vk.com user: ' + vk_userid;
+      }
+    ],
+
+    "nav_title": [
+      "compx",
+      ['big_desc', 'p_nav_title'],
+      function(big_desc, p_nav_title){
+        return big_desc || p_nav_title;
+      }
+    ]
+  },
+
   model_name: 'vk_usercard',
+
   sub_page: {
     // 'tracks': {
     // 	constr: user_music_vk.VkUserTracks,
@@ -111,23 +144,7 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
       title: [['#locales.Friends']]
     }
   },
-  'compx-big_desc': [
-    ['first_name', 'last_name'],
-    function(first_name, last_name){
-      return [first_name, last_name].join(' ');
-    }
-  ],
-  'compx-p_nav_title': [
-    ['vk_userid'],
-    function(vk_userid) {
-      return 'Vk.com user: ' + vk_userid;
-    }],
-  'compx-nav_title': [
-    ['big_desc', 'p_nav_title'],
-    function(big_desc, p_nav_title){
-      return big_desc || p_nav_title;
-    }
-  ],
+
   nest: (function() {
     var result = {};
 
@@ -140,6 +157,7 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
     return result;
 
   })(),
+
   req_map: [
     [
       ['first_name', 'last_name', 'photo', 'ava_image', 'selected_image'],
@@ -162,6 +180,7 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
       }]
     ]
   ],
+
   'stch-mp_has_focus': function(target, state) {
     if (state){
 
@@ -183,10 +202,27 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 });
 
 var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
+  "+states": {
+    "nav_title": ["compx", ['lfm_userid']],
+
+    "big_desc": [
+      "compx",
+      ['realname', 'age', 'gender', 'country'],
+      function(realname, age, gender, country)  {
+        var big_desc = [];
+        var bide_items = [realname, age, gender, country];
+        for (var i = 0; i < bide_items.length; i++) {
+          if (bide_items[i]){
+            big_desc.push(bide_items[i]);
+          }
+        }
+        return big_desc.join(', ');
+      }
+    ]
+  },
+
   model_name: 'lfm_usercard',
-  'compx-nav_title': [
-    ['lfm_userid'],
-  ],
+
   nest: (function() {
     var result = {};
     var networks_pages = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
@@ -197,6 +233,7 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
 
     return result;
   })(),
+
   sub_page: {
     'friends': {
       constr: user_music_lfm.LfmFriendsList,
@@ -223,19 +260,7 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
       title: [['#locales.Albums']]
     }
   },
-  'compx-big_desc': [
-    ['realname', 'age', 'gender', 'country'],
-    function(realname, age, gender, country)  {
-      var big_desc = [];
-      var bide_items = [realname, age, gender, country];
-      for (var i = 0; i < bide_items.length; i++) {
-        if (bide_items[i]){
-          big_desc.push(bide_items[i]);
-        }
-      }
-      return big_desc.join(', ');
-    }
-  ],
+
   req_map: [
     [
       ['userid', 'realname', 'country', 'age', 'gender', 'playcount', 'playlists', 'lfm_img', 'registered', 'scrobblesource', 'recenttrack'],
@@ -260,6 +285,7 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
       }]
     ]
   ],
+
   'stch-mp_has_focus': function(target, state) {
     if (state){
       target.requestState('realname', 'country', 'age', 'gender');

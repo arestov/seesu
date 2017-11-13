@@ -78,70 +78,91 @@ var MfComplectBase = spv.inh(pv.Model, {
     });
   }
 }, {
-  'compx-mf_cor_id': [['^_provoda_id']],
-  'compx-artist_name': [['^artist_name']],
-  'compx-track_name': [['^track_name']],
-  'compx-can_search': [
-    ['artist_name', 'track_name'],
-    function (artist_name, track_name) {
-      return artist_name && track_name;
-    }
-  ],
+  "+states": {
+    "mf_cor_id": ["compx", ['^_provoda_id']],
+    "artist_name": ["compx", ['^artist_name']],
+    "track_name": ["compx", ['^track_name']],
+
+    "can_search": [
+      "compx",
+      ['artist_name', 'track_name'],
+      function (artist_name, track_name) {
+        return artist_name && track_name;
+      }
+    ]
+  },
+
   toggleOverstocked: function() {
     pv.update(this, 'show_overstocked', !this.state('show_overstocked'));
   },
+
   overstock_limit: 5,
+
   hasManyFiles: function() {
     return this.sem_part && this.sem_part.t && this.sem_part.t.length > 1;
   },
+
   getFiles: function() {
     var lookup = this.map_parent.getNesting('lookup');
     if (!lookup) {return [];}
     var source = lookup.bindSource(pvState(this, 'search_name'));
     return source.getNesting('able_to_play_mp3files');
   },
+
   'nest-pioneer': ['#mp3_search/lookups/[:artist_name],[:track_name]/[:search_name]', {
     ask_for: 'can_search'
   }]
 });
 
 var MfComplect = spv.inh(MfComplectBase, {}, {
-  'compx-use_multisearch': [
-    ['can_search', 'file'],
-    function (can_search, file) {
-      return can_search && !file;
-    }
-  ],
+  "+states": {
+    "use_multisearch": [
+      "compx",
+      ['can_search', 'file'],
+      function (can_search, file) {
+        return can_search && !file;
+      }
+    ]
+  },
+
   'nest-multi_pioneer': ['#mp3_search/lookups/[:artist_name],[:track_name]/[:search_name]', {
     ask_for: 'use_multisearch'
   }],
+
   'nest_sel-available_to_play': {
     from: 'multi_pioneer.able_to_play_mp3files'
   },
+
   'nest_sel-music_files': {
     from: 'multi_pioneer.music_files_sorted',
   },
+
   'nest_sel-moplas_list': {
     from: 'multi_pioneer.music_files_sorted',
     map: '>playable_files/[:mf_cor_id]'
-  },
+  }
 });
 
 var MfComplectSingle = spv.inh(MfComplectBase, {}, {
-  'compx-file': [['^file']],
-  'compx-file_from': [['file.from']],
-  'compx-file_id': [['file._id']],
+  "+states": {
+    "file": ["compx", ['^file']],
+    "file_from": ["compx", ['file.from']],
+    "file_id": ["compx", ['file._id']]
+  },
+
   'nest-music_files': [['#mp3_search/sources/[:file_from]/files/[:file_id]']],
+
   'nest_sel-available_to_play': {
     from: 'music_files',
     where: {
       '>unavailable': [['=', 'boolean'], [false]]
     }
   },
+
   'nest_sel-moplas_list': {
     from: 'music_files',
     map: '>playable_files/[:mf_cor_id]'
-  },
+  }
 });
 
 
@@ -181,26 +202,161 @@ var MfCorBase = spv.inh(LoadableList, {
     self.intMessages();
   }
 }, {
-  'compx-artist_name': [['^artist_name']],
-  'compx-track_name': [['^track_name']],
-  'compx-can_search': [
-    ['artist_name', 'track_name'],
-    function (artist_name, track_name) {
-      return artist_name && track_name;
-    }
-  ],
-  'compx-use_multisearch': [
-    ['can_search', 'file'],
-    function (can_search, file) {
-      return can_search && !file;
-    }
-  ],
+  "+states": {
+    "artist_name": ["compx", ['^artist_name']],
+    "track_name": ["compx", ['^track_name']],
+
+    "can_search": [
+      "compx",
+      ['artist_name', 'track_name'],
+      function (artist_name, track_name) {
+        return artist_name && track_name;
+      }
+    ],
+
+    "use_multisearch": [
+      "compx",
+      ['can_search', 'file'],
+      function (can_search, file) {
+        return can_search && !file;
+      }
+    ],
+
+    "play": [
+      "compx",
+      ['@one:play:used_mopla']
+    ],
+
+    "is_important": [
+      "compx",
+      ['^is_important']
+    ],
+
+    "has_files": [
+      "compx",
+      ['@some:music_files$exists:sorted_completcs'],
+      function (state) {
+        return state;
+      }
+    ],
+
+    "few_sources": [
+      "compx",
+      ['sorted_completcs$length'],
+      function (length) {
+        return length > 1;
+      }
+    ],
+
+    "almost_loaded": [
+      "compx",
+      ['@loading_progress:current_mopla'],
+      function (array) {
+        return array && array[0] > 0.8;
+      }
+    ],
+
+    "must_be_expandable": [
+      "compx",
+      ['has_files', 'few_sources', 'cant_play_music'],
+      function(has_files, fsrs, cant_play){
+        return !!(has_files || fsrs || cant_play);
+      }
+    ],
+
+    "user_preferred": [
+      "compx",
+      ["selected_mopla_to_use", "almost_selected_mopla"],
+      function(selected_mopla_to_use, almost_selected_mopla) {
+        return selected_mopla_to_use || almost_selected_mopla;
+      }
+    ],
+
+    "can_play": [
+      "compx",
+      ['mopla_to_use'],
+      function(mopla) {
+        return !!mopla;
+      }
+    ],
+
+    "mopla_to_use": [
+      "compx",
+      ["user_preferred", "default_mopla"],
+      function(user_preferred, default_mopla){
+        return user_preferred || default_mopla;
+      }
+    ],
+
+    "has_available_tracks": [
+      "compx",
+      ['mopla_to_use'],
+      function(mopla_to_use) {
+        return !!mopla_to_use;
+      }
+    ],
+
+    "current_mopla": [
+      "compx",
+      ["used_mopla", "mopla_to_use"],
+      function(used_mopla, mopla_to_use) {
+        return used_mopla || mopla_to_use;
+      }
+    ],
+
+    "mopla_to_preload": [
+      "compx",
+      ['search_ready', '^player_song', '^preload_current_file', 'current_mopla'],
+      function(search_ready, player_song, preload_current_file, current_mopla){
+        return search_ready && (player_song || preload_current_file) && current_mopla;
+      }
+    ],
+
+    "current_source": [
+      "compx",
+      ['current_mopla', 'default_mopla'],
+      function (current_mopla, default_mopla) {
+        var vis_mopla = current_mopla || default_mopla;
+        return vis_mopla && {
+          source_name: vis_mopla.state('from'),
+          source_link: vis_mopla.state('page_link') || sources_map[vis_mopla.state('from')]
+        };
+      }
+    ],
+
+    "$relation:file_to_load-for-player_song": [
+      "compx",
+      ['search_ready', 'current_mopla', '^player_song'],
+      function (search_ready, current_mopla, player_song) {
+        return search_ready && player_song && current_mopla;
+      }
+    ],
+
+    "$relation:file_to_load-for-preload_current_file": [
+      "compx",
+      ['search_ready', 'current_mopla', '^preload_current_file'],
+      function (search_ready, current_mopla, preload_current_file) {
+        return search_ready && preload_current_file && current_mopla;
+      }
+    ],
+
+    "$relation:investg_to_load-for-song_need": [
+      "compx",
+      ['^need_files', 'files_investg'],
+      function (need_files, files_investg) {
+        return need_files && files_investg;
+      }
+    ]
+  },
+
   'nest-multi_lookup': ['#mp3_search/lookups/[:artist_name],[:track_name]', {
     ask_for: 'use_multisearch'
   }],
+
   'nest-lookup': ['#mp3_search/lookups/[:artist_name],[:track_name]', {
     ask_for: 'can_search'
   }],
+
   hndTrackNameCh: function(e) {
     if (e.value){
       this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.state('artist'), track: this.mo.state('track')}, this.current_motivator);
@@ -210,27 +366,11 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
-  'compx-play': [
-    ['@one:play:used_mopla']
-  ],
+
   'stch-used_mopla': function(target, state) {
     target.updateNesting('used_mopla', state);
   },
-  'compx-is_important': [
-    ['^is_important']
-  ],
-  'compx-has_files': [
-    ['@some:music_files$exists:sorted_completcs'],
-    function (state) {
-      return state;
-    }
-  ],
-  'compx-few_sources': [
-    ['sorted_completcs$length'],
-    function (length) {
-      return length > 1;
-    }
-  ],
+
   sub_pager: {
     type: {
       complects: 'complect',
@@ -249,22 +389,21 @@ var MfCorBase = spv.inh(LoadableList, {
       ],
     }
   },
+
   getSource: function (source_name) {
     return BrowseMap.routePathByModels(this, 'complects/' + source_name, false, true);
   },
+
   'nest-mp3_search': ['#mp3_search'],
-  'compx-almost_loaded': [
-    ['@loading_progress:current_mopla'],
-    function (array) {
-      return array && array[0] > 0.8;
-    }
-  ],
+
   'stch-is_important': function(target, state) {
     if (state) {
       target.requestMoreData('yt_videos');
     }
   },
+
   'nest_rqc-yt_videos': YoutubeVideo,
+
   'nest_req-yt_videos': [
     [(function() {
       var end = /default.jpg$/;
@@ -332,56 +471,12 @@ var MfCorBase = spv.inh(LoadableList, {
     }]
   ],
 
-  "compx-must_be_expandable": [
-    ['has_files', 'few_sources', 'cant_play_music'],
-    function(has_files, fsrs, cant_play){
-      return !!(has_files || fsrs || cant_play);
-    }
-  ],
-
-
-  'compx-user_preferred': [
-    ["selected_mopla_to_use", "almost_selected_mopla"],
-    function(selected_mopla_to_use, almost_selected_mopla) {
-      return selected_mopla_to_use || almost_selected_mopla;
-    }
-  ],
-  'compx-can_play': [
-    ['mopla_to_use'],
-    function(mopla) {
-      return !!mopla;
-    }
-  ],
-
-  'compx-mopla_to_use': [
-    ["user_preferred", "default_mopla"],
-    function(user_preferred, default_mopla){
-      return user_preferred || default_mopla;
-    }
-  ],
-  'compx-has_available_tracks': [
-    ['mopla_to_use'],
-    function(mopla_to_use) {
-      return !!mopla_to_use;
-    }
-  ],
-  'compx-current_mopla': [
-    ["used_mopla", "mopla_to_use"],
-    function(used_mopla, mopla_to_use) {
-      return used_mopla || mopla_to_use;
-    }
-  ],
-  'compx-mopla_to_preload': [
-    ['search_ready', '^player_song', '^preload_current_file', 'current_mopla'],
-    function(search_ready, player_song, preload_current_file, current_mopla){
-      return search_ready && (player_song || preload_current_file) && current_mopla;
-    }
-  ],
   'stch-unavailable@sorted_completcs.moplas_list': function(target, state, old_state, source) {
     if (state) {
       target.checkMoplas(source.item);
     }
   },
+
   state_change: {
     "selected_mopla": function() {
 
@@ -397,34 +492,7 @@ var MfCorBase = spv.inh(LoadableList, {
       pv.updateNesting(target, 'current_mopla', nmf);
     },
   },
-  'compx-current_source': [
-    ['current_mopla', 'default_mopla'],
-    function (current_mopla, default_mopla) {
-      var vis_mopla = current_mopla || default_mopla;
-      return vis_mopla && {
-        source_name: vis_mopla.state('from'),
-        source_link: vis_mopla.state('page_link') || sources_map[vis_mopla.state('from')]
-      };
-    }
-  ],
-  'compx-$relation:file_to_load-for-player_song': [
-    ['search_ready', 'current_mopla', '^player_song'],
-    function (search_ready, current_mopla, player_song) {
-      return search_ready && player_song && current_mopla;
-    }
-  ],
-  'compx-$relation:file_to_load-for-preload_current_file': [
-    ['search_ready', 'current_mopla', '^preload_current_file'],
-    function (search_ready, current_mopla, preload_current_file) {
-      return search_ready && preload_current_file && current_mopla;
-    }
-  ],
-  'compx-$relation:investg_to_load-for-song_need': [
-    ['^need_files', 'files_investg'],
-    function (need_files, files_investg) {
-      return need_files && files_investg;
-    }
-  ],
+
   'stch-$relation:investg_to_load-for-song_need': pv.getRDep('$relation:investg_to_load-for-song_need'),
   'stch-$relation:file_to_load-for-player_song': pv.getRDep('$relation:file_to_load-for-player_song'),
   'stch-$relation:file_to_load-for-preload_current_file': pv.getRDep('$relation:file_to_load-for-preload_current_file'),
@@ -432,7 +500,9 @@ var MfCorBase = spv.inh(LoadableList, {
   isSearchAllowed: function() {
     return !this.file;
   },
+
   'chi-notifier': NotifyCounter,
+
   initNotifier: function() {
     this.notifier = this.initChi('notifier');
     pv.updateNesting(this, 'notifier', this.notifier);
@@ -444,6 +514,7 @@ var MfCorBase = spv.inh(LoadableList, {
     }
     this.bindMessagesRecieving();
   },
+
   intMessages: function() {
     this.player = this.mo.player;
 
@@ -453,21 +524,26 @@ var MfCorBase = spv.inh(LoadableList, {
 
 
   },
+
   hndPCoreFail: function() {
     pv.update(this, 'cant_play_music', true);
     this.notifier.addMessage('player-fail');
   },
+
   hndPCoreReady: function() {
     pv.update(this, 'cant_play_music', false);
     this.notifier.banMessage('player-fail');
   },
+
   getCurrentMopla: function(){
     return this.state('current_mopla');
   },
+
   showOnMap: function() {
     this.mo.showOnMap();
     pv.update(this, 'want_more_songs', true);
   },
+
   switchMoreSongsView: function() {
     if (!this.state('want_more_songs')){
       pv.update(this, 'want_more_songs', true);
@@ -476,19 +552,24 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
+
   markMessagesReaded: function() {
     // this.sf_notf.markAsReaded('vk_audio_auth ');
   },
+
   hndNtfRead: function(message_id) {
     this.notifier.banMessage(message_id);
   },
+
   bindMessagesRecieving: function() {
     this.sf_notf.on('read', this.hndNtfRead, this.getContextOpts());
 
   },
+
   collapseExpanders: function() {
     pv.update(this, 'want_more_songs', false);
   },
+
   bindInvestgChanges: function() {
     var investg = this.files_investg;
     if (!investg){
@@ -496,6 +577,7 @@ var MfCorBase = spv.inh(LoadableList, {
     }
     this.wlch(investg, 'search_ready_to_use', 'search_ready');
   },
+
   checkMoplas: function(unavailable_mopla) {
     var current_mopla_unavailable;
     if (this.state("used_mopla") == unavailable_mopla){
@@ -520,6 +602,7 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
+
   updateDefaultMopla: function() {
     var available = this.getFirstFile();
     if (available){
@@ -529,18 +612,21 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
+
   setVolume: function(vol, fac){
     var cmf = this.state('current_mopla');
     if (cmf){
       cmf.setVolume(vol, fac);
     }
   },
+
   stop: function(){
     var cmf = this.state('current_mopla');
     if (cmf){
       cmf.stop();
     }
   },
+
   switchPlay: function(){
     if (this.state('play')){
       this.pause();
@@ -549,6 +635,7 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
+
   pause: function(){
     var cmf = this.state('current_mopla');
     if (cmf){
@@ -556,6 +643,7 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
+
   selectMopla: function(mopla) {
     this.updateManyStates({
       'selected_mopla_to_use': mopla,
@@ -570,11 +658,13 @@ var MfCorBase = spv.inh(LoadableList, {
       return true;
     }
   },
+
   playSelectedByUser: function(mopla) {
     if (this.selectMopla(mopla)) {
       this.play();
     }
   },
+
   play: function(){
     if (this.mo.state('forbidden_by_copyrh')) {
       return;
@@ -595,8 +685,10 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
+
   getVKFile: function(){
   },
+
   getFirstFrom: function(source_name) {
     var sorted_completcs = this.getNesting('sorted_completcs');
     if (!sorted_completcs) {return;}
@@ -608,6 +700,7 @@ var MfCorBase = spv.inh(LoadableList, {
       }
     }
   },
+
   canPlay: function() {
     return !!this.state("mopla_to_use");
   }
@@ -641,20 +734,25 @@ var MfCorSingle = spv.inh(MfCorBase, {
     self.updateDefaultMopla();
   }
 }, {
+  "+states": {
+    "file_from": ["compx", ['file.from']]
+  },
+
   'stch-@sorted_completcs.available_to_play': function (target) {
     target.updateDefaultMopla();
   },
-  'compx-file_from': [['file.from']],
+
   'nest-sorted_completcs': [
     'single-complects/[:file_from]', {
       ask_for: 'file'
     },
   ],
+
   getFirstFile: function() {
     var single = this.getNesting('sorted_completcs');
     var list = single && single.getNesting('music_files');
     return list && list[0];
-  },
+  }
 });
 
 MfCorUsual.Single = MfCorSingle;

@@ -14,17 +14,22 @@ function QMIKey(msq) {
 }
 
 var DurationGroup = pv.behavior({
+  "+states": {
+    "average_dur": [
+      "compx",
+      ['@duration:filtered_music_files_matches'],
+      getAvg
+    ]
+  },
+
   DurationGroup: true,
+
   'nest_sel-filtered_music_files_matches': {
     from: '^>match_ratings',
     where: {
       '>index_value': ['=', 'index_value']
     }
-  },
-  'compx-average_dur': [
-    ['@duration:filtered_music_files_matches'],
-    getAvg
-  ],
+  }
 });
 
 var FilesBySource = spv.inh(pv.Model, {
@@ -37,17 +42,96 @@ var FilesBySource = spv.inh(pv.Model, {
     //scope
   }
 }, {
+  "+states": {
+    "disable_search": [
+      "compx",
+      ['@one:disable_search:tuner']
+    ],
+
+    "wait_before_playing": [
+      "compx",
+      ['@one:wait_before_playing:tuner']
+    ],
+
+    "qmi_key": ["compx", ['msq'], QMIKey],
+
+    "request_required": [
+      "compx",
+      ['disable_search', '^must_load'],
+      function(disabled, must_load) {
+        return !disabled && must_load;
+      }
+    ],
+
+    "has_mp3_files": [
+      "compx",
+      ['mp3files$exists']
+    ],
+
+    "has_best_files": [
+      "compx",
+      ['best_music_files$exists']
+    ],
+
+    "has_files": [
+      "compx",
+      ['music_files_list$exists']
+    ],
+
+    "has_any_data": [
+      "compx",
+      ['has_files', 'search_complete'],
+      function (has_files, search_complete) {
+        return !!has_files || !!search_complete;
+      }
+    ],
+
+    "dmca_url": [
+      "compx",
+      ['@one:dmca_url:source']
+    ],
+
+    "load_query": [
+      "compx",
+      ['request_required', 'search_query$exists'],
+      function (one, two) {
+        return one && two;
+      }
+    ],
+
+    "search_complete": [
+      "compx",
+      ['@one:search_complete:search_query']
+    ],
+
+    "search_fail": [
+      "compx",
+      ['@one:search_fail:search_query']
+    ],
+
+    "search_progress": [
+      "compx",
+      ['@one:search_progress:search_query']
+    ],
+
+    "has_request": [
+      "compx",
+      ['@one:has_request:search_query']
+    ]
+  },
+
   'nest-tuner': ['^^tuners/[:search_name]'],
-  'compx-disable_search': [['@one:disable_search:tuner']],
-  'compx-wait_before_playing': [['@one:wait_before_playing:tuner']],
+
   switchTunerVisibility: function() {
     var visible = this.getNesting('vis_tuner');
     pv.updateNesting(this, 'vis_tuner', ( visible ? null : this.getNesting('tuner') ) );
   },
+
   addFile: function(music_file) {
     var injected_music_files = this.getNesting('injected_music_files') || [];
     this.updateNesting('injected_music_files', injected_music_files.concat([music_file]));
   },
+
   sub_pager: {
     type: {
       duration_groups: 'duration_group',
@@ -60,11 +144,13 @@ var FilesBySource = spv.inh(pv.Model, {
       ],
     }
   },
+
   'nest_sel-queried_music_files': {
     from: 'search_query.files'
   },
+
   'nest_conj-music_files_list': ['queried_music_files', 'requested_music_files', 'injected_music_files'],
-  'compx-qmi_key': [['msq'], QMIKey],
+
   'nest_sel-best_music_files': {
     from: 'match_ratings',
     map: '>^',
@@ -72,14 +158,17 @@ var FilesBySource = spv.inh(pv.Model, {
       '>index_value': ['=', [0]]
     },
   },
+
   'nest_sel-music_files_sorted': {
     from: 'match_ratings',
     map: '>^'
   },
+
   'nest_sel-match_ratings_raw': {
     from: 'music_files_list',
     map: '>match_ratings/[:search_name],[:artist_name],[:track_title]'
   },
+
   'nest_sel-match_ratings': {
     from: 'match_ratings_raw',
     sort: [
@@ -91,47 +180,23 @@ var FilesBySource = spv.inh(pv.Model, {
       }
     ]
   },
+
   'nest_sel-mp3files': {
     from: 'music_files_sorted',
     where: {
       '>media_type': ['=', ['mp3']]
     }
   },
+
   'nest_sel-able_to_play_mp3files': {
     from: 'mp3files',
     where: {
       '>unavailable': [['=', 'boolean'], [false]]
     }
   },
-  'compx-request_required': [
-    ['disable_search', '^must_load'],
-    function(disabled, must_load) {
-      return !disabled && must_load;
-    }
-  ],
-  'compx-has_mp3_files': [['mp3files$exists']],
-  'compx-has_best_files': [['best_music_files$exists']],
-  'compx-has_files': [['music_files_list$exists']],
-  'compx-has_any_data': [
-    ['has_files', 'search_complete'],
-    function (has_files, search_complete) {
-      return !!has_files || !!search_complete;
-    }
-  ],
-  'nest-source': ['#mp3_search/sources/[:search_name]'],
-  'compx-dmca_url': [['@one:dmca_url:source']],
-  'nest-search_query': ['#mp3_search/sources/[:search_name]/queries/[:artist_name],[:track_title]'],
-  'compx-load_query': [
-    ['request_required', 'search_query$exists'],
-    function (one, two) {
-      return one && two;
-    }
-  ],
 
-  'compx-search_complete': [['@one:search_complete:search_query']],
-  'compx-search_fail': [['@one:search_fail:search_query']],
-  'compx-search_progress': [['@one:search_progress:search_query']],
-  'compx-has_request': [['@one:has_request:search_query']],
+  'nest-source': ['#mp3_search/sources/[:search_name]'],
+  'nest-search_query': ['#mp3_search/sources/[:search_name]/queries/[:artist_name],[:track_title]'],
 
   'stch-load_query': function (target, state) {
     if (!state) {return;}

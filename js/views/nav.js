@@ -4,12 +4,19 @@ var spv = require('spv');
 var View = require('View');
 
 var baseNavUI = spv.inh(View, {}, {
+  "+states": {
+    "nav_clickable": [
+      "compx",
+      ['^nav_clickable']
+    ]
+  },
+
   dom_rp: true,
+
   base_tree: {
     sample_name: 'common-nav'
   },
 
-  'compx-nav_clickable': [['^nav_clickable']],
   tpl_events:{
     zoomOut: function() {
       if (this.state('nav_clickable')){

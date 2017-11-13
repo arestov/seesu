@@ -17,25 +17,32 @@ var FilesSourceTuner = spv.inh(pv.Model, {
     target.updateManyStates(data);
   }
 }, {
-  'compx-settings': [
-    ['search_name', '#settings-files_sources'],
-    function (search_name, value) {
-      return value && value[search_name];
-    }
-  ],
-  'compx-disable_search': [
-    ['settings'],
-    function(settings) {
-      return settings && settings['disable_search'];
-    }
+  "+states": {
+    "settings": [
+      "compx",
+      ['search_name', '#settings-files_sources'],
+      function (search_name, value) {
+        return value && value[search_name];
+      }
+    ],
 
-  ],
-  'compx-wait_before_playing': [
-    ['settings'],
-    function(settings) {
-      return settings && settings['wait_before_playing'];
-    }
-  ],
+    "disable_search": [
+      "compx",
+      ['settings'],
+      function(settings) {
+        return settings && settings['disable_search'];
+      }
+    ],
+
+    "wait_before_playing": [
+      "compx",
+      ['settings'],
+      function(settings) {
+        return settings && settings['wait_before_playing'];
+      }
+    ]
+  },
+
   changeSetting: function(setting_name, value) {
     var all_settings = this.app.settings['files_sources'];
     all_settings = all_settings ? spv.cloneObj({}, all_settings) : {};
@@ -43,10 +50,10 @@ var FilesSourceTuner = spv.inh(pv.Model, {
     all_settings[this.state('search_name')] = spv.cloneObj({}, all_settings[this.state('search_name')]);
     this.app.setSetting('files_sources', all_settings);
   },
+
   changeTune: function(tune_name, value) {
     this.changeSetting(tune_name, value);
   }
-
 });
 
 function byBestSearchIndex(g,f, searches_pr){
@@ -74,6 +81,28 @@ function byBestSearchIndex(g,f, searches_pr){
 }
 
   var Mp3Search = spv.inh(pv.Model, {},  {
+    "+states": {
+      "tools_by_name": [
+        "compx",
+        ['@search_name:sources_sorted_list'],
+        function (list) {
+          var index = {};
+          if (!list) {return index;}
+
+          for (var i = 0; i < list.length; i++) {
+            index[list[i]] = true;
+          }
+
+          return index;
+        }
+      ],
+
+      "searches_pr": [
+        "compx",
+        ['#mp3_search_order']
+      ]
+    },
+
     'nest-all_sources': [
       [
         'sources/soundcloud',
@@ -81,6 +110,7 @@ function byBestSearchIndex(g,f, searches_pr){
         'sources/fanburst',
       ]
     ],
+
     'nest_sel-sources_sorted_list': {
       from: 'all_sources',
       where: {
@@ -93,26 +123,14 @@ function byBestSearchIndex(g,f, searches_pr){
         }
       ]
     },
-    'compx-tools_by_name': [
-      ['@search_name:sources_sorted_list'],
-      function (list) {
-        var index = {};
-        if (!list) {return index;}
 
-        for (var i = 0; i < list.length; i++) {
-          index[list[i]] = true;
-        }
-
-        return index;
-      }
-    ],
-    'compx-searches_pr': [['#mp3_search_order']],
     sub_page: {
       'sources': {
         constr: Sources,
         title: [[]],
       },
     },
+
     sub_pager: {
       type: {
         tuners: 'tuner',
@@ -134,6 +152,7 @@ function byBestSearchIndex(g,f, searches_pr){
         ],
       }
     },
+
     getFilesInvestg: function(msq, motivator) {
       return routePathByModels(
         this,
@@ -143,9 +162,11 @@ function byBestSearchIndex(g,f, searches_pr){
     },
 
     getQueryString: getQueryString,
+
     sortMusicFilesArray: function (music_list, msq, time_limit) {
       sortMusicFilesArray(this, music_list, msq, time_limit);
     },
+
     /*
     getCache: function(sem, name){
       return cache_ajax.get(name + 'mp3', sem.q, function(r){
@@ -173,13 +194,14 @@ function byBestSearchIndex(g,f, searches_pr){
       cur.updateManyStates(file);
       this.addFileToInvestg(file, cur, msq);
     },
+
     addFileToInvestg: function(file, music_file, msq) {
       var qmi = getQMSongIndex(msq, file);
       if (qmi != -1) {
         var investg = this.getFilesInvestg(msq);
         investg.addFile(music_file, file.from);
       }
-    },
+    }
   });
 
   Mp3Search.guessArtist = guessArtist;

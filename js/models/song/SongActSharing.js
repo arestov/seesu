@@ -39,12 +39,16 @@ var struserSuggest = spv.inh(invstg.BaseSuggest, {
 });
 
 var VKLoginFSearch = spv.inh(comd.VkLoginB, {}, {
-  'compx-access_desc': [
-    ['#locales.to-find-vk-friends', '#locales.to-post-and-find-vk', '#env.vkontakte'],
-    function(friends, to_post, is_vk) {
-      return is_vk ? friends: to_post;
-    }
-  ],
+  "+states": {
+    "access_desc": [
+      "compx",
+      ['#locales.to-find-vk-friends', '#locales.to-post-and-find-vk', '#env.vkontakte'],
+      function(friends, to_post, is_vk) {
+        return is_vk ? friends: to_post;
+      }
+    ]
+  },
+
   config: {
     open_opts: {settings_bits: 2}
   }
@@ -103,50 +107,68 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
     });
   }
 }, {
+  "+states": {
+    "can_searchf_vkopt": [
+      "compx",
+      ['vk_opts'],
+      function(vk_opts) {
+        return (vk_opts & 2) * 1;
+      }
+    ],
+
+    "can_post_to_own_wall": [
+      "compx",
+      ['vk_env', 'has_vk_api'],
+      function(vk_env, has_vk_api) {
+        return vk_env || has_vk_api;
+      }
+    ],
+
+    "can_search": [
+      "compx",
+      ['can_search_friends']
+    ],
+
+    "can_search_friends": [
+      "compx",
+      ['vk_env', 'has_vk_api', 'can_searchf_vkopt'],
+      function(vk_env, has_vk_api, can_searchf_vkopt) {
+        if (vk_env) {
+          return !!can_searchf_vkopt;
+        } else {
+          return !!has_vk_api;
+        }
+      }
+    ],
+
+    "needs_vk_auth": [
+      "compx",
+      ['can_search_friends'],
+      function(can_search_friends) {
+        return !can_search_friends;
+      }
+    ]
+  },
+
   resItem: struserSuggest,
   model_name: "section-vk-users",
-  'compx-can_searchf_vkopt': [
-    ['vk_opts'],
-    function(vk_opts) {
-      return (vk_opts & 2) * 1;
-    }
-  ],
-  'compx-can_post_to_own_wall': [
-    ['vk_env', 'has_vk_api'],
-    function(vk_env, has_vk_api) {
-      return vk_env || has_vk_api;
-    }
-  ],
-  'compx-can_search': [['can_search_friends']],
-  'compx-can_search_friends': [
-    ['vk_env', 'has_vk_api', 'can_searchf_vkopt'],
-    function(vk_env, has_vk_api, can_searchf_vkopt) {
-      if (vk_env) {
-        return !!can_searchf_vkopt;
-      } else {
-        return !!has_vk_api;
-      }
-    }
-  ],
-  'compx-needs_vk_auth': [
-    ['can_search_friends'],
-    function(can_search_friends) {
-      return !can_search_friends;
-    }
-  ],
+
   //desc: improve ?
   'nest-vk_auth': [VKLoginFSearch, {
     ask_for: 'needs_vk_auth',
   }],
+
   'stch-can_search_friends': function(target, state) {
     if (state){
       target.searchByQuery(pvState(target, 'query'));
     }
   },
+
   searchByQuery: function(query) {
     this.changeQuery(query);
     this.searchFriends();
   },
+
   searchFriends: function(){
     var list = this.getNesting('friends') || [];
     var query = this.state('query');
@@ -166,10 +188,10 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
     }
     this.appendResults(r, true);
   },
+
   postToVKWall: function() {
     this.mo.postToVKWall();
   }
-
 });
 
 
@@ -227,17 +249,23 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
     });
   },
 }, {
+  "+states": {
+    "can_search": ["compx", ['can_share']],
+
+    "can_share": [
+      "compx",
+      ['^^active_view', '#lfm_userid'],
+      function(active_view, lfm_userid) {
+        return lfm_userid && active_view;
+      }
+    ]
+  },
+
   searchByQuery: function(query) {
     this.changeQuery(query);
     this.searchFriends();
   },
-  'compx-can_search': [['can_share']],
-  'compx-can_share':[
-    ['^^active_view', '#lfm_userid'],
-    function(active_view, lfm_userid) {
-      return lfm_userid && active_view;
-    }
-  ],
+
   searchFriends: function(){
     var list = this.getNesting('friends') || [];
     var query = this.state('query');
@@ -257,6 +285,7 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
     }
     this.appendResults(r, true);
   },
+
   resItem: LFMUserSuggest,
   model_name: "section-lfm-friends"
 });
@@ -309,17 +338,21 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
     });
   }
 }, {
+  "+states": {
+    "can_share": [
+      "compx",
+      ['^^active_view', '#lfm_userid'],
+      function(active_view, lfm_userid) {
+        return lfm_userid && active_view;
+      }
+    ]
+  },
 
   searchByQuery: function(query) {
     this.changeQuery(query);
     this.searchOneUser();
   },
-  'compx-can_share':[
-    ['^^active_view', '#lfm_userid'],
-    function(active_view, lfm_userid) {
-      return lfm_userid && active_view;
-    }
-  ],
+
   searchOneUser: spv.debounce(function() {
     var _this = this;
 
@@ -359,6 +392,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
             _this.loaded();
           }));
   }, 200),
+
   searchFriends: function(){
     var list = this.getNesting('friends') || [];
     var query = this.state('query');
@@ -375,13 +409,19 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
     }
     this.appendResults(r, true);
   },
+
   resItem: LFMOneUserSuggest,
   model_name: "section-lfm-user"
 });
 
 
 var LfmSharingAuth = spv.inh(LfmAuth.LfmLogin, {}, {
-  'compx-access_desc': [['#locales.lastfm-sharing-access']]
+  "+states": {
+    "access_desc": [
+      "compx",
+      ['#locales.lastfm-sharing-access']
+    ]
+  }
 });
 
 var StrusersRowSearch = spv.inh(invstg.Investigation, {
@@ -415,9 +455,13 @@ var SongActSharing = spv.inh(comd.BaseCRow, {
     target.search('');
   }
 }, {
+  "+states": {
+    "share_url": ["compx", ['^^share_url']]
+  },
+
   actionsrow_src: '^',
   'nest-searcher': [StrusersRowSearch],
-  'compx-share_url': [['^^share_url']],
+
   search: function(q) {
     pv.update(this, 'query', q);
     var searcher = this.getNesting('searcher');
@@ -425,6 +469,7 @@ var SongActSharing = spv.inh(comd.BaseCRow, {
       searcher.changeQuery(q);
     }
   },
+
   model_name: 'row-share'
 });
 

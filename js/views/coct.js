@@ -49,18 +49,23 @@ var ListPreview = spv.inh(View, {}, {
 });
 
 var ListPreviewLine = spv.inh(View, {}, {
+  "+states": {
+    "selected_title": [
+      "compx",
+      ['nav_title', 'nav_short_title'],
+      function(title, short_title) {
+        return short_title || title;
+      }
+    ]
+  },
+
   base_tree: {
     sample_name: 'preview_line'
   },
+
   expandBase: function() {
     this.setVisState('img_allowed', this.extended_viewing);
-  },
-  'compx-selected_title': [
-    ['nav_title', 'nav_short_title'],
-    function(title, short_title) {
-      return short_title || title;
-    }
-  ]
+  }
 });
 
 
@@ -77,18 +82,23 @@ var LiListsPreview = spv.inh(ListPreview, {}, {
 
 
 var SPView = spv.inh(View, {}, {
-  'compx-lvmp_show': [
-    ['^vmp_show'],
-    function(vmp_show) {
-      return vmp_show;
-    }
-  ],
-  'compx-mp_show_end': [
-    ['^mp_show_end'],
-    function(mp_show_end) {
-      return mp_show_end;
-    }
-  ]
+  "+states": {
+    "lvmp_show": [
+      "compx",
+      ['^vmp_show'],
+      function(vmp_show) {
+        return vmp_show;
+      }
+    ],
+
+    "mp_show_end": [
+      "compx",
+      ['^mp_show_end'],
+      function(mp_show_end) {
+        return mp_show_end;
+      }
+    ]
+  }
 });
 
 var PageView = spv.inh(SPView, {}, {

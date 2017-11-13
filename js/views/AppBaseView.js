@@ -109,7 +109,18 @@ var BrowserAppRootView = spv.inh(View, {}, {
 var sync_opt = {sync_tpl: true};
 var PvTemplate = View._PvTemplate;
 var AppBaseView = spv.inh(BrowserAppRootView, {}, {
+  "+states": {
+    "map_animating": [
+      "compx",
+      ['map_animation_num_started', 'map_animation_num_completed'],
+      function (started_num, completed_num) {
+        return typeof started_num == 'number' && started_num != completed_num;
+      }
+    ]
+  },
+
   location_name: 'root_view',
+
   createDetails: function() {
     this._super();
 
@@ -133,11 +144,13 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     this.completely_rendered_once = {};
 
   },
+
   completeDomBuilding: function() {
     this.connectStates();
     this.connectChildrenModels();
     this.requestView();
   },
+
   getLevelContainer: function(num) {
     if (this.lev_containers[num]){
       return this.lev_containers[num];
@@ -184,7 +197,9 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
       return lev_con;
     }
   },
+
   manual_states_connect: true,
+
   getLevByNum: function(num, exclude_start_lev) {
     if (num < -1){
       return false;
@@ -195,12 +210,15 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     }
 
   },
+
   getScrollVP: function() {
     return this.els.scrolling_viewport;
   },
+
   scollNeeded: function() {
     return window.document.body.scrollHeight > window.document.body.clientHeight;
   },
+
   scrollTo: function(jnode, view_port, opts) {
     if (!jnode){return false;}
   //	if (!this.view_port || !this.view_port.node){return false;}
@@ -265,6 +283,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
     }
   },
+
   getSampler: function(sample_name) {
     var sampler = this.samples[sample_name], sample_node;
     if (!sampler){
@@ -289,6 +308,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     }
     return sampler;
   },
+
   getSample: function(sample_name, simple, options) {
     var sampler = this.getSampler(sample_name);
 
@@ -305,12 +325,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
       return $(sampler).clone();
     }
   },
-  'compx-map_animating': [
-    ['map_animation_num_started', 'map_animation_num_completed'],
-    function (started_num, completed_num) {
-      return typeof started_num == 'number' && started_num != completed_num;
-    }
-  ],
+
   markAnimationStart: function(models, changes_number) {
     pv.update(this, 'map_animation_num_started', changes_number, sync_opt);
     for (var i = 0; i < models.length; i++) {
@@ -319,6 +334,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
       ////MUST UPDATE VIEW, NOT MODEL!!!!!
     }
   },
+
   markAnimationEnd: function(models, changes_number) {
     if (this.state('map_animation_num_started') == changes_number) {
       pv.update(this, 'map_animation_num_completed', changes_number, sync_opt);
@@ -342,6 +358,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     var target_bwlev = dclr.is_wrapper_parent ? bwlev.map_parent: bwlev;
     return this.findMpxViewInChildren( this.getStoredMpx(target_bwlev), dclr.space, 'map_slice' );
   },
+
   getMapSliceChildInParenView: function(bwlev, md) {
     var parent_bwlev = bwlev.map_parent;
     // md of parent view could differ from md.map_parent
@@ -359,9 +376,11 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     }
     return target_in_parent;
   },
+
   setVMpshow: function(target_mpx, value) {
     pv.mpx.update(target_mpx, 'vmp_show', value, sync_opt);
   },
+
   'model-mapch': {
     'move-view': function(change) {
       var parent = change.bwlev.getMD().getParentMapModel();
@@ -378,15 +397,19 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
       this.setVMpshow(this.getStoredMpx(md), false);
     }
   },
+
   'collch-$spec_det-map_slice': {
     is_wrapper_parent: '^',
     space: 'detailed',
     place: viewOnLevelP
   },
+
   'collch-$spec_common-map_slice': {
     place: viewOnLevelP
   },
+
   'sel-coll-map_slice': '$spec_common-map_slice',
+
   'coll-prio-map_slice': function(array) {
 
     /*for (var i = 0; i < array.length; i++) {
@@ -397,6 +420,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     return array;
 
   },
+
   findBMapTarget: function(array) {
     var target_md, i;
     for (i = 0; i < array.length; i++) {
@@ -407,6 +431,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     }
     return target_md;
   },
+
   'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
     var mp_show_states = nesting_data.residents_struc.mp_show_states;
     var transaction = nesting_data.transaction;
@@ -536,7 +561,6 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
 
   }
-
 });
 AppBaseView.BrowserAppRootView = BrowserAppRootView;
 AppBaseView.viewOnLevelP = viewOnLevelP;

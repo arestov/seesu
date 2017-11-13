@@ -99,12 +99,15 @@ var TrackImages  = spv.inh(ImagesPack, {
     target.wlch(params.artmd, 'image-to-use', 'artist_image');
   }
 }, {
-  'compx-image-to-use': [
-    ['best_image', 'just_image', 'artist_image'],
-    function(bei, jui, arti){
-      return bei || jui || arti;
-    }
-  ]
+  "+states": {
+    "image-to-use": [
+      "compx",
+      ['best_image', 'just_image', 'artist_image'],
+      function(bei, jui, arti){
+        return bei || jui || arti;
+      }
+    ]
+  }
 });
 
 var ArtistImages = spv.inh(ImagesPack, {
@@ -112,12 +115,15 @@ var ArtistImages = spv.inh(ImagesPack, {
     target.artist_name = params.artist_name;
   }
 }, {
-  'compx-image-to-use': [
-    ['best_image', 'just_image'],
-    function(bei, jui){
-      return bei || jui;
-    }
-  ]
+  "+states": {
+    "image-to-use": [
+      "compx",
+      ['best_image', 'just_image'],
+      function(bei, jui){
+        return bei || jui;
+      }
+    ]
+  }
 });
 
 var LastFMArtistImagesSelector = spv.inh(pv.Model, {
@@ -479,38 +485,49 @@ var VkLoginB = spv.inh(pv.Model, {
 
   }
 }, {
+  "+states": {
+    "has_session": [
+      "compx",
+      ['@one:has_token:auth', 'target_bits', '@one:settings_bits:auth'],
+      function(has_token, target_bits, settings_bits) {
+        if (has_token) {return true;}
+        if (typeof target_bits != 'undefined' && settings_bits != 'undefined') {
+          return (settings_bits & target_bits) * 1;
+        }
+      }
+    ],
+
+    "request_description": [
+      "compx",
+      ['access_desc', '#locales.vk-auth-invitation'],
+      function(desc, vk_inv) {
+        return desc ? (desc + ' ' + vk_inv): '';
+      }
+    ]
+  },
+
   model_name: 'auth_block_vk',
   access_desc: null,
-  'compx-has_session': [
-    ['@one:has_token:auth', 'target_bits', '@one:settings_bits:auth'],
-    function(has_token, target_bits, settings_bits) {
-      if (has_token) {return true;}
-      if (typeof target_bits != 'undefined' && settings_bits != 'undefined') {
-        return (settings_bits & target_bits) * 1;
-      }
-    }
-  ],
+
   removeNotifyMark: function() {
     this.notf.markAsReaded('vk_audio_auth ');
   },
+
   bindAuthReady: function(exlusive_space, callback) {
     this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
   },
+
   // triggerSession: function() {
   // 	pvUpdate(this, 'has_session', true);
   // },
   waitData: function() {
     pvUpdate(this, 'data_wait', true);
   },
+
   notWaitData: function() {
     pvUpdate(this, 'data_wait', false);
   },
-  'compx-request_description': [
-    ['access_desc', '#locales.vk-auth-invitation'],
-    function(desc, vk_inv) {
-      return desc ? (desc + ' ' + vk_inv): '';
-    }
-  ],
+
   useCode: function(auth_code){
     if (this.bindAuthCallback){
       this.bindAuthCallback();
@@ -518,12 +535,14 @@ var VkLoginB = spv.inh(pv.Model, {
     this.auth.setToken(auth_code);
 
   },
+
   requestAuth: function(opts) {
     if (this.beforeRequest){
       this.beforeRequest();
     }
     this.auth.requestAuth(opts || this.open_opts);
   },
+
   switchView: function(){
     pvUpdate(this, 'active', !this.state('active'));
   }

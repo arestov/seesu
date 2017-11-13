@@ -41,7 +41,12 @@ function makeMusicList(r) {
 }
 
 return pv.behavior({
-  'compx-ready': [['#vk_search_ready']],
+  "+states": {
+    "ready": [
+      "compx",
+      ['#vk_search_ready']
+    ]
+  }
 }, createSource(Query, 'https://vk.com/dmca'));
 
 });

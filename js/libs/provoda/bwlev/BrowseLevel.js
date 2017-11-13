@@ -49,21 +49,99 @@ var BrowseLevel = spv.inh(Model, {
 
   }
 }, {
+  "+states": {
+    "map_slice_view_sources": [
+      "compx",
+      ['struc', '@pioneer'],
+      function (struc, pioneer) {
+        if (!pioneer) {return;}
+
+        return [pioneer._network_source, getStrucSources(pioneer, struc)];
+      }
+    ],
+
+    "struc": [
+      "compx",
+      ['@one:used_data_structure:map', '@pioneer', 'map_level_num', 'probe_name'],
+      function(struc, pioneer, num, probe_name) {
+        if (num == -2) {return}
+        if (!struc || !pioneer || !probe_name) {return;}
+        return getUsageStruc(pioneer, probe_name, struc, this.app);
+      }
+    ],
+
+    "to_init": [
+      "compx",
+      ['mp_dft', 'struc'],
+      function(mp_dft, struc) {
+        if (!mp_dft || mp_dft > 2 || !struc) {return;}
+        return struc;
+      }
+    ],
+
+    "to_load": [
+      "compx",
+      ['mp_dft', 'struc'],
+      function(mp_dft, struc) {
+        if (!mp_dft || mp_dft > 1 || !struc) {return;}
+        return struc;
+      }
+    ],
+
+    "struc_list": [
+      "compx",
+      ['struc'],
+      function(struc) {
+        if (!this.getNesting('pioneer') || !struc) {return;}
+        return flatStruc(this.getNesting('pioneer'), struc);
+      }
+    ],
+
+    "supervision": [
+      "compx",
+      [],
+      function () {
+          return {
+            needy: this,
+            store: {},
+            reqs: {},
+            is_active: {}
+          };
+        }
+    ],
+
+    "to_load_all": [
+      "compx",
+      ['mp_dft', 'struc_list', 'supervision'],
+      function(mp_dft, struc, supervision) {
+        return {
+          inactive: !mp_dft || mp_dft > 1 || !struc,
+          list: struc,
+          supervision: supervision
+        };
+      }
+    ]
+  },
+
   getParentMapModel: function() {
     return this.map_parent;
   },
+
   showOnMap: function() {
     // !!!!showMOnMap(BrowseLevel, this.map, this.getNesting('pioneer'), this);
     changeBridge(this);
   },
+
   requestPage: function(id) {
     return requestPage(BrowseLevel, this, id);
   },
+
   zoomOut: function() {
     if (this.state('mp_show')) {
       changeBridge(this);
     }
   },
+
   followTo: function(id) {
     var md = getModelById(this, id);
     if (md.getRelativeModel) {
@@ -73,6 +151,7 @@ var BrowseLevel = spv.inh(Model, {
     var bwlev = followFromTo(BrowseLevel, this.map, this, md);
     changeBridge(bwlev);
   },
+
   'stch-mpl_attached': function(target, state) {
     var md = target.getNesting('pioneer');
     var obj = pvState(md, 'bmpl_attached');
@@ -81,29 +160,7 @@ var BrowseLevel = spv.inh(Model, {
     pvUpdate(md, 'bmpl_attached', obj);
     pvUpdate(md, 'mpl_attached', countKeys(obj, true));
   },
-  'compx-map_slice_view_sources': [
-    ['struc', '@pioneer'],
-    function (struc, pioneer) {
-      if (!pioneer) {return;}
 
-      return [pioneer._network_source, getStrucSources(pioneer, struc)];
-    }
-  ],
-  'compx-struc': [
-    ['@one:used_data_structure:map', '@pioneer', 'map_level_num', 'probe_name'],
-    function(struc, pioneer, num, probe_name) {
-      if (num == -2) {return}
-      if (!struc || !pioneer || !probe_name) {return;}
-      return getUsageStruc(pioneer, probe_name, struc, this.app);
-    }
-  ],
-  'compx-to_init': [
-    ['mp_dft', 'struc'],
-    function(mp_dft, struc) {
-      if (!mp_dft || mp_dft > 2 || !struc) {return;}
-      return struc;
-    }
-  ],
   'stch-to_init': function(target, struc) {
     if (!struc) {return;}
 
@@ -111,13 +168,7 @@ var BrowseLevel = spv.inh(Model, {
 
     initNestingsByStruc(target.getNesting('pioneer'), struc);
   },
-  'compx-to_load': [
-    ['mp_dft', 'struc'],
-    function(mp_dft, struc) {
-      if (!mp_dft || mp_dft > 1 || !struc) {return;}
-      return struc;
-    }
-  ],
+
   'stch-to_load': function(target, struc) {
     if (!struc) {return;}
 
@@ -125,30 +176,7 @@ var BrowseLevel = spv.inh(Model, {
 
     loadNestingsByStruc(target.getNesting('pioneer'), struc);
   },
-  'compx-struc_list': [['struc'], function(struc) {
-    if (!this.getNesting('pioneer') || !struc) {return;}
-    return flatStruc(this.getNesting('pioneer'), struc);
-  }],
-  'compx-supervision': [
-    [], function () {
-      return {
-        needy: this,
-        store: {},
-        reqs: {},
-        is_active: {}
-      };
-    }
-  ],
-  'compx-to_load_all': [
-    ['mp_dft', 'struc_list', 'supervision'],
-    function(mp_dft, struc, supervision) {
-      return {
-        inactive: !mp_dft || mp_dft > 1 || !struc,
-        list: struc,
-        supervision: supervision
-      };
-    }
-  ],
+
   'stch-to_load_all': function(target, obj, prev) {
     if (!obj.list) {
       return;

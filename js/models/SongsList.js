@@ -25,26 +25,47 @@ var spv = require('spv');
   };
 
   var PlaylistSettingsRow = spv.inh(comd.BaseCRow, {}, {
-    'compx-nav_title': [['#locales.playlist-settings']],
+    "+states": {
+      "nav_title": [
+        "compx",
+        ['#locales.playlist-settings']
+      ],
+
+      "dont_rept_pl": [
+        "compx",
+        ['#settings-dont-rept-pl']
+      ]
+    },
+
     actionsrow_src: '^',
-    'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
+
     setDnRp: function(state) {
       this.app.setSetting('dont-rept-pl', state);
     },
+
     model_name: 'row-pl-settings'
   });
 
   var MultiAtcsRow = spv.inh(comd.BaseCRow, {}, {
-    'compx-nav_title': [['#locales.playlist-actions']],
+    "+states": {
+      "nav_title": [
+        "compx",
+        ['#locales.playlist-actions']
+      ]
+    },
+
     actionsrow_src: '^',
+
     makePlayable: function() {
       this.map_parent.map_parent.makePlayable(true);
       this.app.trackEvent('Controls', 'make playable all tracks in playlist');
     },
+
     makeExternalPlaylist: function() {
       this.map_parent.map_parent.makeExternalPlaylist();
       this.app.trackEvent('Controls', 'make *.m3u');
     },
+
     model_name: 'row-multiatcs'
   });
 
@@ -55,17 +76,22 @@ var spv = require('spv');
       pv.update(target, 'active_part', false);
     }
   }, {
+    "+states": {
+      "loader_disallowing_desc": [
+        "compx",
+        ['^loader_disallowing_desc'],
+        function(loader_disallowing_desc) {
+          return loader_disallowing_desc;
+        }
+      ]
+    },
+
     'sub_page': {
       'row-pl-settings': PlaylistSettingsRow,
       'row-multiatcs': MultiAtcsRow
     },
-    'nest_posb-context_parts': ['row-multiatcs', 'row-pl-settings'],
-    'compx-loader_disallowing_desc': [
-      ['^loader_disallowing_desc'],
-      function(loader_disallowing_desc) {
-        return loader_disallowing_desc;
-      }
-    ]
+
+    'nest_posb-context_parts': ['row-multiatcs', 'row-pl-settings']
   });
 
   // var SongsListBase = function() {};
@@ -73,10 +99,21 @@ var spv = require('spv');
 
 
   var SongsList = spv.inh(SongsListBase, {}, {
+    "+states": {
+      "dont_rept_pl": [
+        "compx",
+        ['#settings-dont-rept-pl']
+      ],
+
+      "pl-shuffle": [
+        "compx",
+        ['#settings-pl-shuffle']
+      ]
+    },
+
     'nest-plarow': [PlARow],
-    'compx-dont_rept_pl': [['#settings-dont-rept-pl']],
-    'compx-pl-shuffle': [['#settings-pl-shuffle']],
     'nest_rqc-songs-list': Song,
+
     makeExternalPlaylist: function() {
       var songs_list = this.getMainlist();
       if (!songs_list.length){return false;}
@@ -114,22 +151,32 @@ var HypemPlaylist = spv.inh(SongsList, {
     pvUpdate(target, 'browser_can_load', target.can_use);
   }
 }, {
-  'compx-possible_loader_disallowing': [['#locales.Hypem-cant-load']],
-  page_limit: 20,
-  'compx-loader_disallowing_desc': [
-    ['loader_disallowed', 'possible_loader_disallowing'],
-    function(disallowed, desc) {
-      if (disallowed){
-        return desc;
+  "+states": {
+    "possible_loader_disallowing": [
+      "compx",
+      ['#locales.Hypem-cant-load']
+    ],
+
+    "loader_disallowing_desc": [
+      "compx",
+      ['loader_disallowed', 'possible_loader_disallowing'],
+      function(disallowed, desc) {
+        if (disallowed){
+          return desc;
+        }
       }
-    }
-  ],
-  'compx-loader_disallowed': [
-    ['browser_can_load'],
-    function(can_load) {
-      return !can_load;
-    }
-  ]
+    ],
+
+    "loader_disallowed": [
+      "compx",
+      ['browser_can_load'],
+      function(can_load) {
+        return !can_load;
+      }
+    ]
+  },
+
+  page_limit: 20
 });
 SongsList.HypemPlaylist = HypemPlaylist;
 return SongsList;

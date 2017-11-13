@@ -12,38 +12,52 @@ var finup = function(callback) {
 };
 
 var StartPageView = spv.inh(coct.SPView, {}, {
+  "+states": {
+    "autofocus": [
+      "compx",
+      ['mp_show_end', 'mp_has_focus'],
+      function(shw_end, focus) {
+        return focus && shw_end;
+      }
+    ],
+
+    "lo_at_page": ["compx", []],
+
+    "ask_rating_help": [
+      "compx",
+      ['ask-rating-help', '#locales.at-this-page', '#locales.ask-rating-help'],
+      function(link, lo_at_page, text) {
+        return link && lo_at_page && {
+          link: link,
+          link_text: lo_at_page,
+          text: text
+        };
+      }
+    ]
+  },
+
   createDetails: function(){
     this.els = this.root_view.els;
     this.c = this.els.start_screen;
     this.createTemplate();
   },
+
   'nest_borrow-search_criteria': ['^^^search_criteria'],
   'collch-muco': true,
   'collch-pstuff': true,
   'collch-tags': true,
+
   children_views: {
     pstuff: {
       main: UserCardPreview
     },
     tags: coct.ListPreview
   },
+
   'stch-autofocus': function(target, value) {
     target.parent_view.parent_view.updateState('startpage_autofocus', value);
   },
-  'compx-autofocus': [
-    ['mp_show_end', 'mp_has_focus'],
-    function(shw_end, focus) {
-      return focus && shw_end;
-    }
-  ],
-  'compx-lo_at_page': [[]],
-  'compx-ask_rating_help': [['ask-rating-help', '#locales.at-this-page', '#locales.ask-rating-help'], function(link, lo_at_page, text) {
-    return link && lo_at_page && {
-      link: link,
-      link_text: lo_at_page,
-      text: text
-    };
-  }],
+
   state_change: {
     "can_expand": function(target, state) {
       if (state){
@@ -63,6 +77,7 @@ var StartPageView = spv.inh(coct.SPView, {}, {
       }
     })
   },
+
   parts_builder: {
     'start-page-blocks': function() {
       return true;

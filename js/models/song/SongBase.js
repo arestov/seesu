@@ -69,16 +69,259 @@ return spv.inh(BrowseMap.Model, {
 
   }
 }, {
-  'compx-track_name': [['track']],
-  'compx-artist_name': [['artist']],
-  'compx-track': [['track_name_provided']],
+  "+states": {
+    "track_name": ["compx", ['track']],
+    "artist_name": ["compx", ['artist']],
+
+    "track": [
+      "compx",
+      ['track_name_provided']
+    ],
+
+    "needs_states_connecting": ["compx", ['^active_use']],
+
+    "mf_cor_current_mopla": [
+      "compx",
+      ['@one:current_mopla:mf_cor']
+    ],
+
+    "file_almost_loaded": [
+      "compx",
+      ['@every:almost_loaded:mf_cor']
+    ],
+
+    "one_artist_playlist": [
+      "compx",
+      ['playlist_type'],
+      function(playlist_type) {
+        return playlist_type == 'artist';
+      }
+    ],
+
+    "selected_image": [
+      "compx",
+      ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
+      function(lfm_i, ext_lfm, just_url, album_image) {
+        return album_image || lfm_i || just_url || ext_lfm;
+      }
+    ],
+
+    "song_title": [
+      "compx",
+      ['artist', 'track'],
+      function(artist, track){
+        return this.getFullName(artist, track);
+      }
+    ],
+
+    "nav_short_title": [
+      "compx",
+      ['artist', 'track'],
+      function(artist, track) {
+        return this.getFullName(artist, track, true);
+      }
+    ],
+
+    "nav_title": [
+      "compx",
+      ['artist', 'track'],
+      function(artist, track){
+        return this.getFullName(artist, track);
+      }
+    ],
+
+    "is_important": [
+      "compx",
+      ['mp_show', 'player_song', 'want_to_play'],
+      function(mp_show, player_song, wapl){
+        if (mp_show){
+          return 'mp_show';
+        }
+        if (player_song){
+          return 'player_song';
+        }
+        if (wapl){
+          return 'want_to_play';
+        }
+      }
+    ],
+
+    "$relation:next_preload_song-for-loaded_player_song": [
+      "compx",
+      ['player_song', 'related_next_preload_song', 'file_almost_loaded'],
+      function(player_song, related_next_preload_song, file_almost_loaded) {
+        return player_song && file_almost_loaded && related_next_preload_song;
+      }
+    ],
+
+    "$relation:next_preload_song-for-mp_show": [
+      "compx",
+      ['mp_show', 'related_next_preload_song'],
+      function(mp_show, related_next_preload_song) {
+        return mp_show && related_next_preload_song;
+      }
+    ],
+
+    "$relation:next_preload_song-for-player_song": [
+      "compx",
+      ['player_song', 'related_next_preload_song'],
+      function(player_song, related_next_preload_song) {
+        return player_song && related_next_preload_song;
+      }
+    ],
+
+    "$relation:next_preload_song-for-very_wanted_play": [
+      "compx",
+      ['want_to_play', 'related_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
+      function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
+        return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
+      }
+    ],
+
+    "need_files": [
+      "compx",
+      [ 'mp_show', 'want_to_play', 'next_preload_song-for-mp_show', 'next_preload_song-for-player_song', 'next_preload_song-for-very_wanted_play'],
+      function(mp_show, want_to_play, n_show, n_player_song, n_vvsong) {
+        return mp_show || want_to_play || isDepend(n_show) || isDepend(n_player_song) || isDepend(n_vvsong);
+      }
+      /*
+
+      необходимо искать файлы для композиций в следующих состояниях:
+
+        показываемая
+        желанная для воспроизведения
+
+        следующая по порядку воспроизведения (но не визуальному порядку)
+          для воспроизводимой
+          отображаемой
+          для желанной, но недоступной в %желанном% плейлисте
+
+      */
+    ],
+
+    "preload_current_file": [
+      "compx",
+      ['next_preload_song-for-loaded_player_song'],
+      function(n_loaded_psong) {
+        return isDepend(n_loaded_psong);
+      }
+    ],
+
+    "load_current_file": [
+      "compx",
+      ['player_song'],
+      function(player_song) {
+        return !!player_song;
+      }
+    ],
+
+    "rept-song": [
+      "compx",
+      ['#settings-rept-song']
+    ],
+
+    "can_load_random_lfm_track_name": [
+      "compx",
+      ['track_name_provided'],
+      function (track_name_provided) {
+        return !track_name_provided;
+      }
+    ],
+
+    "track_name_not_found": [
+      "compx",
+      ['track', 'random_lfm_track_name', 'random_lfm_track_name__$complete'],
+      function (track_name, random_trackname, complete) {
+        return !track_name && complete && !random_trackname;
+      }
+    ],
+
+    "track_name_loading": [
+      "compx",
+      ['random_lfm_track_name__loading']
+    ],
+
+    "can-use-as-neighbour": [
+      "compx",
+      ['has_none_files_to_play', 'forbidden_by_copyrh'],
+      function(h_nftp, forbidden_by_copyrh) {
+        if (forbidden_by_copyrh) {
+          return false;
+        }
+        if (h_nftp){
+          return false;
+        } else {
+          return true;
+        }
+
+      }
+    ],
+
+    "has_none_files_to_play": [
+      "compx",
+      ['mf_cor', 'search_complete', 'track_name_not_found', 'mf_cor_has_available_tracks'],
+      function(mf_cor, scomt, track_name_not_found, mf_cor_tracks) {
+        if (mf_cor && !mf_cor_tracks){
+          if (!mf_cor.isSearchAllowed()){
+            return true;
+          } else if (scomt){
+            return true;
+          }
+        }
+
+        if (track_name_not_found){
+          return true;
+        }
+        return false;
+      }
+    ],
+
+    "search_complete": [
+      "compx",
+      ['@one:search_complete:investg']
+    ],
+
+    "mf_cor_has_available_tracks": [
+      "compx",
+      ['@some:has_available_tracks:mf_cor']
+    ],
+
+    "playable": [
+      "compx",
+      ['@one:has_mp3_files:investg', '@one:has_available_tracks:mf_cor'],
+      function (has_mp3_files, has_available_tracks) {
+        return has_mp3_files || has_available_tracks;
+      }
+    ],
+
+    "files_search": [
+      "compx",
+      ['@one:legacy-files-search:investg', '@one:has_available_tracks:mf_cor'],
+      function(files_search, has_available_tracks){
+        return files_search || (has_available_tracks && {
+          search_complete: true,
+          have_best_tracks: true,
+          have_mp3_tracks: true,
+          have_tracks: true
+        });
+      }
+    ],
+
+    "searching_files": [
+      "compx",
+      ['@one:has_request:investg']
+    ]
+  },
+
   model_name: "song",
   network_data_as_states: false,
   manual_states_init: true,
+
   hndRequestsPrio: function() {
     this.map_parent.checkRequestsPriority();
 
   },
+
   'stch-needs_states_connecting': function(target) {
     if (!target.states_was_twisted) {
 
@@ -89,117 +332,11 @@ return spv.inh(BrowseMap.Model, {
       }
     }
   },
+
   'stch-mf_cor_current_mopla': function(target, state) {
     target.updateNesting('current_mopla', state);
   },
-  'compx-needs_states_connecting': [
-    ['^active_use']
-  ],
-  'compx-mf_cor_current_mopla': [
-    ['@one:current_mopla:mf_cor']
-  ],
-  'compx-file_almost_loaded': [
-    ['@every:almost_loaded:mf_cor']
-  ],
-  'compx-one_artist_playlist': [
-    ['playlist_type'],
-    function(playlist_type) {
-      return playlist_type == 'artist';
-    }
-  ],
-  'compx-selected_image': [
-    ['lfm_image', 'ext_lfm_image', 'image_url', 'album_image'],
-    function(lfm_i, ext_lfm, just_url, album_image) {
-      return album_image || lfm_i || just_url || ext_lfm;
-    }
-  ],
-  'compx-song_title': [
-    ['artist', 'track'],
-    function(artist, track){
-      return this.getFullName(artist, track);
-    }
-  ],
-  'compx-nav_short_title': [
-    ['artist', 'track'],
-    function(artist, track) {
-      return this.getFullName(artist, track, true);
-    }
-  ],
-  'compx-nav_title': [
-    ['artist', 'track'],
-    function(artist, track){
-      return this.getFullName(artist, track);
-    }
-  ],
-  'compx-is_important': [
-    ['mp_show', 'player_song', 'want_to_play'],
-    function(mp_show, player_song, wapl){
-      if (mp_show){
-        return 'mp_show';
-      }
-      if (player_song){
-        return 'player_song';
-      }
-      if (wapl){
-        return 'want_to_play';
-      }
-    }
-  ],
-  'compx-$relation:next_preload_song-for-loaded_player_song': [
-    ['player_song', 'related_next_preload_song', 'file_almost_loaded'],
-    function(player_song, related_next_preload_song, file_almost_loaded) {
-      return player_song && file_almost_loaded && related_next_preload_song;
-    }
-  ],
-  'compx-$relation:next_preload_song-for-mp_show': [
-    ['mp_show', 'related_next_preload_song'],
-    function(mp_show, related_next_preload_song) {
-      return mp_show && related_next_preload_song;
-    }
-  ],
-  'compx-$relation:next_preload_song-for-player_song': [
-    ['player_song', 'related_next_preload_song'],
-    function(player_song, related_next_preload_song) {
-      return player_song && related_next_preload_song;
-    }
-  ],
-  'compx-$relation:next_preload_song-for-very_wanted_play': [
-    ['want_to_play', 'related_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
-    function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
-      return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
-    }
-  ],
-  'compx-need_files': [
-    [ 'mp_show', 'want_to_play', 'next_preload_song-for-mp_show', 'next_preload_song-for-player_song', 'next_preload_song-for-very_wanted_play'],
-    function(mp_show, want_to_play, n_show, n_player_song, n_vvsong) {
-      return mp_show || want_to_play || isDepend(n_show) || isDepend(n_player_song) || isDepend(n_vvsong);
-    }
-    /*
 
-    необходимо искать файлы для композиций в следующих состояниях:
-
-      показываемая
-      желанная для воспроизведения
-
-      следующая по порядку воспроизведения (но не визуальному порядку)
-        для воспроизводимой
-        отображаемой
-        для желанной, но недоступной в %желанном% плейлисте
-
-    */
-  ],
-  'compx-preload_current_file': [
-    ['next_preload_song-for-loaded_player_song'],
-    function(n_loaded_psong) {
-      return isDepend(n_loaded_psong);
-    }
-  ],
-  'compx-load_current_file': [
-    ['player_song'],
-    function(player_song) {
-      return !!player_song;
-    }
-  ],
   'stch-$relation:next_preload_song-for-mp_show': pv.getRDep('$relation:next_preload_song-for-mp_show'),
   'stch-$relation:next_preload_song-for-player_song': pv.getRDep('$relation:next_preload_song-for-player_song'),
   'stch-$relation:next_preload_song-for-very_wanted_play': pv.getRDep('$relation:next_preload_song-for-very_wanted_play'),
@@ -208,6 +345,7 @@ return spv.inh(BrowseMap.Model, {
   canUseAsNeighbour: function(){
     return this.state('can-use-as-neighbour');
   },
+
   state_change: {
     "mp_show": function(target, state) {
       if (state){
@@ -219,6 +357,7 @@ return spv.inh(BrowseMap.Model, {
       }
     }
   },
+
   requestPlay: function(bwlev_id) {
     var bwlev = pv.getModelById(this, bwlev_id);
 
@@ -236,6 +375,7 @@ return spv.inh(BrowseMap.Model, {
 
     this.makeSongPlayalbe(true);
   },
+
   wantSong: function() {
 
     if (this.player){
@@ -244,12 +384,15 @@ return spv.inh(BrowseMap.Model, {
 
     this.makeSongPlayalbe(true);
   },
+
   prepareForPlaying: function() {
     this.makeSongPlayalbe(true);
   },
+
   simplify: function() {
     return spv.cloneObj({}, this, false, ['track', 'artist']);
   },
+
   getFullName: function(artist, track, allow_short){
     var n = '';
     if (this.state('artist')){
@@ -267,7 +410,7 @@ return spv.inh(BrowseMap.Model, {
     }
     return n || 'no title';
   },
-  'compx-rept-song': [['#settings-rept-song']],
+
   playNext: function(auto) {
     if (this.state('rept-song')){
       this.play();
@@ -276,9 +419,11 @@ return spv.inh(BrowseMap.Model, {
     }
 
   },
+
   playPrev: function() {
     playRelative(this, this.map_parent.switchTo(this));
   },
+
   /*
   downloadLazy: spv.debounce(function(){
     var song = spv.getTargetField(this.mf_cor.songs(), "0.t.0");
@@ -293,15 +438,19 @@ return spv.inh(BrowseMap.Model, {
   setVolume: function(vol, fac){
     this.getMFCore().setVolume(vol, fac);
   },
+
   stop: function(){
     this.getMFCore().stop();
   },
+
   switchPlay: function(){
     this.getMFCore().switchPlay();
   },
+
   pause: function(){
     this.getMFCore().pause();
   },
+
   play: function(mopla){
     if (this.state('forbidden_by_copyrh')) {
       return;
@@ -309,12 +458,14 @@ return spv.inh(BrowseMap.Model, {
     this.getMFCore().play(mopla);
 
   },
+
   markAs: function(neighbour, mo){
     if (!this.neighbour_for){
       this.neighbour_for = mo;
       pv.update(this, 'marked_as', neighbour);
     }
   },
+
   unmark: function(mo){
     if (this.neighbour_for == mo){
       this.neighbour_for = null;
@@ -322,12 +473,15 @@ return spv.inh(BrowseMap.Model, {
 
     }
   },
+
   wasMarkedAsPrev: function() {
     return this.state('marked_as') && this.state('marked_as') == 'prev';
   },
+
   wasMarkedAsNext: function() {
     return this.state('marked_as') && this.state('marked_as') == 'next';
   },
+
   addMarksToNeighbours: function(){
 
     if (!this.marked_prev_song || this.marked_prev_song != this.prev_song){
@@ -349,6 +503,7 @@ return spv.inh(BrowseMap.Model, {
     this.map_parent.checkShowedNeighboursMarks();
 
   },
+
   removeMarksFromNeighbours: function(){
     if (this.marked_prev_song){
       //this.marked_prev_song.unmark(this);
@@ -368,18 +523,7 @@ return spv.inh(BrowseMap.Model, {
   hasNextSong: function(){
     return !!this.next_song;
   },
-  'compx-can_load_random_lfm_track_name': [
-    ['track_name_provided'],
-    function (track_name_provided) {
-      return !track_name_provided;
-    }
-  ],
-  'compx-track_name_not_found': [
-    ['track', 'random_lfm_track_name', 'random_lfm_track_name__$complete'],
-    function (track_name, random_trackname, complete) {
-      return !track_name && complete && !random_trackname;
-    }
-  ],
+
   req_map: [
     [
       ['random_lfm_track_name'],
@@ -449,13 +593,14 @@ return spv.inh(BrowseMap.Model, {
       ]
     ]
   ],
-  'compx-track_name_loading': [['random_lfm_track_name__loading']],
+
   getRandomTrackName: function() {
     if (this.state('track')) {
       return;
     }
     this.requestState('random_lfm_track_name');
   },
+
   // prefindFiles: function(){
   // 	this.findFiles();
   // },
@@ -467,9 +612,11 @@ return spv.inh(BrowseMap.Model, {
     depend: true,
     space: 'acting'
   },
+
   hndInvestgReqs: function(array) {
     this.addRequests(array, this.investg_rq_opts);
   },
+
   // hndLegacyFSearch: function(e) {
   // 	this.updateFilesSearchState(e.value);
   // },
@@ -484,74 +631,21 @@ return spv.inh(BrowseMap.Model, {
       target.map_parent.markAsPlayable();
     }
   },
-  'compx-can-use-as-neighbour': [
-    ['has_none_files_to_play', 'forbidden_by_copyrh'],
-    function(h_nftp, forbidden_by_copyrh) {
-      if (forbidden_by_copyrh) {
-        return false;
-      }
-      if (h_nftp){
-        return false;
-      } else {
-        return true;
-      }
 
-    }
-  ],
-  'compx-has_none_files_to_play': [
-    ['mf_cor', 'search_complete', 'track_name_not_found', 'mf_cor_has_available_tracks'],
-    function(mf_cor, scomt, track_name_not_found, mf_cor_tracks) {
-      if (mf_cor && !mf_cor_tracks){
-        if (!mf_cor.isSearchAllowed()){
-          return true;
-        } else if (scomt){
-          return true;
-        }
-      }
-
-      if (track_name_not_found){
-        return true;
-      }
-      return false;
-    }
-  ],
-  'compx-search_complete': [
-    ['@one:search_complete:investg']
-  ],
-  'compx-mf_cor_has_available_tracks': [
-    ['@some:has_available_tracks:mf_cor']
-  ],
-  'compx-playable': [
-    ['@one:has_mp3_files:investg', '@one:has_available_tracks:mf_cor'],
-    function (has_mp3_files, has_available_tracks) {
-      return has_mp3_files || has_available_tracks;
-    }
-  ],
-  'compx-files_search': [
-    ['@one:legacy-files-search:investg', '@one:has_available_tracks:mf_cor'],
-    function(files_search, has_available_tracks){
-      return files_search || (has_available_tracks && {
-        search_complete: true,
-        have_best_tracks: true,
-        have_mp3_tracks: true,
-        have_tracks: true
-      });
-    }
-  ],
-  'compx-searching_files': [
-    ['@one:has_request:investg']
-  ],
   'stch-files_search': function(target, state) {
     target.checkChangesSinceFS(state);
   },
+
   bindFilesSearchChanges: function(investg) {
     this.updateNesting('investg', investg);
     investg
       .on('requests', this.hndInvestgReqs, this.getContextOptsI());
   },
+
   isSearchAllowed: function() {
     return this.getMFCore() && this.getMFCore().isSearchAllowed();
   },
+
   // findFiles: function(opts){
   // 	return;
 
@@ -573,9 +667,11 @@ return spv.inh(BrowseMap.Model, {
       }
     }
   },
+
   checkRequestsPriority: function() {
     this.map_parent.checkRequestsPriority();
   },
+
   getActingPriorityModels: function() {
     var result = [];
     if (this.next_song){
@@ -589,35 +685,42 @@ return spv.inh(BrowseMap.Model, {
     result.push( this );
     return result;
   },
+
   checkChangesSinceFS: function(opts){
     this.map_parent.checkChangesSinceFS(this, opts);
   },
+
   view: function(no_navi, userwant){
     if (!this.state('mp_show')){
       this.trigger('view', no_navi, userwant);
     }
   },
+
   valueOf:function(){
     return (this.state('artist') ? this.state('artist') + ' - ' : '') + this.state('track');
   },
+
   isPossibleNeighbour: function(mo) {
     return this.isNeighbour(mo) || mo == this.next_preload_song;
   },
+
   isNeighbour: function(mo){
     return (mo == this.prev_song) || (mo == this.next_song);
   },
+
   setPlayableInfo: function(info){
     this.playable_info = info;
     return this;
   },
+
   posistionChangeInMopla: function(mopla){
     if (this.getCurrentMopla() == mopla){
       this.submitNowPlaying();
     }
   },
+
   getCurrentMopla: function(){
     return this.getMFCore().getCurrentMopla();
-  },
-
+  }
 });
 });

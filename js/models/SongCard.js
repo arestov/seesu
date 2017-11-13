@@ -81,14 +81,18 @@ var VKPostSongs = spv.inh(SongsList, {
       //дата публикации
   }
 }, {
+  "+states": {
+    "date_desc": [
+      "compx",
+      ['date'],
+      function(date) {
+        return date && (new Date(date)).toLocaleString();
+      }
+    ]
+  },
+
   manual_states_init: true,
-  network_data_as_states: false,
-  'compx-date_desc': [
-    ['date'],
-    function(date) {
-      return date && (new Date(date)).toLocaleString();
-    }
-  ]
+  network_data_as_states: false
 });
 
 
@@ -110,23 +114,27 @@ var VKPostsList = spv.inh(LoadableListBase, {
     });
   }
 }, {
-  'compx-image_previews': [
-    ['@owner_info:sorted_list'],
-    function (array) {
-      if (!array) {return;}
-      var result = [];
-      for (var i = 0; i < array.length; i++) {
-        var cur= array[i];
-        if (!cur) {
-          continue;
+  "+states": {
+    "image_previews": [
+      "compx",
+      ['@owner_info:sorted_list'],
+      function (array) {
+        if (!array) {return;}
+        var result = [];
+        for (var i = 0; i < array.length; i++) {
+          var cur= array[i];
+          if (!cur) {
+            continue;
+          }
+
+          result.push(cur.photo_medium_rec || cur.photo_50);
         }
 
-        result.push(cur.photo_medium_rec || cur.photo_50);
+        return spv.collapseAll(result);
       }
+    ]
+  },
 
-      return spv.collapseAll(result);
-    }
-  ],
   model_name: 'vk_posts',
 
   //splitItemData: ,
@@ -144,6 +152,7 @@ var VKPostsList = spv.inh(LoadableListBase, {
       }
     }];
   },
+
   'nest_req-lists_list': [
     [
       {
@@ -222,45 +231,64 @@ var VKPostsList = spv.inh(LoadableListBase, {
 var isDepend = pv.utils.isDepend;
 
 var SongCard = spv.inh(LoadableListBase, {}, {
+  "+states": {
+    "nav_title": [
+      "compx",
+      ['artist_name', 'track_name'],
+      function(artist_name, track_name) {
+        return artist_name + ' - ' + track_name;
+      }
+    ],
+
+    "nest_need": [
+      "compx",
+      ['need_for_song', 'songcard-for-active_song'],
+      function(need_for_song, for_asong) {
+        return need_for_song || isDepend(for_asong);
+      }
+    ],
+
+    "wide_need": [
+      "compx",
+      ['nest_need', 'mp_has_focus'],
+      function(nest_need, mp_has_focus) {
+        return mp_has_focus || nest_need;
+      }
+    ],
+
+    "load_listeners": [
+      "compx",
+      ['wide_need', 'artist_name', 'track_name'],
+      function(wide_need, artist_name, track_name) {
+        return wide_need && artist_name && track_name && {
+          artist_name: artist_name,
+          track_name: track_name
+        };
+      }
+    ],
+
+    "vswitched_select": ["compx", ['vswitched']],
+
+    "current_su_user_info": [
+      "compx",
+      ['#current_su_user_info']
+    ]
+  },
+
   model_name: 'songcard',
-  'compx-nav_title': [
-    ['artist_name', 'track_name'],
-    function(artist_name, track_name) {
-      return artist_name + ' - ' + track_name;
-    }
-  ],
-  'compx-nest_need': [
-    ['need_for_song', 'songcard-for-active_song'],
-    function(need_for_song, for_asong) {
-      return need_for_song || isDepend(for_asong);
-    }
-  ],
-  'compx-wide_need': [
-    ['nest_need', 'mp_has_focus'],
-    function(nest_need, mp_has_focus) {
-      return mp_has_focus || nest_need;
-    }
-  ],
-  'compx-load_listeners': [
-    ['wide_need', 'artist_name', 'track_name'],
-    function(wide_need, artist_name, track_name) {
-      return wide_need && artist_name && track_name && {
-        artist_name: artist_name,
-        track_name: track_name
-      };
-    }
-  ],
+
   'stch-load_listeners': function(target, state) {
     if (state) {
       target.requestMoreData('listenings');
     }
   },
-  'compx-vswitched_select': [['vswitched']],
+
   'stch-vswitched_select': function(target, state) {
     pv.updateNesting(target, 'selected', state && pv.getModelById(target, state));
   },
-  'compx-current_su_user_info': [['#current_su_user_info']],
+
   'nest_rqc-listenings': SeesuListening,
+
   'nest_req-listenings': [
     [function(resp) {
       if (!resp || !resp.done) {return;}
@@ -307,11 +335,14 @@ var SongCard = spv.inh(LoadableListBase, {}, {
       }];
     }]
   ],
+
   'nest-fans': ['fans'],
+
   'nest-vk_posts': ['vk_posts', {
     preload_on: 'nest_need',
     idle_until: 'nest_need',
   }],
+
   'nest-artist': ['#catalog/[:artist_name]', {
     idle_until: 'mp_has_focus',
   }],

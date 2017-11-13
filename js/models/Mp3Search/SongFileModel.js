@@ -99,7 +99,139 @@ var SongFileModelBase = spv.inh(pv.Model, {
 
 function props() {
   return {
+    "+states": {
+      "title": [
+        "compx",
+        ['artist', 'track'],
+        function(artist, track) {
+          if (artist && track) {
+            return artist + ' - ' + track;
+          } else if (artist) {
+            return artist;
+          } else if (track) {
+            return track;
+          }
+        }
+      ],
+
+      "source_name": ["compx", ['from']],
+
+      "visible_duration": [
+        "compx",
+        ['duration', 'loaded_duration'],
+        function(duration, loaded_duration) {
+          return duration || loaded_duration;
+        }
+      ],
+
+      "play_position": [
+        "compx",
+        ['visible_duration', 'playing_progress'],
+        function(duration, playing_progress) {
+          return Math.round(duration * playing_progress);
+        }
+      ],
+
+      "visible_duration_text": [
+        "compx",
+        ['visible_duration'],
+        function (state) {
+          return getNiceSeconds(state);
+        }
+      ],
+
+      "play_position_text": [
+        "compx",
+        ['play_position'],
+        function (state) {
+          return getNiceSeconds(state);
+        }
+      ],
+
+      "load_file": [
+        "compx",
+        ['file_to_load-for-player_song', 'file_to_load-for-preload_current_file'],
+        function(player_song, preload_current_file) {
+          return isDepend(player_song) || isDepend(preload_current_file);
+        }
+      ],
+
+      "last_play": [
+        "compx",
+        ['playing_progress', 'play'],
+        function (playing_progress, play) {
+          if (isStoped(play) || typeof playing_progress !== 'number') {
+            return null;
+          }
+          if (play === false) {
+            return 0;
+          }
+          return Date.now();
+        }
+      ],
+
+      "played_amount": [
+        "compx",
+        ['played_amount', 'last_play', 'play'],
+        function (played_amount, last_play, play) {
+          if (isStoped(play)) {
+            return null;
+          }
+
+          if (last_play == undefined) {
+            return played_amount;
+          }
+
+          var amount = played_amount && played_amount.value || 0;
+          var prev = played_amount && played_amount.last_play;
+
+          if (last_play === 0) {
+            return {
+              last_play: 0,
+              value: amount || 0
+            };
+          }
+
+          var to_add = prev ? (last_play - prev) : 0;
+
+          return {
+            last_play: last_play,
+            value: amount + to_add,
+          };
+        }
+      ],
+
+      "current_scrobbles": [
+        "compx",
+        ['current_scrobbles', 'duration', 'played_amount.value'],
+        function(current_scrobbles, duration, current_amount) {
+          if (!duration ||!current_amount) {
+            return null;
+          }
+
+          var count = 0;
+          count += Math.floor( current_amount / duration );
+
+          if (current_amount % duration > (duration * 0.35)) {
+            count++;
+          }
+
+          if (current_scrobbles && current_scrobbles.length === count) {
+            return current_scrobbles;
+          }
+
+          var result = current_scrobbles ? current_scrobbles.slice() : [];
+          if (result.length < count) {
+            result.push(Date.now());
+          }
+
+          return result;
+        }
+      ]
+    },
+
     model_name: 'file-http',
+
     requestPlay: function(bwlev_id) {
       this.mo.getMFCore().selectMopla(this);
 
@@ -121,6 +253,7 @@ function props() {
 
       // this.makeSongPlayalbe(true);
     },
+
     switchPlay: function(bwlev_id) {
       //
 
@@ -138,52 +271,11 @@ function props() {
         // this.RPCLegacy('trigger', 'want-to-play-sf');
       }
     },
+
     getTitle: function() {
       return this.state('title');
     },
-    'compx-title': [
-      ['artist', 'track'],
-      function(artist, track) {
-        if (artist && track) {
-          return artist + ' - ' + track;
-        } else if (artist) {
-          return artist;
-        } else if (track) {
-          return track;
-        }
-      }
-    ],
-    'compx-source_name': [['from']],
-    'compx-visible_duration': [
-      ['duration', 'loaded_duration'],
-      function(duration, loaded_duration) {
-        return duration || loaded_duration;
-      }
-    ],
-    'compx-play_position': [
-      ['visible_duration', 'playing_progress'],
-      function(duration, playing_progress) {
-        return Math.round(duration * playing_progress);
-      }
-    ],
-    'compx-visible_duration_text': [
-      ['visible_duration'],
-      function (state) {
-        return getNiceSeconds(state);
-      }
-    ],
-    'compx-play_position_text': [
-      ['play_position'],
-      function (state) {
-        return getNiceSeconds(state);
-      }
-    ],
-    'compx-load_file': [
-      ['file_to_load-for-player_song', 'file_to_load-for-preload_current_file'],
-      function(player_song, preload_current_file) {
-        return isDepend(player_song) || isDepend(preload_current_file);
-      }
-    ],
+
     'stch-load_file': finup(function(target, state) {
       if (state) {
 
@@ -192,6 +284,7 @@ function props() {
         target.removeCache();
       }
     }),
+
     events: {
       finish: function(){
         pv.update(this, 'play', null);
@@ -254,73 +347,7 @@ function props() {
         });
       }
     },
-    'compx-last_play': [
-      ['playing_progress', 'play'],
-      function (playing_progress, play) {
-        if (isStoped(play) || typeof playing_progress !== 'number') {
-          return null;
-        }
-        if (play === false) {
-          return 0;
-        }
-        return Date.now();
-      }
-    ],
-    'compx-played_amount': [
-      ['played_amount', 'last_play', 'play'],
-      function (played_amount, last_play, play) {
-        if (isStoped(play)) {
-          return null;
-        }
 
-        if (last_play == undefined) {
-          return played_amount;
-        }
-
-        var amount = played_amount && played_amount.value || 0;
-        var prev = played_amount && played_amount.last_play;
-
-        if (last_play === 0) {
-          return {
-            last_play: 0,
-            value: amount || 0
-          };
-        }
-
-        var to_add = prev ? (last_play - prev) : 0;
-
-        return {
-          last_play: last_play,
-          value: amount + to_add,
-        };
-      }
-    ],
-    'compx-current_scrobbles': [
-      ['current_scrobbles', 'duration', 'played_amount.value'],
-      function(current_scrobbles, duration, current_amount) {
-        if (!duration ||!current_amount) {
-          return null;
-        }
-
-        var count = 0;
-        count += Math.floor( current_amount / duration );
-
-        if (current_amount % duration > (duration * 0.35)) {
-          count++;
-        }
-
-        if (current_scrobbles && current_scrobbles.length === count) {
-          return current_scrobbles;
-        }
-
-        var result = current_scrobbles ? current_scrobbles.slice() : [];
-        if (result.length < count) {
-          result.push(Date.now());
-        }
-
-        return result;
-      }
-    ],
     failPlaying: function() {
       var old_fails = pvState(this, 'unavailable') || 0;
 
@@ -332,11 +359,13 @@ function props() {
 
       this.trigger("unavailable");
     },
+
     markParentFailed: function (fails) {
       if (this.parent){
         this.parent.unavailable = fails;
       }
     },
+
     setPlayer: function(player){
       if (player){
         this.player = player;
@@ -344,11 +373,13 @@ function props() {
       }
       return this;
     },
+
     _createSound: function(){
       if (!this.sound){
         this.sound = !!this.player.create(this);
       }
     },
+
     play: function(){
       if (this.player){
         if (this.mo.state('forbidden_by_copyrh')) {
@@ -362,6 +393,7 @@ function props() {
 
       }
     },
+
     removeCache: function(){
       if (this.unloadOutBox){
         this.unloadOutBox();
@@ -369,6 +401,7 @@ function props() {
       this.player.remove(this);
       this.sound = null;
     },
+
     stop: function(){
       if (this.player){
         this.pause();
@@ -382,25 +415,31 @@ function props() {
         this.sound = null;
       }
     },
+
     pause: function(){
       if (this.player){
         this.player.pause(this);
       }
     },
+
     setVolumeByFactor: function(fac){
       this.setVolumeByFactor(false, fac);
     },
+
     setVolume: function(vol, fac){
       if (this.player){
         this.player.setVolume(this, vol, fac);
       }
     },
+
     getDuration: function(){
       return this.duration || this.state('loaded_duration');
     },
+
     setPositionByFactor: function(fac){
       this.setPosition(false, fac);
     },
+
     setPosition: function(pos, fac, not_submit){
       if (this.player){
         this.player.setPosition(this, pos, fac);
@@ -412,6 +451,7 @@ function props() {
 
       }
     },
+
     load: function(){
       if (this.player){
         if (this.loadOutBox){
@@ -424,15 +464,19 @@ function props() {
 
       }
     },
+
     activate: function() {
       pv.update(this, 'selected', true);
     },
+
     deactivate: function() {
       pv.update(this, 'selected', false);
     },
+
     markAsPlaying: function() {
 
     },
+
     unmarkAsPlaying: function() {
 
     }

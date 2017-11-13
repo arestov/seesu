@@ -41,8 +41,14 @@ var Query = pv.behavior({
 }, QueryBase);
 
 return pv.behavior({
-  'compx-ready': [[], function () {
-    return true;
-  }],
+  "+states": {
+    "ready": [
+      "compx",
+      [],
+      function () {
+        return true;
+      }
+    ]
+  }
 }, createSource(Query, 'http://soundcloud.com/pages/dmca_policy'));
 });

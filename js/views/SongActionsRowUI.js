@@ -115,12 +115,16 @@ var ShareRowUI = spv.inh(View, {}, {
 });
 
 var SongActPlaylistingUI = spv.inh(View, {}, {
-  'compx-need_creation_button':[
-    ['query', 'has_full_match'],
-    function(query, has_full_match) {
-      return query && !has_full_match;
-    }
-  ],
+  "+states": {
+    "need_creation_button": [
+      "compx",
+      ['query', 'has_full_match'],
+      function(query, has_full_match) {
+        return query && !has_full_match;
+      }
+    ]
+  },
+
   tpl_events: {
     input_search: spv.debounce(function(e, node) {
       this.RPCLegacy('search', node.value);
@@ -155,20 +159,66 @@ var ScrobbleRowUI = spv.inh(View, {}, {
 
 
 var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
+  "+states": {
+    "vis_is_visible": [
+      "compx",
+      ['^mp_show_end'],
+      function (value) {
+        return Boolean(value);
+      }
+    ],
+
+    "p_mpshe": [
+      "compx",
+      ['^mp_show_end'],
+      function (mp_show_end) {
+        return mp_show_end;
+      }
+    ],
+
+    "key_vol_hole_w": [
+      "compx",
+      ['vis_is_visible', 'vis_con_appended'],
+      function (visible, apd) {
+        if (visible && apd) {
+          return this.getBoxDemensionKey('volume-hole-width');
+        }
+      }
+    ],
+
+    "vis_volume-bar-max-width": [
+      "compx",
+      ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
+      function(vvh_w, v_bar_o_w, v_bar_w){
+        if (vvh_w){
+          return  vvh_w - ( v_bar_o_w - v_bar_w);
+        }
+
+      }
+    ],
+
+    "vis_volume": [
+      "compx",
+      ['volume', 'vis_volume-bar-max-width'],
+      function(volume_fac, vvb_mw){
+        if (typeof volume_fac =='undefined'){
+          return 'auto';
+        } else if (vvb_mw){
+          return Math.floor(volume_fac * vvb_mw) + 'px';
+        } else {
+          return (volume_fac * 100)  + '%';
+        }
+      }
+    ]
+  },
+
   dom_rp: true,
+
   bindBase: function(){
     this._super();
     this.createVolumeControl();
   },
-  'compx-vis_is_visible': [['^mp_show_end'], function (value) {
-    return Boolean(value);
-  }],
-  'compx-p_mpshe': [
-    ['^mp_show_end'],
-    function (mp_show_end) {
-      return mp_show_end;
-    }
-  ],
+
   children_views_by_mn: {
     context_parts: {
       'row-lastfm': ScrobbleRowUI,
@@ -182,17 +232,21 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
   getVHoleWidth: function() {
     return this.tpl.ancs['v-hole'].width();
   },
+
   getVBarOuterWidth: function() {
     return this.tpl.ancs['v-bar'].outerWidth();
   },
+
   getVBarWidth: function() {
     return this.tpl.ancs['v-bar'].width();
   },
+
   'stch-key_vol_hole_w': function(target, value) {
     if (value) {
       pvUpdate(target, 'vis_volume-hole-width', target.getBoxDemensionByKey(target.getVHoleWidth, value));
     }
   },
+
   'stch-vis_volume-hole-width': function(target, state) {
     if (state) {
       target.updateManyStates({
@@ -201,35 +255,7 @@ var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
       });
     }
   },
-  "compx-key_vol_hole_w": [
-    ['vis_is_visible', 'vis_con_appended'],
-    function (visible, apd) {
-      if (visible && apd) {
-        return this.getBoxDemensionKey('volume-hole-width');
-      }
-    }
-  ],
-  "compx-vis_volume-bar-max-width": [
-    ['vis_volume-hole-width', 'v-bar-o-width', 'v-bar-width'],
-    function(vvh_w, v_bar_o_w, v_bar_w){
-      if (vvh_w){
-        return  vvh_w - ( v_bar_o_w - v_bar_w);
-      }
 
-    }
-  ],
-  "compx-vis_volume": [
-    ['volume', 'vis_volume-bar-max-width'],
-    function(volume_fac, vvb_mw){
-      if (typeof volume_fac =='undefined'){
-        return 'auto';
-      } else if (vvb_mw){
-        return Math.floor(volume_fac * vvb_mw) + 'px';
-      } else {
-        return (volume_fac * 100)  + '%';
-      }
-    }
-  ],
   createVolumeControl: function() {
     this.vol_cc = this.tpl.ancs['volume-control'];
 

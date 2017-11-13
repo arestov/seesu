@@ -48,19 +48,26 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
     }
   }
 }, {
+  "+states": {
+    "can_hide_artist_name": [
+      "compx",
+      ['album_artist', 'original_artist'],
+      function(alb_artist, orgn_artist) {
+        return alb_artist == orgn_artist;
+      }
+    ],
+
+    "selected_image": [
+      "compx",
+      ['lfm_img', 'lfm_image', 'profile_image'],
+      function(lfm_img, lfmi_wrap, pi_wrap) {
+        return pi_wrap || lfm_img || lfmi_wrap;
+      }
+    ]
+  },
+
   network_data_as_states: false,
-  'compx-can_hide_artist_name': [
-    ['album_artist', 'original_artist'],
-    function(alb_artist, orgn_artist) {
-      return alb_artist == orgn_artist;
-    }
-  ],
-  'compx-selected_image': [
-    ['lfm_img', 'lfm_image', 'profile_image'],
-    function(lfm_img, lfmi_wrap, pi_wrap) {
-      return pi_wrap || lfm_img || lfmi_wrap;
-    }
-  ],
+
   getURLPart: function(params, app){
     if (params.album_artist == params.original_artist){
       return app.encodeURLPart(params.album_name);
@@ -68,6 +75,7 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
       return app.encodeURLPart(params.album_artist) + ',' + app.encodeURLPart(params.album_name);
     }
   },
+
   getAlbumURL: function() {
     return this.getURLPart({
       original_artist: this.original_artist,
@@ -75,6 +83,7 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
       album_name: this.album_name
     }, this.app);
   },
+
   'nest_req-songs-list': [
     [
       {
@@ -94,22 +103,28 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
   ]
 });
 var ArtistTagsList = spv.inh(LoadableList.TagsList, {}, {
-  // init: function(opts, params) {
-  // 	this._super.apply(this, arguments);
-  // 	this.artist_name = params.artist;
-  // },
-  'compx-preview_loading': [
-    ['^tags_list__loading'],
-    function(state) {
-      return state;
-    }
-  ],
-  'compx-preview_list': [
-    ['^tags_list'],
-    function(state) {
-      return state;
-    }
-  ],
+  "+states": {
+    // init: function(opts, params) {
+    // 	this._super.apply(this, arguments);
+    // 	this.artist_name = params.artist;
+    // },
+    "preview_loading": [
+      "compx",
+      ['^tags_list__loading'],
+      function(state) {
+        return state;
+      }
+    ],
+
+    "preview_list": [
+      "compx",
+      ['^tags_list'],
+      function(state) {
+        return state;
+      }
+    ]
+  },
+
   'nest_req-tags_list': [
     [{
       is_array: true,
@@ -161,21 +176,28 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
     });
   }
 }, {
-  'compx-can_hide_artist_name': [
-    ['album_artist', 'original_artist'],
-    function(alb_artist, orgn_artist) {
-      return alb_artist == orgn_artist;
-    }
-  ],
-  'compx-selected_image': [
-    ['lfm_image', 'profile_image', 'image_url'],
-    function(lfmi_wrap, pi_wrap, image_url) {
-      return pi_wrap || lfmi_wrap || image_url;
-    }
-  ],
+  "+states": {
+    "can_hide_artist_name": [
+      "compx",
+      ['album_artist', 'original_artist'],
+      function(alb_artist, orgn_artist) {
+        return alb_artist == orgn_artist;
+      }
+    ],
+
+    "selected_image": [
+      "compx",
+      ['lfm_image', 'profile_image', 'image_url'],
+      function(lfmi_wrap, pi_wrap, image_url) {
+        return pi_wrap || lfmi_wrap || image_url;
+      }
+    ]
+  },
+
   getAlbumURL: function() {
     return '';
   },
+
   'nest_req-songs-list': [
     [function(r) {
       var _this = this;
@@ -228,42 +250,62 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
 });
 
 var DiscogsAlbums = spv.inh(AlbumsList, {}, {
+  "+states": {
+    "should_load": [
+      "compx",
+      ['^mp_has_focus', 'mp_show', 'artist_id'],
+      function(pfocus, mp_show, artist_id) {
+        return artist_id && (mp_show || pfocus);
+      }
+    ],
+
+    "possible_loader_disallowing": [
+      "compx",
+      ['#locales.no-dgs-id']
+    ],
+
+    "profile_searching": [
+      "compx",
+      ['^discogs_id__loading']
+    ],
+
+    "artist_id": ["compx", ['^discogs_id']],
+
+    "loader_disallowing_desc": [
+      "compx",
+      ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
+      function(searching, disallowed, desc) {
+        if (disallowed && !searching){
+          return desc;
+        }
+      }
+    ],
+
+    "loader_disallowed": [
+      "compx",
+      ['artist_id'],
+      function(artist_id) {
+        return !artist_id;
+      }
+    ]
+  },
+
   'stch-should_load': function(target, state) {
     if (state) {
       target.preloadStart();
     }
   },
+
   'stch-mp_show': function(target, state) {
     if (state) {
       // target.map_parent.requestState('discogs_id');
     }
   },
-  'compx-should_load': [
-    ['^mp_has_focus', 'mp_show', 'artist_id'],
-    function(pfocus, mp_show, artist_id) {
-      return artist_id && (mp_show || pfocus);
-    }
-  ],
-  'compx-possible_loader_disallowing': [['#locales.no-dgs-id']],
-  'compx-profile_searching': [['^discogs_id__loading']],
-  'compx-artist_id':[['^discogs_id']],
-  'compx-loader_disallowing_desc': [
-    ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
-    function(searching, disallowed, desc) {
-      if (disallowed && !searching){
-        return desc;
-      }
-    }
-  ],
-  'compx-loader_disallowed': [
-    ['artist_id'],
-    function(artist_id) {
-      return !artist_id;
-    }
-  ],
+
   page_limit: 50,
   manual_previews: false,
   'nest_rqc-albums_list': DiscogsAlbumSongs,
+
   'nest_req-albums_list': [
     [function(r) {
       return spv.toRealArray(spv.getTargetField(r, 'releases'));
@@ -281,7 +323,6 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
       return ['/artists/' + artist_id + '/releases', null];
     }]
   ]
-
 });
 
 var ArtistAlbums = spv.inh(AlbumsList, {}, {
@@ -349,39 +390,56 @@ var HypemArtistSeBlogged = spv.inh(SongsList.HypemPlaylist, {}, {
 
 
 var SoundcloudArtcardSongs = spv.inh(SongsList, {}, {
-  'compx-profile_searching': [['^sc_profile__loading']],
-  'compx-artist_id': [['^soundcloud_profile']],
-  'compx-id_searching': [
-    ['profile_searching'],
-    function(profile_searching) {
-      return profile_searching;
-    }
-  ],
-  'compx-possible_loader_disallowing': [
-    ['^no_soundcloud_profile', 'artist_id', '^soundcloud_profile', '#locales.no-soundcloud-profile', '#locales.Sc-profile-not-found'],
-    function(no_soundcloud_profile, artist_id, profile, desc_no_preofile, desc_not_found) {
-      if (no_soundcloud_profile) {
-        return desc_no_preofile;
+  "+states": {
+    "profile_searching": [
+      "compx",
+      ['^sc_profile__loading']
+    ],
+
+    "artist_id": [
+      "compx",
+      ['^soundcloud_profile']
+    ],
+
+    "id_searching": [
+      "compx",
+      ['profile_searching'],
+      function(profile_searching) {
+        return profile_searching;
       }
-      if (!artist_id) {
-        return desc_not_found;
+    ],
+
+    "possible_loader_disallowing": [
+      "compx",
+      ['^no_soundcloud_profile', 'artist_id', '^soundcloud_profile', '#locales.no-soundcloud-profile', '#locales.Sc-profile-not-found'],
+      function(no_soundcloud_profile, artist_id, profile, desc_no_preofile, desc_not_found) {
+        if (no_soundcloud_profile) {
+          return desc_no_preofile;
+        }
+        if (!artist_id) {
+          return desc_not_found;
+        }
       }
-    }
-  ],
-  'compx-loader_disallowing_desc': [
-    ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
-    function(searching, disallowed, desc) {
-      if (disallowed && !searching){
-        return desc;
+    ],
+
+    "loader_disallowing_desc": [
+      "compx",
+      ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
+      function(searching, disallowed, desc) {
+        if (disallowed && !searching){
+          return desc;
+        }
       }
-    }
-  ],
-  'compx-loader_disallowed': [
-    ['artist_id'],
-    function(artist_id) {
-      return !artist_id;
-    }
-  ]
+    ],
+
+    "loader_disallowed": [
+      "compx",
+      ['artist_id'],
+      function(artist_id) {
+        return !artist_id;
+      }
+    ]
+  }
 });
 var SoundcloudArtistLikes = spv.inh(SoundcloudArtcardSongs, {}, {
   'nest_req-songs-list': [
@@ -755,26 +813,32 @@ var ArtistInArtl = spv.inh(ArtCardBase, {}, {
 });
 
 var RandomSong = spv.inh(Song, {}, {
-  'compx-track': [
-    ['track_name_provided', 'random_lfm_track_name'],
-    function (provied, random) {
-      return provied || random;
-    }
-  ]
+  "+states": {
+    "track": [
+      "compx",
+      ['track_name_provided', 'random_lfm_track_name'],
+      function (provied, random) {
+        return provied || random;
+      }
+    ]
+  }
 });
 
 var ArtistsListPlaylist = spv.inh(SongsList, {}, {
+  "+states": {
+    // items_comparing_props: [['artist_name', 'artist_name']],
+    "has_data_loader": [
+      "compx",
+      ['^has_data_loader'],
+      function(state) {
+        return state;
+      }
+    ]
+  },
+
   'nest_rqc-songs-list': RandomSong,
   page_limit: null,
-  // items_comparing_props: [['artist_name', 'artist_name']],
-  'compx-has_data_loader': [
-    ['^has_data_loader'],
-    function(state) {
-      return state;
-    }
-  ],
   items_comparing_props: [['artist', 'artist']],
-
 
   requestMoreData: function() {
     var declr = this.map_parent[ 'nest_req-' + this.map_parent.main_list_name ];
@@ -784,6 +848,7 @@ var ArtistsListPlaylist = spv.inh(SongsList, {}, {
       this._super();
     }
   },
+
   getRqData: function() {
     return this.map_parent.getRqData.apply(this.map_parent, arguments);
   }
@@ -824,38 +889,47 @@ var SimilarArtists = spv.inh(ArtistsList, {
     });
   }
 }, {
+  "+states": {
+    // init: function(opts, params) {
+    // 	this._super.apply(this, arguments);
+    // 	// this.original_artist = params.artist;
+
+
+
+    // },
+    "preview_loading": [
+      "compx",
+      ['^similar_artists_list__loading'],
+      function(state) {
+        return state;
+      }
+    ],
+
+    "preview_list": [
+      "compx",
+      ['^similar_artists_list'],
+      function(state) {
+        return state;
+      }
+    ]
+  },
+
   page_limit: 100,
-  // init: function(opts, params) {
-  // 	this._super.apply(this, arguments);
-  // 	// this.original_artist = params.artist;
 
-
-
-  // },
-  'compx-preview_loading': [
-    ['^similar_artists_list__loading'],
-    function(state) {
-      return state;
-    }
-  ],
-  'compx-preview_list': [
-    ['^similar_artists_list'],
-    function(state) {
-      return state;
-    }
-  ],
   getRqData: function(paging_opts) {
     return {
       artist: this.head.artist_name,
       limit: paging_opts.page_limit
     };
   },
+
   'nest_req-artists_list': [
     declr_parsers.lfm.getArtists('similarartists', true),
     ['#lfm', 'get', function(opts) {
       return ['artist.getSimilar', this.getRqData(opts.paging)];
     }]
   ],
+
   setPreviewList: function(raw_array) {
     var preview_list = this.getNesting(this.preview_mlist_name);
     if (!preview_list || !preview_list.length){

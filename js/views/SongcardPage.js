@@ -28,12 +28,16 @@ var SongcardPage = spv.inh(coct.SPView, {}, {
 });
 
 var FanPreview = spv.inh(View, {}, {
-  'compx-can_use_image':[
-    ['vis_image_loaded', 'selected_image'],
-    function(vis_image_loaded, selected_image) {
-      return !!(vis_image_loaded && selected_image);
-    }
-  ],
+  "+states": {
+    "can_use_image": [
+      "compx",
+      ['vis_image_loaded', 'selected_image'],
+      function(vis_image_loaded, selected_image) {
+        return !!(vis_image_loaded && selected_image);
+      }
+    ]
+  },
+
   'stch-selected_image': function(target, state) {
     var image_node = target.tpl.ancs['user-image'];
     image_node.src = '';
@@ -73,24 +77,31 @@ var selected = spv.inh(View, {}, {
 });
 
 var SongcardController = spv.inh(View, {}, {
+  "+states": {
+    "disallow_seesu_listeners": [
+      "compx",
+      ['#disallow_seesu_listeners'],
+      function(state) {
+        return state;
+      }
+    ],
+
+    "can_expand_listeners": [
+      "compx",
+      ['^vmp_show', 'artist_name', 'track_name', 'disallow_seesu_listeners', 'expanded'],
+      function (vmp_show, artist_name, track_name, disallow_seesu_listeners, expanded) {
+        return vmp_show && artist_name && track_name && expanded && !disallow_seesu_listeners;
+      }
+    ]
+  },
+
   dom_rp: true,
+
   children_views:{
     artist: ArtcardUI.ArtistInSongConstroller,
     fans: FansList,
     selected: selected
-  },
-  'compx-disallow_seesu_listeners': [
-    ['#disallow_seesu_listeners'],
-    function(state) {
-      return state;
-    }
-  ],
-  'compx-can_expand_listeners': [
-    ['^vmp_show', 'artist_name', 'track_name', 'disallow_seesu_listeners', 'expanded'],
-    function (vmp_show, artist_name, track_name, disallow_seesu_listeners, expanded) {
-      return vmp_show && artist_name && track_name && expanded && !disallow_seesu_listeners;
-    }
-  ]
+  }
 });
 SongcardPage.SongcardController = SongcardController;
 

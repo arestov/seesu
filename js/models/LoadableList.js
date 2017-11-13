@@ -14,8 +14,19 @@ var LoadableList = spv.inh(LoadableListBase, {
 });
 
 var TagsList = spv.inh(LoadableList, {}, {
+  "+states": {
+    "simple_tags_list": [
+      "compx",
+      ['tags_list', 'preview_list'],
+      function(tag_list, preview_list){
+        return tag_list || preview_list;
+      }
+    ]
+  },
+
   model_name: 'tagslist',
   main_list_name: 'tags_list',
+
   addTag: function(name, silent) {
     var main_list = this.getMainlist();
     main_list.push(name);
@@ -25,23 +36,21 @@ var TagsList = spv.inh(LoadableList, {}, {
       pv.update(this, this.main_list_name, [].concat(main_list));
     }
   },
+
   dataListChange: function() {
     var main_list = this.getMainlist();
     pv.update(this, this.main_list_name, [].concat(main_list));
 
   },
+
   addItemToDatalist: function(obj, silent) {
     this.addTag(obj, silent);
   },
-  'compx-simple_tags_list': [
-    ['tags_list', 'preview_list'],
-    function(tag_list, preview_list){
-      return tag_list || preview_list;
-    }
-  ],
+
   setPreview: function(list) {
     pv.update(this, 'preview_list', list);
   },
+
   showTag: function(tag_name) {
     this.app.show_tag(tag_name);
   }
