@@ -6,8 +6,6 @@ var prsStCon = require('../prsStCon');
 var spv = require('spv');
 var hp = require('../helpers');
 
-var getUnprefixed = spv.getDeprefixFunc( 'compx-' );
-var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 var identical = function(state) {
   return state;
@@ -51,38 +49,10 @@ var declr = function(comlx_name, cur) {
   return item;
 };
 
-var collectCompxs1part = function(self, props) {
-  var build_index = self._build_cache_compx_one;
-  self._build_cache_compx_one = {};
-
-  for (var prefixed_name in self){
-    var comlx_name = getUnprefixed(prefixed_name);
-    if (comlx_name){
-      var cur = self[prefixed_name];
-      if (!cur) {continue;}
-
-      var item;
-      if (props.hasOwnProperty(prefixed_name)) {
-        item = declr(comlx_name, cur);
-      } else {
-        item = build_index[comlx_name];
-      }
-
-      self._build_cache_compx_one[comlx_name] = item;
-    }
-  }
-};
-
 
 var collectBuildParts = function(self) {
   var compx_check = {};
   var full_comlxs_list = [];
-
-  for (var key_name_one in self._build_cache_compx_one) {
-    compx_check[key_name_one] = self._build_cache_compx_one[key_name_one];
-    full_comlxs_list.push(compx_check[key_name_one]);
-  }
-
 
   for (var key_name_one in self._dcl_cache__compx) {
     compx_check[key_name_one] = self._dcl_cache__compx[key_name_one];
@@ -132,15 +102,9 @@ return function(self, props, typed_part) {
     extendTyped(self, typed_part);
   }
 
-  var part1 = hasPrefixedProps(props);
-  var need_recalc = part1 || typed_part;
-
+  var need_recalc = typed_part;
   if (!need_recalc){
     return;
-  }
-
-  if (part1) {
-    collectCompxs1part(self, props);
   }
 
   collectBuildParts(self);
@@ -153,7 +117,8 @@ return function(self, props, typed_part) {
 
 function collectStatesConnectionsProps(self, full_comlxs_list) {
   /*
-  'compx-some_state': [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
+
+  [['^visible', '@some:complete:list', '#vk_id'], function(visible, complete){
 
   }]
   */
