@@ -29,18 +29,18 @@
     }
   ],
   'raw_data': [
-    '->[]', ['window'],
+    '[]<-', ['window'],
     function(update, window) {
 
     }
   ],
-  '<-sc_profile': '*',
+  '[]<-sc_profile': '*',
 },
 'req_map'
 'nests': {
   ''
 },
-->[] (affect)
+[]<- (affect)
 []-> (effect)
 
 'sub_page-'
