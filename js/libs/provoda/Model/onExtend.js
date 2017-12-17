@@ -18,8 +18,31 @@ var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
 
 var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
+var updateStatesDcls = function(self, props, original) {
+  if (!props['+states']) {
+    return;
+  }
+  var original_ext = original.__states_dcls || {};
+  var __states_dcls = spv.cloneObj({}, original_ext);
+  __states_dcls = spv.cloneObj(__states_dcls, props['+states']);
+  self.__states_dcls = __states_dcls;
+
+  /*
+  {
+    '+states': {
+      full_name: null
+    }
+  }
+
+  should remove cache for `full_name` (compx, effect, ect)
+
+  */
+};
+
+
 var check = /initStates/gi;
 return function(self, props, original, params) {
+  updateStatesDcls(self, props, original);
   var typed_state_dcls = getTypedDcls(props['+states']) || {};
 
   checkApis(self, props, typed_state_dcls);
