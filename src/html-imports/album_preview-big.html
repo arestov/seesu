@@ -10,10 +10,10 @@
 	.album_preview-big:hover{
 		background: transparent;
 		}
-	.theme--dark .album_preview-big:hover{
+	:global(.theme--dark) .album_preview-big:hover{
 	background-color: #555;
 }
-.full-page .album_preview-big{
+:global(.full-page) .album_preview-big{
 	float:left;
 	}
 
@@ -24,7 +24,7 @@
 		background-color: transparent;
 		}
 
-	.theme--dark .album_preview-big img{
+	:global(.theme--dark) .album_preview-big img{
 	background-color: #666;
 }
 	.album_preview-big .full_album_name{
@@ -33,30 +33,30 @@
 		overflow: hidden;
 		bottom:0;
 		}
-	.full-page .album_preview-big .full_album_name{
+	:global(.full-page) .album_preview-big .full_album_name{
 		width:9rem;
 		height: 9.5rem;
 		}
-	.page-scheme .album_preview-big img{
+	:global(.page-scheme) .album_preview-big img{
 		height: 6rem;
 		width: 6rem;
 		}
-	.page-scheme .album_preview-big .full_album_name{
+	:global(.page-scheme) .album_preview-big .full_album_name{
 		margin-bottom: 1rem;
 		}
 	.full_album_name .album_name{
 		color: transparent;
 		}
-	.theme--dark .full_album_name .album_name{
+	:global(.theme--dark) .full_album_name .album_name{
 	color: #999;
 }
 </style>
 	<img src="" alt="" pv-anchor="imgc"/>
 	<div class="full_album_name">
-		<div class="desc hidden" pv-class="hidden: !album_year" pv-text="{{album_year}}"></div>
+		<div class="*desc *hidden" pv-class="*hidden: !album_year" pv-text="{{album_year}}"></div>
 		<div
 			class="artist_name_alb"
-			pv-class="hidden: can_hide_artist_name"
+			pv-class="*hidden: can_hide_artist_name"
 			pv-anchor="artist_name_c" pv-text="{{album_artist}}"></div>
 		<div class="album_name" pv-anchor="album_name_c" pv-text="{{album_name}}"></div>
 	</div>
