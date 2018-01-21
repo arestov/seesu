@@ -1,17 +1,29 @@
-'use strict';
+/* eslint strict: 0 */
 var gulp = require('gulp');
 var foreach = require("gulp-foreach");
 var path = require('path');
 
-gulp.task('index', function() {
+
+gulp.task('html-imports', function() {
+  return gulp.src(['src/html-imports/**/*'], {base: 'src'})
+    .pipe(gulp.dest('dist-envs/temp/html'));
+});
+
+gulp.task('index-src', copy(
+  ['src/index.html', 'src/components.html'],
+  'dist-envs/temp/html'
+));
+
+
+gulp.task('index', ['html-imports', 'index-src'], function() {
 	var fileinclude = require('gulp-file-include');
 	var deinline = require('./dev/gulp-extract-html-style');
 
-	return gulp.src('./src/index.html')
+	return gulp.src('dist-envs/temp/html/index.html')
 		.pipe(fileinclude({
 			indent: true,
 			prefix: '<!--import-',
-			suffix: '-->'
+			suffix: '-->',
 		}))
 		.pipe(deinline({noInject: true}))
 		.pipe(foreach(function(stream, f) {
