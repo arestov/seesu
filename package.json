@@ -45,6 +45,7 @@
     "gulp-zip": "3.2.0",
     "inspect-process": "^0.5.0",
     "postcss": "5.0.5",
+    "postcss-selector-parser": "^3.1.1",
     "xmldom": "0.1.19"
   },
   "dependencies": {
