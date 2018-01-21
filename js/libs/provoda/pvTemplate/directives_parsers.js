@@ -50,9 +50,6 @@ var createPropChange = (function() {
 })();
 
 
-
-
-
 var regxp_props_com = /\S[\S\s]*?\:[\s]*?\{\{[\S\s]+?\}\}/gi;
 var regxp_props_com_soft = /\S[\S\s]*?\:[\s]*?(?:\{\{[\S\s]+?\}\})|(?:\S+?(\s|$))/gi;
 var regxp_props_spaces = /^\s*|s*?$/;
@@ -60,6 +57,31 @@ var regxp_props_coms_part = /\s*\:\s*?(?=\{\{)/;
 var regxp_props_statement = /(^\{\{)|(\}\}$)/gi;
 
 var getFieldsTreesBases = StandartChange.getFieldsTreesBases;
+
+var exp = /\S+\s*\:\s*(\{\{.+?\}\}|\S+)/gi;
+var two_part = /(\S+)\s*\:\s*(?:\{\{(.+?)\}\}|(\S+))/;
+
+var createPVClassParse = function(wrapItem) {
+  return function(node, full_declaration, directive_name) {
+    var statements = full_declaration.match(exp);
+    if (!statements.length) { return; }
+
+    var result = [];
+    for (var i = statements.length - 1; i >= 0; i--) {
+      var parts = statements[i].match(two_part);
+      var class_name = parts[1];
+      var condition = parts[2] || parts[3];
+      if (!class_name || !condition) {
+        throw new Error('wrong statement: ' + statements[i]);
+      }
+
+      result.push(wrapItem(class_name, condition, node, directive_name));
+    }
+
+    return result;
+
+  }
+}
 
 var getIndexList = function(obj, arr) {
   var result = arr || [];
@@ -184,33 +206,17 @@ return {
 
       };
 
-      var exp = /\S+\s*\:\s*(\{\{.+?\}\}|\S+)/gi;
-      var two_part = /(\S+)\s*\:\s*(?:\{\{(.+?)\}\}|(\S+))/;
-      return function(node, full_declaration, directive_name) {
-        var statements = full_declaration.match(exp);
-        if (!statements.length) { return; }
+      var parsePVClass = createPVClassParse(function(class_name, condition, node, directive_name) {
+        return new StandartChange(node, {
+          data: class_name,
+          statement: condition,
+          getValue: getClassName,
+          setValue: setClassName,
+          simplifyValue: Boolean
+        }, class_name + '$' + directive_name)
+      });
 
-        var result = [];
-        for (var i = statements.length - 1; i >= 0; i--) {
-          var parts = statements[i].match(two_part);
-          var class_name = parts[1];
-          var condition = parts[2] || parts[3];
-          if (!class_name || !condition) {
-            throw new Error('wrong statement: ' + statements[i]);
-          }
-
-          result.push(new StandartChange(node, {
-            data: class_name,
-            statement: condition,
-            getValue: getClassName,
-            setValue: setClassName,
-            simplifyValue: Boolean
-          }, class_name + '$' + directive_name));
-
-        }
-
-        return result;
-      };
+      return parsePVClass;
     })(),
     'pv-props': function(node, full_declaration, directive_name) {
       var result = [];
