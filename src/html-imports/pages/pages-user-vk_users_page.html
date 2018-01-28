@@ -1,0 +1,38 @@
+<style>
+.vk_friend-base-preview{
+	overflow: hidden;
+	margin-bottom: 1rem;
+	padding: 0.5rem;
+	border-radius: 0.2rem;
+	cursor: pointer;
+	}
+	.vk_friend-base-preview:hover{
+		background-color:transparent;
+	}
+	.theme--dark .vk_friend-base-preview:hover{
+	background-color: #555;
+}
+	.vk_friend-ava{
+		float:left;
+		height: 4.58rem;
+		width: 4.58rem;
+		margin-right:1rem;
+		}
+	.vk_friend-desc{
+		font-size: 0.8em;
+		color:transparent;
+	}
+	.theme--dark .vk_friend-desc{
+	color: #8C8C8C;
+}
+</style>
+<!-- userslist -->
+<div class="vk_users_page usual_page">
+	<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click:followTo" pv-type="way-point">
+		<img class="vk_friend-ava" src="" alt="" pv-props="
+			src: {{ava_image.url}}">
+		<div class="vk_friend-desc">
+			<span pv-text="{{big_desc}}"></span>
+		</div>
+	</div>
+</div>
