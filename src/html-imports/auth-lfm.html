@@ -1,0 +1,48 @@
+<style>
+.lfm-finish{
+	display:none;
+	opacity:0.3;
+}
+.deep-sandbox .lfm-finish{
+	display:block;
+}
+.lfm-finish .lfm-code{
+	margin-right: 1.72rem;
+	width: 314px;
+}
+.waiting-auth .lfm-finish{
+	opacity:1;
+}
+
+.lfm-auth-module .auth-block{
+	overflow: hidden;
+}
+
+.lastfm-auth-bp{
+	float:right;
+	margin-left:1rem;
+}
+</style>
+<div class="lfm-auth-module">
+	<div class="auth-block">
+		<p>
+			<span class="button-hole lastfm-auth-bp">
+				<a class="nicebutton lang localize-grant">grant</a>
+			</span>
+			<span class="lfm-auth-request-desc"></span>
+		</p>
+
+		<div class="lfm-finish">
+			<div class="lang localize-enter-code">
+				Enter here code
+			</div>
+			<div>
+				<input type="text" placeholder='Put your code here' class="lfm-code"/>
+				<span class="button-hole">
+					<a class="use-lfm-code nicebutton lang localize-use-code">Use code</a>
+				</span>
+
+			</div>
+		</div>
+	</div>
+</div>
