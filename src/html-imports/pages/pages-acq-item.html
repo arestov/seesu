@@ -1,0 +1,29 @@
+<style>
+.people-image{
+  float:left;
+  margin-right:1rem;
+}
+.people-image img{
+  width: 50px;
+  height: 50px;
+  }
+.button-place-people-el .button-hole{
+	margin-top:7px;
+}
+
+</style>
+<div class="people-list-item-inner">
+	<div class="people-image">
+		<img
+			src="https://vk.com/images/camera_b.gif"
+			pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+	</div>
+	<div class="button-place-people-el" pv-anchor="button_place" pv-when="needs_accept_b">
+		<span class="button-hole"><a class="nicebutton" pv-text="{{lo_accept_inv}}" pv-events="click::acceptInvite"></a></span>
+		<!-- needs_accept_b -->
+	</div>
+	<div class="p-link-place" pv-when="userlink" pv-anchor="link_place">
+		<a href="" pv-props="href: {{userlink.href}}" pv-text="{{userlink.text}}"></a>
+	</div>
+	<span class="desc" pv-when="after_accept_desc" pv-text="{{after_accept_desc}}"></span>
+</div>

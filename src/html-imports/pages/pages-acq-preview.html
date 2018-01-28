@@ -1,0 +1,37 @@
+<style type="text/css">
+.user_acqes-preview{
+	cursor: pointer;
+	opacity: 0.5;
+	margin-top: 0.2rem;
+	overflow: hidden;
+	}
+	.user_acqes-preview img{
+		width:25px;
+		height:25px;
+		}
+	.user_acqes-preview:hover{
+		opacity: 0.8;
+		}
+	.user_acqes-preview:active{
+		opacity: 1;
+		}
+	.page-scheme .user_acqes-preview{
+		display: none;
+		}
+	.user_acq_preview_item {
+		float:left;
+	}
+</style>
+<div class="user_acqes-preview" pv-events="click:requestPage">
+	<span pv-nest="acqs_from_someone" class="user_acq_preview_item">
+		<img
+			src="https://vk.com/images/camera_b.gif"
+			pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+	</span>
+	<span pv-nest="acqs_from_me"  class="user_acq_preview_item">
+		<img
+			src="https://vk.com/images/camera_b.gif"
+			pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+	</span>
+
+</div>

@@ -1,0 +1,44 @@
+<style type="text/css">
+
+.people-l-wide .people-list-item{
+	width:238px;
+}
+
+.people-list-item {
+	overflow: hidden;
+	}
+	.people-list-item .desc{
+		display:block;
+		font-size:0.8rem;
+		line-height:1.4;
+	}
+
+
+.full-page .people-list{
+	overflow:hidden;
+	}
+	.full-page .people-list>li{
+		float:left;
+		margin-bottom:1rem;
+		padding-right:1rem;
+	}
+</style>
+
+<div class="relations_page usual_page">
+	<div class="relations-invites-wrap">
+		<h3 pv-text="{{lo_from_people}}"></h3>
+		<ul class="people-list people-l-wide">
+			<li pv-nest='acqs_from_someone' class="people-list-item">
+				<!--pv-replace sample_name:people-list-item-inner-->
+			</li>
+		</ul>
+	</div>
+	<div class="relations-likes-wrap">
+		<h3 pv-text="{{lo_from_you}}"></h3>
+		<ul class="people-list people-l-wide">
+			<li pv-nest='acqs_from_me' class="people-list-item">
+				<!--pv-replace sample_name:people-list-item-inner-->
+			</li>
+		</ul>
+	</div>
+</div>
