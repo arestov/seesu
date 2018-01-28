@@ -12,14 +12,28 @@ module.exports = function(name, callback) {
 	      return done(new gutil.PluginError(name, 'Streams are not supported!'));
 	    }
 
-	    callback.call(stream, options, file, encoding, function(err, result) {
+      var complete = function(err, result) {
 	    	var error = err && (typeof err == 'string' ?
 	    		new gutil.PluginError(name, err) : err);
 
 	    	setImmediate(function() {
 	    		done(error, result);
 	    	});
-	    });
+	    }
+
+	    var promise = callback.call(stream, options, file, encoding, complete);
+      if (!promise || !promise.then) {
+        return;
+      }
+
+      promise.then(function(result) {
+          complete(null, result);
+        }, function(err) {
+          complete(err);
+        }
+      );
+
+
 	  };
 	  return stream;
 	}

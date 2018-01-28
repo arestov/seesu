@@ -1,36 +1,28 @@
 var promisify = require('util').promisify;
 var parse = promisify(require('../sax-precise'))
-
 var postcss = require('postcss');
 
-
-
-// processor.process()
-
-
-// postcss.parse()
-
-var getStylesText = function(root) {
-  var styles = parse.select('style', root);
-
-  var uninlined = '';
-  for (var i = 0; i < styles.length; i++) {
-    uninlined += text(styles[i]);
-    // remove(styles[i]);
-  }
-
-  return uninlined;
-}
-
 var getClassFromCSS = function(root) {
-  var styles_text = getStylesText(root);
-  var css_root = postcss.parse(styles_text);
-  var list = [];
-  css_root.walkRules(function(rule) {
-    list.push(rule);
-  })
+  var parsed =  parse.select('style', root).map(function(node) {
+    return {
+      node: node,
+      css_root: postcss.parse(text(node)),
+    };
+  });
 
-  return list;
+  var list = [];
+
+  parsed.forEach(function(parsed) {
+    parsed.css_root.walkRules(function(rule) {
+      list.push(rule);
+    })
+
+  });
+
+  return {
+    style_nodes: parsed,
+    rules: list
+  };
 }
 
 
