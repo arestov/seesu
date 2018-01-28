@@ -1,0 +1,18 @@
+<style>
+.user_tag{
+
+	}
+	.user_tag-count{
+		display: inline-block;
+		width: 50px;
+	}
+</style>
+<div
+	class="user_tags_page usual_page">
+	<ul>
+		<li pv-nest="tags" class="user_tag" pv-events="click:requestPage" pv-type="way-point">
+			<span class="user_tag-count" pv-text="{{count}}"></span>
+			<span class="user_tag-name" pv-text="{{tag_name}}"></span>
+		</li>
+	</ul>
+</div>
