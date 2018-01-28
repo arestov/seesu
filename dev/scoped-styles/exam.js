@@ -8,7 +8,7 @@ var examHTML = require('./exam-html');
 
 var processor = require('postcss-selector-parser')();
 
-var testPath = '../../src/html-imports/album_preview-big.html';
+var testPath = '../../src/html-imports/artist_preview-base.html';
 
 // console.log(path.resolve(testPath))
 var parsed = readFile(testPath, 'utf8')
@@ -21,7 +21,7 @@ parsed
   return Promise.all([examCSS(root), examHTML(root)]);
 })
 .then(function(values) {
-  var cls_css = values[0];
+  var cls_css = values[0].rules;
   var cls_html = values[1];
   var css_parsed = cls_css.map(parseRule);
 
@@ -58,10 +58,12 @@ var getCSSIndex = function(css_parsed) {
 }
 
 function parseRule(rule) {
-  var parsed_selector = processor.astSync(rule.selector).nodes[0].nodes;
-  console.log(parsed_selector);
+  var root = processor.astSync(rule.selector);
+  var parsed_selector = root.nodes[0].nodes;
+  // console.log(parsed_selector);
   return {
     rule: rule,
+    selector_root: root,
     parsed_selector: parsed_selector,
   };
 }
@@ -71,12 +73,14 @@ function checkCSS(css_parsed, cls_html) {
   console.log('CSS:');
 
   css_parsed.forEach(function(parsed){
-    parsed.parsed_selector.forEach(function(part) {
+    parsed.selector_root.walkClasses(function(part) {
       if (part.type !== 'class') {
         return;
       }
 
-      // console.log("index[part.value]", index[part.value])
+      if (part.parent.parent.value === ':global') {
+        return;
+      }
 
       if (!html_index[part.value]) {
         console.warn(part.value, '\t', parsed.rule.selector);
@@ -84,15 +88,14 @@ function checkCSS(css_parsed, cls_html) {
         // console.log("ok", part.value);
       }
 
-    })
-
+    });
   });
 }
 
 function checkHTML(css_parsed, cls_html) {
   var index = getCSSIndex(css_parsed);
 
-  console.log(index);
+  // console.log(index);
 
   console.log('HTML:');
 

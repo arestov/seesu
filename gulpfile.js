@@ -7,8 +7,10 @@ var path = require('path');
 
 gulp.task('html-imports', function() {
   var deinline = require('./dev/gulp-extract-html-style');
+  var cssmodules = require('./dev/scoped-styles/compile');
 
   return gulp.src(['src/html-imports/**/*.html'], {base: 'src'})
+    // .pipe(cssmodules())
     .pipe(deinline({noInject: true}))
     .pipe(gulp.dest('dist-envs/temp/html'));
 });
