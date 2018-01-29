@@ -696,7 +696,8 @@ var WebAppView = spv.inh(AppBaseView, {}, {
       window_width: wd.innerWidth
     });
     if (this.ui_samples_csel) {
-      this.els.ui_samples = this.c.find(this.ui_samples_csel);
+      var samples_root = this.c.find(this.ui_samples_csel);
+      this.els.ui_samples = samples_root.add(samples_root.children('.templates-wrap'));
     }
   },
   ui_samples_csel: '#ui-samples'
