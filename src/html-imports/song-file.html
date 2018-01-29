@@ -1,3 +1,13 @@
+<li
+	class="song-file mopla-item"
+	pv-type="{{!selected && vis_wp_usable && 'way-point'}}"
+	pv-events="click:selectFile"
+	pv-class="
+		mf-unavailable: unavailable
+		buffering-progress: buffering_progress
+		playing-file: {{ play == 'play' }}
+		selected-mf: selected
+	">
 <style>
 .pc-indicator{
 	display:inline-block;
@@ -267,16 +277,6 @@
 }
 
 </style>
-<li
-	class="song-file mopla-item"
-	pv-type="{{!selected && vis_wp_usable && 'way-point'}}"
-	pv-events="click:selectFile"
-	pv-class="
-		mf-unavailable: unavailable
-		buffering-progress: buffering_progress
-		playing-file: {{ play == 'play' }}
-		selected-mf: selected
-	">
 	<span
 		class="play-button-place"
 		pv-type="{{selected && 'way-point'}}"

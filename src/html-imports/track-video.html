@@ -1,27 +1,4 @@
 <ul class="track-video" >
-	<li class="you-tube-video-link"
-		pv-nest="yt_videos"
-		pv-props="title:{{nav_title}}"
-		pv-events="click|sp,pd::requestVideo"
-		pv-type="way-point"
-		pv-class="cant-show: cant_show">
-		<a class='video-preview external' pv-props="href:{{ yt_id && 'http://www.youtube.com/watch?v=' + yt_id }}">
-			<img  alt="" class="whole" pv-props="src:{{previews.default}}" pv-when="!triple"/>
-			<span class="preview-slicer" pv-repeat="pict in triple">
-				<img
-					class="preview-part" alt=""
-					pv-props="src:{{pict}}"
-					pv-class="
-						preview-start: $first
-						preview-middle: $middle
-						preview-end: {{ $last  }}
-						"
-				/>
-			</span>
-		</a>
-	</li>
-</ul>
-
 <style type="text/css">
 
 .track-video{
@@ -89,3 +66,25 @@ overflow: hidden;
 border-color:#9C9C9C;
 }
 </style>
+	<li class="you-tube-video-link"
+		pv-nest="yt_videos"
+		pv-props="title:{{nav_title}}"
+		pv-events="click|sp,pd::requestVideo"
+		pv-type="way-point"
+		pv-class="cant-show: cant_show">
+		<a class='video-preview external' pv-props="href:{{ yt_id && 'http://www.youtube.com/watch?v=' + yt_id }}">
+			<img  alt="" class="whole" pv-props="src:{{previews.default}}" pv-when="!triple"/>
+			<span class="preview-slicer" pv-repeat="pict in triple">
+				<img
+					class="preview-part" alt=""
+					pv-props="src:{{pict}}"
+					pv-class="
+						preview-start: $first
+						preview-middle: $middle
+						preview-end: {{ $last  }}
+						"
+				/>
+			</span>
+		</a>
+	</li>
+</ul>

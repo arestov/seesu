@@ -1,3 +1,12 @@
+<form
+	id="search"
+	name="search"
+	action='/o'
+	method="get"
+	class=""
+	pv-class="hidden: !show_search_form"
+	pv-events="submit:preventSubmit"
+>
 <style>
 #search{
 	padding-top:1rem;
@@ -69,15 +78,6 @@
 	}
 
 </style>
-<form
-	id="search"
-	name="search"
-	action='/o'
-	method="get"
-	class=""
-	pv-class="hidden: !show_search_form"
-	pv-events="submit:preventSubmit"
->
   <!-- google stat for custom search in browsers -->
   <div>
     <input type="hidden" name="utm_source" value="web_app" id="app_type">

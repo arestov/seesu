@@ -1,3 +1,8 @@
+<div class="album_preview-big"
+	pv-events="click:requestPage"
+	pv-type="way-point"
+	pv-props="title: {{album_name}}"
+	>
 <style type="text/css">
 .album_preview-big{
 	cursor: pointer;
@@ -46,11 +51,6 @@
 	color: #999;
 }
 </style>
-<div class="album_preview-big"
-	pv-events="click:requestPage"
-	pv-type="way-point"
-	pv-props="title: {{album_name}}"
-	>
 	<img src="" alt="" pv-anchor="imgc"/>
 	<div class="full_album_name">
 		<div class="desc hidden" pv-class="hidden: !album_year" pv-text="{{album_year}}"></div>

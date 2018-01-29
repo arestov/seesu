@@ -1,3 +1,8 @@
+<div class="playlist-container"
+	pv-class="
+		has-files-in-songs: can_play
+		show-zoom-to-track: {{ !vis_overview && !mp_has_focus }}
+		">
 <style>
 .playlist-container{
 	padding-top: 4px;
@@ -31,11 +36,6 @@
 }
 
 </style>
-<div class="playlist-container"
-	pv-class="
-		has-files-in-songs: can_play
-		show-zoom-to-track: {{ !vis_overview && !mp_has_focus }}
-		">
 	<!--pv-replace sample_name:playlist_panel-->
 
 	<ul

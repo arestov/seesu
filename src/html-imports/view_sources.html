@@ -1,3 +1,4 @@
+<div class="view_sources hidden" pv-class="hidden: !view_sources.length">
 <style type="text/css">
 .view_sources {
 	margin-top:1rem;
@@ -19,7 +20,6 @@
 	padding: 0 1rem;
 }
 </style>
-<div class="view_sources hidden" pv-class="hidden: !view_sources.length">
 	Powered by
 	<div>
 		<a class="external data_source_link" pv-repeat="source in view_sources" pv-text="{{source}} " pv-props="href:{{'http://' + source}}"></a>
