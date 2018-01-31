@@ -27,7 +27,7 @@ module.exports = plugin('gulp-extract-html-style', function (options, file, enc,
 			remove(styles[i]);
 		}
 
-		var file_path = './uninlined.css';
+		var file_path = options.file_path;
 
 		stream.push(copyFile(file, uninlined.replace(/^\s+\n|$/gi,''), file_path));
 
