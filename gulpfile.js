@@ -25,7 +25,7 @@ gulp.task('index', ['html-imports', 'index-src'], function() {
 			prefix: '<!--import-',
 			suffix: '-->',
 		}))
-		.pipe(deinline({noInject: true}))
+		.pipe(deinline({noInject: true, file_path: './uninlined.css'}))
 		.pipe(foreach(function(stream, f) {
 			if (path.basename(f.path) == 'index.html') {
 				return stream.pipe(gulp.dest('./'));
