@@ -1,0 +1,69 @@
+<style>
+.row-listeners-context{
+	margin-top:14px;
+}
+.soft_auth_con {
+	color:transparent;
+	padding: 0.5rem 1rem 0;
+	}
+.theme--dark .soft_auth_con{
+	color:#999;
+}
+	.soft_auth_con .vk-login-context{
+		padding: 0;
+		margin: 0;
+		}
+.people-list-desc{
+	margin-top:-1rem;
+	font-size:1rem;
+	}
+</style>
+<div class="song-row-content row-listeners-context" pv-when="vswitched_select">
+
+  <div class="big-listener-info" pv-nest="selected">
+    <div class="big-user-avatar">
+      <img class="big-user-avatar--img" alt="user photo" pv-props="src:{{info.photo_big}}">
+    </div>
+    <div pv-when="rel">
+      <a
+        pv-when="userlink"
+        pv-text="{{userlink.text}}"
+        pv-props="href:{{userlink.href}}"></a>
+
+      <span
+        pv-when="remain_time_desc"
+        pv-text="{{remain_time_desc}}"></span>
+
+      <div pv-when="!invite_accepted && !rel.item.accepted">
+        <div pv-when="rel.item.from == user">
+          <span class="desc people-list-desc">
+            <span class="lang localize-user-want-you"></span>
+          </span>
+          <span class="button-hole">
+            <a class="nicebutton lang localize-accept-inv" pv-events="click::acceptInvite">Accept invite</a>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div pv-when="like_just_sended || (rel.item.to == user)">
+      <span class="desc people-list-desc">
+        <span class="lang localize-if-user-accept-i"></span>
+        <span class="lang localize-will-get-link"></span>
+      </span>
+    </div>
+
+    <div  pv-when="!rel.item && has_vk_auth && !current_user_has_photo">
+      <span class="button-hole">
+        <a class="nicebutton lang localize-vk_photo_update" pv-events="click::#getPhotoFromVK">Get photo from my vk.com profile</a>
+      </span>
+    </div>
+
+    <div pv-when="!like_just_sended && !rel.item && has_vk_auth && current_user_has_photo">
+      <span class="button-hole">
+        <a class="nicebutton lang localize-want-meet" pv-events="click::setLike">Want to meet!</a>
+      </span>
+    </div>
+
+    <div class="soft_auth_con" pv-anchor="auth_con"></div>
+  </div>
+</div>
