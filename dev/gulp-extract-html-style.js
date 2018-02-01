@@ -14,8 +14,17 @@ function copyFile(src, data, name) {
 	});
 }
 
+var cssName = function(html_file) {
+  var parsed = path.parse(html_file.path);
+  return path.format({
+    name: parsed.name,
+    ext: '.css',
+  });
+};
+
 module.exports = plugin('gulp-extract-html-style', function (options, file, enc, done) {
 	var stream = this;
+
 	parse(file.contents.toString(), {}, function(err, root) {
 
 		if (err) {return done(err);}
@@ -27,9 +36,13 @@ module.exports = plugin('gulp-extract-html-style', function (options, file, enc,
 			remove(styles[i]);
 		}
 
-		var file_path = options.file_path;
+		var file_name = options.file_name || cssName(file);
 
-		stream.push(copyFile(file, uninlined.replace(/^\s+\n|$/gi,''), file_path));
+    var content = uninlined.replace(/^\s+\n|$/gi,'');
+    if (content) {
+      stream.push(copyFile(file, content, file_name));
+    }
+
 
 		if (options && options.noInject) {
 			stream.push(copyFile(file, parse.stringify(root)));
@@ -38,7 +51,7 @@ module.exports = plugin('gulp-extract-html-style', function (options, file, enc,
 
 		var head = parse.select('head', root);
 
-		parse('<link src="' + file_path + '" rel="stylesheet"/>\n', {}, function(err, parsed) {
+		parse('<link src="' + file_name + '" rel="stylesheet"/>\n', {}, function(err, parsed) {
 			if (err) {return done(err);}
 
 			append(head[0], parsed[0]);

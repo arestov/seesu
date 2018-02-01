@@ -6,7 +6,10 @@ var path = require('path');
 
 
 gulp.task('html-imports', function() {
-  return gulp.src(['src/html-imports/**/*'], {base: 'src'})
+  var deinline = require('./dev/gulp-extract-html-style');
+
+  return gulp.src(['src/html-imports/**/*.html'], {base: 'src'})
+    .pipe(deinline({noInject: true}))
     .pipe(gulp.dest('dist-envs/temp/html'));
 });
 
@@ -26,7 +29,7 @@ gulp.task('index', ['html-imports', 'index-src'], function() {
 			prefix: '<!--import-',
 			suffix: '-->',
 		}))
-		.pipe(deinline({noInject: true, file_path: './uninlined.css'}))
+		.pipe(deinline({noInject: true, file_name: './uninlined.css'}))
 		.pipe(foreach(function(stream, f) {
 			if (path.basename(f.path) == 'index.html') {
 				return stream.pipe(gulp.dest('./'));
@@ -59,6 +62,7 @@ gulp.task('css', gulp.parallel(['index'], function() {
 		'css/song-image-con.css',
 		'css/abs_layout.css',
 		'css/pv-layout.css',
+    'dist-envs/temp/html/**/*.css',
 		'dist-envs/temp/uninlined.css'
 	];
 
