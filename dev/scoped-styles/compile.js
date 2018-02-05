@@ -60,7 +60,7 @@ function getCSSIndex (css_parsed) {
 function checkHTML(css_parsed, cls_html) {
   var index = getCSSIndex(css_parsed);
 
-  console.log(index);
+  // console.log(index);
 
   console.log('HTML:');
 
@@ -82,15 +82,27 @@ function replaceStyles(item, html_index) {
   css_root.walkRules(function(rule) {
     var selector_wrap = parseRule(rule);
 
-
+    // console.log('selector_wrap', selector_wrap)
     // .walkCombinators
+
+    // selector_wrap.rule.selector = ''
 
     selector_wrap.selector_root.walkClasses(function(part) {
       if (part.type !== 'class') {
         return;
       }
 
-      if (part.parent.parent.value === ':global') {
+      var combSelector = part.parent;
+      var comb = combSelector.parent;
+
+      if (comb && comb.value === ':global') {
+        // console.log('selector_wrap.selector_root', selector_wrap.selector_root)
+
+        var realSelector = comb.parent;
+
+        combSelector.remove();
+        realSelector.insertBefore(comb, combSelector);
+        comb.remove();
 
         return;
       }
@@ -102,12 +114,31 @@ function replaceStyles(item, html_index) {
       }
 
     });
+
+    selector_wrap.rule.selector = selector_wrap.selector_root.toString();
   })
   return css_root.toString();
 }
 
-function replaceText(node, newText) {
+function text(node) {
+	if (node.type == 'text') {
+		return node.data;
+	}
+	if (node.o.type =='node') {
+		var result = '';
+		for (var i = 0; i < node.children.length; i++) {
 
+			result += text(node.children[i]);
+		}
+		return result;
+	}
+	return '';
+}
+
+function replaceText(node, newText) {
+  var first = node.children[0];
+  first.data = newText;
+  node.children = [first];
 }
 
 function replaceCSS(css, cls_html) {
@@ -143,26 +174,30 @@ function checkCSS(css_parsed, cls_html) {
 
 module.exports = plugin('gulp-compile-scoped-styles', function(options, file, enc, done) {
   var content = file.contents.toString();
-  console.log(file);
+  console.log(file.path);
   // console.log('!!!!!!!!!!!!!!', content)
   var html_root = parse(content, {});
 
-  return Promise.all([examCSS(html_root), examHTML(html_root)])
-    .then(function(values) {
-      var css = values[0];
-      var cls_css = css.rules;
-      var cls_html = values[1];
+  return html_root.then(function(html_root) {
+    return Promise.all([examCSS(html_root), examHTML(html_root)])
+      .then(function(values) {
+        var css = values[0];
+        var cls_css = css.rules;
+        var cls_html = values[1];
 
-      var css_parsed = cls_css.map(parseRule);
+        var css_parsed = cls_css.map(parseRule);
 
-      checkHTML(css_parsed, cls_html);
-      replaceCSS(css, cls_html);
+        checkHTML(css_parsed, cls_html);
+        checkCSS(css_parsed, cls_html);
 
-      return html_root;
-    })
-    .then(function(html_root) {
-      return copyFile(file, parse.stringify(html_root));
-    });
+        replaceCSS(css, cls_html);
+
+        return html_root;
+      })
+      .then(function(html_root) {
+        return copyFile(file, parse.stringify(html_root));
+      });
+  })
 
   // done(null, );
 

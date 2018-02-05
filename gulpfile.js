@@ -10,7 +10,7 @@ gulp.task('html-imports', function() {
   var cssmodules = require('./dev/scoped-styles/compile');
 
   return gulp.src(['src/html-imports/**/*.html'], {base: 'src'})
-    // .pipe(cssmodules())
+    .pipe(cssmodules())
     .pipe(deinline({noInject: true}))
     .pipe(gulp.dest('dist-envs/temp/html'));
 });
