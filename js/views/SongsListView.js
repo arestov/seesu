@@ -6,6 +6,7 @@ var etc_views = require('./etc_views');
 var coct = require('./coct');
 var spv = require('spv');
 var View = require('View');
+var ActionsRowUI = require('./common/ActionsRowUI');
 
   var PlaylistSettingsRowView = spv.inh(View, {}, {
     "stch-dont_rept_pl": function(target, state) {
@@ -20,7 +21,7 @@ var View = require('View');
     }
   });
 
-  var PlARowView = spv.inh(etc_views.ActionsRowUI, {}, {
+  var PlARowView = spv.inh(ActionsRowUI, {}, {
 
     canUseWaypoints: function() {
       return this.parent_view.state('mp_has_focus');

@@ -7,7 +7,7 @@ var etc_views = require('./etc_views');
 var SongActTaggingControl = require('./SongActTaggingControl');
 var View = require('View');
 var used_struc_bhv = require('./utils/used_struc').bhv;
-
+var ActionsRowUI = require('./common/ActionsRowUI');
 
 var pvUpdate = pv.update;
 var ShareSearchSection = spv.inh(View, {}, {
@@ -157,7 +157,7 @@ var ScrobbleRowUI = spv.inh(View, {}, {
 
 });
 
-var ArrowPart = spv.inh(etc_views.ActionsRowUI, {}, {
+var ArrowPart = spv.inh(ActionsRowUI, {}, {
   // bindBase: function() {
   //   debugger;
   //   window.ee1 = this;
@@ -193,7 +193,7 @@ var Probe = spv.inh(View, {}, spv.cloneObj({
 }, used_struc_bhv));
 
 
-var SongActionsRowUI = spv.inh(etc_views.ActionsRowUI, {}, {
+var SongActionsRowUI = spv.inh(ActionsRowUI, {}, {
 	dom_rp: true,
 	bindBase: function(){
 		this._super();
