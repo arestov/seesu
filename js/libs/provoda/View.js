@@ -387,6 +387,8 @@ var View = spv.inh(StatesEmitter, {
       this.tpl = tpl;
     }
 
+    tpl.root_node_raw._provoda_view = this;
+
     return tpl;
   },
   addTemplatedWaypoint: function(wp_wrap) {
@@ -532,6 +534,10 @@ var View = spv.inh(StatesEmitter, {
       } else if (this.createBase){
         this.createBase();
       }
+    }
+
+    if (this.c) {
+      this.c._provoda_view = this;
     }
   },
   requestDetailesCreating: function() {
