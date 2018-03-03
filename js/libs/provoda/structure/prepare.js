@@ -19,15 +19,16 @@ var Probe = spv.inh(Model, {
   'stch-used_struc': function(self, value) {
     console.log('GOT used_struc', value);
   },
-  'compx-struc': [
-		['used_struc', '@current_md', 'name'],
-		function(struc, pioneer, probe_name) {
-			// if (num == -2) {return}
-      debugger;
-			if (!struc || !pioneer || !probe_name) {return;}
-			return getUsageStruc(pioneer, probe_name, struc, this.app);
-		}
-	],
+  '+states': {
+    struc: [
+      "compx", ['used_struc', '@current_md', 'name'],
+  		function(struc, pioneer, probe_name) {
+  			// if (num == -2) {return}
+  			if (!struc || !pioneer || !probe_name) {return;}
+  			return getUsageStruc(pioneer, probe_name, struc, this.app);
+  		}
+  	],
+  }
   // 'compx-struc': [
   //   ['@one:struc:owner_bwlev', 'name'],
   //   function(struc, name) {

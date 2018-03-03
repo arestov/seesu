@@ -162,12 +162,15 @@ var ArrowPart = spv.inh(ActionsRowUI, {}, {
   //   debugger;
   //   window.ee1 = this;
   // },
-  'compx-active_part': [
-    ['vis_con_appended', '^current_md$exists', 'url_part'],
-    function(vis_con_appended, parent_visible, url_part) {
-      return vis_con_appended && parent_visible && url_part && url_part.slice(1);
-    }
-  ],
+  '+states': {
+    'active_part': [
+      "compx", ['vis_con_appended', '^current_md$exists', 'url_part'],
+      function(vis_con_appended, parent_visible, url_part) {
+        return vis_con_appended && parent_visible && url_part && url_part.slice(1);
+      }
+    ],
+  },
+
   getCurrentButton: function() {
     var active_part = this.state('active_part');
     if (active_part) {
