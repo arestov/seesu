@@ -2,6 +2,9 @@ var promisify = require('util').promisify;
 var parse = promisify(require('../sax-precise'))
 
 // var path = require('path');
+// button_selected: mp_show
+// moplas_source-unavailable: {{  search_complete && !has_files }} disabled_search: disable_search
+
 
 var exp = /\S+\s*\:\s*(\{\{.+?\}\}|\S+)/gi;
 var two_part = /(\S+)\s*\:\s*(?:\{\{(.+?)\}\}|(\S+))/;
