@@ -1,7 +1,7 @@
 define(function(require) {
 'use strict';
 
-// var spv = require('spv');
+var spv = require('spv');
 // var app_serv = require('app_serv');
 // var pv = require('pv');
 // var $ = require('jquery');
@@ -18,10 +18,26 @@ var AppModel = require('js/models/AppModelBase');
 // var localize_dict = require('js/libs/localizer');
 // var route = require('./modules/route');
 // var initAPIs = require('./initAPIs');
-// var prepare = require('js/libs/provoda/structure/prepare');
+var prepare = require('js/libs/provoda/structure/prepare');
 // var SearchQueryModel = require('./models/SearchQueryModel');
 
-var App = spv.inh(AppModel, {}, {});
+var App = spv.inh(AppModel, {}, {
+  init: function(self, opts) {
+    self.app = self;
+  },
+  '+states': {
+    'full_name': [
+      'compx',
+      ['first_name', 'last_name'],
+      function(first_name, last_name) {
+        if (!first_name || !last_name) {
+          return null;
+        }
+        return first_name + ' ' + last_name;
+      }
+    ]
+  }
+});
 
 
 return prepare(App);
