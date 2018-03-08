@@ -3,9 +3,9 @@ var requirejs = require('./nodejs/require-r-2.2.0.min.js');
 requirejs.config({
 	nodeRequire: require,
   paths: {
-		jquery: '../js/common-libs/jquery-2.1.4.min',
-		angbo: '../js/libs/provoda/StatementsAngularParser.min',
-    'js': '../js'
+		jquery: 'js/common-libs/jquery-2.1.4.min',
+		angbo: 'js/libs/provoda/StatementsAngularParser.min',
+    'js': 'js'
 	},
 	map: {
 		'*': {
@@ -32,7 +32,7 @@ requirejs.config({
 	// 		main: 'provoda'
 	// 	}
 	// ],
-  // baseUrl: __dirname,
+  baseUrl: __dirname,
 	// paths: {
 	// 	pv: 'js/libs/provoda/provoda',
 	// 	spv: 'js/libs/spv',
