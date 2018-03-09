@@ -5,11 +5,20 @@ var init = requirejs('test/init');
 
 var pv = requirejs('pv')
 var pvUpdate = pv.update;
+var pvState = pv.state;
 
+test('state updated', t => {
+  var app_model = init({}).app_model;
+  t.is(undefined, app_model.state('first_name'));
 
+  pvUpdate(app_model, 'first_name', 'John');
 
+  return waitFlow(app_model).then((app_model) => {
+    t.is('John', pvState(app_model, 'first_name'))
+  })
+});
 
-test('arrays are equal', t => {
+test('simple compx calculated', t => {
   var inited = init({
     '+states': {
       'full_name': [
@@ -27,25 +36,27 @@ test('arrays are equal', t => {
 
   var app_model = inited.app_model;
 
-  t.is(undefined, app_model.state('full_name'));
+  t.is(undefined, pvState(app_model, 'full_name'));
 
   pvUpdate(app_model, 'first_name', 'John');
   pvUpdate(app_model, 'last_name', 'Smith');
 
 
+  return waitFlow(app_model).then((app_model) => {
+    t.is("John Smith", pvState(app_model, 'full_name'));
+  });
+
+});
+
+function waitFlow(app_model) {
   return new Promise((resolve, reject) => {
     app_model.nextTick(() => {
       next(app_model, () => {
         resolve(app_model)
       })
     })
-
-  }).then((app_model) => {
-    t.is("John Smith", app_model.state('full_name'));
   });
-
-});
-
+}
 
 function next(app, cb) {
   app._calls_flow.pushToFlow(cb, null, null, null, null, null, {
