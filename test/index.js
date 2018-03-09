@@ -1,11 +1,11 @@
 import test from 'ava';
 
 var requirejs = require('../requirejs-config');
-var init = requirejs('test/init');
-
 var pv = requirejs('pv')
-var pvUpdate = pv.update;
-var pvState = pv.state;
+var pvUpdate = requirejs('pv/update');
+var pvState = requirejs('pv/state');
+
+var init = requirejs('test/init');
 
 test('state updated', t => {
   var app_model = init({}).app_model;
