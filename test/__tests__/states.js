@@ -7,6 +7,8 @@ var pvState = requirejs('pv/state');
 
 var init = requirejs('test/init');
 
+var waitFlow = require('../waitFlow');
+
 test('state updated', t => {
   var app_model = init({}).app_model;
   t.is(undefined, app_model.state('first_name'));
@@ -47,20 +49,3 @@ test('simple compx calculated', t => {
   });
 
 });
-
-function waitFlow(app_model) {
-  return new Promise((resolve, reject) => {
-    app_model.nextTick(() => {
-      next(app_model, () => {
-        resolve(app_model)
-      })
-    })
-  });
-}
-
-function next(app, cb) {
-  app._calls_flow.pushToFlow(cb, null, null, null, null, null, {
-    complex_order: [Infinity],
-    inited_order: [Infinity],
-  })
-}
