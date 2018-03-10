@@ -27,18 +27,6 @@ var Appartment = spv.inh(Model, {}, {
 test("nestings updated", (t) => {
   var person = init({
     'nest-appartment': [Appartment],
-    '+states': {
-      'full_name': [
-        'compx',
-        ['first_name', 'last_name'],
-        function(first_name, last_name) {
-          if (!first_name || !last_name) {
-            return null;
-          }
-          return first_name + ' ' + last_name;
-        }
-      ]
-    }
   }).app_model;
 
   return waitFlow(person).then((person) => {
