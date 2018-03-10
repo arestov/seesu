@@ -69,3 +69,58 @@ test("compx with nestings calculated", (t) => {
   })
 
 });
+
+test('compx calculated from parent and root states', t => {
+  var DeepestChild = spv.inh(Model, {}, {
+    '+states': {
+      'description_name': [
+        'compx',
+        ['#family_name', '^name', 'name'],
+        function(family_name, parent_name, name) {
+          return `${name} ${family_name}, son of ${parent_name}`
+        }
+      ]
+    }
+  });
+  var DeepChild = spv.inh(Model, {}, {
+    'nest-child': [DeepestChild],
+  });
+  var Child = spv.inh(Model, {}, {
+    'nest-child': [DeepChild],
+  });
+  var app = init({
+    'nest-child': [Child]
+  }).app_model;
+
+
+  return waitFlow(app).then((app) => {
+    const {
+      child,
+      deep_child,
+      deepest_child,
+    } = getModels(app);
+
+    pvUpdate(app, 'family_name', 'Smith');
+    pvUpdate(deep_child, 'name', 'John');
+    pvUpdate(deepest_child, 'name', 'Mike')
+
+    return waitFlow(app);
+  }).then(app => {
+    const { deepest_child } = getModels(app);
+    t.is('Mike Smith, son of John', pvState(deepest_child, 'description_name'));
+
+  })
+
+  function getModels(app) {
+    var child = getNesting(app, 'child');
+    var deep_child = getNesting(child, 'child')
+    var deepest_child = getNesting(deep_child, 'child')
+
+    return {
+      child,
+      deep_child,
+      deepest_child,
+    }
+  };
+
+});
