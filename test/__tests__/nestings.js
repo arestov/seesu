@@ -36,3 +36,36 @@ test("nestings updated", (t) => {
   })
 
 });
+
+test("compx with nestings calculated", (t) => {
+  var Brother = spv.inh(Model, {}, {});
+
+  var person = init({
+    'nest-brother': [Brother],
+    '+states': {
+      'richest': [
+        'compx',
+        ['@one:money:brother', 'money'],
+        function(broher_money, my_money) {
+          return broher_money < my_money;
+        }
+      ]
+    }
+  }).app_model;
+
+  person.nextTick(() => {
+    pvUpdate(getNesting(person, 'brother'), 'money', 15);
+    pvUpdate(person, 'money', 12);
+  })
+
+  return waitFlow(person).then((person) => {
+    t.is(false, pvState(person, 'richest'));
+
+    pvUpdate(person, 'money', 20);
+    return waitFlow(person);
+  }).then(person => {
+    t.is(true, pvState(person, 'richest'));
+
+  })
+
+});
