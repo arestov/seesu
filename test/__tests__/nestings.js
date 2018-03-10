@@ -12,19 +12,19 @@ var init = requirejs('test/init');
 
 var waitFlow = require('../waitFlow');
 
-var Appartment = spv.inh(Model, {}, {
-  '+states': {
-    'number': [
-      'compx',
-      [],
-      function() {
-        return  49588;
-      }
-    ]
-  }
-});
-
 test("nestings updated", (t) => {
+  var Appartment = spv.inh(Model, {}, {
+    '+states': {
+      'number': [
+        'compx',
+        [],
+        function() {
+          return  49588;
+        }
+      ]
+    }
+  });
+
   var person = init({
     'nest-appartment': [Appartment],
   }).app_model;
