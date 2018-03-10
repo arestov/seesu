@@ -12,9 +12,8 @@ return function fakeApp(props) {
     init: function(self, opts) {
       self.app = self;
     },
-    ...props,
   };
-  var App = spv.inh(AppModel, {}, all);
+  var App = spv.inh(AppModel, all, props);
   return prepare(App);
 }
 
