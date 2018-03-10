@@ -1,6 +1,6 @@
 import test from 'ava';
 
-var requirejs = require('../requirejs-config');
+var requirejs = require('../../requirejs-config');
 var pv = requirejs('pv')
 var pvUpdate = requirejs('pv/update');
 var pvState = requirejs('pv/state');

@@ -18,7 +18,7 @@
   "node-remote": "https://arestov.github.io",
   "scripts": {
     "gulp": "gulp",
-    "test": "ava test/index.js"
+    "test": "ava **/__tests__"
   },
   "devDependencies": {
     "autoprefixer": "6.0.2",
