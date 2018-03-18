@@ -3,6 +3,8 @@ define(function(require) {
 //app thread;
 var BrowseMap = require('js/libs/BrowseMap');
 var pv = require('pv')
+var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
+
 var pvUpdate = pv.update;
 
 var fakeApp = require('./fakeApp');
@@ -10,9 +12,9 @@ var fakeApp = require('./fakeApp');
 var env = {};
 
 // var root_bwlev = initBrowsing(app_model);
-return function init(app_props) {
+return function init(app_props, init) {
   var views_proxies = new pv.views_proxies.Proxies();
-  var App = fakeApp(app_props);
+  var App = fakeApp(app_props, init);
   var app_model = new App({
     _highway: {
       models_counters: 1,
@@ -24,6 +26,10 @@ return function init(app_props) {
       env: env
     }
   });
+
+  if (app_model.start_page) {
+    initBrowsing(app_model)
+  }
 
   return {
     app_model,
