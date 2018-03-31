@@ -11,7 +11,7 @@ var SeesuListening = require('./SeesuListening');
 
 var complexEach = app_serv.complexEach;
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 var sortByGif = spv.getSortFunc([{
     field: function(item) {
       var image = item.state('lfm_img');

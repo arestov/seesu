@@ -5,7 +5,7 @@ var comd = require('../comd');
 var spv = require('spv');
 var pv = require('pv');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
   init: function(target) {

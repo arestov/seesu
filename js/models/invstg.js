@@ -8,7 +8,7 @@ var cache_ajax = require('cache_ajax');
 var hex_md5 = require('hex_md5');
 var lastfm_data = require('js/lastfm_data');
 var base = require('./Investigation');
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var suParseArtistsResults = function() {
   return lfmhelp.parseArtistsResults.apply(this, arguments);

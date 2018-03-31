@@ -14,7 +14,7 @@ var pv = require('pv');
 var ArtistsList = ArtCard.ArtistsList;
 var AlbumsList = ArtCard.AlbumsList;
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 var cloneObj = spv.cloneObj;
 //
 var UserCardLFMLogin = spv.inh(LfmAuth.LfmLogin, {}, {

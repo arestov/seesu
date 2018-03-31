@@ -8,7 +8,7 @@ var SongActPlaylisting = require('./SongActPlaylisting');
 var SongActTaging = require('./SongActTaging');
 var SongActSharing = require('./SongActSharing');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
   init: function(target) {

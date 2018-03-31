@@ -3,7 +3,7 @@ define(function(require) {
 var pv = require('pv');
 var spv = require('spv');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var playRelative = function(mo, result) {
   if (result === true) {

@@ -9,7 +9,7 @@ var BrowseMap = require('js/libs/BrowseMap');
 
 var routePathByModels = BrowseMap.routePathByModels;
 var pvState = pv.state;
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var NotifyCounter = spv.inh(pv.Model, {
   naming: function(fn) {

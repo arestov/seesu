@@ -17,7 +17,7 @@ var finup = function(callback) {
 };
 
 var pvState = pv.state;
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var FileInTorrent = spv.inh(pv.Model, {
   init: function(target, opts, states, params) {

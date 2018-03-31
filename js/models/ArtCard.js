@@ -18,7 +18,7 @@ define(function(require) {
 
   var Song = require('./Song');
 var ArtCard;
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var ArtistAlbumSongs = spv.inh(SongsList, {
   init: function(target, opts, params) {

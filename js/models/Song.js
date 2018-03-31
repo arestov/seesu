@@ -18,7 +18,7 @@ var album_placeholder = {
   url: 'i/album_placeholder.png'
 };
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 function handleFile(self, file) {
   if (!file || !file.link) {

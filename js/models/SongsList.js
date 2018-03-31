@@ -144,7 +144,7 @@ var spv = require('spv');
   });
 
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 var HypemPlaylist = spv.inh(SongsList, {
   init: function(target) {
     target.can_use = target.app.hypem.can_send;

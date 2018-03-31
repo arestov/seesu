@@ -5,7 +5,7 @@ var app_serv = require('app_serv');
 var pv = require('pv');
 var spv = require('spv');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 var app_env = app_serv.app_env;
 var YoutubeVideo = spv.inh(BrowseMap.Model, {
   init: function(target, opts, params) {
