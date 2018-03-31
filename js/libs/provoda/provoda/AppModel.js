@@ -1,9 +1,9 @@
 define(function(require) {
 'use strict';
-var pv = require('pv');
+var pv = require('../provoda');
 var spv = require('spv');
-var BrowseMap = require('../libs/BrowseMap');
-var joinNavURL = require('js/libs/provoda/bwlev/joinNavURL');
+var BrowseMap = require('./BrowseMap');
+var joinNavURL = require('../bwlev/joinNavURL');
 
 
 var AppModelBase = spv.inh(pv.Model, {

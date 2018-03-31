@@ -1,6 +1,6 @@
 define(function(require) {
 "use strict";
-var AppModelBase = require('./AppModelBase');
+var AppModelBase = require('pv/AppModel');
 var spv = require('spv');
 var SongsList = require('./SongsList');
 var pv = require('pv');
