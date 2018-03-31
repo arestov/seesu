@@ -2,7 +2,7 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var AppModel = require('js/models/AppModelBase');
+var AppModel = require('pv/AppModel');
 var prepare = require('js/libs/provoda/structure/prepare');
 
 
