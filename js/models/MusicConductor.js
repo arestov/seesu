@@ -7,6 +7,8 @@ var BrowseMap = require('js/libs/BrowseMap');
 var lastfm_data = require('js/lastfm_data');
 var declr_parsers = require('js/modules/declr_parsers');
 var pv = require('pv');
+var pvUpdate = require('pv/update');
+
 
 var parent_focus = [['^mp_has_focus']];
 var heavyInitReactn = function(target, state) {
@@ -418,7 +420,7 @@ var CountryPlace = spv.inh(BrowseMap.Model, {}, {
       return;
     } else {
       this.heavy_inited = true;
-      pv.update(this, 'mp_alhf', true);
+      pvUpdate(this, 'mp_alhf', true);
     }
   }
 });

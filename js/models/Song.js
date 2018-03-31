@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var spv = require('spv');
 var app_serv = require('app_serv');
 var MfCorUsual = require('./MfCor');
@@ -51,7 +52,7 @@ function handleFile(self, file) {
         spec_image_wrap = omo.lfm_img;
       } else if (omo.lfm_image){
         spec_image_wrap = self.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
-        //pv.update(this, 'lfm_image', omo.lfm_image);
+        //pvUpdate(this, 'lfm_image', omo.lfm_image);
       }
       var images_pack;
 
@@ -335,7 +336,7 @@ function handleFile(self, file) {
         .on("error", this.hndMfcError, this.getContextOpts());
 
       pv.updateNesting(this, 'mf_cor', this.mf_cor);
-      pv.update(this, 'mf_cor', this.mf_cor);
+      pvUpdate(this, 'mf_cor', this.mf_cor);
 
     }),
 
@@ -343,7 +344,7 @@ function handleFile(self, file) {
       this.player.changeNowPlaying(this, mopla.state('play'));
       this.mopla = mopla;
       // pv.updateNesting(this, 'current_mopla', mopla);
-      // pv.update(this, 'play', mopla.state('play'));
+      // pvUpdate(this, 'play', mopla.state('play'));
     },
 
     hndMfcError: function(can_play) {

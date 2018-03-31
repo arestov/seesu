@@ -3,6 +3,7 @@ define(function(require) {
 var LoadableListBase = require('pv/LoadableList');
 var spv = require('spv');
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 
 var LoadableList = spv.inh(LoadableListBase, {
   naming: function(fn) {
@@ -33,13 +34,13 @@ var TagsList = spv.inh(LoadableList, {}, {
 
     if (!silent){
       //pv.updateNesting(this, this.main_list_name, main_list);
-      pv.update(this, this.main_list_name, [].concat(main_list));
+      pvUpdate(this, this.main_list_name, [].concat(main_list));
     }
   },
 
   dataListChange: function() {
     var main_list = this.getMainlist();
-    pv.update(this, this.main_list_name, [].concat(main_list));
+    pvUpdate(this, this.main_list_name, [].concat(main_list));
 
   },
 
@@ -48,7 +49,7 @@ var TagsList = spv.inh(LoadableList, {}, {
   },
 
   setPreview: function(list) {
-    pv.update(this, 'preview_list', list);
+    pvUpdate(this, 'preview_list', list);
   },
 
   showTag: function(tag_name) {

@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var spv = require('spv');
 var LoadableList = require('./LoadableList');
 
@@ -33,13 +34,13 @@ return spv.inh(LoadableList, {
     var key_name = 'cur_' + e.nesting_name;
     if (e.value != this[key_name]) {
       if (this[key_name]) {
-        pv.update(this[key_name], 'marked_as', false);
+        pvUpdate(this[key_name], 'marked_as', false);
       }
 
       this[key_name] = e.value;
 
       if (e.value) {
-        pv.update(e.value, 'marked_as', direction);
+        pvUpdate(e.value, 'marked_as', direction);
       }
     }
     //console.log(e.value, e.nesting_name);
@@ -433,7 +434,7 @@ return spv.inh(LoadableList, {
         }
       }
       pv.updateNesting(target, 'last_played_song', target.idx_player_song || target.getNesting('last_played_song'));
-      pv.update(target, 'last_played_song_start', Date.now());
+      pvUpdate(target, 'last_played_song_start', Date.now());
     },
 
     'stch-can-use-as-neighbour@songs-list': function(target, new_state, old, source) {
@@ -534,7 +535,7 @@ return spv.inh(LoadableList, {
     },
 
     markAsPlayable: function() {
-      pv.update(this, 'can_play', true);
+      pvUpdate(this, 'can_play', true);
     },
 
     makePlayable: function(full_allowing) {
@@ -562,7 +563,7 @@ return spv.inh(LoadableList, {
 
     wantListPlaying: function() {
       this.player.removeCurrentWantedSong();
-      pv.update(this, 'want_be_played', true);
+      pvUpdate(this, 'want_be_played', true);
 
       if (!this.getMainlist()[0]) {
         this.requestMoreData();
@@ -572,7 +573,7 @@ return spv.inh(LoadableList, {
 
       var _this = this;
       this.player.once('now_playing-signal', function() {
-        pv.update(_this, 'want_be_played', false);
+        pvUpdate(_this, 'want_be_played', false);
       });
     },
 

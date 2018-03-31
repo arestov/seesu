@@ -277,7 +277,7 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
     self.image = null;
     if (data.image){
       self.image = data.image;
-      pv.update(self, 'image', data.image);
+      pvUpdate(self, 'image', data.image);
     }
     if (data.resid){
       self.aid = data.resid;
@@ -333,7 +333,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
   "+states": {
     // init: function(){
     // 	this._super.apply(this, arguments);
-    // 	pv.update(this, 'mp_detailed', false);
+    // 	pvUpdate(this, 'mp_detailed', false);
     // },
 
 

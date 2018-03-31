@@ -462,14 +462,14 @@ return spv.inh(BrowseMap.Model, {
   markAs: function(neighbour, mo){
     if (!this.neighbour_for){
       this.neighbour_for = mo;
-      pv.update(this, 'marked_as', neighbour);
+      pvUpdate(this, 'marked_as', neighbour);
     }
   },
 
   unmark: function(mo){
     if (this.neighbour_for == mo){
       this.neighbour_for = null;
-      pv.update(this, 'marked_as', false);
+      pvUpdate(this, 'marked_as', false);
 
     }
   },
@@ -605,7 +605,7 @@ return spv.inh(BrowseMap.Model, {
   // 	this.findFiles();
   // },
   // updateFilesSearchState: function(opts){
-  // 	pv.update(this, 'files_search', opts);
+  // 	pvUpdate(this, 'files_search', opts);
   // 	this.checkChangesSinceFS(opts);
   // },
   investg_rq_opts: {
@@ -621,7 +621,7 @@ return spv.inh(BrowseMap.Model, {
   // 	this.updateFilesSearchState(e.value);
   // },
   // hndHasMp3Files: function(e) {
-  // 	pv.update(this, 'playable', e.value);
+  // 	pvUpdate(this, 'playable', e.value);
   // 	if (e.value){
   // 		this.map_parent.markAsPlayable();
   // 	}
