@@ -1,8 +1,8 @@
 define(function(require) {
 'use strict';
-var BrowseMap = require('js/libs/BrowseMap');
+var BrowseMap = require('./BrowseMap');
 var spv = require('spv');
-var pv = require('pv');
+var pv = require('../provoda');
 
 var initDeclaredNestings = require('js/libs/provoda/initDeclaredNestings');
 var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
