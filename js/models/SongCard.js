@@ -5,7 +5,7 @@ var spv = require('spv');
 var app_serv = require('app_serv');
 var morph_helpers = require('js/libs/morph_helpers');
 var user_music_lfm = require('./user_music_lfm');
-var LoadableListBase = require('./LoadableListBase');
+var LoadableListBase = require('pv/LoadableList');
 var SongsList = require('./SongsList');
 var SeesuListening = require('./SeesuListening');
 
