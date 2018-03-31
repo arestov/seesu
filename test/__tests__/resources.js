@@ -29,7 +29,7 @@ test("state loaded", (t) => {
         ['#fake', [
           ['someid'],
           function(api, opts, msq) {
-            return api.get('profiles/' + someid, {}, opts);
+            return api.get('profiles/' + 55, {}, opts);
           }
         ]]
       ]
