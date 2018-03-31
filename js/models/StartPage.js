@@ -1,6 +1,6 @@
 define(function(require) {
 "use strict";
-var BrowseMap = require('js/libs/BrowseMap');
+var BrowseMap = require('pv/BrowseMap');
 var ArtCard = require('./ArtCard');
 var SongCard = require('./SongCard');
 var TagsList = require('./TagPage');
