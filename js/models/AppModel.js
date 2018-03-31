@@ -5,7 +5,7 @@ var spv = require('spv');
 var SongsList = require('./SongsList');
 var pv = require('pv');
 var BrowseMap = require('../libs/BrowseMap');
-var routePathByModels = require('js/libs/provoda/routePathByModels');
+var routePathByModels = require('pv/routePathByModels');
 
 var AppModel = spv.inh(AppModelBase, {}, (function(){
 var props = {
