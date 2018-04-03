@@ -210,6 +210,7 @@ var SongActionsRowUI = spv.inh(ActionsRowUI, {}, {
 		}
 	]
 	},
+  'spyglass-song_action': [Probe],
 	getVHoleWidth: function() {
 		return this.tpl.ancs['v-hole'].width();
 	},
