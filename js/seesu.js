@@ -22,6 +22,7 @@ var SearchQueryModel = require('./models/SearchQueryModel');
 var effects = require('./app/effects')
 
 var pvUpdate = pv.update;
+var pvState = require('pv/state');
 
 var app_env = app_serv.app_env;
 

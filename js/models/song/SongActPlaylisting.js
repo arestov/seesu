@@ -5,6 +5,7 @@ var comd = require('../comd');
 var pv = require('pv');
 var pvUpdate = require('pv/update');
 var spv = require('spv');
+var pvUpdate = require('pv/update');
 var SongActPlaylisting;
 
 var playlistSuggest = spv.inh(invstg.BaseSuggest, {
