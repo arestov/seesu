@@ -18,6 +18,12 @@ var initProbes = require('./dcl_view/probe/init');
 var probeDestroy = require('./dcl_view/probe/destroy');
 var probeCheckChange = require('./dcl_view/probe/check-change');
 
+var initSpyglasses = require('./dcl_view/spyglass/init');
+var getRootBwlevView = require('./dcl_view/spyglass/getRootBwlevView');
+var getParentBwlevView = require('./dcl_view/spyglass/getParentBwlevView');
+
+// var spyglassDestroy = require('./dcl_view/spyglass/destroy');
+
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;
@@ -151,6 +157,7 @@ var initView = function(target, view_otps, opts){
 
   nestBorrowInit(target);
   initProbes(target);
+  initSpyglasses(target)
 };
 
 var changeProbeUniversal = function (method) {
@@ -158,6 +165,26 @@ var changeProbeUniversal = function (method) {
     var bwlev_view = $v.getBwlevView(this) || this.root_view.parent_view;
     bwlev_view.RPCLegacy.apply(
       bwlev_view, [method, this.mpx._provoda_id].concat(Array.prototype.slice.call(arguments, 2))
+    );
+  }
+}
+
+var changeSpyglassUniversal = function (method) {
+  return function () {
+    var bwlev_view = getRootBwlevView(this);
+    var parent_bwlev_view = getParentBwlevView(this);
+    var event_data = Array.prototype.slice.call(arguments, 2);
+    var data = {
+      context_md: parent_bwlev_view.children_models.pioneer._provoda_id,
+      bwlev: parent_bwlev_view.mpx.md._provoda_id,
+      target_id: this.mpx._provoda_id,
+      probe_name: event_data[0],
+      value: event_data[1],
+      probe_container_uri: null,
+    };
+
+    bwlev_view.RPCLegacy.apply(
+      bwlev_view, [method, data]
     );
   }
 }
@@ -217,6 +244,8 @@ var View = spv.inh(StatesEmitter, {
     },
     toggleProbe: changeProbeUniversal('toggleProbe'),
     updateProbe: changeProbeUniversal('updateProbe'),
+    toggleSpyglass: changeSpyglassUniversal('toggleSpyglass'),
+    updateSpyglass: changeSpyglassUniversal('updateSpyglass'),
   },
   onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
     return onPropsExtend(md, props, original, params);
@@ -917,6 +946,7 @@ var View = spv.inh(StatesEmitter, {
       nestBorrowDestroy(this);
       this._lbr.marked_as_dead = true;
       probeDestroy(this);
+      // spyglassDestroy(this)
     }
     return this;
   },

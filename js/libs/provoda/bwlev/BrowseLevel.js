@@ -20,6 +20,7 @@ var getModelSources = require('../structure/getModelSources');
 
 var watchAndCollectProbes = require('../dcl/probe/watch');
 var updateProbe = require('../dcl/probe/updateProbe');
+var updateSpyglass = require('../dcl/spyglass/update');
 
 var countKeys = spv.countKeys;
 var cloneObj = spv.cloneObj;
@@ -56,6 +57,12 @@ var BrowseLevel = spv.inh(Model, {
     watchAndCollectProbes(self, pioneer);
   }
 }, {
+  updateSpyglass: function(data) {
+    updateSpyglass(BrowseLevel, this, data);
+  },
+  toggleSpyglass: function(data) {
+    updateSpyglass.toggle(BrowseLevel, this, data);
+  },
   updateProbe: function(target_id, probe_name, value, probe_container_uri) {
     updateProbe(BrowseLevel, this, target_id, probe_name, value, probe_container_uri);
   },
