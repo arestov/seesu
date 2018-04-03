@@ -21,6 +21,7 @@ var prepare = require('js/libs/provoda/structure/prepare');
 var SearchQueryModel = require('./models/SearchQueryModel');
 
 var pvUpdate = pv.update;
+var pvState = require('pv/state');
 
 var app_env = app_serv.app_env;
 
