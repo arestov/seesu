@@ -487,11 +487,6 @@ var MfCorBase = spv.inh(LoadableList, {
     return this.state('current_mopla');
   },
 
-  showOnMap: function() {
-    this.mo.showOnMap();
-    pvUpdate(this, 'want_more_songs', true);
-  },
-
   switchMoreSongsView: function() {
     if (!this.state('want_more_songs')){
       pvUpdate(this, 'want_more_songs', true);
