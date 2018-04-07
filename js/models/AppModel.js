@@ -48,7 +48,7 @@ var props = {
     pvUpdate(this, 'now_playing', mo.getTitle());
     this.current_playing = mo;
     this.matchNav();
-    this.updatePlayedListsHistory(mo);
+    this.updatePlayedListsHistory(this, mo);
   },
 
   matchNav: function() {
@@ -58,8 +58,8 @@ var props = {
 
   },
 
-  updatePlayedListsHistory: function(mo) {
-    var array = this.getNesting('played_playlists');
+  updatePlayedListsHistory: function(target, mo) {
+    var array = target.getNesting('played_playlists');
     if (!array) {
       array = [];
     } else {
@@ -73,7 +73,7 @@ var props = {
       array.unshift( mo.map_parent );
 
     }
-    pv.updateNesting(this, 'played_playlists', array);
+    pv.updateNesting(target, 'played_playlists', array);
   },
 
   playing: function() {
