@@ -51,6 +51,9 @@ return function requestPage(BWL, self, id) {
     }
   }
 
-  changeBridge(last_called);
+  if (last_called) {
+    changeBridge(last_called);
+  }
+
 }
 });

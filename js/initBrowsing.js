@@ -36,9 +36,14 @@ return function initBrowsing(app) {
 
   initMapTree(app, app.start_page, app_env.needs_url_history, navi);
 
+  // pv.updateNesting(app.getNesting('fake_spyglass'), 'search_criteria', app.map.getNesting('search_criteria'))
+  // // TODO move search_criteria from map to spyglass
+
   if (app_env.needs_url_history){
     navi.init(function(e){
       var url = e.newURL;
+
+
 
       var state_from_history = navi.findHistory(e.newURL);
       if (state_from_history){
