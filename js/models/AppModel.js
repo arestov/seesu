@@ -7,6 +7,24 @@ var pvUpdate = require('pv/update');
 var BrowseMap = require('../libs/BrowseMap');
 var routePathByModels = require('pv/routePathByModels');
 
+var updatePlayedListsHistory = function(target, mo) {
+  var array = target.getNesting('played_playlists');
+  if (!array) {
+    array = [];
+  } else {
+    array = array.slice();
+  }
+  var pos = array.indexOf( mo.map_parent );
+  if (pos == -1) {
+    array.unshift( mo.map_parent );
+  } else {
+    spv.removeItem(array, pos);
+    array.unshift( mo.map_parent );
+
+  }
+  pv.updateNesting(target, 'played_playlists', array);
+};
+
 var AppModel = spv.inh(AppModelBase, {}, (function(){
 var props = {
   "+states": {
@@ -47,7 +65,7 @@ var props = {
     pvUpdate(this, 'now_playing', mo.getTitle());
     this.current_playing = mo;
     this.matchNav();
-    this.updatePlayedListsHistory(this, mo);
+    updatePlayedListsHistory(this, mo);
   },
 
   matchNav: function() {
@@ -55,24 +73,6 @@ var props = {
       pvUpdate(this, 'viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
     }
 
-  },
-
-  updatePlayedListsHistory: function(target, mo) {
-    var array = target.getNesting('played_playlists');
-    if (!array) {
-      array = [];
-    } else {
-      array = array.slice();
-    }
-    var pos = array.indexOf( mo.map_parent );
-    if (pos == -1) {
-      array.unshift( mo.map_parent );
-    } else {
-      spv.removeItem(array, pos);
-      array.unshift( mo.map_parent );
-
-    }
-    pv.updateNesting(target, 'played_playlists', array);
   },
 
   playing: function() {
