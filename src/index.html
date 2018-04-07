@@ -41,7 +41,7 @@
 					pv-class="
 						hidden: !now_playing_text
 						nav-button: !viewing_playing
-						np-button-nh_intend: {{ !nav_helper_is_needed && viewing_playing && (played_playlists_length > 1) }}
+						np-button-nh_intend: {{ !nav_helper_is_needed && viewing_playing && (played_playlists$length > 1) }}
 						player-played: playing
 						np-button-can_ff: {{ nav_helper_is_needed && !viewing_playing }}
 					"
@@ -88,8 +88,8 @@
 				</div>
 				<span
 					class="hidden nav_helper-fullb"
-					pv-class="hidden: {{ (played_playlists_length < 3 || nav_helper_full) }}"
-					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists_length - 2}}"></span> items</span>
+					pv-class="hidden: {{ (played_playlists$length < 3 || nav_helper_full) }}"
+					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists$length - 2}}"></span> items</span>
 
 				<span pv-events="click::closeNavHelper" class="nav_helper-closer">&times;</span>
 

@@ -73,7 +73,6 @@ var props = {
 
     }
     pv.updateNesting(this, 'played_playlists', array);
-    pvUpdate(this, 'played_playlists_length', array.length);
   },
 
   playing: function() {
