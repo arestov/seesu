@@ -736,7 +736,7 @@ var SeesuApp = spv.inh(AppModel, {
 
   suggestNavHelper: function() {
     this.showNowPlaying();
-    if (this.state('played_playlists_length') > 1) {
+    if (this.state('played_playlists$length') > 1) {
       pv.update(this, 'nav_helper_is_needed', true);
     }
 
