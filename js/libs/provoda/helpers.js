@@ -11,29 +11,28 @@ var selecPoineertDeclr = require('./structure/selecPoineertDeclr');
 var getPropsPrefixChecker = require('./utils/getPropsPrefixChecker');
 var getEncodedState = require('./utils/getEncodedState');
 var getShortStateName = require('./utils/getShortStateName');
+var nil = spv.nil;
 
 var emergency_opt = {
   emergency: true
 };
 
-function getBwlevView(view) {
-  var bwlev_view;
 
-  var cur = view;
-  while (!bwlev_view && cur.parent_view) {
-    if (cur.parent_view != view.root_view) {
-      cur = cur.parent_view;
-    } else {
-      bwlev_view = cur;
-      break;
+function getParentBwlevView(target) {
+  var cur = target.parent_view;
+
+  while (!nil(cur)) {
+    if (cur.mpx.md.model_name == 'bwlev') {
+      return cur;
     }
+
+    cur = cur.parent_view;
   }
 
-  return bwlev_view;
-}
+};
 
 function getBwlevId(view) {
-  return getBwlevView(view).mpx._provoda_id;
+  return getParentBwlevView(view).mpx._provoda_id;
 }
 
 return {
@@ -178,7 +177,7 @@ return {
     }
   },
   $v: {
-    getBwlevView: getBwlevView,
+    getBwlevView: getParentBwlevView,
     getBwlevId: getBwlevId,
     getViewLocationId: function(parent_view, nesting_name, nesting_space) {
       if (!nesting_name) {
