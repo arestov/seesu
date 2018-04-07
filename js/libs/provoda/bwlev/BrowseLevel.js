@@ -87,7 +87,9 @@ var BrowseLevel = spv.inh(Model, {
       function(struc, pioneer, num, probe_name) {
         if (num == -2) {return}
         if (!struc || !pioneer || !probe_name) {return;}
-        return getUsageStruc(pioneer, probe_name, struc, this.app);
+        var sub_struc = struc.m_children.children.fake_spyglass.main;
+        // TODO don't use fake_spyglass
+        return getUsageStruc(pioneer, probe_name, sub_struc, this.app);
       }
     ],
 

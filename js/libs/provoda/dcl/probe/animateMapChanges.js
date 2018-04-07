@@ -139,10 +139,14 @@ var branch = function (bwlev) {
  if (!diff.array || !diff.array.length) {
   return;
  }
+ var fake_spyglass = app.getNesting('fake_spyglass');
 
   var bwlevs = branch(bwlev);
   var models = bwlevs.map(getPioneer);
+
   updateNesting(app, 'navigation', bwlevs);
+  updateNesting(fake_spyglass, 'navigation', bwlevs);
+
 
   var nav_tree = models;
   app.nav_tree = nav_tree;
@@ -190,9 +194,14 @@ var branch = function (bwlev) {
 
     pvUpdate(app, 'show_search_form', !!target_md.state('needs_search_from'));
     pvUpdate(app, 'full_page_need', !!target_md.full_page_need);
+
+    pvUpdate(fake_spyglass, 'show_search_form', !!target_md.state('needs_search_from'));
+    pvUpdate(fake_spyglass, 'full_page_need', !!target_md.full_page_need);
   //	pvUpdate(app, 'current_mp_md', target_md._provoda_id);
     updateNesting(app, 'current_mp_md', target_md);
     updateNesting(app, 'current_mp_bwlev', diff.bwlev.getMD());
+    updateNesting(fake_spyglass, 'current_mp_md', target_md);
+    updateNesting(fake_spyglass, 'current_mp_bwlev', diff.bwlev.getMD());
     //pvUpdate(target_md, 'mp-highlight', false);
 
 
@@ -220,6 +229,10 @@ var branch = function (bwlev) {
     transaction: changes
   });
 
+  updateNesting(fake_spyglass, 'map_slice', {
+    residents_struc: mp_show_wrap,
+    transaction: changes
+  });
 
 };
 

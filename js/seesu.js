@@ -19,8 +19,10 @@ var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
 var SearchQueryModel = require('./models/SearchQueryModel');
+var FakeSpyglass = require('./models/FakeSpyglass');
 
 var pvUpdate = pv.update;
+var updateNesting = require('pv/updateNesting');
 var pvState = require('pv/state');
 
 var app_env = app_serv.app_env;
@@ -178,6 +180,7 @@ var SeesuApp = spv.inh(AppModel, {
     }
 
     self.start_page = self.initChi('start__page');
+    updateNesting(self, 'fake_spyglass',  self.initChi('fake_spyglass'));
 
     if (app_env.tizen_app){
       //https://developer.tizen.org/
@@ -318,7 +321,7 @@ var SeesuApp = spv.inh(AppModel, {
   'chi-vk_auth': VkAuth,
   'chi-lfm_auth': LfmAuth,
   'chi-start__page': StartPage,
-
+  'chi-fake_spyglass': FakeSpyglass,
   tickStat: function(data_array) {
     window._gaq.push(data_array);
   },

@@ -5,21 +5,15 @@ var spv = require('spv');
 var $ = require('jquery');
 var app_serv = require('app_serv');
 var FuncsQueue = require('js/libs/FuncsQueue');
-var nav = require('./nav');
 var coct = require('./coct');
 
 var AppBaseView = require('./AppBaseView');
 var WPBox = require('./modules/WPBox');
-var View = require('View');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
-var map_slice_by_model = require('./pages/index');
-var used_struc_bhv = require('./utils/used_struc').bhv;
-
-var View = require('View');
+var MapSliceSpyglass = require('./MapSliceSpyglass');
 
 var app_env = app_serv.app_env;
-var pvUpdate = pv.update;
 
 function initRootView(root_view) {
   root_view.all_queues = [];
@@ -49,35 +43,6 @@ function initRootView(root_view) {
     resortQueue: resortQueue
   });
 }
-
-
-var SearchCriteriaView = spv.inh(View, {}, {
-  "+states": {
-    "startpage_autofocus": [
-      "compx",
-      ['^startpage_autofocus']
-    ]
-  },
-
-  tpl_events: {
-    preventSubmit: function (e) {
-      e.preventDefault();
-    }
-  },
-
-  'stch-startpage_autofocus': function(target, value) {
-    if (!value) {
-      return;
-    }
-
-    target.nextLocalTick(target.tickCheckFocus);
-  },
-
-  tickCheckFocus: function() {
-    this.tpl.ancs['search_face'][0].focus();
-  }
-});
-
 
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
   location_name: 'exposed_root_view',
@@ -122,153 +87,6 @@ function changeFaviconNode(d, oldLink, src, type) {
   return link;
 }
 
-var push = Array.prototype.push;
-
-var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
-  "+states": {
-    "mp_show_end": [
-      "compx",
-      ['animation_started', 'animation_completed', 'vmp_show'],
-      function(animation_started, animation_completed, vmp_show) {
-        if (!animation_started){
-          return vmp_show;
-        } else {
-          if (animation_started == animation_completed){
-            return vmp_show;
-          } else {
-            return false;
-          }
-        }
-      }
-    ]
-  },
-
-  children_views_by_mn: {
-    pioneer: map_slice_by_model
-  },
-
-  base_tree: {
-    sample_name: 'browse_lev_con'
-  },
-
-  'stch-map_slice_view_sources': function(target, state) {
-    if (state) {
-      if (target.location_name == 'map_slice-detailed') {
-        return;
-      }
-      if (target.parent_view == target.root_view && target.nesting_name == 'map_slice') {
-        var arr = [];
-        if (state[0]) {
-          arr.push(state[0]);
-        }
-        push.apply(arr, state[1][target.nesting_space]);
-        pvUpdate(target, 'view_sources', arr);
-      }
-
-    }
-  },
-
-  'collch-$spec_common-pioneer': {
-    by_model_name: true,
-    place: 'tpl.ancs.con'
-  },
-
-  'collch-$spec_det-pioneer': {
-    space: 'all-sufficient-details',
-    by_model_name: true,
-    place: 'tpl.ancs.con'
-  },
-
-  'collch-$spec_noplace-pioneer': {
-    by_model_name: true
-  },
-
-  // 'collch-$spec_wrapped-pioneer': {
-  // 	is_wrapper_parent: '^',
-  // 	space: 'all-sufficient-details',
-  // 	by_model_name: true,
-  // 	place: 'tpl.ancs.con'
-  // },
-  'sel-coll-pioneer//detailed':'$spec_det-pioneer',
-
-  'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',
-
-  // 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
-  'sel-coll-pioneer': '$spec_common-pioneer'
-}, used_struc_bhv));
-
-
-var BrowseLevNavView = spv.inh(View, {}, {
-  "+states": {
-    "nav_clickable": [
-      "compx",
-      ['mp_stack', 'mp_has_focus'],
-      function(mp_stack, mp_has_focus) {
-        return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
-      }
-    ],
-
-    "mp_stack_root_follower": [
-      "compx",
-      ['$index', '$index_back', 'vmp_show'],
-      function (index, index_back) {
-        if (index == 0) {
-          return;
-        }
-
-        if (index_back == 0) {
-          // title
-          return;
-        }
-
-        return index == 1;
-      }
-    ],
-
-    "mp_stack": [
-      "compx",
-      ['$index', '$index_back', 'vmp_show'],
-      function (index, index_back, vmp_show) {
-        if (index == 0) {
-          return vmp_show && 'root';
-        }
-
-        if (index_back == 0) {
-          // title
-          return;
-        }
-
-        if (index_back == 1) {
-          return 'top';
-        }
-
-        if (index == 1) {
-          return 'bottom';
-        }
-
-        return 'middle';
-      }
-    ]
-  },
-
-  base_tree: {
-    sample_name: 'brow_lev_nav'
-  },
-
-  children_views_by_mn: {
-    pioneer: {
-      $default: nav.baseNavUI,
-      start_page: nav.StartPageNavView,
-      invstg: nav.investgNavUI
-    }
-  },
-
-  'collch-pioneer': {
-    by_model_name: true,
-    place: 'c'
-  }
-});
-
 var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   /*children_views_by_mn: {
     navigation: {
@@ -277,19 +95,10 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       invstg: nav.investgNavUI
     }
   },*/
-  'sel-coll-map_slice/song': '$spec_det-map_slice',
-  'nest_borrow-search_criteria': [
-    '^search_criteria',
-    SearchCriteriaView
-  ],
   children_views: {
-    map_slice: {
-      main: BrowseLevView,
-      detailed: BrowseLevView
-    },
-    navigation: BrowseLevNavView,
-    // search_criteria: SearchCriteriaView,
+    fake_spyglass: MapSliceSpyglass,
   },
+  'collch-fake_spyglass': true,
   controllers: {
     auth_vk: etc_views.VkLoginUI,
     auth_lfm: etc_views.LfmLoginView,
@@ -508,29 +317,11 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     }
     return scrolling_viewport;
   },
-  buildNowPlayingButton: function() {
-    var _this = this;
-    var np_button = this.nav.justhead.find('.np-button').detach();
-    _this.tpls.push( pv.$v.createTemplate( this, np_button ) );
-    this.nav.daddy.append(np_button);
-  },
-  'stch-nav_helper_is_needed': function(target, state) {
-    if (!state) {
-      pv.update(target, 'nav_helper_full', false);
-    }
-  },
+
   tpl_events: {
-    showFullNavHelper: function() {
-      pv.update(this, 'nav_helper_full', true);
-    },
     showArtcardPage: function (e, node, artist_name) {
       this.RPCLegacy('showArtcardPage', artist_name);
     }
-  },
-  buildNavHelper: function() {
-    this.tpls.push( pv.$v.createTemplate(
-      this, this.els.nav_helper
-    ) );
   },
   selectKeyNodes: function() {
     var slider = this.d.getElementById('slider');
@@ -562,7 +353,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       _this.checkSizeDetector();
       _this.nextTick(_this.buildWidthStreamer);
 
-      _this.wrapStartScreen(this.els.start_screen);
       $('#widget-url',d).val(window.location.href.replace('index.html', ''));
 
       if (app_env.bro.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
@@ -575,9 +365,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       }
 
       _this.buildVKSamples();
-
-      _this.buildNowPlayingButton();
-      _this.buildNavHelper();
 
       var d_click_callback = function(e) {
         e.preventDefault();
