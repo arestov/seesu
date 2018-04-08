@@ -10,6 +10,7 @@ var showInterest = require('../bwlev/showInterest');
 var getBwlevFromParentBwlev = require('../bwlev/getBwlevFromParentBwlev');
 var get_constr = require('../structure/get_constr');
 var prepare = require('../structure/prepare');
+var RootLev = require('../bwlev/RootLev');
 
 var routePathByModels = require('../routePathByModels');
 
@@ -207,7 +208,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 });
 
 function hookRoot(rootmd, start_page) {
-  var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(BrowseLevel, {}, rootmd.BWLev)) : BrowseLevel;
+  var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(RootLev, {}, rootmd.BWLev)) : RootLev;
   var bwlev_root = createLevel(CurBrowseLevel, '', -2, null, rootmd, null);
   if (start_page) {
     setStartBwlev('map_slice', bwlev_root, start_page);
