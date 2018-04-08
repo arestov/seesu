@@ -282,7 +282,8 @@ var WebAppView = spv.inh(AppBaseView, {}, {
   resortQueue: (function() {
 
     var getView = function(md, bwlev) {
-      var parent_view = bwlev.map_parent && this.getMapSliceView(bwlev, md);
+      var parent_view = bwlev.map_parent && this.getMapSliceView && this.getMapSliceView(bwlev, md);
+      // TODO fix. getMapSliceView was moved to fake_spyglass
       if (parent_view) {
         var views = this.getStoredMpx(md).getViews();
         return pv.$v.matchByParent(views, parent_view);
