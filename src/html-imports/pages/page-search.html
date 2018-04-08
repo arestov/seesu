@@ -208,14 +208,13 @@
 		<span class="desc lang localize-search-control-hint"></span>
 	</p>
 	<div class="search_results_sections">
-
-
 		<div
-			pv-nest="section for_model:section-tag"
-			pv-class="hidden: !active">
+			pv-nest="section for_model:section-playlist"
+			pv-class="hidden: !active"
+			class="hidden">
 			<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 			<ul
-				class="sugg-section results-suggests"
+				class="sugg-section results-suggests playlist-results"
 				pv-class="odd_section: odd_section active-section: active">
 				<li
 					pv-nest="rendering_list"
@@ -230,17 +229,7 @@
 						<span pv-text="{{text_title}}"></span>
 					</a>
 				</li>
-				<li class="suggest" pv-nest="button"
-					pv-type="way-point" pv-events="click::view"
-					pv-class="
-						searched-bordered: bordered
-						hidden: disabled
-					">
-					<button type="button"  ><span pv-text="{{button_text}}"></span></button>
-				</li>
-				<li  pv-class="hidden: !no_results_text">
-					<a pv-text="{{no_results_text}}"></a>
-				</li>
+
 			</ul>
 		</div>
 		<div
@@ -366,13 +355,13 @@
 				</li>
 			</ul>
 		</div>
+
 		<div
-			pv-nest="section for_model:section-playlist"
-			pv-class="hidden: !active"
-			class="hidden">
+			pv-nest="section for_model:section-tag"
+			pv-class="hidden: !active">
 			<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 			<ul
-				class="sugg-section results-suggests playlist-results"
+				class="sugg-section results-suggests"
 				pv-class="odd_section: odd_section active-section: active">
 				<li
 					pv-nest="rendering_list"
@@ -387,7 +376,17 @@
 						<span pv-text="{{text_title}}"></span>
 					</a>
 				</li>
-
+				<li class="suggest" pv-nest="button"
+					pv-type="way-point" pv-events="click::view"
+					pv-class="
+						searched-bordered: bordered
+						hidden: disabled
+					">
+					<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+				</li>
+				<li  pv-class="hidden: !no_results_text">
+					<a pv-text="{{no_results_text}}"></a>
+				</li>
 			</ul>
 		</div>
 	</div>
