@@ -259,14 +259,6 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
 }, {
-  'probe-map_slice2': {
-    main: ['nesting', {
-      place_of_current: 'action',
-      place_of_nav: null,
-      initial: '#/',
-    }],
-    steps_to_surface_limit: 1,
-  },
   "+states": {
     "app_lang": ["compx", ['env.lang']],
 
