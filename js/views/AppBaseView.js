@@ -224,12 +224,9 @@ var WebAppView = spv.inh(AppBaseView, {}, {
         _this.buildAppDOM();
         _this.onDomBuild();
         _this.completeDomBuilding();
-        _this.RPCLegacy('attachUI', _this.root_view_uid);
       });
     });
-    this.on('die', function() {
-      this.RPCLegacy('detachUI', this.root_view_uid);
-    });
+
     this.on('state_change-current_mp_bwlev', function() {
       _this.resortQueue();
     });

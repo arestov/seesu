@@ -37,5 +37,25 @@ return spv.inh(Model, {}, {
     invstg.showOnMap();
     return invstg;
   },
-})
+  attachUI: function(app_view_id) {
+    this.app.app_view_id = app_view_id;
+    checkPageTracking(this.app);
+  },
+  detachUI: function(app_view_id) {
+    if (this.app.p && this.app.p.c_song){
+      this.showNowPlaying(true);
+    }
+    if (this.app.app_view_id === app_view_id){
+      this.app.app_view_id = null;
+    }
+  },
+});
+
+
+function checkPageTracking(app) {
+  if (app.app_view_id && app.last_page_tracking_data){
+    app.trackStat.call(this, app.last_page_tracking_data);
+    app.last_page_tracking_data = null;
+  }
+}
 });

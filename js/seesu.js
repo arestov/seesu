@@ -451,14 +451,6 @@ var SeesuApp = spv.inh(AppModel, {
 
   },
 
-  checkPageTracking: function() {
-    if (this.app_view_id && this.last_page_tracking_data){
-      this.trackStat.call(this, this.last_page_tracking_data);
-      this.last_page_tracking_data = null;
-
-    }
-  },
-
   trackTime: function(){
     var args = Array.prototype.slice.call(arguments);
     var current_page = this.current_page || '(nonono)';
@@ -502,20 +494,6 @@ var SeesuApp = spv.inh(AppModel, {
       }
     }
     return r;
-  },
-
-  attachUI: function(app_view_id) {
-    this.app_view_id = app_view_id;
-    this.checkPageTracking();
-  },
-
-  detachUI: function(app_view_id) {
-    if (this.p && this.p.c_song){
-      this.showNowPlaying(true);
-    }
-    if (this.app_view_id === app_view_id){
-      this.app_view_id = null;
-    }
   },
 
   vkappid: 2271620,
