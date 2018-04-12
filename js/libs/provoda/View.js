@@ -226,6 +226,10 @@ var View = spv.inh(StatesEmitter, {
       this.RPCLegacy.apply(this, arguments);
     }
   },
+  requestPageById: function(_provoda_id) {
+    var bwlev_view = $v.getBwlevView(this);
+    bwlev_view.RPCLegacy('requestPage', _provoda_id);
+  },
   requestPage: function() {
     var bwlev_view = $v.getBwlevView(this);
 
@@ -235,6 +239,9 @@ var View = spv.inh(StatesEmitter, {
   tpl_events: {
     requestPage: function() {
       this.requestPage();
+    },
+    requestPageById: function(e, node, _provoda_id) {
+      this.requestPageById(_provoda_id);
     },
     followTo: function() {
       var bwlev_view = $v.getBwlevView(this);

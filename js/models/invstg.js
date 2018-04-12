@@ -42,16 +42,14 @@ var playlistSuggest = spv.inh(base.BaseSuggest, {
     self.pl = data.playlist;
     self.text_title = self.getTitle();
     self.updateManyStates({
-      text_title: self.text_title
+      text_title: self.text_title,
+      playlist_provoda_id: data.playlist._provoda_id,
     });
   }
 }, {
   valueOf: function(){
     return this.pl.state('nav_title');
   },
-  onView: function(){
-    this.pl.showOnMap();
-  }
 });
 
 var seesuSection = spv.inh(base.SearchSection, {
