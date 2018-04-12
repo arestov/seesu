@@ -3,6 +3,7 @@ define(function(require) {
 var Model = require('pv/Model');
 var spv = require('spv');
 var routePathByModels = require('pv/routePathByModels');
+var pvUpdate = require('pv/update');
 
 return spv.inh(Model, {}, {
   "+states": {
@@ -48,6 +49,30 @@ return spv.inh(Model, {}, {
     if (this.app.app_view_id === app_view_id){
       this.app.app_view_id = null;
     }
+  },
+  search: function(query) {
+    this.app.search(query);
+  },
+  checkUserInput: function(opts) {
+    if (opts.ext_search_query) {
+      this.search(opts.ext_search_query);
+    }
+
+    var state_recovered;
+    if (this.app.p && this.app.p.c_song){
+      this.showNowPlaying(true);
+      state_recovered = true;
+    }
+
+    if (state_recovered){
+      opts.state_recovered = true;
+    }
+    if (!state_recovered && !opts.ext_search_query){
+      this.app.trigger('handle-location');
+    }
+
+    pvUpdate(this.app.start_page, 'can_expand', true);
+
   },
 });
 
