@@ -173,7 +173,11 @@ return spv.inh(View, {}, {
     this.buildNowPlayingButton();
     this.buildNavHelper();
 
+    this.on('die', function() {
+      this.RPCLegacy('detachUI', this.root_view.root_view_uid);
+    });
 
+    this.RPCLegacy('attachUI', this.root_view.root_view_uid);
   },
   getLevByNum: function(num, exclude_start_lev) {
     if (num < -1){
