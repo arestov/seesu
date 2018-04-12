@@ -348,12 +348,6 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
   onDomBuild: function() {
     this._super();
     this.c.addClass('app-loaded');
-    // var ext_search_query = this.els.search_input.val();
-    //must be before start_page view set its value to search_input
-    this.RPCLegacy('checkUserInput', {
-      // ext_search_query: ext_search_query
-    });
-
   },
 });
 
