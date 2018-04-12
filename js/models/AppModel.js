@@ -40,28 +40,6 @@ var props = {
     ]
   },
 
-  checkUserInput: function(opts) {
-    if (opts.ext_search_query) {
-      this.search(opts.ext_search_query);
-    }
-
-    var state_recovered;
-    if (this.p && this.p.c_song){
-      this.showNowPlaying(true);
-      state_recovered = true;
-    }
-
-    if (state_recovered){
-      opts.state_recovered = true;
-    }
-    if (!state_recovered && !opts.ext_search_query){
-      this.trigger('handle-location');
-    }
-
-    pvUpdate(this.start_page, 'can_expand', true);
-
-  },
-
   nowPlaying: function(mo) {
     pvUpdate(this, 'now_playing', mo.getTitle());
     this.current_playing = mo;
