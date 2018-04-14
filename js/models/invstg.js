@@ -294,6 +294,7 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
     }
     if (data.resid){
       self.aid = data.resid;
+      pvUpdate(self, 'aid', data.resid);
     }
     self.text_title = self.getTitle();
     pvUpdate(self, 'text_title', self.text_title);
@@ -303,11 +304,6 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
     return '( ' + this.artist + ' ) ' + this.name;
   },
   onView: function(){
-    this.app.showArtistAlbum({
-      album_artist: this.artist,
-      album_name: this.name,
-      album_id: this.aid
-    }, this.invstg);
     this.app.trackEvent('Music search', this.q, "album: " + this.text_title);
   }
 });
