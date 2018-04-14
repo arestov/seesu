@@ -42,13 +42,8 @@ return function requestPage(BWL, self, id) {
     }
     var cur_md = bwlev_children[i];
 
-    if (cur_md.state('has_no_access')) {
-      parent_bwlev = null;
-      cur_md.switchPmd();
-    } else {
-      parent_bwlev = _goDeeper(BWL, map, cur_md, parent_bwlev);
-      last_called = parent_bwlev;
-    }
+    parent_bwlev = _goDeeper(BWL, map, cur_md, parent_bwlev);
+    last_called = parent_bwlev;
   }
 
   if (last_called) {

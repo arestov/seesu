@@ -106,7 +106,7 @@ var auth_bh = {
   'stch-acess_ready': function(target, state) {
     if (state) {
       target.loadStart();
-      target.showOnMap();
+      // target.showOnMap();
     }
   }
 };
