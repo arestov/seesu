@@ -317,7 +317,11 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     }
     return scrolling_viewport;
   },
-
+  tpl_r_events: {
+    showTag: function(_1, _2, _3, tag_name) {
+      this.RPCLegacy('show_tag', tag_name);
+    },
+  },
   tpl_events: {
     showArtcardPage: function (e, node, artist_name) {
       this.RPCLegacy('showArtcardPage', artist_name);
