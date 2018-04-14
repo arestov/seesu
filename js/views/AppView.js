@@ -329,6 +329,8 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
         album_id: album_id
       });
     },
+    showTag: function(e, node, tag_name) {
+      this.RPCLegacy('show_tag', tag_name);
     }
   },
   selectKeyNodes: function() {
