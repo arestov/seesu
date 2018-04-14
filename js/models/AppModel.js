@@ -114,7 +114,7 @@ var props = {
     return md;
   },
 
-  showTopTacks: function(artist, track_name) {
+  showTopTracks: function(artist, track_name) {
     var artcard = getArtcard(this, artist);
     var target = artcard.getTopTacks(track_name);
     target.showOnMap();
