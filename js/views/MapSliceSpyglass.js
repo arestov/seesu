@@ -105,9 +105,6 @@ return spv.inh(View, {}, {
     showFullNavHelper: function() {
       pv.update(this, 'nav_helper_full', true);
     },
-    showArtcardPage: function (e, node, artist_name) {
-      this.RPCLegacy('showArtcardPage', artist_name);
-    }
   },
   'collch-current_mp_md': function(name, value) {
     pv.update(this, 'current_mp_md', value._provoda_id);
