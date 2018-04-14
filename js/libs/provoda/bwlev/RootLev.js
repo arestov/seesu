@@ -52,6 +52,9 @@ var RootLev = spv.inh(BrowseLevel, {}, {
   toggleSpyglass: function(data) {
     updateSpyglass.toggle(BrowseLevel, this, data);
   },
+  spyglassURL: function(name, pattern, data) {
+    // navigation, "/tags/[:tag]" {tag: "tgbbb"}
+  }
 })
 
 return RootLev;
