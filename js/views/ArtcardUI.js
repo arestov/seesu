@@ -60,19 +60,6 @@ var ArtcardUI = spv.inh(View, {}, {
 
 var sortByNum = spv.getSortFunc(['num']);
 
-var TagsController = spv.inh(View, {}, {
-  bindBase: function() {},
-  tpl_r_events: {
-    'preview_list': {
-      showTag: function(e, node, scope){
-        e.preventDefault();
-        this.RPCLegacy('showTag', scope.tag.name);
-      }
-    }
-  }
-});
-
-
 var SimilarsController = spv.inh(View, {}, {
   tpl_r_events: {
     'similars': {
@@ -165,7 +152,6 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
   dom_rp: true,
 
   children_views:{
-    tags_list: TagsController,
     similar_artists: SimilarsController
   },
 
