@@ -321,6 +321,14 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   tpl_events: {
     showArtcardPage: function (e, node, artist_name) {
       this.RPCLegacy('showArtcardPage', artist_name);
+    },
+    showArtistAlbum: function(e, node, album_artist, album_name, album_id) {
+      this.RPCLegacy('showArtistAlbum', {
+        album_artist: album_artist,
+        album_name: album_name,
+        album_id: album_id
+      });
+    },
     }
   },
   selectKeyNodes: function() {
