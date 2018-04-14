@@ -322,6 +322,51 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       this.RPCLegacy('show_tag', tag_name);
     },
   },
+  spyglassURL: function(name, pattern, data) {
+    this.root_view.parent_view.RPCLegacy(name, pattern, data);
+  },
+  // tpl_events: {
+  //   showArtcardPage: function(artist_name) {
+  //     this.spyglassURL('navigation', 'catalog/[:artist_name]', {artist_name: artist_name})
+  //   },
+  //   showTopTacks: function(artist_name, track_name) {
+  //     if (!track_name) {
+  //       this.spyglassURL('navigation', 'catalog/[:artist_name]/_', {artist_name: artist_name})
+  //     }
+  //     this.spyglassURL(
+  //       'navigation',
+  //       'catalog/[:artist_name]/_/[:artist_name],[:track_name]', {
+  //         artist_name: artist_name,
+  //         track_name: track_name,
+  //       });
+  //   },
+  //   showArtistAlbum: function(artist, album_name, artist_name) {
+  //     this.spyglassURL(
+  //       'navigation',
+  //       'catalog/[:artist]/[:album_artist],[:album_name]',
+  //       {
+  //         artist: artist,
+  //         album_name: album_name,
+  //         artist_name: artist_name || artist,
+  //       }
+  //     );
+  //   },
+  //   showResultsPage: function(query) {
+  //     this.spyglassURL('navigation', 'search/[:query]', {query: query})
+  //   },
+  //   showTag: function(tag_name) {
+  //     this.spyglassURL('navigation', 'tags/[:tag_name]', {tag_name: tag_name})
+  //   },
+  //   /*
+  //     showArtcardPage
+  //     showArtistAlbum
+  //     showResultsPage
+  //     show_tag
+  //     showTopTacks
+  //     showNowPlaying
+  //   */
+  //   spyglassURL: function(e, node, name, pattern, data) {
+  //     this.root_view.parent_view.RPCLegacy(name, pattern, data);
   tpl_events: {
     showArtcardPage: function (e, node, artist_name) {
       this.RPCLegacy('showArtcardPage', artist_name);
