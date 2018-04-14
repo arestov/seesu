@@ -45,17 +45,17 @@ var YoutubeVideo = spv.inh(BrowseMap.Model, {
   },
 
   full_page_need: true,
-
-  requestVideo: function() {
-    var cant_show = this.state('cant_show');
-    var link = 'http://www.youtube.com/watch?v=' + this.state('yt_id');
-    if (!cant_show && !app_env.tizen_app){
-      this.showOnMap();
-
-    } else{
-      app_env.openURL(link);
-    }
-  }
+  // refactoring showOnMap, so disabling this code
+  // requestVideo: function() {
+  //   var cant_show = this.state('cant_show');
+  //   var link = 'http://www.youtube.com/watch?v=' + this.state('yt_id');
+  //   if (!cant_show && !app_env.tizen_app){
+  //     this.showOnMap();
+  //
+  //   } else{
+  //     app_env.openURL(link);
+  //   }
+  // }
 });
 
 
