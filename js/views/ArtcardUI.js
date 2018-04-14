@@ -60,17 +60,6 @@ var ArtcardUI = spv.inh(View, {}, {
 
 var sortByNum = spv.getSortFunc(['num']);
 
-var SimilarsController = spv.inh(View, {}, {
-  tpl_r_events: {
-    'similars': {
-      showArtcardPage: function(e, node, scope) {
-        e.preventDefault();
-        this.root_view.tpl_events.showArtcardPage.call(this.root_view, e, node, scope.artist.name);
-      }
-    }
-  }
-});
-
 var ArtistInSongConstroller = spv.inh(View, {}, {
   "+states": {
     "parent_vmp_show": [
@@ -152,7 +141,6 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
   dom_rp: true,
 
   children_views:{
-    similar_artists: SimilarsController
   },
 
   bindBase: function() {
