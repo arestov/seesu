@@ -168,8 +168,6 @@ var trackSuggest = spv.inh(base.BaseSuggest, {
     return this.artist + ' - ' + this.track;
   },
   onView: function(){
-    this.app.showTopTacks(this.artist, this.track);
-
     this.app.trackEvent('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
   }
 });

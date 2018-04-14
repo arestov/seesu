@@ -331,7 +331,10 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     },
     showTag: function(e, node, tag_name) {
       this.RPCLegacy('show_tag', tag_name);
-    }
+    },
+    showTopTracks: function(e, node, artist_name, track_name) {
+      this.RPCLegacy('showTopTracks', artist_name, track_name);
+    },
   },
   selectKeyNodes: function() {
     var slider = this.d.getElementById('slider');
