@@ -245,7 +245,7 @@ return {
             return;
           }
 
-          if (!e.pv_repeat_context){
+          if (!e.pv_repeat_context || args_list.length){
             target_view.tpl_events[fnName].apply(target_view, [e.event, e.node].concat(args_list));
           } else {
             target_view.tpl_r_events[e.pv_repeat_context][fnName].call(target_view, e.event, e.node, e.scope);
