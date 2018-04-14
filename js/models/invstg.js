@@ -228,7 +228,6 @@ var tagSuggest = spv.inh(base.BaseSuggest, {
     return this.tag;
   },
   onView: function(){
-    this.app.show_tag(this.tag, this.invstg);
     this.app.trackEvent('Music search', this.q, "tag: " + this.tag );
   }
 });
