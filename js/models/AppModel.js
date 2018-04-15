@@ -88,29 +88,6 @@ var props = {
 
     return this.start_page.getSPI('catalog/' + encodeURIComponent(artist_name), true);
   },
-
-  // search: function(query){
-  // 	var old_v = this.state('search_query');
-  // 	if (query != old_v){
-  // 		if (!query) {
-  // 			this.showStartPage();
-  // 		} else {
-  // 			this.showResultsPage(query);
-  // 		}
-  //
-  // 	}
-  // 	pvUpdate(this, 'search_query', query);
-  // },
-  // 'stch-search_request_freshness': function(target) {
-  // 	var query = target.state('search_query');
-  // 	if (query) {
-  // 		target.showResultsPage(query);
-  // 	}
-  //
-  // },
-  // refreshSearchRequest: function(time) {
-  // 	pvUpdate(this, 'search_request_freshness', time);
-  // },
   checkActingRequestsPriority: function() {
     var raw_array = [];
     var acting = [];

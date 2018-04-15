@@ -53,9 +53,6 @@ return spv.inh(Model, {}, {
       this.app.app_view_id = null;
     }
   },
-  search: function(query) {
-    this.app.search(query);
-  },
   checkUserInput: function(opts) {
     if (opts.ext_search_query) {
       this.search(opts.ext_search_query);
