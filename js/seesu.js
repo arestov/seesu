@@ -18,8 +18,7 @@ var localize_dict = require('js/libs/localizer');
 var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
-var SearchQueryModel = require('./models/SearchQueryModel');
-var FakeSpyglass = require('./models/FakeSpyglass');
+var RootBwlevSeesu = require('./models/RootBwlevSeesu');
 
 var pvUpdate = pv.update;
 var updateNesting = require('pv/updateNesting');
@@ -286,20 +285,7 @@ var SeesuApp = spv.inh(AppModel, {
 
   model_name: 'app_root',
 
-  BWLev: {
-    "+states": {
-      "show_search_form": [
-        "compx",
-        ['@one:needs_search_from:selected__md'],
-        function(needs_search_from) {
-          return needs_search_from;
-        }
-      ]
-    },
-
-    'nest-search_criteria': [SearchQueryModel],
-    'nest-fake_spyglass': [FakeSpyglass],
-  },
+  BWLev: RootBwlevSeesu,
 
   'stch-session@lfm_auth': function(target, state) {
     if (state) {
