@@ -378,11 +378,6 @@ var SeesuApp = spv.inh(AppModel, {
 
 
   },
-
-  showPlaylists: function() {
-    this.search(':playlists');
-  },
-
   //fast search
   fs: {},
 

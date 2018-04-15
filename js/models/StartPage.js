@@ -82,9 +82,6 @@ var StartPage = spv.inh(BrowseMap.Model, {
 }, {
   model_name: 'start_page',
   zero_map_level: true,
-  showPlaylists: function(){
-    this.app.search(':playlists');
-  },
   refreshListeners: function() {
     this.app.s.susd.ligs.getData();
   },
