@@ -258,7 +258,7 @@ var SeesuApp = spv.inh(AppModel, {
       pv.update(self, 'disallow_seesu_listeners', true);
     }
     self.on('child_change-current_mp_md', function() {
-      this.closeNavHelper();
+      // this.closeNavHelper();
     });
   },
 
@@ -729,15 +729,10 @@ var SeesuApp = spv.inh(AppModel, {
 
   suggestNavHelper: function() {
     this.showNowPlaying();
-    if (this.state('played_playlists$length') > 1) {
-      pv.update(this, 'nav_helper_is_needed', true);
-    }
-
-
   },
 
   closeNavHelper: function() {
-    pv.update(this, 'nav_helper_is_needed', false);
+    pv.update(this.getNesting('fake_spyglass'), 'nav_helper_is_needed', false);
   }
 });
 
