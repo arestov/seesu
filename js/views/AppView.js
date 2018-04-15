@@ -46,9 +46,6 @@ function initRootView(root_view) {
 
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
   location_name: 'exposed_root_view',
-  'stch-doc_title': function(target, title) {
-    target.d.title = title || "";
-  },
   'stch-playing': function(target, state) {
     if (app_env.need_favicon){
       if (state){
