@@ -7,6 +7,9 @@ var pvUpdate = require('pv/update');
 var updateNesting = require('pv/updateNesting');
 var joinNavURL = require('pv/joinNavURL');
 var navi = require('../libs/navi');
+var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
+var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
+var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 
 var BrowseMap = require('../libs/BrowseMap');
 var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
@@ -14,6 +17,10 @@ var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
 var app_serv = require('app_serv');
 var app_env = app_serv.app_env;
 
+var showOnMapWrap = function(map, md) {
+  var bwlev = showMOnMap(BrowseLevel, map, md);
+  changeBridge(bwlev);
+}
 
 return spv.inh(Model, {
   init: function(self) {
@@ -98,7 +105,7 @@ return spv.inh(Model, {
     // если элемента нет или в элемент детализировали
     var invstg = routePathByModels(this.app.start_page, 'search/', false, true, {reuse: true});
     invstg.changeQuery(query);
-    invstg.showOnMap();
+    showOnMapWrap(this.map_parent, invstg);
     return invstg;
   },
   attachUI: function(app_view_id) {
@@ -170,7 +177,7 @@ function initNav(map, navi, app) {
       var url = e.newURL;
       var state_from_history = navi.findHistory(e.newURL);
       if (state_from_history){
-        state_from_history.data.showOnMap();
+        showOnMapWrap(map, state_from_history.data)
         handleQuery(map, state_from_history.data.getNesting('pioneer'));
       } else{
         var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), app.start_page);
