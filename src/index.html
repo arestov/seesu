@@ -78,7 +78,7 @@
 						nav_pl_hitem-allow_preview: {{ $index < 2 }}
 						nav_pl_hitem-selected: mp_show
 					"
-					pv-events="click::#closeNavHelper click::requestLastPlayedSong">
+					pv-events="click::#closeNavHelper click:#requestPageById:%states%last_played_song_provoda_id">
 					<span pv-text="{{nav_title}}"></span>
 					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" player_song: player_song">
 						<span pv-text="{{nav_title}}"></span>
