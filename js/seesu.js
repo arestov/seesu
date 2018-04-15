@@ -180,7 +180,6 @@ var SeesuApp = spv.inh(AppModel, {
     }
 
     self.start_page = self.initChi('start__page');
-    updateNesting(self, 'fake_spyglass',  self.initChi('fake_spyglass'));
 
     if (app_env.tizen_app){
       //https://developer.tizen.org/
@@ -298,7 +297,8 @@ var SeesuApp = spv.inh(AppModel, {
       ]
     },
 
-    'nest-search_criteria': [SearchQueryModel]
+    'nest-search_criteria': [SearchQueryModel],
+    'nest-fake_spyglass': [FakeSpyglass],
   },
 
   'stch-session@lfm_auth': function(target, state) {
@@ -313,7 +313,7 @@ var SeesuApp = spv.inh(AppModel, {
   'chi-vk_auth': VkAuth,
   'chi-lfm_auth': LfmAuth,
   'chi-start__page': StartPage,
-  'chi-fake_spyglass': FakeSpyglass,
+  // 'chi-fake_spyglass': FakeSpyglass,
   tickStat: function(data_array) {
     window._gaq.push(data_array);
   },
@@ -712,7 +712,7 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
   closeNavHelper: function() {
-    pv.update(this.getNesting('fake_spyglass'), 'nav_helper_is_needed', false);
+    pv.update(this.map.getNesting('fake_spyglass'), 'nav_helper_is_needed', false);
   }
 });
 
