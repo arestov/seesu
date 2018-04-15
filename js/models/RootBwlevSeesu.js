@@ -2,9 +2,18 @@ define(function(require) {
 'use strict';
 var BrowseMap = require('../libs/BrowseMap');
 var routePathByModels = require('pv/routePathByModels');
+var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
+var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
+var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 
 var SearchQueryModel = require('./SearchQueryModel');
 var FakeSpyglass = require('./FakeSpyglass');
+
+var showOnMapWrap = function(map, md) {
+  var bwlev = showMOnMap(BrowseLevel, map, md);
+  changeBridge(bwlev);
+}
+
 
 return {
   "+states": {
@@ -20,7 +29,7 @@ return {
   'nest-fake_spyglass': [FakeSpyglass],
   showArtcardPage: function(artist_name){
     var md = getArtcard(this, artist_name);
-    md.showOnMap();
+    showOnMapWrap(this, md);
     return md;
   },
 
@@ -29,8 +38,7 @@ return {
 
     var artist_name = params.album_artist || artcard.head.artist_name
     var pl = artcard.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
-
-    pl.showOnMap();
+    showOnMapWrap(this, pl);
     return pl;
   },
 
@@ -50,21 +58,21 @@ return {
     // если элемента нет или в элемент детализировали
     var invstg = routePathByModels(this.app.start_page, 'search/', false, true, {reuse: true});
     invstg.changeQuery(query);
-    invstg.showOnMap();
+    showOnMapWrap(this, invstg);
     return invstg;
   },
 
   showTag: function(tag){
     var md = routePathByModels(this.app.start_page, 'tags/' + tag );
 
-    md.showOnMap();
+    showOnMapWrap(this, md);
     return md;
   },
 
   showTopTracks: function(artist, track_name) {
     var artcard = getArtcard(this, artist);
     var target = artcard.getTopTacks(track_name);
-    target.showOnMap();
+    showOnMapWrap(this, target)
   },
 };
 
