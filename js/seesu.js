@@ -689,7 +689,6 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
   suggestNavHelper: function() {
-    this.showNowPlaying();
   },
 
   closeNavHelper: function() {
