@@ -324,7 +324,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   //   showArtcardPage: function(artist_name) {
   //     this.spyglassURL('navigation', 'catalog/[:artist_name]', {artist_name: artist_name})
   //   },
-  //   showTopTacks: function(artist_name, track_name) {
+  //   showTopTracks: function(artist_name, track_name) {
   //     if (!track_name) {
   //       this.spyglassURL('navigation', 'catalog/[:artist_name]/_', {artist_name: artist_name})
   //     }
@@ -357,7 +357,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   //     showArtistAlbum
   //     showResultsPage
   //     show_tag
-  //     showTopTacks
+  //     showTopTracks
   //     showNowPlaying
   //   */
   //   spyglassURL: function(e, node, name, pattern, data) {
