@@ -25,7 +25,7 @@ return spv.inh(Model, {}, {
     ],
   },
   suggestNavHelper: function() {
-    this.app.suggestNavHelper();
+    this.map_parent.showNowPlaying();
     if (this.state('played_playlists$length') > 1) {
       // pvUpdate(this, 'nav_helper_is_needed', true);
     }
