@@ -31,7 +31,7 @@ return spv.inh(Model, {}, {
     }
   },
   showNowPlaying: function(no_stat) {
-    this.app.showNowPlaying(no_stat);
+    this.map_parent.showNowPlaying(no_stat);
   },
   showResultsPage: function(query){
     // если нет элемента или элемент не отображается
