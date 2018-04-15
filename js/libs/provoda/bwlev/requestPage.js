@@ -3,7 +3,7 @@ define(function (require) {
 var _goDeeper = require('./_goDeeper');
 var getModelById = require('../utils/getModelById');
 var changeBridge = require('./changeBridge');
-// var showMOnMap = require('./showMOnMap');
+var showMOnMap = require('./showMOnMap');
 
 return function requestPage(BWL, self, id) {
   var md = getModelById(self, id);
@@ -25,7 +25,9 @@ return function requestPage(BWL, self, id) {
   }
 
   if (!target_is_deep_child) {
-    return md.requestPage();
+    var bwlev = showMOnMap(BWL, md.app.map, md);
+    changeBridge(bwlev);
+    return;
   }
 
   bwlev_children = bwlev_children.reverse();
