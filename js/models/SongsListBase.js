@@ -117,7 +117,10 @@ var legacyBase = spv.inh(LoadableList, {
           target.idx_player_song = null;
         }
       }
-      pv.updateNesting(target, 'last_played_song', target.idx_player_song || target.getNesting('last_played_song'));
+      var last_played_song = target.idx_player_song || target.getNesting('last_played_song');
+      pv.updateNesting(target, 'last_played_song', last_played_song);
+      pvUpdate(target, 'last_played_song_provoda_id', last_played_song && last_played_song._provoda_id);
+
       pvUpdate(target, 'last_played_song_start', Date.now());
     },
 
@@ -330,10 +333,6 @@ var legacyBase = spv.inh(LoadableList, {
         track: parts[1] ? parts[1] : parts[0]
       });
     },
-
-    requestLastPlayedSong: function() {
-      this.getNesting('last_played_song').requestPage();
-    }
   });
 }));
 

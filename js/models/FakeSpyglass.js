@@ -26,6 +26,9 @@ return spv.inh(Model, {}, {
   },
   suggestNavHelper: function() {
     this.app.suggestNavHelper();
+    if (this.state('played_playlists$length') > 1) {
+      // pvUpdate(this, 'nav_helper_is_needed', true);
+    }
   },
   showNowPlaying: function(no_stat) {
     this.app.showNowPlaying(no_stat);
