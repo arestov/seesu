@@ -33,9 +33,9 @@ return spv.inh(pv.Model, {
     target.updateState('query_face', value);
 
     if (!value) {
-      target.app.showStartPage();
+      target.map_parent.showStartPage();
     } else {
-      target.app.showResultsPage(value);
+      target.map_parent.showResultsPage(value);
     }
   },
 

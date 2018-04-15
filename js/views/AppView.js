@@ -317,7 +317,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   },
   tpl_r_events: {
     showTag: function(_1, _2, _3, tag_name) {
-      this.RPCLegacy('show_tag', tag_name);
+      this.parent_view.RPCLegacy('show_tag', tag_name);
     },
   },
   spyglassURL: function(name, pattern, data) {
@@ -367,20 +367,20 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   //     this.root_view.parent_view.RPCLegacy(name, pattern, data);
   tpl_events: {
     showArtcardPage: function (e, node, artist_name) {
-      this.RPCLegacy('showArtcardPage', artist_name);
+      this.parent_view.RPCLegacy('showArtcardPage', artist_name);
     },
     showArtistAlbum: function(e, node, album_artist, album_name, album_id) {
-      this.RPCLegacy('showArtistAlbum', {
+      this.parent_view.RPCLegacy('showArtistAlbum', {
         album_artist: album_artist,
         album_name: album_name,
         album_id: album_id
       });
     },
     showTag: function(e, node, tag_name) {
-      this.RPCLegacy('show_tag', tag_name);
+      this.parent_view.RPCLegacy('showTag', tag_name);
     },
     showTopTracks: function(e, node, artist_name, track_name) {
-      this.RPCLegacy('showTopTracks', artist_name, track_name);
+      this.parent_view.RPCLegacy('showTopTracks', artist_name, track_name);
     },
   },
   selectKeyNodes: function() {
@@ -500,13 +500,13 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
         e.preventDefault();
 
         var artist_name = decodeURIComponent(link.replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-        _this.root_view.tpl_events.showArtcardPage.call(_this.root_view, null, null, artist_name);
+        _this.root_view.parent_view.RPCLegacy('showTag', artist_name);
         _this.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
       } else if (node.is('.bbcode_tag')){
         e.preventDefault();
 
         var tag_name = decodeURIComponent(link.replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
-        _this.RPCLegacy('show_tag', 'artist_name');
+        _this.root_view.parent_view.RPCLegacy('showTag', tag_name);
         _this.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
       } else {
         e.preventDefault();
