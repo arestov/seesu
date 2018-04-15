@@ -139,7 +139,7 @@ var branch = function (bwlev) {
  if (!diff.array || !diff.array.length) {
   return;
  }
- var fake_spyglass = app.getNesting('fake_spyglass');
+ var fake_spyglass = app.map.getNesting('fake_spyglass');
 
   var bwlevs = branch(bwlev);
   var models = bwlevs.map(getPioneer);
