@@ -399,17 +399,6 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
       });
     }
   },
-
-  // :auth things
-  requestPage: function() {
-    if (!this.state('has_no_access')){
-      this.loadStart();
-      this.showOnMap();
-    } else {
-      this.map_parent.zoomOut();
-      this.switchPmd();
-    }
-  }
 });
 
 function convertToNestings(params) {

@@ -186,9 +186,6 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
     }
   },
-  requestPage: function() {
-    this.showOnMap();
-  },
   showOnMap: function() {
     var bwlev = showMOnMap(BrowseLevel, this.app.map, this);
     changeBridge(bwlev);
