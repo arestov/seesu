@@ -52,7 +52,7 @@ return function (self) {
     return;
   }
 
-  var root_bwlev_view = getRootBwlevView(self);
+  var root_bwlev_view = self.root_view.parent_view;
   if (nil(root_bwlev_view)) {
     throw new Error('cant find bwlev_view');
   }

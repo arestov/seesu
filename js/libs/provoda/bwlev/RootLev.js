@@ -43,7 +43,8 @@ var Probe = spv.inh(Model, {
   // ]
 });
 
-var RootLev = spv.inh(BrowseLevel, {}, {
+var RootLev = spv.inh(Model, {}, {
+  BWL: BrowseLevel,
   'chi-__probe': Probe,
   rpc_legacy: {
     requestSpyglass: handleSpyglassRequests,
