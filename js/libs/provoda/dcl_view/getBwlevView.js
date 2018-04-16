@@ -2,8 +2,8 @@ define(function () {
 'use strict';
 var spv = require('spv');
 var nil = spv.nil;
-return function getParentBwlevView(target) {
-  var cur = target.parent_view;
+return function getBwlevView(target) {
+  var cur = target;
 
   while (!nil(cur)) {
     if (cur.mpx.md.model_name == 'bwlev') {

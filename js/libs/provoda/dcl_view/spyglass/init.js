@@ -6,7 +6,7 @@ var getModelById = require('../../utils/getModelById');
 
 
 var getRootBwlevView = require('./getRootBwlevView');
-var getParentBwlevView = require('./getParentBwlevView')
+var getBwlevView = require('../getBwlevView')
 
 function getModel(view, _provoda_id) {
   var proxies_space = view.proxies_space || view.root_view.proxies_space;
@@ -24,7 +24,7 @@ function watchAndRequest(root_bwlev_view, self, spyglass) {
     // TODO if (value) {unsubscribe()}
   })
 
-  var parent_bwlev_view = spyglass.bwlev === true && getParentBwlevView(self)
+  var parent_bwlev_view = spyglass.bwlev === true && getBwlevView(self)
   root_bwlev_view.RPCLegacy('requestSpyglass', {
     key: key,
     bwlev: spyglass.bwlev && parent_bwlev_view.mpx.md._provoda_id,
