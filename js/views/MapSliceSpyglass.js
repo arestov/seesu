@@ -88,18 +88,19 @@ LevContainer.prototype = {
 return spv.inh(View, {}, {
   dom_rp: true,
   'sel-coll-map_slice/song': '$spec_det-map_slice',
-  'nest_borrow-search_criteria': [
-    '^^search_criteria',
-    SearchCriteriaView
-  ],
+  // 'nest_borrow-search_criteria': [
+  //   '^^search_criteria',
+  //   SearchCriteriaView
+  // ],
   children_views: {
     map_slice: {
       main: BrowseLevView,
       detailed: BrowseLevView
     },
     navigation: BrowseLevNavView,
-    // search_criteria: SearchCriteriaView,
+    search_criteria: SearchCriteriaView,
   },
+  'collch-search_criteria': true,
   tpl_events: {
     showFullNavHelper: function() {
       pv.update(this, 'nav_helper_full', true);
