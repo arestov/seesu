@@ -157,7 +157,7 @@ var initView = function(target, view_otps, opts){
 
 var changeSpyglassUniversal = function (method) {
   return function () {
-    var bwlev_view = getRootBwlevView(this);
+    var bwlev_view = this.root_view.parent_view;
     var parent_bwlev_view = getParentBwlevView(this);
     var event_data = Array.prototype.slice.call(arguments, 2);
     var data = {
