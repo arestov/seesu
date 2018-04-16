@@ -206,8 +206,13 @@ return {
           var target_view;
           var fnName;
 
-          if (spv.startsWith(fnNameRaw, '#')) {
+          var firstChar = fnNameRaw.charAt(0);
+
+          if (firstChar === '#') {
             target_view = view.root_view;
+            fnName = fnNameRaw.slice(1);
+          } else if (firstChar === '^') {
+            target_view = view.parent_view;
             fnName = fnNameRaw.slice(1);
           } else {
             fnName = fnNameRaw
