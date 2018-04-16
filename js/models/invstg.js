@@ -405,18 +405,6 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 
   },
 
-  key_name_nav: {
-    'Enter': function() {
-      this.pressEnter();
-    },
-    "Up": function() {
-      this.selectEnterItemAbove();
-    },
-    "Down": function() {
-      this.selectEnterItemBelow();
-    }
-  },
-
   searchf: function() {
     var playlists = this.app.gena.playlists,
       pl_results = [],
