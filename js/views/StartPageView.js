@@ -42,7 +42,7 @@ var StartPageView = spv.inh(coct.SPView, {}, {
     this.createTemplate();
   },
 
-  'nest_borrow-search_criteria': ['^^^^search_criteria'],
+  'nest_borrow-search_criteria': ['^^search_criteria'],
   'collch-muco': true,
   'collch-pstuff': true,
   'collch-tags': true,

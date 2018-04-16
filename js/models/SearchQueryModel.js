@@ -17,7 +17,7 @@ return spv.inh(pv.Model, {
   "+states": {
     "is_start": [
       "compx",
-      ['^selected__name'],
+      ['^^selected__name'],
       function (selected__name) {
         return selected__name === 'start_page';
       }
@@ -25,7 +25,7 @@ return spv.inh(pv.Model, {
 
     "show_search_form": [
       "compx",
-      ['#show_search_form']
+      ['^show_search_form']
     ]
   },
 
@@ -33,15 +33,16 @@ return spv.inh(pv.Model, {
     target.updateState('query_face', value);
 
     if (!value) {
-      target.map_parent.showStartPage();
+      target.map_parent.map_parent.showStartPage();
     } else {
-      target.map_parent.showResultsPage(value);
+      target.map_parent.map_parent.showResultsPage(value);
     }
   },
 
   rpc_legacy: {
     requestSearchHint: function() {
       var artist = this.state('nice_artist_hint');
+
       pvUpdate(this, 'query_value', artist);
       pvUpdate(this, 'nice_artist_hint', popular_artists[(Math.random()*10).toFixed(0)]);
       this.app.trackEvent('Navigation', 'hint artist');
