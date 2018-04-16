@@ -103,9 +103,16 @@ return spv.inh(Model, {
   'nest_sel-played_playlists': {
     from: '#>played_playlists',
   },
+  'stch-@current_mp_bwlev': function(self) {
+    self.closeNavHelper();
+  },
+  closeNavHelper: function() {
+    pvUpdate(this, 'nav_helper_is_needed', false);
+  },
   suggestNavHelper: function() {
     this.map_parent.showNowPlaying();
     if (this.state('played_playlists$length') > 1) {
+      // should work!
       // pvUpdate(this, 'nav_helper_is_needed', true);
     }
   },

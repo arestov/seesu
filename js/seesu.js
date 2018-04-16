@@ -255,9 +255,6 @@ var SeesuApp = spv.inh(AppModel, {
     if (app_serv.app_env.nodewebkit) {
       pv.update(self, 'disallow_seesu_listeners', true);
     }
-    self.on('child_change-current_mp_md', self.inputFn(function() {
-      // this.closeNavHelper();
-    }));
   },
 
 }, {
@@ -707,13 +704,6 @@ var SeesuApp = spv.inh(AppModel, {
     }
 
   },
-
-  suggestNavHelper: function() {
-  },
-
-  closeNavHelper: function() {
-    pv.update(this.map.getNesting('fake_spyglass'), 'nav_helper_is_needed', false);
-  }
 });
 
 return prepare(SeesuApp);

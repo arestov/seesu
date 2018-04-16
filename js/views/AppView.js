@@ -363,6 +363,9 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   //   spyglassURL: function(e, node, name, pattern, data) {
   //     this.root_view.parent_view.RPCLegacy(name, pattern, data);
   tpl_events: {
+    closeNavHelper: function() {
+      this.parent_view.RPCLegacy('closeNavHelper');
+    },
     showArtcardPage: function (e, node, artist_name) {
       this.parent_view.RPCLegacy('showArtcardPage', artist_name);
     },
