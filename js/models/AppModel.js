@@ -22,7 +22,6 @@ var updatePlayedListsHistory = function(target, mo) {
 
   }
   pv.updateNesting(target, 'played_playlists', array);
-  pv.updateNesting(target.app.map.getNesting('fake_spyglass'), 'played_playlists', array)
 };
 
 var AppModel = spv.inh(AppModelBase, {}, (function(){

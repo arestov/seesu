@@ -93,6 +93,9 @@ return spv.inh(Model, {
     [['doc_title']]
   ],
   'nest-search_criteria': [SearchQueryModel],
+  'nest_sel-played_playlists': {
+    from: '#>played_playlists',
+  },
   suggestNavHelper: function() {
     this.map_parent.showNowPlaying();
     if (this.state('played_playlists$length') > 1) {
