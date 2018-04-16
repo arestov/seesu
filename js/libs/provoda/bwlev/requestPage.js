@@ -24,15 +24,16 @@ return function requestPage(BWL, self, id) {
     cur = cur.map_parent;
   }
 
+  var map = self.map;
+
   if (!target_is_deep_child) {
-    var bwlev = showMOnMap(BWL, md.app.map, md);
+
+    var bwlev = showMOnMap(BWL, map, md);
     changeBridge(bwlev);
     return;
   }
 
   bwlev_children = bwlev_children.reverse();
-
-  var map = md.app.map;
 
   // !!!!showMOnMap(BWL, map, pioneer, self);
 
