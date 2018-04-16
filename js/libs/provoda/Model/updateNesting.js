@@ -26,7 +26,7 @@ return function updateNesting(self, collection_name, input, opts, spec_data) {
   var old_value = self.children_models[collection_name];
 
   if (!isNestingChanged(old_value, input)) {
-    return
+    return self
   }
 
   var zdsv = self.zdsv;
