@@ -3,7 +3,7 @@ define(function (require) {
 var spv = require('spv');
 var nil = spv.nil;
 
-var getParentBwlevView = require('./getParentBwlevView');
+var getBwlevView = require('../getBwlevView');
 var watcherKey = require('./watcherKey');
 
 var probeCheckChildren = require('./check-change').probeCheckChildren;
@@ -13,7 +13,7 @@ return function (self) {
     return;
   }
 
-  var bwlev_view = getParentBwlevView(self);
+  var bwlev_view = getBwlevView(self);
   if (nil(bwlev_view)) {
     throw new Error('cant find bwlev_view');
   }

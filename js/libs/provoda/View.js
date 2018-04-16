@@ -20,7 +20,7 @@ var probeCheckChange = require('./dcl_view/probe/check-change');
 
 var initSpyglasses = require('./dcl_view/spyglass/init');
 var getRootBwlevView = require('./dcl_view/spyglass/getRootBwlevView');
-var getParentBwlevView = require('./dcl_view/spyglass/getParentBwlevView');
+var getBwlevView = require('./dcl_view/getBwlevView');
 
 // var spyglassDestroy = require('./dcl_view/spyglass/destroy');
 
@@ -172,7 +172,7 @@ var changeProbeUniversal = function (method) {
 var changeSpyglassUniversal = function (method) {
   return function () {
     var bwlev_view = this.root_view.parent_view;
-    var parent_bwlev_view = getParentBwlevView(this);
+    var parent_bwlev_view = getBwlevView(this);
     var event_data = Array.prototype.slice.call(arguments, 2);
     var data = {
       context_md: parent_bwlev_view.children_models.pioneer._provoda_id,
