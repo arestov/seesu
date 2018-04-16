@@ -7,7 +7,11 @@ var BrowseLevel = require('./BrowseLevel');
 var handleSpyglassRequests = require('../dcl/spyglass/handleRequest')
 var updateSpyglass = require('../dcl/spyglass/update');
 var getNesting = require('pv/getNesting');
+var requestPage = require('./requestPage');
 var pvState = require('pv/state');
+var showMOnMap = require('./showMOnMap');
+var getModelById = require('../utils/getModelById');
+
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
@@ -48,6 +52,11 @@ var RootLev = spv.inh(Model, {}, {
   'chi-__probe': Probe,
   rpc_legacy: {
     requestSpyglass: handleSpyglassRequests,
+    requestPage: function(id) {
+      var md = getModelById(this, id);
+      var bwlev = showMOnMap(BrowseLevel, this, md)
+      bwlev.showOnMap();
+    },
   },
   updateSpyglass: function(data) {
     updateSpyglass(BrowseLevel, this, data);

@@ -227,14 +227,12 @@ var View = spv.inh(StatesEmitter, {
     }
   },
   requestPageById: function(_provoda_id) {
-    var bwlev_view = $v.getBwlevView(this);
-    bwlev_view.RPCLegacy('requestPage', _provoda_id);
+    this.root_view.parent_view.RPCLegacy('requestPage', _provoda_id);
   },
   requestPage: function() {
-    var bwlev_view = $v.getBwlevView(this);
-
     var md_id = this.mpx._provoda_id;
-    bwlev_view.RPCLegacy('requestPage', md_id);
+
+    this.root_view.parent_view.RPCLegacy('requestPage', md_id);
   },
   tpl_events: {
     requestPage: function() {
@@ -244,10 +242,8 @@ var View = spv.inh(StatesEmitter, {
       this.requestPageById(_provoda_id);
     },
     followTo: function() {
-      var bwlev_view = $v.getBwlevView(this);
-
       var md_id = this.mpx._provoda_id;
-      bwlev_view.RPCLegacy('followTo', md_id);
+      this.root_view.parent_view.RPCLegacy('followTo', md_id);
     },
     toggleProbe: changeProbeUniversal('toggleProbe'),
     updateProbe: changeProbeUniversal('updateProbe'),
