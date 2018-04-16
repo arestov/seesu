@@ -13,6 +13,7 @@ var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 
 var BrowseMap = require('../libs/BrowseMap');
 var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
+var SearchQueryModel = require('./SearchQueryModel');
 
 var app_serv = require('app_serv');
 var app_env = app_serv.app_env;
@@ -70,6 +71,13 @@ return spv.inh(Model, {
         }
         return as_first + ' ← ' + as_second;
       }
+    ],
+    "show_search_form": [
+      "compx",
+      ['@one:needs_search_from:current_mp_md'],
+      function(needs_search_from) {
+        return needs_search_from;
+      }
     ]
   },
   'effect-browser-location': [
@@ -84,6 +92,7 @@ return spv.inh(Model, {
     ],
     [['doc_title']]
   ],
+  'nest-search_criteria': [SearchQueryModel],
   suggestNavHelper: function() {
     this.map_parent.showNowPlaying();
     if (this.state('played_playlists$length') > 1) {

@@ -192,10 +192,8 @@ var branch = function (bwlev) {
     pvUpdate(target_md, 'mp_has_focus', true);
     pvUpdate(diff.bwlev.getMD(), 'mp_has_focus', true);
 
-    pvUpdate(app, 'show_search_form', !!target_md.state('needs_search_from'));
     pvUpdate(app, 'full_page_need', !!target_md.full_page_need);
 
-    pvUpdate(fake_spyglass, 'show_search_form', !!target_md.state('needs_search_from'));
     pvUpdate(fake_spyglass, 'full_page_need', !!target_md.full_page_need);
   //	pvUpdate(app, 'current_mp_md', target_md._provoda_id);
     updateNesting(app, 'current_mp_md', target_md);

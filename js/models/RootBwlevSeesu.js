@@ -6,7 +6,6 @@ var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
 var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
 var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 
-var SearchQueryModel = require('./SearchQueryModel');
 var FakeSpyglass = require('./FakeSpyglass');
 
 var showOnMapWrap = function(map, md) {
@@ -16,16 +15,6 @@ var showOnMapWrap = function(map, md) {
 
 
 return {
-  "+states": {
-    "show_search_form": [
-      "compx",
-      ['@one:needs_search_from:selected__md'],
-      function(needs_search_from) {
-        return needs_search_from;
-      }
-    ]
-  },
-  'nest-search_criteria': [SearchQueryModel],
   'nest-fake_spyglass': [FakeSpyglass],
   showArtcardPage: function(artist_name){
     var md = getArtcard(this, artist_name);
