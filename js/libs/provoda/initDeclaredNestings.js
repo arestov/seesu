@@ -76,9 +76,12 @@ var getPathBySimpleData = pathExecutor(function(chunkName, app, data) {
 
 var followStringTemplate = function (app, md, obj, need_constr, full_path) {
   if (obj.from_root) {
+    // "#page/etc/etc"
     return app.routePathByModels(full_path, app.start_page, need_constr);
   }
+
   if (obj.from_parent) {
+    // "^page/ect"
     var target_md_start = md;
     for (var i = 0; i < obj.from_parent; i++) {
       target_md_start = target_md_start.map_parent;
@@ -88,6 +91,12 @@ var followStringTemplate = function (app, md, obj, need_constr, full_path) {
     }
     return app.routePathByModels(full_path, target_md_start, need_constr);
   }
+
+  if (obj.full_usable_string === '#') {
+    // "#"
+    return app;
+  }
+
   return app.routePathByModels(full_path, md, need_constr);
 };
 
