@@ -13,7 +13,7 @@ return function showInterest(map, interest) {
   var first = interest.shift();
   // first.md.lev fixme
 
-  var parent_bwlev = showMOnMap(BWL, first.md.app.map, first.md);
+  var parent_bwlev = showMOnMap(BWL, map, first.md);
 
   for (var i = 0; i < interest.length; i++) {
     var cur = interest[i];
