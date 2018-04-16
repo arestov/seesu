@@ -31,6 +31,10 @@ return function updateNesting(self, collection_name, array, opts, spec_data) {
   }
 
   var old_value = self.children_models[collection_name];
+  if (!old_value && !array) {
+    return self;
+  }
+
   self.children_models[collection_name] = array;
 
   if (old_value && array) {
