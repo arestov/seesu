@@ -18,8 +18,8 @@ var emergency_opt = {
 };
 
 
-function getParentBwlevView(target) {
-  var cur = target.parent_view;
+function getBwlevView(target) {
+  var cur = target;
 
   while (!nil(cur)) {
     if (cur.mpx.md.model_name == 'bwlev') {
@@ -32,7 +32,7 @@ function getParentBwlevView(target) {
 };
 
 function getBwlevId(view) {
-  return getParentBwlevView(view).mpx._provoda_id;
+  return getBwlevView(view).mpx._provoda_id;
 }
 
 return {
@@ -177,7 +177,7 @@ return {
     }
   },
   $v: {
-    getBwlevView: getParentBwlevView,
+    getBwlevView: getBwlevView,
     getBwlevId: getBwlevId,
     getViewLocationId: function(parent_view, nesting_name, nesting_space) {
       if (!nesting_name) {
