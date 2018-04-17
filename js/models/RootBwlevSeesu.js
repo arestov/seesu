@@ -35,11 +35,13 @@ return {
     var resolved = this.app.p.resolved;
     var bwlev = resolved.getNesting('bwlev');
     var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, this.app.p.c_song.map_parent);
-    pl_bwlev.followTo(this.app.p.c_song._provoda_id);
+    var md_bwlev = pl_bwlev.followTo(this.app.p.c_song._provoda_id);
     // this.p.c_song.showOnMap();
     if (!no_stat){
       this.app.trackEvent('Navigation', 'now playing');
     }
+
+    return md_bwlev;
   },
 
   showResultsPage: function(query){

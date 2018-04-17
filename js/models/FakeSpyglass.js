@@ -4,6 +4,7 @@ var Model = require('pv/Model');
 var spv = require('spv');
 var routePathByModels = require('pv/routePathByModels');
 var pvUpdate = require('pv/update');
+var pvState = require('pv/state');
 var updateNesting = require('pv/updateNesting');
 var joinNavURL = require('pv/joinNavURL');
 var navi = require('../libs/navi');
@@ -103,17 +104,28 @@ return spv.inh(Model, {
   'nest_sel-played_playlists': {
     from: '#>played_playlists',
   },
-  'stch-@current_mp_bwlev': function(self) {
-    self.closeNavHelper();
+  'stch-@current_mp_bwlev': function(self, _, __, c) {
+    var bwlev = c && c.items;
+    if (!bwlev) {
+      return;
+    }
+    self.closeNavHelper(bwlev._provoda_id);
   },
-  closeNavHelper: function() {
-    pvUpdate(this, 'nav_helper_is_needed', false);
+  closeNavHelper: function(_provoda_id) {
+    if (!_provoda_id) {
+      pvUpdate(this, 'nav_helper_is_needed', false);
+    }
+
+    var old_value = pvState(this, 'nav_helper_is_needed');
+    if (!old_value !== _provoda_id) {
+      pvUpdate(this, 'nav_helper_is_needed', false);
+    }
   },
   suggestNavHelper: function() {
-    this.map_parent.showNowPlaying();
+    var mo_bwlev = this.map_parent.showNowPlaying();
     if (this.state('played_playlists$length') > 1) {
       // should work!
-      // pvUpdate(this, 'nav_helper_is_needed', true);
+      pvUpdate(this, 'nav_helper_is_needed', mo_bwlev._provoda_id);
     }
   },
   showNowPlaying: function(no_stat) {
