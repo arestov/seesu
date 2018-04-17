@@ -28,9 +28,6 @@ return spv.inh(Model, {
   init: function(self) {
     initMapTree(self, self.app.start_page, app_env.needs_url_history, navi);
 
-    // pv.updateNesting(app.getNesting('fake_spyglass'), 'search_criteria', app.map.getNesting('search_criteria'))
-    // // TODO move search_criteria from map to spyglass
-
     initNav(self.map_parent, navi, self.app)
   }
 }, {
