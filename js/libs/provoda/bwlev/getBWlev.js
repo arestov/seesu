@@ -11,6 +11,9 @@ return function getBWlev(BrowseLevel, md, probe_name, parent_bwlev, map_level_nu
 
   // debugger;
   // var BrowseLevel = require('./BrowseLevel');
+  if (!BrowseLevel) {
+    throw new Error('provide BrowseLevel constructor');
+  }
 
   var bwlev = create(BrowseLevel, {
     probe_name: probe_name,
