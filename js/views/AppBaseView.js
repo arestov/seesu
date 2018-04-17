@@ -227,10 +227,6 @@ var WebAppView = spv.inh(AppBaseView, {}, {
       }));
     });
 
-    this.on('state_change-current_mp_bwlev', function() {
-      _this.resortQueue();
-    });
-
     (function() {
       var wd = this.getWindow();
       var checkWindowSizes = spv.debounce(function() {
@@ -276,35 +272,13 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 
     this.d = null;
   },
-  resortQueue: (function() {
-
-    var getView = function(md, bwlev) {
-      var parent_view = bwlev.map_parent && this.getMapSliceView && this.getMapSliceView(bwlev, md);
-      // TODO fix. getMapSliceView was moved to fake_spyglass
-      if (parent_view) {
-        var views = this.getStoredMpx(md).getViews();
-        return pv.$v.matchByParent(views, parent_view);
-      }
-    };
-
-    return function (queue) {
-      if (queue){
-        queue.removePrioMarks();
-      } else {
-        if (this.all_queues) {
-          for (var i = 0; i < this.all_queues.length; i++) {
-            this.all_queues[i].removePrioMarks();
-          }
-        }
-
-      }
-      var md = this.getNesting('current_mp_md');
-      var view = md && getView.call(this, md, this.getNesting('current_mp_bwlev'));
-      if (view){
-        view.setPrio();
-      }
-    };
-  })(),
+  setImportantBwlev: function(bwlev_view) {
+    this.parent_view.important_bwlev_view = bwlev_view;
+    this.resortQueue();
+  },
+  resortQueue: function(queue) {
+    return this.parent_view.resortQueue(queue);
+  },
   onDomBuild: function() {
     var used_data_structure = getUsageTree([], [], this, this);
     this.used_data_structure = used_data_structure
