@@ -153,6 +153,7 @@ var BrowseLevel = spv.inh(Model, {
     // md.requestPage();
     var bwlev = followFromTo(BrowseLevel, this.map, this, md);
     changeBridge(bwlev);
+    return bwlev;
   },
 
   'stch-mpl_attached': function(target, state) {
