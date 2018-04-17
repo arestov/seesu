@@ -9,6 +9,7 @@ var updateSpyglass = require('../dcl/spyglass/update');
 var getNesting = require('pv/getNesting');
 var requestPage = require('./requestPage');
 var pvState = require('pv/state');
+var pvUpdate = require('pv/update');
 var showMOnMap = require('./showMOnMap');
 var getModelById = require('../utils/getModelById');
 
@@ -57,6 +58,14 @@ var RootLev = spv.inh(Model, {}, {
       var bwlev = showMOnMap(BrowseLevel, this, md)
       bwlev.showOnMap();
     },
+    knowViewingDataStructure: function(constr_id, used_data_structure) {
+      if (this.used_data_structure) {
+        return;
+      }
+
+      this.used_data_structure = used_data_structure;
+      pvUpdate(this, 'used_data_structure', used_data_structure);
+    }
   },
   updateSpyglass: function(data) {
     updateSpyglass(BrowseLevel, this, data);
@@ -96,8 +105,7 @@ var RootLev = spv.inh(Model, {}, {
     map.updateState('selected__name', bwlev.model_name);
 
     askAuth(list[ok_bwlev + 1]);
-  }
-
+  },
 })
 
 function askAuth(bwlev) {
