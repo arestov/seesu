@@ -6,16 +6,6 @@ var BrowseMap = require('./BrowseMap');
 
 var AppModelBase = spv.inh(pv.Model, {
   init: function(target) {
-    target.binded_models = {};
-    // target.navigation = [];
-    // target.map = ;
-    target.current_mp_md = null;
-    target.on('child_change-current_mp_md', function(e) {
-      if (e.target){
-        this.resortQueue();
-      }
-
-    });
     target.views_strucs = {};
   }
 }, {
@@ -38,7 +28,7 @@ var AppModelBase = spv.inh(pv.Model, {
         this.all_queues[i].removePrioMarks();
       }
     }
-    var md = this.getNesting('current_mp_md');
+    var md = this.important_model;
     if (md){
       if (md.checkRequestsPriority){
         md.checkRequestsPriority();

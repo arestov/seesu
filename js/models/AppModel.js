@@ -99,18 +99,21 @@ var props = {
     if (w_song){
       addToArray(acting, w_song);
     }
-    var imporant_models = [ this.p && this.p.waiting_next, this.getNesting('current_mp_md'), this.p && this.p.c_song ];
+    var imporant_models = [ this.p && this.p.waiting_next, this.important_model, this.p && this.p.c_song ];
     for (i = 0; i < imporant_models.length; i++) {
       var cur = imporant_models[i];
-      if (cur){
-        if (cur.getActingPriorityModels){
-          var models = cur.getActingPriorityModels();
-          if (models.length){
-            raw_array = raw_array.concat(models);
-          }
-        } else {
-          raw_array.push(cur);
-        }
+      if (!cur){
+        continue;
+      }
+
+      if (!cur.getActingPriorityModels){
+        raw_array.push(cur);
+        continue;
+      }
+
+      var models = cur.getActingPriorityModels();
+      if (models.length){
+        raw_array = raw_array.concat(models);
       }
     }
 
