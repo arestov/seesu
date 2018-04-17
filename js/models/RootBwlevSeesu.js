@@ -16,6 +16,10 @@ var showOnMapWrap = function(map, md) {
 
 return {
   'nest-fake_spyglass': [FakeSpyglass],
+  showStartPage: function(){
+    var bwlev = BrowseMap.showInterest(this.getNesting('fake_spyglass'), []);
+    BrowseMap.changeBridge(bwlev);
+  },
   showArtcardPage: function(artist_name){
     var md = getArtcard(this.app, artist_name);
     showOnMapWrap(this, md);
