@@ -34,14 +34,6 @@ var AppModelBase = spv.inh(pv.Model, {
     console.warn('add checkActingRequestsPriority')
   },
   model_name: 'app_model',
-  changeNavTree: function(nav_tree) {
-    // this.nav_tree = spv.filter(nav_tree, 'resident');
-    this.nav_tree = nav_tree;
-    if (this.matchNav){
-      this.matchNav();
-    }
-
-  },
 
   showStartPage: function(){
     var bwlev = BrowseMap.showInterest(this.map, []);
