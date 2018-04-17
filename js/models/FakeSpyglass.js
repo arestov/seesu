@@ -199,8 +199,6 @@ function initMapTree(target, start_page, needs_url_history, navi) {
     .on('bridge-changed', function(bwlev) {
       animateMapChanges(target, bwlev);
     }, target.app.getContextOptsI());
-
-  return target.app.map;
 };
 
 function handleQuery(map, md) {
