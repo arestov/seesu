@@ -59,15 +59,6 @@ var AppModelBase = spv.inh(pv.Model, {
   routePathByModels: function(pth_string, start_md, need_constr, strict, options) {
     return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr, strict, options);
   },
-
-  knowViewingDataStructure: function(constr_id, used_data_structure) {
-    if (!this.used_data_structure) {
-      this.used_data_structure = used_data_structure;
-      pv.update(this.map, 'used_data_structure', used_data_structure);
-      pv.update(this, 'used_data_structure', used_data_structure);
-    }
-    //console.log(1313)
-  }
 });
 
 
