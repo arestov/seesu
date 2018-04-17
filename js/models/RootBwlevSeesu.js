@@ -17,13 +17,13 @@ var showOnMapWrap = function(map, md) {
 return {
   'nest-fake_spyglass': [FakeSpyglass],
   showArtcardPage: function(artist_name){
-    var md = getArtcard(this, artist_name);
+    var md = getArtcard(this.app, artist_name);
     showOnMapWrap(this, md);
     return md;
   },
 
   showArtistAlbum: function(params){
-    var artcard = getArtcard(this, params.album_artist);
+    var artcard = getArtcard(this.app, params.album_artist);
 
     var artist_name = params.album_artist || artcard.head.artist_name
     var pl = artcard.getSPI('albums_lfm', true).getSPI(artist_name + ',' + params.album_name, true);
@@ -61,15 +61,15 @@ return {
   },
 
   showTopTracks: function(artist, track_name) {
-    var artcard = getArtcard(this, artist);
+    var artcard = getArtcard(this.app, artist);
     var target = artcard.getTopTacks(track_name);
     showOnMapWrap(this, target)
   },
 };
 
 
-function getArtcard(target, artist_name) {
-  return routePathByModels(target.app.start_page, 'catalog/' + encodeURIComponent(artist_name), false, true);
+function getArtcard(app, artist_name) {
+  return routePathByModels(app.start_page, 'catalog/' + encodeURIComponent(artist_name), false, true);
 }
 
 });
