@@ -11,6 +11,7 @@ var navi = require('../libs/navi');
 var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
 var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
 var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
+var getNesting = require('pv/getNesting');
 
 var BrowseMap = require('../libs/BrowseMap');
 var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
@@ -26,6 +27,11 @@ var showOnMapWrap = function(map, md) {
 
 return spv.inh(Model, {
   init: function(self) {
+    self.binded_models = {};
+    // target.navigation = [];
+    // target.map = ;
+    self.current_mp_md = null;
+
     initMapTree(self, self.app.start_page, app_env.needs_url_history, navi);
 
     initNav(self.map_parent, navi, self.app)
@@ -106,7 +112,12 @@ return spv.inh(Model, {
     if (!bwlev) {
       return;
     }
+
     self.closeNavHelper(bwlev._provoda_id);
+
+
+    self.app.important_model = getNesting(bwlev, 'pioneer');
+    self.app.resortQueue();
   },
   closeNavHelper: function(_provoda_id) {
     if (!_provoda_id) {
@@ -186,7 +197,7 @@ function initMapTree(target, start_page, needs_url_history, navi) {
 
   target.map_parent
     .on('bridge-changed', function(bwlev) {
-      animateMapChanges(target.app, bwlev);
+      animateMapChanges(target, bwlev);
     }, target.app.getContextOptsI());
 
   return target.app.map;

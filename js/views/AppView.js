@@ -17,6 +17,7 @@ var app_env = app_serv.app_env;
 
 function initRootView(root_view) {
   root_view.all_queues = [];
+  root_view.parent_view.all_queues = root_view.all_queues;
   var addQueue = function() {
     this.reverse_default_prio = true;
     root_view.all_queues.push(this);

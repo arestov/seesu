@@ -26,7 +26,21 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
           }
         }
       }
+    ],
+    'full_focus': [
+      'compx',
+      ['mp_show', 'mp_has_focus'],
+      function(a, b) {
+        return a && b;
+      }
     ]
+  },
+
+  'stch-full_focus': function(target, value) {
+    if (!value) {
+      return;
+    }
+    target.root_view.setImportantBwlev(target)
   },
 
   children_views_by_mn: {
