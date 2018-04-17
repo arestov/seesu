@@ -55,7 +55,7 @@ var RootLev = spv.inh(Model, {}, {
     requestSpyglass: handleSpyglassRequests,
     requestPage: function(id) {
       var md = getModelById(this, id);
-      var bwlev = showMOnMap(BrowseLevel, this, md)
+      var bwlev = showMOnMap(BrowseLevel, this.getNesting('fake_spyglass'), md)
       bwlev.showOnMap();
     },
     knowViewingDataStructure: function(constr_id, used_data_structure) {
@@ -76,43 +76,7 @@ var RootLev = spv.inh(Model, {}, {
   spyglassURL: function(name, pattern, data) {
     // navigation, "/tags/[:tag]" {tag: "tgbbb"}
   },
-  'stch-has_no_access@wanted_bwlev_chain.pioneer': function(target, state, old_state, source) {
-    var map = target;
-
-    var list = getNesting(map, 'wanted_bwlev_chain');
-    if (!list) {
-      return;
-    }
-
-    // start_page/level/i===0 can't have `Boolean(has_no_access) === true`. so ok_bwlev = 0
-    var ok_bwlev = 0;
-
-    for (var i = 0; i < list.length; i++) {
-      var cur_bwlev = list[i];
-      var md = getNesting(cur_bwlev, 'pioneer');
-      var has_no_access = pvState(md, 'has_no_access');
-      if (has_no_access) {
-        break;
-      }
-      ok_bwlev = i;
-    }
-
-    var bwlev = list[ok_bwlev];
-
-    map.trigger('bridge-changed', bwlev);
-    map.updateNesting('selected__bwlev', bwlev);
-    map.updateNesting('selected__md', bwlev.getNesting('pioneer'));
-    map.updateState('selected__name', bwlev.model_name);
-
-    askAuth(list[ok_bwlev + 1]);
-  },
 })
-
-function askAuth(bwlev) {
-  if (!bwlev) {return;}
-
-  getNesting(bwlev, 'pioneer').switchPmd();
-}
 
 return RootLev;
 });

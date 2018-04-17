@@ -8,8 +8,8 @@ var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 
 var FakeSpyglass = require('./FakeSpyglass');
 
-var showOnMapWrap = function(map, md) {
-  var bwlev = showMOnMap(BrowseLevel, map, md);
+var showOnMapWrap = function(bwroot, md) {
+  var bwlev = showMOnMap(BrowseLevel, bwroot.getNesting('fake_spyglass'), md);
   changeBridge(bwlev);
 }
 

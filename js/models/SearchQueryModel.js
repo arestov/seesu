@@ -17,7 +17,7 @@ return spv.inh(pv.Model, {
   "+states": {
     "is_start": [
       "compx",
-      ['^^selected__name'],
+      ['^selected__name'],
       function (selected__name) {
         return selected__name === 'start_page';
       }
