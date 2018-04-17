@@ -200,9 +200,16 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 function hookRoot(rootmd, start_page) {
   var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(RootLev, {}, rootmd.BWLev)) : RootLev;
   var bwlev_root = createLevel(CurBrowseLevel, '', -2, null, rootmd, null);
-  if (start_page) {
-    setStartBwlev('map_slice', bwlev_root, start_page);
+
+  if (!start_page) {
+    return bwlev_root;
   }
+
+  bwlev_root.mainLevelResident = start_page;
+
+  bwlev_root.nextTick(function() {
+    setStartBwlev('map_slice', bwlev_root.getNesting('fake_spyglass'), start_page);
+  });
 
   return bwlev_root;
 }

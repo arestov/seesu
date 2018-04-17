@@ -32,11 +32,15 @@ return spv.inh(Model, {
     // target.map = ;
     self.current_mp_md = null;
 
-    initMapTree(self, self.app.start_page, app_env.needs_url_history, navi);
+    self.mainLevelResident = self.map_parent.mainLevelResident;
 
-    initNav(self.map_parent, navi, self.app)
+    initMapTree(self, self.app.start_page, app_env.needs_url_history, navi);
+    self.nextTick(function() {
+      initNav(self, navi, self.app)
+    })
   }
 }, {
+  BWL: BrowseLevel,
   "+states": {
     "now_playing": [
       "compx",
@@ -112,6 +116,36 @@ return spv.inh(Model, {
     self.app.important_model = getNesting(bwlev, 'pioneer');
     self.app.resortQueue();
   },
+  'stch-has_no_access@wanted_bwlev_chain.pioneer': function(target, state, old_state, source) {
+    var map = target;
+
+    var list = getNesting(map, 'wanted_bwlev_chain');
+    if (!list) {
+      return;
+    }
+
+    // start_page/level/i===0 can't have `Boolean(has_no_access) === true`. so ok_bwlev = 0
+    var ok_bwlev = 0;
+
+    for (var i = 0; i < list.length; i++) {
+      var cur_bwlev = list[i];
+      var md = getNesting(cur_bwlev, 'pioneer');
+      var has_no_access = pvState(md, 'has_no_access');
+      if (has_no_access) {
+        break;
+      }
+      ok_bwlev = i;
+    }
+
+    var bwlev = list[ok_bwlev];
+
+    map.trigger('bridge-changed', bwlev);
+    map.updateNesting('selected__bwlev', bwlev);
+    map.updateNesting('selected__md', bwlev.getNesting('pioneer'));
+    map.updateState('selected__name', bwlev.model_name);
+
+    askAuth(list[ok_bwlev + 1]);
+  },
   closeNavHelper: function(_provoda_id) {
     if (!_provoda_id) {
       pvUpdate(this, 'nav_helper_is_needed', false);
@@ -137,7 +171,7 @@ return spv.inh(Model, {
     // если элемента нет или в элемент детализировали
     var invstg = routePathByModels(this.app.start_page, 'search/', false, true, {reuse: true});
     invstg.changeQuery(query);
-    showOnMapWrap(this.map_parent, invstg);
+    showOnMapWrap(this, invstg);
     return invstg;
   },
   attachUI: function(app_view_id) {
@@ -188,7 +222,7 @@ function initMapTree(target, start_page, needs_url_history, navi) {
   updateNesting(target, 'navigation', []);
   updateNesting(target, 'start_page', start_page);
 
-  target.map_parent
+  target
     .on('bridge-changed', function(bwlev) {
       animateMapChanges(target, bwlev);
     }, target.app.getContextOptsI());
@@ -207,7 +241,7 @@ function initNav(map, navi, app) {
       var url = e.newURL;
       var state_from_history = navi.findHistory(e.newURL);
       if (state_from_history){
-        showOnMapWrap(map, state_from_history.data)
+        changeBridge(state_from_history.data);
         handleQuery(map, state_from_history.data.getNesting('pioneer'));
       } else{
         var interest = BrowseMap.getUserInterest(url.replace(/\ ?\$...$/, ''), app.start_page);
@@ -235,5 +269,12 @@ function initNav(map, navi, app) {
     BrowseMap.changeBridge(bwlev);
   }
 }
+
+function askAuth(bwlev) {
+  if (!bwlev) {return;}
+
+  getNesting(bwlev, 'pioneer').switchPmd();
+}
+
 
 });
