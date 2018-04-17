@@ -9,11 +9,6 @@ var AppModelBase = spv.inh(pv.Model, {
     target.views_strucs = {};
   }
 }, {
-  showStartPage: function(){
-    var bwlev = BrowseMap.showInterest(this.map, []);
-    BrowseMap.changeBridge(bwlev);
-  },
-
   animationMark: function(models, mark) {
     for (var i = 0; i < models.length; i++) {
       pv.update(models[i].getMD(), 'map_animating', mark);
