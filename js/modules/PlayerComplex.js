@@ -3,7 +3,6 @@ define(function(require) {
 var PlayerBase = require('./PlayerBase');
 var spv = require('spv');
 var pv = require('pv');
-var BrowseMap = require('../libs/BrowseMap');
 
 var removeCurrentWantedSong = function(obj){
   if (obj.wanted_song){
@@ -135,21 +134,6 @@ var PlayerComplex = spv.inh(PlayerBase, {
 
           removeCurrentWantedSong(this);
 
-
-          if (last_mo && resolved) {
-            var bwlev = resolved.getNesting('bwlev');
-            if (!bwlev) {
-              console.warn(new Error('play request should have bwlev'))
-            } else {
-              var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, last_mo.map_parent);
-              var last_bwlev = pl_bwlev && BrowseMap.getBwlevFromParentBwlev(pl_bwlev, last_mo);
-              if (last_bwlev && last_bwlev.state('mp_show')) {
-                pl_bwlev.followTo(mo._provoda_id);
-              }
-            }
-
-          }
-
           if (last_mo && last_mo.state('mp_show') && this.c_song != mo){
             // mo.showOnMap();
           }
@@ -163,6 +147,8 @@ var PlayerComplex = spv.inh(PlayerBase, {
             this.nowPlaying(mo);
           }
 
+          pv.update(this, 'current_song', mo);
+
           this.c_song = mo;
           pv.update(mo, 'player_song', true);
         }
@@ -170,6 +156,7 @@ var PlayerComplex = spv.inh(PlayerBase, {
       } else {
         throw new Error('do not expect this!');
       }
+
 
 
     }
