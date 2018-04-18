@@ -7,7 +7,7 @@ var BrowseMap = require('js/libs/BrowseMap');
 
   var Investigation = spv.inh(BrowseMap.Model, {
     init: function(self) {
-      self.q = self.state('query') || self.init_states.query;
+      self.q = self.state('query') || (self.init_states && self.init_states.query);
 
       self.names = {};
       self.enter_items = false;
