@@ -12,6 +12,7 @@ var pvState = require('pv/state');
 var pvUpdate = require('pv/update');
 var showMOnMap = require('./showMOnMap');
 var getModelById = require('../utils/getModelById');
+var followFromTo = require('./followFromTo');
 
 
 var Probe = spv.inh(Model, {
@@ -57,6 +58,18 @@ var RootLev = spv.inh(Model, {}, {
       var md = getModelById(this, id);
       var bwlev = showMOnMap(BrowseLevel, this.getNesting('fake_spyglass'), md)
       bwlev.showOnMap();
+    },
+    followTo: function(from_id, id) {
+      var md = getModelById(this, id);
+      if (md.getRelativeModel) {
+        md = md.getRelativeModel();
+      }
+
+      var from_bwlev = getModelById(this, from_id);
+
+      var bwlev = followFromTo(BrowseLevel, this.getNesting('fake_spyglass'), from_bwlev, md);
+      bwlev.showOnMap();
+      return bwlev;
     },
     knowViewingDataStructure: function(constr_id, used_data_structure) {
       if (this.used_data_structure) {

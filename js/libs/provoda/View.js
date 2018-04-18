@@ -229,7 +229,8 @@ var View = spv.inh(StatesEmitter, {
     },
     followTo: function() {
       var md_id = this.mpx._provoda_id;
-      this.root_view.parent_view.RPCLegacy('followTo', md_id);
+      var bwlev_view = $v.getBwlevView(this);
+      this.root_view.parent_view.RPCLegacy('followTo', bwlev_view.mpx._provoda_id, md_id);
     },
     toggleSpyglass: changeSpyglassUniversal('toggleSpyglass'),
     updateSpyglass: changeSpyglassUniversal('updateSpyglass'),
