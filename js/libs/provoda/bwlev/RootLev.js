@@ -13,7 +13,7 @@ var pvUpdate = require('pv/update');
 var showMOnMap = require('./showMOnMap');
 var getModelById = require('../utils/getModelById');
 var followFromTo = require('./followFromTo');
-
+var getSPByPathTemplate = require('../initDeclaredNestings').getSPByPathTemplate;
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
@@ -58,6 +58,16 @@ var RootLev = spv.inh(Model, {}, {
       var md = getModelById(this, id);
       var bwlev = showMOnMap(BrowseLevel, this.getNesting('fake_spyglass'), md)
       bwlev.showOnMap();
+    },
+    followURL: function(from_id, url) {
+      var from_bwlev = getModelById(this, from_id);
+      var md = from_bwlev.getNesting('pioneer');
+
+      var target_md = getSPByPathTemplate(this.app, md, url);
+
+      var bwlev = followFromTo(BrowseLevel, this.getNesting('fake_spyglass'), from_bwlev, target_md);
+      bwlev.showOnMap();
+      return bwlev;
     },
     followTo: function(from_id, id) {
       var md = getModelById(this, id);
