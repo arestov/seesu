@@ -164,6 +164,7 @@ var SeesuApp = spv.inh(AppModel, {
     self.cache_ajax = cache_ajax;
 
     self.p = new PlayerSeesu(self);
+    updateNesting(self, 'player', self.p);
     self.player = self.p;
     self.app_md = self;
     self.art_images = self.initChi('art_images');

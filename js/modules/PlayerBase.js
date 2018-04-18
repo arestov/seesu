@@ -8,7 +8,7 @@ var spv = require('spv');
 var PlayerBase = function(){};
 pv.Eventor.extendTo(PlayerBase, );
 */
-var PlayerBase = spv.inh(pv.Eventor, {
+var PlayerBase = spv.inh(pv.Model, {
   naming: function(constructor) {
     return function PlayerBase() {
       constructor(this);
@@ -19,7 +19,6 @@ var PlayerBase = spv.inh(pv.Eventor, {
     self.attached = {};
   },
   props: {
-    constructor: PlayerBase,
     global_volume: true,
     'regfr-cready': {
       event_name: 'core-ready',
