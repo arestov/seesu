@@ -3,8 +3,6 @@ define(function (require) {
 
 var cloneObj = require('spv').cloneObj;
 var initSubPager = require('../dcl/sub_pager/init');
-var reportProbe = require('../dcl/probe/report');
-var reportZeroPath = reportProbe.reportZeroPath;
 
 return function initModel(self, opts, data, params, more, states) {
   self.current_motivator = self.current_motivator || (opts && opts._motivator);
@@ -95,8 +93,6 @@ return function initModel(self, opts, data, params, more, states) {
   if (self.head) {
     toServStates(self, self.head);
   }
-
-  reportZeroPath(self);
 
   if (!self.init_service_states) {
     return self;

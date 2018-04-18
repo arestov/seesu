@@ -5,7 +5,6 @@ var hp = require('../helpers');
 var StatesLabour = require('../StatesLabour');
 var updateProxy = require('../updateProxy');
 var checkNesting =  require('../nest-watch/index').checkNesting;
-var markNestingParticipation = require('./markNestingParticipation');
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 
@@ -46,8 +45,6 @@ return function updateNesting(self, collection_name, array, opts, spec_data) {
   }
 
   var removed = hp.getRemovedNestingItems(array, old_value);
-
-  markNestingParticipation(self, collection_name, array, removed);
 
   checkNesting(self, collection_name, array, removed);
   // !?

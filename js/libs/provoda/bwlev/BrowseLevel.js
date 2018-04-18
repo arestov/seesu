@@ -18,9 +18,6 @@ var loadNestingsByStruc = require('../structure/reactions/loadNestingsByStruc');
 var loadAllByStruc = require('../structure/reactions/loadAllByStruc');
 var getModelSources = require('../structure/getModelSources');
 
-var watchAndCollectProbes = require('../dcl/probe/watch');
-var updateProbe = require('../dcl/probe/updateProbe');
-
 var countKeys = spv.countKeys;
 var cloneObj = spv.cloneObj;
 
@@ -52,16 +49,8 @@ var BrowseLevel = spv.inh(Model, {
       self.ptree = self.ptree.concat(self.map_parent.ptree);
       self.rtree = self.rtree.concat(self.map_parent.rtree);
     }
-
-    watchAndCollectProbes(self, pioneer);
   }
 }, {
-  updateProbe: function(target_id, probe_name, value, probe_container_uri) {
-    updateProbe(BrowseLevel, this, target_id, probe_name, value, probe_container_uri);
-  },
-  toggleProbe: function(target_id, probe_name, value, probe_container_uri) {
-    updateProbe.toggleProbe(BrowseLevel, this, target_id, probe_name, value, probe_container_uri);
-  },
   model_name: 'bwlev',
   "+states": {
     "map_slice_view_sources": [
