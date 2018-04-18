@@ -41,6 +41,9 @@ return spv.inh(Model, {
   }
 }, {
   BWL: BrowseLevel,
+  'nest_sel-player': {
+    from: '#>player',
+  },
   "+states": {
     "now_playing": [
       "compx",
@@ -86,6 +89,10 @@ return spv.inh(Model, {
       function(needs_search_from) {
         return needs_search_from;
       }
+    ],
+    'current_song': [
+      'compx',
+      ['@one:current_song:player'],
     ]
   },
   "+effects": {
@@ -214,6 +221,23 @@ return spv.inh(Model, {
     pvUpdate(this.app.start_page, 'can_expand', true);
 
   },
+  'stch-current_song': function(target, mo, last_mo) {
+    if (!mo || !last_mo) {
+      return;
+    }
+
+    var resolved = target.app.player.resolved;
+    if (!resolved) {
+      return;
+    }
+
+    var bwlev = resolved.getNesting('bwlev');
+    var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, last_mo.map_parent);
+    var last_bwlev = pl_bwlev && BrowseMap.getBwlevFromParentBwlev(pl_bwlev, last_mo);
+    if (last_bwlev && last_bwlev.state('mp_show')) {
+      pl_bwlev.followTo(mo._provoda_id);
+    }
+  }
 });
 
 
