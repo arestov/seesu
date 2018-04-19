@@ -179,7 +179,6 @@ var ArrowPart = spv.inh(ActionsRowUI, {}, {
   }
 });
 
-// __run_probe_song_action
 var Probe = spv.inh(View, {}, spv.cloneObj({
   children_views: {
     current_md: {arrow: ArrowPart}
