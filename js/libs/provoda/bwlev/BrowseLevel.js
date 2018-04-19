@@ -65,10 +65,13 @@ var BrowseLevel = spv.inh(Model, {
       "compx",
       ['@one:used_data_structure:map', '@pioneer', 'map_level_num', 'probe_name'],
       function(struc, pioneer, num, probe_name) {
+
         if (num == -2) {return}
+
         if (!struc || !pioneer || !probe_name) {return;}
-        var sub_struc = struc.m_children.children.fake_spyglass.main;
-        // TODO don't use fake_spyglass
+
+        var sub_struc = struc.m_children.children.spyglass__navigation.main;
+        // TODO don't use spyglass__navigation
         return getUsageStruc(pioneer, probe_name, sub_struc, this.app);
       }
     ],

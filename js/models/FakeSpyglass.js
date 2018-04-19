@@ -45,6 +45,10 @@ return spv.inh(Model, {
     from: '#>player',
   },
   "+states": {
+    "used_data_structure": [
+      'compx',
+      ['^used_data_structure'],
+    ],
     "now_playing": [
       "compx",
       ['#now_playing'],
