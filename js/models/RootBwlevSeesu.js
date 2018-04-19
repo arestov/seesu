@@ -15,7 +15,25 @@ var showOnMapWrap = function(bwroot, md) {
 
 
 return {
-  'nest-fake_spyglass': [FakeSpyglass],
+  sub_page: {
+    'navigation': {
+      constr: FakeSpyglass,
+      title: [['nav_title_nothing']],
+    },
+  },
+  // sub_pager: {
+  //   by_type: {
+  //     navigation: [
+  //       FakeSpyglass, [['nav_title_nothing']], {
+  //         key: 'simple_name'
+  //       }
+  //     ],
+  //   },
+  //   type: {
+  //     navigation: 'navigation',
+  //   },
+  // },
+  'nest-fake_spyglass': ['navigation'],
   showStartPage: function(){
     var bwlev = BrowseMap.showInterest(this.getNesting('fake_spyglass'), []);
     BrowseMap.changeBridge(bwlev);
