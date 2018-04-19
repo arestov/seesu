@@ -43,12 +43,6 @@ return function initModel(self, opts, data, params, more, states) {
   self.children_models = null;
   self._network_source = self._network_source || null;
 
-  self._participation_in_nesting = null;
-  self._nestings_paths = null;
-  self._collected_probes = null;
-  self._probes_collectors = null;
-  self._run_probes = null;
-
   self.md_replacer = null;
   self.mpx = null;
   self._requests_deps = null;
