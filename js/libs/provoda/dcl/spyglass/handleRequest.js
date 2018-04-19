@@ -6,7 +6,7 @@ var pvUpdate = require('pv/update');
 var updateNesting = require('pv/updateNesting');
 var getModelById = require('../../utils/getModelById');
 var getKey = require('./getKey');
-
+var getSPByPathTemplate = require('../../initDeclaredNestings').getSPByPathTemplate;
 
 return function(request) {
   var self = this;
@@ -47,11 +47,10 @@ function ensureSpyglass(self, index, key, request) {
   if (index[key]) {
     return index;
   }
-  var spyglass = self.initChi('__probe', null, null, null, {
-    // path: pathp.path,
-    name: request.name,
-    // owner_provoda_id: md._provoda_id,
-  });
+
+  var path = request.name + ((key && key !== request.name) ? ('/' + key) : '');
+
+  var spyglass = getSPByPathTemplate(self.app, self, path)
 
   var new_index = spv.cloneObj({}, index);
 
