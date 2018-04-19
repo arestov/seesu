@@ -76,6 +76,11 @@ var getPathBySimpleData = pathExecutor(function(chunkName, app, data) {
 
 var followStringTemplate = function (app, md, obj, need_constr, full_path) {
   if (obj.from_root) {
+    if (full_path === '') {
+      // used just "#" as path
+      return app;
+    }
+
     // "#page/etc/etc"
     return app.routePathByModels(full_path, app.start_page, need_constr);
   }
@@ -89,12 +94,8 @@ var followStringTemplate = function (app, md, obj, need_constr, full_path) {
     if (!full_path) {
       return target_md_start;
     }
-    return app.routePathByModels(full_path, target_md_start, need_constr);
-  }
 
-  if (obj.full_usable_string === '#') {
-    // "#"
-    return app;
+    return app.routePathByModels(full_path, target_md_start, need_constr);
   }
 
   return app.routePathByModels(full_path, md, need_constr);
@@ -112,7 +113,9 @@ var isFromRoot = function(first_char, string_template) {
   var from_root = first_char == '#';
   if (!from_root) {return;}
 
-  return string_template.slice( 1 );
+  return {
+    cutted: string_template.slice( 1 )
+  };
 };
 
 var parent_count_regexp = /^\^+/gi;
@@ -134,7 +137,11 @@ var getParsedPath = spv.memorize(function(string_template) {
   var from_root = isFromRoot(first_char, string_template);
   var from_parent = !from_root && isFromParent(first_char, string_template);
 
-  var full_usable_string = from_root || (from_parent && from_parent.cutted) || string_template;
+  var full_usable_string = from_root
+    ? from_root.cutted
+    : (from_parent
+      ? from_parent.cutted
+      : string_template);
 
   var clean_string_parts = full_usable_string.split(string_state_regexp);
   var states = full_usable_string.match(string_state_regexp);
@@ -145,7 +152,7 @@ var getParsedPath = spv.memorize(function(string_template) {
     }
   }
 
-  if (!full_usable_string && !from_parent) {
+  if (!full_usable_string && !from_parent && !from_root) {
     throw new Error('path cannot be empty');
   }
 
