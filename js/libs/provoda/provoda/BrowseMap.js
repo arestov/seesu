@@ -11,6 +11,7 @@ var getBwlevFromParentBwlev = require('../bwlev/getBwlevFromParentBwlev');
 var get_constr = require('../structure/get_constr');
 var prepare = require('../structure/prepare');
 var RootLev = require('../bwlev/RootLev');
+var getSPByPathTemplate = require('../initDeclaredNestings').getSPByPathTemplate;
 
 var routePathByModels = require('../routePathByModels');
 
@@ -211,7 +212,7 @@ function hookRoot(rootmd, start_page) {
   bwlev_root.mainLevelResident = start_page;
 
   bwlev_root.nextTick(function() {
-    setStartBwlev('map_slice', bwlev_root.getNesting('fake_spyglass'), start_page);
+    setStartBwlev('map_slice', getSPByPathTemplate(bwlev_root.app, bwlev_root, 'navigation'), start_page);
   });
 
   return bwlev_root;

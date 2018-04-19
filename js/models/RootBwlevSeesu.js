@@ -5,11 +5,12 @@ var routePathByModels = require('pv/routePathByModels');
 var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
 var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
 var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
+var getSPByPathTemplate = require('js/libs/provoda/initDeclaredNestings').getSPByPathTemplate;
 
 var FakeSpyglass = require('./FakeSpyglass');
 
 var showOnMapWrap = function(bwroot, md) {
-  var bwlev = showMOnMap(BrowseLevel, bwroot.getNesting('fake_spyglass'), md);
+  var bwlev = showMOnMap(BrowseLevel, getSPByPathTemplate(bwroot.app, bwroot, 'navigation'), md);
   changeBridge(bwlev);
 }
 
@@ -35,7 +36,7 @@ return {
   // },
   'nest-fake_spyglass': ['navigation'],
   showStartPage: function(){
-    var bwlev = BrowseMap.showInterest(this.getNesting('fake_spyglass'), []);
+    var bwlev = BrowseMap.showInterest(getSPByPathTemplate(this.app, this, 'navigation'), []);
     BrowseMap.changeBridge(bwlev);
   },
   showArtcardPage: function(artist_name){

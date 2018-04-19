@@ -56,7 +56,7 @@ var RootLev = spv.inh(Model, {}, {
     requestSpyglass: handleSpyglassRequests,
     requestPage: function(id) {
       var md = getModelById(this, id);
-      var bwlev = showMOnMap(BrowseLevel, this.getNesting('fake_spyglass'), md)
+      var bwlev = showMOnMap(BrowseLevel, getSPByPathTemplate(this.app, this, 'navigation'), md)
       bwlev.showOnMap();
     },
     followURL: function(from_id, url) {
@@ -65,7 +65,7 @@ var RootLev = spv.inh(Model, {}, {
 
       var target_md = getSPByPathTemplate(this.app, md, url);
 
-      var bwlev = followFromTo(BrowseLevel, this.getNesting('fake_spyglass'), from_bwlev, target_md);
+      var bwlev = followFromTo(BrowseLevel, getSPByPathTemplate(this.app, this, 'navigation'), from_bwlev, target_md);
       bwlev.showOnMap();
       return bwlev;
     },
@@ -77,7 +77,7 @@ var RootLev = spv.inh(Model, {}, {
 
       var from_bwlev = getModelById(this, from_id);
 
-      var bwlev = followFromTo(BrowseLevel, this.getNesting('fake_spyglass'), from_bwlev, md);
+      var bwlev = followFromTo(BrowseLevel, getSPByPathTemplate(this.app, this, 'navigation'), from_bwlev, md);
       bwlev.showOnMap();
       return bwlev;
     },
