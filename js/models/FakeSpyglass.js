@@ -12,6 +12,7 @@ var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
 var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
 var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 var getNesting = require('pv/getNesting');
+var createLevel = require('js/libs/provoda/bwlev/createLevel');
 
 var BrowseMap = require('../libs/BrowseMap');
 var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
@@ -32,7 +33,17 @@ return spv.inh(Model, {
     // target.map = ;
     self.current_mp_md = null;
 
-    self.mainLevelResident = self.map_parent.mainLevelResident;
+    var spyglass_name = 'navigation';
+
+    self.mainLevelResident = self.app.start_page;
+    self.start_bwlev = createLevel(
+      BrowseLevel,
+      spyglass_name,
+      -1,
+      false,
+      self.mainLevelResident,
+      self
+    );
 
     initMapTree(self, self.app.start_page, app_env.needs_url_history, navi);
     self.nextTick(function() {
