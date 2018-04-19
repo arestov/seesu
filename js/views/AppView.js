@@ -95,6 +95,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   },*/
   'nest_borrow-fake_spyglass': ['^fake_spyglass', MapSliceSpyglass],
   'collch-fake_spyglass': true,
+  isRootView: true,
   controllers: {
     auth_vk: etc_views.VkLoginUI,
     auth_lfm: etc_views.LfmLoginView,
