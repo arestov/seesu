@@ -21,6 +21,9 @@ var getModelSources = require('../structure/getModelSources');
 var countKeys = spv.countKeys;
 var cloneObj = spv.cloneObj;
 
+var transportName = function(spyglass_name) {
+  return 'spyglass__' + spyglass_name.replace('/', '__');
+}
 
 var BrowseLevel = spv.inh(Model, {
   strict: true,
@@ -70,8 +73,8 @@ var BrowseLevel = spv.inh(Model, {
 
         if (!struc || !pioneer || !probe_name) {return;}
 
-        var sub_struc = struc.m_children.children.spyglass__navigation.main;
-        // TODO don't use spyglass__navigation
+        var spyglass_view_name = transportName(probe_name)
+        var sub_struc = struc.m_children.children[spyglass_view_name].main;
         return getUsageStruc(pioneer, probe_name, sub_struc, this.app);
       }
     ],
