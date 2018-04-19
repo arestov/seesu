@@ -31,10 +31,6 @@ var getDeclrConstr = get_constr.getDeclrConstr;
 
 */
 
-function setStartBwlev(probe_name, self, mainLevelResident) {
-  self.mainLevelResident = mainLevelResident;
-  self.start_bwlev = createLevel(BrowseLevel, probe_name, -1, false, self.mainLevelResident, self);
-}
 
 var BrowseMap = {};
 
@@ -209,10 +205,8 @@ function hookRoot(rootmd, start_page) {
     return bwlev_root;
   }
 
-  bwlev_root.mainLevelResident = start_page;
-
   bwlev_root.nextTick(function() {
-    setStartBwlev('map_slice', getSPByPathTemplate(bwlev_root.app, bwlev_root, 'navigation'), start_page);
+    getSPByPathTemplate(bwlev_root.app, bwlev_root, 'navigation')
   });
 
   return bwlev_root;
