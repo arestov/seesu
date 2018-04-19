@@ -48,7 +48,7 @@ var getCommonBwlevParent = function(bwlev, md) {
       if (pioneer == cur_md) {
         return cur_bwlev;
       }
-      cur_md = md.map_parent;
+      cur_md = cur_md.map_parent;
     }
 
     cur_bwlev = cur_bwlev.map_parent;
