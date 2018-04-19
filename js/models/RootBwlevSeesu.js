@@ -5,9 +5,46 @@ var routePathByModels = require('pv/routePathByModels');
 var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
 var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
 var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
+var getUsageStruc = require('js/libs/provoda/structure/getUsageStruc');
 var getSPByPathTemplate = require('js/libs/provoda/initDeclaredNestings').getSPByPathTemplate;
+var Model = require('pv/Model');
+var spv = require('spv');
 
 var FakeSpyglass = require('./FakeSpyglass');
+
+var Probe = spv.inh(Model, {
+  naming: function(fn) {
+		return function Probe(opts, data, params, more, states) {
+			fn(this, opts, data, params, more, states);
+		};
+	},
+  init: function(self) {
+    self.bwlevs = {};
+  },
+}, {
+  'stch-used_struc': function(self, value) {
+    console.log('GOT used_struc', value);
+  },
+  '+states': {
+    struc: [
+      "compx", ['used_struc', '@current_md', 'name'],
+  		function(struc, pioneer, probe_name) {
+  			// if (num == -2) {return}
+  			if (!struc || !pioneer || !probe_name) {return;}
+  			return getUsageStruc(pioneer, probe_name, struc, this.app);
+  		}
+  	],
+  }
+  // 'compx-struc': [
+  //   ['@one:struc:owner_bwlev', 'name'],
+  //   function(struc, name) {
+  //     if (!struc) {return;}
+  //
+  //     console.log('---------Probe', name, struc.main.m_children.children);
+  //     return struc.main.m_children[name];
+  //   }
+  // ]
+});
 
 var showOnMapWrap = function(bwroot, md) {
   var bwlev = showMOnMap(BrowseLevel, getSPByPathTemplate(bwroot.app, bwroot, 'navigation'), md);
@@ -22,18 +59,18 @@ return {
       title: [['nav_title_nothing']],
     },
   },
-  // sub_pager: {
-  //   by_type: {
-  //     navigation: [
-  //       FakeSpyglass, [['nav_title_nothing']], {
-  //         key: 'simple_name'
-  //       }
-  //     ],
-  //   },
-  //   type: {
-  //     navigation: 'navigation',
-  //   },
-  // },
+  sub_pager: {
+    by_type: {
+      song_action: [
+        Probe, [['nav_title_nothing']], {
+          key: 'simple_name'
+        }
+      ],
+    },
+    type: {
+      song_action: 'song_action',
+    },
+  },
   'nest-fake_spyglass': ['navigation'],
   showStartPage: function(){
     var bwlev = BrowseMap.showInterest(getSPByPathTemplate(this.app, this, 'navigation'), []);
