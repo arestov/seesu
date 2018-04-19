@@ -28,7 +28,7 @@ function watchAndRequest(root_bwlev_view, self, spyglass) {
   root_bwlev_view.RPCLegacy('requestSpyglass', {
     key: key,
     bwlev: spyglass.bwlev && parent_bwlev_view.mpx.md._provoda_id,
-    context_md: getContextId(self, parent_bwlev_view, spyglass.context_md),
+    context_md: spyglass.context_md && getContextId(self, parent_bwlev_view, spyglass.context_md),
     name: spyglass.name,
   });
   // TODO remove key value from index on this view/self destroy
@@ -51,8 +51,8 @@ return function (self) {
   if (nil(self._spyglass)) {
     return;
   }
-
-  var root_bwlev_view = self.root_view.parent_view;
+  var root_view = self.root_view || (self.isRootView && self)
+  var root_bwlev_view = root_view.parent_view;
   if (nil(root_bwlev_view)) {
     throw new Error('cant find bwlev_view');
   }
