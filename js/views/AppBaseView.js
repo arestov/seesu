@@ -82,9 +82,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     // this.struc_store = {};
     this.els = {};
     this.samples = {};
-    this.max_level_num = -1;
     this.dom_related_props.push('samples', 'els', 'struc_store');
-    this.completely_rendered_once = {};
 
   },
 
