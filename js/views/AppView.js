@@ -466,19 +466,19 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       });
   }),
   scrollToWP: function(cwp) {
-    if (cwp){
-      var cur_md_md = this.getNesting('current_mp_md');
-      var parent_md = cur_md_md.getParentMapModel();
+    if (!cwp){return;}
 
-      // если родительская вьюха (вьюхи от cwp), соедененная с корнем совпадает
-      // с вьюхой соедененной с корнем
-      if (parent_md && getAncestorByRooViCon(cwp.view) == getMapSliceView(this.getStoredMpx(parent_md))){
-        this.scrollTo($(cwp.node), {
-          node: this.general_navigation_view.getLevByNum(parent_md.map_level_num).scroll_con
-        }, {vp_limit: 0.6, animate: 117});
-      }
-      this.scrollTo($(cwp.node), false, {vp_limit: 0.6, animate: 117});
+    var cur_md_md = this.getNesting('current_mp_md');
+    var parent_md = cur_md_md.getParentMapModel();
+
+    // если родительская вьюха (вьюхи от cwp), соедененная с корнем совпадает
+    // с вьюхой соедененной с корнем
+    if (parent_md && getAncestorByRooViCon(cwp.view) == getMapSliceView(this.getStoredMpx(parent_md))){
+      this.scrollTo($(cwp.node), {
+        node: this.general_navigation_view.getLevByNum(parent_md.map_level_num).scroll_con
+      }, {vp_limit: 0.6, animate: 117});
     }
+    this.scrollTo($(cwp.node), false, {vp_limit: 0.6, animate: 117});
   },
   'stch-vis_current_wpoint': function(target, nst, ost) {
     if (ost){
