@@ -11,7 +11,7 @@ var AppBaseView = require('./AppBaseView');
 var WPBox = require('./modules/WPBox');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
-var MapSliceSpyglass = require('./MapSliceSpyglass');
+var MapSliceSpyglass = require('./map_slice/MapSliceSpyglass');
 var getRooConPresentation = require('pv/map-slice/getRooConPresentation')
 
 var app_env = app_serv.app_env;
