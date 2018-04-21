@@ -272,7 +272,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     var offset_top;
 
     var recheckFunc = function(){
-      if (typeof window.documentScrollSizeChangeHandler != 'function'){
+      if (typeof window.document.ScrollSizeChangeHandler != 'function'){
         return;
       }
 
@@ -283,7 +283,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
           var offset = $(getCurrentNode()).offset();
           offset_top = (offset && offset.top) || 0;
         }
-        window.documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+        window.document.ScrollSizeChangeHandler((oldsize = newsize) + offset_top);
       }
     };
 
