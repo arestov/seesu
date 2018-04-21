@@ -62,17 +62,17 @@ spv.Class.extendTo(WPBox, {
     if (cwp) {
       var passes = false;
       while (cwp && !passes) {
-
-        if (!this.getWPDemsForStorage(cwp, dems_storage)) {
-          this.removeWP(cwp);
-          var ncwp = this.getRelativeWP();
-          if (ncwp != cwp) {
-            cwp = ncwp;
-          } else {
-            cwp = null;
-          }
-        } else {
+        if (this.getWPDemsForStorage(cwp, dems_storage)) {
           passes = true;
+          continue;
+        }
+
+        this.removeWP(cwp);
+        var ncwp = this.getRelativeWP();
+        if (ncwp != cwp) {
+          cwp = ncwp;
+        } else {
+          cwp = null;
         }
       }
     }
