@@ -527,6 +527,12 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     });
 
   },
+  updateImportantBwlev: function(bwlev_view) {
+    this.parent_view.important_bwlev_view = bwlev_view;
+    this.resortQueue();
+    // check resize?
+    // check waypoints
+  },
 });
 
 AppView.AppExposedView = AppExposedView;
