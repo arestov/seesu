@@ -2,7 +2,7 @@ define(function (require) {
 'use strict';
 var pv = require('pv');
 var view_serv = require('view_serv');
-var findMpxViewInChildren = require('./findMpxViewInChildren')
+// var findMpxViewInChildren = require('./findMpxViewInChildren')
 
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 var css_transform = view_serv.css.transform;
@@ -81,19 +81,19 @@ return function readMapSliceAnimationData(view, transaction_data) {
   };
 };
 
-function getMapSliceChildInParenViewOLD(md) {
-  var parent_md = md.map_parent;
-
-
-  var parent_view = this.getMapSliceView(parent_md);
-  if (!parent_view){
-    return;
-  }
-  var target_in_parent = findMpxViewInChildren(parent_view, this.getStoredMpx(md));
-  if (!target_in_parent){
-    var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
-    target_in_parent = view && view[0];
-  }
-  return target_in_parent;
-};
+// function getMapSliceChildInParenViewOLD(md) {
+//   var parent_md = md.map_parent;
+//
+//
+//   var parent_view = this.getMapSliceView(parent_md);
+//   if (!parent_view){
+//     return;
+//   }
+//   var target_in_parent = findMpxViewInChildren(parent_view, this.getStoredMpx(md));
+//   if (!target_in_parent){
+//     var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
+//     target_in_parent = view && view[0];
+//   }
+//   return target_in_parent;
+// };
 });
