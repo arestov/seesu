@@ -1,6 +1,6 @@
-define(function(){
+define(function(require){
 'use strict';
-
+var matchCildrenView = require('./matchCildrenView');
 return function getAncestorByRooViCon(self, view_space, strict) { //находит родительскую вьюху соеденённую с корневой вьюхой
   //by root view connection
   var target_ancestor;
@@ -14,7 +14,7 @@ return function getAncestorByRooViCon(self, view_space, strict) { //находи
       break;
     } else {
       if (cur_ancestor.parent_view == root_view){
-        if ( root_view.matchCildrenView( cur_ancestor, view_space, 'map_slice' ) ) {
+        if ( matchCildrenView(root_view, cur_ancestor, view_space, 'map_slice' ) ) {
           target_ancestor = cur_ancestor;
           break;
         }
