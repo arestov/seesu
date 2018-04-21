@@ -476,7 +476,10 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     if (cwp){
       var cur_md_md = this.getNesting('current_mp_md');
       var parent_md = cur_md_md.getParentMapModel();
-      if (parent_md && getAncestorByRooViCon(cwp.view, 'main') == getRooConPresentation(this.getStoredMpx(parent_md), this)){
+
+      // если родительская вьюха (вьюхи от cwp), соедененная с корнем совпадает
+      // с вьюхой соедененной с корнем
+      if (parent_md && getAncestorByRooViCon(cwp.view) == getRooConPresentation(this.getStoredMpx(parent_md), this)){
         this.scrollTo($(cwp.node), {
           node: this.general_navigation_view.getLevByNum(parent_md.map_level_num).scroll_con
         }, {vp_limit: 0.6, animate: 117});
