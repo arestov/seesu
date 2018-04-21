@@ -9,7 +9,7 @@ return function getRooConPresentation(self, app_view, mplev_view, get_ancestor, 
   if (!only_by_ancestor){
     for (var i = 0; i < views.length; i++) {
       cur = views[i];
-      if (matchCildrenView(app_view,  cur, false, 'map_slice' ) ) {
+      if (matchCildrenView(app_view.general_navigation_view,  cur, false, 'map_slice' ) ) {
         return cur;
       }
 
