@@ -47,58 +47,61 @@ spv.Class.extendTo(WPBox, {
 
     var cwp = this.getRelativeWP();
     if (nav_type == 'Enter'){
-
       if (cwp){
         this.press(cwp);
 
       }
       return;
+    }
 
-    } else if (this.wp_dirs.all[nav_type]){
-      var dems_storage = {};
-      if (cwp) {
-        var passes = false;
-        while (cwp && !passes) {
+    if (!this.wp_dirs.all[nav_type]) {
+      return;
+    }
 
-          if (!this.getWPDemsForStorage(cwp, dems_storage)) {
-            this.removeWP(cwp);
-            var ncwp = this.getRelativeWP();
-            if (ncwp != cwp) {
-              cwp = ncwp;
-            } else {
-              cwp = null;
-            }
+    var dems_storage = {};
+    if (cwp) {
+      var passes = false;
+      while (cwp && !passes) {
+
+        if (!this.getWPDemsForStorage(cwp, dems_storage)) {
+          this.removeWP(cwp);
+          var ncwp = this.getRelativeWP();
+          if (ncwp != cwp) {
+            cwp = ncwp;
           } else {
-            passes = true;
+            cwp = null;
           }
+        } else {
+          passes = true;
         }
-      }
-
-      if (!cwp){
-        var cur_view = roocon_view;
-        var wayp_pack =[];
-
-        while (!wayp_pack.length && cur_view){
-          wayp_pack = this.getWPPack(cur_view, dems_storage);
-          cur_view = cur_view.parent_view;
-        }
-        this.select(wayp_pack[0], e);
-
-
-      } else {
-        var target_dems = cwp && dems_storage[cwp.wpid];
-        if (!target_dems){
-          throw new Error('there is no demensions!');
-        }
-        var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
-
-        var new_wpoint = corridor[0];
-        if (new_wpoint ){
-          this.select(new_wpoint, e);
-        }
-
       }
     }
+
+    if (!cwp){
+      var cur_view = roocon_view;
+      var wayp_pack =[];
+
+      while (!wayp_pack.length && cur_view){
+        wayp_pack = this.getWPPack(cur_view, dems_storage);
+        cur_view = cur_view.parent_view;
+      }
+      this.select(wayp_pack[0], e);
+
+
+    } else {
+      var target_dems = cwp && dems_storage[cwp.wpid];
+      if (!target_dems){
+        throw new Error('there is no demensions!');
+      }
+      var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
+
+      var new_wpoint = corridor[0];
+      if (new_wpoint ){
+        this.select(new_wpoint, e);
+      }
+
+    }
+
   },
   getAnyPossibleWaypoints: function(cwp, nav_type, dems_storage) {
     var corridor = [];
