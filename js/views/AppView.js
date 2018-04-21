@@ -12,7 +12,6 @@ var WPBox = require('./modules/WPBox');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
 var MapSliceSpyglass = require('./map_slice/MapSliceSpyglass');
-var getRooConPresentation = require('./map_slice/getRooConPresentation');
 var getAncestorByRooViCon = require('./map_slice/getAncestorByRooViCon');
 var getMapSliceView = require('./map_slice/getMapSliceView');
 
