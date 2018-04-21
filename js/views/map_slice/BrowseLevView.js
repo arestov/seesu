@@ -40,7 +40,7 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
     if (!value) {
       return;
     }
-    target.root_view.setImportantBwlev(target)
+    target.root_view.updateImportantBwlev(target)
   },
 
   children_views_by_mn: {
