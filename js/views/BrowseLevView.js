@@ -56,7 +56,8 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
       if (target.location_name == 'map_slice-detailed') {
         return;
       }
-      if (target.parent_view == target.root_view && target.nesting_name == 'map_slice') {
+
+      if (target.parent_view.parent_view == target.root_view && target.nesting_name == 'map_slice') {
         var arr = [];
         if (state[0]) {
           arr.push(state[0]);
