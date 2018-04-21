@@ -3,7 +3,6 @@ define(function(require) {
 var spv = require('spv');
 var $ = require('jquery');
 
-var getRooConPresentation  = require('../map_slice/getRooConPresentation');
 var getMapSliceView = require('../map_slice/getMapSliceView');
 
 var WPBox = function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
