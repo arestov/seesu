@@ -426,18 +426,19 @@ return spv.inh(View, {
       //
 
       var parent_md = md.getParentMapModel();
-      if (parent_md){
-        // var mplev_item_view = getRooConPresentation(target.getStoredMpx(md), target, false, false, true);
-        var mplev_item_view = target.getMapSliceChildInParenView(bwlev, md);
-        var con = mplev_item_view && mplev_item_view.getC();
-        var map_level_num = pvState(bwlev, 'map_level_num') - 1;
-        if (con && con.height()){
-          target.root_view.scrollTo(mplev_item_view.getC(), {
-            node: target.getLevByNum(map_level_num).scroll_con
-          }, {vp_limit: 0.4, animate: 117});
-        } else {
-          target.getLevByNum(map_level_num).scroll_con.scrollTop(0);
-        }
+      if (!parent_md) {
+        return;
+      }
+      // var mplev_item_view = getRooConPresentation(target.getStoredMpx(md), target, false, false, true);
+      var mplev_item_view = target.getMapSliceChildInParenView(bwlev, md);
+      var con = mplev_item_view && mplev_item_view.getC();
+      var map_level_num = pvState(bwlev, 'map_level_num') - 1;
+      if (con && con.height()){
+        target.root_view.scrollTo(mplev_item_view.getC(), {
+          node: target.getLevByNum(map_level_num).scroll_con
+        }, {vp_limit: 0.4, animate: 117});
+      } else {
+        target.getLevByNum(map_level_num).scroll_con.scrollTop(0);
       }
     }, 150);
 
