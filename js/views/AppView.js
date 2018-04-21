@@ -12,6 +12,7 @@ var WPBox = require('./modules/WPBox');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
 var MapSliceSpyglass = require('./MapSliceSpyglass');
+var getRooConPresentation = require('pv/map-slice/getRooConPresentation')
 
 var app_env = app_serv.app_env;
 
@@ -259,7 +260,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     };
     var getCurrentNode = function() {
       var current_md = self.getNesting('current_mp_md');
-      return current_md && self.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
+      return current_md && getRooConPresentation(self.getStoredMpx(current_md), this, true, true).getC();
     };
 
     if (self.rsd_rz){
@@ -473,7 +474,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     if (cwp){
       var cur_md_md = this.getNesting('current_mp_md');
       var parent_md = cur_md_md.getParentMapModel();
-      if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation(this)){
+      if (parent_md && cwp.view.getAncestorByRooViCon('main') == getRooConPresentation(this.getStoredMpx(parent_md), this)){
         this.scrollTo($(cwp.node), {
           node: this.getLevByNum(parent_md.map_level_num).scroll_con
         }, {vp_limit: 0.6, animate: 117});

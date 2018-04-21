@@ -9,6 +9,7 @@ var pvUpdate = require('pv/update');
 var $ = require('jquery');
 var wrapInputCall = require('pv/wrapInputCall')
 
+// var getRooConPresentation = require('pv/map-slice/getRooConPresentation')
 var BrowseLevNavView = require('./BrowseLevNavView');
 var BrowseLevView = require('./BrowseLevView');
 var readMapSliceAnimationData = require('./map_slice/readMapSliceAnimationData');
@@ -396,7 +397,7 @@ return spv.inh(View, {}, {
     var ov_highlight = ov_md && ov_md.state('mp-highlight');
     if (ov_highlight && ov_highlight.source_md){
       var source_md = ov_highlight.source_md;
-      var mplev_item_view = source_md.getRooConPresentation(target);
+      var mplev_item_view = getRooConPresentation(source_md, target);
       if (mplev_item_view){
         target.scrollTo(mplev_item_view.getC(), {
           node: target.getLevByNum(md.map_level_num - 1).scroll_con
@@ -422,7 +423,7 @@ return spv.inh(View, {}, {
 
       var parent_md = md.getParentMapModel();
       if (parent_md){
-        // var mplev_item_view = target.getStoredMpx(md).getRooConPresentation(target, false, false, true);
+        // var mplev_item_view = getRooConPresentation(target.getStoredMpx(md), target, false, false, true);
         var mplev_item_view = target.getMapSliceChildInParenView(bwlev, md);
         var con = mplev_item_view && mplev_item_view.getC();
         var map_level_num = pvState(bwlev, 'map_level_num') - 1;

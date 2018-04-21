@@ -1,0 +1,33 @@
+define(function() {
+'use strict';
+return function getRooConPresentation(self, app_view, mplev_view, get_ancestor, only_by_ancestor) {
+  var views = self.getViews();
+  var cur;
+  if (!only_by_ancestor){
+    for (var i = 0; i < views.length; i++) {
+      cur = views[i];
+      if (app_view.matchCildrenView( cur, false, 'map_slice' ) ) {
+        return cur;
+      }
+
+
+    }
+  }
+  for (var jj = 0; jj < views.length; jj++) {
+    cur = views[jj];
+    var ancestor = false;
+    if (mplev_view){
+      ancestor = cur.getAncestorByRooViCon('all-sufficient-details', only_by_ancestor);
+    } else {
+      ancestor = cur.getAncestorByRooViCon('main', only_by_ancestor);
+    }
+    if (ancestor){
+      if (get_ancestor){
+        return ancestor;
+      } else {
+        return cur;
+      }
+    }
+  }
+}
+});
