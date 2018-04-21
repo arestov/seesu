@@ -1,34 +1,53 @@
-define(function(require){
+define(function(){
 'use strict';
-var matchCildrenView = require('./matchCildrenView');
-return function getAncestorByRooViCon(self, view_space, strict) { //находит родительскую вьюху соеденённую с корневой вьюхой
+return function getAncestorByRooViCon(self, details, strict) {
+  //находит родительскую вьюху соеденённую с корневой вьюхой
   //by root view connection
-  var target_ancestor;
+
+  var view_space = details ? 'detailed' : 'main';
   var cur_ancestor = self;
   var root_view = self.root_view;
   if (strict){
     cur_ancestor = cur_ancestor.parent_view;
   }
-  while (!target_ancestor && cur_ancestor){
+  while (cur_ancestor){
     if (cur_ancestor == root_view){
       break;
-    } else {
-      if (cur_ancestor.parent_view == root_view){
-        if ( matchCildrenView(
-          root_view.general_navigation_view,
-          cur_ancestor,
-          view_space,
-          'map_slice'
-        ) ) {
-          target_ancestor = cur_ancestor;
-          break;
-        }
+    }
 
-      }
+    if (isBwConnectedView(cur_ancestor, view_space)) {
+      return cur_ancestor;
     }
 
     cur_ancestor = cur_ancestor.parent_view;
   }
-  return target_ancestor;
 }
+
+function isBwConnectedView(target, view_space) {
+  /*
+  поменять на
+
+  если сам
+  {nesting_name:"pioneer"
+  nesting_space:"main"}
+  и родитель map_slice и совпадает с general_navigation_view, то подходит
+  */
+
+  //
+
+  if (!target.parent_view || !target.parent_view.parent_view) {
+    return;
+  }
+
+  var general = target.root_view.general_navigation_view;
+  var parent_view = target.parent_view
+  if (parent_view.parent_view === general &&
+    parent_view.nesting_name === 'map_slice' &&
+    parent_view.nesting_space === view_space) {
+    return true;
+  }
+
+  return
+}
+
 });
