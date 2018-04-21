@@ -1,5 +1,6 @@
-define(function() {
+define(function(require) {
 'use strict';
+var getAncestorByRooViCon = require('./getAncestorByRooViCon');
 return function getRooConPresentation(self, app_view, mplev_view, get_ancestor, only_by_ancestor) {
   var views = self.getViews();
   var cur;
@@ -17,9 +18,9 @@ return function getRooConPresentation(self, app_view, mplev_view, get_ancestor, 
     cur = views[jj];
     var ancestor = false;
     if (mplev_view){
-      ancestor = cur.getAncestorByRooViCon('all-sufficient-details', only_by_ancestor);
+      ancestor = getAncestorByRooViCon(cur, 'all-sufficient-details', only_by_ancestor);
     } else {
-      ancestor = cur.getAncestorByRooViCon('main', only_by_ancestor);
+      ancestor = getAncestorByRooViCon(cur, 'main', only_by_ancestor);
     }
     if (ancestor){
       if (get_ancestor){
