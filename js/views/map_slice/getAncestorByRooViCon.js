@@ -14,7 +14,12 @@ return function getAncestorByRooViCon(self, view_space, strict) { //находи
       break;
     } else {
       if (cur_ancestor.parent_view == root_view){
-        if ( matchCildrenView(root_view, cur_ancestor, view_space, 'map_slice' ) ) {
+        if ( matchCildrenView(
+          root_view.general_navigation_view,
+          cur_ancestor,
+          view_space,
+          'map_slice'
+        ) ) {
           target_ancestor = cur_ancestor;
           break;
         }
