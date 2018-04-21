@@ -14,6 +14,7 @@ var arrowsKeysNav = require('./utils/arrowsKeysNav');
 var MapSliceSpyglass = require('./map_slice/MapSliceSpyglass');
 var getRooConPresentation = require('./map_slice/getRooConPresentation');
 var getAncestorByRooViCon = require('./map_slice/getAncestorByRooViCon');
+var getMapSliceView = require('./map_slice/getMapSliceView');
 
 var app_env = app_serv.app_env;
 
@@ -479,7 +480,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
       // если родительская вьюха (вьюхи от cwp), соедененная с корнем совпадает
       // с вьюхой соедененной с корнем
-      if (parent_md && getAncestorByRooViCon(cwp.view) == getRooConPresentation(this.getStoredMpx(parent_md), this)){
+      if (parent_md && getAncestorByRooViCon(cwp.view) == getMapSliceView(this.getStoredMpx(parent_md))){
         this.scrollTo($(cwp.node), {
           node: this.general_navigation_view.getLevByNum(parent_md.map_level_num).scroll_con
         }, {vp_limit: 0.6, animate: 117});
