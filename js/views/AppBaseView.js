@@ -270,10 +270,6 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 
     this.d = null;
   },
-  updateImportantBwlev: function(bwlev_view) {
-    this.parent_view.important_bwlev_view = bwlev_view;
-    this.resortQueue();
-  },
   resortQueue: function(queue) {
     return this.parent_view.resortQueue(queue);
   },
