@@ -86,20 +86,18 @@ spv.Class.extendTo(WPBox, {
         cur_view = cur_view.parent_view;
       }
       this.select(wayp_pack[0], e);
+      return;
+    }
 
+    var target_dems = cwp && dems_storage[cwp.wpid];
+    if (!target_dems){
+      throw new Error('there is no demensions!');
+    }
+    var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
 
-    } else {
-      var target_dems = cwp && dems_storage[cwp.wpid];
-      if (!target_dems){
-        throw new Error('there is no demensions!');
-      }
-      var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
-
-      var new_wpoint = corridor[0];
-      if (new_wpoint ){
-        this.select(new_wpoint, e);
-      }
-
+    var new_wpoint = corridor[0];
+    if (new_wpoint ){
+      this.select(new_wpoint, e);
     }
 
   },
