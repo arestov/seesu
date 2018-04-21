@@ -258,8 +258,8 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       //return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
     };
     var getCurrentNode = function() {
-      var current_md = self.getNesting('current_mp_md');
-      return current_md && getMapSliceView(self.getStoredMpx(current_md)).getC();
+      var important_bwlev_view = self.parent_view.important_bwlev_view;
+      return important_bwlev_view && important_bwlev_view.getC();
     };
 
     if (self.rsd_rz){
