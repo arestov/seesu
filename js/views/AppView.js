@@ -12,7 +12,8 @@ var WPBox = require('./modules/WPBox');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
 var MapSliceSpyglass = require('./map_slice/MapSliceSpyglass');
-var getRooConPresentation = require('./map_slice/getRooConPresentation')
+var getRooConPresentation = require('./map_slice/getRooConPresentation');
+var getAncestorByRooViCon = require('./map_slice/getAncestorByRooViCon');
 
 var app_env = app_serv.app_env;
 
@@ -474,7 +475,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     if (cwp){
       var cur_md_md = this.getNesting('current_mp_md');
       var parent_md = cur_md_md.getParentMapModel();
-      if (parent_md && cwp.view.getAncestorByRooViCon('main') == getRooConPresentation(this.getStoredMpx(parent_md), this)){
+      if (parent_md && getAncestorByRooViCon(cwp.view, 'main') == getRooConPresentation(this.getStoredMpx(parent_md), this)){
         this.scrollTo($(cwp.node), {
           node: this.getLevByNum(parent_md.map_level_num).scroll_con
         }, {vp_limit: 0.6, animate: 117});
