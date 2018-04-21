@@ -619,30 +619,6 @@ var View = spv.inh(StatesEmitter, {
     }
 
   },
-  getAncestorByRooViCon: function(view_space, strict) { //находит родительскую вьюху соеденённую с корневой вьюхой
-    //by root view connection
-    var target_ancestor;
-    var cur_ancestor = this;
-    if (strict){
-      cur_ancestor = cur_ancestor.parent_view;
-    }
-    while (!target_ancestor && cur_ancestor){
-      if (cur_ancestor == this.root_view){
-        break;
-      } else {
-        if (cur_ancestor.parent_view == this.root_view){
-          if ( this.root_view.matchCildrenView( cur_ancestor, view_space, 'map_slice' ) ) {
-            target_ancestor = cur_ancestor;
-            break;
-          }
-
-        }
-      }
-
-      cur_ancestor = cur_ancestor.parent_view;
-    }
-    return target_ancestor;
-  },
   matchCildrenView: function(target_view, nesting_space, nesting_name) {
     nesting_space = nesting_space || 'main';
     for (var i = 0; i < this.children.length; i++) {
