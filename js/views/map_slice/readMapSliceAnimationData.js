@@ -2,6 +2,7 @@ define(function (require) {
 'use strict';
 var pv = require('pv');
 var view_serv = require('view_serv');
+var findMpxViewInChildren = require('./findMpxViewInChildren')
 
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 var css_transform = view_serv.css.transform;
@@ -88,7 +89,7 @@ function getMapSliceChildInParenViewOLD(md) {
   if (!parent_view){
     return;
   }
-  var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
+  var target_in_parent = findMpxViewInChildren(parent_view, this.getStoredMpx(md));
   if (!target_in_parent){
     var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
     target_in_parent = view && view[0];
