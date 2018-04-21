@@ -618,24 +618,6 @@ var View = spv.inh(StatesEmitter, {
     }
 
   },
-  matchCildrenView: function(target_view, nesting_space, nesting_name) {
-    nesting_space = nesting_space || 'main';
-    for (var i = 0; i < this.children.length; i++) {
-      var cur = this.children[i];
-      if (cur != target_view) {
-        continue;
-      }
-      if (nesting_space && cur.nesting_space != nesting_space) {
-        continue;
-      }
-      if (nesting_name && cur.nesting_name != nesting_name) {
-        continue;
-      }
-      return true;
-
-    }
-    return false;
-  },
   getFreeChildView: function(address_opts, md, opts) {
     var mpx = this.getStoredMpx(md);
     var
