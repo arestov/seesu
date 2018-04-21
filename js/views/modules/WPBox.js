@@ -4,6 +4,7 @@ var spv = require('spv');
 var $ = require('jquery');
 
 var getRooConPresentation  = require('../map_slice/getRooConPresentation');
+var getMapSliceView = require('../map_slice/getMapSliceView');
 
 var WPBox = function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
   this.root_view = root_view;
@@ -40,7 +41,7 @@ spv.Class.extendTo(WPBox, {
     //var _this = this;
 
     var cur_mp_md = this.getStartModel();
-    var roocon_view =  (cur_mp_md && getRooConPresentation(this.root_view.getStoredMpx(cur_mp_md), this.root_view, true)) || this.root_view;
+    var roocon_view =  (cur_mp_md && getMapSliceView(this.root_view.getStoredMpx(cur_mp_md))) || this.root_view;
     if (!roocon_view) {
       return;
     }
