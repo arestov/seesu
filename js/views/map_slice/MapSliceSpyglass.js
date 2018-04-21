@@ -8,7 +8,7 @@ var pvState = require('pv/state');
 var pvUpdate = require('pv/update');
 var $ = require('jquery');
 
-// var getRooConPresentation = require('pv/map-slice/getRooConPresentation')
+// var getRooConPresentation = require('./getRooConPresentation')
 var BrowseLevNavView = require('../BrowseLevNavView');
 var BrowseLevView = require('../BrowseLevView');
 var readMapSliceAnimationData = require('./readMapSliceAnimationData');
