@@ -14,6 +14,7 @@ var BrowseLevNavView = require('./BrowseLevNavView');
 var BrowseLevView = require('./BrowseLevView');
 var readMapSliceAnimationData = require('./map_slice/readMapSliceAnimationData');
 var animateMapSlice = require('./map_slice/animateMapSlice');
+var findMpxViewInChildren = require('./map_slice/findMpxViewInChildren');
 
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 
@@ -383,9 +384,9 @@ return spv.inh(View, {}, {
     if (highlight && highlight.source_md){
       var source_md = highlight.source_md;
 
-      var md_view = target.findMpxViewInChildren(md.mpx);
+      var md_view = findMpxViewInChildren(target, md.mpx);
       if (md_view){
-        var hl_view = md_view.findMpxViewInChildren(source_md.mpx);
+        var hl_view = findMpxViewInChildren(md_view, source_md.mpx);
         if (hl_view){
           //target.scrollTo(hl_view.getC());
         }
@@ -442,7 +443,7 @@ return spv.inh(View, {}, {
     var dclr = pv.$v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
       'map_slice', md.model_name, this.nesting_space);
     var target_bwlev = dclr.is_wrapper_parent ? bwlev.map_parent: bwlev;
-    return this.findMpxViewInChildren( this.getStoredMpx(target_bwlev), dclr.space, 'map_slice' );
+    return findMpxViewInChildren( this, this.getStoredMpx(target_bwlev), dclr.space, 'map_slice' );
   },
 
   getMapSliceChildInParenView: function(bwlev, md) {
@@ -451,11 +452,11 @@ return spv.inh(View, {}, {
     var parent_md = bwlev.getParentMapModel().getNesting('pioneer');
 
     var parent_bwlev_view = this.getMapSliceView(parent_bwlev, parent_md);
-    var parent_view = parent_bwlev_view && parent_bwlev_view.findMpxViewInChildren(this.getStoredMpx(parent_md));
+    var parent_view = parent_bwlev_view && findMpxViewInChildren(parent_bwlev_view, this.getStoredMpx(parent_md));
     if (!parent_view){
       return;
     }
-    var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
+    var target_in_parent = findMpxViewInChildren(parent_view, this.getStoredMpx(md));
     if (!target_in_parent){
       var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
       target_in_parent = view && view[0];
