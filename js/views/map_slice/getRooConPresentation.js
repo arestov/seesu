@@ -1,21 +1,11 @@
 define(function(require) {
 'use strict';
-var matchCildrenView = require('./matchCildrenView');
 var getAncestorByRooViCon = require('./getAncestorByRooViCon');
 
 return function getRooConPresentation(self, app_view, mplev_view, get_ancestor, only_by_ancestor) {
   var views = self.getViews();
   var cur;
-  if (!only_by_ancestor){
-    for (var i = 0; i < views.length; i++) {
-      cur = views[i];
-      if (matchCildrenView(app_view.general_navigation_view,  cur, false, 'map_slice' ) ) {
-        return cur;
-      }
 
-
-    }
-  }
   for (var jj = 0; jj < views.length; jj++) {
     cur = views[jj];
     var ancestor = false;
