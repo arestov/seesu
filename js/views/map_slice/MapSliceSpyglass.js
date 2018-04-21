@@ -9,11 +9,11 @@ var pvUpdate = require('pv/update');
 var $ = require('jquery');
 
 // var getRooConPresentation = require('pv/map-slice/getRooConPresentation')
-var BrowseLevNavView = require('./BrowseLevNavView');
-var BrowseLevView = require('./BrowseLevView');
-var readMapSliceAnimationData = require('./map_slice/readMapSliceAnimationData');
-var animateMapSlice = require('./map_slice/animateMapSlice');
-var findMpxViewInChildren = require('./map_slice/findMpxViewInChildren');
+var BrowseLevNavView = require('../BrowseLevNavView');
+var BrowseLevView = require('../BrowseLevView');
+var readMapSliceAnimationData = require('./readMapSliceAnimationData');
+var animateMapSlice = require('./animateMapSlice');
+var findMpxViewInChildren = require('./findMpxViewInChildren');
 
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 
