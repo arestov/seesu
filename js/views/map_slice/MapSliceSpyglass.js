@@ -88,7 +88,11 @@ LevContainer.prototype = {
 };
 
 
-return spv.inh(View, {}, {
+return spv.inh(View, {
+  init: function(self) {
+    self.parent_view.general_navigation_view = self;
+  },
+}, {
   dom_rp: true,
   'sel-coll-map_slice/song': '$spec_det-map_slice',
   // 'nest_borrow-search_criteria': [
