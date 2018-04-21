@@ -126,7 +126,16 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     // }
 
   },
+  checkWaypoints: function() {
+    var cwp = this.state('vis_current_wpoint');
+    if (!cwp){
+      return;
+    }
 
+    if (cwp.canUse && !cwp.canUse()){
+      this.setVisState('current_wpoint', false);
+    }
+  },
   createDetails: function(){
     this._super();
     var _this = this;
@@ -161,17 +170,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     _this.dom_related_props.push('favicon_node', 'wp_box');
 
     initRootView(this);
-
-    this.on('vip_state_change-current_mp_md', function() {
-      var cwp = this.state('vis_current_wpoint');
-      if (cwp){
-        if (cwp.canUse && !cwp.canUse()){
-          _this.setVisState('current_wpoint', false);
-        }
-      }
-
-    }, {skip_reg: true, immediately: true});
-
   },
   /*'compx-window_demensions_key': {
     depends_on: ['window_width', 'window_height'],
@@ -288,12 +286,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     };
 
     self.rsd_rz = setInterval(recheckFunc, 100);
-
-    self.on('vip_state_change-current_mp_md', function() {
-      recheckFunc();
-    }, {
-      immediately: true
-    });
+    this.checkSizeFn = recheckFunc;
   },
   calculateScrollingViewport: function(screens_block) {
     var scrolling_viewport;
@@ -530,8 +523,10 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   updateImportantBwlev: function(bwlev_view) {
     this.parent_view.important_bwlev_view = bwlev_view;
     this.resortQueue();
-    // check resize?
-    // check waypoints
+    this.checkWaypoints();
+    if (this.checkSizeFn) {
+      this.checkSizeFn();
+    }
   },
 });
 
