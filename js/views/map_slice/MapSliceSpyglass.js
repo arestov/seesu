@@ -9,8 +9,8 @@ var pvUpdate = require('pv/update');
 var $ = require('jquery');
 var wrapInputCall = require('pv/wrapInputCall')
 
-var BrowseLevNavView = require('../BrowseLevNavView');
-var BrowseLevView = require('../BrowseLevView');
+var BrowseLevNavView = require('./BrowseLevNavView');
+var BrowseLevView = require('./BrowseLevView');
 var readMapSliceAnimationData = require('./readMapSliceAnimationData');
 var animateMapSlice = require('./animateMapSlice');
 var findMpxViewInChildren = require('./findMpxViewInChildren');
