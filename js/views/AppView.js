@@ -272,17 +272,18 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     var offset_top;
 
     var recheckFunc = function(){
-      if (typeof window.documentScrollSizeChangeHandler == 'function'){
-        var newsize = detectSize(getCurrentNode());
+      if (typeof window.documentScrollSizeChangeHandler != 'function'){
+        return;
+      }
 
-        if (oldsize != newsize){
-          if (typeof offset_top == 'undefined'){
-            var offset = $(getCurrentNode()).offset();
-            offset_top = (offset && offset.top) || 0;
-          }
-          window.documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+      var newsize = detectSize(getCurrentNode());
+
+      if (oldsize != newsize){
+        if (typeof offset_top == 'undefined'){
+          var offset = $(getCurrentNode()).offset();
+          offset_top = (offset && offset.top) || 0;
         }
-
+        window.documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
       }
     };
 
