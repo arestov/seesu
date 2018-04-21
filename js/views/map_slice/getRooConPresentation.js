@@ -20,9 +20,11 @@ return function getRooConPresentation(self, app_view, mplev_view, get_ancestor, 
     cur = views[jj];
     var ancestor = false;
     if (mplev_view){
-      ancestor = getAncestorByRooViCon(cur, 'all-sufficient-details', only_by_ancestor);
+      ancestor =
+        getAncestorByRooViCon(cur, true, only_by_ancestor)
+        || getAncestorByRooViCon(cur, false, only_by_ancestor);
     } else {
-      ancestor = getAncestorByRooViCon(cur, 'main', only_by_ancestor);
+      ancestor = getAncestorByRooViCon(cur, false, only_by_ancestor);
     }
     if (ancestor){
       if (get_ancestor){
