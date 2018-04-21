@@ -262,7 +262,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     };
     var getCurrentNode = function() {
       var current_md = self.getNesting('current_mp_md');
-      return current_md && getRooConPresentation(self.getStoredMpx(current_md), this, true, true).getC();
+      return current_md && getMapSliceView(self.getStoredMpx(current_md)).getC();
     };
 
     if (self.rsd_rz){
