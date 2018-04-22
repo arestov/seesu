@@ -5,10 +5,10 @@ var $ = require('jquery');
 
 var getMapSliceView = require('../map_slice/getMapSliceView');
 
-var WPBox = function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
+var WPBox = function(root_view, getImportantView, select, press, getRelativeWP, removeWP) {
   this.root_view = root_view;
 
-  this.getStartModel = getStartModel;
+  this.getImportantView = getImportantView;
   this.press = press;
   this.select = select;
   this.getRelativeWP = getRelativeWP;
@@ -37,10 +37,8 @@ spv.Class.extendTo(WPBox, {
     }
   },
   wayPointsNav: function(nav_type, e) {
-    //var _this = this;
-
-    var cur_mp_md = this.getStartModel();
-    var roocon_view =  (cur_mp_md && getMapSliceView(this.root_view.getStoredMpx(cur_mp_md))) || this.root_view;
+    var important_view = this.getImportantView();
+    var roocon_view =  important_view || this.root_view;
     if (!roocon_view) {
       return;
     }
