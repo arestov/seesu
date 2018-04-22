@@ -1,19 +1,19 @@
 define(function (require) {
 'use strict';
 
-var uacq = require('../uacq');
-var StartPageView = require('../StartPageView');
-var SearchPageView = require('../SearchPageView');
-var ArtcardUI = require('../ArtcardUI');
-var ArtistListView = require('../ArtistListView');
-var SongsListView = require('../SongsListView');
-var UserCardPage = require('../UserCardPage');
-var MusicConductorPage = require('../MusicConductorPage');
-var TagPageView = require('../TagPageView');
-var YoutubeVideoView = require('../YoutubeVideoView');
-var lul = require('../lul');
-var SongcardPage = require('../SongcardPage');
-var coct = require('../coct');
+var uacq = require('../../uacq');
+var StartPageView = require('../../StartPageView');
+var SearchPageView = require('../../SearchPageView');
+var ArtcardUI = require('../../ArtcardUI');
+var ArtistListView = require('../../ArtistListView');
+var SongsListView = require('../../SongsListView');
+var UserCardPage = require('../../UserCardPage');
+var MusicConductorPage = require('../../MusicConductorPage');
+var TagPageView = require('../../TagPageView');
+var YoutubeVideoView = require('../../YoutubeVideoView');
+var lul = require('../../lul');
+var SongcardPage = require('../../SongcardPage');
+var coct = require('../../coct');
 
 return {
   $default: coct.ListOfListsView,

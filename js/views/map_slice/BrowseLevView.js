@@ -5,7 +5,7 @@ var View = require('View');
 var pvUpdate = require('pv/update');
 var pv = require('pv');
 
-var map_slice_by_model = require('../pages/index');
+var map_slice_by_model = require('./pages/index');
 var used_struc_bhv = require('../utils/used_struc').bhv;
 
 var push = Array.prototype.push;
