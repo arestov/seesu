@@ -140,7 +140,7 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     this._super();
     var _this = this;
     this.wp_box = new WPBox(this, function() {
-      return _this.getNesting('current_mp_md');
+      return _this.parent_view.important_bwlev_view;
     }, function(waypoint) {
       _this.setVisState('current_wpoint', waypoint);
     }, function(cwp) {
