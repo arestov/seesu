@@ -14,10 +14,9 @@ var SongViewBase = spv.inh(coct.SPView, {}, {
   "+states": {
     "vmp_show": [
       "compx",
-      ['^^vmp_show', 'bmp_show', '^^map_level_num'],
-      function(vmp_show, bmp_show, map_level_num) {
-        return bmp_show && bmp_show[map_level_num + 1] && vmp_show;
-        // return vmp_show;
+      ['^^vmp_show', '^^pioneer_provoda_id', '_provoda_id'],
+      function(vmp_show, pioneer_provoda_id, _provoda_id) {
+        return vmp_show && pioneer_provoda_id == _provoda_id;
       }
     ]
   },
