@@ -93,7 +93,6 @@ return spv.inh(View, {
   },
 }, {
   dom_rp: true,
-  'sel-coll-map_slice/song': '$spec_det-map_slice',
   // 'nest_borrow-search_criteria': [
   //   '^^search_criteria',
   //   SearchCriteriaView
@@ -101,7 +100,6 @@ return spv.inh(View, {
   children_views: {
     map_slice: {
       main: BrowseLevView,
-      detailed: BrowseLevView
     },
     navigation: BrowseLevNavView,
     search_criteria: SearchCriteriaView,
@@ -280,12 +278,6 @@ return spv.inh(View, {
       var md = change.bwlev.getMD();
       this.setVMpshow(this.getStoredMpx(md), false);
     }
-  },
-
-  'collch-$spec_det-map_slice': {
-    is_wrapper_parent: '^',
-    space: 'detailed',
-    place: viewOnLevelP
   },
 
   'collch-$spec_common-map_slice': {
