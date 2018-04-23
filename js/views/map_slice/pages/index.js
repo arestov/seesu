@@ -25,6 +25,9 @@ return {
     'main': SongsListView,
     'all-sufficient-details': SongsListView.SongsListDetailedView,
   },
+  song: {
+    'main': SongsListView.SongsListDetailedView
+  },
   vk_usercard: UserCardPage.VkUsercardPageView,
   lfm_usercard: UserCardPage.LfmUsercardPageView,
   usercard: UserCardPage,
