@@ -7,14 +7,14 @@ var pvUpdate = require('pv/update');
 var pvState = require('pv/state');
 var updateNesting = require('pv/updateNesting');
 var joinNavURL = require('pv/joinNavURL');
-var navi = require('../libs/navi');
+var navi = require('js/libs/navi');
 var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
 var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
 var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 var getNesting = require('pv/getNesting');
 var createLevel = require('js/libs/provoda/bwlev/createLevel');
 
-var BrowseMap = require('../libs/BrowseMap');
+var BrowseMap = require('js/libs/BrowseMap');
 var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
 var SearchQueryModel = require('./SearchQueryModel');
 
