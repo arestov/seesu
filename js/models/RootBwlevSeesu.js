@@ -10,7 +10,7 @@ var getSPByPathTemplate = require('js/libs/provoda/initDeclaredNestings').getSPB
 var Model = require('pv/Model');
 var spv = require('spv');
 
-var FakeSpyglass = require('./FakeSpyglass');
+var FakeSpyglass = require('./spyglasses/FakeSpyglass');
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
