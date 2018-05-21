@@ -8,6 +8,9 @@ var initNestSel = require('../dcl/nest_sel/init');
 var initNestConcat = require('../dcl/nest_conj/init');
 
 function initList(self, list) {
+  self.states_links = self.states_links || null;
+  self.nes_match_index = self.nes_match_index || null;
+
   if (!list) {
     return;
   }
@@ -18,9 +21,6 @@ function initList(self, list) {
 }
 
 function init(self) {
-  self.states_links = null;
-  self.nes_match_index = null;
-
   initNestSel(self);
   initNestConcat(self);
 
