@@ -7,6 +7,16 @@ var checkStates = require('./checkStates');
 var initNestSel = require('../dcl/nest_sel/init');
 var initNestConcat = require('../dcl/nest_conj/init');
 
+function initList(self, list) {
+  if (!list) {
+    return;
+  }
+
+  for (var i = 0; i < list.length; i++) {
+    addFrom(self, new LocalWatchRoot(self, list[i]), 0);
+  }
+}
+
 function init(self) {
   self.states_links = null;
   self.nes_match_index = null;
@@ -14,11 +24,7 @@ function init(self) {
   initNestSel(self);
   initNestConcat(self);
 
-  if (self.nest_match) {
-    for (var i = 0; i < self.nest_match.length; i++) {
-      addFrom(self, new LocalWatchRoot(self, self.nest_match[i]), 0);
-    }
-  }
+  initList(self, self.nest_match)
 }
 
 
