@@ -6,13 +6,23 @@ var initWatchList = require('../nest-watch/index').initList;
 var initNestSel = require('../dcl/nest_sel/init');
 var initNestConcat = require('../dcl/nest_conj/init');
 
-return function postInitModel(self) {
+
+
+function connectStates(self) {
   // prefill own states before connecting relations
   self.__initStates();
 
   prsStCon.connect.parent(self);
   prsStCon.connect.root(self);
   prsStCon.connect.nesting(self);
+
+  initWatchList(self, self.compx_nest_matches)
+}
+
+
+return function postInitModel(self) {
+
+  connectStates(self)
 
   if (self.nestings_declarations) {
     self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
@@ -22,7 +32,6 @@ return function postInitModel(self) {
   initNestConcat(self);
 
   initWatchList(self, self.st_nest_matches)
-  initWatchList(self, self.compx_nest_matches)
 
   if (self.__apis_$_usual && self.__apis_$_usual.length) {
     for (var i = 0; i < self.__apis_$_usual.length; i++) {
