@@ -68,8 +68,8 @@ var FastEventor = function(context) {
   }
   this.requests = null;
   this._requestsSortFunc = null;
-  this.mapped_reqs = null;//this.sputnik.req_map ? {} : null;
-  this.nesting_requests = null;//this.sputnik.has_reqnest_decls ? {} : null;
+  this.mapped_reqs = null
+  this.nesting_requests = null;
 };
 FastEventor.prototype = spv.coe(function(add) {
 
