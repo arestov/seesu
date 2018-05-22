@@ -54,10 +54,10 @@ return function(self, props, original, params) {
   collectSubpages(self, props);
   checkSubpager(self, props);
   checkChi(self, props);
+
   checkNestRqC(self, props);
   checkNestSel(self, props);
   checkNestCnt(self, props);
-
   collectNestingsDeclarations(self, props);
 
   for (var i = 0; i < xxxx_morph_props.length; i++) {
