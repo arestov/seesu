@@ -24,10 +24,6 @@ return function (Query, dmca_url, File) {
       ]
     },
 
-    head_by_urlname: {
-      search_name: 'by_slash.0'
-    },
-
     sub_pager: {
       type: {
         queries: 'query',
