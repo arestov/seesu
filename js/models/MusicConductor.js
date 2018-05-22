@@ -320,7 +320,7 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
 
     var lists_list = [];
 
-    var citiesl = lastfm_data.сountries[this.head.country_name];
+    var citiesl = lastfm_data.countries[this.head.country_name];
 
     for (var i = 0; i < citiesl.length; i++) {
       var name = citiesl[i];
@@ -422,14 +422,14 @@ var CountryPlace = spv.inh(BrowseMap.Model, {}, {
 var CountriesList = spv.inh(BrowseMap.Model, {
   init: function(target) {
     var lists_list = [];
-    for (var country in lastfm_data.сountries){
+    for (var country in lastfm_data.countries){
       var country_place = target.getSPI(country, true);
       lists_list.push(country_place);
     }
     pv.updateNesting(target, 'lists_list', lists_list);
   }
 }, {
-  model_name: 'сountries_list',
+  model_name: 'countries_list',
   'nest_posb-lists_list': ['{country_name}'],
   sub_pager: {
     item: {
@@ -498,10 +498,10 @@ MusicConductor = spv.inh(BrowseMap.Model, {}, {
     [['world/songs', 'world/songs/topnow_hypem', 'world/songs/_', 'world/artists', 'world']],
 
   'nest-allpas': ['world'],
-  'nest-сountries': ['сountries'],
+  'nest-countries': ['countries'],
 
   sub_page: {
-    сountries: {
+    countries: {
       title: [['#locales.Countries']],
       constr: CountriesList
     },
