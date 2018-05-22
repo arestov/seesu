@@ -178,7 +178,7 @@ function getterSPI(){
     var common_opts = getSPOpts(self, sp_name, slashed, item.byType);
 
     var instance_data = getInitData(self, common_opts);
-    var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
+    var hbu_declr = item.getHead;
     var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
     if (head_by_urlname) {
       instance_data.head = head_by_urlname;
