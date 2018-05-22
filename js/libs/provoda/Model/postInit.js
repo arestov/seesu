@@ -19,17 +19,18 @@ function connectStates(self) {
   initWatchList(self, self.compx_nest_matches)
 }
 
-
-return function postInitModel(self) {
-
-  connectStates(self)
-
+function connectNests(self) {
   if (self.nestings_declarations) {
     self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
   }
 
   initNestSel(self);
   initNestConcat(self);
+}
+
+return function postInitModel(self) {
+  connectStates(self)
+  connectNests(self)
 
   initWatchList(self, self.st_nest_matches)
 
