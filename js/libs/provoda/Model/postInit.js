@@ -2,7 +2,9 @@ define(function(require) {
 'use strict';
 var initDeclaredNestings = require('../initDeclaredNestings');
 var prsStCon = require('../prsStCon');
-var initNestWatchers = require('../nest-watch/index').init;
+var initWatchList = require('../nest-watch/index').initList;
+var initNestSel = require('../dcl/nest_sel/init');
+var initNestConcat = require('../dcl/nest_conj/init');
 
 return function postInitModel(self) {
   // prefill own states before connecting relations
@@ -16,7 +18,11 @@ return function postInitModel(self) {
     self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
   }
 
-  initNestWatchers(self);
+  initNestSel(self);
+  initNestConcat(self);
+
+  initWatchList(self, self.st_nest_matches)
+  initWatchList(self, self.compx_nest_matches)
 
   if (self.__apis_$_usual && self.__apis_$_usual.length) {
     for (var i = 0; i < self.__apis_$_usual.length; i++) {

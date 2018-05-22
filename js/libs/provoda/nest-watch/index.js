@@ -4,8 +4,6 @@ var LocalWatchRoot = require('./LocalWatchRoot');
 var addFrom = require('./addFrom');
 var checkNesting = require('./checkNesting');
 var checkStates = require('./checkStates');
-var initNestSel = require('../dcl/nest_sel/init');
-var initNestConcat = require('../dcl/nest_conj/init');
 
 function initList(self, list) {
   self.states_links = self.states_links || null;
@@ -20,17 +18,8 @@ function initList(self, list) {
   }
 }
 
-function init(self) {
-  initNestSel(self);
-  initNestConcat(self);
-
-  initList(self, self.st_nest_matches)
-  initList(self, self.compx_nest_matches)
-}
-
-
 return {
-  init: init,
+  initList: initList,
   checkNesting: checkNesting,
   checkStates: checkStates,
 };
