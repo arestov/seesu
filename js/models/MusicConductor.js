@@ -311,7 +311,6 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
   model_name: 'cities_list',
   'stch-parent_focus': heavyInitReactn,
   'stch-mp_has_focus': heavyInitReactn,
-  data_by_hp: true,
 
   heavyInit: function() {
     if (this.heavy_inited){

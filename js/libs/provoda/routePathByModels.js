@@ -140,11 +140,7 @@ function getSPOpts(md, sp_name, slashed, byType) {
 function getInitData(md, common_opts) {
   var pre_instance_data = {};
 
-
-  var params_from_parent = md.data_by_hp === true ? md.head_props : md.sub_pa_params;
-
   var data_parts = [
-    params_from_parent,
     common_opts && common_opts[0]
   ];
 
@@ -174,7 +170,6 @@ function getterSPI(){
     var Constr = self._all_chi[item.key];
     /*
     data_by_urlname
-    data_by_hp
 
     берем данные из родителя
     накладываем стандартные данные
