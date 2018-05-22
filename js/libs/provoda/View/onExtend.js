@@ -62,10 +62,6 @@ return function(self, props, original) {
 
   collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
 
-  if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
-    self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
-  }
-
   var base_tree_mofified = props.hasOwnProperty('base_tree');
   if (base_tree_mofified) {
     self.base_tree_list = getBaseTreeCheckList(props.base_tree);
