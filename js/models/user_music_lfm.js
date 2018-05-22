@@ -196,9 +196,6 @@ var TopLUArt = spv.inh(UserArtists, {}, pv.mergeBhv({
       }];
     }]
   ],
-  head_by_urlname: {
-    timeword: 'name_spaced'
-  }
 }, auth_bh));
 
 var TopUserTracks = spv.inh(SongsList, {}, pv.mergeBhv({
@@ -211,9 +208,6 @@ var TopUserTracks = spv.inh(SongsList, {}, pv.mergeBhv({
       }];
     }]
   ],
-  head_by_urlname: {
-    timeword: 'name_spaced'
-  }
 }, auth_bh));
 
 
@@ -306,6 +300,10 @@ var RecommArtListForCurrentUser = spv.inh(RecommArtList, {}, {
 var user_artists_sp = ['recommended', /*'library',*/ 'top:7day', /* 'top:1month',*/
   'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 
+var timeword_head = {
+  timeword: 'name_spaced',
+}
+
 var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
   model_name: 'lfm_listened_artists',
   'nest-lists_list':
@@ -330,27 +328,33 @@ var LfmUserArtists = spv.inh(BrowseMap.Model, {}, {
     // },
     'top:7day': {
       constr: TopLUArt,
-      title: [null, 'top of 7day']
+      title: [null, 'top of 7day'],
+      head: timeword_head
     },
     /*'top:1month':{
       constr: TopLUArt,
-      title: 'top of month'
+      title: 'top of month',
+      head: timeword_head,
     },*/
     'top:3month':{
       constr: TopLUArt,
-      title: [null, 'top of 3 months']
+      title: [null, 'top of 3 months'],
+      head: timeword_head
     },
     'top:6month':{
       constr: TopLUArt,
-      title: [null, 'top of 6 months']
+      title: [null, 'top of 6 months'],
+      head: timeword_head
     },
     'top:12month':{
       constr: TopLUArt,
-      title: [null, 'top of 12 months']
+      title: [null, 'top of 12 months'],
+      head: timeword_head
     },
     'top:overall':{
       constr: TopLUArt,
-      title: [null, 'overall top']
+      title: [null, 'overall top'],
+      head: timeword_head
     }
     //артисты в библиотеке
     //недельный чарт
@@ -413,27 +417,33 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
     },
     'top:7day': {
       constr: TopUserTracks,
-      title: [null, 'top of 7day']
+      title: [null, 'top of 7day'],
+      head: timeword_head,
     },
     /*'top:1month':{
       constr: TopUserTracks,
-      title: 'top of month'
+      title: 'top of month',
+      head: timeword_head,
     },*/
     'top:3month':{
       constr: TopUserTracks,
-      title: [null, 'top of 3 months']
+      title: [null, 'top of 3 months'],
+      head: timeword_head,
     },
     'top:6month':{
       constr: TopUserTracks,
-      title: [null, 'top of 6 months']
+      title: [null, 'top of 6 months'],
+      head: timeword_head,
     },
     'top:12month':{
       constr: TopUserTracks,
-      title: [null, 'top of 12 months']
+      title: [null, 'top of 12 months'],
+      head: timeword_head,
     },
     'top:overall':{
       constr: TopUserTracks,
-      title: [null, 'overall top']
+      title: [null, 'overall top'],
+      head: timeword_head,
     }
     //лучшие за последние  7 днея, лучше за 3 месяца, полгода, год
     //недельные чарты - отрезки по 7 дней
@@ -470,9 +480,6 @@ var RecommNewReleases = spv.inh(UserNewReleases, {}, {
 
 
 var LfmUserTopAlbums = spv.inh(AlbumsList, {}, pv.mergeBhv({
-  head_by_urlname: {
-    timeword: 'name_spaced'
-  },
   'nest_req-albums_list': [
     declr_parsers.lfm.getAlbums('topalbums'),
     ['#lfm', 'get', function() {
@@ -521,27 +528,34 @@ var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
     },
     'top:7day':{
       constr: LfmUserTopAlbums,
-      title: [null, 'Top of 7 days']
+      title: [null, 'Top of 7 days'],
+      head: timeword_head,
     },
     /*'top:1month':{
       constr: LfmUserTopAlbums,
-      title: 'Top of 1 month'
+      title: 'Top of 1 month',
+      head: timeword_head,
+
     },*/
     'top:3month':{
       constr: LfmUserTopAlbums,
-      title: [null, 'Top of 3 months']
+      title: [null, 'Top of 3 months'],
+      head: timeword_head,
     },
     'top:6month':{
       constr: LfmUserTopAlbums,
-      title: [null, 'Top of 6 months']
+      title: [null, 'Top of 6 months'],
+      head: timeword_head,
     },
     'top:12month':{
       constr: LfmUserTopAlbums,
-      title: [null, 'Top of 12 months']
+      title: [null, 'Top of 12 months'],
+      head: timeword_head,
     },
     'top:overall':{
       constr: LfmUserTopAlbums,
-      title: [null, 'Overall top']
+      title: [null, 'Overall top'],
+      head: timeword_head,
     }
   }
 });
