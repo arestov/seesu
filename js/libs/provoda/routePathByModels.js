@@ -173,7 +173,6 @@ function getterSPI(){
   var prepare = function(self, item, sp_name, slashed) {
     var Constr = self._all_chi[item.key];
     /*
-    hp_bound
     data_by_urlname
     data_by_hp
 

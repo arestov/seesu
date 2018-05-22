@@ -16,7 +16,7 @@ var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');
 var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
 
-var xxxx_morph_props = [['hp_bound','--data--'], 'data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
+var xxxx_morph_props = ['data_by_urlname', 'data_by_hp', 'head_by_urlname', 'netdata_as_states'];
 
 var updateStatesDcls = function(self, props, original) {
   if (!props['+states']) {
@@ -65,15 +65,11 @@ return function(self, props, original, params) {
     // на вход функции - одна структура, на выход - другая
     var cur = xxxx_morph_props[i];
     var cur_name = Array.isArray(cur) ? cur[0] : cur;
-    var subfield = Array.isArray(cur) && cur[1];
     if (props.hasOwnProperty(cur_name)) {
       if (typeof self[cur_name] != 'function' && self[cur_name] !== true) {
         var obj = {
           props_map: self[cur_name]
         };
-        if (subfield) {
-          obj.source = subfield;
-        }
         self[cur_name] = spv.mmap(obj);
       }
 
