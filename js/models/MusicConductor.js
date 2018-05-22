@@ -287,11 +287,6 @@ var CitySongsLists = spv.inh(BrowseMap.Model, {}, {
 
 var CityPlace = spv.inh(BrowseMap.Model, {}, {
   model_name: 'city_place',
-  hp_bound: {
-    country_name: null,
-    city_name: null
-  },
-  data_by_hp: true,
   'nest-lists_list': [['artists', 'songs']],
   sub_page: {
     'artists': {
