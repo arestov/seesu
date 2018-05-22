@@ -16,7 +16,7 @@ var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');
 var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
 
-var xxxx_morph_props = ['data_by_urlname', 'head_by_urlname', 'netdata_as_states'];
+var xxxx_morph_props = ['head_by_urlname', 'netdata_as_states'];
 
 var updateStatesDcls = function(self, props, original) {
   if (!props['+states']) {
