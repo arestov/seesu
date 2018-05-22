@@ -58,12 +58,6 @@ return function(self, props, original, params) {
   checkNestSel(self, props);
   checkNestCnt(self, props);
 
-
-
-  if (self.hasOwnProperty('st_nest_matches') || self.hasOwnProperty('compx_nest_matches')) {
-    self.nest_match = (self.st_nest_matches || []).concat(self.compx_nest_matches || []);
-  }
-
   collectNestingsDeclarations(self, props);
 
   for (var i = 0; i < xxxx_morph_props.length; i++) {

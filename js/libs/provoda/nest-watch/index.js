@@ -24,7 +24,8 @@ function init(self) {
   initNestSel(self);
   initNestConcat(self);
 
-  initList(self, self.nest_match)
+  initList(self, self.st_nest_matches)
+  initList(self, self.compx_nest_matches)
 }
 
 
