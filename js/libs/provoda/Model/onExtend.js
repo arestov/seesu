@@ -39,26 +39,13 @@ var updateStatesDcls = function(self, props, original) {
   */
 };
 
-
 var check = /initStates/gi;
-return function(self, props, original, params) {
-  updateStatesDcls(self, props, original);
-  var typed_state_dcls = getTypedDcls(props['+states']) || {};
 
+var checkSideeffects = function(self, props, typed_state_dcls, params) {
   checkApis(self, props, typed_state_dcls);
 
   changeDataMorphDeclarations(self, props, typed_state_dcls);
   collectStateChangeHandlers(self, props, typed_state_dcls);
-
-  collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
-  collectSubpages(self, props);
-  checkSubpager(self, props);
-  checkChi(self, props);
-
-  checkNestRqC(self, props);
-  checkNestSel(self, props);
-  checkNestCnt(self, props);
-  collectNestingsDeclarations(self, props);
 
   for (var i = 0; i < xxxx_morph_props.length; i++) {
     // если есть декларации - парсим, делаем функции
@@ -85,6 +72,30 @@ return function(self, props, original, params) {
       self.manual_states_init = true;
     }
   }
+}
+
+var checkNests = function(self, props) {
+  checkNestRqC(self, props);
+  checkNestSel(self, props);
+  checkNestCnt(self, props);
+  collectNestingsDeclarations(self, props);
+}
+
+return function(self, props, original, params) {
+  updateStatesDcls(self, props, original);
+  var typed_state_dcls = getTypedDcls(props['+states']) || {};
+
+  checkSideeffects(self, props, typed_state_dcls, params)
+
+  collectCompxs(self, props, typed_state_dcls && typed_state_dcls['compx']);
+
+  collectSubpages(self, props);
+  checkSubpager(self, props);
+
+  checkNests(self, props)
+
+
+  checkChi(self, props);
 
 };
 
