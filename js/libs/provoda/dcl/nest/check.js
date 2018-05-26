@@ -1,8 +1,8 @@
 define(function (require) {
 'use strict';
 var spv = require('spv');
-var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
-var declarationConstructor = require('../structure/constr_mention').declarationConstructor;
+var getPropsPrefixChecker = require('../../utils/getPropsPrefixChecker');
+var declarationConstructor = require('../../structure/constr_mention').declarationConstructor;
 var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 

@@ -13,7 +13,7 @@ var checkSubpager = require('../dcl/sub_pager/check');
 var collectSubpages = require('../dcl/sub_pager/collectSubpages');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
-var collectNestingsDeclarations = require('../dcl/collectNestingsDeclarations');
+var checkNest = require('../dcl/nest/check');
 var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
 
 var xxxx_morph_props = ['netdata_as_states'];
@@ -78,7 +78,7 @@ var checkNests = function(self, props) {
   checkNestRqC(self, props);
   checkNestSel(self, props);
   checkNestCnt(self, props);
-  collectNestingsDeclarations(self, props);
+  checkNest(self, props);
 }
 
 return function(self, props, original, params) {
