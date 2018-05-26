@@ -4,7 +4,7 @@ var spv = require('spv');
 var cloneObj = spv.cloneObj;
 
 var getTypedDcls = require('../dcl-h/getTypedDcls');
-var checkApis = require('../StatesEmitter/checkApis');
+var checkApis = require('../StatesEmitter/apis/check');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var collectSelectorsOfCollchs = require('../dcl_view/collectSelectorsOfCollchs');
 var collectCollectionChangeDeclarations = require('../dcl_view/collectCollectionChangeDeclarations');

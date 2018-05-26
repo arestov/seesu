@@ -3,7 +3,7 @@ define(function(require){
 
 var spv = require('spv');
 var getTypedDcls = require('../dcl-h/getTypedDcls');
-var checkApis = require('../StatesEmitter/checkApis');
+var checkApis = require('../StatesEmitter/apis/check');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var checkChi = require('../StatesEmitter/checkChi');
 var checkNestRqC = require('../StatesEmitter/checkNestRqC');
