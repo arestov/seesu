@@ -12,59 +12,58 @@ return function(self, props) {
     has_pack = self.hasOwnProperty('nest'),
     prop, cur, real_name;
 
-  if (has_props || has_pack){
-    var result = [];
+  if (!has_props && !has_pack) {
+    return;
+  }
 
-    var used_props = {};
+  var result = [];
 
-    if (has_props) {
-      for (prop in self) {
+  var used_props = {};
 
-        if (getUnprefixed(prop)) {
+  if (has_props) {
+    for (prop in self) {
 
-          real_name = getUnprefixed(prop);
-          cur = self[prop];
-          used_props[real_name] = true;
-          result.push(new NestDcl(real_name, cur));
-        }
-      }
-    }
+      if (getUnprefixed(prop)) {
 
-    if (has_pack) {
-      for (real_name in self.nest) {
-        if (used_props[real_name]) {
-          continue;
-        }
-        cur = self.nest[real_name];
+        real_name = getUnprefixed(prop);
+        cur = self[prop];
         used_props[real_name] = true;
         result.push(new NestDcl(real_name, cur));
       }
     }
-
-    self.nestings_declarations = result;
-    self.idx_nestings_declarations = {};
-    self._chi_nest = {};
-    for (var i = 0; i < result.length; i++) {
-      self.idx_nestings_declarations[result[i].nesting_name] = result[i];
-
-      var item = result[i].subpages_names_list;
-      if (Array.isArray(item)) {
-        for (var kk = 0; kk < item.length; kk++) {
-          if (item[kk].type == 'constr') {
-            self._chi_nest[item[kk].key] = item[kk].value;
-          }
-        }
-      } else {
-        if (item.type == 'constr') {
-          self._chi_nest[item.key] = item.value;
-        }
-      }
-
-    }
-
-
   }
 
+  if (has_pack) {
+    for (real_name in self.nest) {
+      if (used_props[real_name]) {
+        continue;
+      }
+      cur = self.nest[real_name];
+      used_props[real_name] = true;
+      result.push(new NestDcl(real_name, cur));
+    }
+  }
+
+  self.nestings_declarations = result;
+  self.idx_nestings_declarations = {};
+  self._chi_nest = {};
+  for (var i = 0; i < result.length; i++) {
+    self.idx_nestings_declarations[result[i].nesting_name] = result[i];
+
+    var item = result[i].subpages_names_list;
+    if (Array.isArray(item)) {
+      for (var kk = 0; kk < item.length; kk++) {
+        if (item[kk].type == 'constr') {
+          self._chi_nest[item[kk].key] = item[kk].value;
+        }
+      }
+    } else {
+      if (item.type == 'constr') {
+        self._chi_nest[item.key] = item.value;
+      }
+    }
+
+  }
 
 
 };
