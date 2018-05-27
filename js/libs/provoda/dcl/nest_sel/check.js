@@ -2,16 +2,9 @@ define(function(require) {
 'use strict';
 var checkPrefix = require('../../StatesEmitter/checkPrefix');
 var SelectNestingDeclaration = require('./item')
+var build = require('./build');
 
-var handle = function(self, _chi_nest_sel) {
-  self.nest_sel_nest_matches = [];
-
-  for (var sel_res in _chi_nest_sel) {
-    self.nest_sel_nest_matches.push(_chi_nest_sel[sel_res]);
-  }
-}
-
-var checkNestSel = checkPrefix('nest_sel-', SelectNestingDeclaration, '_chi_nest_sel', handle);
+var checkNestSel = checkPrefix('nest_sel-', SelectNestingDeclaration, '_chi_nest_sel', build);
 
 return checkNestSel;
 });
