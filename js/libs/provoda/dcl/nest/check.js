@@ -5,7 +5,6 @@ var getPropsPrefixChecker = require('../../utils/getPropsPrefixChecker');
 var getUnprefixed = spv.getDeprefixFunc( 'nest-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 var NestDcl = require('./item');
-var build = require('./build');
 
 return function(self, props) {
   var
@@ -44,7 +43,6 @@ return function(self, props) {
       result[real_name] = new NestDcl(real_name, cur);
     }
   }
-
-  build(self, result)
+  self._legacy_nest_dcl = result;
 };
 });

@@ -9,6 +9,7 @@ var checkChi = require('../StatesEmitter/checkChi');
 var checkNestRqC = require('../StatesEmitter/checkNestRqC');
 var checkNestSel = require('../dcl/nest_sel/check');
 var checkNestCnt = require('../dcl/nest_conj/check');
+var checkModernNests = require('../dcl/nests/check');
 var checkSubpager = require('../dcl/sub_pager/check');
 var collectSubpages = require('../dcl/sub_pager/collectSubpages');
 
@@ -79,6 +80,7 @@ var checkNests = function(self, props) {
   checkNestSel(self, props);
   checkNestCnt(self, props);
   checkNest(self, props);
+  checkModernNests(self, props)
 }
 
 return function(self, props, original, params) {
