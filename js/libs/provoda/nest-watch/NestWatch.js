@@ -65,7 +65,7 @@ var NestWatch = function(nesting_source, state_name, zip_func, result_state_name
     this.handle_state_change = handler.onchd_state;
     this.handle_count_or_order_change = handler.onchd_count;
   } else {
-    // если есть full_name значит нам надо записать новое состояние
+    // если есть result_state_name значит нам надо записать новое состояние
     // если нет, значит просто передать массив в пользовательскую функцию
     var full_name_handler = result_state_name && getStateWriter(result_state_name, state_name, zip_func);
 
