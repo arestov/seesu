@@ -69,8 +69,14 @@ var NestWatch = function(nesting_source, state_name, zip_func, result_state_name
     // если нет, значит просто передать массив в пользовательскую функцию
     var full_name_handler = result_state_name && getStateWriter(result_state_name, state_name, zip_func);
 
-    this.handle_state_change = this.state_name ? ( result_state_name ? full_name_handler : (this.handler && stateHandler)) : null;
-    this.handle_count_or_order_change = result_state_name ? full_name_handler : (this.handler && wrapper);
+    this.handle_state_change = this.state_name
+      ? ( result_state_name
+          ? full_name_handler
+          : (this.handler && stateHandler))
+      : null;
+    this.handle_count_or_order_change = result_state_name
+      ? full_name_handler
+      : (this.handler && wrapper);
   }
 
 };
