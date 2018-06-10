@@ -88,12 +88,18 @@ function hdkey(full_name, state_name, zip_func) {
   return (full_name || '') + '-' + (state_name || '') + '-' + (zip_func || '');
 }
 
-var getStateWriter = spv.memorize(function(full_name, state_name, zip_name) {
-  var zip_func = getZipFunc(state_name, zip_name);
-  return standart(function stateHandler(md, items) {
-    pvUpdate(md, full_name, items && zip_func(items));
-  });
-}, hdkey);
+var createWriter = function(write) {
+  return spv.memorize(function(full_name, state_name, zip_name) {
+    var zip_func = getZipFunc(state_name, zip_name);
+    return standart(function stateHandler(md, items) {
+      write(md, full_name, items && zip_func(items));
+    });
+  }, hdkey);
+}
+
+var getStateWriter = createWriter(pvUpdate);
+
+getStateWriter.createWriter;
 
 return getStateWriter;
 });
