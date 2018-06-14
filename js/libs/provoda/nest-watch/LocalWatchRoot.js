@@ -15,7 +15,6 @@ return function LocalWatchRoot(md, nwatch, data) {
     this.one_item_mode = false;
 
     // this.state_handler = nwatch.state_handler;
-    // this.zip_name = nwatch.zip_func;
     this.distance = 0;
 
     this.state_handler = nwatch.handle_state_change;
