@@ -47,7 +47,6 @@ var NestWatch = function(nesting_source, state_name, zip_func, result_state_name
     (Array.isArray(state_name)
       ? (state_name.map(getShortStateName))
       : getShortStateName(state_name));
-  this.full_name = result_state_name;
   this.handler = handler; // mainely for 'stch-'
 
   // this.callback = nwatch.handler; // mainely for 'stch-'
