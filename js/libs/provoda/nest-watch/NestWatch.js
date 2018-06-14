@@ -2,26 +2,6 @@ define(function (require) {
 'use strict';
 var getShortStateName = require('../utils/getShortStateName');
 
-var standart = require('./standartNWH');
-
-var wrapper = standart(function wrapper(md, items, lnwatch) {
-  var callback = lnwatch.nwatch.handler;
-  callback(md, null, null, {
-    items: items,
-    item: null
-  });
-});
-
-
-var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) {
-  if (!args.length) {return;}
-  var callback = lnwatch.nwatch.handler;
-  callback(md, args[1], args[2], {
-    items: items,
-    item: args[3]
-  });
-});
-
 var counter = 1;
 var NestWatch = function(nesting_source, state_name, handler, addHandler, removeHandler) {
   var selector = nesting_source.selector;
@@ -54,20 +34,12 @@ var NestWatch = function(nesting_source, state_name, handler, addHandler, remove
 
   this.model_groups = null;
 
-
-  if (handler && (Array.isArray(state_name) || typeof handler == 'object')) {
-    this.handle_state_change = handler.onchd_state;
-    this.handle_count_or_order_change = handler.onchd_count;
-  } else {
-    // просто передать массив в пользовательскую функцию
-
-    if (!this.handler && (!addHandler || !removeHandler)) {
-      throw new Error('something wrong')
-    }
-
-    this.handle_state_change = (this.handler && stateHandler)
-    this.handle_count_or_order_change = (this.handler && wrapper)
+  if (!handler && (!addHandler || !removeHandler)) {
+    throw new Error('something wrong')
   }
+
+  this.handle_state_change = handler && handler.onchd_state;
+  this.handle_count_or_order_change = handler && handler.onchd_count;
 
 };
 

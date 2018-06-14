@@ -4,6 +4,25 @@ var spv = require('spv');
 var NestWatch = require('../nest-watch/NestWatch');
 
 var collectStateChangeHandlers = require('./collectStateChangeHandlers');
+var standart = require('../nest-watch/standartNWH');
+
+var wrapper = standart(function wrapper(md, items, lnwatch) {
+  var callback = lnwatch.nwatch.handler.stch_fn;
+  callback(md, null, null, {
+    items: items,
+    item: null
+  });
+});
+
+var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) {
+  if (!args.length) {return;}
+  var callback = lnwatch.nwatch.handler.stch_fn;
+  callback(md, args[1], args[2], {
+    items: items,
+    item: args[3]
+  });
+});
+
 
 var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
   if (string.indexOf('@') == -1) {
@@ -30,8 +49,14 @@ return function(self, props) {
     var nw_draft2 = getParsedStateChange(stname);
     if (!nw_draft2) { continue; }
 
+    var callback =  index[stname];
+
     self.st_nest_matches.push(
-      new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, index[stname])
+      new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, {
+        onchd_state: stateHandler,
+        onchd_count: wrapper,
+        stch_fn: callback,
+      })
     );
   }
 };
