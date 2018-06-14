@@ -5,6 +5,7 @@ var NestWatch = require('../nest-watch/NestWatch');
 var getShortStateName = require('./getShortStateName');
 var NestingSourceDr = require('./NestingSourceDr');
 var getPropsPrefixChecker= require('./getPropsPrefixChecker');
+var getStateWriter = require('../nest-watch/getStateWriter');
 
 var enc_states = {
   '^': (function(){
@@ -38,13 +39,18 @@ var enc_states = {
 
     var nesting_source = new NestingSourceDr(nesting_name);
 
+    var doubleHandler = getStateWriter(string, state_name, zip_func);
+
     return {
       rel_type: 'nesting',
       full_name: string,
       nesting_name: nesting_source.selector.join('.'),
       state_name: state_name,
       zip_func: zip_func || itself,
-      nwatch: new NestWatch(nesting_source, state_name, zip_func, string)
+      nwatch: new NestWatch(nesting_source, state_name, null, null, {
+        onchd_state: doubleHandler,
+        onchd_count: doubleHandler,
+      })
     };
   },
   '#': function(string) {
