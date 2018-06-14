@@ -9,7 +9,7 @@ var NestCntDeclr = function(name, data) {
   this.nwbases = new Array(data.length);
 
   for (var i = 0; i < data.length; i++) {
-    this.nwbases[i] = new NestWatch(new NestingSourceDr(data[i]), null, null, null, {
+    this.nwbases[i] = new NestWatch(new NestingSourceDr(data[i]), null, {
       onchd_count: handleChdCount,
     });
   }

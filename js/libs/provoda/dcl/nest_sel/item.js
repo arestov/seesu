@@ -50,7 +50,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
 
   this.deps = getDeps(data, this.map, this.where_states);
 
-  this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, null, null, {
+  this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, {
     onchd_count: handleChdCount,
     onchd_state: this.selectFn ? handleChdDeepState : rerun
   }, this.selectFn && handleAdding, this.selectFn && handleRemoving);

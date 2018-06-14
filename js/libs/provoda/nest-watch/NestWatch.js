@@ -23,15 +23,12 @@ var stateHandler = standart(function baseStateHandler(md, items, lnwatch, args) 
 });
 
 var counter = 1;
-var NestWatch = function(nesting_source, state_name, zip_func, result_state_name, handler, addHandler, removeHandler) {
+var NestWatch = function(nesting_source, state_name, handler, addHandler, removeHandler) {
   var selector = nesting_source.selector;
   if (!Array.isArray(selector)) {
     throw new Error('selector should be array');
   }
   if (Array.isArray(state_name)) {
-    if (result_state_name) {
-      throw new Error('state_name cant be array when result_state_name is presented');
-    }
     if (!handler.onchd_count || !handler.onchd_state) {
       throw new Error('should be both onchd_count and onchd_state');
     }

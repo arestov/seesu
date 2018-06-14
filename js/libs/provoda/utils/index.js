@@ -47,7 +47,7 @@ var enc_states = {
       nesting_name: nesting_source.selector.join('.'),
       state_name: state_name,
       zip_func: zip_func || itself,
-      nwatch: new NestWatch(nesting_source, state_name, null, null, {
+      nwatch: new NestWatch(nesting_source, state_name, {
         onchd_state: doubleHandler,
         onchd_count: doubleHandler,
       })

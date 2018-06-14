@@ -31,7 +31,7 @@ return function(self, props) {
     if (!nw_draft2) { continue; }
 
     self.st_nest_matches.push(
-      new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, null, null, index[stname])
+      new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, index[stname])
     );
   }
 };
