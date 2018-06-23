@@ -40,19 +40,15 @@ var enc_states = {
 
     var nesting_source = new NestingSourceDr(nesting_name);
 
-    var doubleHandler = getStateWriter(string, state_name, zip_func);
-
     return {
       rel_type: 'nesting',
       full_name: string,
       state_name: state_name,
 
+      nesting_source: nesting_source,
       nesting_name: nesting_source.selector.join('.'),
+      zip_name: zip_func,
       zip_func: zip_func || itself,
-      nwatch: new NestWatch(nesting_source, state_name, {
-        onchd_state: doubleHandler,
-        onchd_count: doubleHandler,
-      })
     };
   },
   '#': function(string) {
@@ -72,7 +68,7 @@ var enc_states = {
 };
 
 
-var getEncodedState = spv.memorize(function getEncodedState(state_name) {
+var getParsedState = spv.memorize(function getParsedState(state_name) {
   // isSpecialState
   var start = state_name.charAt(0);
   if (enc_states[start]) {
@@ -82,10 +78,34 @@ var getEncodedState = spv.memorize(function getEncodedState(state_name) {
   }
 });
 
+var getEncodedState = spv.memorize(function getEncodedState(state_name) {
+  var result = getParsedState(state_name)
+
+  if (!result) {
+    return null
+  }
+
+  if (result.rel_type !== 'nesting') {
+    return result
+  }
+
+  var doubleHandler = getStateWriter(result.full_name, result.state_name, result.zip_name);
+  var nwatch = new NestWatch(result.nesting_source, result.state_name, {
+    onchd_state: doubleHandler,
+    onchd_count: doubleHandler,
+  })
+
+  var copy = spv.cloneObj({}, result);
+  copy.nwatch = nwatch
+
+  return copy
+});
+
 function itself(item) {return item;}
 
 return {
   getShortStateName: getShortStateName,
+  getParsedState: getParsedState,
   getEncodedState: getEncodedState,
   getPropsPrefixChecker: getPropsPrefixChecker,
 };
