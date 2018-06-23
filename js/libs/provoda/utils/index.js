@@ -21,8 +21,9 @@ var enc_states = {
       return {
         rel_type: 'parent',
         full_name: string,
+        state_name: state_name,
+
         ancestors: count,
-        state_name: state_name
       };
     };
   })(),
@@ -44,8 +45,9 @@ var enc_states = {
     return {
       rel_type: 'nesting',
       full_name: string,
-      nesting_name: nesting_source.selector.join('.'),
       state_name: state_name,
+
+      nesting_name: nesting_source.selector.join('.'),
       zip_func: zip_func || itself,
       nwatch: new NestWatch(nesting_source, state_name, {
         onchd_state: doubleHandler,
