@@ -99,7 +99,7 @@ var createWriter = function(write) {
 
 var getStateWriter = createWriter(pvUpdate);
 
-getStateWriter.createWriter;
+getStateWriter.createWriter = createWriter;
 
 return getStateWriter;
 });
