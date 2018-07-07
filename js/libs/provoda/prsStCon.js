@@ -2,15 +2,6 @@ define(function(require) {
 'use strict';
   var pvState = require('./utils/state');
   return {
-    toList: function(obj) {
-      var result = [];
-      for (var p in obj){
-        if (obj.hasOwnProperty(p)){
-          result.push(obj[p]);
-        }
-      }
-      return result;
-    },
     prefill: {
       parent: function (md, states_list) {
         var list = md.conndst_parent;

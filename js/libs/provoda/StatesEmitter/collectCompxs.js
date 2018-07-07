@@ -4,12 +4,16 @@ define(function(require) {
 var prsStCon = require('../prsStCon');
 
 var spv = require('spv');
-var hp = require('../helpers');
+var utils = require('../utils/index.js');
 
 
 var identical = function(state) {
   return state;
 };
+
+var makeGroups = utils.groupDeps(utils.getEncodedState, function(cur) {
+  return cur.depends_on;
+})
 
 var fromArray = function(state_name, cur) {
   return {
@@ -44,7 +48,7 @@ var declr = function(comlx_name, cur) {
     if (!item.depends_on[i]) {
       throw new Error('state name should not be empty');
     }
-    item.watch_list[i] = hp.getShortStateName(item.depends_on[i]);
+    item.watch_list[i] = utils.getShortStateName(item.depends_on[i]);
   }
   return item;
 };
@@ -127,49 +131,16 @@ function collectStatesConnectionsProps(self, full_comlxs_list) {
     ['songs-list', 'mf_cor', 'sorted_completcs']
   ]
   */
-
-  self.compx_nest_matches = [];
-
-  var states_of_parent = {};
-  var states_of_nesting = {};
-  var states_of_root = {};
-
-  for (var i = 0; i < full_comlxs_list.length; i++) {
-    var cur = full_comlxs_list[i];
-
-    for (var jj = 0; jj < cur.depends_on.length; jj++) {
-      var state_name = cur.depends_on[jj];
-      var parsing_result = hp.getEncodedState(state_name);
-      if (!parsing_result) {
-        continue;
-      }
-      switch (parsing_result.rel_type) {
-        case 'root': {
-          if (!states_of_root[state_name]) {
-            states_of_root[state_name] = parsing_result;
-          }
-        }
-        break;
-        case 'nesting': {
-          if (!states_of_nesting[state_name]) {
-            states_of_nesting[state_name] = parsing_result;
-            self.compx_nest_matches.push( parsing_result.nwatch );
-          }
-        }
-        break;
-        case 'parent': {
-          if (!states_of_parent[state_name]) {
-            states_of_parent[state_name] = parsing_result;
-          }
-        }
-        break;
-      }
-    }
+  var result = makeGroups(full_comlxs_list);
+  var compx_nest_matches = new Array(result.conndst_nesting.length)
+  for (var i = 0; i < result.conndst_nesting.length; i++) {
+    compx_nest_matches[i] = result.conndst_nesting[i].nwatch;
   }
 
-  self.conndst_parent = prsStCon.toList(states_of_parent);
-  self.conndst_nesting = prsStCon.toList(states_of_nesting);
-  self.conndst_root = prsStCon.toList(states_of_root);
+  self.compx_nest_matches = compx_nest_matches;
 
+  self.conndst_parent = result.conndst_parent
+  self.conndst_nesting = result.conndst_nesting
+  self.conndst_root = result.conndst_root;
 }
 });
