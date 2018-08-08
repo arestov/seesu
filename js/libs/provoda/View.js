@@ -141,8 +141,8 @@ var initView = function(target, view_otps, opts){
   cloneObj(target._lbr.undetailed_states, target.mpx.vstates);
   cloneObj(target._lbr.undetailed_children_models, target.mpx.nestings);
 
-  prsStCon.connect.parent(target);
-  prsStCon.connect.root(target);
+  prsStCon.connect.parent(target, target);
+  prsStCon.connect.root(target, target);
 
   nestBorrowInit(target);
 };

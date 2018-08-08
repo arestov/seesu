@@ -39,8 +39,8 @@ define(function(require) {
       }
     },
     connect: {
-      parent: function(md) {
-        var list = md.conndst_parent;
+      parent: function(md, instructions) {
+        var list = instructions.conndst_parent;
         if (!list){
           return;
         }
@@ -60,8 +60,8 @@ define(function(require) {
 
       },
       nesting: function() {},
-      root: function(md) {
-        var list = md.conndst_root;
+      root: function(md, instructions) {
+        var list = instructions.conndst_root;
         if (!list){
           return;
         }

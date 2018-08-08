@@ -12,9 +12,9 @@ function connectStates(self) {
   // prefill own states before connecting relations
   self.__initStates();
 
-  prsStCon.connect.parent(self);
-  prsStCon.connect.root(self);
-  prsStCon.connect.nesting(self);
+  prsStCon.connect.parent(self, self);
+  prsStCon.connect.root(self, self);
+  prsStCon.connect.nesting(self, self);
 
   initWatchList(self, self.compx_nest_matches)
 }
