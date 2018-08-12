@@ -170,6 +170,26 @@ return function checkPass(self, props) {
   self._nest_by_type = byType(self._extendable_nest_index);
 
   rebuild(self, self._nest_by_type, oldByType)
+
+  self._nest_by_type_listed = {}
+  for (var type_name in self._nest_by_type) {
+    if (!self._nest_by_type.hasOwnProperty(type_name)) {
+      continue;
+    }
+
+    var result = []
+
+    var cur = self._nest_by_type[type_name]
+    for (var nest_name in cur) {
+      if (!cur.hasOwnProperty(nest_name)) {
+        continue
+      }
+      result.push(cur[nest_name])
+    }
+
+    self._nest_by_type_listed[type_name] = result
+
+  }
   return true;
 }
 })
