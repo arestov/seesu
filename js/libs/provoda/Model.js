@@ -81,6 +81,25 @@ var Model = spv.inh(StatesEmitter, {
   props: modelProps
 });
 
+var selectParent = function (md) {
+  return md.map_parent
+}
+
+var getStrucParent = function(item, _count) {
+  var count = _count || 1
+
+  var target = item;
+  while (count){
+    count--;
+    target = selectParent(target);
+
+    if (!target) {
+      throw new Error('no parent for step ' + count)
+    }
+  }
+  return target
+}
+
 function modelProps(add) {
 add(_requestsDeps);
 add({
@@ -180,8 +199,8 @@ add({
   getStrucRoot: function() {
     return this.app;
   },
-  getStrucParent: function() {
-    return this.map_parent;
+  getStrucParent: function(count) {
+    return getStrucParent(this, count)
   },
   getSiOpts: function() {
     return getSiOpts(this);

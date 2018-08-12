@@ -147,6 +147,25 @@ var initView = function(target, view_otps, opts){
   nestBorrowInit(target);
 };
 
+var selectParent = function (view) {
+  return view.parent_view
+}
+
+var getStrucParent = function(item, _count) {
+  var count = _count || 1
+
+  var target = item;
+  while (count){
+    count--;
+    target = selectParent(target);
+
+    if (!target) {
+      throw new Error('no parent for step ' + count)
+    }
+  }
+  return target
+}
+
 var View = spv.inh(StatesEmitter, {
   naming: function(fn) {
     return function View(view_otps, opts) {
@@ -188,8 +207,8 @@ var View = spv.inh(StatesEmitter, {
   getStrucRoot: function() {
     return this.root_view;
   },
-  getStrucParent: function() {
-    return this.parent_view;
+  getStrucParent: function(count) {
+    return getStrucParent(this, count)
   },
   getNesting: function(collection_name) {
     return this.children_models[collection_name];
