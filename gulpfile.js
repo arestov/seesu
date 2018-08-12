@@ -43,11 +43,8 @@ gulp.task('css', gulp.parallel(['index'], function() {
 		'css/area_button.css',
 		'css/master.css',
 		'css/view_switcher.css',
-		'css/vkontakte_switcher.css',
-		'css/search_results.css',
 		'css/player.css',
 		'css/song-image-con.css',
-		'css/play-list-panel.css',
 		'css/abs_layout.css',
 		'css/pv-layout.css',
 		'dist-envs/temp/uninlined.css'
