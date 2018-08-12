@@ -1,3 +1,4 @@
+/* eslint-disable strict */
 'use strict';
 var gulp = require('gulp');
 var foreach = require("gulp-foreach");
@@ -29,11 +30,8 @@ gulp.task('index', function() {
 // 		;
 // });
 
-gulp.task('common', ['css', 'js' , 'index']);
 
-gulp.task('default', ['common']);
-
-gulp.task('css', ['index'], function() {
+gulp.task('css', gulp.parallel(['index'], function() {
 	var concat = require('gulp-concat');
 	var postcss = require('gulp-postcss');
 	var autoprefixer = require('autoprefixer');
@@ -64,7 +62,7 @@ gulp.task('css', ['index'], function() {
 		.pipe(concat('combined.css'))
 		// .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist/'));
-});
+}));
 
 gulp.task('js', function() {
 	var rjs = require('gulp-requirejs-optimize');
@@ -101,6 +99,11 @@ gulp.task('js', function() {
 		// .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist'));
 });
+
+gulp.task('common', gulp.parallel(['css', 'js' , 'index']));
+
+gulp.task('default', gulp.parallel(['common']));
+
 
 combo('webapp', extend(common('webapp'), {
 	'index': [['index'], function() {
@@ -139,26 +142,26 @@ combo('opera_popup', extend(chromeExtension('opera_popup'), {
 	),
 }));
 
-gulp.task('chrome_app-zipped', ['chrome_app'], function () {
+gulp.task('chrome_app-zipped', gulp.parallel(['chrome_app'], function () {
 	var zip = require('gulp-zip');
 	return gulp.src('dist-envs/' + 'chrome_app/**')
 		.pipe(zip('chrome_app.zip'))
 		.pipe(gulp.dest('dist-envs'));
-});
-gulp.task('chrome_popup-zipped', ['chrome_popup'], function () {
+}));
+gulp.task('chrome_popup-zipped', gulp.parallel(['chrome_popup'], function () {
 	var zip = require('gulp-zip');
 	return gulp.src('dist-envs/' + 'chrome_popup/**')
 		.pipe(zip('chrome_popup.zip'))
 		.pipe(gulp.dest('dist-envs'));
-});
-gulp.task('opera_popup-zipped', ['opera_popup'], function () {
+}));
+gulp.task('opera_popup-zipped', gulp.parallel(['opera_popup'], function () {
 	var zip = require('gulp-zip');
 	return gulp.src('dist-envs/' + 'opera_popup/**')
 		.pipe(zip('opera_popup.zip'))
 		.pipe(gulp.dest('dist-envs'));
-});
+}));
 
-gulp.task('envs', ['chrome_app-zipped', 'chrome_popup-zipped', 'opera_popup-zipped', 'webapp']);
+gulp.task('envs', gulp.parallel(['chrome_app-zipped', 'chrome_popup-zipped', 'opera_popup-zipped', 'webapp']));
 
 
 function chromeExtension(dest_env) {
@@ -232,14 +235,14 @@ function combo(task, deps) {
 		var task_name = task + '-' + name;
 		var value = deps[name];
 		if (Array.isArray(value)) {
-			gulp.task(task_name, value[0], value[1]);
+			gulp.task(task_name, gulp.parallel(value[0], value[1]));
 		} else {
 			gulp.task(task_name, value);
 		}
 		array.push(task_name);
 	}
 
-	gulp.task(task, array);
+	gulp.task(task, gulp.parallel(array));
 }
 
 function extend(origin, add) {
