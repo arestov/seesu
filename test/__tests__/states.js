@@ -1,4 +1,4 @@
-import test from 'ava';
+var test = require('ava');
 
 var requirejs = require('../../requirejs-config');
 var pv = requirejs('pv')
