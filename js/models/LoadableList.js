@@ -1,6 +1,6 @@
 define(function(require) {
 'use strict';
-var LoadableListBase = require('./LoadableListBase');
+var LoadableListBase = require('pv/LoadableList');
 var spv = require('spv');
 var pv = require('pv');
 
