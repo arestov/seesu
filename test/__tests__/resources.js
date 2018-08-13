@@ -19,6 +19,7 @@ var fakeInterface = require('../fakeInterface');
 test("state loaded", (t) => {
 
   var StartPage = spv.inh(BrowseMap.Model, {}, {
+    model_name: 'start_page',
     zero_map_level: true,
     req_map: [
       [
