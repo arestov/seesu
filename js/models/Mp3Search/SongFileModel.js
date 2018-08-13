@@ -17,7 +17,7 @@ var finup = function(callback) {
 };
 
 var pvState = pv.state;
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var FileInTorrent = spv.inh(pv.Model, {
   init: function(target, opts, states, params) {
@@ -45,7 +45,7 @@ var FileInTorrent = spv.inh(pv.Model, {
     } else {
       btapp.add.torrent(this.sr_item.torrent_link);
     }
-    pv.update(this, 'download-pressed', true);
+    pvUpdate(this, 'download-pressed', true);
   }
 });
 
@@ -287,18 +287,18 @@ function props() {
 
     events: {
       finish: function(){
-        pv.update(this, 'play', null);
+        pvUpdate(this, 'play', null);
       },
       play: function(){
-        pv.update(this, 'play', 'play');
+        pvUpdate(this, 'play', 'play');
       },
       playing: function(opts){
         var dec = opts.position/opts.duration;
-        pv.update(this, 'playing_progress', dec);
-        pv.update(this, 'loaded_duration', opts.duration);
+        pvUpdate(this, 'playing_progress', dec);
+        pvUpdate(this, 'loaded_duration', opts.duration);
       },
       buffering: function(state) {
-        pv.update(this, 'buffering_progress', !!state);
+        pvUpdate(this, 'buffering_progress', !!state);
       },
       loading: function(opts){
         var factor;
@@ -308,7 +308,7 @@ function props() {
           factor = opts.fetched/opts.duration;
         }
         if (factor){
-          pv.update(this, 'loading_progress', factor);
+          pvUpdate(this, 'loading_progress', factor);
         }
       },
       pause: function(){
@@ -316,14 +316,14 @@ function props() {
           // `stoped` should not become `paused`
           return;
         }
-        pv.update(this, 'play', false);
+        pvUpdate(this, 'play', false);
       },
       stop: function(){
-        pv.update(this, 'play', null);
+        pvUpdate(this, 'play', null);
       },
       error: function() {
         var d = new Date();
-        pv.update(this, "error", d);
+        pvUpdate(this, "error", d);
         if (this.parent){
           this.parent.error = d;
         }
@@ -408,9 +408,9 @@ function props() {
         this.setPosition(0, false, true);
         this.removeCache();
 
-        pv.update(this, 'play', null);
-        pv.update(this, 'loading_progress', 0);
-        pv.update(this, 'playing_progress', 0);
+        pvUpdate(this, 'play', null);
+        pvUpdate(this, 'loading_progress', 0);
+        pvUpdate(this, 'playing_progress', 0);
 
         this.sound = null;
       }
@@ -466,11 +466,11 @@ function props() {
     },
 
     activate: function() {
-      pv.update(this, 'selected', true);
+      pvUpdate(this, 'selected', true);
     },
 
     deactivate: function() {
-      pv.update(this, 'selected', false);
+      pvUpdate(this, 'selected', false);
     },
 
     markAsPlaying: function() {

@@ -8,7 +8,7 @@ var cache_ajax = require('cache_ajax');
 var hex_md5 = require('hex_md5');
 var lastfm_data = require('js/lastfm_data');
 var base = require('./Investigation');
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var suParseArtistsResults = function() {
   return lfmhelp.parseArtistsResults.apply(this, arguments);
@@ -277,7 +277,7 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
     self.image = null;
     if (data.image){
       self.image = data.image;
-      pv.update(self, 'image', data.image);
+      pvUpdate(self, 'image', data.image);
     }
     if (data.resid){
       self.aid = data.resid;
@@ -333,7 +333,7 @@ var SearchPage = spv.inh(base.Investigation, {}, {
   "+states": {
     // init: function(){
     // 	this._super.apply(this, arguments);
-    // 	pv.update(this, 'mp_detailed', false);
+    // 	pvUpdate(this, 'mp_detailed', false);
     // },
 
 

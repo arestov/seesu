@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var app_serv = require('app_serv');
 var comd = require('./comd');
 var Song = require('./Song');
@@ -73,7 +74,7 @@ var spv = require('spv');
     init: function(target) {
       target.pl = target.map_parent;
 
-      pv.update(target, 'active_part', false);
+      pvUpdate(target, 'active_part', false);
     }
   }, {
     "+states": {
@@ -144,7 +145,7 @@ var spv = require('spv');
   });
 
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 var HypemPlaylist = spv.inh(SongsList, {
   init: function(target) {
     target.can_use = target.app.hypem.can_send;

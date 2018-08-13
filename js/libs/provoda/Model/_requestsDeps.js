@@ -98,7 +98,7 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
     }
   };
 
-  return new NestWatch({selector: dep.value}, null, null, null, null, addHandler, removeHandler);
+  return new NestWatch({selector: dep.value}, null, null, addHandler, removeHandler);
 }, function(dep) {
   return dep.dep_id;
 });

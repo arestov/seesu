@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var spv = require('spv');
 var BrowseMap = require('js/libs/BrowseMap');
 var UserAcquaintancesLists = require('./UserAcquaintancesLists');
@@ -13,7 +14,7 @@ var UserCard = spv.inh(BrowseMap.Model, {
     //плейлисты
     var gena = target.getSPI('playlists', true);
     var hasPlaylistCheck = function(items) {
-      pv.update(target, 'has_playlists', !!items.length);
+      pvUpdate(target, 'has_playlists', !!items.length);
     };
     hasPlaylistCheck(target.app.gena.playlists);
     target.app.gena.on('playlists-change', hasPlaylistCheck);

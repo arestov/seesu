@@ -7,99 +7,6 @@ var View = require('View');
 var createNiceButton = require('./modules/createNiceButton');
 
 var pvUpdate = pv.update;
-var contextRow = function(container){
-  this.m = {
-    c: container.addClass('hidden'),
-    active: false
-  };
-  this.arrow = container.children('.rc-arrow');
-  this.parts = {};
-
-};
-contextRow.prototype = {
-  getC: function(){
-    return this.m.c;
-  },
-  addPart: function(cpart, name){
-    if (name){
-      this.parts[name] = {
-        c: cpart.addClass('hidden'),
-        d:{},
-        active: false
-      };
-    }
-
-  },
-  C: function(name){
-    return this.parts[name] && this.parts[name].c;
-  },
-  D: function(name, key, value){
-    if (name && this.parts[name]){
-      if (typeof value != 'undefined' && key){
-        return this.parts[name].d[key] = value;
-      } else if (key){
-        return this.parts[name].d[key];
-      }
-    }
-
-  },
-  isActive: function(name){
-    return !!this.parts[name].active;
-  },
-  showPart: function(name, posFn){
-
-
-    if (!this.parts[name].active){
-
-      this.hide(true);
-
-
-      this.parts[name].c.removeClass('hidden');
-      this.parts[name].active = true;
-
-
-      if (!this.m.active){
-        this.m.c.removeClass('hidden');
-        this.m.active = true;
-      }
-
-    }
-    if (posFn){
-      //used for positioning
-      this.arrow.removeClass('hidden');
-      var pos = posFn();
-      var arrow_papos = this.arrow.offsetParent().offset();
-
-      //.removeClass('hidden');
-      this.arrow.css('left', ((pos.left + pos.owidth/2) - arrow_papos.left) + 'px');
-
-    }
-
-  },
-  hide: function(not_itself, skip_arrow){
-    if (!not_itself){
-      if (this.m.active){
-        this.m.c.addClass('hidden');
-        this.m.active = false;
-      }
-
-    }
-
-    for (var a in this.parts){
-      if (this.parts[a].active){
-        this.parts[a].c.addClass('hidden');
-        this.parts[a].active = false;
-      }
-
-    }
-    if (!skip_arrow){
-      this.arrow.addClass('hidden');
-    }
-
-
-
-  }
-};
 
 var VkLoginUI = spv.inh(View, {}, {
   state_change: {
@@ -396,7 +303,6 @@ return {
   LfmScrobbleView: LfmScrobbleView,
   LfmLoveItView: LfmLoveItView,
   VkLoginUI:VkLoginUI,
-  contextRow: contextRow,
   ActionsRowUI:ActionsRowUI
 };
 });

@@ -6,15 +6,11 @@ define(function(require) {
 
   var app_serv = require('app_serv');
 
-  var FuncsStack = require('js/libs/FuncsStack');
-
   var BrowseMap = require('js/libs/BrowseMap');
 
   var LoadableList = require('./LoadableList');
 
   var SongsList = require('./SongsList');
-
-  var htmlencoding = require('js/common-libs/htmlencoding');
 
   var Mp3Search = require('js/models/Mp3Search/index');
 
@@ -22,7 +18,7 @@ define(function(require) {
 
   var Song = require('./Song');
 var ArtCard;
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var ArtistAlbumSongs = spv.inh(SongsList, {
   init: function(target, opts, params) {

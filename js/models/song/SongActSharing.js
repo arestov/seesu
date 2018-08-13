@@ -6,6 +6,7 @@ var app_serv = require('app_serv');
 var invstg = require('../invstg');
 var comd = require('../comd');
 var LfmAuth = require('js/LfmAuth');
+var pvUpdate = require('pv/update');
 
 var app_env = app_serv.app_env;
 var pvState = pv.state;
@@ -68,24 +69,24 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
     });
 
     self.app.on("vk-api", function(api) {
-      pv.update(self, "has_vk_api", !!api);
+      pvUpdate(self, "has_vk_api", !!api);
     });
 
     if (app_env.vkontakte) {
       self.app.vk_auth.on('settings-change', function(vk_opts) {
-        pv.update(self, 'vk_opts', vk_opts);
+        pvUpdate(self, 'vk_opts', vk_opts);
       });
     }
 
     var cu_info = self.app.s.getInfo('vk');
     if (cu_info){
       if (cu_info.photo){
-        pv.update(self, "own_photo", cu_info.photo);
+        pvUpdate(self, "own_photo", cu_info.photo);
       }
     } else {
       self.app.s.once("info-change-vk", function(cu_info) {
         if (cu_info.photo){
-          pv.update(self, "own_photo", cu_info.photo);
+          pvUpdate(self, "own_photo", cu_info.photo);
         }
       });
     }
@@ -463,7 +464,7 @@ var SongActSharing = spv.inh(comd.BaseCRow, {
   'nest-searcher': [StrusersRowSearch],
 
   search: function(q) {
-    pv.update(this, 'query', q);
+    pvUpdate(this, 'query', q);
     var searcher = this.getNesting('searcher');
     if (searcher) {
       searcher.changeQuery(q);

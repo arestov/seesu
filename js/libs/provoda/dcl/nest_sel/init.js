@@ -38,6 +38,9 @@ function add(self, nwbase, dcl) {
 }
 
 return function init(self) {
+  self.states_links = self.states_links || null;
+  self.nes_match_index = self.nes_match_index || null;
+
   if (!self.nest_sel_nest_matches) {return;}
 
   for (var i = 0; i < self.nest_sel_nest_matches.length; i++) {

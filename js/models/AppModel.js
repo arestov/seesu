@@ -4,6 +4,7 @@ var AppModelBase = require('pv/AppModel');
 var spv = require('spv');
 var SongsList = require('./SongsList');
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var BrowseMap = require('../libs/BrowseMap');
 var routePathByModels = require('pv/routePathByModels');
 
@@ -39,12 +40,12 @@ var props = {
       this.trigger('handle-location');
     }
 
-    pv.update(this.start_page, 'can_expand', true);
+    pvUpdate(this.start_page, 'can_expand', true);
 
   },
 
   nowPlaying: function(mo) {
-    pv.update(this, 'now_playing', mo.getTitle());
+    pvUpdate(this, 'now_playing', mo.getTitle());
     this.current_playing = mo;
     this.matchNav();
     this.updatePlayedListsHistory(mo);
@@ -52,7 +53,7 @@ var props = {
 
   matchNav: function() {
     if (this.current_playing){
-      pv.update(this, 'viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
+      pvUpdate(this, 'viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
     }
 
   },
@@ -73,15 +74,15 @@ var props = {
 
     }
     pv.updateNesting(this, 'played_playlists', array);
-    pv.update(this, 'played_playlists_length', array.length);
+    pvUpdate(this, 'played_playlists_length', array.length);
   },
 
   playing: function() {
-    pv.update(this, 'playing', true);
+    pvUpdate(this, 'playing', true);
   },
 
   notPlaying: function() {
-    pv.update(this, 'playing', false);
+    pvUpdate(this, 'playing', false);
   },
 
   createSonglist: function(map_parent, params) {
@@ -176,7 +177,7 @@ var props = {
   // 		}
   //
   // 	}
-  // 	pv.update(this, 'search_query', query);
+  // 	pvUpdate(this, 'search_query', query);
   // },
   // 'stch-search_request_freshness': function(target) {
   // 	var query = target.state('search_query');
@@ -186,7 +187,7 @@ var props = {
   //
   // },
   // refreshSearchRequest: function(time) {
-  // 	pv.update(this, 'search_request_freshness', time);
+  // 	pvUpdate(this, 'search_request_freshness', time);
   // },
   checkActingRequestsPriority: function() {
     var raw_array = [];

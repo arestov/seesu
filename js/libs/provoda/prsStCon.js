@@ -2,15 +2,6 @@ define(function(require) {
 'use strict';
   var pvState = require('./utils/state');
   return {
-    toList: function(obj) {
-      var result = [];
-      for (var p in obj){
-        if (obj.hasOwnProperty(p)){
-          result.push(obj[p]);
-        }
-      }
-      return result;
-    },
     prefill: {
       parent: function (md, states_list) {
         var list = md.conndst_parent;
@@ -48,8 +39,8 @@ define(function(require) {
       }
     },
     connect: {
-      parent: function(md) {
-        var list = md.conndst_parent;
+      parent: function(md, instructions) {
+        var list = instructions.conndst_parent;
         if (!list){
           return;
         }
@@ -69,8 +60,8 @@ define(function(require) {
 
       },
       nesting: function() {},
-      root: function(md) {
-        var list = md.conndst_root;
+      root: function(md, instructions) {
+        var list = instructions.conndst_root;
         if (!list){
           return;
         }

@@ -35,7 +35,7 @@ return {
   user_playlists: coct.ListOfListsView,
   songs_lists: coct.ListOfListsView,
   artists_lists: coct.ListOfListsView,
-  сountries_list: coct.SimpleListOfListsView,
+  countries_list: coct.SimpleListOfListsView,
   city_place: coct.SimpleListOfListsView,
   cities_list: coct.SimpleListOfListsView,
   country_place: coct.ListOfListsView,

@@ -2,9 +2,9 @@ define(function (require) {
 'use strict';
 
 var spv = require('spv');
-var checkPrefix = require('./checkPrefix');
-var collectStatesBinders = require('./collectStatesBinders');
-var pvUpdate = require('../updateProxy').update;
+var checkPrefix = require('../checkPrefix');
+var collectStatesBinders = require('../collectStatesBinders');
+var pvUpdate = require('../../updateProxy').update;
 
 var toRealArray = spv.toRealArray;
 

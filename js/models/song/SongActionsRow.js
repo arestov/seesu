@@ -8,7 +8,7 @@ var SongActPlaylisting = require('./SongActPlaylisting');
 var SongActTaging = require('./SongActTaging');
 var SongActSharing = require('./SongActSharing');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
   init: function(target) {
@@ -38,7 +38,7 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
 
     if (this.app.lfm.sk){
       var _this = this;
-      pv.update(this, 'wait_love_done', true);
+      pvUpdate(this, 'wait_love_done', true);
       this.app.lfm.post('Track.love', {
         sk: this.app.lfm.sk,
         artist: this.song.state('artist'),
@@ -46,7 +46,7 @@ var LfmLoveIt = spv.inh(LfmAuth.LfmLogin, {
       }).then(anyway, anyway);
 
       function anyway(){
-        pv.update(_this, 'wait_love_done', false);
+        pvUpdate(_this, 'wait_love_done', false);
         _this.trigger('love-success');
       }
 
@@ -137,7 +137,7 @@ var constrs_names= constrs.map(function(el) {
 var SongActionsRow = spv.inh(comd.PartsSwitcher, {
   init: function(target) {
     target.mo = target.map_parent;
-    pv.update(target, 'active_part', false);
+    pvUpdate(target, 'active_part', false);
     //target.app = mo.app;
     target.inited_parts = {};
   }

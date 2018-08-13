@@ -1,9 +1,10 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var spv = require('spv');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var playRelative = function(mo, result) {
   if (result === true) {
@@ -151,7 +152,7 @@ var PlayRequest = spv.inh(pv.Model, {}, {
   },
 
   switchSong: function(song) {
-    pv.update(this, 'next_song', song);
+    pvUpdate(this, 'next_song', song);
   },
 
   playNext: function() {
@@ -159,7 +160,7 @@ var PlayRequest = spv.inh(pv.Model, {}, {
 
     if (current_song.state('rept-song')){
       current_song.play();
-      pv.update(this, 'next_song', current_song);
+      pvUpdate(this, 'next_song', current_song);
     } else {
       var next_song = playRelative(current_song, current_song.map_parent.switchTo(current_song, true, true));
       this.switchSong(next_song);

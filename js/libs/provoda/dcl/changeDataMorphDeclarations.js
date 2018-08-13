@@ -221,7 +221,6 @@ return function(self, props, typed_state_dcls) {
   var main_list_nest_req = self.main_list_nest_req;
 
   if (has_reqnest_decls) {
-    self.has_reqnest_decls = true;
     self.netsources_of_nestings = {
       api_names: [],
       api_names_converted: false,

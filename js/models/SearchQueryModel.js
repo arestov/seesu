@@ -4,7 +4,7 @@ var pv = require('pv');
 var spv = require('spv');
 // var morph_helpers = require('js/libs/morph_helpers');
 // var BrowseMap = require('../libs/BrowseMap');
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 

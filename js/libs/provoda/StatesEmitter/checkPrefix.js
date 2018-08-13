@@ -4,10 +4,14 @@ define(function (require) {
 var spv = require('spv');
 var hp = require('../helpers');
 
-return function checkPrefix(prefix, Declr, result_prop) {
+var empty = function() {};
+
+return function checkPrefix(prefix, Declr, result_prop, fn) {
   var getUnprefixed = spv.getDeprefixFunc( prefix );
   var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
   var merge = mergePrefixed(prefix);
+
+  var callback = fn || empty;
 
   return function (self, props) {
     if (!hasPrefixedProps(props)) {
@@ -24,6 +28,7 @@ return function checkPrefix(prefix, Declr, result_prop) {
     }
 
     self[result_prop] = merge(self, self[result_prop], fresh);
+    callback(self, self[result_prop], props);
     return self[result_prop];
   };
 };

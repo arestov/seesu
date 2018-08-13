@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var spv = require('spv');
 var aReq = require('js/modules/aReq');
 var YoutubeVideo = require('./YoutubeVideo');
@@ -9,7 +10,7 @@ var BrowseMap = require('js/libs/BrowseMap');
 
 var routePathByModels = BrowseMap.routePathByModels;
 var pvState = pv.state;
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var NotifyCounter = spv.inh(pv.Model, {
   naming: function(fn) {
@@ -43,7 +44,7 @@ var NotifyCounter = spv.inh(pv.Model, {
     for (var a in this.messages){
       ++counter;
     }
-    pv.update(this, 'counter', counter);
+    pvUpdate(this, 'counter', counter);
   }
 });
 
@@ -93,7 +94,7 @@ var MfComplectBase = spv.inh(pv.Model, {
   },
 
   toggleOverstocked: function() {
-    pv.update(this, 'show_overstocked', !this.state('show_overstocked'));
+    pvUpdate(this, 'show_overstocked', !this.state('show_overstocked'));
   },
 
   overstock_limit: 5,
@@ -362,7 +363,7 @@ var MfCorBase = spv.inh(LoadableList, {
       this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.state('artist'), track: this.mo.state('track')}, this.current_motivator);
       this.bindInvestgChanges();
       this.mo.bindFilesSearchChanges(this.files_investg);
-      pv.update(this, 'files_investg', this.files_investg);
+      pvUpdate(this, 'files_investg', this.files_investg);
     }
 
   },
@@ -526,12 +527,12 @@ var MfCorBase = spv.inh(LoadableList, {
   },
 
   hndPCoreFail: function() {
-    pv.update(this, 'cant_play_music', true);
+    pvUpdate(this, 'cant_play_music', true);
     this.notifier.addMessage('player-fail');
   },
 
   hndPCoreReady: function() {
-    pv.update(this, 'cant_play_music', false);
+    pvUpdate(this, 'cant_play_music', false);
     this.notifier.banMessage('player-fail');
   },
 
@@ -541,14 +542,14 @@ var MfCorBase = spv.inh(LoadableList, {
 
   showOnMap: function() {
     this.mo.showOnMap();
-    pv.update(this, 'want_more_songs', true);
+    pvUpdate(this, 'want_more_songs', true);
   },
 
   switchMoreSongsView: function() {
     if (!this.state('want_more_songs')){
-      pv.update(this, 'want_more_songs', true);
+      pvUpdate(this, 'want_more_songs', true);
     } else {
-      pv.update(this, 'want_more_songs', false);
+      pvUpdate(this, 'want_more_songs', false);
     }
 
   },
@@ -567,7 +568,7 @@ var MfCorBase = spv.inh(LoadableList, {
   },
 
   collapseExpanders: function() {
-    pv.update(this, 'want_more_songs', false);
+    pvUpdate(this, 'want_more_songs', false);
   },
 
   bindInvestgChanges: function() {
@@ -581,20 +582,20 @@ var MfCorBase = spv.inh(LoadableList, {
   checkMoplas: function(unavailable_mopla) {
     var current_mopla_unavailable;
     if (this.state("used_mopla") == unavailable_mopla){
-      pv.update(this, "used_mopla", false);
+      pvUpdate(this, "used_mopla", false);
       current_mopla_unavailable = true;
     }
     if (this.state("default_mopla") == unavailable_mopla){
       this.updateDefaultMopla();
     }
     if (this.state("user_preferred") == unavailable_mopla){
-      pv.update(this, "selected_mopla_to_use", false);
+      pvUpdate(this, "selected_mopla_to_use", false);
       var from = pvState(this.state("selected_mopla"), 'from');
       var available = this.getFirstFrom(from);
       if (available){
-        pv.update(this, "almost_selected_mopla", getSFM(this, available));
+        pvUpdate(this, "almost_selected_mopla", getSFM(this, available));
       } else {
-        pv.update(this, "almost_selected_mopla", false);
+        pvUpdate(this, "almost_selected_mopla", false);
       }
     }
     if (current_mopla_unavailable){
@@ -606,9 +607,9 @@ var MfCorBase = spv.inh(LoadableList, {
   updateDefaultMopla: function() {
     var available = this.getFirstFile();
     if (available){
-      pv.update(this, "default_mopla", getSFM(this, available));
+      pvUpdate(this, "default_mopla", getSFM(this, available));
     } else {
-      pv.update(this, "default_mopla", false);
+      pvUpdate(this, "default_mopla", false);
     }
 
   },
@@ -653,7 +654,7 @@ var MfCorBase = spv.inh(LoadableList, {
     var t_mopla = this.state("mopla_to_use");
     if (t_mopla){
       if (this.state("used_mopla") != t_mopla){
-        pv.update(this, "used_mopla", false);
+        pvUpdate(this, "used_mopla", false);
       }
       return true;
     }
@@ -678,7 +679,7 @@ var MfCorBase = spv.inh(LoadableList, {
     } else {
       var mopla = this.state("mopla_to_use");
       if (mopla){
-        pv.update(this, "used_mopla", mopla);
+        pvUpdate(this, "used_mopla", mopla);
         this.trigger('before-mf-play', mopla);
         mopla.play();
       }

@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var spv = require('spv');
 var BrowseMap = require('js/libs/BrowseMap');
 
@@ -168,7 +169,7 @@ var BrowseMap = require('js/libs/BrowseMap');
         this.q = q;
 
         delete this.selected_inum;
-        pv.update(this, 'query', q);
+        pvUpdate(this, 'query', q);
         this.changeResultsCounter();
         this.doEverythingForQuery();
       }
@@ -180,10 +181,10 @@ var BrowseMap = require('js/libs/BrowseMap');
 
   var BaseSuggest = spv.inh(pv.Model, {}, {
     setActive: function(){
-      pv.update(this, 'active', true);
+      pvUpdate(this, 'active', true);
     },
     setInactive: function(){
-      pv.update(this, 'active', false);
+      pvUpdate(this, 'active', false);
     },
     getTitle: function(){
       return this.valueOf();
@@ -202,11 +203,11 @@ var BrowseMap = require('js/libs/BrowseMap');
     },
 
     show: function(){
-      pv.update(this, 'disabled', false);
+      pvUpdate(this, 'disabled', false);
     },
 
     hide: function(){
-      pv.update(this, 'disabled', true);
+      pvUpdate(this, 'disabled', true);
       this.setInactive();
     }
   });
@@ -283,20 +284,20 @@ var BrowseMap = require('js/libs/BrowseMap');
       return this;
     },
     setActive: function(){
-      pv.update(this, 'active', true);
+      pvUpdate(this, 'active', true);
     },
     setInactive: function(){
 
-      pv.update(this, 'active', false);
+      pvUpdate(this, 'active', false);
     },
     loading: function(){
-      pv.update(this, 'loading', true);
+      pvUpdate(this, 'loading', true);
     },
     loaded: function(){
-      pv.update(this, 'loading', false);
+      pvUpdate(this, 'loading', false);
     },
     markOdd: function(remove){
-      pv.update(this, 'odd_section', !remove);
+      pvUpdate(this, 'odd_section', !remove);
     },
     getItems: function(no_button){
       var r = [].concat(this.rendering_list);
@@ -325,13 +326,13 @@ var BrowseMap = require('js/libs/BrowseMap');
       }
       this.loaded();
       this.removeOldResults();
-      pv.update(this, 'has_no_results', false);
+      pvUpdate(this, 'has_no_results', false);
 
 
       this.r = new SearchResults(q);
       this.rendering_list = [];
       this.edges_list = [];
-      pv.update(this, 'query', q);
+      pvUpdate(this, 'query', q);
       this.showButton();
       this.trigger('items-change');
       return this;
@@ -359,7 +360,7 @@ var BrowseMap = require('js/libs/BrowseMap');
       } else{
         if (no_more_results){
           if (this.no_results_text){
-            pv.update(this, 'has_no_results', true);
+            pvUpdate(this, 'has_no_results', true);
             this.hideButton();
           } else{
             this.setInactive();
@@ -373,16 +374,16 @@ var BrowseMap = require('js/libs/BrowseMap');
 
         var cur = this.rendering_list[this.edges_list[i]];
         if (cur){
-          pv.update(cur, 'bordered', true);
+          pvUpdate(cur, 'bordered', true);
         }
 
       }
 
-      pv.update(this, 'no_more_results', no_more_results);
-      pv.update(this, 'preview', preview);
+      pvUpdate(this, 'no_more_results', no_more_results);
+      pvUpdate(this, 'preview', preview);
       pv.updateNesting(this, 'rendering_list', this.rendering_list);
-      pv.update(this, 'changed', new Date());
-      pv.update(this, 'any_results', !!this.r.length);
+      pvUpdate(this, 'changed', new Date());
+      pvUpdate(this, 'any_results', !!this.r.length);
       this.trigger('items-change', this.r.length);
       return this;
     }

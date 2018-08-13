@@ -18,7 +18,7 @@ var Mp3Search = require('./Mp3Search/index');
 var app_env = app_serv.app_env;
 var complexEach = app_serv.complexEach;
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 var lang = app_env.lang;
 
 var converNews = function(list) {

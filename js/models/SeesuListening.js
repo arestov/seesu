@@ -4,7 +4,7 @@ var pv = require('pv');
 var comd = require('./comd');
 var app_serv = require('app_serv');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var auth = pv.behavior({
   "+states": {

@@ -5,7 +5,7 @@ var spv = require('spv');
 var morph_helpers = require('js/libs/morph_helpers');
 var BrowseMap = require('../libs/BrowseMap');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 
 var CommonMessagesStore = spv.inh(pv.Eventor, {
   naming: function(constr) {

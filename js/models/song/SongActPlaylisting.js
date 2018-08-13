@@ -3,6 +3,7 @@ define(function(require) {
 var invstg = require('../invstg');
 var comd = require('../comd');
 var pv = require('pv');
+var pvUpdate = require('pv/update');
 var spv = require('spv');
 var SongActPlaylisting;
 
@@ -12,7 +13,7 @@ var playlistSuggest = spv.inh(invstg.BaseSuggest, {
     self.mo = data.mo;
     self.rpl = data.rpl;
     self.text_title = self.getTitle();
-    pv.update(self, 'text_title', self.text_title);
+    pvUpdate(self, 'text_title', self.text_title);
   }
 }, {
   valueOf: function(){
@@ -77,7 +78,7 @@ SongActPlaylisting = spv.inh(comd.BaseCRow, {
   'nest-searcher': [PlaylistRowSearch],
   model_name: 'row-playlist-add',
   search: function(q) {
-    pv.update(this, 'query', q);
+    pvUpdate(this, 'query', q);
     var searcher = this.getNesting('searcher');
     if (searcher) {
       searcher.changeQuery(q);
@@ -90,7 +91,7 @@ SongActPlaylisting = spv.inh(comd.BaseCRow, {
 
   checkFullMatch: function() {
     var current_query = this.state('query');
-    pv.update(this, 'has_full_match', current_query && !!this.app.gena.matchTitleStrictly(current_query));
+    pvUpdate(this, 'has_full_match', current_query && !!this.app.gena.matchTitleStrictly(current_query));
   },
   findAddPlaylist: function() {
     var current_query = this.state('query');
@@ -98,7 +99,7 @@ SongActPlaylisting = spv.inh(comd.BaseCRow, {
       this.app.gena.findAddPlaylist(current_query, this.mo);
     }
     this.hide();
-    pv.update(this, 'query', '');
+    pvUpdate(this, 'query', '');
     this.getNesting('searcher').changeQuery('');
     this.checkFullMatch();
   }

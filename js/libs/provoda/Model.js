@@ -9,11 +9,11 @@ var initDeclaredNestings = require('./initDeclaredNestings');
 var prsStCon = require('./prsStCon');
 var updateProxy = require('./updateProxy');
 var StatesEmitter = require('./StatesEmitter');
-var initNestWatchers = require('./nest-watch/index').init;
 var _requestsDeps = require('./Model/_requestsDeps');
 var onPropsExtend = require('./Model/onExtend');
 var initModel = require('./Model/init');
 var updateNesting = require('./Model/updateNesting');
+var postInitModel = require('./Model/postInit')
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -69,40 +69,6 @@ var changeSourcesByApiNames = function(md, store) {
   }
 };
 
-function postInitModel(self) {
-  // prefill own states before connecting relations
-  self.__initStates();
-
-  prsStCon.connect.parent(self);
-  prsStCon.connect.root(self);
-  prsStCon.connect.nesting(self);
-
-  if (self.nestings_declarations) {
-    self.nextTick(initDeclaredNestings, null, false, self.current_motivator);
-  }
-
-  initNestWatchers(self);
-
-  if (self.__apis_$_usual && self.__apis_$_usual.length) {
-    for (var i = 0; i < self.__apis_$_usual.length; i++) {
-      var cur = self.__apis_$_usual[i];
-      self.useInterface(cur.name, cur.fn());
-    }
-  }
-
-  if (self.__api_root_dep_apis) {
-    for (var i = 0; i < self.__api_root_dep_apis.length; i++) {
-      var cur = self.__api_root_dep_apis[i];
-      var api = self.app._interfaces_using.used[cur]
-      self.useInterface('#' + cur, api);
-    }
-  }
-
-  if (self.__api_effects_$_index_by_apis && self.__api_effects_$_index_by_apis['self']) {
-    self.useInterface('self', self);
-  }
-}
-
 var Model = spv.inh(StatesEmitter, {
   naming: function(fn) {
     return function Model(opts, data, params, more, states) {
@@ -114,6 +80,25 @@ var Model = spv.inh(StatesEmitter, {
   postInit: postInitModel,
   props: modelProps
 });
+
+var selectParent = function (md) {
+  return md.map_parent
+}
+
+var getStrucParent = function(item, _count) {
+  var count = _count || 1
+
+  var target = item;
+  while (count){
+    count--;
+    target = selectParent(target);
+
+    if (!target) {
+      throw new Error('no parent for step ' + count)
+    }
+  }
+  return target
+}
 
 function modelProps(add) {
 add(_requestsDeps);
@@ -214,8 +199,8 @@ add({
   getStrucRoot: function() {
     return this.app;
   },
-  getStrucParent: function() {
-    return this.map_parent;
+  getStrucParent: function(count) {
+    return getStrucParent(this, count)
   },
   getSiOpts: function() {
     return getSiOpts(this);

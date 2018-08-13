@@ -8,7 +8,7 @@ var BrowseMap = require('js/libs/BrowseMap');
 var LoadableList = require('./LoadableList');
 var declr_parsers = require('js/modules/declr_parsers');
 
-var pvUpdate = pv.update;
+var pvUpdate = require('pv/update');
 var cloneObj = spv.cloneObj;
 
 var VkAudioLogin = spv.inh(comd.VkLoginB, {}, {

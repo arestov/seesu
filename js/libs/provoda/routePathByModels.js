@@ -140,11 +140,7 @@ function getSPOpts(md, sp_name, slashed, byType) {
 function getInitData(md, common_opts) {
   var pre_instance_data = {};
 
-
-  var params_from_parent = md.data_by_hp === true ? md.head_props : md.sub_pa_params;
-
   var data_parts = [
-    params_from_parent,
     common_opts && common_opts[0]
   ];
 
@@ -173,9 +169,6 @@ function getterSPI(){
   var prepare = function(self, item, sp_name, slashed) {
     var Constr = self._all_chi[item.key];
     /*
-    hp_bound
-    data_by_urlname
-    data_by_hp
 
     берем данные из родителя
     накладываем стандартные данные
@@ -185,14 +178,11 @@ function getterSPI(){
     var common_opts = getSPOpts(self, sp_name, slashed, item.byType);
 
     var instance_data = getInitData(self, common_opts);
-    var dbu_declr = Constr.prototype.data_by_urlname;
-    var hbu_declr = item.getHead || Constr.prototype.head_by_urlname;
-    var data_by_urlname = dbu_declr && dbu_declr(common_opts[1], null, morph_helpers);
+    var hbu_declr = item.getHead;
     var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
     if (head_by_urlname) {
       instance_data.head = head_by_urlname;
     }
-    cloneObj(instance_data, data_by_urlname);
 
     return self.initSi(Constr, instance_data, null, null, common_opts[0]);
   };

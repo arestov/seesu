@@ -7,6 +7,8 @@ var BrowseMap = require('js/libs/BrowseMap');
 var lastfm_data = require('js/lastfm_data');
 var declr_parsers = require('js/modules/declr_parsers');
 var pv = require('pv');
+var pvUpdate = require('pv/update');
+
 
 var parent_focus = [['^mp_has_focus']];
 var heavyInitReactn = function(target, state) {
@@ -285,11 +287,6 @@ var CitySongsLists = spv.inh(BrowseMap.Model, {}, {
 
 var CityPlace = spv.inh(BrowseMap.Model, {}, {
   model_name: 'city_place',
-  hp_bound: {
-    country_name: null,
-    city_name: null
-  },
-  data_by_hp: true,
   'nest-lists_list': [['artists', 'songs']],
   sub_page: {
     'artists': {
@@ -314,7 +311,6 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
   model_name: 'cities_list',
   'stch-parent_focus': heavyInitReactn,
   'stch-mp_has_focus': heavyInitReactn,
-  data_by_hp: true,
 
   heavyInit: function() {
     if (this.heavy_inited){
@@ -324,7 +320,7 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
 
     var lists_list = [];
 
-    var citiesl = lastfm_data.сountries[this.head.country_name];
+    var citiesl = lastfm_data.countries[this.head.country_name];
 
     for (var i = 0; i < citiesl.length; i++) {
       var name = citiesl[i];
@@ -418,7 +414,7 @@ var CountryPlace = spv.inh(BrowseMap.Model, {}, {
       return;
     } else {
       this.heavy_inited = true;
-      pv.update(this, 'mp_alhf', true);
+      pvUpdate(this, 'mp_alhf', true);
     }
   }
 });
@@ -426,14 +422,14 @@ var CountryPlace = spv.inh(BrowseMap.Model, {}, {
 var CountriesList = spv.inh(BrowseMap.Model, {
   init: function(target) {
     var lists_list = [];
-    for (var country in lastfm_data.сountries){
+    for (var country in lastfm_data.countries){
       var country_place = target.getSPI(country, true);
       lists_list.push(country_place);
     }
     pv.updateNesting(target, 'lists_list', lists_list);
   }
 }, {
-  model_name: 'сountries_list',
+  model_name: 'countries_list',
   'nest_posb-lists_list': ['{country_name}'],
   sub_pager: {
     item: {
@@ -502,10 +498,10 @@ MusicConductor = spv.inh(BrowseMap.Model, {}, {
     [['world/songs', 'world/songs/topnow_hypem', 'world/songs/_', 'world/artists', 'world']],
 
   'nest-allpas': ['world'],
-  'nest-сountries': ['сountries'],
+  'nest-countries': ['countries'],
 
   sub_page: {
-    сountries: {
+    countries: {
       title: [['#locales.Countries']],
       constr: CountriesList
     },
