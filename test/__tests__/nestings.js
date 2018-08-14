@@ -118,3 +118,23 @@ test('state compx calculated from parent and root states', t => {
     }
   }
 })
+
+
+test('nest compx calculated', t => {
+  const Child = spv.inh(Model, {}, {
+    'nest-child': [DeepChild],
+  })
+  const app = init({
+    'nest-child': [Child],
+    '+nests': {
+      next_visible_song333: [
+        'compx',
+        ['@songs-list'],
+        function (possible_list) {
+          debugger
+          return possible_list
+        },
+      ],
+    },
+  }).app_model
+})
