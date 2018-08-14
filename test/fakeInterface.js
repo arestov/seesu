@@ -1,13 +1,12 @@
-module.exports = function() {
-  'use strict'
+module.exports = function () {
   return {
     source_name: 'fake',
     errors_fields: [],
-    get: function() {
-      var p = Promise.resolve({bio: 'was born'});
-      p.abort = function() {};
+    get() {
+      const p = Promise.resolve({ bio: 'was born' })
+      p.abort = function () {}
 
-      return p;
-    }
+      return p
+    },
   }
-};
+}

@@ -1,72 +1,61 @@
-var test = require('ava');
+const test = require('ava')
 
-var requirejs = require('../../requirejs-config');
-var spv = requirejs('spv');
-var pv = requirejs('pv');
-var Model = requirejs('pv/Model');
-var pvUpdate = requirejs('pv/update');
-var pvState = requirejs('pv/state');
-var getNesting = requirejs('pv/getNesting');
-var BrowseMap = requirejs('js/libs/BrowseMap');
+const requirejs = require('../../requirejs-config')
 
+const spv = requirejs('spv')
+const pvState = requirejs('pv/state')
+const BrowseMap = requirejs('js/libs/BrowseMap')
 
-var init = requirejs('test/init');
+const init = requirejs('test/init')
 
-var waitFlow = require('../waitFlow');
+const waitFlow = require('../waitFlow')
 
-var fakeInterface = require('../fakeInterface');
+const fakeInterface = require('../fakeInterface')
 
-test("state loaded", (t) => {
-
-  var StartPage = spv.inh(BrowseMap.Model, {}, {
+test('state loaded', t => {
+  const StartPage = spv.inh(BrowseMap.Model, {}, {
     model_name: 'start_page',
     zero_map_level: true,
     req_map: [
       [
         ['bio'],
         function parse(data) {
-          return [data && data.bio];
+          return [data && data.bio]
         },
         ['#fake', [
           ['someid'],
-          function(api, opts, msq) {
-            return api.get('profiles/' + 55, {}, opts);
-          }
-        ]]
-      ]
+          function (api, opts, msq) {
+            return api.get(`profiles/${55}`, {}, opts)
+          },
+        ]],
+      ],
 
     ],
     '+states': {
-      'number': [
+      number: [
         'compx',
         [],
-        function() {
-          return  49588;
-        }
-      ]
-    }
-  });
-
-  var app = init({
-    'api-fake': function () {
-      return fakeInterface();
+        function () {
+          return 49588
+        },
+      ],
     },
-    'chi-start__page': StartPage,
-    checkActingRequestsPriority: function() {
-
-    }
-  }, function(self) {
-    self.all_queues = [];
-    self.start_page = self.initChi('start__page');
-
-  }).app_model;
-
-  return waitFlow(app).then((app) => {
-    return app.start_page.requestState('bio').then(function() {
-      return waitFlow(app);
-    });
-  }).then(function (app) {
-    t.is('was born', pvState(app.start_page, 'bio'));
   })
 
-});
+  const app = init({
+    'api-fake': function () {
+      return fakeInterface()
+    },
+    'chi-start__page': StartPage,
+    checkActingRequestsPriority() {
+
+    },
+  }, self => {
+    self.all_queues = []
+    self.start_page = self.initChi('start__page')
+  }).app_model
+
+  return waitFlow(app).then(app => app.start_page.requestState('bio').then(() => waitFlow(app))).then(app => {
+    t.is('was born', pvState(app.start_page, 'bio'))
+  })
+})
