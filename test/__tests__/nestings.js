@@ -18,9 +18,7 @@ test('nestings updated', t => {
       number: [
         'compx',
         [],
-        function () {
-          return 49588
-        },
+        () => 49588,
       ],
     },
   })
@@ -45,9 +43,7 @@ test('compx with nestings calculated', t => {
       richest: [
         'compx',
         ['@one:money:brother', 'money'],
-        function (broher_money, my_money) {
-          return broher_money < my_money
-        },
+        (broher_money, my_money) => broher_money < my_money,
       ],
     },
   }).app_model
@@ -73,9 +69,7 @@ test('state compx calculated from parent and root states', t => {
       description_name: [
         'compx',
         ['#family_name', '^name', 'name'],
-        function (family_name, parent_name, name) {
-          return `${name} ${family_name}, son of ${parent_name}`
-        },
+        (family_name, parent_name, name) => `${name} ${family_name}, son of ${parent_name}`,
       ],
     },
   })
