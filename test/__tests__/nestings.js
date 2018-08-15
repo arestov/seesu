@@ -115,20 +115,58 @@ test('state compx calculated from parent and root states', t => {
 
 
 test('nest compx calculated', t => {
-  const Child = spv.inh(Model, {}, {
-    'nest-child': [DeepChild],
-  })
-  const app = init({
-    'nest-child': [Child],
+  const createDeepChild = num => {
+    const DeepChild = spv.inh(Model, {}, {
+      '+states': {
+        desc: [
+          'compx',
+          [],
+          () => `DeepChild${num}`,
+        ],
+      },
+    })
+    return DeepChild
+  }
+
+  const indie = createDeepChild('indie')
+
+  const TargetChild = spv.inh(Model, {}, {
     '+nests': {
-      next_visible_song333: [
+      indie: ['nest', [indie]],
+      list: [
+        'nest', [createDeepChild(1), createDeepChild(2)],
+      ],
+      calculated_child: [
         'compx',
-        ['@songs-list'],
-        function (possible_list) {
-          debugger
-          return possible_list
-        },
+        ['#number', '@indie', '@list'],
+        (num, indie_value, list) => list,
       ],
     },
+  })
+
+
+  const app = init({
+    'nest-target_child': [TargetChild],
   }).app_model
+
+  return waitFlow(app).then(app => {
+    pvUpdate(app, 'number', 100)
+    // pvUpdate(deep_child, 'name', 'John')
+    // pvUpdate(deepest_child, 'name', 'Mike')
+
+    return waitFlow(app)
+  }).then(app => {
+    t.log({
+      list: getNesting(app, 'list'),
+      calculated_child: getNesting(app, 'calculated_child'),
+    })
+    t.fail('dd')
+    t.is(
+      getNesting(app, 'list'),
+      getNesting(app, 'calculated_child'),
+    )
+
+    // const { deepest_child } = getModels(app)
+    // t.is('Mike Smith, son of John', pvState(deepest_child, 'description_name'))
+  })
 })
