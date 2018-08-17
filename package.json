@@ -18,6 +18,7 @@
   "node-remote": "https://arestov.github.io",
   "scripts": {
     "gulp": "gulp",
+    "inspect": "inspect",
     "test": "ava **/__tests__"
   },
   "devDependencies": {
@@ -40,8 +41,21 @@
     "gulp-sourcemaps": "1.5.2",
     "gulp-util": "3.0.6",
     "gulp-zip": "3.2.0",
+    "inspect-process": "^0.5.0",
     "postcss": "5.0.5",
     "xmldom": "0.1.19"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "ava": {
+    "type": "node",
+    "request": "launch",
+    "name": "Run AVA test",
+    "program": "${workspaceRoot}/node_modules/ava/profile.js",
+    "args": [
+      "${file}"
+    ],
+    "skipFiles": [
+      "<node_internals>/**/*.js"
+    ]
+  }
 }
