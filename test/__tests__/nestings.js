@@ -156,14 +156,17 @@ test('nest compx calculated', t => {
 
     return waitFlow(app)
   }).then(app => {
+    const target_child = getNesting(app, 'target_child')
     t.log({
-      list: getNesting(app, 'list'),
-      calculated_child: getNesting(app, 'calculated_child'),
+      list: getNesting(target_child, 'list'),
+      calculated_child: getNesting(target_child, 'calculated_child'),
     })
-    t.fail('dd')
+
+    const list = getNesting(target_child, 'list')
+    t.truthy(list)
     t.is(
-      getNesting(app, 'list'),
-      getNesting(app, 'calculated_child'),
+      list,
+      getNesting(target_child, 'calculated_child'),
     )
 
     // const { deepest_child } = getModels(app)
