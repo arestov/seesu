@@ -18,8 +18,6 @@ var getDeps = spv.memorize(function getEncodedState(state_name) {
     return result
   }
 
-  debugger
-
   // var doubleHandler = getStateWriter(result.full_name, result.state_name, result.zip_name);
   var nwatch = new NestWatch(result.nesting_source, result.state_name, {
     onchd_state: handler,
@@ -33,7 +31,6 @@ var getDeps = spv.memorize(function getEncodedState(state_name) {
 });
 
 var makeGroups = utils.groupDeps(getDeps, function(cur) {
-  debugger
   return cur;
 })
 
@@ -46,7 +43,9 @@ var NestCompxDcl = function(name, data) {
   var deps = data[1];
   var fn = data[2]
 
-  this.nwbases = new Array(deps.length);
+  this.deps = deps;
+
+  // this.nwbases = new Array(deps.length);
 
   var result = makeGroups([deps]);
   //
@@ -54,6 +53,8 @@ var NestCompxDcl = function(name, data) {
   // for (var i = 0; i < result.conndst_nesting.length; i++) {
   //   compx_nest_matches[i] = result.conndst_nesting[i].nwatch;
   // }
+
+  this.calcFn = fn;
 
   // this.compx_nest_matches = compx_nest_matches;
   this.conndst_parent = result.conndst_parent

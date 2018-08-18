@@ -6,6 +6,7 @@ var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var NestCompxRunner = function(md, dcl) {
   this.dcl = dcl;
   this.md = md;
+  this._runStates = null;
   // var nwbases = dcl.nwbases;
   // this.items = new Array(nwbases.length);
 

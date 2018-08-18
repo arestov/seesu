@@ -134,7 +134,7 @@ test('nest compx calculated', t => {
     '+nests': {
       indie: ['nest', [indie]],
       list: [
-        'nest', [createDeepChild(1), createDeepChild(2)],
+        'nest', [[createDeepChild(1), createDeepChild(2)]],
       ],
       calculated_child: [
         'compx',
@@ -157,19 +157,13 @@ test('nest compx calculated', t => {
     return waitFlow(app)
   }).then(app => {
     const target_child = getNesting(app, 'target_child')
-    t.log({
-      list: getNesting(target_child, 'list'),
-      calculated_child: getNesting(target_child, 'calculated_child'),
-    })
 
     const list = getNesting(target_child, 'list')
-    t.truthy(list)
-    t.is(
-      list,
-      getNesting(target_child, 'calculated_child'),
-    )
+    const calculated = getNesting(target_child, 'calculated_child')
 
-    // const { deepest_child } = getModels(app)
-    // t.is('Mike Smith, son of John', pvState(deepest_child, 'description_name'))
+    t.deepEqual(
+      list,
+      calculated,
+    )
   })
 })
