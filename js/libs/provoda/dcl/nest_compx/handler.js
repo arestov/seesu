@@ -27,32 +27,34 @@ var createInitialStates = function(dcl) {
 }
 
 
-return function nestCompxDepChangeHandler(flow_step, _, lwroot, __, value) {
-  var data = lwroot.data
+return {
+  hnest: function nestCompxDepChangeHandler(flow_step, _, lwroot, __, value) {
+    var data = lwroot.data
 
-  var runner = data.runner
-  var dcl = runner.dcl
+    var runner = data.runner
+    var dcl = runner.dcl
 
 
-  if (!runner._runStates) {
-    runner._runStates = createInitialStates(dcl)
+    if (!runner._runStates) {
+      runner._runStates = createInitialStates(dcl)
+    }
+
+    var dep_full_name = data.dep.full_name
+
+    if (runner._runStates[dep_full_name] === value) {
+      return;
+    }
+
+    runner._runStates[dep_full_name] = value;
+
+    var args = prepareArgs(dcl, runner._runStates)
+    var calcFn = dcl.calcFn
+    var result = calcFn.apply(null, args)
+
+    var dest_name = dcl.dest_name;
+
+    updateNesting(runner.md, dest_name, result)
   }
-
-  var dep_full_name = data.dep.full_name
-
-  if (runner._runStates[dep_full_name] === value) {
-    return;
-  }
-
-  runner._runStates[dep_full_name] = value;
-
-  var args = prepareArgs(dcl, runner._runStates)
-  var calcFn = dcl.calcFn
-  var result = calcFn.apply(null, args)
-
-  var dest_name = dcl.dest_name;
-
-  updateNesting(runner.md, dest_name, result)
-};
+}
 
 })
