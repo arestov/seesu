@@ -3,7 +3,7 @@ define(function(require) {
 
 var bind = {
   root: function(bind) {
-    return function(md, instructions) {
+    return function(md, instructions, context) {
       var list = instructions.conndst_root;
       if (!list){
         return;
@@ -15,12 +15,12 @@ var bind = {
           throw new Error();
         }
 
-        bind(md, target, cur.state_name, cur.full_name)
+        bind(md, target, cur.state_name, cur.full_name, context)
       }
     }
   },
   parent: function(bind) {
-    return function(md, instructions) {
+    return function(md, instructions, context) {
       var list = instructions.conndst_parent;
       if (!list){
         return;
@@ -37,7 +37,7 @@ var bind = {
           throw new Error();
         }
 
-        bind(md, target, cur.state_name, cur.full_name)
+        bind(md, target, cur.state_name, cur.full_name, context)
       }
 
     }
