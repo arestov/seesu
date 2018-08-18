@@ -24,9 +24,9 @@ define(require => {
       },
     })
 
-    if (app_model.start_page) {
-      initBrowsing(app_model)
-    }
+    // if (app_model.start_page) {
+    //   initBrowsing(app_model)
+    // }
 
     return {
       app_model,
