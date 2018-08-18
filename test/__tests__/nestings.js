@@ -7,10 +7,19 @@ const Model = requirejs('pv/Model')
 const pvUpdate = requirejs('pv/update')
 const pvState = requirejs('pv/state')
 const getNesting = requirejs('pv/getNesting')
+const updateNesting = requirejs('pv/updateNesting')
 
 const init = requirejs('test/init')
 
 const waitFlow = require('../waitFlow')
+
+const toIds = md_list => {
+  if (!Array.isArray(md_list)) {
+    return md_list && md_list._provoda_id
+  }
+
+  return md_list.map(item => item._provoda_id)
+}
 
 test('nestings updated', t => {
   const Appartment = spv.inh(Model, {}, {
@@ -115,7 +124,7 @@ test('state compx calculated from parent and root states', t => {
 
 
 test('nest compx calculated', t => {
-  const createDeepChild = num => {
+  const createDeepChild = (num, props) => {
     const DeepChild = spv.inh(Model, {}, {
       '+states': {
         desc: [
@@ -124,6 +133,7 @@ test('nest compx calculated', t => {
           () => `DeepChild${num}`,
         ],
       },
+      ...props,
     })
     return DeepChild
   }
@@ -138,31 +148,106 @@ test('nest compx calculated', t => {
       ],
       calculated_child: [
         'compx',
-        ['#number', '@indie', '@list'],
-        (num, indie_value, list) => list,
+        ['#number', '^nickname', '@indie', '@list'],
+        (num, nickname, indie_value, list) => {
+          if (num === 100) {
+            return list.slice(0, 1)
+          }
+
+          if (nickname === 'smith') {
+            return indie_value
+          }
+
+          return list
+        },
       ],
+    },
+  })
+
+  const startModel = createDeepChild('start', {
+    model_name: 'startModel',
+    '+nests': {
+      target_child: ['nest', [TargetChild]],
     },
   })
 
 
   const app = init({
-    'nest-target_child': [TargetChild],
+    'chi-start__page': startModel,
+  }, self => {
+    self.start_page = self.initChi('start__page') // eslint-disable-line
   }).app_model
 
-  const step = fn => () => waitFlow(app).then(() => fn(app))
+  const step = fn => () => waitFlow(app).then(() => fn())
   const steps = fns => fns.reduce((result, fn) => result.then(step(fn)), waitFlow(app))
 
-  return steps([
-    () => pvUpdate(app, 'number', 100),
-    () => {
-      const target_child = getNesting(app, 'target_child')
+  const targetChild = () => (
+    getNesting(app.start_page, 'target_child')
+  )
 
-      const list = getNesting(target_child, 'list')
+  return steps([
+    () => {
+      const target_child = targetChild()
+
+      const expected = getNesting(target_child, 'list')
       const calculated = getNesting(target_child, 'calculated_child')
 
       t.deepEqual(
-        list,
-        calculated,
+        toIds(expected),
+        toIds(calculated),
+        'should use default value',
+      )
+    },
+    () => pvUpdate(app.start_page, 'nickname', 'smith'),
+    () => {
+      const target_child = targetChild()
+
+      const expected = [getNesting(target_child, 'indie')]
+      const calculated = getNesting(target_child, 'calculated_child')
+
+      t.deepEqual(
+        toIds(expected),
+        toIds(calculated),
+        'should use "parent" case',
+      )
+    },
+    () => pvUpdate(app, 'number', 100),
+    () => {
+      const target_child = targetChild()
+
+      const expected = getNesting(target_child, 'list').slice(0, 1)
+      const calculated = getNesting(target_child, 'calculated_child')
+      const notExpected = [getNesting(target_child, 'indie')]
+
+      t.deepEqual(
+        toIds(expected),
+        toIds(calculated),
+        'should use "root" case',
+      )
+
+      t.notDeepEqual(
+        toIds(notExpected),
+        toIds(calculated),
+        'should not use "parent" case',
+      )
+    },
+    () => {
+      const target_child = targetChild()
+      const change = getNesting(target_child, 'list')[1]
+
+      updateNesting(target_child, 'indie', change)
+      pvUpdate(app, 'number', null)
+    },
+    () => {
+      const target_child = targetChild()
+
+      const expected = [getNesting(target_child, 'list')[1]]
+      const calculated = getNesting(target_child, 'calculated_child')
+
+      t.deepEqual(
+        toIds(expected),
+        toIds(calculated),
+        'should use special "parent" case',
       )
     },
   ])
