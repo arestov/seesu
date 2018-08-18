@@ -2,6 +2,18 @@ define(function(require) {
 'use strict'
 var addFrom = require('../../nest-watch/addFrom');
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
+var prsStCon = require('../../prsStCon');
+var handler = require('./handler')
+var hstate = handler.hstate
+
+var copyStates = function(md, target, state_name, full_name, runner) {
+  md.lwch(target, state_name, function(value) {
+    hstate(runner, full_name, value)
+  });
+}
+
+var bindParent =  prsStCon.bind.parent(copyStates);
+var bindRoot = prsStCon.bind.root(copyStates);
 
 var NestCompxRunner = function(md, dcl) {
   this.dcl = dcl;
@@ -27,6 +39,9 @@ var NestCompxRunner = function(md, dcl) {
   }
 
   this.lnwatches = lnwatches
+
+  bindRoot(this.md, this.dcl, this)
+  bindParent(this.md, this.dcl, this)
 }
 
 return NestCompxRunner;

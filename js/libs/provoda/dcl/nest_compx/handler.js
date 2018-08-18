@@ -51,10 +51,13 @@ var changeValue = function(runner, dep_full_name, value) {
 
 
 return {
-  hnest: function nestCompxDepChangeHandler(flow_step, _, lwroot, __, value) {
+  hnest: function nestCompxNestDepChangeHandler(flow_step, _, lwroot, __, value) {
     var data = lwroot.data
     var runner = data.runner
     changeValue(runner, data.dep.full_name, value)
+  },
+  hstate: function nestCompxStateDepChangeHandler(runner, dep_full_name, value) {
+    changeValue(runner, dep_full_name, value)
   }
 }
 
