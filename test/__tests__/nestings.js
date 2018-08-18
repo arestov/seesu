@@ -149,21 +149,21 @@ test('nest compx calculated', t => {
     'nest-target_child': [TargetChild],
   }).app_model
 
-  return waitFlow(app).then(app => {
-    pvUpdate(app, 'number', 100)
-    // pvUpdate(deep_child, 'name', 'John')
-    // pvUpdate(deepest_child, 'name', 'Mike')
+  const step = fn => () => waitFlow(app).then(() => fn(app))
+  const steps = fns => fns.reduce((result, fn) => result.then(step(fn)), waitFlow(app))
 
-    return waitFlow(app)
-  }).then(app => {
-    const target_child = getNesting(app, 'target_child')
+  return steps([
+    () => pvUpdate(app, 'number', 100),
+    () => {
+      const target_child = getNesting(app, 'target_child')
 
-    const list = getNesting(target_child, 'list')
-    const calculated = getNesting(target_child, 'calculated_child')
+      const list = getNesting(target_child, 'list')
+      const calculated = getNesting(target_child, 'calculated_child')
 
-    t.deepEqual(
-      list,
-      calculated,
-    )
-  })
+      t.deepEqual(
+        list,
+        calculated,
+      )
+    },
+  ])
 })
