@@ -213,7 +213,8 @@ var unhandleRoot = function(dep, req_dep, self) {
 var getParent = function(self, dep) {
   var cur = self;
   for (var i = 0; i < dep.value; i++) {
-    cur = cur.getStrucParent();
+    // TODO do not require view-attached state from model (like vmp_show)
+    cur = cur.getStrucParent(1, true);
   }
   return cur;
 };

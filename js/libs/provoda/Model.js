@@ -85,7 +85,7 @@ var selectParent = function (md) {
   return md.map_parent
 }
 
-var getStrucParent = function(item, _count) {
+var getStrucParent = function(item, _count, soft) {
   var count = _count || 1
 
   var target = item;
@@ -93,7 +93,7 @@ var getStrucParent = function(item, _count) {
     count--;
     target = selectParent(target);
 
-    if (!target) {
+    if (!target && !soft) {
       throw new Error('no parent for step ' + count)
     }
   }
@@ -199,8 +199,8 @@ add({
   getStrucRoot: function() {
     return this.app;
   },
-  getStrucParent: function(count) {
-    return getStrucParent(this, count)
+  getStrucParent: function(count, soft) {
+    return getStrucParent(this, count, soft)
   },
   getSiOpts: function() {
     return getSiOpts(this);
