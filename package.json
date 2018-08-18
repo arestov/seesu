@@ -19,7 +19,7 @@
   "scripts": {
     "gulp": "gulp",
     "inspect": "inspect",
-    "test": "ava **/__tests__"
+    "test": "ava --verbose **/__tests__"
   },
   "devDependencies": {
     "autoprefixer": "6.0.2",
