@@ -16,6 +16,16 @@ var prepareArgs = function(dcl, _runStates) {
   return result;
 };
 
+var createInitialStates = function(dcl) {
+  var _runStates = {}
+
+  for (var i = 0; i < dcl.deps.length; i++) {
+    _runStates[dcl.deps[i]] = null
+  }
+
+  return _runStates;
+}
+
 
 return function nestCompxDepChangeHandler(flow_step, _, lwroot, __, value) {
   var data = lwroot.data
@@ -25,7 +35,7 @@ return function nestCompxDepChangeHandler(flow_step, _, lwroot, __, value) {
 
 
   if (!runner._runStates) {
-    runner._runStates = {}
+    runner._runStates = createInitialStates(dcl)
   }
 
   var dep_full_name = data.dep.full_name
