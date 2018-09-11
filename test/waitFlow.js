@@ -1,11 +1,11 @@
 function waitFlow(app_model) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     app_model.nextTick(() => {
       next(app_model, () => {
         resolve(app_model)
       })
     })
-  });
+  })
 }
 
 function next(app, cb) {
@@ -15,4 +15,4 @@ function next(app, cb) {
   })
 }
 
-module.exports = waitFlow;
+module.exports = waitFlow

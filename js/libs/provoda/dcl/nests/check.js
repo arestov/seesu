@@ -5,6 +5,7 @@ var cloneObj = require('spv').cloneObj
 var NestSelector = require('../nest_sel/item');
 var NestCntDeclr = require('../nest_conj/item')
 var NestDcl = require('../nest/item');
+var NestCompx = require('../nest_compx/item')
 
 var buildSel = require('../nest_sel/build');
 var buildNest = require('../nest/build');
@@ -21,6 +22,9 @@ var parse = function(name, data) {
     }
     case 'sel': {
       return new NestSelector(name, data[1]);
+    }
+    case 'compx': {
+      return new NestCompx(name, data);
     }
   }
 
