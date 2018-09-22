@@ -4,14 +4,15 @@ define(function(require) {
 var prsStCon = require('../prsStCon');
 
 var spv = require('spv');
-var utils = require('../utils/index.js');
-
+var groupDeps = require('../utils/groupDeps')
+var getEncodedState= require('../utils/getEncodedState');
+var getShortStateName= require('../utils/getShortStateName');
 
 var identical = function(state) {
   return state;
 };
 
-var makeGroups = utils.groupDeps(utils.getEncodedState, function(cur) {
+var makeGroups = groupDeps(getEncodedState, function(cur) {
   return cur.depends_on;
 })
 
@@ -48,7 +49,7 @@ var declr = function(comlx_name, cur) {
     if (!item.depends_on[i]) {
       throw new Error('state name should not be empty');
     }
-    item.watch_list[i] = utils.getShortStateName(item.depends_on[i]);
+    item.watch_list[i] = getShortStateName(item.depends_on[i]);
   }
   return item;
 };

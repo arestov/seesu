@@ -2,14 +2,15 @@ define(function(require) {
 "use strict";
 
 var spv = require('spv');
-var utils = require('./utils/index');
 var utils_simple = require('./utils/simple')
 var pvState = require('./utils/state');
 var stateGetter = require('./utils/stateGetter');
 var probeDiff = require('./probeDiff');
 var selecPoineertDeclr = require('./structure/selecPoineertDeclr');
-var getEncodedState = utils.getEncodedState;
-var getShortStateName = utils.getShortStateName;
+
+var getPropsPrefixChecker = require('./utils/getPropsPrefixChecker');
+var getEncodedState = require('./utils/getEncodedState');
+var getShortStateName = require('./utils/getShortStateName');
 
 var emergency_opt = {
   emergency: true
@@ -91,7 +92,7 @@ return {
 
     return sputnik._interfaces_using.used[api_name];
   },
-  getPropsPrefixChecker: utils.getPropsPrefixChecker,
+  getPropsPrefixChecker: getPropsPrefixChecker,
   _groupMotive: function(fn) {
     return function() {
       var self = this;
