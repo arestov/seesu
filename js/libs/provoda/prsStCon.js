@@ -1,5 +1,6 @@
 define(function(require) {
 'use strict';
+var read = require('./utils/readDepValue').read;
 
 var bind = {
   root: function(bind) {
@@ -47,32 +48,6 @@ var bind = {
 var copyStates = function(md, target, state_name, full_name) {
   md.wlch(target, state_name, full_name);
 }
-
-  var pvState = require('./utils/state');
-
-var read = {
-  parent: function(md, dep) {
-    var count = dep.ancestors;
-    var target = md;
-    while (count){
-      count--;
-      target = target.getStrucParent();
-    }
-    if (!target){
-      throw new Error();
-    }
-
-    return pvState(target, dep.state_name)
-  },
-  root: function(md, dep) {
-    var target = md.getStrucRoot();
-    if (!target){
-      throw new Error();
-    }
-    return pvState(target, dep.state_name)
-  }
-}
-
 
   return {
     bind: bind,
