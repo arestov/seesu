@@ -50,6 +50,28 @@ var copyStates = function(md, target, state_name, full_name) {
 
   var pvState = require('./utils/state');
 
+var read = {
+  parent: function(md, dep) {
+    var count = dep.ancestors;
+    var target = md;
+    while (count){
+      count--;
+      target = target.getStrucParent();
+    }
+    if (!target){
+      throw new Error();
+    }
+
+    return pvState(target, dep.state_name)
+  },
+  root: function(md, dep) {
+    var target = md.getStrucRoot();
+    if (!target){
+      throw new Error();
+    }
+    return pvState(target, dep.state_name)
+  }
+}
 
 
   return {
@@ -63,16 +85,9 @@ var copyStates = function(md, target, state_name, full_name) {
 
         for (var i = 0; i < list.length; i++) {
           var cur = list[i];
-          var count = cur.ancestors;
-          var target = md;
-          while (count){
-            count--;
-            target = target.getStrucParent();
-          }
-          if (!target){
-            throw new Error();
-          }
-          states_list.push(true, cur.full_name, pvState(target, cur.state_name));
+          var value = read.parent(md, cur);
+
+          states_list.push(true, cur.full_name, value);
         }
       },
       root: function (md, states_list) {
@@ -82,11 +97,8 @@ var copyStates = function(md, target, state_name, full_name) {
         }
         for (var i = 0; i < list.length; i++) {
           var cur = list[i];
-          var target = md.getStrucRoot();
-          if (!target){
-            throw new Error();
-          }
-          states_list.push(true, cur.full_name, pvState(target, cur.state_name));
+          var value = read.root(md, cur);
+          states_list.push(true, cur.full_name, value);
         }
       }
     },
