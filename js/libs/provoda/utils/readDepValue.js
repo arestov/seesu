@@ -45,6 +45,10 @@ return {
       case "parent": {
         return parent(md, dep)
       }
+
+      case "nesting": {
+        throw new Error('implement')
+      }
     }
   }
 }
