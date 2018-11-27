@@ -2,12 +2,13 @@ define(function(require){
 'use strict';
 var spv = require('spv');
 var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
+var splitByDot = spv.splitByDot
 
 var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
 var apiDeclr = spv.memorize(function(name) {
-  var parts = name.split('.');
+  var parts = splitByDot(name);
   return {
     name: parts[0],
     resource_path: parts.length > 1 ? parts.slice(1) : null

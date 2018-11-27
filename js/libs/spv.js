@@ -195,16 +195,34 @@ shuffleArray = spv.shuffleArray = function(obj) {
   return shuffled;
 };
 
+spv.memorize = function(func, getter) {
+  var cache = {};
+  return getter ? function(){
+    var arg = getter.apply(this, arguments);
+    if (!cache.hasOwnProperty(arg)) {
+      var result = cache[arg] = func.apply(this, arguments);
+      return result;
+    }
+    return cache[arg];
+  } : function(arg) {
+    if (!cache.hasOwnProperty(arg)) {
+      var result = cache[arg] = func.apply(this, arguments);
+      return result;
+    }
+    return cache[arg];
+  };
+};
 
-var fields_cache = {};
+var splitByDot = spv.memorize(function(string) {
+  return string.split('.');
+})
+spv.splitByDot = splitByDot;
+
 var getFieldsTree = function(string) {
   if (Array.isArray(string)){
     return string;
   } else {
-    if (!fields_cache[string]){
-      fields_cache[string] = string.split('.');
-    }
-    return fields_cache[string];
+    return splitByDot(string);
   }
 };
 spv.getFieldsTree = getFieldsTree;
@@ -386,24 +404,6 @@ toRealArray = spv.toRealArray = function(array, check_field){
   } else{
     return [];
   }
-};
-
-spv.memorize = function(func, getter) {
-  var cache = {};
-  return getter ? function(){
-    var arg = getter.apply(this, arguments);
-    if (!cache.hasOwnProperty(arg)) {
-      var result = cache[arg] = func.apply(this, arguments);
-      return result;
-    }
-    return cache[arg];
-  } : function(arg) {
-    if (!cache.hasOwnProperty(arg)) {
-      var result = cache[arg] = func.apply(this, arguments);
-      return result;
-    }
-    return cache[arg];
-  };
 };
 
 spv.f = {
