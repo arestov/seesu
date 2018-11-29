@@ -3,6 +3,7 @@ define(function(require) {
 
 var spv = require('spv');
 var angbo = require('angbo');
+var splitByDot = spv.splitByDot;
 
 var abortFlowStep = function(tpl, w_cache_key) {
   var flow_step = tpl.calls_flow_index[w_cache_key];
@@ -58,7 +59,7 @@ var wrapChange = function(motivator, fn, context, args, arg) {
 var getFieldsTreesBases = function(all_vs) {
   var sfy_values = new Array(all_vs.length);
   for (var i = 0; i < all_vs.length; i++) {
-    var parts = all_vs[i].split('.');
+    var parts = splitByDot(all_vs[i]);
     var main_part = parts[0];
     sfy_values[i] = main_part;
   }

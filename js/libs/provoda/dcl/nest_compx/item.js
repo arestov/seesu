@@ -3,8 +3,9 @@ define(function(require) {
 var spv = require('spv')
 // var NestingSourceDr = require('../../utils/NestingSourceDr');
 var NestWatch = require('../../nest-watch/NestWatch');
-var utils = require('../../utils/index.js');
-var getParsedState = utils.getParsedState
+var getParsedState = require('../../utils/getParsedState');
+var groupDeps = require('../../utils/groupDeps')
+
 var handler = require('./handler')
 var hnest = handler.hnest
 
@@ -31,7 +32,7 @@ var getDeps = spv.memorize(function getEncodedState(state_name) {
   return copy
 });
 
-var makeGroups = utils.groupDeps(getDeps, function(cur) {
+var makeGroups = groupDeps(getDeps, function(cur) {
   return cur;
 })
 

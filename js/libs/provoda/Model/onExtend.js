@@ -10,6 +10,7 @@ var checkNestRqC = require('../StatesEmitter/checkNestRqC');
 var checkNestSel = require('../dcl/nest_sel/check');
 var checkNestCnt = require('../dcl/nest_conj/check');
 var checkModernNests = require('../dcl/nests/check');
+var checkPasses = require('../dcl/passes/check')
 var checkSubpager = require('../dcl/sub_pager/check');
 var collectSubpages = require('../dcl/sub_pager/collectSubpages');
 
@@ -95,6 +96,8 @@ return function(self, props, original, params) {
   checkSubpager(self, props);
 
   checkNests(self, props)
+
+  checkPasses(self, props)
 
 
   checkChi(self, props);

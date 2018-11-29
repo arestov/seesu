@@ -1,6 +1,7 @@
 define(function (require) {
 'use strict';
 var spv = require('spv');
+var splitByDot = spv.splitByDot;
 var NestWatch = require('../nest-watch/NestWatch');
 
 var collectStateChangeHandlers = require('./collectStateChangeHandlers');
@@ -31,7 +32,7 @@ var getParsedStateChange = spv.memorize(function getParsedStateChange(string) {
   var parts = string.split('@');
   return {
     state: parts[0],
-    selector: parts[1].split('.')
+    selector: splitByDot(parts[1])
   };
 });
 
