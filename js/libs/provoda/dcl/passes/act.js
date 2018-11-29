@@ -118,7 +118,7 @@ var getModelsFromManyBases = function(bases, target) {
 }
 
 var getTargetModels = function(md, target, data) {
-  switch (target.options.base) {
+  switch (target.options && target.options.base) {
     case "arg_nesting_next": {
       return getModelsFromManyBases(data.next_value, target)
     }
