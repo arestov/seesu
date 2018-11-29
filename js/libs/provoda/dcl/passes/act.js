@@ -50,7 +50,6 @@ var getModelById = require('../../utils/getModelById');
 
 var saveToDestModel = function(md, target, value) {
   if (target.path_type == 'by_provoda_id') {
-
     return
   }
 
@@ -94,14 +93,44 @@ var saveByProvodaId = function(md, target, wrap) {
 
 }
 
-var saveResultToTarget = function(md, target, value) {
+var getModelsFromBase = function(base, target) {
+  var multi_path = target.target_path
+  return getModels(base, multi_path);
+}
+
+var getModelsFromManyBases = function(bases, target) {
+  if (!Array.isArray(bases)) {
+    return getModelsFromBase(bases, target)
+  }
+
+  var result = []
+  for (var i = 0; i < bases.length; i++) {
+    var mds = getModelsFromBase(bases[i], target)
+    Array.prototype.push.apply(result, mds);
+  }
+  return result;
+}
+
+var getTargetModels = function(md, target, data) {
+  switch (target.options.base) {
+    case "arg_nesting_next": {
+      return getModelsFromManyBases(data.next_value, target)
+    }
+    case "arg_nesting_prev": {
+      return getModelsFromManyBases(data.prev_value, target)
+    }
+  }
+
+  return getModelsFromBase(md, target);
+}
+
+var saveResultToTarget = function(md, target, value, data) {
   if (target.path_type == 'by_provoda_id') {
     saveByProvodaId(md, target, value)
     return
   }
 
-  var multi_path = target.target_path
-  var models = getModels(md, multi_path);
+  var models = getTargetModels(md, target, data)
 
   if (Array.isArray(models)) {
     for (var i = 0; i < models.length; i++) {
@@ -113,7 +142,7 @@ var saveResultToTarget = function(md, target, value) {
   }
 }
 
-var saveResult = function (md, dcl, value) {
+var saveResult = function (md, dcl, value, data) {
   if (dcl.targets_list) {
     if (value !== Object(value)) {
       throw new Error('return object from handler')
@@ -124,10 +153,10 @@ var saveResult = function (md, dcl, value) {
       if (!value.hasOwnProperty(cur.result_name)) {
         continue;
       }
-      saveResultToTarget(md, cur, value[cur.result_name]);
+      saveResultToTarget(md, cur, value[cur.result_name], data);
     }
   } else {
-    saveResultToTarget(md, dcl.target_single, value)
+    saveResultToTarget(md, dcl.target_single, value, data)
   }
 
 }
