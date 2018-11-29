@@ -33,7 +33,7 @@ var getModels = function(md, multi_path) {
       getBase(md, multi_path),
       multi_path
     ),
-    multi_path,
+    multi_path
   )
   // var base;
   // var resource;
@@ -108,9 +108,9 @@ function getDeepNesting(md, multi_path) {
   var exec_path = just_base ? info.base : info.path
 
   var cur = [md]
-  for (var i = 0; i < info.path.length; i++) {
+  for (var i = 0; i < exec_path.length; i++) {
     var nested = []
-    var nest_name = info.path[i]
+    var nest_name = exec_path[i]
     add(nested, cur, nest_name)
     cur = nested
   }

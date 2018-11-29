@@ -69,7 +69,6 @@ var parseModern = spv.memorize(function(string) {
   if (modern.from_start) {
     return parseFromStart(string)
   }
-
   return parseFromEnd(string)
 })
 
@@ -124,8 +123,8 @@ function getNestInfo(string) {
 
   return {
     path: full_path,
-    base: full_path.slice(0, path.length-1),
-    target_nest_name: path[path.length-1],
+    base: full_path.slice(0, full_path.length-1),
+    target_nest_name: full_path[full_path.length-1],
     zip_name: parts[0] || null,
   }
 }
@@ -164,11 +163,11 @@ function getBaseInfo(string) {
 }
 
 function getResultType(state, nest) {
-  if (state) {
+  if (state && state.path) {
     return 'state'
   }
 
-  if (nest) {
+  if (nest && nest.path) {
     return 'nesting'
   }
 
