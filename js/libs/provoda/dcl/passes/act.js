@@ -3,6 +3,7 @@ define(function(require) {
 var spv = require('spv')
 var pvUpdate = require('../../provoda/update')
 var pvState = require('../../provoda/state')
+var getNesting = require('../../provoda/getNesting')
 
 var updateNesting = require('../../provoda/updateNesting')
 var readDepValue = require('../../utils/readDepValue').depValue
@@ -10,6 +11,7 @@ var getModels = require('../../utils/multiPath/getModels')
 var getValues = require('../../utils/multiPath/getValues')
 var getModelById = require('../../utils/getModelById');
 
+var prepareNestingValue = require('./act/prepareNestingValue')
 /* EXEC
 
 1. один результат, адресат результата определен, обычное указание адресата
@@ -57,7 +59,11 @@ var saveToDestModel = function(md, target, value) {
 
   switch (multi_path.result_type) {
     case "nesting": {
-      updateNesting(md, multi_path.nesting.target_nest_name, value)
+      updateNesting(
+        md,
+        multi_path.nesting.target_nest_name,
+        prepareNestingValue(md, target, value)
+      )
     }
     case "state": {
       pvUpdate(md, multi_path.state.base, value)
