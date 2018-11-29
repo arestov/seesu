@@ -34,6 +34,7 @@ const spv = requirejs('spv')
 const Model = requirejs('pv/Model')
 const pvState = requirejs('pv/state')
 const pvPass = requirejs('pv/pass')
+const pvUpdate = requirejs('pv/update')
 const getNesting = requirejs('pv/getNesting')
 
 const init = requirejs('test/init')
@@ -57,6 +58,7 @@ test('multiple state by pass calculated', t => {
 
   return steps([
     () => {
+      pvUpdate(app.start_page, 'skip_this_state', 'untouched')
       pvPass(app.start_page, 'action', 13)
     },
     () => {
@@ -65,13 +67,10 @@ test('multiple state by pass calculated', t => {
         pvState(app.start_page, 'selected'),
       )
       t.is(
-        undefined,
+        'untouched',
         pvState(app.start_page, 'skip_this_state'),
       )
 
-      t.log(
-        getNesting(getNesting(app.start_page, 'target_child'), 'indie').states,
-      )
       t.is(
         'Michael Jackson',
         pvState(

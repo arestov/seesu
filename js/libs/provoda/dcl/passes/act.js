@@ -115,8 +115,15 @@ var saveResultToTarget = function(md, target, value) {
 
 var saveResult = function (md, dcl, value) {
   if (dcl.targets_list) {
+    if (value !== Object(value)) {
+      throw new Error('return object from handler')
+    }
+
     for (var i = 0; i < dcl.targets_list.length; i++) {
       var cur = dcl.targets_list[i]
+      if (!value.hasOwnProperty(cur.result_name)) {
+        continue;
+      }
       saveResultToTarget(md, cur, value[cur.result_name]);
     }
   } else {
