@@ -26,7 +26,7 @@ var parent_count_regexp = /\^+/gi;
 
 "nesting_name < < ^^"
 */
-var checkSplit = /(?:^|\s|(?:<))<(?:$|\s|)/
+var checkSplit = /(?:^|\s|(?:<))<(?:$|\s|<)(?:\s?)/
 var end = /(<$)|(^$)|(#$)/
 var start = /^</
 
