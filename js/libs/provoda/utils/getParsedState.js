@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var spv = require('spv');
+var splitByDot = spv.splitByDot
 var NestingSourceDr = require('./NestingSourceDr');
 
 function itself(item) {return item;}
@@ -20,7 +21,8 @@ var enc_states = {
         rel_type: 'parent',
         full_name: string,
         state_name: state_name,
-
+        full_state_name: state_name,
+        base_state_name: state_name && splitByDot(state_name)[0],
         ancestors: count,
       };
     };
@@ -42,6 +44,9 @@ var enc_states = {
       rel_type: 'nesting',
       full_name: string,
       state_name: state_name,
+      full_state_name: state_name,
+      base_state_name: state_name && splitByDot(state_name)[0],
+
 
       nesting_source: nesting_source,
       nesting_name: nesting_source.selector.join('.'),
@@ -57,13 +62,16 @@ var enc_states = {
     if (!state_name) {
       throw new Error('should be state_name');
     }
+
     return {
       rel_type: 'root',
       full_name: string,
-      state_name: state_name
+      state_name: state_name,
+      full_state_name: state_name,
+      base_state_name: state_name && splitByDot(state_name)[0],
     };
   }
-};
+}
 
 var getParsedState = spv.memorize(function getParsedState(state_name) {
   // isSpecialState
