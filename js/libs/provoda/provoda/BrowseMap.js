@@ -206,7 +206,7 @@ function hookRoot(rootmd, start_page) {
   }
 
   bwlev_root.nextTick(function() {
-    getSPByPathTemplate(bwlev_root.app, bwlev_root, 'navigation')
+    getSPByPathTemplate(bwlev_root.app, bwlev_root, 'spyglass-navigation')
   });
 
   return bwlev_root;
