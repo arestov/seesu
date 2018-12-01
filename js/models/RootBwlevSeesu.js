@@ -47,33 +47,33 @@ var Probe = spv.inh(Model, {
 });
 
 var showOnMapWrap = function(bwroot, md) {
-  var bwlev = showMOnMap(BrowseLevel, getSPByPathTemplate(bwroot.app, bwroot, 'navigation'), md);
+  var bwlev = showMOnMap(BrowseLevel, getSPByPathTemplate(bwroot.app, bwroot, 'spyglass-navigation'), md);
   changeBridge(bwlev);
 }
 
 
 return {
   sub_page: {
-    'navigation': {
+    'spyglass-navigation': {
       constr: FakeSpyglass,
       title: [['nav_title_nothing']],
     },
   },
   sub_pager: {
     by_type: {
-      song_action: [
+      'spyglass-song_action': [
         Probe, [['nav_title_nothing']], {
           key: 'simple_name'
         }
       ],
     },
     type: {
-      song_action: 'song_action',
+      'spyglass-song_action': 'spyglass-song_action',
     },
   },
-  'nest-fake_spyglass': ['navigation'],
+  'nest-fake_spyglass': ['spyglass-navigation'],
   showStartPage: function(){
-    var bwlev = BrowseMap.showInterest(getSPByPathTemplate(this.app, this, 'navigation'), []);
+    var bwlev = BrowseMap.showInterest(getSPByPathTemplate(this.app, this, 'spyglass-navigation'), []);
     BrowseMap.changeBridge(bwlev);
   },
   showArtcardPage: function(artist_name){
