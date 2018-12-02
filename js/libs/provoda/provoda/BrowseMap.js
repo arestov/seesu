@@ -3,9 +3,7 @@ define(function(require) {
 var pv = require('pv');
 var spv = require('spv');
 var changeBridge = require('../bwlev/changeBridge');
-var createLevel = require('../bwlev/createLevel');
-var BrowseLevel = require('../bwlev/BrowseLevel');
-var showMOnMap = require('../bwlev/showMOnMap');
+var initBWlev = require('../bwlev/initBWlev');
 var showInterest = require('../bwlev/showInterest');
 var getBwlevFromParentBwlev = require('../bwlev/getBwlevFromParentBwlev');
 var get_constr = require('../structure/get_constr');
@@ -17,8 +15,6 @@ var routePathByModels = require('../routePathByModels');
 
 var getSPIConstr = routePathByModels.getSPIConstr;
 var getSPI= routePathByModels.getSPI;
-
-var cloneObj = spv.cloneObj;
 
 var getDeclrConstr = get_constr.getDeclrConstr;
 
@@ -196,8 +192,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
 function hookRoot(rootmd, start_page) {
   var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(RootLev, {}, rootmd.BWLev)) : RootLev;
-  var bwlev_root = createLevel(CurBrowseLevel, '', -2, null, rootmd, null);
-
+  var bwlev_root = initBWlev(CurBrowseLevel, rootmd, '', -2, null, null)
   if (!start_page) {
     return bwlev_root;
   }
