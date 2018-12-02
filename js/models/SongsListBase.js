@@ -309,7 +309,7 @@ return spv.inh(LoadableList, {
     return spv.getDiffObj(o_ste, original_clone);
   };
 
-  var applySongRolesChanges = function(target_song, changes) {
+  function applySongRolesChanges(target_song, changes) {
     spv.cloneObj(target_song, changes);
     var result = {};
     for (var prop in changes) {
@@ -321,7 +321,7 @@ return spv.inh(LoadableList, {
   };
 
 
-  var checkNeighboursChanges = function(md, target_song, changed_neighbour, viewing) {
+  function checkNeighboursChanges(md, target_song, changed_neighbour, viewing) {
     var changes = getNeighboursChanges.call(md, target_song, changed_neighbour);
     //console.log("changes");
     //console.log(); isImportant
@@ -359,7 +359,7 @@ return spv.inh(LoadableList, {
 
   };
 
-  var getLastUsableSong = function(mdpl){
+  function getLastUsableSong(mdpl){
     for (var i = mdpl.getMainlist().length - 1; i >= 0; i--) {
       var cur = mdpl.getMainlist()[i];
       if (cur.canUseAsNeighbour()){
@@ -370,16 +370,16 @@ return spv.inh(LoadableList, {
   };
 
 
-  var getWantedSong= function(mdpl, exept) {
+  function getWantedSong(mdpl, exept) {
 
     //return spv.filter(mdpl.getMainlist(), 'states.want_to_play', function(v) {return !!v;})[0];
     return mdpl.idx_wplay_song != exept && mdpl.idx_wplay_song;
   };
-  var getViewingSong=function(mdpl, exept) {
+  function getViewingSong(mdpl, exept) {
     //var song = spv.filter(mdpl.getMainlist(), 'states.mp_show', function(v) {return !!v;})[0];
     return mdpl.idx_show_song != exept && mdpl.idx_show_song;
   };
-  var getPlayerSong= function(mdpl, exept) {
+  function getPlayerSong(mdpl, exept) {
     //var song = spv.filter(mdpl.getMainlist(), "states.player_song", true)[0];
     return mdpl.idx_player_song != exept && mdpl.idx_player_song;
   };
