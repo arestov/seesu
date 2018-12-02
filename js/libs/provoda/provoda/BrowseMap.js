@@ -3,9 +3,7 @@ define(function(require) {
 var pv = require('pv');
 var spv = require('spv');
 var changeBridge = require('../bwlev/changeBridge');
-var createLevel = require('../bwlev/createLevel');
-var BrowseLevel = require('../bwlev/BrowseLevel');
-var showMOnMap = require('../bwlev/showMOnMap'); // todo: remove
+var initBWlev = require('../bwlev/initBWlev');
 var showInterest = require('../bwlev/showInterest');
 var getBwlevFromParentBwlev = require('../bwlev/getBwlevFromParentBwlev');
 var get_constr = require('../structure/get_constr');
@@ -17,8 +15,6 @@ var routePathByModels = require('../routePathByModels');
 
 var getSPIConstr = routePathByModels.getSPIConstr;
 var getSPI= routePathByModels.getSPI;
-
-var cloneObj = spv.cloneObj;
 
 var getDeclrConstr = get_constr.getDeclrConstr;
 
@@ -184,8 +180,11 @@ BrowseMap.Model = spv.inh(pv.HModel, {
     }
   },
   _getMySimpleBwlev: function() {
-    console.warn('_getMySimpleBwlev is depricated. md should not have tied connection to one `map` object')
-    return showMOnMap(BrowseLevel, this.app.map, this);
+    throw new Error('implement new way to get simple bwlev (or try to use old?)')
+    // var showMOnMap = require('../bwlev/showMOnMap'); // todo: remove
+
+    // console.warn('_getMySimpleBwlev is depricated. md should not have tied connection to one `map` object')
+    // return showMOnMap(BrowseLevel, this.app.map, this);
   },
   getParentMapModel: function() {
     return this.map_parent;
@@ -203,8 +202,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
 function hookRoot(rootmd, start_page) {
   var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(RootLev, {}, rootmd.BWLev)) : RootLev;
-  var bwlev_root = createLevel(CurBrowseLevel, '', -2, null, rootmd, null);
-
+  var bwlev_root = initBWlev(CurBrowseLevel, rootmd, '', -2, null, null)
   if (!start_page) {
     return bwlev_root;
   }
