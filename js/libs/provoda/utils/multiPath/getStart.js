@@ -19,13 +19,16 @@ function getBase(md, multi_path) {
     steps: from_parent_num[0].length,
   },
   */
-  var info = multi_path.base
+  var info = multi_path.from_base
 
-  if (multi_path || !multi_path.type) {
+  if (!info || !info.type) {
     return md;
   }
 
   if (info.type === 'root') {
+    if (multi_path.resource && multi_path.resource.path) {
+      return md.getStrucRoot().start_page
+    }
     return md.getStrucRoot();
   }
 
