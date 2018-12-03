@@ -45,7 +45,6 @@ var SelectNestingDeclaration = function(dest_name, data) {
   }
   var nesting_source = new NestingSourceDr(data.from);
 
-  this.start_point = nesting_source.start_point;
   this.from = nesting_source.selector;
   this.dest_name = dest_name;
   this.deps_dest = null;
