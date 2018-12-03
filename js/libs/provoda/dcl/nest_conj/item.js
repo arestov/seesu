@@ -1,6 +1,6 @@
 define(function(require) {
 'use strict'
-var parse = require('../../utils/NestingSourceDr/parse');
+var asMultiPath = require('../../utils/NestingSourceDr/asMultiPath');
 var NestWatch = require('../../nest-watch/NestWatch');
 
 var NestCntDeclr = function(name, data) {
@@ -9,7 +9,7 @@ var NestCntDeclr = function(name, data) {
   this.nwbases = new Array(data.length);
 
   for (var i = 0; i < data.length; i++) {
-    this.nwbases[i] = new NestWatch(parse(data[i]), null, {
+    this.nwbases[i] = new NestWatch(asMultiPath(data[i]), null, {
       onchd_count: handleChdCount,
     });
   }

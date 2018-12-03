@@ -5,6 +5,7 @@ var spv = require('spv')
 var NestWatch = require('../../nest-watch/NestWatch');
 var getParsedState = require('../../utils/getParsedState');
 var groupDeps = require('../../utils/groupDeps')
+var toMultiPath = require('../../utils/NestingSourceDr/toMultiPath')
 
 var handler = require('./handler')
 var hnest = handler.hnest
@@ -21,7 +22,7 @@ var getDeps = spv.memorize(function getEncodedState(state_name) {
   }
 
   // var doubleHandler = getStateWriter(result.full_name, result.state_name, result.zip_name);
-  var nwatch = new NestWatch(result.nesting_source, result.state_name, {
+  var nwatch = new NestWatch(toMultiPath(result.nesting_source), result.state_name, {
     onchd_state: hnest,
     onchd_count: hnest,
   })

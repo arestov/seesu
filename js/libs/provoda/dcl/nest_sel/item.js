@@ -4,7 +4,7 @@ define(function(require) {
 var push = Array.prototype.push;
 var spv = require('spv');
 var getShortStateName = require('../../utils/getShortStateName');
-var parse = require('../../utils/NestingSourceDr/parse');
+var asMultiPath = require('../../utils/NestingSourceDr/asMultiPath');
 
 var NestWatch = require('../../nest-watch/NestWatch');
 
@@ -43,7 +43,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
   if (this.map && typeof this.map !== 'object') {
     throw new Error('unsupported map type');
   }
-  var nesting_source = parse(data.from);
+  var multi_path = asMultiPath(data.from);
 
   this.dest_name = dest_name;
   this.deps_dest = null;
@@ -60,7 +60,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
 
   this.deps = getDeps(data, this.map, this.where_states);
 
-  this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, {
+  this.nwbase = new NestWatch(multi_path, this.deps.deep.all.shorts, {
     onchd_count: handleChdCount,
     onchd_state: this.selectFn ? handleChdDeepState : rerun
   }, this.selectFn && handleAdding, this.selectFn && handleRemoving);
