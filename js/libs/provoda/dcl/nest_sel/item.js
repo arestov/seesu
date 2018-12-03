@@ -45,7 +45,6 @@ var SelectNestingDeclaration = function(dest_name, data) {
   }
   var nesting_source = parse(data.from);
 
-  this.from = nesting_source.selector;
   this.dest_name = dest_name;
   this.deps_dest = null;
   this.source_state_names = null;
