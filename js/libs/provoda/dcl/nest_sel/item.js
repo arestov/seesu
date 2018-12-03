@@ -4,7 +4,7 @@ define(function(require) {
 var push = Array.prototype.push;
 var spv = require('spv');
 var getShortStateName = require('../../utils/getShortStateName');
-var NestingSourceDr = require('../../utils/NestingSourceDr');
+var parse = require('../../utils/NestingSourceDr/parse');
 
 var NestWatch = require('../../nest-watch/NestWatch');
 
@@ -43,7 +43,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
   if (this.map && typeof this.map !== 'object') {
     throw new Error('unsupported map type');
   }
-  var nesting_source = new NestingSourceDr(data.from);
+  var nesting_source = parse(data.from);
 
   this.from = nesting_source.selector;
   this.dest_name = dest_name;

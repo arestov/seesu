@@ -2,7 +2,7 @@ define(function(require) {
 'use strict';
 var spv = require('spv');
 var splitByDot = spv.splitByDot
-var NestingSourceDr = require('./NestingSourceDr');
+var parse = require('./NestingSourceDr/parse');
 
 function itself(item) {return item;}
 
@@ -38,7 +38,7 @@ var enc_states = {
     var state_name = parts.pop();
     var zip_func = parts.pop();
 
-    var nesting_source = new NestingSourceDr(nesting_name);
+    var nesting_source = parse(nesting_name);
 
     return {
       rel_type: 'nesting',
