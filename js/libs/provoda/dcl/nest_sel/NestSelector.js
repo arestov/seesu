@@ -208,7 +208,7 @@ function getReadyItems(head, hands, filtered) {
     var md_states_from = switchDistant(distant, cur, head.md);
 
     arr[i] = executeStringTemplate(
-      head.md.app, md_from, dcl.map, false, md_states_from
+      head.md.app, md_from, dcl.map.template, false, md_states_from
     );
   }
   return arr;

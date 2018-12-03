@@ -117,14 +117,10 @@ var isFromParent = function (first_char, string_template) {
   };
 };
 
-var getParsedPath = spv.memorize(function(raw_string_template) {
-  var from_distant_model = raw_string_template.charAt(0) == '>';
-  var string_template = from_distant_model
-    ? raw_string_template.slice(1)
-    : raw_string_template;
+var getParsedPath = spv.memorize(function(string_template) {
   //example "#tracks/[:artist],[:track]"
-  //example ">^^tracks/[:artist],[:track]"
-  //example ">^"
+  //example "^^tracks/[:artist],[:track]"
+  //example "^"
   var first_char = string_template.charAt(0);
   var from_root = isFromRoot(first_char, string_template);
   var from_parent = !from_root && isFromParent(first_char, string_template);
@@ -145,7 +141,6 @@ var getParsedPath = spv.memorize(function(raw_string_template) {
   }
 
   return {
-    from_distant_model: from_distant_model,
     from_root: Boolean(from_root),
     from_parent: from_parent && from_parent.count,
     clean_string_parts: clean_string_parts,
