@@ -59,13 +59,13 @@ var getFullPathInfo = spv.memorize(function(full_path) {
       //   zip_func: zip_func || itself,
       // };
       //
-      var parts = splitByDot(info.nesting_source)
+      var parts = info.nesting_source.selector
 
       return {
         result_type: info.state_name ? 'state' : 'nesting',
         state: createStateInfo(info.state_name),
         nesting: {
-          path: info.nesting_source,
+          path: info.nesting_source.selector.join('.'),
           base: parts.slice(0, parts.length-1),
           target_nest_name: parts[parts.length-1],
           zip_name: info.zip_name || null,
