@@ -2,6 +2,9 @@ define(function(require) {
 'use strict'
 
 var spv = require('spv')
+var initDeclaredNestings = require('../../initDeclaredNestings');
+var getParsedPath = initDeclaredNestings.getParsedPath;
+
 var splitByDot = spv.splitByDot;
 var fromLegacy = require('./fromLegacy')
 var empty = {}
@@ -136,6 +139,7 @@ function getResourceInfo(string) {
 
   return {
     path: string,
+    template: getParsedPath(string),
   }
 }
 
