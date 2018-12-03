@@ -17,7 +17,7 @@ var NestWatch = function(nesting_source, state_name, handler, addHandler, remove
   this.handled_subl_wtchs = null;
 
   this.selector = selector;
-  this.start_point = nesting_source.start_point || null;
+  this.nmpath_source = nesting_source;
   this.state_name = state_name;
   this.short_state_name = state_name &&
     (Array.isArray(state_name)

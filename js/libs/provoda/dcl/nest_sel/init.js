@@ -1,26 +1,22 @@
 define(function(require) {
 'use strict';
-var initDeclaredNestings = require('../../initDeclaredNestings');
-var getParsedPath = initDeclaredNestings.getParsedPath;
-var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 var addRootNestWatch = require('../../nest-watch/add-remove').addRootNestWatch;
 
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');
+var getStartModel = require('../../nest-watch/getStartModel')
+
 var NestSelector = require('./NestSelector');
 var Hands= NestSelector.Hands;
 var addHead = NestSelector.addHead;
 
 function add(self, nwbase, dcl) {
-  var start_point  = nwbase && nwbase.start_point;
-  var path_template = start_point && getParsedPath(start_point);
-  if (!path_template) {
+  var start_md = getStartModel(self, nwbase)
+  if (self == start_md) {
     var lnw = new LocalWatchRoot(null, nwbase, new Hands(dcl));
     addFrom(self, lnw);
     return lnw;
   }
-
-  var start_md = getSPByPathTemplate(self.app, self, start_point);
 
   if (!start_md.shared_nest_sel_hands) {
     start_md.shared_nest_sel_hands = {};
