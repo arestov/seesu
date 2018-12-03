@@ -5,9 +5,8 @@
 define(function(require) {
 'use strict';
 var getNesting = require('pv/getNesting')
-var initDeclaredNestings = require('../../initDeclaredNestings');
-var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
-var empty = {}
+var getStart = require('./getStart')
+
 // {
 //   result_type: result_type,
 //   state: {
@@ -28,53 +27,16 @@ var empty = {}
 // }
 
 var getModels = function(md, multi_path) {
+  var start_md = getStart(md, multi_path)
+
   return getDeepNesting(
-    getResourse(
-      getBase(md, multi_path),
-      multi_path
-    ),
+    start_md,
     multi_path
   )
   // var base;
   // var resource;
   // var nesting;
 
-}
-
-function getBase(md, multi_path) {
-  /*
-  {
-    type: 'parent',
-    steps: from_parent_num[0].length,
-  },
-  */
-  var info = multi_path.base
-
-  if (multi_path || !multi_path.type) {
-    return md;
-  }
-
-  if (info.type === 'root') {
-    return md.getStrucRoot();
-  }
-
-  return md.getStrucParent(info.steps)
-}
-
-function getResourse(md, multi_path) {
-  /*
-   {
-    path: string,
-  },
-  */
-
-  var info = multi_path.resource
-
-  if (!info || !info.path) {
-    return md;
-  }
-
-  return getSPByPathTemplateAndData(md.app, md, info.path, false, empty)
 }
 
 function add(result, list, nest_name) {
