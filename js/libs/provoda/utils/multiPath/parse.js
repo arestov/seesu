@@ -11,6 +11,10 @@ var empty = {}
 var parent_count_regexp = /\^+/gi;
 
 /*
+
+
+/(^|\s+)(\<)(\s+)/
+
 "< state_name < aggr:nesting < resource < #"
 
 "< state_name << /resource/[:ddaf]/sdf < #"
@@ -29,7 +33,7 @@ var parent_count_regexp = /\^+/gi;
 
 "nesting_name < < ^^"
 */
-var checkSplit = /(?:^|\s|(?:<))<(?:$|\s|<)(?:\s?)/
+var checkSplit = /(?:^|\s+)?<(?:\s+)?/
 var end = /(<$)|(^$)|(#$)/
 var start = /^</
 
