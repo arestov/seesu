@@ -48,28 +48,15 @@ var NestCompxDcl = function(name, data) {
 
   this.deps = deps;
 
-  // this.nwbases = new Array(deps.length);
-
   var result = makeGroups([deps]);
-  //
-  // var compx_nest_matches = new Array(result.conndst_nesting.length)
-  // for (var i = 0; i < result.conndst_nesting.length; i++) {
-  //   compx_nest_matches[i] = result.conndst_nesting[i].nwatch;
-  // }
 
   this.calcFn = fn;
 
-  // this.compx_nest_matches = compx_nest_matches;
   this.conndst_parent = result.conndst_parent
   this.conndst_nesting = result.conndst_nesting
   this.conndst_root = result.conndst_root;
 
 
-  // for (var i = 0; i < data.length; i++) {
-  //   this.nwbases[i] = new NestWatch(new NestingSourceDr(data[i]), null, {
-  //     onchd_count: handleChdCount,
-  //   });
-  // }
 }
 
 return NestCompxDcl;
