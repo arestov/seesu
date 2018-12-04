@@ -52,6 +52,7 @@ var NestCompxDcl = function(name, data) {
 
   this.calcFn = fn;
 
+  // will be used by runner
   this.conndst_parent = result.conndst_parent
   this.conndst_nesting = result.conndst_nesting
   this.conndst_root = result.conndst_root;

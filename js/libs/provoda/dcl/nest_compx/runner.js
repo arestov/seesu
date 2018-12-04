@@ -23,6 +23,7 @@ var NestCompxRunner = function(md, dcl) {
   // this.items = new Array(nwbases.length);
 
 
+  // USIND conndst_nesting
   var list = this.dcl.conndst_nesting
   var lnwatches = new Array(list.length);
 
@@ -40,6 +41,8 @@ var NestCompxRunner = function(md, dcl) {
 
   this.lnwatches = lnwatches
 
+  // USING conndst_root
+  // USING conndst_parent
   bindRoot(this.md, this.dcl, this)
   bindParent(this.md, this.dcl, this)
 }
