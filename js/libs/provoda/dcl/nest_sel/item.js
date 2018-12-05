@@ -4,7 +4,7 @@ define(function(require) {
 var push = Array.prototype.push;
 var spv = require('spv');
 var getShortStateName = require('../../utils/getShortStateName');
-var NestingSourceDr = require('../../utils/NestingSourceDr');
+var asMultiPath = require('../../utils/NestingSourceDr/asMultiPath');
 
 var NestWatch = require('../../nest-watch/NestWatch');
 
@@ -21,20 +21,30 @@ var where = require('./where');
 
 var types = ['sort', 'map', 'cond'];
 
+var getMap = function(map_chunk) {
+  if (typeof map_chunk != 'string') {
+    return map_chunk
+  }
+
+  var from_distant_model = map_chunk.charAt(0) === '>'
+  var path = from_distant_model ? map_chunk.slice(1) : map_chunk
+  return {
+    from_distant_model: from_distant_model,
+    template: getParsedPath(path)
+  }
+}
 
 var SelectNestingDeclaration = function(dest_name, data) {
   this.map = null;
   if (data.map) {
-    this.map = typeof data.map == 'string' ? getParsedPath(data.map) : data.map;
+    this.map = getMap(data.map)
   }
 
   if (this.map && typeof this.map !== 'object') {
     throw new Error('unsupported map type');
   }
-  var nesting_source = new NestingSourceDr(data.from);
+  var multi_path = asMultiPath(data.from);
 
-  this.start_point = nesting_source.start_point;
-  this.from = nesting_source.selector;
   this.dest_name = dest_name;
   this.deps_dest = null;
   this.source_state_names = null;
@@ -50,7 +60,7 @@ var SelectNestingDeclaration = function(dest_name, data) {
 
   this.deps = getDeps(data, this.map, this.where_states);
 
-  this.nwbase = new NestWatch(nesting_source, this.deps.deep.all.shorts, {
+  this.nwbase = new NestWatch(multi_path, this.deps.deep.all.shorts, {
     onchd_count: handleChdCount,
     onchd_state: this.selectFn ? handleChdDeepState : rerun
   }, this.selectFn && handleAdding, this.selectFn && handleRemoving);

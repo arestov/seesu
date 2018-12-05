@@ -2,9 +2,7 @@ define(function(require) {
 'use strict'
 
 var updateNesting = require('../../Model/updateNesting');
-
-// /Users/arestov/side-effect/seesu/js/libs/provoda/dcl/nest_compx/handler.js
-// /Users/arestov/side-effect/seesu/js/libs/provoda/Model/updateNesting.js
+var multiPathAsString = require('../../utils/multiPath/asString')
 
 var prepareArgs = function(dcl, _runStates) {
   var result = new Array(dcl.deps.length);
@@ -54,7 +52,7 @@ return {
   hnest: function nestCompxNestDepChangeHandler(flow_step, _, lwroot, __, value) {
     var data = lwroot.data
     var runner = data.runner
-    changeValue(runner, data.dep.full_name, value)
+    changeValue(runner, multiPathAsString(data.dep), value)
   },
   hstate: function nestCompxStateDepChangeHandler(runner, dep_full_name, value) {
     changeValue(runner, dep_full_name, value)

@@ -6,6 +6,7 @@ var LocalWatchRoot = require('../nest-watch/LocalWatchRoot');
 var addRootNestWatch = require('../nest-watch/add-remove').addRootNestWatch;
 var removeRootNestWatch = require('../nest-watch/add-remove').removeRootNestWatch;
 var NestWatch = require('../nest-watch/NestWatch');
+var toMultiPath = require('../utils/NestingSourceDr/toMultiPath')
 var spv = require('spv');
 
 var count = 1;
@@ -98,7 +99,7 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
     }
   };
 
-  return new NestWatch({selector: dep.value}, null, null, addHandler, removeHandler);
+  return new NestWatch(toMultiPath({selector: dep.value}), null, null, addHandler, removeHandler);
 }, function(dep) {
   return dep.dep_id;
 });

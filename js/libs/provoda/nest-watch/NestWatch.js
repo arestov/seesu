@@ -3,8 +3,8 @@ define(function (require) {
 var getShortStateName = require('../utils/getShortStateName');
 
 var counter = 1;
-var NestWatch = function(nesting_source, state_name, handler, addHandler, removeHandler) {
-  var selector = nesting_source.selector;
+var NestWatch = function(multi_path, state_name, handler, addHandler, removeHandler) {
+  var selector = multi_path.nesting.path;
   if (!Array.isArray(selector)) {
     throw new Error('selector should be array');
   }
@@ -17,7 +17,7 @@ var NestWatch = function(nesting_source, state_name, handler, addHandler, remove
   this.handled_subl_wtchs = null;
 
   this.selector = selector;
-  this.start_point = nesting_source.start_point || null;
+  this.nmpath_source = multi_path;
   this.state_name = state_name;
   this.short_state_name = state_name &&
     (Array.isArray(state_name)

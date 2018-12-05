@@ -1,27 +1,33 @@
 define(function(require) {
 'use strict';
 var spv = require('spv')
-// var NestingSourceDr = require('../../utils/NestingSourceDr');
 var NestWatch = require('../../nest-watch/NestWatch');
-var getParsedState = require('../../utils/getParsedState');
-var groupDeps = require('../../utils/groupDeps')
+var parseMultiPath = require('../../utils/multiPath/parse')
+var asString = require('../../utils/multiPath/asString')
 
 var handler = require('./handler')
 var hnest = handler.hnest
 
-var getDeps = spv.memorize(function getEncodedState(state_name) {
-  var result = getParsedState(state_name)
+var getDeps = spv.memorize(function getEncodedState(string) {
+
+  var result = parseMultiPath(string)
 
   if (!result) {
+    throw new Error('cant parse: ' + string)
     return null
   }
 
-  if (result.rel_type !== 'nesting') {
-    return result
+  if (result.result_type !== 'nesting' && result.result_type !== 'state') {
+    throw new Error('implement runner part')
   }
 
-  // var doubleHandler = getStateWriter(result.full_name, result.state_name, result.zip_name);
-  var nwatch = new NestWatch(result.nesting_source, result.state_name, {
+  if (!result.nesting || !result.nesting.path) {
+    return result;
+  }
+
+  var state_name = result.state && result.state.path
+
+  var nwatch = new NestWatch(result, state_name, {
     onchd_state: hnest,
     onchd_count: hnest,
   })
@@ -32,12 +38,23 @@ var getDeps = spv.memorize(function getEncodedState(state_name) {
   return copy
 });
 
-var makeGroups = groupDeps(getDeps, function(cur) {
-  return cur;
-})
+var groupBySubscribing = function(list) {
+  var result = {
+    nest_watch: [],
+    usual: [],
+  }
 
+  for (var i = 0; i < list.length; i++) {
+    var cur = list[i]
+    if (cur.nwatch) {
+      result.nest_watch.push(cur);
+    } else {
+      result.usual.push(cur);
+    }
+  }
 
-// getParsedState: getParsedState,
+  return result
+}
 
 var NestCompxDcl = function(name, data) {
   this.dest_name = name;
@@ -45,30 +62,15 @@ var NestCompxDcl = function(name, data) {
   var deps = data[1];
   var fn = data[2]
 
-  this.deps = deps;
+  var list = deps.map(getDeps)
 
-  // this.nwbases = new Array(deps.length);
-
-  var result = makeGroups([deps]);
-  //
-  // var compx_nest_matches = new Array(result.conndst_nesting.length)
-  // for (var i = 0; i < result.conndst_nesting.length; i++) {
-  //   compx_nest_matches[i] = result.conndst_nesting[i].nwatch;
-  // }
+  this.deps = list.map(asString);
 
   this.calcFn = fn;
 
-  // this.compx_nest_matches = compx_nest_matches;
-  this.conndst_parent = result.conndst_parent
-  this.conndst_nesting = result.conndst_nesting
-  this.conndst_root = result.conndst_root;
+  // will be used by runner
+  this.parsed_deps = groupBySubscribing(list)
 
-
-  // for (var i = 0; i < data.length; i++) {
-  //   this.nwbases[i] = new NestWatch(new NestingSourceDr(data[i]), null, {
-  //     onchd_count: handleChdCount,
-  //   });
-  // }
 }
 
 return NestCompxDcl;

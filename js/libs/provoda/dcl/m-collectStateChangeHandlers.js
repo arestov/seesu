@@ -3,6 +3,7 @@ define(function (require) {
 var spv = require('spv');
 var splitByDot = spv.splitByDot;
 var NestWatch = require('../nest-watch/NestWatch');
+var toMultiPath = require('../utils/NestingSourceDr/toMultiPath')
 
 var collectStateChangeHandlers = require('./collectStateChangeHandlers');
 var standart = require('../nest-watch/standartNWH');
@@ -53,7 +54,7 @@ return function(self, props) {
     var callback =  index[stname];
 
     self.st_nest_matches.push(
-      new NestWatch({selector: nw_draft2.selector}, nw_draft2.state, {
+      new NestWatch(toMultiPath({selector: nw_draft2.selector}), nw_draft2.state, {
         onchd_state: stateHandler,
         onchd_count: wrapper,
         stch_fn: callback,

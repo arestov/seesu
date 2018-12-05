@@ -2,12 +2,19 @@ define(function(require) {
 'use strict'
 
 var spv = require('spv')
+var initDeclaredNestings = require('../../initDeclaredNestings');
+var getParsedPath = initDeclaredNestings.getParsedPath;
+
 var splitByDot = spv.splitByDot;
 var fromLegacy = require('./fromLegacy')
 var empty = {}
 var parent_count_regexp = /\^+/gi;
 
 /*
+
+
+/(\^|\s+)(\<)(\s+)/
+
 "< state_name < aggr:nesting < resource < #"
 
 "< state_name << /resource/[:ddaf]/sdf < #"
@@ -26,8 +33,8 @@ var parent_count_regexp = /\^+/gi;
 
 "nesting_name < < ^^"
 */
-var checkSplit = /(?:^|\s|(?:<))<(?:$|\s|<)(?:\s?)/
-var end = /(<$)|(^$)|(#$)/
+var checkSplit = /(?:^|\s+)?<(?:\s+)?/
+var end = /(<$)|(\^$)|(#$)/
 var start = /^</
 
 var parseFromStart = spv.memorize(function(string) {
@@ -97,6 +104,7 @@ function parseParts(state_raw, nest_raw, resource_raw, base_raw) {
     nesting: nest_info,
     resource: resource_info,
     from_base: base_info,
+    as_string: null,
   }
 }
 
@@ -136,6 +144,7 @@ function getResourceInfo(string) {
 
   return {
     path: string,
+    template: getParsedPath(string),
   }
 }
 

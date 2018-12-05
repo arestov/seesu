@@ -2,9 +2,9 @@ define(function(require) {
 'use strict'
 var addFrom = require('../../nest-watch/addFrom');
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
-var prsStCon = require('../../prsStCon');
 var handler = require('./handler')
 var hstate = handler.hstate
+var subscribing = require('../../utils/multiPath/subscribing')
 
 var copyStates = function(md, target, state_name, full_name, runner) {
   md.lwch(target, state_name, function(value) {
@@ -12,23 +12,18 @@ var copyStates = function(md, target, state_name, full_name, runner) {
   });
 }
 
-var bindParent =  prsStCon.bind.parent(copyStates);
-var bindRoot = prsStCon.bind.root(copyStates);
+var subscribe = subscribing(copyStates)
 
-var NestCompxRunner = function(md, dcl) {
-  this.dcl = dcl;
-  this.md = md;
-  this._runStates = null;
-  // var nwbases = dcl.nwbases;
-  // this.items = new Array(nwbases.length);
+var runNestWatches = function(self, md, list) {
+  if (!list || !list.length) {
+    return
+  }
 
-
-  var list = this.dcl.conndst_nesting
   var lnwatches = new Array(list.length);
 
   for (var i = 0; i < list.length; i++) {
     var lnwatch = new LocalWatchRoot(md, list[i].nwatch, {
-      runner: this,
+      runner: self,
       dep: list[i],
       num: i,
       // index: i,
@@ -38,10 +33,28 @@ var NestCompxRunner = function(md, dcl) {
     lnwatches[i] = lnwatch
   }
 
-  this.lnwatches = lnwatches
+  self.lnwatches = lnwatches
+}
 
-  bindRoot(this.md, this.dcl, this)
-  bindParent(this.md, this.dcl, this)
+var runUsual = function(self, md, list) {
+  if (!list || !list.length) {
+    return
+  }
+  for (var i = 0; i < list.length; i++) {
+    var cur = list[i]
+    subscribe(md, cur, self)
+  }
+}
+
+var NestCompxRunner = function(md, dcl) {
+  this.dcl = dcl;
+  this.md = md;
+  this._runStates = null;
+
+  var parsed_deps = this.dcl.parsed_deps
+
+  runNestWatches(this, md, parsed_deps.nest_watch)
+  runUsual(this, md, parsed_deps.usual)
 }
 
 return NestCompxRunner;
