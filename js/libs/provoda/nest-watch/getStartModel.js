@@ -7,7 +7,7 @@ return function getStartModel(target, nwatch) {
     return target
   }
 
-  var start_md = getStart(target, nwatch.nmpath_source)
+  var start_md = getStart(target, nwatch.nmpath_source, true)
   return start_md
 }
 })

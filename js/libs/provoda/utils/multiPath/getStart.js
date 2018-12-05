@@ -2,12 +2,15 @@ define(function(require) {
 'use strict';
 var initDeclaredNestings = require('../../initDeclaredNestings');
 var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
+var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate
+
 var empty = {}
 
-return function getStart(md, multi_path) {
+return function getStart(md, multi_path, use_state_from_initial_model) {
   return getResourse(
     getBase(md, multi_path),
-    multi_path
+    multi_path,
+    use_state_from_initial_model
   )
 }
 
@@ -35,7 +38,7 @@ function getBase(md, multi_path) {
   return md.getStrucParent(info.steps)
 }
 
-function getResourse(md, multi_path) {
+function getResourse(md, multi_path, use_state_from_initial_model) {
   /*
    {
     path: string,
@@ -46,6 +49,10 @@ function getResourse(md, multi_path) {
 
   if (!info || !info.path) {
     return md;
+  }
+
+  if (use_state_from_initial_model) {
+    return getSPByPathTemplate(md.app, md, info.path)
   }
 
   return getSPByPathTemplateAndData(md.app, md, info.path, false, empty)
