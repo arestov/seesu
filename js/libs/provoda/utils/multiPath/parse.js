@@ -13,7 +13,7 @@ var parent_count_regexp = /\^+/gi;
 /*
 
 
-/(^|\s+)(\<)(\s+)/
+/(\^|\s+)(\<)(\s+)/
 
 "< state_name < aggr:nesting < resource < #"
 
@@ -34,7 +34,7 @@ var parent_count_regexp = /\^+/gi;
 "nesting_name < < ^^"
 */
 var checkSplit = /(?:^|\s+)?<(?:\s+)?/
-var end = /(<$)|(^$)|(#$)/
+var end = /(<$)|(\^$)|(#$)/
 var start = /^</
 
 var parseFromStart = spv.memorize(function(string) {
