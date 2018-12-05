@@ -103,7 +103,9 @@ var isFromRoot = function(first_char, string_template) {
   var from_root = first_char == '#';
   if (!from_root) {return;}
 
-  return string_template.slice( 1 );
+  return {
+    cutted: string_template.slice( 1 )
+  };
 };
 
 var parent_count_regexp = /^\^+/gi;
@@ -125,7 +127,11 @@ var getParsedPath = spv.memorize(function(string_template) {
   var from_root = isFromRoot(first_char, string_template);
   var from_parent = !from_root && isFromParent(first_char, string_template);
 
-  var full_usable_string = from_root || (from_parent && from_parent.cutted) || string_template;
+  var full_usable_string = from_root
+    ? from_root.cutted
+    : (from_parent
+        ? from_parent.cutted
+        : string_template);
 
   var clean_string_parts = full_usable_string.split(string_state_regexp);
   var states = full_usable_string.match(string_state_regexp);
