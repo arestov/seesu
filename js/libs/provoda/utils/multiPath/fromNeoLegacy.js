@@ -77,6 +77,7 @@ return function fromNestingSourceDr(nesting_source) {
     },
     from_base: parsed_start_point.from_base,
     resource: parsed_start_point.resource,
+    as_string: null,
   }
 }
 

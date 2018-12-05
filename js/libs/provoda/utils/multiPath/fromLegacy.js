@@ -45,6 +45,7 @@ var getFullPathInfo = spv.memorize(function(full_path) {
           steps: null,
         },
         raw_info: info,
+        as_string: null,
       }
     }
     case "nesting": {
@@ -75,6 +76,7 @@ var getFullPathInfo = spv.memorize(function(full_path) {
           steps: null,
         },
         raw_info: info,
+        as_string: null,
       }
     }
     case "parent": {
@@ -95,6 +97,7 @@ var getFullPathInfo = spv.memorize(function(full_path) {
           steps: info.ancestors,
         },
         raw_info: info,
+        as_string: null,
       }
     }
 
@@ -114,6 +117,7 @@ var getFullPathInfo = spv.memorize(function(full_path) {
           steps: null,
         },
         raw_info: info,
+        as_string: null,
       }
     }
   }

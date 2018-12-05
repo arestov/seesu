@@ -104,6 +104,7 @@ function parseParts(state_raw, nest_raw, resource_raw, base_raw) {
     nesting: nest_info,
     resource: resource_info,
     from_base: base_info,
+    as_string: null,
   }
 }
 
