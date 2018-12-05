@@ -3,6 +3,7 @@ define(function(require) {
 
 var updateNesting = require('../../Model/updateNesting');
 var multiPathAsString = require('../../utils/multiPath/asString')
+var isNestingChanged = require('../../utils/isNestingChanged')
 
 var prepareArgs = function(dcl, _runStates) {
   var result = new Array(dcl.deps.length);
@@ -24,7 +25,7 @@ var createInitialStates = function(dcl) {
   return _runStates;
 }
 
-var changeValue = function(runner, dep_full_name, value) {
+var changeValue = function(runner, dep_full_name, value, checkFromNesting) {
   var dcl = runner.dcl
 
 
@@ -32,8 +33,14 @@ var changeValue = function(runner, dep_full_name, value) {
     runner._runStates = createInitialStates(dcl)
   }
 
-  if (runner._runStates[dep_full_name] === value) {
-    return;
+  if (!checkFromNesting) {
+    if (runner._runStates[dep_full_name] === value) {
+      return;
+    }
+  } else {
+    if (!isNestingChanged(runner._runStates[dep_full_name], value)) {
+      return;
+    }
   }
 
   runner._runStates[dep_full_name] = value;
@@ -52,10 +59,14 @@ return {
   hnest: function nestCompxNestDepChangeHandler(flow_step, _, lwroot, __, value) {
     var data = lwroot.data
     var runner = data.runner
-    changeValue(runner, multiPathAsString(data.dep), value)
+
+    // we can get same, but mutated `value`
+    var to_pass = Array.isArray(value) ? value.slice(0) : value;
+
+    changeValue(runner, multiPathAsString(data.dep), to_pass, true)
   },
   hstate: function nestCompxStateDepChangeHandler(runner, dep_full_name, value) {
-    changeValue(runner, dep_full_name, value)
+    changeValue(runner, dep_full_name, value, false)
   }
 }
 
