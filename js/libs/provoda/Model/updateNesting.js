@@ -5,6 +5,7 @@ var hp = require('../helpers');
 var StatesLabour = require('../StatesLabour');
 var updateProxy = require('../updateProxy');
 var checkNesting =  require('../nest-watch/index').checkNesting;
+var isNestingChanged = require('../utils/isNestingChanged')
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 
@@ -12,9 +13,19 @@ var hasDot = spv.memorize(function(nesting_name) {
   return nesting_name.indexOf('.') != -1;
 });
 
-return function updateNesting(self, collection_name, array, opts, spec_data) {
+return function updateNesting(self, collection_name, input, opts, spec_data) {
   if (hasDot(collection_name)){
     throw new Error('remove "." (dot) from name');
+  }
+
+  if (!self.children_models) {
+    self.children_models = {};
+  }
+
+  var old_value = self.children_models[collection_name];
+
+  if (!isNestingChanged(old_value, input)) {
+    return
   }
 
   var zdsv = self.zdsv;
@@ -22,14 +33,8 @@ return function updateNesting(self, collection_name, array, opts, spec_data) {
     zdsv.abortFlowSteps('collch', collection_name);
   }
 
-  if (Array.isArray(array)){
-    array = array.slice(0);
-  }
-  if (!self.children_models) {
-    self.children_models = {};
-  }
+  var array = Array.isArray(input) ? input.slice(0) : input
 
-  var old_value = self.children_models[collection_name];
   self.children_models[collection_name] = array;
 
   if (old_value && array) {
