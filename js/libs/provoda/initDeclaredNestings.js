@@ -152,7 +152,6 @@ var getParsedPath = spv.memorize(function(string_template) {
     from_parent: from_parent && from_parent.count,
     clean_string_parts: clean_string_parts,
     states: states,
-    full_usable_string: full_usable_string
   };
 });
 
