@@ -421,39 +421,36 @@ function handleFile(self, file) {
       //console.log(uid);
     },
 
-    'effect-lfm-scrobble': [
-      [
-        '#lfm', 'to_scrobble',
-        function(lfm, to_scrobble) {
-          return lfm.submit({
-            artist: to_scrobble.artist,
-            track: to_scrobble.track,
-            album: to_scrobble.album_name,
-          }, to_scrobble.duration, to_scrobble.timestamp);
+    'effect-lfm-scrobble': {
+      api: '#lfm',
+      trigger: 'to_scrobble',
+      require: ['to_scrobble', '#settings-lfm-scrobbling'],
+      fn: function(lfm, to_scrobble) {
+        return lfm.submit({
+          artist: to_scrobble.artist,
+          track: to_scrobble.track,
+          album: to_scrobble.album_name,
+        }, to_scrobble.duration, to_scrobble.timestamp);
+      },
+    },
 
-        }
-      ],
-      [['to_scrobble', '#settings-lfm-scrobbling']]
-    ],
+    'effect-sus-scrobble': {
+      api: '#sus',
+      trigger: ['to_scrobble', '#env.app_type'], // #env.app_type is not watcheable,
+      fn: function(sus, to_scrobble, app_type) {
+        if (!sus.loggedIn()){return;}
 
-    'effect-sus-scrobble': [
-      [
-        '#sus', ['to_scrobble', '#env.app_type'], // #env.app_type is not watcheable
-        function(sus, to_scrobble, app_type) {
-          if (!sus.loggedIn()){return;}
-
-          sus.api('track.scrobble', {
-            client: app_type,
-            status: 'finished',
-            duration: to_scrobble.duration,
-            artist: to_scrobble.artist,
-            title: to_scrobble.track,
-            timestamp: to_scrobble.timestamp.toFixed(0)
-          });
-        }
-      ],
-      [['to_scrobble', '#su_userid', '#env.app_type']] // remove #env.app_type from here
-    ],
+        sus.api('track.scrobble', {
+          client: app_type,
+          status: 'finished',
+          duration: to_scrobble.duration,
+          artist: to_scrobble.artist,
+          title: to_scrobble.track,
+          timestamp: to_scrobble.timestamp.toFixed(0)
+        });
+      },
+      require: ['to_scrobble', '#su_userid', '#env.app_type'], // remove #env.app_type from here
+    },
 
     submitNowPlaying: spv.debounce(function(){
       var mopla = this.getCurrentMopla();

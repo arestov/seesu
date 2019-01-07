@@ -96,25 +96,24 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
     ask_for: 'artist',
   }],
 
-  'effect-personal_tags': [
-    [
-      'self', ['canload_personal', 'artist', 'track'],
-      function (self) {
-        self.requestState('personal_tags');
-      }
-    ],
-    [['canload_personal', 'artist', 'track']]
-  ],
+  'effect-personal_tags': {
+    api: 'self',
+    trigger:  ['canload_personal', 'artist', 'track'],
+    fn: function (self) {
+      self.requestState('personal_tags');
+    },
+    require: ['canload_personal', 'artist', 'track'],
+  },
 
-  'effect-track_tags': [
-    [
-      'self', ['artist', 'track'],
-      function (self) {
-        self.requestState('toptags');
-      }
-    ],
-    [['artist', 'track']]
-  ],
+  'effect-track_tags': {
+    api: 'self',
+    trigger:  ['artist', 'track'],
+    fn: function (self) {
+      self.requestState('toptags');
+    },
+    require: ['artist', 'track'],
+
+  },
 
   comma_regx: /\s*\,\s*/,
   comma_regx_end: /\s*\,\s*$/,

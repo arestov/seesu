@@ -10,8 +10,19 @@ var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 var StateBindDeclr = function (data, state_name) {
   this.state_name = state_name;
-  this.apis = spv.toRealArray(data[0]);
-  this.fn = data[1];
+  this.apis = null;
+  this.fn = null;
+
+
+  if (Array.isArray(data)) {
+    // legacy ?
+    this.apis = spv.toRealArray(data[0]);
+    this.fn = data[1];
+    return
+  }
+
+  this.apis = spv.toRealArray(data.api);
+  this.fn = data.fn;
 };
 
 return function(self, props) {

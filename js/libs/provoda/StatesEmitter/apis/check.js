@@ -129,6 +129,29 @@ var ApiEffectDeclr = function(name, data) {
 
   this.compxes = null;
 
+  if (!Array.isArray(data)) {
+    this.apis = toRealArray(data.api);
+    this.triggering_states = toRealArray(data.trigger);
+    this.fn = data.fn;
+    this.is_async = data.is_async;
+    this.result_handler = data.parse && getHandler(this.is_async, data.parse);
+
+    if (data.require) {
+      this.deps = wrapDeps(data.require);
+      this.deps_name = '_need_api_effect_' + name;
+
+      this.compxes = [
+        this.deps_name, this.deps
+      ];
+    }
+
+    if (data.effects) {
+      this.effects_deps = (data.effects && toRealArray(data.effects)) || null;
+    }
+
+    return
+  }
+
   var execution = data[0];
   this.apis = toRealArray(execution[0]);
   this.triggering_states = toRealArray(execution[1]);
