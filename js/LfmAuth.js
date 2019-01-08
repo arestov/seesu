@@ -183,6 +183,7 @@ var LfmAuth = spv.inh(pv.Model, {
     }
   ],
   'state-token': {
+    type: 'subscribe',
     api: ['window', 'bridge'],
     fn: function (update, win, bridge) {
       return spv.listenEvent(win, 'message', function(e) {
@@ -195,6 +196,7 @@ var LfmAuth = spv.inh(pv.Model, {
     }
   },
   'state-_bridge_ready': {
+    type: 'subscribe',
     api: ['window', 'bridge'],
     fn: function (update, win, bridge) {
       return spv.listenEvent(win, 'message', function(e) {
