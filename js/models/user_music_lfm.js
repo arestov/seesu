@@ -246,7 +246,20 @@ var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
   },
 
   page_limit: 30,
-
+  'api-last_fm_xml': function() {
+    return {
+      api_name: 'last_fm_xml',
+      source_name: 'last.fm',
+      get: function(url) {
+        return $.ajax({
+          url: 'http://ws.audioscrobbler.com/1.0/' + url,
+          type: "GET",
+          dataType: "xml"
+        });
+      },
+      errors_fields: []
+    };
+  },
   'nest_req-artists_list': [
     [function(xml) {
       var data_list = [];
@@ -261,21 +274,7 @@ var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
       }
       return data_list;
     }],
-    [function() {
-      return {
-        api_name: 'last_fm_xml',
-        source_name: 'last.fm',
-        get: function(url) {
-          return $.ajax({
-            url: 'http://ws.audioscrobbler.com/1.0/' + url,
-            type: "GET",
-            dataType: "xml"
-          });
-        },
-        errors_fields: []
-      };
-
-    }, 'get', function() {
+    ['last_fm_xml', 'get', function() {
       return ['user/' + this.state('userid') + '/systemrecs.rss'];
     }]
   ]
