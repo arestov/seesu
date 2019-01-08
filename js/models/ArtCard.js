@@ -80,8 +80,10 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
     }, this.app);
   },
 
-  'nest_req-songs-list': [
-    [
+  'nest_req-songs-list': {
+    type: "nest_request",
+
+    parse: [
       {
         is_array: true,
         source: 'album.tracks.track',
@@ -93,10 +95,13 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
         }
       }
     ],
-    ['#lfm', 'get', function() {
-      return ['album.getInfo', {'artist': this.playlist_artist, album : this.album_name}];
+
+    api: '#lfm',
+
+    fn: [['album_artist', 'album_name'], function(api, opts, album_artist, album_name) {
+      return api.get('album.getInfo', {'artist': album_artist, album : album_name});
     }]
-  ]
+  }
 });
 var ArtistTagsList = spv.inh(LoadableList.TagsList, {}, {
   "+states": {
@@ -121,8 +126,10 @@ var ArtistTagsList = spv.inh(LoadableList.TagsList, {}, {
     ]
   },
 
-  'nest_req-tags_list': [
-    [{
+  'nest_req-tags_list': {
+    type: "nest_request",
+
+    parse: [{
       is_array: true,
       source: 'toptags.tag',
       props_map: {
@@ -130,12 +137,15 @@ var ArtistTagsList = spv.inh(LoadableList.TagsList, {}, {
         name: null
       }
     }],
-    ['#lfm', 'get', function() {
-      return ['artist.getTopTags', {
-        artist: this.head.artist_name
-      }];
+
+    api: '#lfm',
+
+    fn: [['artist_name'], function(api, opts, artist_name) {
+      return api.get('artist.getTopTags', {
+        artist: artist_name
+      });
     }]
-  ]
+  }
 });
 
 var AlbumsList = spv.inh(LoadableList, {}, {
@@ -162,6 +172,8 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
 
 
     target.updateManyStates({
+      'release_type': params.type,
+      'album_id': target.album_id,
       'album_artist': target.playlist_artist,
       'album_name': target.album_name,
       'album_year': params.year,
@@ -194,8 +206,10 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
     return '';
   },
 
-  'nest_req-songs-list': [
-    [function(r) {
+  'nest_req-songs-list': {
+    type: "nest_request",
+
+    parse: [function(r) {
       var _this = this;
       var compileArtistsArray = function(array) {
         var result = '';
@@ -232,17 +246,19 @@ var DiscogsAlbumSongs = spv.inh(SongsList, {
       return track_list;
 
     }],
-    ['#discogs', 'get', function() {
+
+    api: '#discogs',
+
+    fn: [['release_type', 'album_id'], function(api, opts, release_type, album_id) {
       var discogs_url;
-      if (this.release_type == 'master'){
+      if (release_type == 'master'){
         discogs_url = '/masters/';
       } else {
         discogs_url = '/releases/';
       }
-
-      return [discogs_url + this.album_id,{}];
+      return api.get(discogs_url + album_id, {});
     }]
-  ]
+  }
 });
 
 var DiscogsAlbums = spv.inh(AlbumsList, {}, {
@@ -302,8 +318,10 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
   manual_previews: false,
   'nest_rqc-albums_list': DiscogsAlbumSongs,
 
-  'nest_req-albums_list': [
-    [function(r) {
+  'nest_req-albums_list': {
+    type: "nest_request",
+
+    parse: [function(r) {
       return spv.toRealArray(spv.getTargetField(r, 'releases'));
     }, {
       source: 'pagination',
@@ -314,23 +332,28 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
         total: ['num', 'items']
       }
     }],
-    ['#discogs', 'get', function() {
-      var artist_id = this.state('artist_id');
-      return ['/artists/' + artist_id + '/releases', null];
+
+    api: '#discogs',
+
+    fn: [['artist_id'], function(api, opts, artist_id) {
+      return api.get('/artists/' + artist_id + '/releases', null);
     }]
-  ]
+  }
 });
 
 var ArtistAlbums = spv.inh(AlbumsList, {}, {
   page_limit: 50,
-  'nest_req-albums_list': [
-    declr_parsers.lfm.getAlbums('topalbums'),
-    ['#lfm', 'get', function() {
-      return ['artist.getTopAlbums', {
-        artist: this.head.artist_name
-      }];
+  'nest_req-albums_list': {
+    type: "nest_request",
+    parse: declr_parsers.lfm.getAlbums('topalbums'),
+    api: '#lfm',
+
+    fn: [['artist_name'], function(api, opts, artist_name) {
+      return api.get('artist.getTopAlbums', {
+        artist: artist_name
+      });
     }]
-  ],
+  },
   getSPC: true,
   subPager: function(pstr, string) {
     var parts = this.app.getCommaParts(string);
@@ -348,39 +371,55 @@ var ArtistAlbums = spv.inh(AlbumsList, {}, {
 
 
 var HypemArtistSeFreshSongs = spv.inh(SongsList.HypemPlaylist, {}, {
-  send_params: {},
-  'nest_req-songs-list': [
-    declr_parsers.hypem.tracks,
-    ['#hypem', 'get', function(opts) {
-      var path = '/playlist/search/' + this.head.artist_name + '/json/' + opts.paging.next_page +'/data.js';
-      return [path, this.send_params];
+  '+states': {
+    'send_params': ['compx', [], function() {return {
+
+    }}]
+  },
+  'nest_req-songs-list': {
+    type: "nest_request",
+    parse: declr_parsers.hypem.tracks,
+    api: '#hypem',
+
+    fn: [['send_params', 'artist_name'], function(api, opts, send_params, artist_name) {
+      var path = '/playlist/search/' + artist_name + '/json/' + opts.paging.next_page +'/data.js';
+      return api.get(path, send_params);
     }]
-  ]
+  }
 });
 var HypemArtistSeUFavSongs = spv.inh(SongsList.HypemPlaylist, {}, {
-
-  send_params: {
-    sortby:'favorite'
+  '+states': {
+    'send_params': ['compx', [], function() {return {
+      sortby:'favorite'
+    }}]
   },
-  'nest_req-songs-list': [
-    declr_parsers.hypem.tracks,
-    ['#hypem', 'get', function(opts) {
-      var path = '/playlist/search/' + this.head.artist_name + '/json/' + opts.paging.next_page +'/data.js';
-      return [path, this.send_params];
+  'nest_req-songs-list': {
+    type: "nest_request",
+    parse: declr_parsers.hypem.tracks,
+    api: '#hypem',
+
+    fn: [['send_params', 'artist_name'], function(api, opts, send_params, artist_name) {
+      var path = '/playlist/search/' + artist_name + '/json/' + opts.paging.next_page +'/data.js';
+      return api.get(path, send_params);
     }]
-  ]
+  }
 });
 var HypemArtistSeBlogged = spv.inh(SongsList.HypemPlaylist, {}, {
-  send_params: {
-    sortby:'blogged'
+  '+states': {
+    'send_params': ['compx', [], function() {return {
+      sortby:'blogged'
+    }}]
   },
-  'nest_req-songs-list': [
-    declr_parsers.hypem.tracks,
-    ['#hypem', 'get', function(opts) {
-      var path = '/playlist/search/' + this.head.artist_name + '/json/' + opts.paging.next_page +'/data.js';
-      return [path, this.send_params];
+  'nest_req-songs-list': {
+    type: "nest_request",
+    parse: declr_parsers.hypem.tracks,
+    api: '#hypem',
+
+    fn: [['send_params', 'artist_name'], function(api, opts, send_params, artist_name) {
+      var path = '/playlist/search/' + artist_name + '/json/' + opts.paging.next_page +'/data.js';
+      return api.get(path, send_params);
     }]
-  ]
+  }
 });
 
 
@@ -438,24 +477,26 @@ var SoundcloudArtcardSongs = spv.inh(SongsList, {}, {
   }
 });
 var SoundcloudArtistLikes = spv.inh(SoundcloudArtcardSongs, {}, {
-  'nest_req-songs-list': [
-    [declr_parsers.soundcloud.tracksFn, true],
-    ['#sc_api', 'get', function() {
-      var artist_id = this.state('artist_id');
-      return ['users/' + artist_id + '/favorites', null];
-    }]
+  'nest_req-songs-list': {
+    type: "nest_request",
+    parse: [declr_parsers.soundcloud.tracksFn, true],
+    api: '#sc_api',
 
-  ]
+    fn: [['artist_id'], function(api, opts, artist_id) {
+      return api.get('users/' + artist_id + '/favorites', null);
+    }]
+  }
 });
 var SoundcloudArtistSongs = spv.inh(SoundcloudArtcardSongs, {}, {
-  'nest_req-songs-list': [
-    [declr_parsers.soundcloud.tracksFn, true],
-    ['#sc_api', 'get', function() {
-      var artist_id = this.state('artist_id');
-      return ['users/' + artist_id + '/tracks', null];
-    }]
+  'nest_req-songs-list': {
+    type: "nest_request",
+    parse: [declr_parsers.soundcloud.tracksFn, true],
+    api: '#sc_api',
 
-  ],
+    fn: [['artist_id'], function(api, opts, artist_id) {
+      return api.get('users/' + artist_id + '/tracks', null);
+    }]
+  },
   allow_artist_guessing: true
 });
 
@@ -465,19 +506,24 @@ var TopArtistSongs = spv.inh(SongsList, {
   }
 }, {
   playlist_type: 'artist',
-  'nest_req-songs-list': [
-    declr_parsers.lfm.getTracks('toptracks'),
-    ['#lfm', 'get', function() {
-        return ['artist.getTopTracks', {
-        artist: this.head.artist_name
-      }];
+  'nest_req-songs-list': {
+    type: "nest_request",
+    parse: declr_parsers.lfm.getTracks('toptracks'),
+    api: '#lfm',
+
+    fn: [['artist_name'], function(api, opts, artist_name) {
+      return api.get('artist.getTopTracks', {
+      artist: artist_name
+    });
     }]
-  ]
+  }
 });
 
 var FreeArtistTracks = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': [
-    [
+  'nest_req-songs-list': {
+    type: "nest_request",
+
+    parse: [
       function(r) {
         var tracks = spv.toRealArray(spv.getTargetField(r, 'rss.channel.item'));
 
@@ -510,10 +556,13 @@ var FreeArtistTracks = spv.inh(SongsList, {}, {
         return track_list;
       }
     ],
-    ['#lfm', 'get', function() {
-      return ['artist.getPodcast', {artist: this.playlist_artist}];
+
+    api: '#lfm',
+
+    fn: [['playlist_artist'], function(api, opts, playlist_artist) {
+      return api.get('artist.getPodcast', {artist: playlist_artist});
     }]
-  ]
+  }
 });
 
 var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
@@ -912,19 +961,18 @@ var SimilarArtists = spv.inh(ArtistsList, {
 
   page_limit: 100,
 
-  getRqData: function(paging_opts) {
-    return {
-      artist: this.head.artist_name,
-      limit: paging_opts.page_limit
-    };
-  },
+  'nest_req-artists_list': {
+    type: "nest_request",
+    parse: declr_parsers.lfm.getArtists('similarartists', true),
+    api: '#lfm',
 
-  'nest_req-artists_list': [
-    declr_parsers.lfm.getArtists('similarartists', true),
-    ['#lfm', 'get', function(opts) {
-      return ['artist.getSimilar', this.getRqData(opts.paging)];
+    fn: [['artist_name'], function(api, opts, artist_name) {
+      return api.get('artist.getSimilar', {
+        artist: artist_name,
+        limit: opts.paging.page_limit
+      });
     }]
-  ],
+  },
 
   setPreviewList: function(raw_array) {
     var preview_list = this.getNesting(this.preview_mlist_name);

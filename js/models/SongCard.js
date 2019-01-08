@@ -153,8 +153,10 @@ var VKPostsList = spv.inh(LoadableListBase, {
     }];
   },
 
-  'nest_req-lists_list': [
-    [
+  'nest_req-lists_list': {
+    type: "nest_request",
+
+    parse: [
       {
         is_array: true,
         source: 'response.items',
@@ -220,13 +222,16 @@ var VKPostsList = spv.inh(LoadableListBase, {
         }]
       ]
     ],
-    ['#vktapi', 'get', function() {
-      return ['newsfeed.search', {
-        q: this.head.artist_name + ' ' + this.head.track_name + ' has:audio',
+
+    api: '#vktapi',
+
+    fn: [['artist_name', 'track_name'], function(api, opts, artist_name, track_name) {
+      return api.get('newsfeed.search', {
+        q: artist_name + ' ' + track_name + ' has:audio',
         extended: 1
-      }, null];
+      }, null);
     }]
-  ]
+  }
 });
 var isDepend = pv.utils.isDepend;
 
@@ -289,8 +294,10 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 
   'nest_rqc-listenings': SeesuListening,
 
-  'nest_req-listenings': [
-    [function(resp) {
+  'nest_req-listenings': {
+    type: "nest_request",
+
+    parse: [function(resp) {
       if (!resp || !resp.done) {return;}
 
       var listeners_raw = resp.done;
@@ -328,13 +335,16 @@ var SongCard = spv.inh(LoadableListBase, {}, {
 
       }]
     ]],
-    ['#sus', 'api', function() {
-      return ['track.getListeners', {
-        artist: this.head.artist_name,
-        title: this.head.track_name
-      }];
+
+    api: '#sus',
+
+    fn: [['artist_name', 'track_name'], function(api, artist_name, track_name) {
+      return api.api('track.getListeners', {
+        artist: artist_name,
+        title: track_name
+      });
     }]
-  ],
+  },
 
   'nest-fans': ['fans'],
 
