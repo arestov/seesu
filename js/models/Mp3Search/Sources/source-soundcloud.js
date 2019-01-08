@@ -7,8 +7,10 @@ var getQMSongIndex = require('../QMI').getQMSongIndex;
 var parseScTrack = require('js/modules/declr_parsers').soundcloud.parseTrack;
 
 var Query = pv.behavior({
-  'nest_req-files': [
-    [
+  'nest_req-files': {
+    type: "nest_request",
+
+    parse: [
       function (r, _1, _2, api) {
         if (!r || !r.length) {return;}
         var msq = this.head.msq;
@@ -26,7 +28,10 @@ var Query = pv.behavior({
         return result;
       }
     ],
-    ['#sc_api', [
+
+    api: '#sc_api',
+
+    fn: [
       ['msq'],
       function(api, opts, msq) {
         return api.get('tracks', {
@@ -36,8 +41,8 @@ var Query = pv.behavior({
           offset: 0,
         }, opts);
       }
-    ]]
-  ],
+    ]
+  },
 }, QueryBase);
 
 return pv.behavior({

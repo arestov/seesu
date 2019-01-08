@@ -56,13 +56,18 @@ function makeSong(cursor, msq){
 }
 
 var Query = pv.behavior({
-  'nest_req-files': [
-    [
+  'nest_req-files': {
+    type: "nest_request",
+
+    parse: [
       function (r) {
         return makeList(r, this.head.msq);
       }
     ],
-    ['#pleer_net', [
+
+    api: '#pleer_net',
+
+    fn: [
       ['msq'],
       function(api, opts, msq) {
         return api.get('search', {
@@ -70,8 +75,8 @@ var Query = pv.behavior({
           limit: 30,
         }, opts);
       }
-    ]]
-  ],
+    ]
+  },
 }, QueryBase);
 return pv.behavior({
   "+states": {

@@ -7,8 +7,10 @@ var getQMSongIndex = require('../QMI').getQMSongIndex;
 var guessArtist = require('../guessArtist');
 
 var Query = pv.behavior({
-  'nest_req-files': [
-    [
+  'nest_req-files': {
+    type: "nest_request",
+
+    parse: [
       function (r, _1, _2, api) {
         if (!r || !r.length) {return;}
         var msq = this.head.msq;
@@ -27,7 +29,10 @@ var Query = pv.behavior({
         return result;
       }
     ],
-    ['#fanburst_api', [
+
+    api: '#fanburst_api',
+
+    fn: [
       ['msq'],
       function(api, opts, msq) {
         return api.get('tracks/search', {
@@ -36,8 +41,8 @@ var Query = pv.behavior({
           offset: 0,
         }, opts);
       }
-    ]]
-  ],
+    ]
+  },
 }, QueryBase);
 
 function parseTrack(item, msq, client_id) {

@@ -6,13 +6,18 @@ var createSource = require('./createSource');
 var parseVkTrack = require('js/modules/declr_parsers').vk.parseTrack;
 
 var Query = pv.behavior({
-  'nest_req-files': [
-    [
+  'nest_req-files': {
+    type: "nest_request",
+
+    parse: [
       function (r) {
         return makeMusicList(r.response.items);
       }
     ],
-    ['vk_api', [
+
+    api: 'vk_api',
+
+    fn: [
       ['msq'],
       function(api, opts, msq) {
         return api.get('audio.search', {
@@ -21,8 +26,8 @@ var Query = pv.behavior({
           sort: 2,
         }, opts);
       }
-    ]]
-  ],
+    ]
+  },
 }, QueryBase);
 
 
