@@ -111,34 +111,48 @@ var auth_bh = {
 var VkSongList = spv.inh(SongsList, {}, pv.mergeBhv({}, auth_bh));
 
 var VkRecommendedTracks = spv.inh(VkSongList, {}, {
-  'nest_req-songs-list': [
-    [declr_parsers.vk.getTracksFn('response'), function(r) {
-      return r && r.response && !!r.response.length;
-    }],
-    ['#vktapi', 'get', function() {
-      return ['audio.getRecommendations', {
-        user_id: this.state('userid')
-      }];
-    }]
-
-  ]
+  'nest_req-songs-list': {
+    type: 'nest_req',
+    parse: [
+      declr_parsers.vk.getTracksFn('response'),
+      function(r) {
+        return r && r.response && !!r.response.length;
+      },
+    ],
+    api: '#vktapi',
+    fn: [
+      ['userid'],
+      function(vk_api, opts, userid) {
+        return vk_api.get('audio.getRecommendations', {
+          user_id: userid,
+        });
+      }
+    ]
+  }
 });
 
 var MyVkAudioList = spv.inh(VkSongList, {}, {
-  'nest_req-songs-list': [
-    [declr_parsers.vk.getTracksFn('response.items'), {
-      props_map: {
-        total: ['num', 'response.count'],
-        has_data_holes: [true]
+  'nest_req-songs-list': {
+    type: 'nest_req',
+    parse: [
+      declr_parsers.vk.getTracksFn('response.items'),
+      {
+        props_map: {
+          total: ['num', 'response.count'],
+          has_data_holes: [true]
+        }
       }
-    }],
-    ['#vktapi', 'get', function() {
-      return ['audio.get', {
-        oid: this.state('userid')
-      }];
-    }]
-
-  ]
+    ],
+    api: '#vktapi',
+    fn: [
+      ['userid'],
+      function(vk_api, opts, userid) {
+        return ['audio.get', {
+          oid: userid,
+        }];
+      }
+    ]
+  }
 });
 
 var vk_user_tracks_sp = ['my', 'recommended'];
@@ -168,8 +182,9 @@ var VKFriendsList = spv.inh(LoadableList, {}, pv.mergeBhv({
   model_name: 'vk_users',
   page_limit: 200,
   'nest_rqc-list_items': '#users/vk:[:userid]',
-  'nest_req-list_items': [
-    [
+  'nest_req-list_items': {
+    type: 'nest_req',
+    parse: [
       {
         is_array: true,
         source: 'response.items',
@@ -182,18 +197,26 @@ var VKFriendsList = spv.inh(LoadableList, {}, pv.mergeBhv({
           'selected_image.url': 'photo'
         },
       },
-    {
-      props_map: {
-        total: ['num', 'response.count']
+      {
+        props_map: {
+          total: ['num', 'response.count']
+        }
       }
-    }],
-    ['#vktapi', 'get', function() {
-      return ['friends.get', {
-        user_id: this.state('userid'),
-        fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
-      }];
-    }]
-  ]
+    ],
+    api: '#vktapi',
+    fn: [
+      ['userid'],
+      function(vk_api, opts, userid) {
+        return vk_api.get('friends.get', {
+          user_id: userid,
+          fields:
+            ['id', 'first_name', 'last_name',
+            'sex', 'photo', 'photo_medium', 'photo_big']
+            .join(',')
+        })
+      }
+    ]
+  }
 }, auth_bh));
 
 
