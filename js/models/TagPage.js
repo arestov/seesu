@@ -12,21 +12,29 @@ var AlbumsList = ArtCard.AlbumsList;
 var ArtistsList = ArtCard.ArtistsList;
 
 var SimilarTags = spv.inh(LoadableList.TagsList, {}, {
-  'nest_req-tags_list': [
-    [{
-      is_array: true,
-      source: 'similartags.tag',
-      props_map: {
-        count: null,
-        name: null
+  'nest_req-tags_list': {
+    type: 'nest_request',
+    parse: [
+      {
+        is_array: true,
+        source: 'similartags.tag',
+        props_map: {
+          count: null,
+          name: null
+        }
       }
-    }],
-    ['#lfm', 'get', function() {
-      return ['tag.getSimilar', {
-        tag: this.head.tag_name
-      }];
-    }]
-  ]
+    ],
+    api: '#lfm',
+    fn: [
+      ['tag_name'],
+      function(lfm, opts, tag_name) {
+        debugger
+        return lfm.get('tag.getSimilar', {
+          tag: tag_name
+        })
+      }
+    ]
+  }
 });
 
 var TagAlbums = spv.inh(AlbumsList, {}, {
