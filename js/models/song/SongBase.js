@@ -525,9 +525,11 @@ return spv.inh(BrowseMap.Model, {
   },
 
   req_map: [
-    [
-      ['random_lfm_track_name'],
-      function (r) {
+    {
+      type: "state_request",
+      states: ['random_lfm_track_name'],
+
+      parse: function (r) {
         var tracks_list = spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
         var tracks_list_clean = [];
         for (var i = 0; i < tracks_list.length; i++) {
@@ -543,25 +545,24 @@ return spv.inh(BrowseMap.Model, {
         };
       },
 
-      [
-        ['can_load_random_lfm_track_name'],
-        [
-          '#lfm', [
-            ['artist', 'can_load_random_lfm_track_name'],
-            function(api, opts, artist_name) {
-              return api.get('artist.getTopTracks', {
-                artist: artist_name,
-                limit: 30,
-                page: 1
-              });
-            }
-          ]
-        ]
+      api: '#lfm',
+
+      fn: [
+        ['artist', 'can_load_random_lfm_track_name'],
+        function(api, opts, artist_name) {
+          return api.get('artist.getTopTracks', {
+            artist: artist_name,
+            limit: 30,
+            page: 1
+          });
+        }
       ]
-    ],
-    [
-      ['album_name', 'album_image', 'listeners', 'playcount', 'duration', 'top_tags'],
-      {
+    },
+    {
+      type: "state_request",
+      states: ['album_name', 'album_image', 'listeners', 'playcount', 'duration', 'top_tags'],
+
+      parse: {
         source: 'track',
         props_map: {
           album_name: 'album.title',
@@ -578,20 +579,20 @@ return spv.inh(BrowseMap.Model, {
           }
         }
       },
-      [
+
+      api: '#lfm',
+
+      fn: [
         ['artist', 'track'],
-        ['#lfm', [
-          ['artist', 'track'],
-          function(api, opts, artist_name, track_name) {
-            return api
-              .get('track.getInfo', {
-                artist: artist_name,
-                track: track_name
-              });
-          }
-        ]]
+        function(api, opts, artist_name, track_name) {
+          return api
+            .get('track.getInfo', {
+              artist: artist_name,
+              track: track_name
+            });
+        }
       ]
-    ]
+    }
   ],
 
   getRandomTrackName: function() {

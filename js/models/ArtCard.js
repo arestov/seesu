@@ -706,9 +706,11 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
   },
 
   req_map: [
-    [
-      ['soundcloud_matched', 'soundcloud_profile'],
-      function (r) {
+    {
+      type: "state_request",
+      states: ['soundcloud_matched', 'soundcloud_profile'],
+
+      parse: function (r) {
         var sorted = r && r.sort(function (a, b) {
           return spv.sortByRules(a, b, [{field: 'followers_count', reverse: true}]);
         });
@@ -719,53 +721,21 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
           soundcloud_profile: matched && matched.id
         };
       },
-      ['#sc_api', 'get', function() {
-        return ['users', {
-          q: this.head.artist_name
-        }];
-      }]
-    ],
 
-    // 	['soundcloud_profile'],
-    // 	function(r) {
-    // 		var soundcloud_profile;
-    // 		if (r.location){
-    // 			var matched = r.location.match(/users\/(\d+)/);
-    // 			var artist_scid = matched[1];
-    // 			if (artist_scid){
-    // 				soundcloud_profile = artist_scid;
-    // 			} else {
-    // 			}
-    // 		}
-    // 		return {
-    // 			soundcloud_profile: soundcloud_profile
-    // 		};
-    //
-    // 	},
-    // 	[
-    // 		['soundcloud_matched'],
-    // 		['#sc_api', 'get', function() {
-    // 			return ['resolve', {
-    // 				'_status_code_map[302]': 200,
-    // 				'_status_format': 'json',
-    // 				url: 'http://soundcloud.com/' + this.state('googled_sc_name')
-    // 			}];
-    // 		}]
-    // 	]
-    // ],
-    // [
-    // 	['images'],
-    // 	function(r) {
-    // 		var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
-    // 		return [images];
-    // 	},
-    // 	['#lfm', 'get', function() {
-    // 		return ['artist.getImages', {'artist': this.head.artist_name }];
-    // 	}]
-    // ],
-    [
-      ['profile_image', 'bio', 'listeners', 'playcount', 'similar_artists_list', 'tags_list'],
-      function(r) {
+      api: '#sc_api',
+
+      fn: [['artist_name'], function(api, opts, artist_name) {
+        return api.get('users', {
+          q: artist_name
+        });
+      }]
+    },
+
+    {
+      type: "state_request",
+      states: ['profile_image', 'bio', 'listeners', 'playcount', 'similar_artists_list', 'tags_list'],
+
+      parse: function(r) {
         var psai = app_serv.parseArtistInfo(r);
         var profile_image = this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image'));
 
@@ -794,13 +764,18 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
           artists_list, psai.tags
         ];
       },
-      ['#lfm', 'get', function() {
-        return ['artist.getInfo', {'artist': this.head.artist_name}];
+
+      api: '#lfm',
+
+      fn: [['artist_name'], function(api, opts, artist_name) {
+        return api.get('artist.getInfo', {'artist': artist_name});
       }]
-    ],
-    [
-      ['discogs_id'],
-      function(r) {
+    },
+    {
+      type: "state_request",
+      states: ['discogs_id'],
+
+      parse: function(r) {
         var artist_name = this.head.artist_name;
         var simplifyArtistName = function(name) {
           return name.replace(/\([\s\S]*?\)/, '').split(/\s|,/).sort().join('').toLowerCase();
@@ -832,11 +807,13 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
         // };
         //this.app.discogs.get('/database/search', {q: artist_name, type:"artist"}
       },
-      ['#discogs', 'get', function() {
-        return ['/database/search', {q: this.head.artist_name, type:"artist" }];
-      }]
 
-    ]
+      api: '#discogs',
+
+      fn: [['artist_name'], function(api, opts, artist_name) {
+        return api.get('/database/search', {q: artist_name, type:"artist" });
+      }]
+    }
   ],
   getTopTracks: function() {
     if (this.top_songs){
