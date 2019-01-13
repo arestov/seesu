@@ -7,42 +7,51 @@ var getQMSongIndex = require('../QMI').getQMSongIndex;
 var guessArtist = require('../guessArtist');
 
 var Query = pv.behavior({
-  'nest_req-files': {
-    type: "nest_request",
+  "+effects": {
+    "consume": {
+      "files": {
+        type: "nest_request",
 
-    parse: [
-      function (r, _1, _2, api) {
-        if (!r || !r.length) {return;}
-        var msq = this.head.msq;
-        var result = [];
-        for (var i = 0; i < r.length; i++) {
-          if (!r[i]) {continue;}
-          var file = parseTrack(r[i], msq, api.client_id);
-          if (!file) {continue;}
+        parse: [function(r, _1, _2, api) {
+          if (!r || !r.length) {
+            return;
+          }
+          var msq = this.head.msq;
+          var result = [];
+          for (var i = 0; i < r.length; i++) {
+            if (!r[i]) {
+              continue;
+            }
+            var file = parseTrack(r[i], msq, api.client_id);
+            if (!file) {
+              continue;
+            }
 
-          var qmi = getQMSongIndex(msq, file);
-          if (qmi == -1) {continue;}
+            var qmi = getQMSongIndex(msq, file);
+            if (qmi == -1) {
+              continue;
+            }
 
-          result.push(file);
-        }
+            result.push(file);
+          }
 
-        return result;
+          return result;
+        }],
+
+        api: "#fanburst_api",
+
+        fn: [["msq"], function(api, opts, msq) {
+          return api.get("tracks/search", {
+            query: msq.q ? msq.q : (msq.artist || "") + " - " + (msq.track || ""),
+            per_page: 30,
+            offset: 0
+          }, opts);
+        }]
       }
-    ],
-
-    api: '#fanburst_api',
-
-    fn: [
-      ['msq'],
-      function(api, opts, msq) {
-        return api.get('tracks/search', {
-          query: msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || '')),
-          per_page: 30,
-          offset: 0,
-        }, opts);
-      }
-    ]
+    }
   },
+
+
 }, QueryBase);
 
 function parseTrack(item, msq, client_id) {

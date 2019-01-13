@@ -12,45 +12,55 @@ var AlbumsList = ArtCard.AlbumsList;
 var ArtistsList = ArtCard.ArtistsList;
 
 var SimilarTags = spv.inh(LoadableList.TagsList, {}, {
-  'nest_req-tags_list': {
-    type: 'nest_request',
-    parse: [
-      {
-        is_array: true,
-        source: 'similartags.tag',
-        props_map: {
-          count: null,
-          name: null
-        }
+  "+effects": {
+    "consume": {
+      "tags_list": {
+        type: "nest_request",
+
+        parse: [{
+          is_array: true,
+          source: "similartags.tag",
+
+          props_map: {
+            count: null,
+            name: null
+          }
+        }],
+
+        api: "#lfm",
+
+        fn: [["tag_name"], function(lfm, opts, tag_name) {
+          debugger;
+          return lfm.get("tag.getSimilar", {
+            tag: tag_name
+          });
+        }]
       }
-    ],
-    api: '#lfm',
-    fn: [
-      ['tag_name'],
-      function(lfm, opts, tag_name) {
-        debugger
-        return lfm.get('tag.getSimilar', {
-          tag: tag_name
-        })
-      }
-    ]
-  }
+    }
+  },
+
+
 });
 
 var TagAlbums = spv.inh(AlbumsList, {}, {
+  "+effects": {
+    "consume": {
+      "albums_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getAlbums("albums"),
+        api: "#lfm",
+
+        fn: [["tag_name"], function(api, opts, tag_name) {
+          return api.get("tag.getTopAlbums", {
+            tag: tag_name
+          });
+        }]
+      }
+    }
+  },
 
   page_limit: 50,
-  'nest_req-albums_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getAlbums('albums'),
-    api: '#lfm',
 
-    fn: [['tag_name'], function(api, opts, tag_name) {
-      return api.get('tag.getTopAlbums', {
-        tag: tag_name
-      });
-    }]
-  }
 });
 
 
@@ -68,20 +78,23 @@ function getHypeTagName(tag_name) {
 
 
 var HypemTagPlaylist = spv.inh(SongsList.HypemPlaylist, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.hypem.tracks,
-    api: '#hypem',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.hypem.tracks,
+        api: "#hypem",
 
-    fn: [['send_params', 'tag_name'], function(api, opts, send_params, tag_name) {
-      var path = '/playlist/tags/' +
-        getHypeTagName(tag_name) +
-        '/json/' + opts.paging.next_page +
-        '/data.js';
+        fn: [["send_params", "tag_name"], function(api, opts, send_params, tag_name) {
+          var path = "/playlist/tags/" + getHypeTagName(tag_name) + "/json/" + opts.paging.next_page + "/data.js";
 
-      return api.get(path, send_params);
-    }]
-  }
+          return api.get(path, send_params);
+        }]
+      }
+    }
+  },
+
+
 });
 // var Fav25HypemTagSongs = spv.inh(HypemTagPlaylist, {}, {
 // 	send_params: {
@@ -134,17 +147,22 @@ var HypemTagPlaylist = spv.inh(SongsList.HypemPlaylist, {}, {
 
 
 var TopTagSongs = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('tracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("tracks"),
+        api: "#lfm",
 
-    fn: [['tag_name'], function(api, opts, tag_name) {
-      return api.get('tag.getTopTracks', {
-        tag: tag_name
-      });
-    }]
-  }
+        fn: [["tag_name"], function(api, opts, tag_name) {
+          return api.get("tag.getTopTracks", {
+            tag: tag_name
+          });
+        }]
+      }
+    }
+  },
+
 
 });
 
@@ -210,19 +228,25 @@ var SongsLists = spv.inh(BrowseMap.Model, {}, {
 // });
 
 var TagTopArtists = spv.inh(ArtistsList, {}, {
-  page_limit: 130,
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('topartists', true),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("topartists", true),
+        api: "#lfm",
 
-    fn: [['tag_name'], function(api, opts, tag_name) {
-      return api.get('tag.getTopArtists', {
-        tag: tag_name,
-        limit: opts.paging.page_limit
-      });
-    }]
-  }
+        fn: [["tag_name"], function(api, opts, tag_name) {
+          return api.get("tag.getTopArtists", {
+            tag: tag_name,
+            limit: opts.paging.page_limit
+          });
+        }]
+      }
+    }
+  },
+
+  page_limit: 130,
+
 });
 
 var ArtistsLists = spv.inh(BrowseMap.Model, {}, {
@@ -303,23 +327,30 @@ var TagsList = spv.inh(LoadableList.TagsList, {
     }
   }
 }, {
-  'nest_req-tags_list': {
-    type: "nest_request",
+  "+effects": {
+    "consume": {
+      "tags_list": {
+        type: "nest_request",
 
-    parse: [{
-      is_array: true,
-      source: 'toptags.tag',
-      props_map: {
-        count: null,
-        name: null
+        parse: [{
+          is_array: true,
+          source: "toptags.tag",
+
+          props_map: {
+            count: null,
+            name: null
+          }
+        }],
+
+        api: "#lfm",
+
+        fn: [[], function(api, opts) {
+          return api.get("tag.getTopTags", {
+            limit: opts.paging.page_limit
+          });
+        }]
       }
-    }],
-
-    api: '#lfm',
-
-    fn: [[], function(api, opts) {
-      return api.get('tag.getTopTags', {limit: opts.paging.page_limit});
-    }]
+    }
   },
   sub_pager: {
     item: [
@@ -332,6 +363,7 @@ var TagsList = spv.inh(LoadableList.TagsList, {
       }
     ]
   },
+
   page_limit: 150
 });
 

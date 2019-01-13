@@ -111,48 +111,54 @@ var auth_bh = {
 var VkSongList = spv.inh(SongsList, {}, pv.mergeBhv({}, auth_bh));
 
 var VkRecommendedTracks = spv.inh(VkSongList, {}, {
-  'nest_req-songs-list': {
-    type: 'nest_request',
-    parse: [
-      declr_parsers.vk.getTracksFn('response'),
-      function(r) {
-        return r && r.response && !!r.response.length;
-      },
-    ],
-    api: '#vktapi',
-    fn: [
-      ['userid'],
-      function(vk_api, opts, userid) {
-        return vk_api.get('audio.getRecommendations', {
-          user_id: userid,
-        });
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+
+        parse: [declr_parsers.vk.getTracksFn("response"), function(r) {
+          return r && r.response && !!r.response.length;
+        }],
+
+        api: "#vktapi",
+
+        fn: [["userid"], function(vk_api, opts, userid) {
+          return vk_api.get("audio.getRecommendations", {
+            user_id: userid
+          });
+        }]
       }
-    ]
-  }
+    }
+  },
+
+
 });
 
 var MyVkAudioList = spv.inh(VkSongList, {}, {
-  'nest_req-songs-list': {
-    type: 'nest_request',
-    parse: [
-      declr_parsers.vk.getTracksFn('response.items'),
-      {
-        props_map: {
-          total: ['num', 'response.count'],
-          has_data_holes: [true]
-        }
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+
+        parse: [declr_parsers.vk.getTracksFn("response.items"), {
+          props_map: {
+            total: ["num", "response.count"],
+            has_data_holes: [true]
+          }
+        }],
+
+        api: "#vktapi",
+
+        fn: [["userid"], function(vk_api, opts, userid) {
+          return ["audio.get", {
+            oid: userid
+          }];
+        }]
       }
-    ],
-    api: '#vktapi',
-    fn: [
-      ['userid'],
-      function(vk_api, opts, userid) {
-        return ['audio.get', {
-          oid: userid,
-        }];
-      }
-    ]
-  }
+    }
+  },
+
+
 });
 
 var vk_user_tracks_sp = ['my', 'recommended'];
@@ -178,45 +184,54 @@ var VkUserTracks = spv.inh(BrowseMap.Model, {}, {
 });
 
 var VKFriendsList = spv.inh(LoadableList, {}, pv.mergeBhv({
+  "+effects": {
+    "consume": {
+      "list_items": {
+        type: "nest_request",
+
+        parse: [{
+          is_array: true,
+          source: "response.items",
+
+          props_map: {
+            userid: "id",
+            first_name: "first_name",
+            last_name: "last_name",
+            photo: "photo",
+            "ava_image.url": "photo_medium",
+            "selected_image.url": "photo"
+          }
+        }, {
+          props_map: {
+            total: ["num", "response.count"]
+          }
+        }],
+
+        api: "#vktapi",
+
+        fn: [["userid"], function(vk_api, opts, userid) {
+          return vk_api.get("friends.get", {
+            user_id: userid,
+
+            fields: [
+              "id",
+              "first_name",
+              "last_name",
+              "sex",
+              "photo",
+              "photo_medium",
+              "photo_big"
+            ].join(",")
+          });
+        }]
+      }
+    }
+  },
+
   main_list_name: 'list_items',
   model_name: 'vk_users',
   page_limit: 200,
   'nest_rqc-list_items': '#users/vk:[:userid]',
-  'nest_req-list_items': {
-    type: 'nest_request',
-    parse: [
-      {
-        is_array: true,
-        source: 'response.items',
-        props_map: {
-          userid: 'id',
-          first_name: 'first_name',
-          last_name: 'last_name',
-          photo: 'photo',
-          'ava_image.url': 'photo_medium',
-          'selected_image.url': 'photo'
-        },
-      },
-      {
-        props_map: {
-          total: ['num', 'response.count']
-        }
-      }
-    ],
-    api: '#vktapi',
-    fn: [
-      ['userid'],
-      function(vk_api, opts, userid) {
-        return vk_api.get('friends.get', {
-          user_id: userid,
-          fields:
-            ['id', 'first_name', 'last_name',
-            'sex', 'photo', 'photo_medium', 'photo_big']
-            .join(',')
-        })
-      }
-    ]
-  }
 }, auth_bh));
 
 

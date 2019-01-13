@@ -114,18 +114,24 @@ var auth_bh = {
 //LULA - LfmUserLibraryArtist
 //непосредственно список композиций артиста, которые слушал пользователь
 var LULATracks = spv.inh(SongsList, {}, pv.mergeBhv({
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('tracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("tracks"),
+        api: "#lfm",
 
-    fn: [['userid', 'artist_name'], function(lfm, opts, userid, artist_name) {
-      return lfm.get('library.getTracks', {
-        user: userid,
-        artist: artist_name
-      });
-    }]
-  }
+        fn: [["userid", "artist_name"], function(lfm, opts, userid, artist_name) {
+          return lfm.get("library.getTracks", {
+            user: userid,
+            artist: artist_name
+          });
+        }]
+      }
+    }
+  },
+
+
 }, auth_bh));
 
 var slashPrefix = function(src) {
@@ -189,38 +195,66 @@ var UserArtists = spv.inh(LoadableList, {}, {
 // }, auth_bh));
 
 var TopLUArt = spv.inh(UserArtists, {}, pv.mergeBhv({
-  'nest_rqc-artists': LULA,
-  'nest_req-artists': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('topartists'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("topartists"),
+        api: "#lfm",
 
-    fn: [['userid', 'timeword'], function(lfm, opts, userid, timeword) {
-      return lfm.get('user.getTopArtists', {
-        user: userid,
-        period: timeword
-      });
-    }]
+        fn: [["userid", "timeword"], function(lfm, opts, userid, timeword) {
+          return lfm.get("user.getTopArtists", {
+            user: userid,
+            period: timeword
+          });
+        }]
+      }
+    }
   },
+
+  'nest_rqc-artists': LULA,
+
 }, auth_bh));
 
 var TopUserTracks = spv.inh(SongsList, {}, pv.mergeBhv({
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('toptracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("toptracks"),
+        api: "#lfm",
 
-    fn: [['userid', 'timeword'], function(lfm, opts, userid, timeword) {
-      return lfm.get('user.getTopTracks', {
-        user: userid,
-        period: timeword
-      });
-    }]
+        fn: [["userid", "timeword"], function(lfm, opts, userid, timeword) {
+          return lfm.get("user.getTopTracks", {
+            user: userid,
+            period: timeword
+          });
+        }]
+      }
+    }
   },
+
+
 }, auth_bh));
 
 
 var LfmLovedList = spv.inh(SongsList, {}, pv.mergeBhv({
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("lovedtracks"),
+        api: "#lfm",
+
+        fn: [["userid"], function(lfm, opts, userid) {
+          return lfm.get("user.getLovedTracks", {
+            user: userid
+          });
+        }]
+      }
+    }
+  },
+
   "+states": {
     "access_desc": [
       "compx",
@@ -228,20 +262,38 @@ var LfmLovedList = spv.inh(SongsList, {}, pv.mergeBhv({
     ]
   },
 
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('lovedtracks'),
-    api: '#lfm',
 
-    fn: [['userid'], function(lfm, opts, userid) {
-      return lfm.get('user.getLovedTracks', {
-        user: userid
-      });
-    }]
-  }
 }, auth_bh));
 
 var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+
+        parse: [function(xml) {
+          var data_list = [];
+          var artists = $(xml).find("channel item title");
+          if (artists && artists.length) {
+            for (var i = 0, l = artists.length < 30 ? artists.length : 30; i < l; i++) {
+              var artist = $(artists[i]).text();
+              data_list.push({
+                artist: artist
+              });
+            }
+          }
+          return data_list;
+        }],
+
+        api: "last_fm_xml",
+
+        fn: [["userid"], function(last_fm_xml, opts, userid) {
+          return last_fm_xml.get("user/" + userid + "/systemrecs.rss");
+        }]
+      }
+    }
+  },
+
   "+states": {
     "access_desc": [
       "compx",
@@ -258,6 +310,7 @@ var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
   },
 
   page_limit: 30,
+
   'api-last_fm_xml': function() {
     return {
       api_name: 'last_fm_xml',
@@ -272,48 +325,33 @@ var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
       errors_fields: []
     };
   },
-  'nest_req-artists_list': {
-    type: "nest_request",
 
-    parse: [function(xml) {
-      var data_list = [];
-      var artists = $(xml).find('channel item title');
-      if (artists && artists.length) {
-        for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-          var artist = $(artists[i]).text();
-          data_list.push({
-            artist: artist
-          });
-        }
-      }
-      return data_list;
-    }],
 
-    api: 'last_fm_xml',
-
-    fn: [['userid'], function(last_fm_xml, opts, userid) {
-      return last_fm_xml.get('user/' + userid + '/systemrecs.rss');
-    }]
-  }
 }, auth_bh));
 
 var RecommArtListForCurrentUser = spv.inh(RecommArtList, {}, {
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("recommendations"),
+        api: "#lfm",
+
+        fn: [[], function(lfm) {
+          return lfm.get("user.getRecommendedArtists", {
+            sk: this.app.lfm.sk
+          });
+        }]
+      }
+    }
+  },
+
   "+states": {
     "loader_disallowed": //check this compx
     ["compx"].concat(null)
   },
 
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('recommendations'),
-    api: '#lfm',
 
-    fn: [[], function(lfm) {
-      return lfm.get('user.getRecommendedArtists', {
-        sk: this.app.lfm.sk
-      });
-    }]
-  }
 });
 
 var user_artists_sp = ['recommended', /*'library',*/ 'top:7day', /* 'top:1month',*/
@@ -393,20 +431,26 @@ LfmUserArtists.LfmUserArtistsForCU = spv.inh(LfmUserArtists, {}, {
 
 
 var LfmRecentUserTracks = spv.inh(SongsList, {}, pv.mergeBhv({
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('recenttracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("recenttracks"),
+        api: "#lfm",
 
-    fn: [['userid'], function(lfm, opts, userid) {
-      return lfm.get('user.getRecentTracks', {
-        user: userid,
-        extended: 1,
-        to: (new Date()/1000).toFixed(),
-        nowplaying: true
-      });
-    }]
-  }
+        fn: [["userid"], function(lfm, opts, userid) {
+          return lfm.get("user.getRecentTracks", {
+            user: userid,
+            extended: 1,
+            to: (new Date() / 1000).toFixed(),
+            nowplaying: true
+          });
+        }]
+      }
+    }
+  },
+
+
 }, auth_bh));
 
 var user_tracks_sp = [
@@ -467,6 +511,23 @@ var LfmUserTracks = spv.inh(BrowseMap.Model, {}, {
 
 
 var UserNewReleases = spv.inh(AlbumsList, {}, pv.mergeBhv({
+  "+effects": {
+    "consume": {
+      "albums_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getAlbums("albums"),
+        api: "#lfm",
+
+        fn: [["userid"], function(lfm, opts, userid) {
+          return lfm.get("user.getNewReleases", {
+            user: userid,
+            userecs: this.recomms ? 1 : 0
+          });
+        }]
+      }
+    }
+  },
+
   "+states": {
     "access_desc": [
       "compx",
@@ -476,18 +537,6 @@ var UserNewReleases = spv.inh(AlbumsList, {}, pv.mergeBhv({
 
   page_limit: 50,
 
-  'nest_req-albums_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getAlbums('albums'),
-    api: '#lfm',
-
-    fn: [['userid'], function(lfm, opts, userid) {
-      return lfm.get('user.getNewReleases', {
-        user: userid,
-        userecs: this.recomms ? 1 : 0
-      });
-    }]
-  }
 }, auth_bh));
 
 var UserLibNewReleases = spv.inh(UserNewReleases, {}, {});
@@ -498,18 +547,24 @@ var RecommNewReleases = spv.inh(UserNewReleases, {}, {
 
 
 var LfmUserTopAlbums = spv.inh(AlbumsList, {}, pv.mergeBhv({
-  'nest_req-albums_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getAlbums('topalbums'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "albums_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getAlbums("topalbums"),
+        api: "#lfm",
 
-    fn: [['userid', 'timeword'], function(lfm, opts, userid, timeword) {
-      return lfm.get('user.getTopAlbums', {
-        user: userid,
-        period: timeword
-      });
-    }]
-  }
+        fn: [["userid", "timeword"], function(lfm, opts, userid, timeword) {
+          return lfm.get("user.getTopAlbums", {
+            user: userid,
+            period: timeword
+          });
+        }]
+      }
+    }
+  },
+
+
 }, auth_bh));
 
 
@@ -584,53 +639,71 @@ var LfmUserAlbums = spv.inh(BrowseMap.Model, {}, {
 
 
 var TaggedSongs = spv.inh(SongsList, {}, pv.mergeBhv({
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('taggings.tracks', false, 'taggings'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("taggings.tracks", false, "taggings"),
+        api: "#lfm",
 
-    fn: [['userid', 'tag_name'], function(lfm, opts, userid, tag_name) {
-      return lfm.get('user.getPersonalTags', {
-        user: userid,
-        taggingtype: 'track',
-        tag: tag_name
-      });
-    }]
-  }
+        fn: [["userid", "tag_name"], function(lfm, opts, userid, tag_name) {
+          return lfm.get("user.getPersonalTags", {
+            user: userid,
+            taggingtype: "track",
+            tag: tag_name
+          });
+        }]
+      }
+    }
+  },
+
+
 }, auth_bh));
 
 var TaggedArtists = spv.inh(ArtistsList, {}, pv.mergeBhv({
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('taggings.artists', false, 'taggings'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("taggings.artists", false, "taggings"),
+        api: "#lfm",
 
-    fn: [['userid', 'tag_name'], function(lfm, opts, userid, tag_name) {
-      return lfm.get('user.getPersonalTags', {
-        user: userid,
-        taggingtype: 'artist',
-        tag: tag_name
-      });
-    }]
-  }
+        fn: [["userid", "tag_name"], function(lfm, opts, userid, tag_name) {
+          return lfm.get("user.getPersonalTags", {
+            user: userid,
+            taggingtype: "artist",
+            tag: tag_name
+          });
+        }]
+      }
+    }
+  },
+
+
 }, auth_bh));
 
 
 var TaggedAlbums = spv.inh(AlbumsList, {}, pv.mergeBhv({
-  page_limit: 50,
-  'nest_req-albums_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getAlbums('taggings.albums', false, 'taggings'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "albums_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getAlbums("taggings.albums", false, "taggings"),
+        api: "#lfm",
 
-    fn: [['userid', 'tag_name'], function(lfm, opts, userid, tag_name) {
-      return lfm.get('user.getPersonalTags', {
-        user: userid,
-        taggingtype: 'album',
-        tag: tag_name
-      });
-    }]
-  }
+        fn: [["userid", "tag_name"], function(lfm, opts, userid, tag_name) {
+          return lfm.get("user.getPersonalTags", {
+            user: userid,
+            taggingtype: "album",
+            tag: tag_name
+          });
+        }]
+      }
+    }
+  },
+
+  page_limit: 50,
+
 }, auth_bh));
 
 var user_tag_sp = ['artists', 'tracks', 'albums'];
@@ -660,35 +733,38 @@ var UserTag = spv.inh(BrowseMap.Model, {}, {
 });
 
 var LfmUserTags = spv.inh(LoadableList, {}, pv.mergeBhv({
+  "+effects": {
+    "consume": {
+      "tags": {
+        type: "nest_request",
+
+        parse: [{
+          is_array: true,
+          source: "toptags.tag",
+
+          props_map: {
+            nav_title: "name",
+            url_part: "name",
+            tag_name: "name",
+            count: null
+          }
+        }],
+
+        api: "#lfm",
+
+        fn: [["userid"], function(lfm, opts, userid) {
+          return lfm.get("user.getTopTags", {
+            user: userid
+          });
+        }]
+      }
+    }
+  },
+
   model_name: 'lfm_listened_tags',
   main_list_name: 'tags',
   page_limit: 3000,
-  'nest_req-tags': {
-    type: "nest_request",
-
-    parse: [
-      {
-        is_array: true,
-        source: 'toptags.tag',
-        props_map: {
-          nav_title: 'name',
-          url_part: 'name',
-          tag_name: 'name',
-          count: null
-        }
-      }
-    ],
-
-    api: '#lfm',
-
-    fn: [['userid'], function(lfm, opts, userid) {
-      return lfm.get('user.getTopTags', {
-        user: userid
-      });
-    }]
-  },
   'nest_rqc-tags': UserTag,
-
 
   tagsParser: function(r, field_name) {
     var result = [];
@@ -716,6 +792,23 @@ var LfmUsersList = spv.inh(LoadableList, {}, {
 var LfmUsersListOfUser = spv.inh(LfmUsersList, {}, pv.mergeBhv({}, auth_bh));
 
 var LfmFriendsList = spv.inh(LfmUsersListOfUser, {}, {
+  "+effects": {
+    "consume": {
+      "list_items": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getUsers("friends"),
+        api: "#lfm",
+
+        fn: [["userid"], function(lfm, opts, userid) {
+          return lfm.get("user.getFriends", {
+            recenttracks: true,
+            user: userid
+          });
+        }]
+      }
+    }
+  },
+
   beforeReportChange: function(list) {
     list.sort(function(a,b ){return spv.sortByRules(a, b, [
       {
@@ -737,29 +830,27 @@ var LfmFriendsList = spv.inh(LfmUsersListOfUser, {}, {
     ]);});
     return list;
   },
-  'nest_req-list_items': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getUsers('friends'),
-    api: '#lfm',
 
-    fn: [['userid'], function(lfm, opts, userid) {
-      return lfm.get('user.getFriends', {
-        recenttracks: true,
-        user: userid
-      });
-    }]
-  }
+
 });
 var LfmNeighboursList = spv.inh(LfmUsersListOfUser, {}, {
-  'nest_req-list_items': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getUsers('neighbours'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "list_items": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getUsers("neighbours"),
+        api: "#lfm",
 
-    fn: [['userid'], function(lfm, opts, userid) {
-      return lfm.get('user.getNeighbours', {user: userid});
-    }]
-  }
+        fn: [["userid"], function(lfm, opts, userid) {
+          return lfm.get("user.getNeighbours", {
+            user: userid
+          });
+        }]
+      }
+    }
+  },
+
+
 });
 
 return {

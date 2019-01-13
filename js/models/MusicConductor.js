@@ -22,45 +22,57 @@ var MusicConductor;
 var HypemPlaylist = SongsList.HypemPlaylist;
 var ArtistsList = ArtCard.ArtistsList;
 var AllPHypemLatestSongs = spv.inh(HypemPlaylist, {}, {
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.hypem.tracks,
+        api: "#hypem",
 
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.hypem.tracks,
-    api: '#hypem',
-
-    fn: [[], function(api, opts) {
-      var path = '/playlist/latest/all/json/' + opts.paging.next_page +'/data.js';
-      return api.get(path, null);
-    }]
+        fn: [[], function(api, opts) {
+          var path = "/playlist/latest/all/json/" + opts.paging.next_page + "/data.js";
+          return api.get(path, null);
+        }]
+      }
+    }
   },
   page_limit: 30
 });
 var AllPHypemLatestRemixesSongs = spv.inh(HypemPlaylist, {}, {
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.hypem.tracks,
+        api: "#hypem",
 
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.hypem.tracks,
-    api: '#hypem',
+        fn: [[], function(api, opts) {
+          var path = "/playlist/latest/remix/json/" + opts.paging.next_page + "/data.js";
+          return api.get(path, null);
+        }]
+      }
+    }
+  },
 
-    fn: [[], function(api, opts) {
-       var path = '/playlist/latest/remix/json/' + opts.paging.next_page +'/data.js';
-      return api.get(path, null);
-    }]
-  }
+
 });
 
 var AllPHypemNowSongs = spv.inh(HypemPlaylist, {}, {
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.hypem.tracks,
+        api: "#hypem",
 
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.hypem.tracks,
-    api: '#hypem',
+        fn: [[], function(api, opts) {
+          var path = "/playlist/popular/3day/json/" + opts.paging.next_page + "/data.js";
+          return api.get(path, null);
+        }]
+      }
+    }
+  },
 
-    fn: [[], function(api, opts) {
-      var path = '/playlist/popular/3day/json/' + opts.paging.next_page +'/data.js';
-      return api.get(path, null);
-    }]
-  }
 
 });
 // var AllPHypemWeekSongs = function() {};
@@ -75,39 +87,57 @@ var AllPHypemNowSongs = spv.inh(HypemPlaylist, {}, {
 // });
 
 var AllPSongsChart = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('tracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("tracks"),
+        api: "#lfm",
 
-    fn: [[], function(api) {
-      return api.get('chart.getTopTracks', null);
-    }]
-  }
+        fn: [[], function(api) {
+          return api.get("chart.getTopTracks", null);
+        }]
+      }
+    }
+  },
+
+
 });
 
 var AllPSongsHyped = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('tracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("tracks"),
+        api: "#lfm",
 
-    fn: [[], function(api) {
-      return api.get('chart.getHypedTracks', null);
-    }]
-  }
+        fn: [[], function(api) {
+          return api.get("chart.getHypedTracks", null);
+        }]
+      }
+    }
+  },
+
+
 });
 
 var AllPSongsLoved = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('tracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("tracks"),
+        api: "#lfm",
 
-    fn: [[], function(api) {
-      return api.get('chart.getLovedTracks', null);
-    }]
-  }
+        fn: [[], function(api) {
+          return api.get("chart.getLovedTracks", null);
+        }]
+      }
+    }
+  },
+
+
 });
 
 
@@ -147,27 +177,39 @@ var AllPlacesSongsLists = spv.inh(BrowseMap.Model, {}, {
 
 
 var AllPArtistsHyped = spv.inh(ArtistsList, {}, {
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('artists'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("artists"),
+        api: "#lfm",
 
-    fn: [[], function(api) {
-      return api.get('chart.getHypedArtists', null);
-    }]
-  }
+        fn: [[], function(api) {
+          return api.get("chart.getHypedArtists", null);
+        }]
+      }
+    }
+  },
+
+
 });
 
 var AllPArtistsChart = spv.inh(ArtistsList, {}, {
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('artists'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("artists"),
+        api: "#lfm",
 
-    fn: [[], function(api) {
-      return api.get('chart.getTopArtists', null);
-    }]
-  }
+        fn: [[], function(api) {
+          return api.get("chart.getTopArtists", null);
+        }]
+      }
+    }
+  },
+
+
 });
 
 
@@ -216,47 +258,73 @@ var metroP = function(md) {
 };
 
 var CityAritstsTop = spv.inh(ArtistsList, {}, {
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('topartists'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("topartists"),
+        api: "#lfm",
 
-    fn: [['city_name', 'country_name'], function(api, opts, city_name, country_name) {
-      return api.get('geo.getMetroArtistChart', {
-        metro: city_name,
-        country: country_name
-      });
-    }]
-  }
+        fn: [
+          ["city_name", "country_name"],
+          function(api, opts, city_name, country_name) {
+            return api.get("geo.getMetroArtistChart", {
+              metro: city_name,
+              country: country_name
+            });
+          }
+        ]
+      }
+    }
+  },
+
+
 });
 var CityArtistsHype = spv.inh(ArtistsList, {}, {
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('topartists'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("topartists"),
+        api: "#lfm",
 
-    fn: [['city_name', 'country_name'], function(api, opts, city_name, country_name) {
-      return api.get('geo.getMetroHypeArtistChart', {
-        metro: city_name,
-        country: country_name
-      });
-    }]
-  }
+        fn: [
+          ["city_name", "country_name"],
+          function(api, opts, city_name, country_name) {
+            return api.get("geo.getMetroHypeArtistChart", {
+              metro: city_name,
+              country: country_name
+            });
+          }
+        ]
+      }
+    }
+  },
+
+
 });
 var CityArtistsUnique = spv.inh(ArtistsList, {}, {
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("topartists"),
+        api: "#lfm",
 
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('topartists'),
-    api: '#lfm',
+        fn: [
+          ["city_name", "country_name"],
+          function(api, opts, city_name, country_name) {
+            return api.get("geo.getMetroUniqueArtistChart", {
+              metro: city_name,
+              country: country_name
+            });
+          }
+        ]
+      }
+    }
+  },
 
-    fn: [['city_name', 'country_name'], function(api, opts, city_name, country_name) {
-      return api.get('geo.getMetroUniqueArtistChart', {
-        metro: city_name,
-        country: country_name
-      });
-    }]
-  }
+
 });
 
 var CityArtistsLists = spv.inh(BrowseMap.Model, {}, {
@@ -282,46 +350,73 @@ var CityArtistsLists = spv.inh(BrowseMap.Model, {}, {
 
 
 var CitySongsTop = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('toptracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("toptracks"),
+        api: "#lfm",
 
-    fn: [['city_name', 'country_name'], function(api, opts, city_name, country_name) {
-      return api.get('geo.getMetroTrackChart', {
-        metro: city_name,
-        country: country_name
-      });
-    }]
-  }
+        fn: [
+          ["city_name", "country_name"],
+          function(api, opts, city_name, country_name) {
+            return api.get("geo.getMetroTrackChart", {
+              metro: city_name,
+              country: country_name
+            });
+          }
+        ]
+      }
+    }
+  },
+
+
 });
 var CitySongsHype = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('toptracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("toptracks"),
+        api: "#lfm",
 
-    fn: [['city_name', 'country_name'], function(api, opts, city_name, country_name) {
-      return api.get('geo.getMetroHypeTrackChart', {
-        metro: city_name,
-        country: country_name
-      });
-    }]
-  }
+        fn: [
+          ["city_name", "country_name"],
+          function(api, opts, city_name, country_name) {
+            return api.get("geo.getMetroHypeTrackChart", {
+              metro: city_name,
+              country: country_name
+            });
+          }
+        ]
+      }
+    }
+  },
+
+
 });
 var CitySongsUnique = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('toptracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("toptracks"),
+        api: "#lfm",
 
-    fn: [['city_name', 'country_name'], function(api, opts, city_name, country_name) {
-      return api.get('geo.getMetroUniqueTrackChart', {
-        metro: city_name,
-        country: country_name
-      });
-    }]
-  }
+        fn: [
+          ["city_name", "country_name"],
+          function(api, opts, city_name, country_name) {
+            return api.get("geo.getMetroUniqueTrackChart", {
+              metro: city_name,
+              country: country_name
+            });
+          }
+        ]
+      }
+    }
+  },
+
+
 });
 
 var CitySongsLists = spv.inh(BrowseMap.Model, {}, {
@@ -410,30 +505,42 @@ var CountryCitiesList = spv.inh(BrowseMap.Model, {}, {
 });
 
 var CountryTopArtists = spv.inh(ArtistsList, {}, {
-  'nest_req-artists_list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getArtists('topartists'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "artists_list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getArtists("topartists"),
+        api: "#lfm",
 
-    fn: [['country_name'], function(api, opts, country_name) {
-      return api.get('geo.getTopArtists', {
-        country: country_name
-      });
-    }]
-  }
+        fn: [["country_name"], function(api, opts, country_name) {
+          return api.get("geo.getTopArtists", {
+            country: country_name
+          });
+        }]
+      }
+    }
+  },
+
+
 });
 var CountryTopSongs = spv.inh(SongsList, {}, {
-  'nest_req-songs-list': {
-    type: "nest_request",
-    parse: declr_parsers.lfm.getTracks('toptracks'),
-    api: '#lfm',
+  "+effects": {
+    "consume": {
+      "songs-list": {
+        type: "nest_request",
+        parse: declr_parsers.lfm.getTracks("toptracks"),
+        api: "#lfm",
 
-    fn: [['country_name'], function(api, opts, country_name) {
-      return api.get('geo.getTopTracks', {
-        country: country_name
-      });
-    }]
-  }
+        fn: [["country_name"], function(api, opts, country_name) {
+          return api.get("geo.getTopTracks", {
+            country: country_name
+          });
+        }]
+      }
+    }
+  },
+
+
 });
 
 var CountryPlace = spv.inh(BrowseMap.Model, {}, {

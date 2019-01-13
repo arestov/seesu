@@ -203,6 +203,59 @@ var MfCorBase = spv.inh(LoadableList, {
     self.intMessages();
   }
 }, {
+  "+effects": {
+    "consume": {
+      "yt_videos": {
+        type: "nest_request",
+
+        parse: [function() {
+          var end = /default.jpg$/;
+          var list = ["start", "middle", "end"];
+          var previews = function(url) {
+            if (end.test(url)) {
+              var result = {};
+              for (var i = 0; i < list.length; i++) {
+                var key = list[i];
+                var file_name = i + 1 + ".jpg";
+                result[key] = url.replace(end, file_name);
+              }
+              return result;
+            } else {
+              return {
+                "default": url
+              };
+            }
+            // var url2 =
+          };
+          return function(r) {
+            var items = r && r.items;
+            if (items && items.length) {
+              var result = [];
+              for (var i = 0; i < Math.min(items.length, 3); i++) {
+                var cur = items[i];
+                result.push({
+                  yt_id: cur.id.videoId,
+                  title: cur.snippet.title,
+                  cant_show: true,
+                  previews: previews(cur.snippet.thumbnails.default.url)
+                });
+              }
+              return result;
+            } else {
+              return [];
+            }
+          };
+        }()],
+
+        api: "youtube_d",
+
+        fn: [["artist", "track"], function(api, opts, artist, track) {
+          return api.get(artist + " - " + track);
+        }]
+      }
+    }
+  },
+
   "+states": {
     "artist_name": ["compx", ['^artist_name']],
     "track_name": ["compx", ['^track_name']],
@@ -404,6 +457,7 @@ var MfCorBase = spv.inh(LoadableList, {
   },
 
   'nest_rqc-yt_videos': YoutubeVideo,
+
   'api-youtube_d': function() {
     return {
       api_name: 'youtube_d',
@@ -429,54 +483,6 @@ var MfCorBase = spv.inh(LoadableList, {
     };
   },
 
-  'nest_req-yt_videos': {
-    type: "nest_request",
-
-    parse: [(function() {
-      var end = /default.jpg$/;
-      var list = ['start', 'middle', 'end'];
-      var previews = function(url) {
-        if (end.test(url)) {
-          var result = {};
-          for (var i = 0; i < list.length; i++) {
-            var key = list[i];
-            var file_name = (i + 1) + '.jpg';
-            result[key] = url.replace(end, file_name);
-          }
-          return result;
-        } else {
-          return {
-            'default': url
-          };
-        }
-        // var url2 =
-      };
-      return function(r) {
-        var items = r && r.items;
-        if (items && items.length) {
-          var result = [];
-          for (var i = 0; i < Math.min(items.length, 3); i++) {
-            var cur = items[i];
-            result.push({
-              yt_id: cur.id.videoId,
-              title: cur.snippet.title,
-              cant_show: true,
-              previews: previews(cur.snippet.thumbnails.default.url)
-            });
-          }
-          return result;
-        } else {
-          return [];
-        }
-      };
-    })()],
-
-    api: 'youtube_d',
-
-    fn: [['artist', 'track'], function(api, opts, artist, track) {
-      return api.get(artist + " - " + track);
-    }]
-  },
 
   'stch-unavailable@sorted_completcs.moplas_list': function(target, state, old_state, source) {
     if (state) {
