@@ -69,6 +69,21 @@ var changeSources = function(store, send_declr) {
   }
 };
 
+function buildStateReqs (self, list) {
+  self._states_reqs_index = {};
+  var states_index = {};
+
+  for (var i = 0; i < list.length; i++) {
+    var states_list = list[i].states_list;
+    for (var jj = 0; jj < states_list.length; jj++) {
+      states_index[states_list[jj]] = true;
+    }
+  }
+  for (var state_name in states_index) {
+    self._states_reqs_index[state_name] = doIndex(list, state_name);
+  }
+}
+
 return function(self, props, typed_state_dcls) {
   var i;
 
@@ -91,18 +106,7 @@ return function(self, props, typed_state_dcls) {
 
     }
 
-    self._states_reqs_index = {};
-    var states_index = {};
-
-    for (var i = 0; i < list.length; i++) {
-      var states_list = list[i].states_list;
-      for (var jj = 0; jj < states_list.length; jj++) {
-        states_index[states_list[jj]] = true;
-      }
-    }
-    for (var state_name in states_index) {
-      self._states_reqs_index[state_name] = doIndex(list, state_name);
-    }
+    buildStateReqs(self, list)
   }
 
   var has_reqnest_decls = hasPrefixedProps(props);
