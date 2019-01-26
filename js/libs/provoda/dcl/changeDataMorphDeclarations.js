@@ -28,6 +28,8 @@ function buildNestReqs(self, props, typed_state_dcls) {
     sources_names: []
   };
 
+  var _nest_reqs = spv.cloneObj({}, self._nest_reqs || {})
+
   for (var prop_name in props) {
     if (!props.hasOwnProperty(prop_name) || !getUnprefixed(prop_name) ) {
       continue;
@@ -42,7 +44,7 @@ function buildNestReqs(self, props, typed_state_dcls) {
     // 	debugger;
     // }
     var cur_nest = nest_declr;
-    self[prop_name] = cur_nest;
+    _nest_reqs[nest_name] = cur_nest
 
     if (!cur_nest.state_dep) {
       continue;
@@ -57,6 +59,8 @@ function buildNestReqs(self, props, typed_state_dcls) {
 
     self.main_list_nest_req = cur_nest;
   }
+
+  self._nest_reqs = _nest_reqs
 }
 
 return function(self, props, typed_state_dcls) {
@@ -87,7 +91,7 @@ return function(self, props, typed_state_dcls) {
 
   if (props.hasOwnProperty('main_list_nest_req') && main_list_nest_req && main_list_nest_req.nest_name !== props.main_list_name) {
     assign(typed_state_dcls, main_list_nest_req.original);
-    self['nest_req-' + main_list_nest_req.nest_name] = main_list_nest_req.original;
+    self._nest_reqs[main_list_nest_req.nest_name] = main_list_nest_req.original;
   }
 
   if (has_changes) {

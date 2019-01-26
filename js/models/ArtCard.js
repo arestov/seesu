@@ -863,7 +863,7 @@ var ArtistsListPlaylist = spv.inh(SongsList, {}, {
   items_comparing_props: [['artist', 'artist']],
 
   requestMoreData: function() {
-    var declr = this.map_parent[ 'nest_req-' + this.map_parent.main_list_name ];
+    var declr = this.map_parent._nest_reqs && this.map_parent._nest_reqs[this.map_parent.main_list_name]
     if (declr) {
       this.requestNesting( declr, this.main_list_name );
     } else {

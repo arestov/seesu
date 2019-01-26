@@ -178,7 +178,7 @@ function requestNesting(md, declr, dep) {
 }
 
 var handleCountlessNesting = function(dep, req_dep, self) {
-  var declr = self[ 'nest_req-' + dep.value ];
+  var declr = self._nest_reqs && self._nest_reqs[dep.value];
   if (dep.state) {
     req_dep.anchor = function(state) {
       if (state) {

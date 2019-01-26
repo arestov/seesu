@@ -29,7 +29,7 @@ return spv.inh(BrowseMap.Model, {
     //self.loadable_lists[ self.main_list_name ] = [];
     pv.updateNesting(self,  self.main_list_name, []);
 
-    var has_loader = !!self[ 'nest_req-' + self.main_list_name];
+    var has_loader = !!(self._nest_reqs && self._nest_reqs[self.main_list_name]);
     if (has_loader){
       pv.update(self, "has_data_loader", true);
     }
@@ -153,8 +153,8 @@ return spv.inh(BrowseMap.Model, {
 
   requestMoreData: function(nesting_name) {
     nesting_name = nesting_name || this.main_list_name;
-    if (this[ 'nest_req-' + nesting_name ]) {
-      this.requestNesting( this[ 'nest_req-' + nesting_name ], nesting_name );
+    if (this._nest_reqs && this._nest_reqs[nesting_name]) {
+      this.requestNesting( this._nest_reqs[nesting_name], nesting_name );
     }
   },
 

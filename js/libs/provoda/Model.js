@@ -127,7 +127,7 @@ add({
   },
   getNestingSource: function(nesting_name, app) {
     nesting_name = hp.getRightNestingName(this, nesting_name);
-    var dclt = this['nest_req-' + nesting_name];
+    var dclt = this._nest_reqs && this._nest_reqs[nesting_name];
     var network_api = dclt && hp.getNetApiByDeclr(dclt.send_declr, this, app);
     return network_api && network_api.source_name;
   },
