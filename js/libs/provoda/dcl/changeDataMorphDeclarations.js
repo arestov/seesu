@@ -94,6 +94,43 @@ function buildStateReqs (self, list) {
   }
 }
 
+function buildNestReqs(self, props, typed_state_dcls) {
+  self.netsources_of_nestings = {
+    api_names: [],
+    api_names_converted: false,
+    sources_names: []
+  };
+
+  for (var prop_name in props) {
+    if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
+      var nest_name = getUnprefixed(prop_name);
+      var nest_declr = new NestReqMap(nest_name, props[ prop_name ]);
+
+      changeSources(self.netsources_of_nestings, nest_declr.send_declr);
+
+      var is_main = nest_name == self.main_list_name;
+      // if (is_main) {
+      // 	debugger;
+      // }
+      var cur_nest = !is_main ? nest_declr : new NestReqMapCopy(nest_declr, is_main);
+      self[prop_name] = cur_nest;
+
+      if (!cur_nest.state_dep) {
+        continue;
+      }
+
+      assign(typed_state_dcls, cur_nest);
+
+      if (!is_main) {
+        continue;
+      }
+
+
+      self.main_list_nest_req = cur_nest;
+    }
+  }
+}
+
 return function(self, props, typed_state_dcls) {
   var i;
 
@@ -116,39 +153,8 @@ return function(self, props, typed_state_dcls) {
   var main_list_nest_req = self.main_list_nest_req;
 
   if (has_reqnest_decls) {
-    self.netsources_of_nestings = {
-      api_names: [],
-      api_names_converted: false,
-      sources_names: []
-    };
     has_changes = true;
-    for (var prop_name in props) {
-      if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
-        var nest_name = getUnprefixed(prop_name);
-        var nest_declr = new NestReqMap(nest_name, props[ prop_name ]);
-
-        changeSources(self.netsources_of_nestings, nest_declr.send_declr);
-
-        var is_main = nest_name == self.main_list_name;
-        // if (is_main) {
-        // 	debugger;
-        // }
-        var cur_nest = !is_main ? nest_declr : new NestReqMapCopy(nest_declr, is_main);
-        self[prop_name] = cur_nest;
-
-        if (!cur_nest.state_dep) {
-          continue;
-        }
-
-        assign(typed_state_dcls, cur_nest);
-
-        if (!is_main) {
-          continue;
-        }
-
-        self.main_list_nest_req = cur_nest;
-      }
-    }
+    buildNestReqs(self, props, typed_state_dcls)
   }
 
   if (props.hasOwnProperty('main_list_nest_req') && main_list_nest_req && main_list_nest_req.nest_name !== props.main_list_name) {
