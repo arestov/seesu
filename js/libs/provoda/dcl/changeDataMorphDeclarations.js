@@ -7,6 +7,7 @@ var checkPrefix = require('../StatesEmitter/checkPrefix');
 var spv = require('spv');
 var utils = require('./effects/legacy/utils')
 var changeSources = require('./effects/legacy/utils/changeSources')
+var assign = require('./effects/legacy/utils/assign')
 var NestReqMap = require('./effects/legacy/nest_req/dcl')
 var StateReqMap = require('./effects/legacy/state_req/dcl')
 var buildStateReqs = require('./effects/legacy/state_req/rebuild')
@@ -18,11 +19,6 @@ var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
 var check = checkPrefix('nest_req-', NestReqMap, '_nest_reqs');
-
-var assign = function(typed_state_dcls, nest_declr) {
-  typed_state_dcls['compx'] = typed_state_dcls['compx'] || {};
-  typed_state_dcls['compx'][nest_declr.state_dep] = [nest_declr.dependencies, spv.hasEveryArgs];
-};
 
 function buildNestReqs(self, by_name, typed_state_dcls) {
   self.main_list_nest_req = self.main_list_name && self._nest_reqs[self.main_list_name];
