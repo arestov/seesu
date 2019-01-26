@@ -5,6 +5,7 @@ var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
 
 var spv = require('spv');
 var utils = require('./effects/legacy/utils')
+var changeSources = require('./effects/legacy/utils/changeSources')
 var NestReqMap = require('./effects/legacy/nest_req/dcl')
 var StateReqMap = require('./effects/legacy/state_req/dcl')
 
@@ -30,19 +31,6 @@ var doIndex = function(list, value) {
 var assign = function(typed_state_dcls, nest_declr) {
   typed_state_dcls['compx'] = typed_state_dcls['compx'] || {};
   typed_state_dcls['compx'][nest_declr.state_dep] = [nest_declr.dependencies, spv.hasEveryArgs];
-};
-
-var changeSources = function(store, send_declr) {
-  var api_name = send_declr.api_name;
-  if (typeof api_name == 'string') {
-    store.api_names.push(api_name);
-  } else {
-    var network_api = api_name.call();
-    if (!network_api.source_name) {
-      throw new Error('no source_name');
-    }
-    store.sources_names.push(network_api.source_name);
-  }
 };
 
 function buildStateReqs (self, list) {
