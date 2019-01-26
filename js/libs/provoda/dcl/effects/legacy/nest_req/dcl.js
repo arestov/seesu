@@ -33,6 +33,17 @@ return function NestReqMap(name, dclt) {
       this.state_dep = stateName(this.nest_name);
     }
 
+    if (dclt.granular_access) {
+      return
+    }
+
+    var more = ['can_load_data'];
+    this.dependencies = !this.dependencies
+      ? more
+      : this.dependencies.concat(more);
+
+    this.state_dep = stateName(this.nest_name);
+
     return
   }
 
@@ -67,6 +78,13 @@ return function NestReqMap(name, dclt) {
   if (this.dependencies) {
     this.state_dep = stateName(this.nest_name);
   }
+
+  var more = ['can_load_data'];
+  this.dependencies = !this.dependencies
+    ? more
+    : this.dependencies.concat(more);
+
+  this.state_dep = stateName(this.nest_name);
 
 }
 })
