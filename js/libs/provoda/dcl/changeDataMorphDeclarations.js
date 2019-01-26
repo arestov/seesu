@@ -12,11 +12,6 @@ var NestReqMap = require('./effects/legacy/nest_req/dcl')
 var StateReqMap = require('./effects/legacy/state_req/dcl')
 var buildStateReqs = require('./effects/legacy/state_req/rebuild')
 
-var stateName = utils.stateName
-
-
-var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
-var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
 var check = checkPrefix('nest_req-', NestReqMap, '_nest_reqs');
 
