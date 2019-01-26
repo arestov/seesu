@@ -125,7 +125,7 @@ return function(self, props, typed_state_dcls) {
     for (var prop_name in props) {
       if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
         var nest_name = getUnprefixed(prop_name);
-        var nest_declr = new NestReqMap(props[ prop_name ], nest_name);
+        var nest_declr = new NestReqMap(nest_name, props[ prop_name ]);
 
         changeSources(self.netsources_of_nestings, nest_declr.send_declr);
 

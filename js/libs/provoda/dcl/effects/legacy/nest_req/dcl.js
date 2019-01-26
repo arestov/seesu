@@ -8,7 +8,7 @@ var SendDeclaration = utils.SendDeclaration
 var toSchemaFn = utils.toSchemaFn
 var stateName = utils.stateName
 
-return function NestReqMap(dclt, name) {
+return function NestReqMap(name, dclt) {
   this.original = this;
   this.nest_name = name;
   this.parse_items = null;
