@@ -2,6 +2,7 @@ define(function(require){
 'use strict';
 var spv = require('spv');
 var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
+var checkPrefix = require('../StatesEmitter/checkPrefix');
 
 var spv = require('spv');
 var utils = require('./effects/legacy/utils')
@@ -16,51 +17,32 @@ var stateName = utils.stateName
 var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
+var check = checkPrefix('nest_req-', NestReqMap, '_nest_reqs');
+
 var assign = function(typed_state_dcls, nest_declr) {
   typed_state_dcls['compx'] = typed_state_dcls['compx'] || {};
   typed_state_dcls['compx'][nest_declr.state_dep] = [nest_declr.dependencies, spv.hasEveryArgs];
 };
 
-function buildNestReqs(self, props, typed_state_dcls) {
+function buildNestReqs(self, by_name, typed_state_dcls) {
+  self.main_list_nest_req = self.main_list_name && self._nest_reqs[self.main_list_name];
+
   self.netsources_of_nestings = {
     api_names: [],
     api_names_converted: false,
     sources_names: []
   };
 
-  var _nest_reqs = spv.cloneObj({}, self._nest_reqs || {})
-
-  for (var prop_name in props) {
-    if (!props.hasOwnProperty(prop_name) || !getUnprefixed(prop_name) ) {
-      continue;
-    }
-    var nest_name = getUnprefixed(prop_name);
-    var nest_declr = new NestReqMap(nest_name, props[ prop_name ]);
-
-    changeSources(self.netsources_of_nestings, nest_declr.send_declr);
-
-    var is_main = nest_name == self.main_list_name;
-    // if (is_main) {
-    // 	debugger;
-    // }
-    var cur_nest = nest_declr;
-    _nest_reqs[nest_name] = cur_nest
+  for (var nest_name in self._nest_reqs) {
+    var cur_nest = self._nest_reqs[nest_name]
+    changeSources(self.netsources_of_nestings, cur_nest.send_declr);
 
     if (!cur_nest.state_dep) {
       continue;
     }
 
     assign(typed_state_dcls, cur_nest);
-
-    if (!is_main) {
-      continue;
-    }
-
-
-    self.main_list_nest_req = cur_nest;
   }
-
-  self._nest_reqs = _nest_reqs
 }
 
 return function(self, props, typed_state_dcls) {
@@ -80,13 +62,12 @@ return function(self, props, typed_state_dcls) {
     buildStateReqs(self, list)
   }
 
-  var has_reqnest_decls = hasPrefixedProps(props);
-
   var main_list_nest_req = self.main_list_nest_req;
 
-  if (has_reqnest_decls) {
+  var checked = check(self, props)
+  if (checked) {
     has_changes = true;
-    buildNestReqs(self, props, typed_state_dcls)
+    buildNestReqs(self, checked, typed_state_dcls)
   }
 
   if (props.hasOwnProperty('main_list_nest_req') && main_list_nest_req && main_list_nest_req.nest_name !== props.main_list_name) {
