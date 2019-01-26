@@ -8,6 +8,7 @@ var utils = require('./effects/legacy/utils')
 var changeSources = require('./effects/legacy/utils/changeSources')
 var NestReqMap = require('./effects/legacy/nest_req/dcl')
 var StateReqMap = require('./effects/legacy/state_req/dcl')
+var buildStateReqs = require('./effects/legacy/state_req/rebuild')
 
 var stateName = utils.stateName
 
@@ -15,48 +16,10 @@ var stateName = utils.stateName
 var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
-var doIndex = function(list, value) {
-  var result = [];
-
-  for (var i = 0; i < list.length; i++) {
-    var states_list = list[i].states_list;
-    if (states_list.indexOf(value) != -1) {
-      result.push(list[i]);
-    }
-  }
-
-  return result;
-};
-
 var assign = function(typed_state_dcls, nest_declr) {
   typed_state_dcls['compx'] = typed_state_dcls['compx'] || {};
   typed_state_dcls['compx'][nest_declr.state_dep] = [nest_declr.dependencies, spv.hasEveryArgs];
 };
-
-function buildStateReqs (self, list) {
-  self._states_reqs_index = {};
-  var states_index = {};
-
-  for (var i = 0; i < list.length; i++) {
-    var states_list = list[i].states_list;
-    for (var jj = 0; jj < states_list.length; jj++) {
-      states_index[states_list[jj]] = true;
-    }
-  }
-  for (var state_name in states_index) {
-    self._states_reqs_index[state_name] = doIndex(list, state_name);
-  }
-
-  self.netsources_of_states = {
-    api_names: [],
-    api_names_converted: false,
-    sources_names: []
-  };
-
-  for (var i = 0; i < list.length; i++) {
-    changeSources(self.netsources_of_states, list[i].send_declr);
-  }
-}
 
 function buildNestReqs(self, props, typed_state_dcls) {
   self.netsources_of_nestings = {
