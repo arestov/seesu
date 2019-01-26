@@ -1,11 +1,7 @@
 define(function(require){
 'use strict';
-var spv = require('spv');
-var getPropsPrefixChecker = require('../utils/getPropsPrefixChecker');
 var checkPrefix = require('../StatesEmitter/checkPrefix');
 
-var spv = require('spv');
-var utils = require('./effects/legacy/utils')
 var changeSources = require('./effects/legacy/utils/changeSources')
 var assign = require('./effects/legacy/utils/assign')
 var NestReqMap = require('./effects/legacy/nest_req/dcl')
