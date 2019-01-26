@@ -82,6 +82,16 @@ function buildStateReqs (self, list) {
   for (var state_name in states_index) {
     self._states_reqs_index[state_name] = doIndex(list, state_name);
   }
+
+  self.netsources_of_states = {
+    api_names: [],
+    api_names_converted: false,
+    sources_names: []
+  };
+
+  for (var i = 0; i < list.length; i++) {
+    changeSources(self.netsources_of_states, list[i].send_declr);
+  }
 }
 
 return function(self, props, typed_state_dcls) {
@@ -90,20 +100,12 @@ return function(self, props, typed_state_dcls) {
   var has_changes = false;
 
   if (props.hasOwnProperty('req_map')) {
-    self.netsources_of_states = {
-      api_names: [],
-      api_names_converted: false,
-      sources_names: []
-    };
+
     has_changes = true;
 
     var list = new Array(props.req_map.length);
     for (var i = 0; i < props.req_map.length; i++) {
       list[i] = new StateReqMap(props.req_map[i], i);
-    }
-    for (var i = 0; i < list.length; i++) {
-      changeSources(self.netsources_of_states, list[i].send_declr);
-
     }
 
     buildStateReqs(self, list)
