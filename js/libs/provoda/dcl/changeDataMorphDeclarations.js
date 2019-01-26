@@ -2,35 +2,15 @@ define(function(require){
 'use strict';
 var checkPrefix = require('../StatesEmitter/checkPrefix');
 
-var changeSources = require('./effects/legacy/utils/changeSources')
 var assign = require('./effects/legacy/utils/assign')
 var NestReqMap = require('./effects/legacy/nest_req/dcl')
+var buildNestReqs = require('./effects/legacy/nest_req/rebuild')
+
 var StateReqMap = require('./effects/legacy/state_req/dcl')
 var buildStateReqs = require('./effects/legacy/state_req/rebuild')
 
 
 var check = checkPrefix('nest_req-', NestReqMap, '_nest_reqs');
-
-function buildNestReqs(self, by_name, typed_state_dcls) {
-  self.main_list_nest_req = self.main_list_name && self._nest_reqs[self.main_list_name];
-
-  self.netsources_of_nestings = {
-    api_names: [],
-    api_names_converted: false,
-    sources_names: []
-  };
-
-  for (var nest_name in self._nest_reqs) {
-    var cur_nest = self._nest_reqs[nest_name]
-    changeSources(self.netsources_of_nestings, cur_nest.send_declr);
-
-    if (!cur_nest.state_dep) {
-      continue;
-    }
-
-    assign(typed_state_dcls, cur_nest);
-  }
-}
 
 return function(self, props, typed_state_dcls) {
   var i;
