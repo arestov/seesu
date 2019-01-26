@@ -14,30 +14,6 @@ var stateName = utils.stateName
 var getUnprefixed = spv.getDeprefixFunc( 'nest_req-' );
 var hasPrefixedProps = getPropsPrefixChecker( getUnprefixed );
 
-function NestReqMapCopy(nest_declr, is_main) {
-  this.original = nest_declr;
-
-  this.nest_name = nest_declr.nest_name;
-  this.parse_items = nest_declr.parse_items;
-  this.parse_serv = nest_declr.parse_serv;
-  this.side_data_parsers = nest_declr.side_data_parsers;
-  this.send_declr = nest_declr.send_declr;
-  this.dependencies = nest_declr.dependencies;
-  this.state_dep = nest_declr.state_dep;
-
-  if (!is_main) {
-    return;
-  }
-
-  var more = ['can_load_data'];
-  this.dependencies = !this.dependencies
-    ? more
-    : this.dependencies.concat(more);
-
-  this.state_dep = stateName(this.nest_name);
-
-}
-
 var doIndex = function(list, value) {
   var result = [];
 
@@ -114,7 +90,7 @@ function buildNestReqs(self, props, typed_state_dcls) {
     // if (is_main) {
     // 	debugger;
     // }
-    var cur_nest = !is_main ? nest_declr : new NestReqMapCopy(nest_declr, is_main);
+    var cur_nest = nest_declr;
     self[prop_name] = cur_nest;
 
     if (!cur_nest.state_dep) {
