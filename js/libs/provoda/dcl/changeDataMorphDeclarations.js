@@ -102,32 +102,33 @@ function buildNestReqs(self, props, typed_state_dcls) {
   };
 
   for (var prop_name in props) {
-    if (props.hasOwnProperty(prop_name) && getUnprefixed(prop_name) ) {
-      var nest_name = getUnprefixed(prop_name);
-      var nest_declr = new NestReqMap(nest_name, props[ prop_name ]);
-
-      changeSources(self.netsources_of_nestings, nest_declr.send_declr);
-
-      var is_main = nest_name == self.main_list_name;
-      // if (is_main) {
-      // 	debugger;
-      // }
-      var cur_nest = !is_main ? nest_declr : new NestReqMapCopy(nest_declr, is_main);
-      self[prop_name] = cur_nest;
-
-      if (!cur_nest.state_dep) {
-        continue;
-      }
-
-      assign(typed_state_dcls, cur_nest);
-
-      if (!is_main) {
-        continue;
-      }
-
-
-      self.main_list_nest_req = cur_nest;
+    if (!props.hasOwnProperty(prop_name) || !getUnprefixed(prop_name) ) {
+      continue;
     }
+    var nest_name = getUnprefixed(prop_name);
+    var nest_declr = new NestReqMap(nest_name, props[ prop_name ]);
+
+    changeSources(self.netsources_of_nestings, nest_declr.send_declr);
+
+    var is_main = nest_name == self.main_list_name;
+    // if (is_main) {
+    // 	debugger;
+    // }
+    var cur_nest = !is_main ? nest_declr : new NestReqMapCopy(nest_declr, is_main);
+    self[prop_name] = cur_nest;
+
+    if (!cur_nest.state_dep) {
+      continue;
+    }
+
+    assign(typed_state_dcls, cur_nest);
+
+    if (!is_main) {
+      continue;
+    }
+
+
+    self.main_list_nest_req = cur_nest;
   }
 }
 
