@@ -8,7 +8,7 @@ var getUnprefixed = spv.getDeprefixFunc( 'state-' );
 var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 
-var StateBindDeclr = function (data, state_name) {
+var StateBindDeclr = function (state_name, data) {
   this.state_name = state_name;
   this.apis = null;
   this.fn = null;
@@ -43,7 +43,7 @@ return function(self, props) {
     var item;
     if (props.hasOwnProperty(prop)) {
       var cur = self[prop];
-      item = cur && new StateBindDeclr(cur, state_name);
+      item = cur && new StateBindDeclr(state_name, cur);
     } else {
       item = build_index[state_name];
     }
