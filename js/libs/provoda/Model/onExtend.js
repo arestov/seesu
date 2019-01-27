@@ -14,7 +14,6 @@ var checkPasses = require('../dcl/passes/check')
 var checkSubpager = require('../dcl/sub_pager/check');
 var collectSubpages = require('../dcl/sub_pager/collectSubpages');
 
-var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
 var checkEffects = require('../dcl/effects/check')
 var checkNest = require('../dcl/nest/check');
 var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
@@ -47,7 +46,6 @@ var check = /initStates/gi;
 var checkSideeffects = function(self, props, typed_state_dcls, params) {
   checkApis(self, props, typed_state_dcls);
 
-  changeDataMorphDeclarations(self, props, typed_state_dcls);
   collectStateChangeHandlers(self, props, typed_state_dcls);
   checkEffects(self, props, typed_state_dcls)
 

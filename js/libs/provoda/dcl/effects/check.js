@@ -4,7 +4,6 @@ var cloneObj = require('spv').cloneObj
 
 var StateBindDeclr = null
 // var NestReqMap = null
-var StateReqMap = null
 
 var checkPrefix = require('../../StatesEmitter/checkPrefix');
 
@@ -13,16 +12,17 @@ var checkPrefix = require('../../StatesEmitter/checkPrefix');
 // var NestDcl = require('../nest/item');
 // var NestCompx = require('../nest_compx/item')
 var NestReqMap = require('./legacy/nest_req/dcl')
+var StateReqMap = require('./legacy/state_req/dcl')
 
 // var buildSel = require('../nest_sel/build');
 var buildNestReqs = require('./legacy/nest_req/rebuild');
-// var buildConj = require('../nest_conj/build');
+var buildStateReqs = require('./legacy/state_req/rebuild')
 
 var parse = function(name, data) {
   var type = data.type;
   switch (type) {
     case 'state_request': {
-      // return new StateReqMap(data[1]);
+      return new StateReqMap(name, data);
     }
     case 'nest_request': {
       return new NestReqMap(name, data);
@@ -56,7 +56,6 @@ var byType = function(index) {
     if (!index.hasOwnProperty(name)) {
       continue
     }
-    debugger
 
     var cur = index[name]
     var type = cur.type
@@ -94,14 +93,13 @@ var notEqual = function(one, two) {
   }
 }
 
-var rebuildType = function(self, type, result, typed_state_dcls) {
+var rebuildType = function(self, type, result, list, typed_state_dcls) {
   switch (type) {
     case 'state_request': {
-      // buildNest(self, result);
+      buildStateReqs(self, list)
       return;
     }
     case 'nest_request': {
-      debugger
       buildNestReqs(self, result, typed_state_dcls);
       return;
     }
@@ -112,7 +110,7 @@ var rebuildType = function(self, type, result, typed_state_dcls) {
   }
 }
 
-var rebuild = function(self, newV, oldV, typed_state_dcls) {
+var rebuild = function(self, newV, oldV, listByType, typed_state_dcls) {
   for (var type in newV) {
     if (!newV.hasOwnProperty(type)) {
       continue;
@@ -122,7 +120,7 @@ var rebuild = function(self, newV, oldV, typed_state_dcls) {
       continue;
     }
 
-    rebuildType(self, type, newV[type], typed_state_dcls)
+    rebuildType(self, type, newV[type], listByType[type], typed_state_dcls)
   }
 }
 
@@ -149,6 +147,24 @@ var handleLegacyNestReqs = function(self, props) {
     self._extendable_effect_index,
     checked
   );
+}
+
+var handleLegacyStateReqs = function(self, props) {
+  if (!props.hasOwnProperty('req_map')) {
+    return
+  }
+
+  var result = {}
+
+  for (var i = 0; i < props.req_map.length; i++) {
+    result[i] = props.req_map[i];
+  }
+
+  self._extendable_effect_index = extend(
+    self._extendable_effect_index,
+    result
+  );
+
 }
 
 var handleLegacy = function(self, prop, type) {
@@ -185,6 +201,7 @@ return function checkEffects(self, props, typed_state_dcls) {
   handleLegacyNestReqs(self, props)
   checkLegacy(self, props);
   checkModern(self, props);
+  handleLegacyStateReqs(self, props)
 
   if (currentIndex === self._extendable_effect_index) {
     return;
@@ -193,15 +210,6 @@ return function checkEffects(self, props, typed_state_dcls) {
 
   var oldByType = self._effect_by_type || {};
   self._effect_by_type = byType(self._extendable_effect_index);
-
-  rebuild(self, self._effect_by_type, oldByType, typed_state_dcls)
-
-  if (self.hasOwnProperty('netsources_of_nestings') || self.hasOwnProperty('netsources_of_states')) {
-    self.netsources_of_all = {
-      nestings: self.netsources_of_nestings,
-      states: self.netsources_of_states
-    };
-  }
 
   self._effect_by_type_listed = {}
   for (var type_name in self._effect_by_type) {
@@ -221,6 +229,15 @@ return function checkEffects(self, props, typed_state_dcls) {
 
     self._effect_by_type_listed[type_name] = result
 
+  }
+
+  rebuild(self, self._effect_by_type, oldByType, self._effect_by_type_listed, typed_state_dcls)
+
+  if (self.hasOwnProperty('netsources_of_nestings') || self.hasOwnProperty('netsources_of_states')) {
+    self.netsources_of_all = {
+      nestings: self.netsources_of_nestings,
+      states: self.netsources_of_states
+    };
   }
   return true;
 }

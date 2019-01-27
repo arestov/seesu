@@ -6,7 +6,7 @@ var SendDeclaration = utils.SendDeclaration
 var toSchemaFn = utils.toSchemaFn
 
 
-return function StateReqMap(req_item, num) {
+return function StateReqMap(num, req_item) {
   this.num = num;
   this.dependencies = null;
   this.send_declr = null;
