@@ -149,23 +149,6 @@ var handleLegacyNestReqs = function(self, props) {
   );
 }
 
-var handleLegacyStateReqs = function(self, props) {
-  if (!props.hasOwnProperty('req_map')) {
-    return
-  }
-
-  var result = {}
-
-  for (var i = 0; i < props.req_map.length; i++) {
-    result[i] = props.req_map[i];
-  }
-
-  self._extendable_effect_index = extend(
-    self._extendable_effect_index,
-    result
-  );
-
-}
 
 var handleLegacy = function(self, prop, type) {
   if (!self.hasOwnProperty(prop)) {
@@ -201,7 +184,6 @@ return function checkEffects(self, props, typed_state_dcls) {
   handleLegacyNestReqs(self, props)
   checkLegacy(self, props);
   checkModern(self, props);
-  handleLegacyStateReqs(self, props)
 
   if (currentIndex === self._extendable_effect_index) {
     return;
