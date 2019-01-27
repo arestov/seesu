@@ -5,8 +5,6 @@ var cloneObj = require('spv').cloneObj
 var StateBindDeclr = null
 // var NestReqMap = null
 
-var checkPrefix = require('../../StatesEmitter/checkPrefix');
-
 // var NestSelector = require('../nest_sel/item');
 // var NestCntDeclr = require('../nest_conj/item')
 // var NestDcl = require('../nest/item');
@@ -135,20 +133,6 @@ var checkModern = function(self, props) {
   );
 }
 
-var FakeNestRq = function(name, data) {
-  return data;
-}
-var checkNestReqs = checkPrefix('nest_req-', FakeNestRq, '__legacy_nest_reqs');
-var handleLegacyNestReqs = function(self, props) {
-  var checked = checkNestReqs(self, props)
-  if (!checked) {return;}
-
-  self._extendable_effect_index = extend(
-    self._extendable_effect_index,
-    checked
-  );
-}
-
 
 var handleLegacy = function(self, prop, type) {
   if (!self.hasOwnProperty(prop)) {
@@ -181,7 +165,6 @@ return function checkEffects(self, props, typed_state_dcls) {
 
   var currentIndex = self._extendable_effect_index;
 
-  handleLegacyNestReqs(self, props)
   checkLegacy(self, props);
   checkModern(self, props);
 
