@@ -34,7 +34,7 @@ return pv.behavior({
   requestFiles: function () {
     if (this.getNesting('files')) {return;}
 
-    var declr = this[ 'nest_req-files' ];
+    var declr = this._nest_reqs['files'];
     return this.requestNesting( declr, 'files' );
   },
 
