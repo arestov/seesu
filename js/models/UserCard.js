@@ -107,6 +107,36 @@ var UserCard = spv.inh(BrowseMap.Model, {
   })()
 });
 var VkUserCard = spv.inh(BrowseMap.Model, {}, {
+  "+effects": {
+    "consume": {
+      0: {
+        type: "state_request",
+        states: ['first_name', 'last_name', 'photo', 'ava_image', 'selected_image'],
+
+        parse: {
+          source: 'response.0',
+          props_map: {
+
+            first_name: 'first_name',
+            last_name: 'last_name',
+            photo: 'photo',
+            'ava_image.url': 'photo_medium',
+            'selected_image.url': 'photo'
+          }
+        },
+
+        api: '#vktapi',
+
+        fn: [['vk_userid'], function(api, opts, vk_userid) {
+          return api.get('users.get', {
+            user_ids: [vk_userid],
+            fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
+          });
+        }]
+      }
+    }
+  },
+
   "+states": {
     "big_desc": [
       "compx",
@@ -159,33 +189,6 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 
   })(),
 
-  req_map: [
-    {
-      type: "state_request",
-      states: ['first_name', 'last_name', 'photo', 'ava_image', 'selected_image'],
-
-      parse: {
-        source: 'response.0',
-        props_map: {
-
-          first_name: 'first_name',
-          last_name: 'last_name',
-          photo: 'photo',
-          'ava_image.url': 'photo_medium',
-          'selected_image.url': 'photo'
-        }
-      },
-
-      api: '#vktapi',
-
-      fn: [['vk_userid'], function(api, opts, vk_userid) {
-        return api.get('users.get', {
-          user_ids: [vk_userid],
-          fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(',')
-        });
-      }]
-    }
-  ],
 
   'stch-mp_has_focus': function(target, state) {
     if (state){
@@ -208,6 +211,38 @@ var VkUserCard = spv.inh(BrowseMap.Model, {}, {
 });
 
 var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
+  "+effects": {
+    "consume": {
+      0: {
+        type: "state_request",
+        states: ['userid', 'realname', 'country', 'age', 'gender', 'playcount', 'playlists', 'lfm_img', 'registered', 'scrobblesource', 'recenttrack'],
+
+        parse: {
+          source: 'user',
+          props_map: {
+            userid: 'name',
+            realname: null,
+            country: null,
+            age: ['num', 'age'],
+            gender: null,
+            playcount: ['num', 'playcount'],
+            playlists: ['num', 'playlists'],
+            lfm_img: ['lfm_image', 'image'],
+            registered: ['timestamp', 'registered'],
+            scrobblesource: null,
+            recenttrack: null
+          }
+        },
+
+        api: '#lfm',
+
+        fn: [['lfm_userid'], function(api, opts, lfm_userid) {
+          return api.get('user.getInfo', {'user': lfm_userid});
+        }]
+      }
+    }
+  },
+
   "+states": {
     "nav_title": ["compx", ['lfm_userid']],
 
@@ -267,35 +302,6 @@ var LfmUserCard = spv.inh(BrowseMap.Model, {}, {
     }
   },
 
-  req_map: [
-    {
-      type: "state_request",
-      states: ['userid', 'realname', 'country', 'age', 'gender', 'playcount', 'playlists', 'lfm_img', 'registered', 'scrobblesource', 'recenttrack'],
-
-      parse: {
-        source: 'user',
-        props_map: {
-          userid: 'name',
-          realname: null,
-          country: null,
-          age: ['num', 'age'],
-          gender: null,
-          playcount: ['num', 'playcount'],
-          playlists: ['num', 'playlists'],
-          lfm_img: ['lfm_image', 'image'],
-          registered: ['timestamp', 'registered'],
-          scrobblesource: null,
-          recenttrack: null
-        }
-      },
-
-      api: '#lfm',
-
-      fn: [['lfm_userid'], function(api, opts, lfm_userid) {
-        return api.get('user.getInfo', {'user': lfm_userid});
-      }]
-    }
-  ],
 
   'stch-mp_has_focus': function(target, state) {
     if (state){
