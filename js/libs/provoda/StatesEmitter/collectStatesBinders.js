@@ -3,27 +3,11 @@ define(function(require){
 
 var spv = require('spv');
 var hp = require('../helpers');
+var StateBindDeclr = require('../dcl/effects/legacy/subscribe/dcl')
 
 var getUnprefixed = spv.getDeprefixFunc( 'state-' );
 var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
-
-var StateBindDeclr = function (state_name, data) {
-  this.state_name = state_name;
-  this.apis = null;
-  this.fn = null;
-
-
-  if (Array.isArray(data)) {
-    // legacy ?
-    this.apis = spv.toRealArray(data[0]);
-    this.fn = data[1];
-    return
-  }
-
-  this.apis = spv.toRealArray(data.api);
-  this.fn = data.fn;
-};
 
 return function(self, props) {
   if (!hasPrefixedProps(props)){
