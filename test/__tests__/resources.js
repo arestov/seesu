@@ -40,7 +40,7 @@ test('state loaded', t => {
     zero_map_level: true,
 
     '+states': {
-      number: [
+      someid: [
         'compx',
         [],
         function () {
