@@ -3,7 +3,6 @@ define(function (require) {
 
 var spv = require('spv');
 var checkPrefix = require('../checkPrefix');
-var collectStatesBinders = require('../collectStatesBinders');
 var pvUpdate = require('../../updateProxy').update;
 
 var toRealArray = spv.toRealArray;
@@ -304,10 +303,6 @@ return function checkApis(self, props, typed_state_dcls) {
   self.__api_effects_$_index_by_apis = indexByList(effects, 'apis') || self.__api_effects_$_index_by_apis;
 
   self.__api_root_dep_apis = rootApis(effects) || self.__api_root_dep_apis || null;
-
-
-
-  collectStatesBinders(self, props);
 };
 
 });

@@ -1,8 +1,12 @@
 define(function(require) {
 'use strict';
+var spv = require('spv')
 var cloneObj = require('spv').cloneObj
+var hp = require('../../helpers');
 
-var StateBindDeclr = null
+var getUnprefixed = spv.getDeprefixFunc( 'state-' );
+var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
+
 // var NestReqMap = null
 
 // var NestSelector = require('../nest_sel/item');
@@ -11,10 +15,12 @@ var StateBindDeclr = null
 // var NestCompx = require('../nest_compx/item')
 var NestReqMap = require('./legacy/nest_req/dcl')
 var StateReqMap = require('./legacy/state_req/dcl')
+var StateBindDeclr = require('./legacy/subscribe/dcl')
 
 // var buildSel = require('../nest_sel/build');
 var buildNestReqs = require('./legacy/nest_req/rebuild');
 var buildStateReqs = require('./legacy/state_req/rebuild')
+var buildSubscribes = require('./legacy/subscribe/rebuild')
 
 var parse = function(name, data) {
   var type = data.type;
@@ -26,7 +32,7 @@ var parse = function(name, data) {
       return new NestReqMap(name, data);
     }
     case 'subscribe': {
-      // return new StateBindDeclr(data[1], name);
+      return new StateBindDeclr(name, data);
     }
   }
 
@@ -102,7 +108,7 @@ var rebuildType = function(self, type, result, list, typed_state_dcls) {
       return;
     }
     case 'subscribe': {
-      // buildSel(self, result);
+      buildSubscribes(self, list)
       return;
     }
   }
@@ -133,6 +139,25 @@ var checkModern = function(self, props) {
   );
 }
 
+var handleLegacySubscribe = function(self, props) {
+  if (!hasPrefixedProps(props)){
+    return;
+  }
+
+  var result = {}
+
+  for (var prop in self) {
+    var state_name = getUnprefixed(prop);
+    if (!state_name) {continue;}
+    result[state_name] = self[prop]
+  }
+
+  self._extendable_effect_index = extend(
+    self._extendable_effect_index,
+    result
+  );
+
+}
 
 var handleLegacy = function(self, prop, type) {
   if (!self.hasOwnProperty(prop)) {
@@ -167,6 +192,7 @@ return function checkEffects(self, props, typed_state_dcls) {
 
   checkLegacy(self, props);
   checkModern(self, props);
+  handleLegacySubscribe(self, props)
 
   if (currentIndex === self._extendable_effect_index) {
     return;
