@@ -14,23 +14,31 @@ const fakeInterface = require('../fakeInterface')
 
 test('state loaded', t => {
   const StartPage = spv.inh(BrowseMap.Model, {}, {
+    '+effects': {
+      consume: {
+        0: {
+          type: 'state_request',
+          states: ['bio'],
+
+          parse: function parse(data) {
+            return [data && data.bio]
+          },
+
+          api: '#fake',
+
+          fn: [
+            ['someid'],
+            function (api, opts, msq) {
+              return api.get(`profiles/${55}`, {}, opts)
+            },
+          ],
+        },
+      },
+    },
+
     model_name: 'start_page',
     zero_map_level: true,
-    req_map: [
-      [
-        ['bio'],
-        function parse(data) {
-          return [data && data.bio]
-        },
-        ['#fake', [
-          ['someid'],
-          function (api, opts, msq) {
-            return api.get(`profiles/${55}`, {}, opts)
-          },
-        ]],
-      ],
 
-    ],
     '+states': {
       number: [
         'compx',
