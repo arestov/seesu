@@ -655,6 +655,120 @@ var FreeArtistTracks = spv.inh(SongsList, {}, {
 });
 
 var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
+  "+effects": {
+    "consume": {
+      0: {
+        type: "state_request",
+        states: ['soundcloud_matched', 'soundcloud_profile'],
+
+        parse: function (r) {
+          var sorted = r && r.sort(function (a, b) {
+            return spv.sortByRules(a, b, [{field: 'followers_count', reverse: true}]);
+          });
+
+          var matched = sorted && sorted[0];
+          return {
+            soundcloud_matched: matched && matched.permalink,
+            soundcloud_profile: matched && matched.id
+          };
+        },
+
+        api: '#sc_api',
+
+        fn: [['artist_name'], function(api, opts, artist_name) {
+          return api.get('users', {
+            q: artist_name
+          });
+        }]
+      },
+
+      1: {
+        type: "state_request",
+        states: ['profile_image', 'bio', 'listeners', 'playcount', 'similar_artists_list', 'tags_list'],
+
+        parse: function(r) {
+          var psai = app_serv.parseArtistInfo(r);
+          var profile_image = this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image'));
+
+          //_this.tags_list.setPreview();
+          var artists_list;
+
+          if (psai.similars){
+            var data_list = [];
+            for (var i = 0; i < psai.similars.length; i++) {
+              var cur = psai.similars[i];
+              data_list.push({
+                artist_name: cur.name,
+                lfm_image: this.app.art_images.getImageWrap(cur.image)
+              });
+
+            }
+            artists_list = data_list;
+            //_this.similar_artists.setPreviewList(data_list);
+          }
+
+          return [
+            profile_image,
+            psai.bio,
+            spv.getTargetField(r, 'artist.stats.listeners'),
+            spv.getTargetField(r, 'artist.stats.playcount'),
+            artists_list, psai.tags
+          ];
+        },
+
+        api: '#lfm',
+
+        fn: [['artist_name'], function(api, opts, artist_name) {
+          return api.get('artist.getInfo', {'artist': artist_name});
+        }]
+      },
+
+      2: {
+        type: "state_request",
+        states: ['discogs_id'],
+
+        parse: function(r) {
+          var artist_name = this.head.artist_name;
+          var simplifyArtistName = function(name) {
+            return name.replace(/\([\s\S]*?\)/, '').split(/\s|,/).sort().join('').toLowerCase();
+          };
+
+          var artists_list = r && r.results;
+          var artist_info;
+          var simplified_artist = simplifyArtistName(artist_name);
+          for (var i = 0; i < artists_list.length; i++) {
+            var cur = artists_list[i];
+            if (simplified_artist == simplifyArtistName(cur.title)){
+              if (cur.thumb && cur.thumb.indexOf('images/record90') == -1){
+                artist_info = {
+                  artist_name: cur.title,
+                  image_url: cur.thumb,
+                  id: cur.id
+                };
+                break;
+              }
+            }
+          }
+
+          return {
+            discogs_id: artist_info && artist_info.id
+          };
+
+          // return {
+          // 	discogs_id: ''
+          // };
+          //this.app.discogs.get('/database/search', {q: artist_name, type:"artist"}
+        },
+
+        api: '#discogs',
+
+        fn: [['artist_name'], function(api, opts, artist_name) {
+          return api.get('/database/search', {q: artist_name, type:"artist" });
+        }]
+      }
+    }
+  },
+
   model_name: 'artcard',
   getURL: function() {
     return '/catalog/' + this.app.encodeURLPart(this.head.artist_name);
@@ -794,116 +908,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
     return song;
   },
 
-  req_map: [
-    {
-      type: "state_request",
-      states: ['soundcloud_matched', 'soundcloud_profile'],
-
-      parse: function (r) {
-        var sorted = r && r.sort(function (a, b) {
-          return spv.sortByRules(a, b, [{field: 'followers_count', reverse: true}]);
-        });
-
-        var matched = sorted && sorted[0];
-        return {
-          soundcloud_matched: matched && matched.permalink,
-          soundcloud_profile: matched && matched.id
-        };
-      },
-
-      api: '#sc_api',
-
-      fn: [['artist_name'], function(api, opts, artist_name) {
-        return api.get('users', {
-          q: artist_name
-        });
-      }]
-    },
-
-    {
-      type: "state_request",
-      states: ['profile_image', 'bio', 'listeners', 'playcount', 'similar_artists_list', 'tags_list'],
-
-      parse: function(r) {
-        var psai = app_serv.parseArtistInfo(r);
-        var profile_image = this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image'));
-
-        //_this.tags_list.setPreview();
-        var artists_list;
-
-        if (psai.similars){
-          var data_list = [];
-          for (var i = 0; i < psai.similars.length; i++) {
-            var cur = psai.similars[i];
-            data_list.push({
-              artist_name: cur.name,
-              lfm_image: this.app.art_images.getImageWrap(cur.image)
-            });
-
-          }
-          artists_list = data_list;
-          //_this.similar_artists.setPreviewList(data_list);
-        }
-
-        return [
-          profile_image,
-          psai.bio,
-          spv.getTargetField(r, 'artist.stats.listeners'),
-          spv.getTargetField(r, 'artist.stats.playcount'),
-          artists_list, psai.tags
-        ];
-      },
-
-      api: '#lfm',
-
-      fn: [['artist_name'], function(api, opts, artist_name) {
-        return api.get('artist.getInfo', {'artist': artist_name});
-      }]
-    },
-    {
-      type: "state_request",
-      states: ['discogs_id'],
-
-      parse: function(r) {
-        var artist_name = this.head.artist_name;
-        var simplifyArtistName = function(name) {
-          return name.replace(/\([\s\S]*?\)/, '').split(/\s|,/).sort().join('').toLowerCase();
-        };
-
-        var artists_list = r && r.results;
-        var artist_info;
-        var simplified_artist = simplifyArtistName(artist_name);
-        for (var i = 0; i < artists_list.length; i++) {
-          var cur = artists_list[i];
-          if (simplified_artist == simplifyArtistName(cur.title)){
-            if (cur.thumb && cur.thumb.indexOf('images/record90') == -1){
-              artist_info = {
-                artist_name: cur.title,
-                image_url: cur.thumb,
-                id: cur.id
-              };
-              break;
-            }
-          }
-        }
-
-        return {
-          discogs_id: artist_info && artist_info.id
-        };
-
-        // return {
-        // 	discogs_id: ''
-        // };
-        //this.app.discogs.get('/database/search', {q: artist_name, type:"artist"}
-      },
-
-      api: '#discogs',
-
-      fn: [['artist_name'], function(api, opts, artist_name) {
-        return api.get('/database/search', {q: artist_name, type:"artist" });
-      }]
-    }
-  ],
   getTopTracks: function() {
     if (this.top_songs){
       return this.top_songs;
