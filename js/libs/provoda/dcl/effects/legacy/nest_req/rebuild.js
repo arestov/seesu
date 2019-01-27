@@ -4,6 +4,7 @@ var changeSources = require('../utils/changeSources')
 var assign = require('../utils/assign')
 
 return function buildNestReqs(self, by_name, typed_state_dcls) {
+  self._nest_reqs = by_name
   self.main_list_nest_req = self.main_list_name && self._nest_reqs[self.main_list_name];
 
   self.netsources_of_nestings = {

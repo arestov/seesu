@@ -15,6 +15,7 @@ var checkSubpager = require('../dcl/sub_pager/check');
 var collectSubpages = require('../dcl/sub_pager/collectSubpages');
 
 var changeDataMorphDeclarations = require('../dcl/changeDataMorphDeclarations');
+var checkEffects = require('../dcl/effects/check')
 var checkNest = require('../dcl/nest/check');
 var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
 
@@ -48,6 +49,7 @@ var checkSideeffects = function(self, props, typed_state_dcls, params) {
 
   changeDataMorphDeclarations(self, props, typed_state_dcls);
   collectStateChangeHandlers(self, props, typed_state_dcls);
+  checkEffects(self, props, typed_state_dcls)
 
   for (var i = 0; i < xxxx_morph_props.length; i++) {
     // если есть декларации - парсим, делаем функции

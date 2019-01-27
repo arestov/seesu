@@ -112,7 +112,7 @@ var VkSongList = spv.inh(SongsList, {}, pv.mergeBhv({}, auth_bh));
 
 var VkRecommendedTracks = spv.inh(VkSongList, {}, {
   'nest_req-songs-list': {
-    type: 'nest_req',
+    type: 'nest_request',
     parse: [
       declr_parsers.vk.getTracksFn('response'),
       function(r) {
@@ -133,7 +133,7 @@ var VkRecommendedTracks = spv.inh(VkSongList, {}, {
 
 var MyVkAudioList = spv.inh(VkSongList, {}, {
   'nest_req-songs-list': {
-    type: 'nest_req',
+    type: 'nest_request',
     parse: [
       declr_parsers.vk.getTracksFn('response.items'),
       {
@@ -183,7 +183,7 @@ var VKFriendsList = spv.inh(LoadableList, {}, pv.mergeBhv({
   page_limit: 200,
   'nest_rqc-list_items': '#users/vk:[:userid]',
   'nest_req-list_items': {
-    type: 'nest_req',
+    type: 'nest_request',
     parse: [
       {
         is_array: true,
