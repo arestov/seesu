@@ -115,6 +115,39 @@ var LfmAuth = spv.inh(pv.Model, {
 
   },
 }, {
+  "+effects": {
+    "consume": {
+      "token": {
+        type: "subscribe",
+        api: ["window", "bridge"],
+
+        fn: function(update, win, bridge) {
+          return spv.listenEvent(win, "message", function(e) {
+            if (e.source != bridge.contentWindow || !spv.startsWith(e.data, "lastfm_token:")) {
+              return;
+            }
+
+            update(e.data.replace("lastfm_token:", ""));
+          });
+        }
+      },
+      "_bridge_ready": {
+        type: "subscribe",
+        api: ["window", "bridge"],
+
+        fn: function(update, win, bridge) {
+          return spv.listenEvent(win, "message", function(e) {
+            if (e.source != bridge.contentWindow || e.data != "lastfm_bridge_ready:") {
+              return;
+            }
+
+            update(true);
+          });
+        }
+      }
+    }
+  },
+
   "+states": {
     "data_wait": [
       "compx",
@@ -182,33 +215,6 @@ var LfmAuth = spv.inh(pv.Model, {
       return window.document.createElement('iframe');
     }
   ],
-  'state-token': {
-    type: 'subscribe',
-    api: ['window', 'bridge'],
-    fn: function (update, win, bridge) {
-      return spv.listenEvent(win, 'message', function(e) {
-        if (e.source != bridge.contentWindow || !spv.startsWith(e.data, 'lastfm_token:')) {
-          return;
-        }
-
-        update(e.data.replace('lastfm_token:', ''));
-      });
-    }
-  },
-  'state-_bridge_ready': {
-    type: 'subscribe',
-    api: ['window', 'bridge'],
-    fn: function (update, win, bridge) {
-      return spv.listenEvent(win, 'message', function(e) {
-        if (e.source != bridge.contentWindow || e.data != 'lastfm_bridge_ready:') {
-          return;
-        }
-
-        update(true);
-      });
-    }
-  },
-
   'effect-started_bridge': {
     api: ['bridge', 'window'],
     trigger: 'bridge_url',
