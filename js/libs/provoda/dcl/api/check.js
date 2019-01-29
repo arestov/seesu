@@ -2,7 +2,7 @@ define(function (require) {
 'use strict';
 
 var spv = require('spv');
-var checkPrefix = require('../checkPrefix');
+var checkPrefix = require('../../StatesEmitter/checkPrefix');
 var pvUpdate = require('../../updateProxy').update;
 var indexByDepName = require('./utils/indexByDepName')
 var wrapDeps = require('./utils/wrapDeps')

@@ -6,7 +6,7 @@ var initWatchList = require('../nest-watch/index').initList;
 var initNestSel = require('../dcl/nest_sel/init');
 var initNestConcat = require('../dcl/nest_conj/init');
 var initNestCompx = require('../dcl/nest_compx/init');
-var initApis = require('../StatesEmitter/apis/init')
+var initApis = require('../dcl/api/init')
 
 
 function connectStates(self) {
