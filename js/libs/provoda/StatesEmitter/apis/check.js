@@ -5,19 +5,9 @@ var spv = require('spv');
 var checkPrefix = require('../checkPrefix');
 var pvUpdate = require('../../updateProxy').update;
 var indexByDepName = require('./utils/indexByDepName')
+var wrapDeps = require('./utils/wrapDeps')
 
 var toRealArray = spv.toRealArray;
-
-var wrapDeps = function(deps) {
-  if (typeof deps == 'string') {
-    return [[deps]];
-  }
-  if (Array.isArray(deps) && typeof deps[0] == 'string') {
-    return [deps, spv.hasEveryArgs];
-  }
-
-  return deps;
-};
 
 var prefixArray = function (arr, prefix) {
   var result = new Array(arr.length);
