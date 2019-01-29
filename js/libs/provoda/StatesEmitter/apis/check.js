@@ -302,10 +302,11 @@ function handleApis(self, props, typed_state_dcls) {
   return true
 }
 
-return function checkApis(self, props, typed_state_dcls) {
-  // var states = checkApiState(self, props);
-  handleApis(self, props, typed_state_dcls)
+function buildEffects(self, props, typed_state_dcls) {
   var effects = checkEffect(self, props);
+  if (!effects) {
+    return
+  }
 
   getDepsToInsert(effects, self, props, typed_state_dcls);
 
@@ -314,6 +315,13 @@ return function checkApis(self, props, typed_state_dcls) {
   self.__api_effects_$_index_by_apis = indexByList(effects, 'apis') || self.__api_effects_$_index_by_apis;
 
   self.__api_root_dep_apis = rootApis(effects) || self.__api_root_dep_apis || null;
+  return true
+}
+
+return function checkApis(self, props, typed_state_dcls) {
+  // var states = checkApiState(self, props);
+  handleApis(self, props, typed_state_dcls)
+  buildEffects(self, props, typed_state_dcls)
 };
 
 });
