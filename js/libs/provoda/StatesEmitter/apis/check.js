@@ -288,16 +288,27 @@ function rootApis(obj) {
   return result.length ? result : null;
 }
 
-return function checkApis(self, props, typed_state_dcls) {
+function handleApis(self, props, typed_state_dcls) {
   var apis = checkApi(self, props);
-  // var states = checkApiState(self, props);
-  var effects = checkEffect(self, props);
+
+  if (!apis) {
+    return
+  }
 
   getDepsToInsert(apis, self, props, typed_state_dcls);
-  getDepsToInsert(effects, self, props, typed_state_dcls);
 
   self.__apis_$_index = indexByDepName(apis) || self.__apis_$_index;
   self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;
+  return true
+}
+
+return function checkApis(self, props, typed_state_dcls) {
+  // var states = checkApiState(self, props);
+  handleApis(self, props, typed_state_dcls)
+  var effects = checkEffect(self, props);
+
+  getDepsToInsert(effects, self, props, typed_state_dcls);
+
   self.__api_effects_$_index = indexByDepName(effects) || self.__api_effects_$_index;
   self.__api_effects_$_index_by_triggering = indexByList(effects, 'triggering_states') || self.__api_effects_$_index_by_triggering;
   self.__api_effects_$_index_by_apis = indexByList(effects, 'apis') || self.__api_effects_$_index_by_apis;
