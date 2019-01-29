@@ -116,12 +116,7 @@ function handleApis(self, props, typed_state_dcls) {
   return true
 }
 
-function checkEffects(self, props, typed_state_dcls) {
-  var effects = checkEffect(self, props);
-  if (!effects) {
-    return
-  }
-
+function rebuildEffects(self, effects, typed_state_dcls) {
   getDepsToInsert(effects, self, typed_state_dcls);
 
   self.__api_effects_$_index = indexByDepName(effects) || self.__api_effects_$_index;
@@ -129,6 +124,16 @@ function checkEffects(self, props, typed_state_dcls) {
   self.__api_effects_$_index_by_apis = indexByList(effects, 'apis') || self.__api_effects_$_index_by_apis;
 
   self.__api_root_dep_apis = rootApis(effects) || self.__api_root_dep_apis || null;
+}
+
+function checkEffects(self, props, typed_state_dcls) {
+  var effects = checkEffect(self, props);
+  if (!effects) {
+    return
+  }
+
+  rebuildEffects(self, effects, typed_state_dcls)
+
   return true
 }
 
