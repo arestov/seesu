@@ -60,7 +60,7 @@ var usualApis = function (obj) {
   return result;
 };
 
-var doCopy = function (item, self, props, typed_state_dcls) {
+var doCopy = function (item, self, typed_state_dcls) {
   for (var i = 0; i < item.compxes.length; i+=2) {
     var name = item.compxes[ i ];
     var deps = item.compxes[ i + 1 ];
@@ -69,7 +69,7 @@ var doCopy = function (item, self, props, typed_state_dcls) {
   }
 };
 
-var getDepsToInsert = function (source, self, props, typed_state_dcls) {
+var getDepsToInsert = function (source, self, typed_state_dcls) {
   if (!source) {return;}
 
   for (var name in source) {
@@ -78,7 +78,7 @@ var getDepsToInsert = function (source, self, props, typed_state_dcls) {
     var cur = source[name];
     if (!cur.compxes) {continue;}
 
-    doCopy(cur, self, props, typed_state_dcls);
+    doCopy(cur, self, typed_state_dcls);
   }
 };
 
@@ -109,7 +109,7 @@ function handleApis(self, props, typed_state_dcls) {
     return
   }
 
-  getDepsToInsert(apis, self, props, typed_state_dcls);
+  getDepsToInsert(apis, self, typed_state_dcls);
 
   self.__apis_$_index = indexByDepName(apis) || self.__apis_$_index;
   self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;
@@ -122,7 +122,7 @@ function checkEffects(self, props, typed_state_dcls) {
     return
   }
 
-  getDepsToInsert(effects, self, props, typed_state_dcls);
+  getDepsToInsert(effects, self, typed_state_dcls);
 
   self.__api_effects_$_index = indexByDepName(effects) || self.__api_effects_$_index;
   self.__api_effects_$_index_by_triggering = indexByList(effects, 'triggering_states') || self.__api_effects_$_index_by_triggering;
