@@ -4,6 +4,7 @@ define(function (require) {
 var spv = require('spv');
 var checkPrefix = require('../../StatesEmitter/checkPrefix');
 var indexByDepName = require('./utils/indexByDepName')
+var getDepsToInsert = require('./utils/getDepsToInsert')
 var ApiDeclr = require('./dcl')
 var ApiEffectDeclr = require('../effects/legacy/produce/dcl')
 
@@ -58,28 +59,6 @@ var usualApis = function (obj) {
   }
 
   return result;
-};
-
-var doCopy = function (item, self, typed_state_dcls) {
-  for (var i = 0; i < item.compxes.length; i+=2) {
-    var name = item.compxes[ i ];
-    var deps = item.compxes[ i + 1 ];
-    typed_state_dcls['compx'] = typed_state_dcls['compx'] || {};
-    typed_state_dcls['compx'][name] = deps;
-  }
-};
-
-var getDepsToInsert = function (source, self, typed_state_dcls) {
-  if (!source) {return;}
-
-  for (var name in source) {
-    if (!source.hasOwnProperty(name)) {continue;}
-
-    var cur = source[name];
-    if (!cur.compxes) {continue;}
-
-    doCopy(cur, self, typed_state_dcls);
-  }
 };
 
 function rootApis(obj) {
