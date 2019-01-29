@@ -116,7 +116,7 @@ function handleApis(self, props, typed_state_dcls) {
   return true
 }
 
-function buildEffects(self, props, typed_state_dcls) {
+function checkEffects(self, props, typed_state_dcls) {
   var effects = checkEffect(self, props);
   if (!effects) {
     return
@@ -135,7 +135,7 @@ function buildEffects(self, props, typed_state_dcls) {
 return function checkApis(self, props, typed_state_dcls) {
   // var states = checkApiState(self, props);
   handleApis(self, props, typed_state_dcls)
-  buildEffects(self, props, typed_state_dcls)
+  checkEffects(self, props, typed_state_dcls)
 };
 
 });
