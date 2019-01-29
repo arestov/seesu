@@ -4,6 +4,7 @@ define(function (require) {
 var spv = require('spv');
 var checkPrefix = require('../checkPrefix');
 var pvUpdate = require('../../updateProxy').update;
+var indexByDepName = require('./utils/indexByDepName')
 
 var toRealArray = spv.toRealArray;
 
@@ -176,26 +177,6 @@ var ApiEffectDeclr = function(name, data) {
 
 var checkApi = checkPrefix('api-', ApiDeclr, '__apis');
 var checkEffect = checkPrefix('effect-', ApiEffectDeclr, '__api_effects');
-
-var indexByDepName = function (obj) {
-  if (!obj) {
-    return;
-  }
-  var result = {};
-
-  for (var name in obj) {
-    if (!obj.hasOwnProperty(name)) {
-      continue;
-    }
-    var cur = obj[name];
-    if (!cur.deps_name) {
-      continue;
-    }
-    result[cur.deps_name] = cur;
-  }
-
-  return result;
-};
 
 var indexByList = function (obj, list_name) {
   if (!obj) {
