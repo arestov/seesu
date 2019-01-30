@@ -18,16 +18,15 @@ var buildNestReqs = require('./legacy/nest_req/rebuild');
 var buildStateReqs = require('./legacy/state_req/rebuild')
 var buildSubscribes = require('./legacy/subscribe/rebuild')
 
-var parse = function(name, data) {
-  var type = data.type;
+var parse = function(type, name, data) {
   switch (type) {
-    case 'state_request': {
+    case 'consume-state_request': {
       return new StateReqMap(name, data);
     }
-    case 'nest_request': {
+    case 'consume-nest_request': {
       return new NestReqMap(name, data);
     }
-    case 'subscribe': {
+    case 'consume-subscribe': {
       return new StateBindDeclr(name, data);
     }
   }
@@ -35,15 +34,17 @@ var parse = function(name, data) {
   throw new Error('unsupported type ' + type);
 }
 
-var extend = function(index, more_effects) {
+var extend = function(prefix, index, more_effects) {
   var cur = cloneObj({}, index) || {};
+  var prefix_string = prefix ? (prefix + '-') : ''
 
   for (var name in more_effects) {
     var data = more_effects[name]
-    var dcl = parse(name, data);
+    var type = prefix_string + data.type;
+    var dcl = parse(type, name, data);
     cur[name] = {
       dcl: dcl,
-      type: data.type,
+      type: type,
     }
   }
 
@@ -95,15 +96,15 @@ var notEqual = function(one, two) {
 
 var rebuildType = function(self, type, result, list, typed_state_dcls) {
   switch (type) {
-    case 'state_request': {
+    case 'consume-state_request': {
       buildStateReqs(self, list)
       return;
     }
-    case 'nest_request': {
+    case 'consume-nest_request': {
       buildNestReqs(self, result, typed_state_dcls);
       return;
     }
-    case 'subscribe': {
+    case 'consume-subscribe': {
       buildSubscribes(self, list)
       return;
     }
@@ -130,6 +131,7 @@ var checkModern = function(self, props) {
   }
 
   self._extendable_effect_index = extend(
+    'consume',
     self._extendable_effect_index,
     props['+effects'].consume
   );
