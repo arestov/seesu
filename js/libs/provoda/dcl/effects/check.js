@@ -1,11 +1,7 @@
 define(function(require) {
 'use strict';
-var spv = require('spv')
 var cloneObj = require('spv').cloneObj
-var hp = require('../../helpers');
 
-var getUnprefixed = spv.getDeprefixFunc( 'state-' );
-var hasPrefixedProps = hp.getPropsPrefixChecker( getUnprefixed );
 
 // var NestReqMap = null
 
@@ -139,32 +135,11 @@ var checkModern = function(self, props) {
   );
 }
 
-var handleLegacySubscribe = function(self, props) {
-  if (!hasPrefixedProps(props)){
-    return;
-  }
-
-  var result = {}
-
-  for (var prop in self) {
-    var state_name = getUnprefixed(prop);
-    if (!state_name) {continue;}
-    result[state_name] = self[prop]
-  }
-
-  self._extendable_effect_index = extend(
-    self._extendable_effect_index,
-    result
-  );
-
-}
-
 return function checkEffects(self, props, typed_state_dcls) {
 
   var currentIndex = self._extendable_effect_index;
 
   checkModern(self, props);
-  handleLegacySubscribe(self, props)
 
   if (currentIndex === self._extendable_effect_index) {
     return;
