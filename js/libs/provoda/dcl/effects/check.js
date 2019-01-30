@@ -159,38 +159,10 @@ var handleLegacySubscribe = function(self, props) {
 
 }
 
-var handleLegacy = function(self, prop, type) {
-  if (!self.hasOwnProperty(prop)) {
-    return;
-  }
-
-  var result = cloneObj({}, self._extendable_effect_index) || {};
-
-  for (var name in self[prop]) {
-    if (!self[prop].hasOwnProperty(name)) {
-      continue;
-    }
-    var cur = self[prop][name];
-    result[name] = {
-      dcl: cur,
-      type: type,
-    };
-  }
-
-  self._extendable_effect_index = result;
-}
-
-var checkLegacy = function(self) {
-  // handleLegacy(self, '_legacy_nest_dcl', 'nest');
-  // handleLegacy(self, '_chi_nest_conj', 'conj');
-  // handleLegacy(self, '_chi_nest_sel', 'sel');
-}
-
 return function checkEffects(self, props, typed_state_dcls) {
 
   var currentIndex = self._extendable_effect_index;
 
-  checkLegacy(self, props);
   checkModern(self, props);
   handleLegacySubscribe(self, props)
 
