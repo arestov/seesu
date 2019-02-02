@@ -1,7 +1,8 @@
 define(function(require) {
 'use strict';
 var cloneObj = require('spv').cloneObj
-
+var checkPrefix = require('../../StatesEmitter/checkPrefix');
+var checkEffect = checkPrefix('effect-', function(name, data) {return data}, '__zzzz_produs_');
 
 // var NestReqMap = null
 
@@ -12,11 +13,14 @@ var cloneObj = require('spv').cloneObj
 var NestReqMap = require('./legacy/nest_req/dcl')
 var StateReqMap = require('./legacy/state_req/dcl')
 var StateBindDeclr = require('./legacy/subscribe/dcl')
+var ProduceEffectDeclr = require('./legacy/produce/dcl')
 
 // var buildSel = require('../nest_sel/build');
 var buildNestReqs = require('./legacy/nest_req/rebuild');
 var buildStateReqs = require('./legacy/state_req/rebuild')
 var buildSubscribes = require('./legacy/subscribe/rebuild')
+var buildProduce = require('./legacy/produce/rebuild')
+
 
 var parse = function(type, name, data) {
   switch (type) {
@@ -29,6 +33,9 @@ var parse = function(type, name, data) {
     case 'consume-subscribe': {
       return new StateBindDeclr(name, data);
     }
+    case 'produce-': {
+      return new ProduceEffectDeclr(name, data)
+    }
   }
 
   throw new Error('unsupported type ' + type);
@@ -40,7 +47,7 @@ var extend = function(prefix, index, more_effects) {
 
   for (var name in more_effects) {
     var data = more_effects[name]
-    var type = prefix_string + data.type;
+    var type = prefix_string + (data.type || '');
     var dcl = parse(type, name, data);
     cur[name] = {
       dcl: dcl,
@@ -108,6 +115,10 @@ var rebuildType = function(self, type, result, list, typed_state_dcls) {
       buildSubscribes(self, list)
       return;
     }
+    case 'produce-': {
+      buildProduce(self, result, typed_state_dcls)
+      return;
+    }
   }
 }
 
@@ -137,10 +148,23 @@ var checkModern = function(self, props) {
   );
 }
 
-return function checkEffects(self, props, typed_state_dcls) {
+var checkLegacyProduce = function(self, props) {
+  var effects = checkEffect(self, props)
+  if (!effects) {
+    return
+  }
 
+  self._extendable_effect_index = extend(
+    'produce',
+    self._extendable_effect_index,
+    effects
+  );
+}
+
+return function checkEffects(self, props, typed_state_dcls) {
   var currentIndex = self._extendable_effect_index;
 
+  checkLegacyProduce(self, props)
   checkModern(self, props);
 
   if (currentIndex === self._extendable_effect_index) {

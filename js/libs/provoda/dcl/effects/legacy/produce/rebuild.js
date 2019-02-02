@@ -53,6 +53,8 @@ function rootApis(obj) {
 }
 
 return function rebuildEffects(self, effects, typed_state_dcls) {
+  self.__api_effects = effects;
+
   getDepsToInsert(effects, self, typed_state_dcls);
 
   self.__api_effects_$_index = indexByDepName(effects) || self.__api_effects_$_index;

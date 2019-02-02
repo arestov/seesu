@@ -5,7 +5,6 @@ var checkPrefix = require('../../StatesEmitter/checkPrefix');
 var indexByDepName = require('./utils/indexByDepName')
 var getDepsToInsert = require('./utils/getDepsToInsert')
 var ApiDeclr = require('./dcl')
-var checkProduce = require('../effects/legacy/checkProduce')
 
 var checkApi = checkPrefix('api-', ApiDeclr, '__apis');
 
@@ -48,7 +47,6 @@ function handleApis(self, props, typed_state_dcls) {
 return function checkApis(self, props, typed_state_dcls) {
   // var states = checkApiState(self, props);
   handleApis(self, props, typed_state_dcls)
-  checkProduce(self, props, typed_state_dcls)
 };
 
 });
