@@ -1,8 +1,6 @@
 define(function(require) {
 'use strict';
 var cloneObj = require('spv').cloneObj
-var checkPrefix = require('../../StatesEmitter/checkPrefix');
-var checkEffect = checkPrefix('effect-', function(name, data) {return data}, '__zzzz_produs_');
 
 // var NestReqMap = null
 
@@ -154,23 +152,9 @@ var checkModern = function(self, props) {
   );
 }
 
-var checkLegacyProduce = function(self, props) {
-  var effects = checkEffect(self, props)
-  if (!effects) {
-    return
-  }
-
-  self._extendable_effect_index = extend(
-    'produce',
-    self._extendable_effect_index,
-    effects
-  );
-}
-
 return function checkEffects(self, props, typed_state_dcls) {
   var currentIndex = self._extendable_effect_index;
 
-  checkLegacyProduce(self, props)
   checkModern(self, props);
 
   if (currentIndex === self._extendable_effect_index) {
