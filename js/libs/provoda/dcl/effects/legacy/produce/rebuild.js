@@ -1,8 +1,8 @@
 define(function(require) {
 'use strict'
 var spv = require('spv')
-var indexByDepName = require('../../../api/utils/indexByDepName')
-var getDepsToInsert = require('../../../api/utils/getDepsToInsert')
+var indexByDepName = require('../api/utils/indexByDepName')
+var getDepsToInsert = require('../api/utils/getDepsToInsert')
 
 var indexByList = function (obj, list_name) {
   if (!obj) {

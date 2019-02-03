@@ -2,7 +2,7 @@ define(function(require) {
 'use strict'
 var spv = require('spv');
 var pvUpdate = require('../../../../updateProxy').update;
-var wrapDeps = require('../../../api/utils/wrapDeps')
+var wrapDeps = require('../api/utils/wrapDeps')
 var toRealArray = spv.toRealArray;
 
 

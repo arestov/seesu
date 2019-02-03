@@ -2,8 +2,8 @@ define(function (require) {
 'use strict';
 
 var checkPrefix = require('../../StatesEmitter/checkPrefix');
-var rebuild = require('./rebuild')
-var ApiDeclr = require('./dcl')
+var rebuild = require('../effects/legacy/api/rebuild')
+var ApiDeclr = require('../effects/legacy/api/dcl')
 
 var checkApi = checkPrefix('api-', ApiDeclr, '__apis');
 
