@@ -20,6 +20,12 @@ var buildSubscribes = require('./legacy/subscribe/rebuild')
 var ProduceEffectDeclr = require('./legacy/produce/dcl')
 var buildProduce = require('./legacy/produce/rebuild')
 
+var checkPrefix = require('../../StatesEmitter/checkPrefix');
+var buildApi = require('./legacy/api/rebuild')
+var ApiDeclr = require('./legacy/api/dcl')
+
+var checkApi = checkPrefix('api-', function(name, data) {return data}, '___noneon_api');
+
 // var buildSel = require('../nest_sel/build');
 
 
@@ -36,6 +42,9 @@ var parse = function(type, name, data) {
     }
     case 'produce-': {
       return new ProduceEffectDeclr(name, data)
+    }
+    case 'api-': {
+      return new ApiDeclr(name, data)
     }
   }
 
@@ -120,6 +129,9 @@ var rebuildType = function(self, type, result, list, typed_state_dcls) {
       buildProduce(self, result, typed_state_dcls)
       return;
     }
+    case 'api-': {
+      buildApi(self, result, typed_state_dcls)
+    }
   }
 }
 
@@ -135,6 +147,20 @@ var rebuild = function(self, newV, oldV, listByType, typed_state_dcls) {
 
     rebuildType(self, type, newV[type], listByType[type], typed_state_dcls)
   }
+}
+
+function handleLegacyApis(self, props) {
+  var apis = checkApi(self, props);
+
+  if (!apis) {
+    return
+  }
+
+  self._extendable_effect_index = extend(
+    'api',
+    self._extendable_effect_index,
+    apis
+  );
 }
 
 var checkModern = function(self, props) {
@@ -153,11 +179,18 @@ var checkModern = function(self, props) {
     self._extendable_effect_index,
     props['+effects'].produce
   );
+
+  self._extendable_effect_index = extend(
+    'api',
+    self._extendable_effect_index,
+    props['+effects'].api
+  );
 }
 
 return function checkEffects(self, props, typed_state_dcls) {
   var currentIndex = self._extendable_effect_index;
 
+  handleLegacyApis(self, props)
   checkModern(self, props);
 
   if (currentIndex === self._extendable_effect_index) {

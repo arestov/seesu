@@ -3,7 +3,6 @@ define(function(require){
 
 var spv = require('spv');
 var getTypedDcls = require('../dcl-h/getTypedDcls');
-var checkApis = require('../dcl/api/check');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var checkChi = require('../StatesEmitter/checkChi');
 var checkNestRqC = require('../StatesEmitter/checkNestRqC');
@@ -44,7 +43,6 @@ var updateStatesDcls = function(self, props, original) {
 var check = /initStates/gi;
 
 var checkSideeffects = function(self, props, typed_state_dcls, params) {
-  checkApis(self, props, typed_state_dcls);
 
   collectStateChangeHandlers(self, props, typed_state_dcls);
   checkEffects(self, props, typed_state_dcls)
