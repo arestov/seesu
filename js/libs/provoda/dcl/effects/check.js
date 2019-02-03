@@ -146,6 +146,12 @@ var checkModern = function(self, props) {
     self._extendable_effect_index,
     props['+effects'].consume
   );
+
+  self._extendable_effect_index = extend(
+    'produce',
+    self._extendable_effect_index,
+    props['+effects'].produce
+  );
 }
 
 var checkLegacyProduce = function(self, props) {
