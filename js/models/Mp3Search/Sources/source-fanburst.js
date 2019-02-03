@@ -7,37 +7,51 @@ var getQMSongIndex = require('../QMI').getQMSongIndex;
 var guessArtist = require('../guessArtist');
 
 var Query = pv.behavior({
-  'nest_req-files': [
-    [
-      function (r, _1, _2, api) {
-        if (!r || !r.length) {return;}
-        var msq = this.head.msq;
-        var result = [];
-        for (var i = 0; i < r.length; i++) {
-          if (!r[i]) {continue;}
-          var file = parseTrack(r[i], msq, api.client_id);
-          if (!file) {continue;}
+  "+effects": {
+    "consume": {
+      "files": {
+        type: "nest_request",
 
-          var qmi = getQMSongIndex(msq, file);
-          if (qmi == -1) {continue;}
+        parse: [function(r, _1, _2, api) {
+          if (!r || !r.length) {
+            return;
+          }
+          var msq = this.head.msq;
+          var result = [];
+          for (var i = 0; i < r.length; i++) {
+            if (!r[i]) {
+              continue;
+            }
+            var file = parseTrack(r[i], msq, api.client_id);
+            if (!file) {
+              continue;
+            }
 
-          result.push(file);
-        }
+            var qmi = getQMSongIndex(msq, file);
+            if (qmi == -1) {
+              continue;
+            }
 
-        return result;
+            result.push(file);
+          }
+
+          return result;
+        }],
+
+        api: "#fanburst_api",
+
+        fn: [["msq"], function(api, opts, msq) {
+          return api.get("tracks/search", {
+            query: msq.q ? msq.q : (msq.artist || "") + " - " + (msq.track || ""),
+            per_page: 30,
+            offset: 0
+          }, opts);
+        }]
       }
-    ],
-    ['#fanburst_api', [
-      ['msq'],
-      function(api, opts, msq) {
-        return api.get('tracks/search', {
-          query: msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || '')),
-          per_page: 30,
-          offset: 0,
-        }, opts);
-      }
-    ]]
-  ],
+    }
+  },
+
+
 }, QueryBase);
 
 function parseTrack(item, msq, client_id) {

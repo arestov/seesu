@@ -115,6 +115,85 @@ var LfmAuth = spv.inh(pv.Model, {
 
   },
 }, {
+  "+effects": {
+    "api": {
+      "bridge": ["requested_once", ["window"], function(window) {
+        return window.document.createElement("iframe");
+      }],
+
+      "window": function() {
+        return window;
+      }
+    },
+
+    "produce": {
+      "started_bridge": {
+        api: ["bridge", "window"],
+        trigger: "bridge_url",
+        require: "bridge_url",
+
+        fn: function(bridge, win, bridge_url) {
+          bridge.className = "serv-container";
+          bridge.src = bridge_url;
+          win.document.body.appendChild(bridge);
+        }
+      },
+
+      "prepared_bridge": {
+        api: "bridge",
+        trigger: "bridge_key",
+        require: ["_bridge_ready", "bridge_key"],
+        effects: "started_bridge",
+
+        fn: function(bridge, key) {
+          bridge.contentWindow.postMessage("add_keys:" + key, "*");
+        }
+      },
+
+      "asked_permission": {
+        api: "self",
+        trigger: "auth_data",
+        require: "auth_data",
+        effects: "prepared_bridge",
+
+        fn: function(self, data) {
+          self.trigger("want-open-url", data.link, data.opts);
+        }
+      }
+    },
+
+    "consume": {
+      "token": {
+        type: "subscribe",
+        api: ["window", "bridge"],
+
+        fn: function(update, win, bridge) {
+          return spv.listenEvent(win, "message", function(e) {
+            if (e.source != bridge.contentWindow || !spv.startsWith(e.data, "lastfm_token:")) {
+              return;
+            }
+
+            update(e.data.replace("lastfm_token:", ""));
+          });
+        }
+      },
+      "_bridge_ready": {
+        type: "subscribe",
+        api: ["window", "bridge"],
+
+        fn: function(update, win, bridge) {
+          return spv.listenEvent(win, "message", function(e) {
+            if (e.source != bridge.contentWindow || e.data != "lastfm_bridge_ready:") {
+              return;
+            }
+
+            update(true);
+          });
+        }
+      }
+    }
+  },
+
   "+states": {
     "data_wait": [
       "compx",
@@ -171,75 +250,6 @@ var LfmAuth = spv.inh(pv.Model, {
     target.updateState('auth_data', target.getInitAuthData());
   },
 
-  'api-window': function () {
-    return window;
-  },
-
-  'api-bridge': [
-    'requested_once',
-    ['window'],
-    function (window) {
-      return window.document.createElement('iframe');
-    }
-  ],
-
-  'state-token': [
-    ['window', 'bridge'],
-    function (update, win, bridge) {
-      return spv.listenEvent(win, 'message', function(e) {
-        if (e.source != bridge.contentWindow || !spv.startsWith(e.data, 'lastfm_token:')) {
-          return;
-        }
-
-        update(e.data.replace('lastfm_token:', ''));
-      });
-    }
-  ],
-
-  'state-_bridge_ready': [
-    ['window', 'bridge'],
-    function (update, win, bridge) {
-      return spv.listenEvent(win, 'message', function(e) {
-        if (e.source != bridge.contentWindow || e.data != 'lastfm_bridge_ready:') {
-          return;
-        }
-
-        update(true);
-      });
-    }
-  ],
-
-  'effect-started_bridge': [
-    [
-      ['bridge', 'window'], 'bridge_url',
-      function (bridge, win, bridge_url) {
-        bridge.className = 'serv-container';
-        bridge.src = bridge_url;
-        win.document.body.appendChild(bridge);
-      }
-    ],
-    ['bridge_url'],
-  ],
-
-  'effect-prepared_bridge': [
-    [
-      'bridge', 'bridge_key',
-      function (bridge, key) {
-        bridge.contentWindow.postMessage("add_keys:" + key, '*');
-      }
-    ],
-    [['_bridge_ready', 'bridge_key'], ['started_bridge']]
-  ],
-
-  'effect-asked_permission': [
-    [
-      'self', 'auth_data',
-      function (self, data) {
-        self.trigger('want-open-url', data.link, data.opts);
-      }
-    ],
-    ['auth_data', 'prepared_bridge']
-  ],
 
   'stch-token': function (target, token) {
     target.setToken(token);

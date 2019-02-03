@@ -56,22 +56,28 @@ function makeSong(cursor, msq){
 }
 
 var Query = pv.behavior({
-  'nest_req-files': [
-    [
-      function (r) {
-        return makeList(r, this.head.msq);
+  "+effects": {
+    "consume": {
+      "files": {
+        type: "nest_request",
+
+        parse: [function(r) {
+          return makeList(r, this.head.msq);
+        }],
+
+        api: "#pleer_net",
+
+        fn: [["msq"], function(api, opts, msq) {
+          return api.get("search", {
+            q: msq.q ? msq.q : (msq.artist || "") + " - " + (msq.track || ""),
+            limit: 30
+          }, opts);
+        }]
       }
-    ],
-    ['#pleer_net', [
-      ['msq'],
-      function(api, opts, msq) {
-        return api.get('search', {
-          q: msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || '')),
-          limit: 30,
-        }, opts);
-      }
-    ]]
-  ],
+    }
+  },
+
+
 }, QueryBase);
 return pv.behavior({
   "+states": {

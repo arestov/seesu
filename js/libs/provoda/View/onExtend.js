@@ -4,7 +4,6 @@ var spv = require('spv');
 var cloneObj = spv.cloneObj;
 
 var getTypedDcls = require('../dcl-h/getTypedDcls');
-var checkApis = require('../StatesEmitter/apis/check');
 var collectCompxs = require('../StatesEmitter/collectCompxs');
 var collectSelectorsOfCollchs = require('../dcl_view/collectSelectorsOfCollchs');
 var collectCollectionChangeDeclarations = require('../dcl_view/collectCollectionChangeDeclarations');
@@ -53,7 +52,7 @@ return function(self, props, original) {
   var typed_state_dcls = getTypedDcls(props['+states']) || {};
 
   checkNestBorrow(self, props);
-  checkApis(self, props, typed_state_dcls);
+  // check effects
 
   collectStateChangeHandlers(self, props, typed_state_dcls);
   collectCollectionChangeDeclarations(self, props);

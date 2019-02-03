@@ -21,6 +21,26 @@ var AppModelBase = spv.inh(pv.Model, {
     target.views_strucs = {};
   }
 }, {
+  "+effects": {
+    "produce": {
+      "browser-location": {
+        api: ["navi", "self"],
+        trigger: "full_url",
+
+        fn: function(navi, self, url) {
+          if (url == null) {
+            return;
+          }
+          var bwlev = self.getNesting("current_mp_bwlev");
+          navi.update(url, bwlev);
+          self.trackPage(bwlev.getNesting("pioneer").model_name);
+        },
+
+        require: "doc_title"
+      }
+    }
+  },
+
   "+states": {
     "full_url": [
       "compx",
@@ -46,20 +66,6 @@ var AppModelBase = spv.inh(pv.Model, {
       }
     ]
   },
-
-  'effect-browser-location': [
-    [
-      ['navi', 'self'], ['full_url'],
-      function(navi, self, url) {
-        if (url == null) {return;}
-        var bwlev = self.getNesting('current_mp_bwlev');
-        navi.update(url, bwlev);
-        self.trackPage(bwlev.getNesting('pioneer').model_name);
-      }
-    ],
-    [['doc_title']]
-  ],
-
   changeNavTree: function(nav_tree) {
     // this.nav_tree = spv.filter(nav_tree, 'resident');
     this.nav_tree = nav_tree;

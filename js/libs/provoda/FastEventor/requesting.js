@@ -339,7 +339,9 @@ return {
 
       var i, cur;
       var maps_for_state = this.sputnik._states_reqs_index && this.sputnik._states_reqs_index[state_name];
-
+      if (!maps_for_state) {
+        console.warn('cant request state:', state_name, 'but tried. should not try without dcl')
+      }
       var cant_request;
       if (this.mapped_reqs) {
         for (i = 0; i < maps_for_state.length; i++) {

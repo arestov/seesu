@@ -114,6 +114,83 @@ var VKPostsList = spv.inh(LoadableListBase, {
     });
   }
 }, {
+  "+effects": {
+    "consume": {
+      "lists_list": {
+        type: "nest_request",
+
+        parse: [{
+          is_array: true,
+          source: "response.items",
+
+          props_map: {
+            props: {
+              nav_title: "owner_id",
+              url_part: ["urlp", "owner_id"],
+              from_id: "from_id",
+              owner_id: "owner_id",
+              date: ["timestamp", "date"],
+              post_type: "post_type",
+              text_body: "text",
+              likes: "likes.count",
+              reposts: "reposts.count",
+
+              photos: [function(array) {
+                if (!array) {
+                  return;
+                }
+                var photos = [];
+                for (var i = 0; i < array.length; i++) {
+                  var cur = array[i];
+
+                  if (cur.type == "photo") {
+                    photos.push(cur.photo);
+                  }
+                }
+                return photos;
+              }, "attachments"]
+            },
+
+            attachments: [function(array) {
+              if (!array) {
+                return;
+              }
+              var songs = [];
+
+              for (var i = 0; i < array.length; i++) {
+                var cur = array[i];
+                if (cur.type == "audio") {
+                  songs.push(parseVKPostSong(cur.audio));
+                }
+              }
+              return {
+                songs: songs
+              };
+            }, "attachments"]
+          }
+        }, //support paging
+        true, [//side data
+        ["vk_users", function(r) {
+          return r.response.profiles;
+        }], ["vk_groups", function(r) {
+          return r.response.groups;
+        }]]],
+
+        api: "#vktapi",
+
+        fn: [
+          ["artist_name", "track_name"],
+          function(api, opts, artist_name, track_name) {
+            return api.get("newsfeed.search", {
+              q: artist_name + " " + track_name + " has:audio",
+              extended: 1
+            }, null);
+          }
+        ]
+      }
+    }
+  },
+
   "+states": {
     "image_previews": [
       "compx",
@@ -153,84 +230,66 @@ var VKPostsList = spv.inh(LoadableListBase, {
     }];
   },
 
-  'nest_req-lists_list': [
-    [
-      {
-        is_array: true,
-        source: 'response.items',
-        props_map: {
-          props: {
-            nav_title: 'owner_id',
-            url_part: ['urlp', 'owner_id'],
-            from_id: 'from_id',
-            owner_id: 'owner_id',
-            date: ['timestamp', 'date'],
-            post_type: 'post_type',
-            text_body: 'text',
-            likes: 'likes.count',
-            reposts: 'reposts.count',
 
-            photos: [function(array) {
-
-              if (!array) {
-                return;
-              }
-              var photos = [];
-              for (var i = 0; i < array.length; i++) {
-                var cur = array[i];
-
-                if (cur.type == 'photo') {
-                  photos.push(cur.photo);
-
-                }
-              }
-              return photos;
-
-            }, 'attachments']
-          },
-          attachments: [function(array) {
-            if (!array) {
-              return;
-            }
-            var songs = [];
-
-            for (var i = 0; i < array.length; i++) {
-              var cur = array[i];
-              if (cur.type == 'audio') {
-                songs.push(parseVKPostSong(cur.audio));
-              }
-
-            }
-            return {
-              songs: songs
-            };
-          }, 'attachments']
-
-        }
-      },
-      true, //support paging
-      [//side data
-        ['vk_users',
-        function(r) {
-          return r.response.profiles;
-        }],
-        ['vk_groups',
-        function(r) {
-          return r.response.groups;
-        }]
-      ]
-    ],
-    ['#vktapi', 'get', function() {
-      return ['newsfeed.search', {
-        q: this.head.artist_name + ' ' + this.head.track_name + ' has:audio',
-        extended: 1
-      }, null];
-    }]
-  ]
 });
 var isDepend = pv.utils.isDepend;
 
 var SongCard = spv.inh(LoadableListBase, {}, {
+  "+effects": {
+    "consume": {
+      "listenings": {
+        type: "nest_request",
+
+        parse: [function(resp) {
+          if (!resp || !resp.done) {
+            return;
+          }
+
+          var listeners_raw = resp.done;
+
+          return complexEach([listeners_raw[1], listeners_raw[2]], function(result, girl, boy) {
+            if (girl) {
+              result.push(girl);
+            }
+            if (boy) {
+              result.push(boy);
+            }
+
+            return result;
+          });
+        }, false, [["su_users", function(resp) {
+          var girls = resp.done && resp.done[1];
+          var boys = resp.done && resp.done[2];
+          var arr = [];
+
+          if (girls) {
+            arr = arr.concat(girls);
+          }
+
+          if (boys) {
+            arr = arr.concat(boys);
+          }
+
+          for (var i = 0; i < arr.length; i++) {
+            var info = arr[i].info;
+            info.user = arr[i].user;
+            arr[i] = info;
+          }
+          return arr;
+        }]]],
+
+        api: "#sus",
+
+        fn: [["artist_name", "track_name"], function(api, artist_name, track_name) {
+          return api.api("track.getListeners", {
+            artist: artist_name,
+            title: track_name
+          });
+        }]
+      }
+    }
+  },
+
   "+states": {
     "nav_title": [
       "compx",
@@ -288,54 +347,6 @@ var SongCard = spv.inh(LoadableListBase, {}, {
   },
 
   'nest_rqc-listenings': SeesuListening,
-
-  'nest_req-listenings': [
-    [function(resp) {
-      if (!resp || !resp.done) {return;}
-
-      var listeners_raw = resp.done;
-
-      return complexEach([listeners_raw[1], listeners_raw[2]], function(result, girl, boy) {
-        if (girl) {
-          result.push(girl);
-        }
-        if (boy) {
-          result.push(boy);
-        }
-
-        return result;
-      });
-    }, false, [
-      ['su_users', function(resp) {
-        var girls = resp.done && resp.done[1];
-        var boys = resp.done && resp.done[2];
-        var arr = [];
-
-        if (girls) {
-          arr = arr.concat(girls);
-        }
-
-        if (boys) {
-          arr = arr.concat(boys);
-        }
-
-        for (var i = 0; i < arr.length; i++) {
-          var info = arr[i].info;
-          info.user = arr[i].user;
-          arr[i] = info;
-        }
-        return arr;
-
-      }]
-    ]],
-    ['#sus', 'api', function() {
-      return ['track.getListeners', {
-        artist: this.head.artist_name,
-        title: this.head.track_name
-      }];
-    }]
-  ],
-
   'nest-fans': ['fans'],
 
   'nest-vk_posts': ['vk_posts', {
