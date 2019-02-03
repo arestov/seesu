@@ -9,15 +9,18 @@ var cloneObj = require('spv').cloneObj
 // var NestDcl = require('../nest/item');
 // var NestCompx = require('../nest_compx/item')
 var NestReqMap = require('./legacy/nest_req/dcl')
+var buildNestReqs = require('./legacy/nest_req/rebuild');
+
 var StateReqMap = require('./legacy/state_req/dcl')
+var buildStateReqs = require('./legacy/state_req/rebuild')
+
 var StateBindDeclr = require('./legacy/subscribe/dcl')
+var buildSubscribes = require('./legacy/subscribe/rebuild')
+
 var ProduceEffectDeclr = require('./legacy/produce/dcl')
+var buildProduce = require('./legacy/produce/rebuild')
 
 // var buildSel = require('../nest_sel/build');
-var buildNestReqs = require('./legacy/nest_req/rebuild');
-var buildStateReqs = require('./legacy/state_req/rebuild')
-var buildSubscribes = require('./legacy/subscribe/rebuild')
-var buildProduce = require('./legacy/produce/rebuild')
 
 
 var parse = function(type, name, data) {
