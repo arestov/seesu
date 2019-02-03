@@ -278,7 +278,7 @@ var MfCorBase = spv.inh(LoadableList, {
 
         api: "youtube_d",
 
-        fn: [["artist", "track"], function(api, opts, artist, track) {
+        fn: [["artist_name", "track_name"], function(api, opts, artist, track) {
           return api.get(artist + " - " + track);
         }]
       }
