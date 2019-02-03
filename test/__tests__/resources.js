@@ -51,10 +51,15 @@ test('state loaded', t => {
   })
 
   const app = init({
-    'api-fake': function () {
-      return fakeInterface()
+    '+effects': {
+      api: {
+        fake() {
+          return fakeInterface()
+        },
+      },
     },
     'chi-start__page': StartPage,
+
     checkActingRequestsPriority() {
 
     },
