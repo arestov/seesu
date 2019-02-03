@@ -116,6 +116,16 @@ var LfmAuth = spv.inh(pv.Model, {
   },
 }, {
   "+effects": {
+    "api": {
+      "bridge": ["requested_once", ["window"], function(window) {
+        return window.document.createElement("iframe");
+      }],
+
+      "window": function() {
+        return window;
+      }
+    },
+
     "produce": {
       "started_bridge": {
         api: ["bridge", "window"],
@@ -240,17 +250,7 @@ var LfmAuth = spv.inh(pv.Model, {
     target.updateState('auth_data', target.getInitAuthData());
   },
 
-  'api-window': function () {
-    return window;
-  },
 
-  'api-bridge': [
-    'requested_once',
-    ['window'],
-    function (window) {
-      return window.document.createElement('iframe');
-    }
-  ],
   'stch-token': function (target, token) {
     target.setToken(token);
   },

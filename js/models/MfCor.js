@@ -204,6 +204,35 @@ var MfCorBase = spv.inh(LoadableList, {
   }
 }, {
   "+effects": {
+    "api": {
+      "youtube_d": function() {
+        return {
+          api_name: "youtube_d",
+          source_name: "youtube.com",
+
+          get: function(q) {
+            var data = {
+              key: "AIzaSyBvg9b_rzQJJ3ubhS1TeipHpOTqsVnShj4",
+              part: "id,snippet",
+              type: "video",
+              maxResults: 3,
+              q: q
+            };
+
+            return aReq({
+              url: "https://www.googleapis.com/youtube/v3/search",
+              dataType: "jsonp",
+              data: data,
+              resourceCachingAvailable: true,
+              thisOriginAllowed: true
+            });
+          },
+
+          errors_fields: []
+        };
+      }
+    },
+
     "consume": {
       "yt_videos": {
         type: "nest_request",
@@ -457,32 +486,6 @@ var MfCorBase = spv.inh(LoadableList, {
   },
 
   'nest_rqc-yt_videos': YoutubeVideo,
-
-  'api-youtube_d': function() {
-    return {
-      api_name: 'youtube_d',
-      source_name: 'youtube.com',
-      get: function(q) {
-        var data = {
-          key: 'AIzaSyBvg9b_rzQJJ3ubhS1TeipHpOTqsVnShj4',
-          part: 'id,snippet',
-          type: 'video',
-          maxResults: 3,
-          q: q
-        };
-
-        return aReq({
-          url: 'https://www.googleapis.com/youtube/v3/search',
-          dataType: 'jsonp',
-          data: data,
-          resourceCachingAvailable: true,
-          thisOriginAllowed: true
-        });
-      },
-      errors_fields: []
-    };
-  },
-
 
   'stch-unavailable@sorted_completcs.moplas_list': function(target, state, old_state, source) {
     if (state) {

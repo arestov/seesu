@@ -267,6 +267,25 @@ var LfmLovedList = spv.inh(SongsList, {}, pv.mergeBhv({
 
 var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
   "+effects": {
+    "api": {
+      "last_fm_xml": function() {
+        return {
+          api_name: "last_fm_xml",
+          source_name: "last.fm",
+
+          get: function(url) {
+            return $.ajax({
+              url: "http://ws.audioscrobbler.com/1.0/" + url,
+              type: "GET",
+              dataType: "xml"
+            });
+          },
+
+          errors_fields: []
+        };
+      }
+    },
+
     "consume": {
       "artists_list": {
         type: "nest_request",
@@ -310,22 +329,6 @@ var RecommArtList = spv.inh(ArtistsList, {}, pv.mergeBhv({
   },
 
   page_limit: 30,
-
-  'api-last_fm_xml': function() {
-    return {
-      api_name: 'last_fm_xml',
-      source_name: 'last.fm',
-      get: function(url) {
-        return $.ajax({
-          url: 'http://ws.audioscrobbler.com/1.0/' + url,
-          type: "GET",
-          dataType: "xml"
-        });
-      },
-      errors_fields: []
-    };
-  },
-
 
 }, auth_bh));
 
