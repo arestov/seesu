@@ -30,6 +30,13 @@ var usualApis = function (obj) {
   return result;
 };
 
+function rebuild(self, apis, typed_state_dcls) {
+  getDepsToInsert(apis, self, typed_state_dcls);
+
+  self.__apis_$_index = indexByDepName(apis) || self.__apis_$_index;
+  self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;
+}
+
 function handleApis(self, props, typed_state_dcls) {
   var apis = checkApi(self, props);
 
@@ -37,10 +44,7 @@ function handleApis(self, props, typed_state_dcls) {
     return
   }
 
-  getDepsToInsert(apis, self, typed_state_dcls);
-
-  self.__apis_$_index = indexByDepName(apis) || self.__apis_$_index;
-  self.__apis_$_usual = usualApis(apis) || self.__apis_$_usual;
+  rebuild(self, apis, typed_state_dcls)
   return true
 }
 
