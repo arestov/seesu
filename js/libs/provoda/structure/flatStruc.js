@@ -46,7 +46,7 @@ function checkNestingPath(app, md, dep, path, original_need) {
     }
 
     var type;
-    var declr = cur._nest_rqc && cur._nest_rqc[right_nesting_name];
+    var declr = cur._nest_reqs && cur._nest_reqs[right_nesting_name];
     if (declr || (cur._nest_rqc && cur._nest_rqc[right_nesting_name])) {
       type = 'countless';
     } else if (Array.isArray(constr)){
