@@ -7,6 +7,12 @@ var get_constr = require('./get_constr');
 
 var getEncodedState = hp.getEncodedState;
 var getNestingConstr = get_constr.getNestingConstr;
+var getNestReq = function(md, nest_name) {
+  return md._nest_reqs && md._nest_reqs[nest_name];
+}
+var getNestConstr = function(md, nest_name) {
+  return md._nest_rqc && md._nest_rqc[nest_name]
+}
 
 var dep_counter = 1;
 
@@ -46,8 +52,8 @@ function checkNestingPath(app, md, dep, path, original_need) {
     }
 
     var type;
-    var declr = cur._nest_reqs && cur._nest_reqs[right_nesting_name];
-    if (declr || (cur._nest_rqc && cur._nest_rqc[right_nesting_name])) {
+    var declr = getNestReq(cur, right_nesting_name);
+    if (declr || getNestConstr(cur, right_nesting_name)) {
       type = 'countless';
     } else if (Array.isArray(constr)){
       // `posbl_` could lead to incorrect type
