@@ -63,16 +63,17 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
     var req_dep = local_nest_watch.data;
     if (local_nest_watch.nwatch.selector.length == skip) {
       complete(target, req_dep);
-    } else {
-      if (skip > requesting_limit) {
-        return;
-      }
+      return
+    }
 
-      var cur = dep.nesting_path[skip];
+    if (skip > requesting_limit) {
+      return;
+    }
 
-      if (cur && cur.type == 'countless' && cur.related) {
-        watchDependence(req_dep.supervision, target, cur.related, sourceKey(req_dep, skip));
-      }
+    var cur = dep.nesting_path[skip];
+
+    if (cur && cur.type == 'countless' && cur.related) {
+      watchDependence(req_dep.supervision, target, cur.related, sourceKey(req_dep, skip));
     }
   };
 
@@ -182,28 +183,32 @@ function requestNesting(md, declr, dep) {
 
 var handleCountlessNesting = function(dep, req_dep, self) {
   var declr = self._nest_reqs && self._nest_reqs[dep.value];
-  if (dep.state) {
-    req_dep.anchor = function(state) {
-      if (state) {
-        requestNesting(self, declr, dep);
-      }
-    };
-    self.lwch(self, dep.state, req_dep.anchor);
-    watchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
-
-  } else {
+  if (!dep.state) {
     requestNesting(self, declr, dep);
+    return
   }
+
+  req_dep.anchor = function(state) {
+    if (state) {
+      requestNesting(self, declr, dep);
+    }
+  };
+  self.lwch(self, dep.state, req_dep.anchor);
+  watchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
+
 };
 
 var unhandleCountlessNesting = function(dep, req_dep, self) {
-  if (dep.state) {
-    var event_name = hp.getSTEVNameLight(dep.state);
-
-    self.off(event_name, req_dep.anchor, false, self);
-    unwatchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
-
+  if (!dep.state) {
+    return
   }
+
+  var event_name = hp.getSTEVNameLight(dep.state);
+
+  self.off(event_name, req_dep.anchor, false, self);
+  unwatchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
+
+
 };
 
 var handleRoot = function(dep, req_dep, self) {
