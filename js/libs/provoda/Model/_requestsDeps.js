@@ -34,20 +34,23 @@ vs
 loading of soundcloud art songslist
 */
 
-var getNestWatch = spv.memorize(function(dep, supervision) {
-  var requesting_limit;
+var getLimit = function(dep, supervision) {
   if (supervision.greedy) {
-    requesting_limit = Infinity;
-  } else {
-    for (var i = 0; i < dep.nesting_path.length; i++) {
-      var cur = dep.nesting_path[i];
-      if (cur.type == 'countless') {
-        break;
-      }
-      cur = null;
-    }
-    requesting_limit = i;
+    return Infinity;
   }
+
+  for (var i = 0; i < dep.nesting_path.length; i++) {
+    var cur = dep.nesting_path[i];
+    if (cur.type == 'countless') {
+      break;
+    }
+    cur = null;
+  }
+  return i
+}
+
+var getNestWatch = spv.memorize(function(dep, supervision) {
+  var requesting_limit = getLimit(dep, supervision);
 
   if (!requesting_limit) {
     return;
