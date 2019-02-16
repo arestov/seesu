@@ -9,6 +9,9 @@ var NestWatch = require('../nest-watch/NestWatch');
 var toMultiPath = require('../utils/NestingSourceDr/toMultiPath')
 var spv = require('spv');
 
+var watchDependence = changeDependence(true);
+var unwatchDependence = changeDependence(false);
+
 var count = 1;
 var ReqDep = function(dep_key, dep, target, supervision) {
   this.id = count++;
@@ -344,7 +347,7 @@ var checkWhy = function(supervision, self, dep) {
 
 };
 
-var changeDependence = function(mark) {
+function changeDependence(mark) {
   return function(supervision, self, dep, why) {
     if (dep.type == 'state' && !dep.can_request && !dep.related) {
       return;
@@ -372,9 +375,6 @@ var changeDependence = function(mark) {
     return;
   };
 };
-
-var watchDependence = changeDependence(true);
-var unwatchDependence = changeDependence(false);
 
 return {
   addReqDependence: function(supervision, dep) {
