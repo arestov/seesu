@@ -117,43 +117,46 @@ var unwatchRelated = function(self, dep, req_dep) {
 };
 
 var handleNesting = function(dep, req_dep, self) {
-  if (dep.value.length) {
-    if (!dep.nesting_path || !dep.nesting_path.length) {
-      return;
-    }
-    var ne_wa = getNestWatch(dep, req_dep.supervision);
-    if (!ne_wa) {
-      // see:
-      // !requesting_limit
-      return;
-    }
-
-    var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
-
-    addRootNestWatch(self, lo_ne_wa);
-    req_dep.anchor = lo_ne_wa;
-  } else {
+  if (!dep.value.length) {
     watchRelated(self, dep, req_dep);
+    return
   }
+
+  if (!dep.nesting_path || !dep.nesting_path.length) {
+    return;
+  }
+
+  var ne_wa = getNestWatch(dep, req_dep.supervision);
+  if (!ne_wa) {
+    // see:
+    // !requesting_limit
+    return;
+  }
+
+  var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
+
+  addRootNestWatch(self, lo_ne_wa);
+  req_dep.anchor = lo_ne_wa;
 };
 
 var unhandleNesting = function(dep, req_dep, self) {
-  if (dep.value.length) {
-    if (!dep.nesting_path || !dep.nesting_path.length) {
-      return;
-    }
-
-    if (!req_dep.anchor) {
-      // see:
-      // !ne_wa
-      // !requesting_limit
-      return;
-    }
-
-    removeRootNestWatch(self, req_dep.anchor);
-  } else {
+  if (!dep.value.length) {
     unwatchRelated(self, dep, req_dep);
+    return
   }
+
+  if (!dep.nesting_path || !dep.nesting_path.length) {
+    return;
+  }
+
+  if (!req_dep.anchor) {
+    // see:
+    // !ne_wa
+    // !requesting_limit
+    return;
+  }
+
+  removeRootNestWatch(self, req_dep.anchor);
 };
 
 var handleState = function(dep, req_dep, self) {
