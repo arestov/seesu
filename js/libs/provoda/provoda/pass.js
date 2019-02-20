@@ -1,6 +1,8 @@
 define(function(require) {
 'use strict';
-var act = require('../dcl/passes/act');
 
-return act;
+return function(self, pass_name, data) {
+  var act = self.__act
+  act(self, pass_name, data)
+};
 })
