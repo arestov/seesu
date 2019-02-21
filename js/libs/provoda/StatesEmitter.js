@@ -8,6 +8,7 @@ var StatesLabour = require('./StatesLabour');
 var Eventor = require('./Eventor');
 var useInterface = require('./StatesEmitter/useInterface');
 var onPropsExtend = require('./onExtendSE');
+var act = require('./dcl/passes/act');
 
 var getConnector = spv.memorize(function(state_name) {
   return function updateStateBinded(e) {
@@ -109,6 +110,7 @@ var EvConxOpts = function(context, immediately) {
 };
 
 add({
+  __act: act,
   onDie: function(cb) {
     this.on('die', cb);
   },
@@ -282,7 +284,7 @@ var StatesEmitter = spv.inh(Eventor, {
     self.states = {};
   },
   onExtend: onPropsExtend,
-  props: props
+  props: props,
 });
 
 return StatesEmitter;

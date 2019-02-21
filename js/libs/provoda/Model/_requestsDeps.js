@@ -9,6 +9,9 @@ var NestWatch = require('../nest-watch/NestWatch');
 var toMultiPath = require('../utils/NestingSourceDr/toMultiPath')
 var spv = require('spv');
 
+var watchDependence = changeDependence(true);
+var unwatchDependence = changeDependence(false);
+
 var count = 1;
 var ReqDep = function(dep_key, dep, target, supervision) {
   this.id = count++;
@@ -34,20 +37,23 @@ vs
 loading of soundcloud art songslist
 */
 
-var getNestWatch = spv.memorize(function(dep, supervision) {
-  var requesting_limit;
+var getLimit = function(dep, supervision) {
   if (supervision.greedy) {
-    requesting_limit = Infinity;
-  } else {
-    for (var i = 0; i < dep.nesting_path.length; i++) {
-      var cur = dep.nesting_path[i];
-      if (cur.type == 'countless') {
-        break;
-      }
-      cur = null;
-    }
-    requesting_limit = i;
+    return Infinity;
   }
+
+  for (var i = 0; i < dep.nesting_path.length; i++) {
+    var cur = dep.nesting_path[i];
+    if (cur.type == 'countless') {
+      break;
+    }
+    cur = null;
+  }
+  return i
+}
+
+var getNestWatch = spv.memorize(function(dep, supervision) {
+  var requesting_limit = getLimit(dep, supervision);
 
   if (!requesting_limit) {
     return;
@@ -63,16 +69,17 @@ var getNestWatch = spv.memorize(function(dep, supervision) {
     var req_dep = local_nest_watch.data;
     if (local_nest_watch.nwatch.selector.length == skip) {
       complete(target, req_dep);
-    } else {
-      if (skip > requesting_limit) {
-        return;
-      }
+      return
+    }
 
-      var cur = dep.nesting_path[skip];
+    if (skip > requesting_limit) {
+      return;
+    }
 
-      if (cur && cur.type == 'countless' && cur.related) {
-        watchDependence(req_dep.supervision, target, cur.related, sourceKey(req_dep, skip));
-      }
+    var cur = dep.nesting_path[skip];
+
+    if (cur && cur.type == 'countless' && cur.related) {
+      watchDependence(req_dep.supervision, target, cur.related, sourceKey(req_dep, skip));
     }
   };
 
@@ -117,43 +124,46 @@ var unwatchRelated = function(self, dep, req_dep) {
 };
 
 var handleNesting = function(dep, req_dep, self) {
-  if (dep.value.length) {
-    if (!dep.nesting_path || !dep.nesting_path.length) {
-      return;
-    }
-    var ne_wa = getNestWatch(dep, req_dep.supervision);
-    if (!ne_wa) {
-      // see:
-      // !requesting_limit
-      return;
-    }
-
-    var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
-
-    addRootNestWatch(self, lo_ne_wa);
-    req_dep.anchor = lo_ne_wa;
-  } else {
+  if (!dep.value.length) {
     watchRelated(self, dep, req_dep);
+    return
   }
+
+  if (!dep.nesting_path || !dep.nesting_path.length) {
+    return;
+  }
+
+  var ne_wa = getNestWatch(dep, req_dep.supervision);
+  if (!ne_wa) {
+    // see:
+    // !requesting_limit
+    return;
+  }
+
+  var lo_ne_wa = new LocalWatchRoot(self, ne_wa, req_dep);
+
+  addRootNestWatch(self, lo_ne_wa);
+  req_dep.anchor = lo_ne_wa;
 };
 
 var unhandleNesting = function(dep, req_dep, self) {
-  if (dep.value.length) {
-    if (!dep.nesting_path || !dep.nesting_path.length) {
-      return;
-    }
-
-    if (!req_dep.anchor) {
-      // see:
-      // !ne_wa
-      // !requesting_limit
-      return;
-    }
-
-    removeRootNestWatch(self, req_dep.anchor);
-  } else {
+  if (!dep.value.length) {
     unwatchRelated(self, dep, req_dep);
+    return
   }
+
+  if (!dep.nesting_path || !dep.nesting_path.length) {
+    return;
+  }
+
+  if (!req_dep.anchor) {
+    // see:
+    // !ne_wa
+    // !requesting_limit
+    return;
+  }
+
+  removeRootNestWatch(self, req_dep.anchor);
 };
 
 var handleState = function(dep, req_dep, self) {
@@ -179,28 +189,32 @@ function requestNesting(md, declr, dep) {
 
 var handleCountlessNesting = function(dep, req_dep, self) {
   var declr = self._nest_reqs && self._nest_reqs[dep.value];
-  if (dep.state) {
-    req_dep.anchor = function(state) {
-      if (state) {
-        requestNesting(self, declr, dep);
-      }
-    };
-    self.lwch(self, dep.state, req_dep.anchor);
-    watchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
-
-  } else {
+  if (!dep.state) {
     requestNesting(self, declr, dep);
+    return
   }
+
+  req_dep.anchor = function(state) {
+    if (state) {
+      requestNesting(self, declr, dep);
+    }
+  };
+  self.lwch(self, dep.state, req_dep.anchor);
+  watchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
+
 };
 
 var unhandleCountlessNesting = function(dep, req_dep, self) {
-  if (dep.state) {
-    var event_name = hp.getSTEVNameLight(dep.state);
-
-    self.off(event_name, req_dep.anchor, false, self);
-    unwatchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
-
+  if (!dep.state) {
+    return
   }
+
+  var event_name = hp.getSTEVNameLight(dep.state);
+
+  self.off(event_name, req_dep.anchor, false, self);
+  unwatchDependence(req_dep.supervision, self, dep.related, req_dep.id + 'countless_nesting');
+
+
 };
 
 var handleRoot = function(dep, req_dep, self) {
@@ -333,7 +347,7 @@ var checkWhy = function(supervision, self, dep) {
 
 };
 
-var changeDependence = function(mark) {
+function changeDependence(mark) {
   return function(supervision, self, dep, why) {
     if (dep.type == 'state' && !dep.can_request && !dep.related) {
       return;
@@ -361,9 +375,6 @@ var changeDependence = function(mark) {
     return;
   };
 };
-
-var watchDependence = changeDependence(true);
-var unwatchDependence = changeDependence(false);
 
 return {
   addReqDependence: function(supervision, dep) {

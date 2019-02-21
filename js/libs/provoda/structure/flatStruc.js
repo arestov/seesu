@@ -7,19 +7,30 @@ var get_constr = require('./get_constr');
 
 var getEncodedState = hp.getEncodedState;
 var getNestingConstr = get_constr.getNestingConstr;
+var getNestReq = function(md, nest_name) {
+  return md._nest_reqs && md._nest_reqs[nest_name];
+}
+var getNestConstr = function(md, nest_name) {
+  return md._nest_rqc && md._nest_rqc[nest_name]
+}
 
 var dep_counter = 1;
+
+function NestingDep (path, needed, nesting_path, limit) {
+  this.dep_id = dep_counter++
+  this.type = 'nesting'
+  this.value = path
+  this.needed = needed
+  this.nesting_path = nesting_path
+  this.limit = limit
+}
 
 var preciseNesting = function(app, array, path, original_need) {
   var index = {};
   for (var i = 0; i < array.length; i++) {
     var cur = array[i].prototype;
-    var dep = {
-      dep_id: dep_counter++,
-      type: 'nesting',
-      value: path,
-      needed: original_need
-    };
+
+    var dep = new NestingDep(path, original_need)
 
     var checked = checkNestingPath(app, cur, dep, path, original_need);
     index[cur.constr_id] = chechTreeStructure(app, cur, checked);
@@ -46,8 +57,8 @@ function checkNestingPath(app, md, dep, path, original_need) {
     }
 
     var type;
-    var declr = cur._nest_reqs && cur._nest_reqs[right_nesting_name];
-    if (declr || (cur._nest_rqc && cur._nest_rqc[right_nesting_name])) {
+    var declr = getNestReq(cur, right_nesting_name);
+    if (declr || getNestConstr(cur, right_nesting_name)) {
       type = 'countless';
     } else if (Array.isArray(constr)){
       // `posbl_` could lead to incorrect type
@@ -93,13 +104,11 @@ function checkNestingPath(app, md, dep, path, original_need) {
     result.push(item);
 
     if (item.type == 'finite') {
-      return {
-        dep_id: dep_counter++,
-        type: 'nesting',
-        value: path.slice(0, i),
-        nesting_path: result,
-        needed: [preciseNesting(app, constr, path.slice(i), original_need)]
-      };
+      return new NestingDep(
+        path.slice(0, i),
+        [preciseNesting(app, constr, path.slice(i), original_need)],
+        result
+      );
     }
 
     cur = constr.prototype;
@@ -288,13 +297,7 @@ function flatSources(struc, parent_path) {
     });
   }
 
-  result_list.push({
-    dep_id: dep_counter++,
-    type: 'nesting',
-    value: parent,
-    needed: needed,
-    limit: struc.main.limit,
-  });
+  result_list.push(new NestingDep(parent, needed, null, struc.main.limit));
 
   var obj = struc.main.m_children.children;
   for (var name in obj) {
@@ -302,12 +305,7 @@ function flatSources(struc, parent_path) {
     copy.push(name);
     var path = copy;
 
-    result_list.push({
-      dep_id: dep_counter++,
-      type: 'nesting',
-      value: path,
-      limit: obj[name].main.limit,
-    });
+    result_list.push(new NestingDep(path, null, null, obj[name].main.limit));
 
     result_list.push.apply(result_list, flatSources(obj[name], path));
   }

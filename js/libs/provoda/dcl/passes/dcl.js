@@ -97,6 +97,7 @@ var getDeps = function(deps) {
 }
 
 var PassDcl = function(name, data) {
+  this.name = name;
   this.by_named_result = !Array.isArray(data.to)
 
   this.targets_list = null;
@@ -111,7 +112,6 @@ var PassDcl = function(name, data) {
   this.deps = null
   this.fn = null
 
-  debugger
   if (typeof data.fn === 'function') {
     this.fn = data.fn
   } else {
