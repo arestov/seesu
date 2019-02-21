@@ -6,7 +6,7 @@ return function(self, original_states, state_name, value) {
     return
   }
 
-  var pass_name = self.__handleState[state_name]
+  var pass_name = self.__handleState[state_name].name
 
   var old_value = original_states[state_name];
   var arg = {
