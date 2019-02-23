@@ -449,9 +449,18 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
-
-  'stch-used_mopla': function(target, state) {
-    target.updateNesting('used_mopla', state);
+  "+passes": {
+    "handleState:used_mopla": {
+      to: ['used_mopla <<', {
+        method: 'set_one',
+      }],
+      fn: [
+        [],
+        function(item) {
+          return item.value
+        },
+      ],
+    },
   },
 
   sub_pager: {
