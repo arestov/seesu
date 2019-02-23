@@ -316,7 +316,20 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
           return api.get("/artists/" + artist_id + "/releases", null);
         }]
       }
-    }
+    },
+    "produce": {
+      'should_load': {
+        trigger: 'should_load',
+        api: 'self',
+        require: ["should_load"],
+
+        fn: function(self, value) {
+          if (value) {
+            self.preloadStart();
+          }
+        }
+      }
+    },
   },
 
   "+states": {
@@ -357,12 +370,6 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
         return !artist_id;
       }
     ]
-  },
-
-  'stch-should_load': function(target, state) {
-    if (state) {
-      target.preloadStart();
-    }
   },
 
   'stch-mp_show': function(target, state) {
