@@ -372,12 +372,6 @@ var DiscogsAlbums = spv.inh(AlbumsList, {}, {
     ]
   },
 
-  'stch-mp_show': function(target, state) {
-    if (state) {
-      // target.map_parent.requestState('discogs_id');
-    }
-  },
-
   page_limit: 50,
   manual_previews: false,
   'nest_rqc-albums_list': DiscogsAlbumSongs,
