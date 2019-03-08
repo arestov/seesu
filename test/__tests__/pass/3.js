@@ -59,7 +59,7 @@ test('multiple state to arg base by pass calculated', t => {
 
   return steps([
     () => {
-      pvPass(app.start_page, 'nesting:selected', {
+      pvPass(app.start_page, 'handleNesting:selected', {
         next_value: getA(),
         prev_value: getB(),
       })
@@ -85,7 +85,7 @@ test('multiple state to arg base by pass calculated', t => {
           nest_b: ['nest', [createDeepChild('nestB')]],
         },
         '+passes': {
-          'nesting:selected': action,
+          'handleNesting:selected': action,
         },
       }),
     }, self => {
