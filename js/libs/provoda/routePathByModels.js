@@ -189,6 +189,7 @@ function getterSPI(){
 
   return function getSPI(self, sp_name, options) {
     var reuse = options && options.reuse;
+    var autocreate = !options || options.autocreate !== false
 
     var item = selectRouteItem(self, sp_name);
     if (item) {
@@ -207,6 +208,10 @@ function getterSPI(){
         return self.sub_pages[key];
       }
 
+      if (!autocreate) {
+        return null
+      }
+
       var instance = item && prepare(self, item, sp_name, slash(sp_name));
       if (instance) {
         watchSubPageKey(self, instance, key);
@@ -221,6 +226,10 @@ function getterSPI(){
     if (self.subPager){
       if (self.sub_pages[sp_name]) {
         return self.sub_pages[sp_name];
+      }
+
+      if (!autocreate) {
+        return null
       }
 
       var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);

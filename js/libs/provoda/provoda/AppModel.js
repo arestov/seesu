@@ -106,9 +106,8 @@ var AppModelBase = spv.inh(pv.Model, {
     this.checkActingRequestsPriority();
   },
 
-  routePathByModels: function(pth_string, start_md, need_constr) {
-    return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
-
+  routePathByModels: function(pth_string, start_md, need_constr, strict, options) {
+    return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr, strict, options);
   },
 
   knowViewingDataStructure: function(constr_id, used_data_structure) {

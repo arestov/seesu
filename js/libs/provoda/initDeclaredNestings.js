@@ -74,9 +74,9 @@ var getPathBySimpleData = pathExecutor(function(chunkName, app, data) {
   return data && data[chunkName];
 });
 
-var followStringTemplate = function (app, md, obj, need_constr, full_path) {
+var followStringTemplate = function (app, md, obj, need_constr, full_path, strict, options) {
   if (obj.from_root) {
-    return app.routePathByModels(full_path, app.start_page, need_constr);
+    return app.routePathByModels(full_path, app.start_page, need_constr, strict, options);
   }
   if (obj.from_parent) {
     var target_md_start = md;
@@ -86,9 +86,9 @@ var followStringTemplate = function (app, md, obj, need_constr, full_path) {
     if (!full_path) {
       return target_md_start;
     }
-    return app.routePathByModels(full_path, target_md_start, need_constr);
+    return app.routePathByModels(full_path, target_md_start, need_constr, strict, options);
   }
-  return app.routePathByModels(full_path, md, need_constr);
+  return app.routePathByModels(full_path, md, need_constr, strict, options);
 };
 
 var executeStringTemplate = function(app, md, obj, need_constr, md_for_urldata) {
@@ -156,10 +156,10 @@ var getParsedPath = spv.memorize(function(string_template) {
 });
 
 
-var getSPByPathTemplateAndData = function (app, start_md, string_template, need_constr, data) {
+var getSPByPathTemplateAndData = function (app, start_md, string_template, need_constr, data, strict, options) {
   var parsed_template = getParsedPath(string_template);
   var full_path = getPathBySimpleData(parsed_template, app, data);
-  return followStringTemplate(app, start_md, parsed_template, need_constr, full_path);
+  return followStringTemplate(app, start_md, parsed_template, need_constr, full_path, strict, options);
 };
 
 var getSPByPathTemplate = function(app, start_md, string_template, need_constr, md_for_urldata) {
