@@ -4,18 +4,34 @@
 
 const action = {
   to: {
-    next: [
-      'selected', {
-        base: 'arg_nesting_next',
-      },
-    ],
     prev: [
       'selected', {
         base: 'arg_nesting_prev',
       },
     ],
+    next: [
+      'selected', {
+        base: 'arg_nesting_next',
+      },
+    ],
   },
-  fn() {
+  fn({ prev_value, next_value }) {
+    if (!prev_value && !next_value) {
+      return null
+    }
+
+    if (!prev_value) {
+      return {
+        next: true,
+      }
+    }
+
+    if (!next_value) {
+      return {
+        prev: false,
+      }
+    }
+
     return {
       next: true,
       prev: false,
@@ -31,9 +47,8 @@ const requirejs = require('../../../requirejs-config')
 const spv = requirejs('spv')
 const Model = requirejs('pv/Model')
 const pvState = requirejs('pv/state')
-const pvPass = requirejs('pv/pass')
-const pvUpdate = requirejs('pv/update')
 const getNesting = requirejs('pv/getNesting')
+const updateNesting = requirejs('pv/updateNesting')
 
 const init = requirejs('test/init')
 const makeStepsRunner = require('../../steps')
@@ -54,15 +69,26 @@ test('multiple state to arg base by pass calculated', t => {
   const app = setup()
   const steps = makeStepsRunner(app)
 
+
   const getA = () => getNesting(app.start_page, 'nest_a')
   const getB = () => getNesting(app.start_page, 'nest_b')
 
   return steps([
     () => {
-      pvPass(app.start_page, 'handleNesting:selected', {
-        next_value: getA(),
-        prev_value: getB(),
-      })
+      updateNesting(app.start_page, 'selected', getB())
+    },
+    () => {
+      t.is(
+        undefined,
+        pvState(getA(), 'selected'),
+      )
+      t.is(
+        true,
+        pvState(getB(), 'selected'),
+      )
+    },
+    () => {
+      updateNesting(app.start_page, 'selected', getA())
     },
     () => {
       t.is(
