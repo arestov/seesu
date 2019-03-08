@@ -9,7 +9,7 @@ var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 var getFinupFullname = spv.getPrefixingFunc('finup-');
 var checkStates = require('./nest-watch/index').checkStates;
-var _passHandleState = require('./dcl/passes/handleState')
+var _passHandleState = require('./dcl/passes/handleState/handle')
 
 var serv_counter = 1;
 var ServStates = function() {
