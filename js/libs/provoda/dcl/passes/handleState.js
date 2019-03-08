@@ -10,8 +10,8 @@ return function(self, original_states, state_name, value) {
 
   var old_value = original_states[state_name];
   var arg = {
-    value: value,
-    old_value: old_value,
+    next_value: value,
+    prev_value: old_value,
   }
 
   self.nextLocalTick(self.__act, [self, pass_name, arg], true);

@@ -2,7 +2,7 @@ const action1 = {
   to: ['age_state'],
   fn: [
     [],
-    ({ value: age }) => {
+    ({ next_value: age }) => {
       if (age < 18) {
         return 'young'
       }
@@ -16,7 +16,7 @@ const action2 = {
   to: ['age_state'],
   fn: [
     [],
-    ({ value: age }) => {
+    ({ next_value: age }) => {
       if (age >= 40) {
         return 'old'
       }
