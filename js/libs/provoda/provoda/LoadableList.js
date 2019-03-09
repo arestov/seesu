@@ -159,31 +159,31 @@ return spv.inh(BrowseMap.Model, {
   },
 
   insertDataAsSubitems: function(target, nesting_name, data_list, opts, source_name) {
-    var items_list = [];
-    if (data_list && data_list.length){
-      var mlc_opts = target.getMainListChangeOpts();
-
-
-      var splitItemData = target['nest_rq_split-' + nesting_name];
-      for (var i = 0; i < data_list.length; i++) {
-
-
-
-        var splited_data = splitItemData && splitItemData(data_list[i], target.getNestingSource(nesting_name, target.app));
-        var cur_data = splited_data ? splited_data[0] : data_list[i],
-          cur_params = splited_data && splited_data[1];
-
-        if (target.isDataItemValid && !target.isDataItemValid(cur_data)) {
-          continue;
-        }
-        var item = target.addItemToDatalist(cur_data, true, cur_params, nesting_name);
-        if (source_name && item && item._network_source === null) {
-          item._network_source = source_name;
-        }
-        items_list.push(item);
-      }
-      target.dataListChange(mlc_opts, items_list, nesting_name);
+    if (!data_list || !data_list.length) {
+      return
     }
+    var items_list = [];
+
+    var mlc_opts = target.getMainListChangeOpts();
+
+    var splitItemData = target['nest_rq_split-' + nesting_name];
+
+    for (var i = 0; i < data_list.length; i++) {
+      var splited_data = splitItemData && splitItemData(data_list[i], target.getNestingSource(nesting_name, target.app));
+      var cur_data = splited_data ? splited_data[0] : data_list[i],
+        cur_params = splited_data && splited_data[1];
+
+      if (target.isDataItemValid && !target.isDataItemValid(cur_data)) {
+        continue;
+      }
+      var item = target.addItemToDatalist(cur_data, true, cur_params, nesting_name);
+      if (source_name && item && item._network_source === null) {
+        item._network_source = source_name;
+      }
+      items_list.push(item);
+    }
+
+    target.dataListChange(mlc_opts, items_list, nesting_name);
 
   },
 
