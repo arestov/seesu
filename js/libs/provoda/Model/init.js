@@ -4,6 +4,31 @@ define(function (require) {
 var cloneObj = require('spv').cloneObj;
 var initSubPager = require('../dcl/sub_pager/init');
 
+function buildHead(self, data) {
+  if (self.map_parent && self.map_parent.head) {
+    if (!self.head) {self.head = {};}
+    cloneObj(self.head, self.map_parent.head);
+  }
+
+  if (data && data.head) {
+    if (!self.head) {self.head = {};}
+    cloneObj(self.head, data.head);
+  }
+
+
+  if (self.network_data_as_states && data && data.network_states) {
+    toServStates(self, data.network_states);
+
+    if (self.net_head) {
+      if (!self.head) {self.head = {};}
+      for (var i = 0; i < self.net_head.length; i++) {
+        var pk = self.net_head[i];
+        self.head[pk] = data.network_states[pk];
+      }
+    }
+  }
+}
+
 return function initModel(self, opts, data, params, more, states) {
   self.current_motivator = self.current_motivator || (opts && opts._motivator);
 
@@ -57,29 +82,7 @@ return function initModel(self, opts, data, params, more, states) {
   toServStates(self, data && data.states);
 
   self.head = null;
-
-  if (self.map_parent && self.map_parent.head) {
-    if (!self.head) {self.head = {};}
-    cloneObj(self.head, self.map_parent.head);
-  }
-
-  if (data && data.head) {
-    if (!self.head) {self.head = {};}
-    cloneObj(self.head, data.head);
-  }
-
-
-  if (self.network_data_as_states && data && data.network_states) {
-    toServStates(self, data.network_states);
-
-    if (self.net_head) {
-      if (!self.head) {self.head = {};}
-      for (var i = 0; i < self.net_head.length; i++) {
-        var pk = self.net_head[i];
-        self.head[pk] = data.network_states[pk];
-      }
-    }
-  }
+  buildHead(self, data)
 
   toServStates(self, self.head);
 
