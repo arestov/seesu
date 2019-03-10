@@ -5,6 +5,8 @@ var cloneObj = require('spv').cloneObj;
 var initSubPager = require('../dcl/sub_pager/init');
 
 function buildHead(self, data) {
+  var init_v2 = data && data.init_version === 2
+
   var head = null;
 
   if (self.map_parent && self.map_parent.head) {
@@ -17,6 +19,9 @@ function buildHead(self, data) {
     cloneObj(head, data.head);
   }
 
+  if (init_v2) {
+    return head
+  }
 
   if (self.network_data_as_states && data && data.network_states) {
     if (self.net_head) {
@@ -90,14 +95,19 @@ function toServStates(iss, states) {
 }
 
 function prepareStates(self, data, states) {
+  var init_v2 = data && data.init_version === 2
+
   self.init_states = self.init_states || null;
 
   var iss = null
 
-  iss = toServStates(iss, states);
+  if (!init_v2) {
+    iss = toServStates(iss, states);
+  }
+
   iss = toServStates(iss, data && data.states);
 
-  if (self.network_data_as_states && data && data.network_states) {
+  if (!init_v2 && self.network_data_as_states && data && data.network_states) {
     iss = toServStates(iss, data.network_states);
   }
 

@@ -285,6 +285,7 @@ add({
     this.init_states = false;
   },
   network_data_as_states: true,
+  handling_v2_init: true,
   onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (props, original, params) {
     onPropsExtend(this, props, original, params);
   }),

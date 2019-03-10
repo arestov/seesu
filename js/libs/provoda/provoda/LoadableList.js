@@ -37,6 +37,7 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
     self.bindStaCons();
   }
 }, {
+  handling_v2_init: true,
   "+states": {
     "$needs_load": [
       "compx",
@@ -403,6 +404,12 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
 
 var LoadableList = spv.inh(LoadableListBase, {
   init: function(self, opts, data, params) {
+    var init_v2 = data && data.init_version === 2
+
+    if (init_v2) {
+      return
+    }
+
     if (!params || !params.subitems || !params.subitems[self.main_list_name]) {
       return
     }
@@ -415,6 +422,8 @@ var LoadableList = spv.inh(LoadableListBase, {
       params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true
     );
   }
+}, {
+  handling_v2_init: true,
 })
 
 LoadableList.LoadableListBase = LoadableListBase
