@@ -342,7 +342,7 @@ var RecommArtListForCurrentUser = spv.inh(RecommArtList, {}, {
 
         fn: [[], function(lfm) {
           return lfm.get("user.getRecommendedArtists", {
-            sk: this.app.lfm.sk
+            sk: lfm.sk
           });
         }]
       }
