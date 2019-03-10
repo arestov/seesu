@@ -19,8 +19,6 @@ function buildHead(self, data) {
 
 
   if (self.network_data_as_states && data && data.network_states) {
-    toServStates(self, data.network_states);
-
     if (self.net_head) {
       if (!head) {head = {};}
       for (var i = 0; i < self.net_head.length; i++) {
@@ -102,6 +100,10 @@ function prepareStates(self, data, states) {
 
   toServStates(self, states);
   toServStates(self, data && data.states);
+
+  if (self.network_data_as_states && data && data.network_states) {
+    toServStates(self, data.network_states);
+  }
 
   toServStates(self, self.head);
 
