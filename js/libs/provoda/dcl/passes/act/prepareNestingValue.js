@@ -12,6 +12,7 @@ var getValues = require('../../../utils/multiPath/getValues')
 var getModelById = require('../../../utils/getModelById');
 var get_constr = require('../../../structure/get_constr');
 
+var cloneObj = spv.cloneObj
 var getNestingConstr = get_constr.getNestingConstr;
 
 var push = Array.prototype.push
@@ -91,7 +92,12 @@ var initItem = function(md, target, value) {
   // isProvodaBhv(value or value[n]) could be true
 
   // expected `value` is : {states: {}, nestings: {}}
-  return md.initSi(Constr, value);
+  var init_data = {}
+
+  cloneObj(init_data, value)
+  init_data.init_version = 2
+  init_data.by = 'prepareNestingValue'
+  return md.initSi(Constr, init_data);
 }
 
 var prepareNestingValue = function(md, target, value) {
