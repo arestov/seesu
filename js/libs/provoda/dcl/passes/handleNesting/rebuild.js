@@ -1,5 +1,8 @@
-define(function() {
+define(function(require) {
 'use strict'
+
+var getDeprefixFunc = require('spv').getDeprefixFunc
+var check = getDeprefixFunc('handleNesting:')
 
 return function rebuild(self, index) {
   var result = {}
@@ -9,12 +12,13 @@ return function rebuild(self, index) {
       continue
     }
 
-    if (!name.startsWith('handleNesting:')) {
+    var result_name = check(name)
+
+    if (!result_name) {
       continue
     }
 
-    var state_name = name.replace('handleNesting:', '')
-    result[state_name] = index[name]
+    result[result_name] = index[name]
   }
 
   self.__handleNesting = result
