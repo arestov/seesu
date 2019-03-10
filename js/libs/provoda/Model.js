@@ -208,7 +208,7 @@ add({
   },
   initChi: function(name, data, params, more, states) {
     var Constr = this._all_chi['chi-' + name];
-    return this.initSi(Constr, data, params, more, states);
+    return initSi(Constr, this, data, params, more, states)
   },
   initSi: function(Constr, data, params, more, states) {
     return initSi(Constr, this, data, params, more, states)
