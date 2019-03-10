@@ -28,6 +28,7 @@ modern init accept
 
 ```
 {
+  head: {},
   states: {},
   nestings: {},
   url_params: {},
@@ -38,3 +39,7 @@ modern init accept
   - loadable list
   - BrowseMap/routing
   - pass
+
+
+## todo
+  refactor network_data_as_states, nest_rq_split
