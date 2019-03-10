@@ -336,20 +336,13 @@ return spv.inh(BrowseMap.Model, {
     var best_constr = this._all_chi[mentioned.key];
 
 
-    var netdata_as_states = best_constr.prototype.netdata_as_states;
     var network_data_as_states = best_constr.prototype.network_data_as_states;
 
     var data_po_pass;
     if (network_data_as_states) {
-      if (netdata_as_states) {
-        data_po_pass = {
-          network_states: netdata_as_states(data)
-        };
-      } else {
-        data_po_pass = {
-          network_states: data
-        };
-      }
+      data_po_pass = {
+        network_states: data
+      };
 
     } else {
       data_po_pass = data;
