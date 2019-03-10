@@ -88,8 +88,8 @@ var initItem = function(md, target, value) {
 
   var Constr = getNestingConstr(md.app, md, nesting_name)
 
-  return md.initSi(Constr, value, null, null);
-
+  // expected `value` is : {states: {}, nestings: {}}
+  return md.initSi(Constr, value);
 }
 
 var prepareNestingValue = function(md, target, value) {
