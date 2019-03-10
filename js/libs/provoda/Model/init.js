@@ -53,12 +53,8 @@ return function initModel(self, opts, data, params, more, states) {
 
   self.init_service_states = null;
 
-  if (states || (data && data.states)) {
-
-    toServStates(self, states);
-    toServStates(self, data && data.states);
-    // pv.create must init init_states
-  }
+  toServStates(self, states);
+  toServStates(self, data && data.states);
 
   self.head = null;
 
@@ -85,9 +81,7 @@ return function initModel(self, opts, data, params, more, states) {
     }
   }
 
-  if (self.head) {
-    toServStates(self, self.head);
-  }
+  toServStates(self, self.head);
 
   if (!self.init_service_states) {
     return self;
