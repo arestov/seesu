@@ -78,14 +78,14 @@ return function initModel(self, opts, data, params, more, states) {
   self._requests_deps = null;
   self.shared_nest_sel_hands = null;
 
+  self.head = buildHead(self, data)
+
   self.init_states = self.init_states || null;
 
   self.init_service_states = null;
 
   toServStates(self, states);
   toServStates(self, data && data.states);
-
-  self.head = buildHead(self, data)
 
   toServStates(self, self.head);
 
