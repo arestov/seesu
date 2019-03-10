@@ -80,6 +80,22 @@ return function initModel(self, opts, data, params, more, states) {
 
   self.head = buildHead(self, data)
 
+  prepareStates(self, data, states)
+
+  return self;
+};
+
+function toServStates(self, states) {
+  if (!states) {return;}
+
+  if (!self.init_service_states) {
+    self.init_service_states = {};
+  }
+
+  cloneObj(self.init_service_states, states);
+}
+
+function prepareStates(self, data, states) {
   self.init_states = self.init_states || null;
 
   self.init_service_states = null;
@@ -105,16 +121,5 @@ return function initModel(self, opts, data, params, more, states) {
   self.init_service_states = null;
 
 
-  return self;
-};
-
-function toServStates(self, states) {
-  if (!states) {return;}
-
-  if (!self.init_service_states) {
-    self.init_service_states = {};
-  }
-
-  cloneObj(self.init_service_states, states);
 }
 });
