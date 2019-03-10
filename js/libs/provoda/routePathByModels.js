@@ -159,12 +159,23 @@ function getterSPI(){
 
     var common_opts = getSPOpts(self, sp_name, slashed, item.byType);
 
-    var instance_data = common_opts[0] || {};
+    var states = common_opts[0] || {};
     var hbu_declr = item.getHead;
     var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
-    if (head_by_urlname) {
-      instance_data.head = head_by_urlname;
+
+    if (Constr.prototype.handling_v2_init) {
+      return self.initSi(Constr, {
+        by: 'routePathByModels',
+        init_version: 2,
+        states: states,
+        head: head_by_urlname,
+        url_params: common_opts[1],
+      });
     }
+
+    var instance_data = {}
+    cloneObj(instance_data, states)
+    instance_data.head = head_by_urlname
 
     return self.initSi(Constr, instance_data, null, null, common_opts[0]);
   };
