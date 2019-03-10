@@ -338,17 +338,11 @@ return spv.inh(BrowseMap.Model, {
 
     var network_data_as_states = best_constr.prototype.network_data_as_states;
 
-    var data_po_pass;
     if (network_data_as_states) {
-      data_po_pass = {
-        network_states: data
-      };
-
+      return this.initSi(best_constr, {network_states: data}, item_params);
     } else {
-      data_po_pass = data;
+      return this.initSi(best_constr, data, item_params);
     }
-
-    return this.initSi(best_constr, data_po_pass, item_params);
   },
 
   findMustBePresentDataItem: function(obj, nesting_name) {
