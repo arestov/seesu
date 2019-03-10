@@ -87,7 +87,8 @@ var initItem = function(md, target, value) {
   var nesting_name = multi_path.nesting.target_nest_name
 
   var Constr = getNestingConstr(md.app, md, nesting_name)
-  return md.initSi(Constr, null, null, null, value);
+
+  return md.initSi(Constr, value, null, null);
 
 }
 

@@ -57,10 +57,16 @@ var parseMultiPath = require('../../utils/multiPath/parse')
 var targetData = function(to, result_name) {
   var target_path = to[0];
   var options = to[1];
+  var parsed_path = parseMultiPath(target_path, true)
+
+  if (parsed_path.result_type == 'nesting' && (!options || !options.schema)) {
+    console.warn('implement schema parsing. add schema to pass dcl')
+  }
+
   return {
     path_type: target_path == '*' ? 'by_provoda_id' : 'by_path',
     value_by_name: result_name ? true : false,
-    target_path: parseMultiPath(target_path, true),
+    target_path: parsed_path,
     options: options,
     result_name: result_name,
   }
