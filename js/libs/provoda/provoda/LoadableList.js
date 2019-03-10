@@ -331,6 +331,7 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
 
     if (best_constr.prototype.handling_v2_init) {
       var v2_data = cloneObj({
+        by: 'LoadableList',
         init_version: 2,
         states: data,
       }, convertToNestings(item_params))
