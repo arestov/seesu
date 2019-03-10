@@ -17,20 +17,20 @@ return function initSi(Constr, parent_md, data, params, more, states) {
     });
 
     return instance;
-  } else {
-    var motivator = parent_md.current_motivator;
-
-    var opts = {
-      _motivator: motivator,
-      map_parent: parent_md != parent_md.app && parent_md,
-      app: parent_md.app
-    };
-
-    var instancePure = new Constr(opts, data, params, more, states);
-
-    instancePure.current_motivator = null;
-
-    return instancePure;
   }
+
+  var motivator = parent_md.current_motivator;
+
+  var opts = {
+    _motivator: motivator,
+    map_parent: parent_md != parent_md.app && parent_md,
+    app: parent_md.app
+  };
+
+  var instancePure = new Constr(opts, data, params, more, states);
+
+  instancePure.current_motivator = null;
+
+  return instancePure;
 }
 })
