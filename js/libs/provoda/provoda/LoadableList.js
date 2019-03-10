@@ -3,6 +3,7 @@ define(function(require) {
 var BrowseMap = require('./BrowseMap');
 var spv = require('spv');
 var pv = require('../provoda');
+var cloneObj = spv.cloneObj
 
 var initDeclaredNestings = require('js/libs/provoda/initDeclaredNestings');
 var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
@@ -328,6 +329,14 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
 
     var network_data_as_states = best_constr.prototype.network_data_as_states;
 
+    if (best_constr.prototype.handling_v2_init) {
+      var v2_data = cloneObj({
+        init_version: 2,
+        states: data,
+      }, convertToNestings(item_params))
+      return this.initSi(best_constr, v2_data);
+    }
+
     if (network_data_as_states) {
       return this.initSi(best_constr, {network_states: data}, item_params);
     } else {
@@ -401,6 +410,36 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
     }
   }
 });
+
+function convertToNestings(params) {
+  if (!params || !params.subitems) {
+    return null
+  }
+
+  var nestings = {}
+
+  for (var nesting_name in params.subitems) {
+    if (!params.subitems.hasOwnProperty(nesting_name)) {
+        continue
+    }
+
+    var cur = params.subitems[nesting_name]
+
+    var result = new Array(cur.length)
+    for (var i = 0; i < cur.length; i++) {
+      result[i] = {
+        states: cur[i]
+      }
+    }
+
+    nestings[nesting_name] = result
+  }
+
+  return {
+    nestings: nestings,
+    nestings_sources: params.subitems_source_name,
+  }
+}
 
 var LoadableList = spv.inh(LoadableListBase, {
   init: function(self, opts, data, params) {
