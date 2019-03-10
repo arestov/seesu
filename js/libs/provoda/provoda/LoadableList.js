@@ -14,14 +14,14 @@ var getPath = pv.pathExecutor(function(chunkName, app, data) {
 
 var getRelativeRequestsGroups = BrowseMap.Model.prototype.getRelativeRequestsGroups;
 
-return spv.inh(BrowseMap.Model, {
+var LoadableListBase = spv.inh(BrowseMap.Model, {
   strict: true,
   naming: function(fn) {
     return function LoadableListBase(opts, data, params, more, states) {
       fn(this, opts, data, params, more, states);
     };
   },
-  init: function initLoadableListBase(self, opts, data, params) {
+  init: function initLoadableListBase(self) {
     self.excess_data_items = null;
     self.loaded_nestings_items = null;
     self.loadable_lists = null;
@@ -35,18 +35,6 @@ return spv.inh(BrowseMap.Model, {
     }
 
     self.bindStaCons();
-
-    if (!params || !params.subitems || !params.subitems[self.main_list_name]) {
-      return
-    }
-
-    self.nextTick(self.insertDataAsSubitems, [
-      self,
-      self.main_list_name,
-      params.subitems[self.main_list_name],
-      null,
-      params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true
-    );
   }
 }, {
   "+states": {
@@ -412,4 +400,24 @@ return spv.inh(BrowseMap.Model, {
     }
   }
 });
+
+var LoadableList = spv.inh(LoadableListBase, {
+  init: function(self, opts, data, params) {
+    if (!params || !params.subitems || !params.subitems[self.main_list_name]) {
+      return
+    }
+
+    self.nextTick(self.insertDataAsSubitems, [
+      self,
+      self.main_list_name,
+      params.subitems[self.main_list_name],
+      null,
+      params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true
+    );
+  }
+})
+
+LoadableList.LoadableListBase = LoadableListBase
+
+return LoadableList
 });
