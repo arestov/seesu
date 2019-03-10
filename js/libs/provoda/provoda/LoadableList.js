@@ -36,16 +36,17 @@ return spv.inh(BrowseMap.Model, {
 
     self.bindStaCons();
 
-    if (params && params.subitems) {
-      if (params.subitems[self.main_list_name]) {
-        self.nextTick(self.insertDataAsSubitems, [
-          self,
-          self.main_list_name,
-          params.subitems[self.main_list_name],
-          null,
-          params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true);
-      }
+    if (!params || !params.subitems || !params.subitems[self.main_list_name]) {
+      return
     }
+
+    self.nextTick(self.insertDataAsSubitems, [
+      self,
+      self.main_list_name,
+      params.subitems[self.main_list_name],
+      null,
+      params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true
+    );
   }
 }, {
   "+states": {
