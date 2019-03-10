@@ -83,45 +83,37 @@ return function initModel(self, opts, data, params, more, states) {
   return self;
 };
 
-function toServStates(self, states) {
-  if (!states) {return;}
+function toServStates(iss, states) {
+  if (!states) {return iss;}
 
-  if (!self.init_service_states) {
-    self.init_service_states = {};
-  }
-
-  cloneObj(self.init_service_states, states);
+  return cloneObj(iss || {}, states);
 }
 
 function prepareStates(self, data, states) {
   self.init_states = self.init_states || null;
 
-  self.init_service_states = null;
+  var iss = null
 
-  toServStates(self, states);
-  toServStates(self, data && data.states);
+  iss = toServStates(iss, states);
+  iss = toServStates(iss, data && data.states);
 
   if (self.network_data_as_states && data && data.network_states) {
-    toServStates(self, data.network_states);
+    iss = toServStates(iss, data.network_states);
   }
 
-  toServStates(self, self.head);
+  iss = toServStates(iss, self.head);
 
-  if (!self.init_service_states) {
+  if (!iss) {
     return self;
   }
 
-  for (var state_name in self.init_service_states) {
+  for (var state_name in iss) {
     if (self.hasComplexStateFn(state_name)) {
-      delete self.init_service_states[state_name];
+      delete iss[state_name];
     }
   }
 
   self.init_states = self.init_states || {};
-
-  cloneObj(self.init_states, self.init_service_states);
-  self.init_service_states = null;
-
-
+  self.init_states = cloneObj(self.init_states, iss);
 }
 });
