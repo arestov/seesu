@@ -5,14 +5,16 @@ var cloneObj = require('spv').cloneObj;
 var initSubPager = require('../dcl/sub_pager/init');
 
 function buildHead(self, data) {
+  var head = null;
+
   if (self.map_parent && self.map_parent.head) {
-    if (!self.head) {self.head = {};}
-    cloneObj(self.head, self.map_parent.head);
+    if (!head) {head = {};}
+    cloneObj(head, self.map_parent.head);
   }
 
   if (data && data.head) {
-    if (!self.head) {self.head = {};}
-    cloneObj(self.head, data.head);
+    if (!head) {head = {};}
+    cloneObj(head, data.head);
   }
 
 
@@ -20,13 +22,15 @@ function buildHead(self, data) {
     toServStates(self, data.network_states);
 
     if (self.net_head) {
-      if (!self.head) {self.head = {};}
+      if (!head) {head = {};}
       for (var i = 0; i < self.net_head.length; i++) {
         var pk = self.net_head[i];
-        self.head[pk] = data.network_states[pk];
+        head[pk] = data.network_states[pk];
       }
     }
   }
+
+  return head
 }
 
 return function initModel(self, opts, data, params, more, states) {
@@ -81,8 +85,7 @@ return function initModel(self, opts, data, params, more, states) {
   toServStates(self, states);
   toServStates(self, data && data.states);
 
-  self.head = null;
-  buildHead(self, data)
+  self.head = buildHead(self, data)
 
   toServStates(self, self.head);
 
