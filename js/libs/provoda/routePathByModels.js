@@ -137,24 +137,6 @@ function getSPOpts(md, sp_name, slashed, byType) {
     }];
 };
 
-function getInitData(md, common_opts) {
-  var pre_instance_data = {};
-
-  var data_parts = [
-    common_opts && common_opts[0]
-  ];
-
-  for (var i = 0; i < data_parts.length; i++) {
-    if (!data_parts[i]) {
-      continue;
-    }
-    cloneObj(pre_instance_data, data_parts[i]);
-  }
-
-  return pre_instance_data;
-};
-
-
 function getterSPI(){
   var init = function(parent, target, data) {
     if (target.hasOwnProperty('_provoda_id')) {
@@ -177,7 +159,7 @@ function getterSPI(){
 
     var common_opts = getSPOpts(self, sp_name, slashed, item.byType);
 
-    var instance_data = getInitData(self, common_opts);
+    var instance_data = common_opts[0] || {};
     var hbu_declr = item.getHead;
     var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
     if (head_by_urlname) {
