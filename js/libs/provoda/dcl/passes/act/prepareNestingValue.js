@@ -87,6 +87,8 @@ var initItem = function(md, target, value) {
   var nesting_name = multi_path.nesting.target_nest_name
 
   var Constr = getNestingConstr(md.app, md, nesting_name)
+  // todo: value could array
+  // isProvodaBhv(value or value[n]) could be true
 
   // expected `value` is : {states: {}, nestings: {}}
   return md.initSi(Constr, value);
