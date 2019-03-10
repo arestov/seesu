@@ -81,6 +81,12 @@ return function initModel(self, opts, data, params, more, states) {
   self._requests_deps = null;
   self.shared_nest_sel_hands = null;
 
+  self.init_v2_data = null
+  var init_v2 = data && data.init_version === 2
+  if (init_v2) {
+    self.init_v2_data = data
+  }
+
   self.head = buildHead(self, data)
 
   prepareStates(self, data, states)
