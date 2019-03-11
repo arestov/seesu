@@ -69,7 +69,7 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
             return api.get("album.getInfo", {
               "artist": album_artist,
               album: album_name
-            });
+            }, opts);
           }
         ]
       }
@@ -135,7 +135,7 @@ var ArtistTagsList = spv.inh(LoadableList.TagsList, {}, {
         fn: [["artist_name"], function(api, opts, artist_name) {
           return api.get("artist.getTopTags", {
             artist: artist_name
-          });
+          }, opts);
         }]
       }
     }
@@ -389,7 +389,7 @@ var ArtistAlbums = spv.inh(AlbumsList, {}, {
         fn: [["artist_name"], function(api, opts, artist_name) {
           return api.get("artist.getTopAlbums", {
             artist: artist_name
-          });
+          }, opts);
         }]
       }
     }
@@ -598,7 +598,7 @@ var TopArtistSongs = spv.inh(SongsList, {
         fn: [["artist_name"], function(api, opts, artist_name) {
           return api.get("artist.getTopTracks", {
             artist: artist_name
-          });
+          }, opts);
         }]
       }
     }
@@ -646,7 +646,7 @@ var FreeArtistTracks = spv.inh(SongsList, {}, {
         fn: [["playlist_artist"], function(api, opts, playlist_artist) {
           return api.get("artist.getPodcast", {
             artist: playlist_artist
-          });
+          }, opts);
         }]
       }
     }
@@ -720,7 +720,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
         api: '#lfm',
 
         fn: [['artist_name'], function(api, opts, artist_name) {
-          return api.get('artist.getInfo', {'artist': artist_name});
+          return api.get('artist.getInfo', {'artist': artist_name}, opts);
         }]
       },
 
@@ -1016,7 +1016,7 @@ var SimilarArtists = spv.inh(ArtistsList, {
           return api.get("artist.getSimilar", {
             artist: artist_name,
             limit: opts.paging.page_limit
-          });
+          }, opts);
         }]
       }
     }
