@@ -14,6 +14,15 @@ var UserPlaylists = spv.inh(BrowseMap.Model, {
   },
 }, {
   model_name: 'user_playlists',
+  sub_pager: {
+    item: [
+      ManualPlaylist,
+      [['search_name']],
+      {
+        search_name: 'decoded_name'
+      }
+    ]
+  },
   getSPC: function() {
     return ManualPlaylist;
   },
@@ -52,12 +61,8 @@ var UserPlaylists = spv.inh(BrowseMap.Model, {
     matched = matched || this.createUserPlaylist(title);
     matched.add(mo);
   },
-  'chi-playlist': ManualPlaylist,
   createUserPlaylist: function(title){
-    var pl_r = this.initChi('playlist', {
-      nav_title: title,
-      url_part: '/' + title
-    });
+    var pl_r = this.getSPI(title);
 
     this.watchOwnPlaylist(pl_r);
     this.playlists.push(pl_r);
@@ -85,20 +90,22 @@ var UserPlaylists = spv.inh(BrowseMap.Model, {
 
   },
   rebuildPlaylist: function(saved_pl){
-    /*var p = this.createEnvPlaylist({
-      title: saved_pl.playlist_title,
-      type: saved_pl.playlist_type,
-      data: {name: saved_pl.playlist_title}
-    });*/
+    var pl_r = this.getSPI(saved_pl.playlist_title);
 
-    var pl_r = this.initChi('playlist', {
-      nav_title: saved_pl.playlist_title,
-      url_part: '/' + saved_pl.playlist_title
-    }, {
-      subitems: {
-        'songs-list': saved_pl
-      }
-    });
+    var params = {
+        subitems: {
+          'songs-list': saved_pl
+        }
+    }
+
+    pl_r.nextTick(pl_r.insertDataAsSubitems, [
+      pl_r,
+      pl_r.main_list_name,
+      params.subitems[pl_r.main_list_name],
+      null,
+      params.subitems_source_name && params.subitems_source_name[pl_r.main_list_name]], true
+    );
+
 
     this.watchOwnPlaylist(pl_r);
     return pl_r;
