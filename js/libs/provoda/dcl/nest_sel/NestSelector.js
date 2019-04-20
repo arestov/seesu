@@ -12,6 +12,7 @@ function addHead(md, hands, head) {
 
 function Hands(dcl) {
   this.dcl = dcl;
+  this.declr = dcl;
   this.items = null;
   this.heads = [];
   this.hands = this;
@@ -35,10 +36,11 @@ function Hands(dcl) {
 }
 
 var count = 1;
-var NestSelector = function (md, declr) {
+var NestSelector = function (md, declr, hands) {
   this.num = 'nsel-' + (count++);
   this.md = md;
   this.declr = declr;
+  this.hands = hands
 
   this.items_changed = null;
   // this.waiting_chd_count = false;
