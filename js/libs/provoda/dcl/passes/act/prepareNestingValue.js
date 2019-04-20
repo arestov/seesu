@@ -100,6 +100,24 @@ var initItem = function(md, target, value) {
   return md.initSi(Constr, init_data);
 }
 
+var initItemsList = function(md, target, value) {
+  if (!value) {
+    return value
+  }
+
+  var list = toArray(value)
+  if (isOk(list)) {
+    return list
+  }
+
+  var result = new Array(list.length)
+  for (var i = 0; i < list.length; i++) {
+    var cur = list[i]
+    result[i] = initItem(cur, target, value)
+  }
+  return result
+}
+
 var prepareNestingValue = function(md, target, value) {
   var multi_path = target.target_path
 
@@ -117,18 +135,21 @@ var prepareNestingValue = function(md, target, value) {
 
   switch (target.options.method) {
     case "at_start": {
-      return toStart(current_value, initItem(md, target, value))
+      return toStart(current_value, initItemsList(md, target, value))
     }
     case "at_end": {
-      return toEnd(current_value, initItem(md, target, value))
+      return toEnd(current_value, initItemsList(md, target, value))
     }
     case "at_index": {
-      return toIndex(current_value, initItem(md, target, value[1]), value[0])
+      return toIndex(current_value, initItemsList(md, target, value[1]), value[0])
     }
     case "replace": {
-      return replaceAt(current_value, initItem(md, target, value[1]), value[0])
+      return replaceAt(current_value, initItemsList(md, target, value[1]), value[0])
     }
     case "set_one": {
+      if (value && Array.isArray(value)) {
+        throw new Error('value should not be list')
+      }
       return initItem(md, target, value)
     }
     //|| 'set_one'
