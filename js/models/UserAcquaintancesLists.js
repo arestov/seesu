@@ -118,9 +118,19 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
       }
     ]
   },
+  'nest_rqc-acqs_from_someone': UserAcquaintance,
+  'nest_rqc-acqs_from_me': UserAcquaintance,
 
+  sub_pager: {
+    item: [
+      UserAcquaintance,
+      [[]],
+      {
+        search_name: 'decoded_name'
+      }
+    ]
+  },
   model_name: 'user_acqs_list',
-  'chi-item': UserAcquaintance,
 
   bindDataSteams: function() {
     if (this.data_st_binded){
@@ -149,7 +159,10 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
 
     for (var i = 0; i < concated.length; i++) {
       var cur = concated[i];
-      var user_acq = this.initChi('item', {
+      var key = cur.item.from + '-' + cur.item.to;
+
+      var user_acq = this.getSPI(key);
+      user_acq.updateManyStates({
         current_user_is_sender: this.state('current_user') == cur.item.from,
         sender: cur.item.from,
         receiver: cur.item.to,
@@ -159,22 +172,22 @@ var UserAcquaintancesLists = spv.inh(BrowseMap.Model, {
         accepted: cur.item.accepted,
         info: cur.info,
         user_photo: cur.info && cur.info.photo
-      });
+      })
 
       concated[i] = user_acq;
     }
-    this.removeChildren(array_name);
+    // this.removeChildren(array_name);
 
     pv.updateNesting(this, array_name, concated);
 
   },
 
-  removeChildren: function(array_name) {
-    var array = this.getNesting(array_name) || [];
-    for (var i = 0; i < array.length; i++) {
-      array[i].die();
-    }
-  }
+  // removeChildren: function(array_name) {
+  //   var array = this.getNesting(array_name) || [];
+  //   for (var i = 0; i < array.length; i++) {
+  //     array[i].die();
+  //   }
+  // }
 });
 return UserAcquaintancesLists;
 });
