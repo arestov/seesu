@@ -79,7 +79,7 @@ var saveByProvodaId = function(md, target, wrap) {
     var data = wrap[id]
     var model = getModelById(md, id)
     var states = data.states
-    var nestings = data.nesting
+    var nestings = data.nestings
 
     for (var state in states) {
       if (!states.hasOwnProperty(state)) {
