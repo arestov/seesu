@@ -13,6 +13,11 @@ return function getTypedDcls(props) {
     }
     var cur = props[prop];
 
+    if (!cur) {
+      console.warn('implement erasing')
+      continue
+    }
+
     var dcl_type = cur[0];
     var data = cur && cur.slice(1);
 
