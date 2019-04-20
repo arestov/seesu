@@ -10,6 +10,9 @@ var getValue = function(md, multi_path) {
 
   switch (multi_path.result_type) {
     case "nesting": {
+      if (!multi_path.nesting.target_nest_name) {
+        return md
+      }
       return getNesting(md, multi_path.nesting.target_nest_name)
     }
     case "state": {
