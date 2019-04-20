@@ -1,15 +1,8 @@
 define(function(require) {
 'use strict';
 var spv = require('spv')
-var pvUpdate = require('pv/update')
-var pvState = require('pv/state')
 var getNesting = require('pv/getNesting')
 
-var updateNesting = require('pv/updateNesting')
-var readDepValue = require('../../../utils/readDepValue').depValue
-var getModels = require('../../../utils/multiPath/getModels')
-var getValues = require('../../../utils/multiPath/getValues')
-var getModelById = require('../../../utils/getModelById');
 var get_constr = require('../../../structure/get_constr');
 
 var cloneObj = spv.cloneObj
