@@ -8,10 +8,8 @@ define(require => {
 
   const env = {}
 
-  // var root_bwlev = initBrowsing(app_model);
-  return function init(app_props, init) {
+  const initApp = (App, env) => {
     const views_proxies = new pv.views_proxies.Proxies()
-    const App = fakeApp(app_props, init)
     const app_model = new App({
       _highway: {
         models_counters: 1,
@@ -33,6 +31,12 @@ define(require => {
       // root_bwlev,
       views_proxies,
     }
+  }
+
+  // var root_bwlev = initBrowsing(app_model);
+  return function init(app_props, init) {
+    const App = fakeApp(app_props, init)
+    return initApp(App, env)
   }
 
   function initBrowsing(app) {
