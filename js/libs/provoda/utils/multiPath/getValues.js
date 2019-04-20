@@ -34,7 +34,11 @@ return function(models, multi_path) {
     result[i] = getValue(models[i], multi_path)
   }
 
-  return result;
+  if (multi_path.result_type !== 'nesting') {
+    return result
+  }
+
+  return Array.prototype.concat.apply([], result)
 
 };
 })
