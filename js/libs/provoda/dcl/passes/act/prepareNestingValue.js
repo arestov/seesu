@@ -151,14 +151,16 @@ function isOk(list) {
     return true;
   }
 
-  if (Array.isArray(list)) {
-    if (!list.length) {
-      return true
-    }
-
-    return list.every(isProvodaBhv)
+  if (!Array.isArray(list)) {
+    return isProvodaBhv(list)
   }
 
-  return isProvodaBhv(list)
+
+  if (!list.length) {
+    return true
+  }
+
+  return list.every(isProvodaBhv)
+
 }
 })
