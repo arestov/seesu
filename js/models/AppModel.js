@@ -84,10 +84,6 @@ var props = {
     pvUpdate(this, 'playing', false);
   },
 
-  // createSonglist: function(map_parent, params) {
-  //   return this.initSi(SongsList, params);
-  // },
-
   keyNav: function(key_name) {
     var md = this.map.getCurMapL().getNesting('pioneer');
     if (md.key_name_nav){
