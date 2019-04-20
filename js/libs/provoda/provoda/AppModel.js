@@ -10,6 +10,8 @@ var AppModelBase = spv.inh(pv.Model, {
   init: function(target) {
     target.app = target
 
+    target.all_queues = target.all_queues || []
+
     target.binded_models = {};
     // target.navigation = [];
     // target.map = ;
@@ -28,6 +30,9 @@ var AppModelBase = spv.inh(pv.Model, {
     target.start_page = target.start_page || target.initChi('start__page') // eslint-disable-line
   }
 }, {
+  checkActingRequestsPriority: () => {
+    console.warn('add checkActingRequestsPriority')
+  },
   model_name: 'app_model',
   "+effects": {
     "produce": {
