@@ -183,8 +183,6 @@ var getDepsValues = function (md, deps) {
     args[i] = getDep(md, cur);
   }
 
-  debugger
-
   return args;
 }
 
