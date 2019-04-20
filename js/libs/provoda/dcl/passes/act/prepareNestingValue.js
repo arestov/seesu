@@ -69,7 +69,7 @@ var replaceAt = function(old_value, value, index) {
   return result
 }
 
-var initItem = function(md, target, value) {
+var initItem = function(md, target, value, mut_refs_index) {
   if (isOk(value)) {
     return value;
   }
@@ -77,6 +77,11 @@ var initItem = function(md, target, value) {
   if (target.options.model) {
     throw new Error('implement me')
   }
+
+  if (value.use_ref_id) {
+    return value
+  }
+
   var multi_path= target.target_path
   var nesting_name = multi_path.nesting.target_nest_name
 
@@ -86,16 +91,27 @@ var initItem = function(md, target, value) {
     // todo - move validation to dcl process
   }
 
+
+
   // expected `value` is : {states: {}, nestings: {}}
   var init_data = {}
 
   cloneObj(init_data, value)
   init_data.init_version = 2
   init_data.by = 'prepareNestingValue'
-  return md.initSi(Constr, init_data);
+  var created_model = md.initSi(Constr, init_data)
+
+  if (value.hold_ref_id) {
+    if (mut_refs_index[value.hold_ref_id]) {
+      throw new Error('ref id holded already ' + value.hold_ref_id)
+    }
+    mut_refs_index[value.hold_ref_id] = created_model._provoda_id
+  }
+
+  return created_model
 }
 
-var initItemsList = function(md, target, value) {
+var initItemsList = function(md, target, value, mut_refs_index) {
   if (!value) {
     return value
   }
@@ -108,12 +124,12 @@ var initItemsList = function(md, target, value) {
   var result = new Array(list.length)
   for (var i = 0; i < list.length; i++) {
     var cur = list[i]
-    result[i] = initItem(md, target, cur)
+    result[i] = initItem(md, target, cur, mut_refs_index)
   }
   return result
 }
 
-var prepareNestingValue = function(md, target, value) {
+var prepareNestingValue = function(md, target, value, mut_refs_index) {
   var multi_path = target.target_path
 
   if (!target.options.method) {
@@ -130,28 +146,28 @@ var prepareNestingValue = function(md, target, value) {
 
   switch (target.options.method) {
     case "at_start": {
-      return toStart(current_value, initItemsList(md, target, value))
+      return toStart(current_value, initItemsList(md, target, value, mut_refs_index))
     }
     case "at_end": {
-      return toEnd(current_value, initItemsList(md, target, value))
+      return toEnd(current_value, initItemsList(md, target, value, mut_refs_index))
     }
     case "at_index": {
-      return toIndex(current_value, initItemsList(md, target, value[1]), value[0])
+      return toIndex(current_value, initItemsList(md, target, value[1], mut_refs_index), value[0])
     }
     case "replace": {
-      return replaceAt(current_value, initItemsList(md, target, value[1]), value[0])
+      return replaceAt(current_value, initItemsList(md, target, value[1], mut_refs_index), value[0])
     }
     case "set_one": {
       if (value && Array.isArray(value)) {
         throw new Error('value should not be list')
       }
-      return initItem(md, target, value)
+      return initItem(md, target, value, mut_refs_index)
     }
     case "set_many": {
       if (value && !Array.isArray(value)) {
         throw new Error('value should be list')
       }
-      return initItemsList(md, target, value)
+      return initItemsList(md, target, value, mut_refs_index)
     }
     //|| 'set_one'
     //|| 'replace'
