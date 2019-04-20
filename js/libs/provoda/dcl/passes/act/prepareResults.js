@@ -6,27 +6,25 @@ var cloneObj = require('spv').cloneObj
 var getModelById = require('../../../utils/getModelById');
 
 
-var prepareAndHold = function(md, target, value, mut_refs_index, mut_result) {
+var prepareAndHold = function(md, target, value, mut_refs_index) {
   var multi_path = target.target_path
 
   switch (multi_path.result_type) {
     case "nesting": {
-      var item = {
+      return {
         target: target,
         target_md: md,
         value: prepareNestingValue(md, target, value, mut_refs_index)
       }
-      mut_result.push(item)
       return
     }
     case "state": {
-      mut_result.push({target: target, target_md: md, value: value})
-      return
+      return {target: target, target_md: md, value: value}
     }
   }
 }
 
-var createAndHold = function (md, target, value, data, mut_refs_index, mut_result) {
+var unwrap = function (md, target, value, data, mut_refs_index, mut_result) {
   if (target.path_type == 'by_provoda_id') {
     mut_result.push({target: target, md: md, value: value, data: data})
     return
@@ -37,10 +35,14 @@ var createAndHold = function (md, target, value, data, mut_refs_index, mut_resul
   if (Array.isArray(models)) {
     for (var i = 0; i < models.length; i++) {
       var cur = models[i];
-      prepareAndHold(cur, target, value, mut_refs_index, mut_result)
+      mut_result.push(
+        prepareAndHold(cur, target, value, mut_refs_index)
+      )
     }
   } else {
-    prepareAndHold(models, target, value, mut_refs_index, mut_result)
+    mut_result.push(
+      prepareAndHold(models, target, value, mut_refs_index)
+    )
   }
 
 }
@@ -100,7 +102,7 @@ return function(md, dcl, value, data) {
   var mut_refs_index = {}
 
   if (!dcl.targets_list) {
-    createAndHold(md, dcl.target_single, value, data, mut_refs_index, mut_result)
+    unwrap(md, dcl.target_single, value, data, mut_refs_index, mut_result)
     linkToHolded(mut_refs_index, mut_result)
     return mut_result
   }
@@ -114,7 +116,7 @@ return function(md, dcl, value, data) {
     if (!value.hasOwnProperty(cur.result_name)) {
       continue;
     }
-    createAndHold(md, cur, value[cur.result_name], data, mut_refs_index, mut_result)
+    unwrap(md, cur, value[cur.result_name], data, mut_refs_index, mut_result)
   }
 
   linkToHolded(mut_refs_index, mut_result)
