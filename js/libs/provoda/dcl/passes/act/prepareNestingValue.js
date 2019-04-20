@@ -88,6 +88,10 @@ var initItem = function(md, target, value) {
   var nesting_name = multi_path.nesting.target_nest_name
 
   var Constr = getNestingConstr(md.app, md, nesting_name)
+  if (!Constr) {
+    throw new Error('cant find Constr for ' + nesting_name)
+    // todo - move validation to dcl process
+  }
 
   // expected `value` is : {states: {}, nestings: {}}
   var init_data = {}
