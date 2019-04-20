@@ -7,13 +7,9 @@ define(require => {
   return function fakeApp(props, init) {
     const initSelf = init || function () {}
     const all = {
-      init(self) {
-        self.app = self
-        initSelf(self)
-      },
+      init: initSelf,
     }
-    const model_name = props.model_name || 'app_model'
-    const App = spv.inh(AppModel, all, { ...props, model_name })
+    const App = spv.inh(AppModel, all, props)
     return prepare(App)
   }
 })

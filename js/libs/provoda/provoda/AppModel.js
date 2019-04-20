@@ -8,6 +8,8 @@ var joinNavURL = require('../bwlev/joinNavURL');
 
 var AppModelBase = spv.inh(pv.Model, {
   init: function(target) {
+    target.app = target
+
     target.binded_models = {};
     // target.navigation = [];
     // target.map = ;
@@ -19,8 +21,14 @@ var AppModelBase = spv.inh(pv.Model, {
 
     });
     target.views_strucs = {};
+    if (!target['chi-start__page']) {
+      console.warn('add chi-start__page to AppModelBase')
+      return
+    }
+    target.start_page = target.start_page || target.initChi('start__page') // eslint-disable-line
   }
 }, {
+  model_name: 'app_model',
   "+effects": {
     "produce": {
       "browser-location": {
