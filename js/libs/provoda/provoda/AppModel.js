@@ -23,6 +23,8 @@ var AppModelBase = spv.inh(pv.Model, {
 
     });
     target.views_strucs = {};
+  },
+  postInit: function(target) {
     if (!target['chi-start__page']) {
       console.warn('add chi-start__page to AppModelBase')
       return
