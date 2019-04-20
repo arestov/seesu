@@ -22,9 +22,6 @@ var SuUsersPlaylists = spv.inh(UserPlaylists, {
   saveToStore: function(value) {
     app_serv.store('user_playlists', value, true);
   },
-  createEnvPlaylist: function(params) {
-    return this.app.createSonglist(this, params);
-  }
 });
 
 return SuUsersPlaylists;

@@ -2,7 +2,6 @@ define(function(require) {
 "use strict";
 var AppModelBase = require('pv/AppModel');
 var spv = require('spv');
-var SongsList = require('./SongsList');
 var pv = require('pv');
 var pvUpdate = require('pv/update');
 var BrowseMap = require('../libs/BrowseMap');
@@ -85,9 +84,9 @@ var props = {
     pvUpdate(this, 'playing', false);
   },
 
-  createSonglist: function(map_parent, params) {
-    return this.initSi(SongsList, params);
-  },
+  // createSonglist: function(map_parent, params) {
+  //   return this.initSi(SongsList, params);
+  // },
 
   keyNav: function(key_name) {
     var md = this.map.getCurMapL().getNesting('pioneer');
