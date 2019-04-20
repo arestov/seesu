@@ -120,20 +120,22 @@ var saveResultToTarget = function(md, target, value, data) {
 }
 
 var saveResult = function (md, dcl, value, data) {
-  if (dcl.targets_list) {
-    if (value !== Object(value)) {
-      throw new Error('return object from handler')
-    }
-
-    for (var i = 0; i < dcl.targets_list.length; i++) {
-      var cur = dcl.targets_list[i]
-      if (!value.hasOwnProperty(cur.result_name)) {
-        continue;
-      }
-      saveResultToTarget(md, cur, value[cur.result_name], data);
-    }
-  } else {
+  if (!dcl.targets_list) {
     saveResultToTarget(md, dcl.target_single, value, data)
+    return
+
+  }
+
+  if (value !== Object(value)) {
+    throw new Error('return object from handler')
+  }
+
+  for (var i = 0; i < dcl.targets_list.length; i++) {
+    var cur = dcl.targets_list[i]
+    if (!value.hasOwnProperty(cur.result_name)) {
+      continue;
+    }
+    saveResultToTarget(md, cur, value[cur.result_name], data);
   }
 
 }
