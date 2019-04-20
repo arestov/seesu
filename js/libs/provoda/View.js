@@ -1045,6 +1045,9 @@ var View = spv.inh(StatesEmitter, {
       }
 
       var parts_builder = this.parts_builder[part_name];
+      if (!parts_builder) {
+        throw new Error('cant build part ' + part_name)
+      }
 
       var part = typeof parts_builder == 'string' ? this.root_view.getSample(parts_builder) : parts_builder.call(this);
 
