@@ -44,7 +44,11 @@ function addExisting(result, from, nest_name) {
   if (!subject) {
     return
   }
-  result.push(subject)
+  if (!Array.isArray(subject)) {
+    result.push(subject)
+  }
+
+  Array.prototype.push.apply(result, subject)
 }
 
 function add(result, list, nest_name) {
