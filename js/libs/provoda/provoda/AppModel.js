@@ -30,7 +30,7 @@ var AppModelBase = spv.inh(pv.Model, {
     target.start_page = target.start_page || target.initChi('start__page') // eslint-disable-line
   }
 }, {
-  checkActingRequestsPriority: () => {
+  checkActingRequestsPriority: function() {
     console.warn('add checkActingRequestsPriority')
   },
   model_name: 'app_model',
