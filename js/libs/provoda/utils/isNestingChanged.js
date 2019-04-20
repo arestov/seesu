@@ -11,7 +11,7 @@ return function isNestingChanged(old_value, new_value) {
   }
 
   for (var i = 0; i < old_value.length; i++) {
-    if (old_value[i] != new_value) {
+    if (old_value[i] != new_value[i]) {
       return true
     }
 
