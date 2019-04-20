@@ -2,11 +2,11 @@ define(function(require) {
 'use strict';
 var getTargetModels = require('./getTargetModels')
 var prepareNestingValue = require('./prepareNestingValue')
-var cloneObj = require('spv').cloneObj
+var countKeys = require('spv').countKeys
 var getModelById = require('../../../utils/getModelById');
+var initPassedValue = prepareNestingValue.initPassedValue
 
-
-var prepareAndHold = function(md, target, value, mut_refs_index) {
+var prepareAndHold = function(md, target, value, mut_refs_index, mut_wanted_ref) {
   var multi_path = target.target_path
 
   switch (multi_path.result_type) {
@@ -14,7 +14,7 @@ var prepareAndHold = function(md, target, value, mut_refs_index) {
       return {
         target: target,
         target_md: md,
-        value: prepareNestingValue(md, target, value, mut_refs_index)
+        value: initPassedValue(md, target, value, mut_refs_index, mut_wanted_ref)
       }
       return
     }
@@ -24,7 +24,7 @@ var prepareAndHold = function(md, target, value, mut_refs_index) {
   }
 }
 
-var unwrap = function (md, target, value, data, mut_refs_index, mut_result) {
+var unwrap = function (md, target, value, data, mut_refs_index, mut_wanted_ref, mut_result) {
   if (target.path_type == 'by_provoda_id') {
     mut_result.push({target: target, md: md, value: value, data: data})
     return
@@ -36,12 +36,12 @@ var unwrap = function (md, target, value, data, mut_refs_index, mut_result) {
     for (var i = 0; i < models.length; i++) {
       var cur = models[i];
       mut_result.push(
-        prepareAndHold(cur, target, value, mut_refs_index)
+        prepareAndHold(cur, target, value, mut_refs_index, mut_wanted_ref, mut_result)
       )
     }
   } else {
     mut_result.push(
-      prepareAndHold(models, target, value, mut_refs_index)
+      prepareAndHold(models, target, value, mut_refs_index, mut_wanted_ref, mut_result)
     )
   }
 
@@ -63,47 +63,52 @@ var replaceItem = function(md, item, mut_refs_index) {
   return getModelById(md, mut_refs_index[item.use_ref_id])
 }
 
-var replaceNestingItem = function (md, list, mut_refs_index) {
-  if (!Array.isArray(list)) {
-    return replaceItem(md, list, mut_refs_index)
-  }
 
-  if (!list.some(needsReplace)) {
-    return list
-  }
+var completeValues = function(list, mut_refs_index, mut_wanted_ref) {
+  var lst_wanted = mut_wanted_ref
 
-  var result = []
-  for (var i = 0; i < list.length; i++) {
-    result.push(replaceItem(md, list[i], mut_refs_index))
-  }
+  while (true) {
+    var local_wanted = {}
 
-}
+    for (var i = 0; i < list.length; i++) {
+      var cur = list[i]
+      var target = cur.target
+      var multi_path = target.target_path
+      if (multi_path.result_type !== 'nesting') {
+        continue
+      }
 
-var linkToHolded = function (mut_refs_index, mut_result) {
-  for (var i = 0; i < mut_result.length; i++) {
-    var cur = mut_result[i]
-    var target = cur.target
-    var multi_path = target.target_path
 
-    if (multi_path.result_type !== 'nesting') {
-      continue;
+      cur.value = prepareNestingValue(
+        cur.target_md, target, cur.value, mut_refs_index, local_wanted
+      )
+
+      list[i] = cur
     }
 
-    var newItem = cloneObj({}, cur)
-    newItem.value = replaceNestingItem(newItem.md, newItem.value, mut_refs_index)
-    mut_result[i] = newItem
+    if (!countKeys(lst_wanted)) {
+      break
+    }
+
+    if (countKeys(local_wanted) >= countKeys(lst_wanted)) {
+      throw new Error('cant hold refs: ' + Object.keys(local_wanted))
+    }
+
+    lst_wanted = local_wanted
   }
+
 }
 
 
 return function(md, dcl, value, data) {
 
-  var mut_result = [];
+  var mut_result = []
   var mut_refs_index = {}
+  var mut_wanted_ref = {}
 
   if (!dcl.targets_list) {
-    unwrap(md, dcl.target_single, value, data, mut_refs_index, mut_result)
-    linkToHolded(mut_refs_index, mut_result)
+    unwrap(md, dcl.target_single, value, data, mut_refs_index, mut_wanted_ref, mut_result)
+    completeValues(mut_result, mut_refs_index, mut_wanted_ref)
     return mut_result
   }
 
@@ -116,10 +121,10 @@ return function(md, dcl, value, data) {
     if (!value.hasOwnProperty(cur.result_name)) {
       continue;
     }
-    unwrap(md, cur, value[cur.result_name], data, mut_refs_index, mut_result)
+    unwrap(md, cur, value[cur.result_name], data, mut_refs_index, mut_wanted_ref, mut_result)
   }
 
-  linkToHolded(mut_refs_index, mut_result)
+  completeValues(mut_result, mut_refs_index, mut_wanted_ref)
 
   return mut_result
 
