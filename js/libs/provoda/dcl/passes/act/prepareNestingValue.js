@@ -88,8 +88,6 @@ var initItem = function(md, target, value) {
   var nesting_name = multi_path.nesting.target_nest_name
 
   var Constr = getNestingConstr(md.app, md, nesting_name)
-  // todo: value could array
-  // isProvodaBhv(value or value[n]) could be true
 
   // expected `value` is : {states: {}, nestings: {}}
   var init_data = {}
@@ -113,7 +111,7 @@ var initItemsList = function(md, target, value) {
   var result = new Array(list.length)
   for (var i = 0; i < list.length; i++) {
     var cur = list[i]
-    result[i] = initItem(cur, target, value)
+    result[i] = initItem(md, target, cur)
   }
   return result
 }
@@ -151,6 +149,12 @@ var prepareNestingValue = function(md, target, value) {
         throw new Error('value should not be list')
       }
       return initItem(md, target, value)
+    }
+    case "set_many": {
+      if (value && !Array.isArray(value)) {
+        throw new Error('value should be list')
+      }
+      return initItemsList(md, target, value)
     }
     //|| 'set_one'
     //|| 'replace'
