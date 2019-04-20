@@ -55,6 +55,9 @@ var parseMultiPath = require('../../utils/multiPath/parse')
 // },
 
 var targetData = function(to, result_name) {
+  if (!Array.isArray(to)) {
+    throw new Error('to: should be array ' + to)
+  }
   var target_path = to[0];
   var options = to[1];
   var parsed_path = parseMultiPath(target_path, true)
