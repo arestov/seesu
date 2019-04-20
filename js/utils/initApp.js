@@ -3,10 +3,11 @@ define(require => {
 
   const initApp = (App, env) => {
     const views_proxies = new pv.views_proxies.Proxies()
+    const sync_sender = new pv.SyncSender()
     const app_model = new App({
       _highway: {
         models_counters: 1,
-        sync_sender: new pv.SyncSender(),
+        sync_sender,
         views_proxies,
         models: {},
         calls_flow: new pv.CallbacksFlow(global),
@@ -21,6 +22,7 @@ define(require => {
 
     return {
       app_model,
+      sync_sender,
       // root_bwlev,
       views_proxies,
     }
