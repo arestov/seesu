@@ -162,10 +162,10 @@ function addNestWatch(self, nwatch, skip, parent_subl_wtch) {
   }
 
   if (isDeepestLevel(nwatch, skip)) {
-    // console.log('full match!', self, nwatch);
-    if (!self.states_links) {
+    if (nwatch.short_state_name && !self.states_links) {
       self.states_links = {};
     }
+    // console.log('full match!', self, nwatch);
     addNWatchToStatesIndex(self.states_links, nwatch);
     if (noNesting(nwatch)) {
       nwatch.ordered_items = self;
@@ -258,6 +258,9 @@ function addNWOne(states_links, state_name, nwatch) {
 }
 
 function addNWatchToStatesIndex(states_links, nwatch) {
+  if (!nwatch.short_state_name) {
+    return
+  }
   if (Array.isArray(nwatch.short_state_name)) {
     for (var i = 0; i < nwatch.short_state_name.length; i++) {
       addNWOne(states_links, nwatch.short_state_name[i], nwatch);
@@ -275,6 +278,9 @@ function removeOne(states_links, state_name, nwatch) {
 }
 
 function removeNWatchFromSI(states_links, nwatch) {
+  if (!nwatch.short_state_name) {
+    return
+  }
   if (Array.isArray(nwatch.short_state_name)) {
     for (var i = 0; i < nwatch.short_state_name.length; i++) {
       removeOne(states_links, nwatch.short_state_name[i], nwatch);
