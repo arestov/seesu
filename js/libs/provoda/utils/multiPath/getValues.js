@@ -29,9 +29,11 @@ return function(models, multi_path) {
     return getValue(models, multi_path)
   }
 
-  var result = new Array(models.length)
+  var result = []
   for (var i = 0; i < models.length; i++) {
-    result[i] = getValue(models[i], multi_path)
+    var cur = getValue(models[i], multi_path)
+    if (!cur) {continue}
+    result.push(cur)
   }
 
   if (multi_path.result_type !== 'nesting') {
