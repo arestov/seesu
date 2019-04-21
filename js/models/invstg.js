@@ -102,7 +102,7 @@ var PlaylistsSection = spv.inh(base.SearchSection, {}, {
   },
 
   model_name: 'section-playlist',
-  resItem: playlistSuggest
+  'nest_rqc-items': playlistSuggest,
 });
 
 var ArtistsSection = spv.inh(seesuSection, {}, {
@@ -131,8 +131,7 @@ var ArtistsSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'artist.search', {artist: q}, q, this, suParseArtistsResults, true);
     }
   },
-
-  resItem: artistSuggest
+  'nest_rqc-items': artistSuggest,
 });
 
 
@@ -201,8 +200,7 @@ var TracksSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'track.search', {track: q}, q, this, suParseTracksResults, true);
     }
   },
-
-  resItem: trackSuggest
+  'nest_rqc-items': trackSuggest,
 });
 
 var tagSuggest = spv.inh(base.BaseSuggest, {
@@ -257,8 +255,7 @@ var TagsSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'tag.search', {tag: q}, q, this, suParseTagsResults, true);
     }
   },
-
-  resItem: tagSuggest
+  'nest_rqc-items': tagSuggest,
 });
 
 var albumSuggest = spv.inh(base.BaseSuggest, {
@@ -320,8 +317,7 @@ var AlbumsSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'album.search', {'album': q}, q, this, suParseAlbumsResults, true);
     }
   },
-
-  resItem: albumSuggest
+  'nest_rqc-items': albumSuggest,
 });
 
 var SearchPage = spv.inh(base.Investigation, {}, {

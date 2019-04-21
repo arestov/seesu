@@ -150,8 +150,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
       }
     ]
   },
-
-  resItem: struserSuggest,
+  'nest_rqc-items': struserSuggest,
   model_name: "section-vk-users",
 
   //desc: improve ?
@@ -287,7 +286,7 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
     this.appendResults(r, true);
   },
 
-  resItem: LFMUserSuggest,
+  'nest_rqc-items': LFMUserSuggest,
   model_name: "section-lfm-friends"
 });
 
@@ -410,8 +409,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
     }
     this.appendResults(r, true);
   },
-
-  resItem: LFMOneUserSuggest,
+  'nest_rqc-items': LFMOneUserSuggest,
   model_name: "section-lfm-user"
 });
 
