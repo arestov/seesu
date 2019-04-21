@@ -14,6 +14,8 @@ var SongsList = require('./SongsList');
 
 var Mp3Search = require('js/models/Mp3Search/index');
 
+var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
+
 var declr_parsers = require('js/modules/declr_parsers');
 
 var Song = require('./Song');
@@ -37,7 +39,7 @@ var ArtistAlbumSongs = spv.inh(SongsList, {
     target.playlist_type = 'album';
     if (params.lfm_image){
 
-      pvUpdate(target, 'lfm_image', target.app.art_images.getImageWrap(params.lfm_image.array));
+      pvUpdate(target, 'lfm_image', getImageWrap(params.lfm_image.array));
     }
     if (params.lfm_img) {
       pvUpdate(target, 'lfm_img', params.lfm_img);
@@ -690,7 +692,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 
         parse: function(r) {
           var psai = app_serv.parseArtistInfo(r);
-          var profile_image = this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image'));
+          var profile_image = getImageWrap(spv.getTargetField(r, 'artist.image'));
 
           //_this.tags_list.setPreview();
           var artists_list;
@@ -701,7 +703,7 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
               var cur = psai.similars[i];
               data_list.push({
                 artist_name: cur.name,
-                lfm_image: this.app.art_images.getImageWrap(cur.image)
+                lfm_image: getImageWrap(cur.image)
               });
 
             }
