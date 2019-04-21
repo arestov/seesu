@@ -164,10 +164,6 @@ var SeesuApp = spv.inh(AppModel, {
     self.p = new PlayerSeesu(self);
     self.player = self.p;
     self.app_md = self;
-    self.art_images = self.initChi('art_images');
-
-    self.vk_users = self.initChi('vk_users');
-    self.vk_groups = self.initChi('vk_groups');
 
     if (app_env.check_resize){
       pv.update(self, 'slice-for-height', true);
@@ -303,9 +299,6 @@ var SeesuApp = spv.inh(AppModel, {
     }
   },
 
-  'chi-vk_users': pv.Model,
-  'chi-vk_groups': pv.Model,
-  'chi-art_images': comd.LastFMArtistImagesSelector,
   'chi-vk_auth': VkAuth,
   'chi-lfm_auth': LfmAuth,
   'chi-start__page': StartPage,

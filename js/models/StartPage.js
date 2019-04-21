@@ -14,6 +14,7 @@ var route = require('../modules/route');
 var invstg = require('../models/invstg');
 var filesSearchers = require('../file_searchers');
 var Mp3Search = require('./Mp3Search/index');
+var comd = require('js/models/comd');
 
 var app_env = app_serv.app_env;
 var complexEach = app_serv.complexEach;
@@ -52,9 +53,9 @@ var StartPage = spv.inh(BrowseMap.Model, {
 
     var self = target
 
-    self.vk_groups = self.app.vk_groups
-    self.vk_users = self.app.vk_users
-    self.art_images = self.app.art_images
+    self.vk_groups = self.getSPI('vk_groups')
+    self.vk_users = self.getSPI('vk_users')
+    self.art_images = self.getSPI('art_images')
 
     pvUpdate(target, 'needs_search_from', true);
     pvUpdate(target, 'nav_title', 'Seesu');
@@ -177,6 +178,19 @@ var StartPage = spv.inh(BrowseMap.Model, {
     }
   },
   sub_page: {
+    'vk_groups': {
+      constr: pv.Model,
+      title: [[]],
+    },
+    'vk_users': {
+      constr: pv.Model,
+      title: [[]],
+    },
+    'art_images': {
+      constr: comd.LastFMArtistImagesSelector,
+      title: [[]],
+    },
+
     'mp3_search': {
       constr: Mp3Search,
       title: [[]],
