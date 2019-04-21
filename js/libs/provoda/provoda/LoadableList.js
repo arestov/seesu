@@ -175,7 +175,7 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
     }
 
     target.dataListChange(mlc_opts, items_list, nesting_name);
-
+    return items_list
   },
 
   getRelativeRequestsGroups: function(space) {
