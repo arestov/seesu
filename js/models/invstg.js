@@ -52,8 +52,7 @@ var playlistSuggest = spv.inh(base.BaseSuggest, {
 var seesuSection = spv.inh(base.SearchSection, {
   init: function(self) {
     if (self.loadMore){
-
-      self.button = self.initSi(base.BaseSectionButton)
+      self.button = self.getSPI('button-more')
         .on('view', function(){
           this.hide();
           self.loadMore();
@@ -103,6 +102,12 @@ var PlaylistsSection = spv.inh(base.SearchSection, {}, {
 
   model_name: 'section-playlist',
   'nest_rqc-items': playlistSuggest,
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  }
 });
 
 var ArtistsSection = spv.inh(seesuSection, {}, {
@@ -124,6 +129,12 @@ var ArtistsSection = spv.inh(seesuSection, {}, {
   },
 
   model_name: 'section-artist',
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
 
   loadMore: function() {
     var q = this.r.query;
@@ -193,6 +204,12 @@ var TracksSection = spv.inh(seesuSection, {}, {
   },
 
   model_name: 'section-track',
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
 
   loadMore: function() {
     var q = this.r.query;
@@ -248,7 +265,12 @@ var TagsSection = spv.inh(seesuSection, {}, {
   },
 
   model_name: 'section-tag',
-
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
   loadMore: function() {
     var q = this.r.query;
     if (q) {
@@ -310,6 +332,13 @@ var AlbumsSection = spv.inh(seesuSection, {}, {
   },
 
   model_name: 'section-album',
+
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
 
   loadMore: function() {
     var q = this.r.query;
