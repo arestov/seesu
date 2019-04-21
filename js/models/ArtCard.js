@@ -1,22 +1,22 @@
 define(function(require) {
 'use strict';
-  var spv = require('spv');
+var spv = require('spv');
 
-  var pv = require('pv');
+var pv = require('pv');
 
-  var app_serv = require('app_serv');
+var app_serv = require('app_serv');
 
-  var BrowseMap = require('js/libs/BrowseMap');
+var BrowseMap = require('js/libs/BrowseMap');
 
-  var LoadableList = require('./LoadableList');
+var LoadableList = require('./LoadableList');
 
-  var SongsList = require('./SongsList');
+var SongsList = require('./SongsList');
 
-  var Mp3Search = require('js/models/Mp3Search/index');
+var Mp3Search = require('js/models/Mp3Search/index');
 
-  var declr_parsers = require('js/modules/declr_parsers');
+var declr_parsers = require('js/modules/declr_parsers');
 
-  var Song = require('./Song');
+var Song = require('./Song');
 var ArtCard;
 var pvUpdate = require('pv/update');
 
