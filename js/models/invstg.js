@@ -10,13 +10,8 @@ var lastfm_data = require('js/lastfm_data');
 var base = require('./Investigation');
 var pvUpdate = require('pv/update');
 
-var suParseArtistsResults = function() {
-  return lfmhelp.parseArtistsResults.apply(this, arguments);
-};
-
-var suParseTracksResults = function() {
-  return lfmhelp.parseTracksResults.apply(this, arguments);
-};
+var suParseArtistsResults = lfmhelp.parseArtistsResults
+var suParseTracksResults = lfmhelp.parseTracksResults
 var suParseTagsResults = lfmhelp.parseTagsResults;
 var suParseAlbumsResults = lfmhelp.parseAlbumsResults;
 
