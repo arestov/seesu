@@ -656,6 +656,7 @@ var FreeArtistTracks = spv.inh(SongsList, {}, {
 });
 
 var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
+  net_head: ['artist_name'],
   "+effects": {
     "consume": {
       0: {
@@ -923,11 +924,6 @@ var ArtCardBase = spv.inh(BrowseMap.Model, {}, {
 
 ArtCard = spv.inh(ArtCardBase, {}, {});
 
-var ArtistInArtl = spv.inh(ArtCardBase, {}, {
-  net_head: ['artist_name'],
-  skip_map_init: true,
-});
-
 var RandomSong = spv.inh(Song, {}, {
   "+states": {
     "track": [
@@ -1048,19 +1044,16 @@ var SimilarArtists = spv.inh(ArtistsList, {
   },
 
   page_limit: 100,
-
+  'nest_rqc-more_previews': '#catalog/[:artist_name]',
   setPreviewList: function(raw_array) {
-    var preview_list = this.getNesting(this.preview_mlist_name) || [];
-    if (preview_list.length) {
+    var preview_base = this.getNesting(this.preview_mlist_name);
+    if (preview_base && preview_base.length) {
       return
     }
 
-    for (var i = 0; i < raw_array.length; i++) {
-      preview_list.push(this.initSi(ArtistInArtl, {
-        network_states: raw_array[i]
-      }));
+    var preview_list = this.insertDataAsSubitems(this, 'more_previews', raw_array);
 
-    }
+
     pv.updateNesting(this, this.preview_mlist_name, preview_list);
   }
 });
