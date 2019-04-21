@@ -4,6 +4,7 @@ var pv = require('pv');
 var spv = require('spv');
 var morph_helpers = require('js/libs/morph_helpers');
 var BrowseMap = require('../libs/BrowseMap');
+var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
 
 var pvUpdate = require('pv/update');
 
@@ -140,15 +141,14 @@ var LastFMArtistImagesSelector = spv.inh(pv.Model, {
     if (!obj.array && !obj.item){
       return;
     }
-    return this.getImageWrap(obj.array || obj.item);
+    return getImageWrap(obj.array || obj.item);
   },
-  getImageWrap: morph_helpers.lfm_image,
   setArtistImage: function(artist_name, lfm_arr, source) {
-    this.getArtistImagesModel(artist_name).addImage(this.getImageWrap(lfm_arr), source);
+    this.getArtistImagesModel(artist_name).addImage(getImageWrap(lfm_arr), source);
   },
   setTrackImage: function(info, lfm_arr, source) {
 
-    this.getTrackImagesModel(info).addImage(this.getImageWrap(lfm_arr), source);
+    this.getTrackImagesModel(info).addImage(getImageWrap(lfm_arr), source);
   },
   setImage: function(info, source) {
     if (!info.artist){
