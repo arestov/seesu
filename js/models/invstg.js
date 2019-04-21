@@ -51,18 +51,19 @@ var playlistSuggest = spv.inh(base.BaseSuggest, {
 
 var seesuSection = spv.inh(base.SearchSection, {
   init: function(self) {
-    if (self.loadMore){
-      self.button = self.getSPI('button-more')
-        .on('view', function(){
-          this.hide();
-          self.loadMore();
-        })
-        .on('state_change-disabled', function(){
-          self.trigger('items-change');
-        }, {skip_reg: true});
-      pv.updateNesting(self, 'button', self.button);
+    if (!self.loadMore) {
+      return
     }
 
+    self.button = self.getSPI('button-more')
+      .on('view', function(){
+        this.hide();
+        self.loadMore();
+      })
+      .on('state_change-disabled', function(){
+        self.trigger('items-change');
+      }, {skip_reg: true});
+    pv.updateNesting(self, 'button', self.button);
   }
 }, {
   "+states": {
