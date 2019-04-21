@@ -1050,17 +1050,18 @@ var SimilarArtists = spv.inh(ArtistsList, {
   page_limit: 100,
 
   setPreviewList: function(raw_array) {
-    var preview_list = this.getNesting(this.preview_mlist_name);
-    if (!preview_list || !preview_list.length){
-      preview_list = [];
-      for (var i = 0; i < raw_array.length; i++) {
-        preview_list.push(this.initSi(ArtistInArtl, {
-          network_states: raw_array[i]
-        }));
-
-      }
-      pv.updateNesting(this, this.preview_mlist_name, preview_list);
+    var preview_list = this.getNesting(this.preview_mlist_name) || [];
+    if (preview_list.length) {
+      return
     }
+
+    for (var i = 0; i < raw_array.length; i++) {
+      preview_list.push(this.initSi(ArtistInArtl, {
+        network_states: raw_array[i]
+      }));
+
+    }
+    pv.updateNesting(this, this.preview_mlist_name, preview_list);
   }
 });
 
