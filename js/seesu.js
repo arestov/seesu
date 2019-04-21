@@ -318,10 +318,10 @@ var SeesuApp = spv.inh(AppModel, {
     var store, character_id;
 
     if (key > 0) {
-      store = this.vk_users;
+      store = this.start_page.vk_users;
       character_id = key;
     } else {
-      store = this.vk_groups;
+      store = this.start_page.vk_groups;
       character_id = key * -1;
     }
 

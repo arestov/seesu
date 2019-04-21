@@ -49,6 +49,13 @@ AppNews.converNews = converNews;
 var StartPage = spv.inh(BrowseMap.Model, {
   init: function(target, opts) {
     target.su = opts.app;
+
+    var self = target
+
+    self.vk_groups = self.app.vk_groups
+    self.vk_users = self.app.vk_users
+    self.art_images = self.app.art_images
+
     pvUpdate(target, 'needs_search_from', true);
     pvUpdate(target, 'nav_title', 'Seesu');
 

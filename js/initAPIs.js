@@ -239,7 +239,7 @@ function initLfm(su, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
   }));
 
   lfm.checkMethodResponse = function(method, data, r) {
-    su.art_images.checkLfmData(method, r);
+    su.start_page.art_images.checkLfmData(method, r);
   };
 
   return lfm;
