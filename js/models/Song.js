@@ -7,6 +7,7 @@ var app_serv = require('app_serv');
 var MfCorUsual = require('./MfCor');
 var SongActionsRow = require('./song/SongActionsRow');
 var SongBase = require('./song/SongBase');
+var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
 
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
@@ -51,7 +52,7 @@ function handleFile(self, file) {
       if (omo.lfm_img) {
         spec_image_wrap = omo.lfm_img;
       } else if (omo.lfm_image){
-        spec_image_wrap = self.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
+        spec_image_wrap = getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
         //pvUpdate(this, 'lfm_image', omo.lfm_image);
       }
       var images_pack;
