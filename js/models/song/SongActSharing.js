@@ -7,6 +7,7 @@ var invstg = require('../invstg');
 var comd = require('../comd');
 var LfmAuth = require('js/LfmAuth');
 var pvUpdate = require('pv/update');
+var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
 
 var app_env = app_serv.app_env;
 var pvState = pv.state;
@@ -304,7 +305,7 @@ var LFMOneUserSuggest = spv.inh(invstg.BaseSuggest, {
     target.userid = user.name;
     target.text_title = target.userid;
     target.updateManyStates({
-      selected_image: target.app.art_images.getImageWrap(user.image),
+      selected_image: getImageWrap(user.image),
       text_title: target.text_title
     });
   }
