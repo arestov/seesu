@@ -271,7 +271,7 @@ var LfmAuth = spv.inh(pv.Model, {
       });
   },
 
-  try_to_login: function(callback){
+  try_to_login: function(){
     var _this = this;
     if (!_this.newtoken) {
       return;
@@ -283,7 +283,7 @@ var LfmAuth = spv.inh(pv.Model, {
         return;
       }
 
-      _this.login(r,callback);
+      _this.login(r);
       pvUpdate(_this, 'session', true);
       _this.trigger("session");
 
