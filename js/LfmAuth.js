@@ -223,12 +223,11 @@ var LfmAuth = spv.inh(pv.Model, {
     pvUpdate(this, 'requested', Date.now());
   },
 
-  login: function(r, callback){
+  login: function(r){
     this.api.sk = r.session.key;
     this.api.username = r.session.name;
     this.api.stSet('lfm_user_name', r.session.name, true);
     this.api.stSet('lfmsk', this.api.sk, true);
-    if (callback){callback();}
   },
 
   getInitAuthData: function(){
