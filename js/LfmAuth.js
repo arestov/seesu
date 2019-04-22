@@ -13,7 +13,7 @@ var LfmLogin = spv.inh(pv.Model, {
 
     target.updateNesting('auth', target.auth);
 
-    if (target.auth.deep_sanbdox){
+    if (target.auth.deep_sandbox){
       pvUpdate(target, 'deep_sandbox', true);
     }
 
@@ -108,7 +108,7 @@ var LfmAuth = spv.inh(pv.Model, {
     target.api = data.lfm;
     target.opts = params || {};
     target.has_session = !!target.api.sk;
-    target.deep_sanbdox = !!params.deep_sanbdox;
+    target.deep_sandbox = !!params.deep_sandbox;
 
     pvUpdate(target, 'session', !!target.has_session);
     pvUpdate(target, 'bridge_url', params.bridge_url);
@@ -233,7 +233,7 @@ var LfmAuth = spv.inh(pv.Model, {
     var o = {};
     o.link = 'http://www.last.fm/api/auth/?api_key=' + this.api.apikey ;
     var link_tag = this.opts.callback_url;
-    if (!this.opts.deep_sanbdox){
+    if (!this.opts.deep_sandbox){
       o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
       link_tag += '?key=' + o.bridgekey;
     }

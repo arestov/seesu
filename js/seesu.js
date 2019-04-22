@@ -168,7 +168,7 @@ var SeesuApp = spv.inh(AppModel, {
     if (app_env.check_resize){
       pv.update(self, 'slice-for-height', true);
     }
-    if (app_env.deep_sanbdox){
+    if (app_env.deep_sandbox){
       pv.update(self, 'deep_sandbox', true);
     }
 

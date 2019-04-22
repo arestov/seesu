@@ -17,7 +17,7 @@ var VkTokenAuth = function(app_id, vk_t) {
 function buildVkAuth(obj, opts) {
   // pconstr(obj);
 
-  //app_id, urls, permissions, open_api, deep_sanbdox
+  //app_id, urls, permissions, open_api, deep_sandbox
   obj.app_id = opts.app_id;
   obj.urls = opts.urls;
   obj.permissions = spv.toRealArray(opts.permissions);
@@ -29,7 +29,7 @@ function buildVkAuth(obj, opts) {
   obj.vksite_app = !!opts.vksite_app;
   obj.vksite_settings = obj.vksite_app && opts.vksite_settings && parseFloat(opts.vksite_settings);
 
-  obj.deep_sanbdox = !!opts.deep_sanbdox;
+  obj.deep_sandbox = !!opts.deep_sandbox;
 
   pvUpdate(obj, 'settings_bits', obj.vksite_settings);
 
@@ -116,7 +116,7 @@ var VkAuth = spv.inh(pv.Model, {
     o.link = base + 'client_id=' + this.app_id +'&scope=' + this.permissions.join(',')+ '&display=' + display_type + '&response_type=token';
     var link_tag = this.urls.callbacker;
 
-    if (!this.deep_sanbdox){
+    if (!this.deep_sandbox){
       o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
       link_tag += '?key=' + o.bridgekey;
     }

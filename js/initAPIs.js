@@ -39,7 +39,7 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
   self.lfm_auth = self.initChi('lfm_auth', {lfm: self.lfm}, {
-    deep_sanbdox: app_env.deep_sanbdox,
+    deep_sandbox: app_env.deep_sandbox,
     callback_url: 'http://seesu.me/lastfm/callbacker.html',
     bridge_url: 'http://seesu.me/lastfm/bridge.html'
   });
@@ -57,7 +57,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     },
     permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
     open_api: false,
-    deep_sanbdox: app_env.deep_sanbdox,
+    deep_sandbox: app_env.deep_sandbox,
     vksite_app: app_env.vkontakte,
     vksite_settings: self._url.api_settings,
     display_type: app_env.tizen_app && 'mobile'

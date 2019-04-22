@@ -469,7 +469,7 @@ var VkLoginB = spv.inh(pv.Model, {
       pvUpdate(target, 'has_notify_closer', true);
     }
 
-    if (target.auth.deep_sanbdox){
+    if (target.auth.deep_sandbox){
       pvUpdate(target, 'deep_sandbox', true);
     }
 
