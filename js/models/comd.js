@@ -5,7 +5,7 @@ var spv = require('spv');
 var morph_helpers = require('js/libs/morph_helpers');
 var BrowseMap = require('../libs/BrowseMap');
 var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
-
+var pvState = require('pv/state')
 var pvUpdate = require('pv/update');
 
 var CommonMessagesStore = spv.inh(pv.Eventor, {
@@ -469,7 +469,7 @@ var VkLoginB = spv.inh(pv.Model, {
       pvUpdate(target, 'has_notify_closer', true);
     }
 
-    if (target.auth.deep_sandbox){
+    if (target.auth.deep_sandbox || pvState(target.auth, 'deep_sandbox')){
       pvUpdate(target, 'deep_sandbox', true);
     }
 
