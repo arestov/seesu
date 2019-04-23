@@ -233,6 +233,12 @@ var SeesuApp = spv.inh(AppModel, {
           }
         }
 
+        if (cur == 'lfm-scrobbling') {
+          value = value == null
+            ? true
+            : value
+        }
+
 
         self.letAppKnowSetting(cur, value);
       }

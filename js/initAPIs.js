@@ -44,11 +44,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     bridge_url: 'http://seesu.me/lastfm/bridge.html'
   });
 
-  self.lfm_auth.once("session", function() {
-    self.setSetting('lfm-scrobbling', true);
-    //self.auth.setScrobbling(true);
-  });
-
   self.vk_auth = self.initChi('vk_auth', false, {
     app_id: self.vkappid,
     urls: {
