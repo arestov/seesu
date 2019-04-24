@@ -258,6 +258,16 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
 }, {
+  "+passes": {
+    "handleState:lfm_auth_params": {
+      to: ['<< lfm_auth', {method: 'set_one'}],
+      fn: function(data) {
+        return {
+          states: data.next_value,
+        }
+      }
+    }
+  },
   "+effects": effects,
   "+states": {
     "app_lang": ["compx", ['env.lang']],
@@ -306,9 +316,8 @@ var SeesuApp = spv.inh(AppModel, {
       pvUpdate(target, 'lfm_userid', target.lfm.username);
     }
   },
-
+  'nest_rqc-lfm_auth': LfmAuth,
   'chi-vk_auth': VkAuth,
-  'chi-lfm_auth': LfmAuth,
   'chi-start__page': StartPage,
 
   tickStat: function(data_array) {

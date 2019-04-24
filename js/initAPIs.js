@@ -2,6 +2,7 @@ define(function(require) {
 'use strict';
 
 var pv = require('pv');
+var pvUpdate = require('pv/update')
 var spv = require('spv');
 var FuncsQueue = require('./libs/FuncsQueue');
 var net_apis = require('./modules/net_apis');
@@ -44,7 +45,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     bridge_url: 'http://seesu.me/lastfm/bridge.html'
   }
 
-  self.lfm_auth = self.initChi('lfm_auth', null, null, null, lfm_auth_params)
+  pvUpdate(self, 'lfm_auth_params', lfm_auth_params)
 
   self.vk_auth = self.initChi('vk_auth', false, {
     app_id: self.vkappid,
@@ -61,7 +62,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
   });
 
   self.auths = {
-    lfm: self.lfm_auth,
     vk: self.vk_auth
   };
 
@@ -159,8 +159,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     }
 
   });
-
-  self.updateNesting('lfm_auth', self.lfm_auth);
 
   if (self.lfm.username){
     pv.update(self, 'lfm_userid', self.lfm.username);
