@@ -1,12 +1,16 @@
 define(function(require) {
 'use strict'
 var spv = require('spv');
+var getNesting = require('pv/getNesting')
 
-return function(self, app_env) {
-  self.lfm_auth.on('session', function(){
+return function(self, win, app_env) {
+  var lfm_auth = getNesting(self, 'lfm_auth')
+
+  lfm_auth.on('session', function(){
     self.trackEvent('Auth to lfm', 'end');
   });
-  self.lfm_auth.on('want-open-url', function(wurl){
+
+  lfm_auth.on('want-open-url', function(wurl){
     if (app_env.showWebPage){
       app_env.openURL(wurl);
       /*
@@ -42,10 +46,10 @@ return function(self, app_env) {
     self.trackEvent('Auth to lfm', 'start');
 
   });
-  spv.domReady(window.document, function() {
-    self.lfm_auth.try_to_login();
+  spv.domReady(win.document, function() {
+    lfm_auth.try_to_login();
     if (!self.lfm.sk) {
-      self.lfm_auth.get_lfm_token();
+      lfm_auth.get_lfm_token();
     }
   });
 }

@@ -19,6 +19,7 @@ var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
 var SearchQueryModel = require('./models/SearchQueryModel');
+var effects = require('./app/effects')
 
 var pvUpdate = pv.update;
 
@@ -257,6 +258,7 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
 }, {
+  "+effects": effects,
   "+states": {
     "app_lang": ["compx", ['env.lang']],
 

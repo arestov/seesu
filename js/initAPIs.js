@@ -8,7 +8,6 @@ var net_apis = require('./modules/net_apis');
 var SeesuServerAPI = require('./SeesuServerAPI');
 var ScApi = require('./libs/ScApi');
 var FanburstApi = require('./libs/FanburstApi');
-var subscribeLfmAuthAction = require('./app/subscribeLfmAuthAction')
 
 var LastfmAPIExtended = require('./libs/LastfmAPIExtended');
 
@@ -170,8 +169,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     // 	pv.update(self, 'lfm_userid', self.lfm.username);
     // });
   }
-
-  subscribeLfmAuthAction(self, app_env)
 
   moreApis(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 }
