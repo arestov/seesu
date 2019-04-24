@@ -47,7 +47,7 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
   pvUpdate(self, 'lfm_auth_params', lfm_auth_params)
 
-  self.vk_auth = self.initChi('vk_auth', false, {
+  var vk_auth_params = {
     app_id: self.vkappid,
     urls: {
       bridge: 'http://seesu.me/vk/bridge.html',
@@ -59,18 +59,10 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     vksite_app: app_env.vkontakte,
     vksite_settings: self._url.api_settings,
     display_type: app_env.tizen_app && 'mobile'
-  });
+  }
 
-  self.auths = {
-    vk: self.vk_auth
-  };
-
-  self.once("vk-site-api", function() {
-    window.document.ScrollSizeChangeHandler = function(height){
-      window.VK.callMethod("resizeWindow", 800, Math.max(700, height));
-    };
-    self.vk_auth.trigger('vk-site-api', window.VK);
-  });
+  self.vk_auth = self.initChi('vk_auth', false, vk_auth_params);
+  pvUpdate(self, 'vk_auth_params', vk_auth_params)
 
   self.vk_queue = new FuncsQueue({
     time: [700, 8000 , 7],
@@ -167,6 +159,8 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     // 	pv.update(self, 'lfm_userid', self.lfm.username);
     // });
   }
+
+  self.updateNesting('vk_auth', self.vk_auth)
 
   moreApis(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 }

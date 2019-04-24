@@ -7,6 +7,7 @@ var BrowseMap = require('../libs/BrowseMap');
 var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
 var pvState = require('pv/state')
 var pvUpdate = require('pv/update');
+var getNesting = require('pv/getNesting')
 
 var CommonMessagesStore = spv.inh(pv.Eventor, {
   naming: function(constr) {
@@ -436,7 +437,8 @@ var BaseCRow = spv.inh(pv.Model, {
 
 var VkLoginB = spv.inh(pv.Model, {
   init: function(target) {
-    target.auth = target.app.auths.vk;
+    var auth = getNesting(target.app, 'vk_auth')
+    target.auth = auth;
     target.updateNesting('auth', target.auth);
 
     var target_bits;

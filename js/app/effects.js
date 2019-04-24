@@ -23,6 +23,20 @@ return {
         subscribeLfmAuthAction(self, win, app_env)
       }
     },
+    "vk_auth_trigger": {
+      api: ["self", "window"],
+      trigger: ["vk_auth$exists"],
+      require: "vk_auth$exists",
+      fn: function(self, win) {
+        self.once("vk-site-api", function() {
+          win.document.ScrollSizeChangeHandler = function(height) {
+            win.VK.callMethod("resizeWindow", 800, Math.max(700, height));
+          };
+          var vk_auth = self.getNesting('vk_auth')
+          vk_auth.trigger('vk-site-api', win.VK);
+        });
+      }
+    }
   }
 }
 
