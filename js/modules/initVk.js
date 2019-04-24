@@ -30,6 +30,7 @@ var appendVKSiteApi = function(app_id, su) {
 };
 
 var initVk = function(su) {
+  var vk_auth = su.getNesting('vk_auth')
 
   var _u = su._url;
   if (app_env.vkontakte){
@@ -72,7 +73,7 @@ var initVk = function(su) {
       });
     });
 
-    su.vk_auth.on('settings-change', function(sts) {
+    vk_auth.on('settings-change', function(sts) {
       if ((sts & 8)*1){
         pvUpdate(su, 'vk_search_ready', true);
         if (!music_connected){
@@ -95,20 +96,20 @@ var initVk = function(su) {
     var save_token = app_serv.store('vk_token_info');
     if (save_token){
       //console.log('token!')
-      su.vk_auth.api = su.connectVKApi( new VkAuth.VkTokenAuth(su.vkappid, save_token), true);
+      vk_auth.api = su.connectVKApi( new VkAuth.VkTokenAuth(su.vkappid, save_token), true);
 
       //console.log(save_token)
       if (app_env.web_app){
         appendVKSiteApi(su.vkappid, su);
       }
 
-      pvUpdate(su.vk_auth, 'has_token', true);
+      pvUpdate(vk_auth, 'has_token', true);
 
-      su.vk_auth.trigger('full-ready', true);
+      vk_auth.trigger('full-ready', true);
 
     }
 
-    su.vk_auth
+    vk_auth
       .on('vk-token-receive', function(token){
         var vk_token = new VkAuth.VkTokenAuth(su.vkappid, token);
         this.api = su.connectVKApi(vk_token, true);
