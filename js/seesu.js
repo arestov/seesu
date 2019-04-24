@@ -582,9 +582,10 @@ var SeesuApp = spv.inh(AppModel, {
   vkSessCode: function(vk_t_raw) {
     if (vk_t_raw){
       var vk_token = new VkAuth.VkTokenAuth(this.vkappid, vk_t_raw);
-      this.vk_auth.api = this.connectVKApi(vk_token, true);
-      pvUpdate(this.vk_auth, 'has_token', true);
-      this.vk_auth.trigger('full-ready', true);
+      var vk_auth = this.getNesting('vk_auth')
+      vk_auth.api = this.connectVKApi(vk_token, true);
+      pvUpdate(vk_auth, 'has_token', true);
+      vk_auth.trigger('full-ready', true);
     }
   },
 
