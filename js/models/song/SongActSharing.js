@@ -74,7 +74,9 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
     });
 
     if (app_env.vkontakte) {
-      self.app.vk_auth.on('settings-change', function(vk_opts) {
+      var vk_auth = self.app.getNesting('vk_auth')
+
+      vk_auth.on('settings-change', function(vk_opts) {
         pvUpdate(self, 'vk_opts', vk_opts);
       });
     }
