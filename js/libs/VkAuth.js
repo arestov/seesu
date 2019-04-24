@@ -50,8 +50,8 @@ function buildVkAuth(obj, opts) {
 }
 
 var VkAuth = spv.inh(pv.Model, {
-  init: function(target, opts, data, params) {
-    buildVkAuth(target, params);
+  init: function(target, opts, data) {
+    buildVkAuth(target, data.states);
   }
 }, {
   checkSettings: function(settings_bits) {

@@ -266,6 +266,14 @@ var SeesuApp = spv.inh(AppModel, {
           states: data.next_value,
         }
       }
+    },
+    "handleState:vk_auth_params": {
+      to: ['<< vk_auth', {method: 'set_one'}],
+      fn: function(data) {
+        return {
+          states: data.next_value,
+        }
+      }
     }
   },
   "+effects": effects,
@@ -317,7 +325,7 @@ var SeesuApp = spv.inh(AppModel, {
     }
   },
   'nest_rqc-lfm_auth': LfmAuth,
-  'chi-vk_auth': VkAuth,
+  'nest_rqc-vk_auth': VkAuth,
   'chi-start__page': StartPage,
 
   tickStat: function(data_array) {

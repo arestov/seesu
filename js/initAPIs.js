@@ -61,7 +61,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     display_type: app_env.tizen_app && 'mobile'
   }
 
-  self.vk_auth = self.initChi('vk_auth', false, vk_auth_params);
   pvUpdate(self, 'vk_auth_params', vk_auth_params)
 
   self.vk_queue = new FuncsQueue({
@@ -159,8 +158,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     // 	pv.update(self, 'lfm_userid', self.lfm.username);
     // });
   }
-
-  self.updateNesting('vk_auth', self.vk_auth)
 
   moreApis(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 }
