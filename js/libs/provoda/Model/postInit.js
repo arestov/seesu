@@ -41,6 +41,8 @@ return function postInitModel(self) {
   if (self.init_v2_data) {
     __handleInit(self, self.init_v2_data)
     self.init_v2_data = null
+  } else {
+    __handleInit(self, null)
   }
 
   initApis(self)
