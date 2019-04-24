@@ -38,11 +38,13 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 
 function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
-  self.lfm_auth = self.initChi('lfm_auth', {lfm: self.lfm}, {
+  var lfm_auth_params = {
     deep_sandbox: app_env.deep_sandbox,
     callback_url: 'http://seesu.me/lastfm/callbacker.html',
     bridge_url: 'http://seesu.me/lastfm/bridge.html'
-  });
+  }
+
+  self.lfm_auth = self.initChi('lfm_auth', null, null, null, lfm_auth_params)
 
   self.vk_auth = self.initChi('vk_auth', false, {
     app_id: self.vkappid,

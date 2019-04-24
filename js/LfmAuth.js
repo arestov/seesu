@@ -105,16 +105,11 @@ var LfmScrobble = spv.inh(LfmLogin, {
 });
 
 var LfmAuth = spv.inh(pv.Model, {
-  init: function(target, opts, data, params) {
-    target.api = data.lfm;
+  init: function(target) {
+    target.api = target.app.lfm;
     var has_session = !!target.api.sk;
 
-    pvUpdate(target, 'deep_sandbox', params.deep_sandbox);
-    pvUpdate(target, 'callback_url', params.callback_url);
-    pvUpdate(target, 'bridge_url', params.bridge_url);
-
     pvUpdate(target, 'session', !!has_session);
-
   },
 }, {
   "+effects": {
