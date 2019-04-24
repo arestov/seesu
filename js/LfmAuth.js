@@ -4,24 +4,24 @@ var pv = require('pv');
 var pvState = require('pv/state')
 var spv = require('spv');
 var hex_md5 = require('hex_md5');
+var getNesting = require('pv/getNesting')
 
 var pvUpdate = pv.update;
 
 
-var LfmLogin = spv.inh(pv.Model, {
-  init: function(target) {
-    target.auth = target.app.auths.lfm;
-
-    target.updateNesting('auth', target.auth);
-
-    if (pvState(target.auth, 'deep_sandbox')){
-      pvUpdate(target, 'deep_sandbox', true);
+var LfmLogin = spv.inh(pv.Model, {}, {
+  "+passes": {
+    handleInit: {
+      to: ["<< auth", {method: 'set_one'}],
+      fn: [['<< lfm_auth << #'], function(_, lfm_auth) {
+        return lfm_auth[0]
+      }]
     }
-
-    return target;
-  }
-}, {
+  },
   "+states": {
+    "deep_sandbox": ["compx", [
+      '@one:deep_sandbox:auth'
+    ]],
     "has_session": ["compx", [
       '@one:session:auth'
     ]],
@@ -52,7 +52,8 @@ var LfmLogin = spv.inh(pv.Model, {
     if (this.bindAuthCallback){
       this.bindAuthCallback();
     }
-    this.auth.setToken(auth_code);
+    var auth = getNesting(this, 'auth')
+    auth.setToken(auth_code);
 
   },
 
@@ -60,7 +61,8 @@ var LfmLogin = spv.inh(pv.Model, {
     if (this.beforeRequest){
       this.beforeRequest();
     }
-    this.auth.requestAuth(opts);
+    var auth = getNesting(this, 'auth')
+    auth.requestAuth(opts);
   },
 
   switchView: function(){

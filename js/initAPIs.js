@@ -39,7 +39,7 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
   var lfm_auth_params = {
-    deep_sandbox: app_env.deep_sandbox,
+    deep_sandbox: app_env.deep_sandbox || false,
     callback_url: 'http://seesu.me/lastfm/callbacker.html',
     bridge_url: 'http://seesu.me/lastfm/bridge.html'
   }
