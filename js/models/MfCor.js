@@ -541,10 +541,6 @@ var MfCorBase = spv.inh(LoadableList, {
 
   },
 
-  markMessagesReaded: function() {
-    // this.sf_notf.markAsReaded('vk_audio_auth ');
-  },
-
   hndNtfRead: function(message_id) {
     this.notifier.banMessage(message_id);
   },
