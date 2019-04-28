@@ -1,12 +1,13 @@
 define(function(require) {
 'use strict'
-var pv = require('pv');
 var spv = require('spv');
+var BrowseMap = require('pv/BrowseMap');
+
 var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
 var pvUpdate = require('pv/update');
 
 
-var ImagesPack = spv.inh(pv.Model, {
+var ImagesPack = spv.inh(BrowseMap.Model, {
   init: function(target) {
     target.images_by_source = {};
     target.all_images = [];
@@ -41,16 +42,10 @@ var ImagesPack = spv.inh(pv.Model, {
   }
 });
 
-var TrackImages  = spv.inh(ImagesPack, {
-  init: function(target, opts, data, params) {
-    target.artmd = params.artmd;
-    target.artist = params.info.artist;
-    target.track = params.info.track;
-
-    // results is state
-    target.wlch(params.artmd, 'image-to-use', 'artist_image');
-  }
-}, {
+var TrackImages  = spv.inh(ImagesPack, {}, {
+  'nest-artist_images': ['#art_images/by_artist_name/[:artist_name]', {
+    ask_for: 'artist_name'
+  }],
   "+states": {
     "image-to-use": [
       "compx",
@@ -58,15 +53,23 @@ var TrackImages  = spv.inh(ImagesPack, {
       function(bei, jui, arti){
         return bei || jui || arti;
       }
+    ],
+    "artist": [
+      "compx",
+      ['artist_name'],
+    ],
+    "track": [
+      "compx",
+      ['track_name'],
+    ],
+    "artist_image": [
+      "compx",
+      ['@one:image-to-use:artist_images'],
     ]
   }
 });
 
-var ArtistImages = spv.inh(ImagesPack, {
-  init: function(target, opts, data, params) {
-    target.artist_name = params.artist_name;
-  }
-}, {
+var ArtistImages = spv.inh(ImagesPack, {}, {
   "+states": {
     "image-to-use": [
       "compx",
@@ -79,13 +82,36 @@ var ArtistImages = spv.inh(ImagesPack, {
 });
 
 
-var LastFMArtistImagesSelector = spv.inh(pv.Model, {
+var LastFMArtistImagesSelector = spv.inh(BrowseMap.Model, {
   init: function(target) {
     target.art_models = {};
     target.track_models = {};
     target.unknown_methods = {};
   }
 }, {
+  sub_pager: {
+    by_type: {
+      track: {
+        head: {
+          artist_name: 'by_comma.0',
+          track_name: 'by_comma.1',
+        },
+        title: [[]],
+        constr: TrackImages,
+      },
+      artist: {
+        head: {
+          artist_name: 'by_comma.0',
+        },
+        title: [[]],
+        constr: ArtistImages,
+      },
+    },
+    type: {
+      by_track_name: 'track',
+      by_artist_name: 'artist',
+    }
+  },
   convertEventName: function(event_name) {
     return event_name.toLowerCase().replace(/^\s+|\s+$/, '');
   },
@@ -121,10 +147,11 @@ var LastFMArtistImagesSelector = spv.inh(pv.Model, {
 
     var model_id = info.artist + ' - ' + info.track;
     if (!this.track_models[model_id]) {
-      var md = this.initChi('track', false, {
-        artmd: this.getArtistImagesModel(info.artist),
-        info: info
-      });
+      var md = this.getSPI('by_track_name/' +
+        encodeURIComponent(info.artist) + ',' +
+        encodeURIComponent(info.track)
+      )
+
 
       this.track_models[model_id] = md;
     }
@@ -139,9 +166,7 @@ var LastFMArtistImagesSelector = spv.inh(pv.Model, {
     artist_name = this.convertEventName(artist_name);
 
     if (!this.art_models[artist_name]){
-      var md = this.initChi('artist', false, {
-        artist_name: artist_name
-      });
+      var md = this.getSPI('by_artist_name/' + encodeURIComponent(artist_name))
       this.art_models[artist_name] = md;
     }
     return this.art_models[artist_name];
