@@ -7,7 +7,6 @@ var aReq = require('js/modules/aReq');
 var YoutubeVideo = require('./YoutubeVideo');
 var LoadableList = require('./LoadableList');
 var BrowseMap = require('js/libs/BrowseMap');
-var SongNotify = require('./song/SongNotify')
 
 var routePathByModels = BrowseMap.routePathByModels;
 var pvState = pv.state;
@@ -406,14 +405,8 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
-  'nest_rqc-notifier': SongNotify,
+  'nest-notifier': ['#song-notifier'],
   "+passes": {
-    handleInit: {
-      to: ['<< notifier', {method: 'set_one'}],
-      fn: function() {
-        return {}
-      },
-    },
     "handleState:used_mopla": {
       to: ['used_mopla <<', {
         method: 'set_one',

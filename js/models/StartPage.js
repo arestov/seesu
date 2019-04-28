@@ -5,6 +5,7 @@ var ArtCard = require('./ArtCard');
 var SongCard = require('./SongCard');
 var TagsList = require('./TagPage');
 var UserCard = require('./UserCard');
+var SongNotify = require('./song/SongNotify')
 var MusicConductor = require('./MusicConductor');
 var app_serv = require('app_serv');
 var SeesuUser = require('./SeesuUser');
@@ -178,6 +179,10 @@ var StartPage = spv.inh(BrowseMap.Model, {
     }
   },
   sub_page: {
+    'song-notifier': {
+      constr: SongNotify,
+      title: [[]],
+    },
     'vk_groups': {
       constr: pv.Model,
       title: [[]],
