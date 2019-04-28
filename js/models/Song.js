@@ -68,10 +68,11 @@ function handleFile(self, file) {
         self.initState('lfm_image', spec_image_wrap);
 
       } else if (passed_artist) {
-        if (self.init_states['track']){
+        var track_name = self.init_states['track'] || self.init_states['track_name_provided']
+        if (track_name){
           images_pack = self.app.start_page.art_images.getTrackImagesModel({
             artist: self.init_states['artist'],
-            track: self.init_states['track']
+            track: track_name
           });
         } else {
           images_pack = self.app.start_page.art_images.getArtistImagesModel(self.init_states['artist']);
