@@ -7,7 +7,7 @@ var aReq = require('js/modules/aReq');
 var YoutubeVideo = require('./YoutubeVideo');
 var LoadableList = require('./LoadableList');
 var BrowseMap = require('js/libs/BrowseMap');
-var NotifyCounter = require('./song/NotifyCounter')
+var SongNotify = require('./song/SongNotify')
 
 var routePathByModels = BrowseMap.routePathByModels;
 var pvState = pv.state;
@@ -154,16 +154,11 @@ var MfCorBase = spv.inh(LoadableList, {
   init: function(self, opts, data, omo) {
     self.files_investg = null;
     self.file = null;
-    self.notifier = null;
-    self.sf_notf = null;
     self.player = null;
 
     self.omo = omo;
     self.mo = self.map_parent;
     self.files_models = {};
-
-    self.initNotifier();
-    self.intMessages();
   }
 }, {
   "+effects": {
@@ -247,7 +242,6 @@ var MfCorBase = spv.inh(LoadableList, {
       }
     }
   },
-
   "+states": {
     "artist_name": ["compx", ['^artist_name']],
     "track_name": ["compx", ['^track_name']],
@@ -412,7 +406,14 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
+  'nest_rqc-notifier': SongNotify,
   "+passes": {
+    handleInit: {
+      to: ['<< notifier', {method: 'set_one'}],
+      fn: function() {
+        return {}
+      },
+    },
     "handleState:used_mopla": {
       to: ['used_mopla <<', {
         method: 'set_one',
@@ -489,40 +490,6 @@ var MfCorBase = spv.inh(LoadableList, {
     return !this.file;
   },
 
-  'chi-notifier': NotifyCounter,
-
-  initNotifier: function() {
-    this.notifier = this.initChi('notifier');
-    pv.updateNesting(this, 'notifier', this.notifier);
-    this.sf_notf = this.app.notf.getStore('song-files');
-    var rd_msgs = this.sf_notf.getReadedMessages();
-
-    for (var i = 0; i < rd_msgs.length; i++) {
-      this.notifier.banMessage(rd_msgs[i]);
-    }
-    this.bindMessagesRecieving();
-  },
-
-  intMessages: function() {
-    this.player = this.mo.player;
-
-    this.player
-      .on('core-fail', this.hndPCoreFail, this.getContextOpts())
-      .on('core-ready', this.hndPCoreReady, this.getContextOpts());
-
-
-  },
-
-  hndPCoreFail: function() {
-    pvUpdate(this, 'cant_play_music', true);
-    this.notifier.addMessage('player-fail');
-  },
-
-  hndPCoreReady: function() {
-    pvUpdate(this, 'cant_play_music', false);
-    this.notifier.banMessage('player-fail');
-  },
-
   getCurrentMopla: function(){
     return this.state('current_mopla');
   },
@@ -538,15 +505,6 @@ var MfCorBase = spv.inh(LoadableList, {
     } else {
       pvUpdate(this, 'want_more_songs', false);
     }
-
-  },
-
-  hndNtfRead: function(message_id) {
-    this.notifier.banMessage(message_id);
-  },
-
-  bindMessagesRecieving: function() {
-    this.sf_notf.on('read', this.hndNtfRead, this.getContextOpts());
 
   },
 

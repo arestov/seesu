@@ -164,6 +164,7 @@ var SeesuApp = spv.inh(AppModel, {
 
     self.p = new PlayerSeesu(self);
     self.player = self.p;
+    self.useInterface('player', self.player)
     self.app_md = self;
 
     if (app_env.check_resize){
