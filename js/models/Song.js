@@ -68,7 +68,6 @@ function handleFile(self, file) {
         self.initState('lfm_image', spec_image_wrap);
 
       } else if (passed_artist) {
-        var still_init = true;
         if (self.init_states['track']){
           images_pack = self.app.start_page.art_images.getTrackImagesModel({
             artist: self.init_states['artist'],
@@ -78,7 +77,6 @@ function handleFile(self, file) {
           images_pack = self.app.start_page.art_images.getArtistImagesModel(self.init_states['artist']);
         }
         self.wlch(images_pack, 'image-to-use', 'ext_lfm_image');
-        still_init = false;
       }
 
       omo.file = handleFile(self, omo.file);
