@@ -52,9 +52,9 @@ var markApi = function (index, using, interface_name, mark) {
   return result;
 };
 
-var template = function (self) {
+var template = function () {
   return {
-    used: {self: self},
+    used: {},
     binders: {
       indexes: {},
       values: {},
@@ -96,7 +96,7 @@ return function (self, interface_name, obj) {
   }
 
   if (!using) {
-    using = self._interfaces_using = template(self);
+    using = self._interfaces_using = template();
   }
 
   var values_original = spv.cloneObj({}, using.binders.values);
