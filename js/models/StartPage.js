@@ -15,7 +15,7 @@ var route = require('../modules/route');
 var invstg = require('../models/invstg');
 var filesSearchers = require('../file_searchers');
 var Mp3Search = require('./Mp3Search/index');
-var comd = require('js/models/comd');
+var LastFMArtistImagesSelector = require('./LastFMArtistImagesSelector')
 
 var app_env = app_serv.app_env;
 var complexEach = app_serv.complexEach;
@@ -192,7 +192,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
       title: [[]],
     },
     'art_images': {
-      constr: comd.LastFMArtistImagesSelector,
+      constr: LastFMArtistImagesSelector,
       title: [[]],
     },
 
