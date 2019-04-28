@@ -19,6 +19,7 @@ return function(self) {
     }
   }
 
+  connectRootApis(self, self.__apis_$__needs_root_apis)
   connectRootApis(self, self.__api_root_dep_apis)
 
   if (self.__api_effects_$_index_by_apis && self.__api_effects_$_index_by_apis['self']) {
