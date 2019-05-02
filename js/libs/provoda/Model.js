@@ -14,6 +14,7 @@ var onPropsExtend = require('./Model/onExtend');
 var initModel = require('./Model/init');
 var updateNesting = require('./Model/updateNesting');
 var postInitModel = require('./Model/postInit')
+var initSi = require('./Model/initConstr/subitem')
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -207,40 +208,10 @@ add({
   },
   initChi: function(name, data, params, more, states) {
     var Constr = this._all_chi['chi-' + name];
-    return this.initSi(Constr, data, params, more, states);
+    return initSi(Constr, this, data, params, more, states)
   },
   initSi: function(Constr, data, params, more, states) {
-    if (Constr.prototype.conndst_parent && Constr.prototype.conndst_parent.length) {
-      if (Constr.prototype.pconstr_id !== true && this.constr_id !== Constr.prototype.pconstr_id) {
-        console.log( (new Error('pconstr_id should match constr_id')).stack );
-      }
-    }
-
-    if (Constr.prototype.init) {
-      var instance = new Constr();
-      var initsbi_opts = this.getSiOpts();
-
-      this.useMotivator(instance, function(instance) {
-        instance.init(initsbi_opts, data, params, more, states);
-      });
-
-      return instance;
-    } else {
-      var motivator = this.current_motivator;
-
-      var opts = {
-        _motivator: motivator,
-        map_parent: this != this.app && this,
-        app: this.app
-      };
-
-      var instancePure = new Constr(opts, data, params, more, states);
-
-      instancePure.current_motivator = null;
-
-      return instancePure;
-    }
-
+    return initSi(Constr, this, data, params, more, states)
   },
   mapStates: function(states_map, donor, acceptor) {
     if (acceptor && typeof acceptor == 'boolean'){
@@ -314,6 +285,7 @@ add({
     this.init_states = false;
   },
   network_data_as_states: true,
+  handling_v2_init: true,
   onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (props, original, params) {
     onPropsExtend(this, props, original, params);
   }),

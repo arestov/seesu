@@ -10,6 +10,9 @@ var getValue = function(md, multi_path) {
 
   switch (multi_path.result_type) {
     case "nesting": {
+      if (!multi_path.nesting.target_nest_name) {
+        return md
+      }
       return getNesting(md, multi_path.nesting.target_nest_name)
     }
     case "state": {
@@ -26,12 +29,18 @@ return function(models, multi_path) {
     return getValue(models, multi_path)
   }
 
-  var result = new Array(models.length)
+  var result = []
   for (var i = 0; i < models.length; i++) {
-    result[i] = getValue(models[i], multi_path)
+    var cur = getValue(models[i], multi_path)
+    if (!cur) {continue}
+    result.push(cur)
   }
 
-  return result;
+  if (multi_path.result_type !== 'nesting') {
+    return result
+  }
+
+  return Array.prototype.concat.apply([], result)
 
 };
 })

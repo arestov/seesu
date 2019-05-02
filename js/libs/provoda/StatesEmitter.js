@@ -9,6 +9,7 @@ var Eventor = require('./Eventor');
 var useInterface = require('./StatesEmitter/useInterface');
 var onPropsExtend = require('./onExtendSE');
 var act = require('./dcl/passes/act');
+var pvState = require('./utils/state')
 
 var getConnector = spv.memorize(function(state_name) {
   return function updateStateBinded(e) {
@@ -194,14 +195,9 @@ add({
 //	full_comlxs_list: [],
   compx_check: {},
 //	full_comlxs_index: {},
-  state: (function(){
-    var getter = hp.stateGetter;
-
-    return function(state_path){
-      var getField = getter(state_path);
-      return getField(this.states);
-    };
-  })()
+  state: function(state_path) {
+    return pvState(this, state_path)
+  }
 });
 
 add({

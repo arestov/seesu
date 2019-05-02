@@ -5,6 +5,7 @@ var ArtCard = require('./ArtCard');
 var SongCard = require('./SongCard');
 var TagsList = require('./TagPage');
 var UserCard = require('./UserCard');
+var SongNotify = require('./song/SongNotify')
 var MusicConductor = require('./MusicConductor');
 var app_serv = require('app_serv');
 var SeesuUser = require('./SeesuUser');
@@ -14,6 +15,7 @@ var route = require('../modules/route');
 var invstg = require('../models/invstg');
 var filesSearchers = require('../file_searchers');
 var Mp3Search = require('./Mp3Search/index');
+var LastFMArtistImagesSelector = require('./LastFMArtistImagesSelector')
 
 var app_env = app_serv.app_env;
 var complexEach = app_serv.complexEach;
@@ -49,6 +51,13 @@ AppNews.converNews = converNews;
 var StartPage = spv.inh(BrowseMap.Model, {
   init: function(target, opts) {
     target.su = opts.app;
+
+    var self = target
+
+    self.vk_groups = self.getSPI('vk_groups')
+    self.vk_users = self.getSPI('vk_users')
+    self.art_images = self.getSPI('art_images')
+
     pvUpdate(target, 'needs_search_from', true);
     pvUpdate(target, 'nav_title', 'Seesu');
 
@@ -170,6 +179,23 @@ var StartPage = spv.inh(BrowseMap.Model, {
     }
   },
   sub_page: {
+    'song-notifier': {
+      constr: SongNotify,
+      title: [[]],
+    },
+    'vk_groups': {
+      constr: pv.Model,
+      title: [[]],
+    },
+    'vk_users': {
+      constr: pv.Model,
+      title: [[]],
+    },
+    'art_images': {
+      constr: LastFMArtistImagesSelector,
+      title: [[]],
+    },
+
     'mp3_search': {
       constr: Mp3Search,
       title: [[]],

@@ -7,6 +7,7 @@ var initNestSel = require('../dcl/nest_sel/init');
 var initNestConcat = require('../dcl/nest_conj/init');
 var initNestCompx = require('../dcl/nest_compx/init');
 var initApis = require('../dcl/effects/legacy/api/init')
+var __handleInit = require('../dcl/passes/handleInit/handle');
 
 
 function connectStates(self) {
@@ -35,6 +36,14 @@ return function postInitModel(self) {
   connectNests(self)
 
   initWatchList(self, self.st_nest_matches)
+
+
+  if (self.init_v2_data) {
+    __handleInit(self, self.init_v2_data)
+    self.init_v2_data = null
+  } else {
+    __handleInit(self, null)
+  }
 
   initApis(self)
 }

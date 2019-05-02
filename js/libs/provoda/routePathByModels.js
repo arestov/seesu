@@ -137,24 +137,6 @@ function getSPOpts(md, sp_name, slashed, byType) {
     }];
 };
 
-function getInitData(md, common_opts) {
-  var pre_instance_data = {};
-
-  var data_parts = [
-    common_opts && common_opts[0]
-  ];
-
-  for (var i = 0; i < data_parts.length; i++) {
-    if (!data_parts[i]) {
-      continue;
-    }
-    cloneObj(pre_instance_data, data_parts[i]);
-  }
-
-  return pre_instance_data;
-};
-
-
 function getterSPI(){
   var init = function(parent, target, data) {
     if (target.hasOwnProperty('_provoda_id')) {
@@ -177,18 +159,30 @@ function getterSPI(){
 
     var common_opts = getSPOpts(self, sp_name, slashed, item.byType);
 
-    var instance_data = getInitData(self, common_opts);
+    var states = common_opts[0] || {};
     var hbu_declr = item.getHead;
     var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
-    if (head_by_urlname) {
-      instance_data.head = head_by_urlname;
+
+    if (Constr.prototype.handling_v2_init) {
+      return self.initSi(Constr, {
+        by: 'routePathByModels',
+        init_version: 2,
+        states: states,
+        head: head_by_urlname,
+        url_params: common_opts[1],
+      });
     }
+
+    var instance_data = {}
+    cloneObj(instance_data, states)
+    instance_data.head = head_by_urlname
 
     return self.initSi(Constr, instance_data, null, null, common_opts[0]);
   };
 
   return function getSPI(self, sp_name, options) {
     var reuse = options && options.reuse;
+    var autocreate = !options || options.autocreate !== false
 
     var item = selectRouteItem(self, sp_name);
     if (item) {
@@ -207,6 +201,10 @@ function getterSPI(){
         return self.sub_pages[key];
       }
 
+      if (!autocreate) {
+        return null
+      }
+
       var instance = item && prepare(self, item, sp_name, slash(sp_name));
       if (instance) {
         watchSubPageKey(self, instance, key);
@@ -221,6 +219,10 @@ function getterSPI(){
     if (self.subPager){
       if (self.sub_pages[sp_name]) {
         return self.sub_pages[sp_name];
+      }
+
+      if (!autocreate) {
+        return null
       }
 
       var sub_page = self.subPager(decodeURIComponent(sp_name), sp_name);

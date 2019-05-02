@@ -74,7 +74,7 @@ var getLastfmSuggests = function(app, method, lfmquery, q, section, parser, no_p
   req.then(function(r){
     if (!section.doesNeed(q)){return;}
     section.loaded();
-    r = r && parser(r, section.resItem, method);
+    r = r && parser(r);
     if (r.length){
       section.appendResults(r);
       section.renderSuggests(true, !no_preview);

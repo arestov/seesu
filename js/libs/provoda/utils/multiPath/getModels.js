@@ -39,17 +39,29 @@ var getModels = function(md, multi_path) {
 
 }
 
+function addExisting(result, from, nest_name) {
+  var subject = from && getNesting(from, nest_name)
+  if (!subject) {
+    return
+  }
+  if (!Array.isArray(subject)) {
+    result.push(subject)
+  }
+
+  Array.prototype.push.apply(result, subject)
+}
+
 function add(result, list, nest_name) {
   if (!list) {
     return
   }
 
   if (!Array.isArray(list)) {
-    result.push(getNesting(list, nest_name))
+    addExisting(result, list, nest_name)
   }
 
   for (var i = 0; i < list.length; i++) {
-    result.push(getNesting(list[i], nest_name))
+    addExisting(result, list[i], nest_name)
   }
 }
 

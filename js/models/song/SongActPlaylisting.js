@@ -26,7 +26,7 @@ var playlistSuggest = spv.inh(invstg.BaseSuggest, {
 });
 
 var PlaylistRSSection = spv.inh(invstg.SearchSection, {}, {
-  resItem: playlistSuggest,
+  'nest_rqc-items': playlistSuggest,
   model_name: "section-playlist"
 });
 

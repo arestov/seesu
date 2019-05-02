@@ -1,26 +1,27 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var pvState = require('pv/state')
 var spv = require('spv');
 var hex_md5 = require('hex_md5');
+var getNesting = require('pv/getNesting')
 
 var pvUpdate = pv.update;
 
 
-var LfmLogin = spv.inh(pv.Model, {
-  init: function(target) {
-    target.auth = target.app.auths.lfm;
-
-    target.updateNesting('auth', target.auth);
-
-    if (target.auth.deep_sanbdox){
-      pvUpdate(target, 'deep_sandbox', true);
+var LfmLogin = spv.inh(pv.Model, {}, {
+  "+passes": {
+    handleInit: {
+      to: ["<< auth", {method: 'set_one'}],
+      fn: [['<< lfm_auth << #'], function(_, lfm_auth) {
+        return lfm_auth[0]
+      }]
     }
-
-    return target;
-  }
-}, {
+  },
   "+states": {
+    "deep_sandbox": ["compx", [
+      '@one:deep_sandbox:auth'
+    ]],
     "has_session": ["compx", [
       '@one:session:auth'
     ]],
@@ -51,7 +52,8 @@ var LfmLogin = spv.inh(pv.Model, {
     if (this.bindAuthCallback){
       this.bindAuthCallback();
     }
-    this.auth.setToken(auth_code);
+    var auth = getNesting(this, 'auth')
+    auth.setToken(auth_code);
 
   },
 
@@ -59,7 +61,8 @@ var LfmLogin = spv.inh(pv.Model, {
     if (this.beforeRequest){
       this.beforeRequest();
     }
-    this.auth.requestAuth(opts);
+    var auth = getNesting(this, 'auth')
+    auth.requestAuth(opts);
   },
 
   switchView: function(){
@@ -104,15 +107,11 @@ var LfmScrobble = spv.inh(LfmLogin, {
 });
 
 var LfmAuth = spv.inh(pv.Model, {
-  init: function(target, opts, data, params) {
-    target.api = data.lfm;
-    target.opts = params || {};
-    target.has_session = !!target.api.sk;
-    target.deep_sanbdox = !!params.deep_sanbdox;
+  init: function(target) {
+    target.api = target.app.lfm;
+    var has_session = !!target.api.sk;
 
-    pvUpdate(target, 'session', !!target.has_session);
-    pvUpdate(target, 'bridge_url', params.bridge_url);
-
+    pvUpdate(target, 'session', !!has_session);
   },
 }, {
   "+effects": {
@@ -221,19 +220,19 @@ var LfmAuth = spv.inh(pv.Model, {
     pvUpdate(this, 'requested', Date.now());
   },
 
-  login: function(r, callback){
+  login: function(r){
     this.api.sk = r.session.key;
     this.api.username = r.session.name;
     this.api.stSet('lfm_user_name', r.session.name, true);
     this.api.stSet('lfmsk', this.api.sk, true);
-    if (callback){callback();}
   },
 
   getInitAuthData: function(){
     var o = {};
     o.link = 'http://www.last.fm/api/auth/?api_key=' + this.api.apikey ;
-    var link_tag = this.opts.callback_url;
-    if (!this.opts.deep_sanbdox){
+    var link_tag = pvState(this, 'callback_url');
+
+    if (!pvState(this, 'deep_sandbox')){
       o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
       link_tag += '?key=' + o.bridgekey;
     }
@@ -268,7 +267,7 @@ var LfmAuth = spv.inh(pv.Model, {
       });
   },
 
-  try_to_login: function(callback){
+  try_to_login: function(){
     var _this = this;
     if (!_this.newtoken) {
       return;
@@ -280,11 +279,9 @@ var LfmAuth = spv.inh(pv.Model, {
         return;
       }
 
-      _this.login(r,callback);
+      _this.login(r);
       pvUpdate(_this, 'session', true);
       _this.trigger("session");
-
-      _this.has_session = true;
 
       console.log('lfm scrobble access granted');
     });

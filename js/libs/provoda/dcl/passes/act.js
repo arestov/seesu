@@ -12,6 +12,8 @@ var getValues = require('../../utils/multiPath/getValues')
 var getModelById = require('../../utils/getModelById');
 
 var prepareNestingValue = require('./act/prepareNestingValue')
+var getTargetModels = require('./act/getTargetModels')
+var prepareResults = require('./act/prepareResults')
 /* EXEC
 
 1. один результат, адресат результата определен, обычное указание адресата
@@ -50,23 +52,24 @@ var prepareNestingValue = require('./act/prepareNestingValue')
     динамические пути в resource part
 */
 
-var saveToDestModel = function(md, target, value) {
-  if (target.path_type == 'by_provoda_id') {
-    return
-  }
+var saveToDestModel = function(exec_item) {
+  // md, target, value
+  var target_md = exec_item.target_md
+  var value = exec_item.value
+  var target = exec_item.target
 
   var multi_path = target.target_path
 
   switch (multi_path.result_type) {
     case "nesting": {
       updateNesting(
-        md,
+        target_md,
         multi_path.nesting.target_nest_name,
-        prepareNestingValue(md, target, value)
+        value
       )
     }
     case "state": {
-      pvUpdate(md, multi_path.state.base, value)
+      pvUpdate(target_md, multi_path.state.base, value)
     }
   }
 }
@@ -79,7 +82,7 @@ var saveByProvodaId = function(md, target, wrap) {
     var data = wrap[id]
     var model = getModelById(md, id)
     var states = data.states
-    var nestings = data.nesting
+    var nestings = data.nestings
 
     for (var state in states) {
       if (!states.hasOwnProperty(state)) {
@@ -99,72 +102,23 @@ var saveByProvodaId = function(md, target, wrap) {
 
 }
 
-var getModelsFromBase = function(base, target) {
-  var multi_path = target.target_path
-  return getModels(base, multi_path);
-}
 
-var getModelsFromManyBases = function(bases, target) {
-  if (!Array.isArray(bases)) {
-    return getModelsFromBase(bases, target)
-  }
-
-  var result = []
-  for (var i = 0; i < bases.length; i++) {
-    var mds = getModelsFromBase(bases[i], target)
-    Array.prototype.push.apply(result, mds);
-  }
-  return result;
-}
-
-var getTargetModels = function(md, target, data) {
-  switch (target.options && target.options.base) {
-    case "arg_nesting_next": {
-      return getModelsFromManyBases(data.next_value, target)
-    }
-    case "arg_nesting_prev": {
-      return getModelsFromManyBases(data.prev_value, target)
-    }
-  }
-
-  return getModelsFromBase(md, target);
-}
-
-var saveResultToTarget = function(md, target, value, data) {
+var saveResultToTarget = function(exec_item) {
+  var target = exec_item.target
   if (target.path_type == 'by_provoda_id') {
-    saveByProvodaId(md, target, value)
+    saveByProvodaId(exec_item.md, target, exec_item.value)
     return
   }
 
-  var models = getTargetModels(md, target, data)
-
-  if (Array.isArray(models)) {
-    for (var i = 0; i < models.length; i++) {
-      var cur = models[i];
-      saveToDestModel(cur, target, value)
-    }
-  } else {
-    saveToDestModel(models, target, value)
-  }
+  saveToDestModel(exec_item)
 }
 
 var saveResult = function (md, dcl, value, data) {
-  if (dcl.targets_list) {
-    if (value !== Object(value)) {
-      throw new Error('return object from handler')
-    }
+  var semi_result = prepareResults(md, dcl, value, data)
 
-    for (var i = 0; i < dcl.targets_list.length; i++) {
-      var cur = dcl.targets_list[i]
-      if (!value.hasOwnProperty(cur.result_name)) {
-        continue;
-      }
-      saveResultToTarget(md, cur, value[cur.result_name], data);
-    }
-  } else {
-    saveResultToTarget(md, dcl.target_single, value, data)
+  for (var i = 0; i < semi_result.length; i++) {
+    saveResultToTarget(semi_result[i])
   }
-
 }
 
 var getDep = function(md, dep) {
@@ -182,8 +136,6 @@ var getDepsValues = function (md, deps) {
     var cur = deps[i]
     args[i] = getDep(md, cur);
   }
-
-  debugger
 
   return args;
 }

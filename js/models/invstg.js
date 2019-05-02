@@ -10,13 +10,8 @@ var lastfm_data = require('js/lastfm_data');
 var base = require('./Investigation');
 var pvUpdate = require('pv/update');
 
-var suParseArtistsResults = function() {
-  return lfmhelp.parseArtistsResults.apply(this, arguments);
-};
-
-var suParseTracksResults = function() {
-  return lfmhelp.parseTracksResults.apply(this, arguments);
-};
+var suParseArtistsResults = lfmhelp.parseArtistsResults
+var suParseTracksResults = lfmhelp.parseTracksResults
 var suParseTagsResults = lfmhelp.parseTagsResults;
 var suParseAlbumsResults = lfmhelp.parseAlbumsResults;
 
@@ -56,19 +51,19 @@ var playlistSuggest = spv.inh(base.BaseSuggest, {
 
 var seesuSection = spv.inh(base.SearchSection, {
   init: function(self) {
-    if (self.loadMore){
-
-      self.button = self.initSi(base.BaseSectionButton)
-        .on('view', function(){
-          this.hide();
-          self.loadMore();
-        })
-        .on('state_change-disabled', function(){
-          self.trigger('items-change');
-        }, {skip_reg: true});
-      pv.updateNesting(self, 'button', self.button);
+    if (!self.loadMore) {
+      return
     }
 
+    self.button = self.getSPI('button-more')
+      .on('view', function(){
+        this.hide();
+        self.loadMore();
+      })
+      .on('state_change-disabled', function(){
+        self.trigger('items-change');
+      }, {skip_reg: true});
+    pv.updateNesting(self, 'button', self.button);
   }
 }, {
   "+states": {
@@ -107,7 +102,13 @@ var PlaylistsSection = spv.inh(base.SearchSection, {}, {
   },
 
   model_name: 'section-playlist',
-  resItem: playlistSuggest
+  'nest_rqc-items': playlistSuggest,
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  }
 });
 
 var ArtistsSection = spv.inh(seesuSection, {}, {
@@ -129,6 +130,12 @@ var ArtistsSection = spv.inh(seesuSection, {}, {
   },
 
   model_name: 'section-artist',
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
 
   loadMore: function() {
     var q = this.r.query;
@@ -136,8 +143,7 @@ var ArtistsSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'artist.search', {artist: q}, q, this, suParseArtistsResults, true);
     }
   },
-
-  resItem: artistSuggest
+  'nest_rqc-items': artistSuggest,
 });
 
 
@@ -199,6 +205,12 @@ var TracksSection = spv.inh(seesuSection, {}, {
   },
 
   model_name: 'section-track',
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
 
   loadMore: function() {
     var q = this.r.query;
@@ -206,8 +218,7 @@ var TracksSection = spv.inh(seesuSection, {}, {
       lfmhelp.getLastfmSuggests(this.app, 'track.search', {track: q}, q, this, suParseTracksResults, true);
     }
   },
-
-  resItem: trackSuggest
+  'nest_rqc-items': trackSuggest,
 });
 
 var tagSuggest = spv.inh(base.BaseSuggest, {
@@ -255,15 +266,19 @@ var TagsSection = spv.inh(seesuSection, {}, {
   },
 
   model_name: 'section-tag',
-
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
   loadMore: function() {
     var q = this.r.query;
     if (q) {
       lfmhelp.getLastfmSuggests(this.app, 'tag.search', {tag: q}, q, this, suParseTagsResults, true);
     }
   },
-
-  resItem: tagSuggest
+  'nest_rqc-items': tagSuggest,
 });
 
 var albumSuggest = spv.inh(base.BaseSuggest, {
@@ -319,14 +334,20 @@ var AlbumsSection = spv.inh(seesuSection, {}, {
 
   model_name: 'section-album',
 
+  sub_page: {
+    'button-more': {
+      constr: base.BaseSectionButton,
+      title:  [[]]
+    },
+  },
+
   loadMore: function() {
     var q = this.r.query;
     if (q) {
       lfmhelp.getLastfmSuggests(this.app, 'album.search', {'album': q}, q, this, suParseAlbumsResults, true);
     }
   },
-
-  resItem: albumSuggest
+  'nest_rqc-items': albumSuggest,
 });
 
 var SearchPage = spv.inh(base.Investigation, {}, {

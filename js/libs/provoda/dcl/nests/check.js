@@ -36,6 +36,11 @@ var extend = function(index, more_nests) {
 
   for (var name in more_nests) {
     var data = more_nests[name]
+    if (!data) {
+      console.warn('implement nest erasing for: ', name)
+      continue
+    }
+
     var dcl = parse(name, data);
     cur[name] = {
       dcl: dcl,

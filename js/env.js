@@ -87,14 +87,14 @@ var env = (function(wd){
   env.xhr2 = !!xhr2_support;
 
   if (typeof lg_smarttv_app != 'undefined' || (navigator.userAgent.search(/LG Browser/i) && (window.NetCastExit || window.NetCastBack))){
-    env.deep_sanbdox = true;
+    env.deep_sandbox = true;
     env.as_application = false;
     env.app_type = 'lg_smarttv_app';
 
   } else if (typeof process == 'object' && window.process.nextTick && typeof navigator == 'object'){
     env.app_type = 'nodewebkit';
     env.as_application = false;
-    env.deep_sanbdox = true;
+    env.deep_sandbox = true;
     env.needs_url_history = true;
     env.torrents_support = true;
     env.cross_domain_allowed = true;
@@ -102,7 +102,7 @@ var env = (function(wd){
   } else if (window.tizen){
     env.app_type = 'tizen_app';
     env.as_application = false;
-    env.deep_sanbdox = true;
+    env.deep_sandbox = true;
     env.needs_url_history = true;
 
   } else if (typeof widget == 'object' && !window.widget.fake_widget){
@@ -111,13 +111,13 @@ var env = (function(wd){
         env.app_type = 'opera_extension';
       } else{
         env.app_type = 'opera_widget';
-        env.deep_sanbdox = true;
+        env.deep_sandbox = true;
       }
 
     } else {
       env.app_type = 'apple_db_widget';
     }
-    env.deep_sanbdox = true;
+    env.deep_sandbox = true;
     env.as_application = true;
 
   } else if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
@@ -153,12 +153,12 @@ var env = (function(wd){
     env.safe_data = true;
     env.app_type = 'pokki_app';
     env.cross_domain_allowed = true;
-    env.deep_sanbdox = true;
+    env.deep_sandbox = true;
     //env.as_application = true;
   } else if (typeof btapp == 'object'){
     env.app_type = 'utorrent_app';
     env.as_application = false;
-    env.deep_sanbdox = true;
+    env.deep_sandbox = true;
 
   } else if (bro.browser == 'mozilla'){
     env.app_type = 'firefox_widget';
@@ -183,7 +183,7 @@ var env = (function(wd){
   if (!env.app_type){
     env.app_type = 'unknown_app_type' + (wd.navigator.userAgent && ': ' + wd.navigator.userAgent);
     env.unknown_app_type = true;
-    env.deep_sanbdox = true;
+    env.deep_sandbox = true;
   } else{
     env[env.app_type] = true;
   }

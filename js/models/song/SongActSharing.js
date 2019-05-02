@@ -7,6 +7,7 @@ var invstg = require('../invstg');
 var comd = require('../comd');
 var LfmAuth = require('js/LfmAuth');
 var pvUpdate = require('pv/update');
+var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
 
 var app_env = app_serv.app_env;
 var pvState = pv.state;
@@ -73,7 +74,9 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
     });
 
     if (app_env.vkontakte) {
-      self.app.vk_auth.on('settings-change', function(vk_opts) {
+      var vk_auth = self.app.getNesting('vk_auth')
+
+      vk_auth.on('settings-change', function(vk_opts) {
         pvUpdate(self, 'vk_opts', vk_opts);
       });
     }
@@ -150,8 +153,7 @@ var StrusersRSSection = spv.inh(invstg.SearchSection, {
       }
     ]
   },
-
-  resItem: struserSuggest,
+  'nest_rqc-items': struserSuggest,
   model_name: "section-vk-users",
 
   //desc: improve ?
@@ -287,7 +289,7 @@ var LFMFriendsSection = spv.inh(invstg.SearchSection, {
     this.appendResults(r, true);
   },
 
-  resItem: LFMUserSuggest,
+  'nest_rqc-items': LFMUserSuggest,
   model_name: "section-lfm-friends"
 });
 
@@ -305,7 +307,7 @@ var LFMOneUserSuggest = spv.inh(invstg.BaseSuggest, {
     target.userid = user.name;
     target.text_title = target.userid;
     target.updateManyStates({
-      selected_image: target.app.art_images.getImageWrap(user.image),
+      selected_image: getImageWrap(user.image),
       text_title: target.text_title
     });
   }
@@ -410,8 +412,7 @@ var LFMOneUserSection = spv.inh(invstg.SearchSection, {
     }
     this.appendResults(r, true);
   },
-
-  resItem: LFMOneUserSuggest,
+  'nest_rqc-items': LFMOneUserSuggest,
   model_name: "section-lfm-user"
 });
 

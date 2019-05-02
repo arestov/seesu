@@ -136,7 +136,7 @@ return spv.inh(BrowseMap.Model, {
               .get('track.getInfo', {
                 artist: artist_name,
                 track: track_name
-              });
+              }, opts);
           }
         ]
       }

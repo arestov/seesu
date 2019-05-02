@@ -68,16 +68,22 @@ test('special nestings by pass calculated', t => {
         getListItem(0),
       )
       pvPass(app.start_page, 'addToStart', {
-        artist: 'Cloudy beasts',
-        title: '1st added to start',
+        states: {
+          artist: 'Cloudy beasts',
+          title: '1st added to start',
+        },
       })
       pvPass(app.start_page, 'addToStart', {
-        artist: 'Cloudy beasts',
-        title: '2nd added to start',
+        states: {
+          artist: 'Cloudy beasts',
+          title: '2nd added to start',
+        },
       })
       pvPass(app.start_page, 'addToStart', {
-        artist: 'Cloudy beasts',
-        title: '3rd added to start',
+        states: {
+          artist: 'Cloudy beasts',
+          title: '3rd added to start',
+        },
       })
     },
     () => {
@@ -109,8 +115,10 @@ test('special nestings by pass calculated', t => {
 
     () => {
       pvPass(app.start_page, 'addToEnd', {
-        artist: 'Cloudy beasts',
-        title: 'added to end',
+        states: {
+          artist: 'Cloudy beasts',
+          title: 'added to end',
+        },
       })
     },
     () => {
@@ -129,8 +137,10 @@ test('special nestings by pass calculated', t => {
       pvPass(app.start_page, 'addToIndex', [
         1,
         {
-          artist: 'Cloudy beasts',
-          title: 'added to index 1',
+          states: {
+            artist: 'Cloudy beasts',
+            title: 'added to index 1',
+          },
         },
       ])
     },
@@ -150,8 +160,10 @@ test('special nestings by pass calculated', t => {
       pvPass(app.start_page, 'replace', [
         1,
         {
-          artist: 'Cloudy beasts',
-          title: 'replaced at index 1',
+          states: {
+            artist: 'Cloudy beasts',
+            title: 'replaced at index 1',
+          },
         },
       ])
     },
@@ -176,8 +188,10 @@ test('special nestings by pass calculated', t => {
     () => {
       // set one
       pvPass(app.start_page, 'setOne', {
-        artist: 'Cloudy beasts',
-        title: 'just one',
+        states: {
+          artist: 'Cloudy beasts',
+          title: 'just one',
+        },
       })
     },
     () => {
@@ -194,8 +208,10 @@ test('special nestings by pass calculated', t => {
       )
 
       pvPass(app.start_page, 'setOne', {
-        artist: 'Cloudy beasts',
-        title: 'another one',
+        states: {
+          artist: 'Cloudy beasts',
+          title: 'another one',
+        },
       })
     },
     () => {

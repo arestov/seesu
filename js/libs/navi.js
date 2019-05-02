@@ -1,6 +1,10 @@
 define(function(require) {
 'use strict';
 var spv = require('spv');
+if (typeof window == 'undefined') {
+  console.log('!')
+  return {}
+}
 var history_api = !!(window.history && window.history.pushState);
 var hash_start = /^\#/;
 

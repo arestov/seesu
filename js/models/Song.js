@@ -7,6 +7,7 @@ var app_serv = require('app_serv');
 var MfCorUsual = require('./MfCor');
 var SongActionsRow = require('./song/SongActionsRow');
 var SongBase = require('./song/SongBase');
+var getImageWrap = require('js/libs/helpers/getLFMImageWrap')
 
 var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
@@ -51,7 +52,7 @@ function handleFile(self, file) {
       if (omo.lfm_img) {
         spec_image_wrap = omo.lfm_img;
       } else if (omo.lfm_image){
-        spec_image_wrap = self.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
+        spec_image_wrap = getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
         //pvUpdate(this, 'lfm_image', omo.lfm_image);
       }
       var images_pack;
@@ -67,17 +68,16 @@ function handleFile(self, file) {
         self.initState('lfm_image', spec_image_wrap);
 
       } else if (passed_artist) {
-        var still_init = true;
-        if (self.init_states['track']){
-          images_pack = self.app.art_images.getTrackImagesModel({
+        var track_name = self.init_states['track'] || self.init_states['track_name_provided']
+        if (track_name){
+          images_pack = self.app.start_page.art_images.getTrackImagesModel({
             artist: self.init_states['artist'],
-            track: self.init_states['track']
+            track: track_name
           });
         } else {
-          images_pack = self.app.art_images.getArtistImagesModel(self.init_states['artist']);
+          images_pack = self.app.start_page.art_images.getArtistImagesModel(self.init_states['artist']);
         }
         self.wlch(images_pack, 'image-to-use', 'ext_lfm_image');
-        still_init = false;
       }
 
       omo.file = handleFile(self, omo.file);

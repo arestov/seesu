@@ -4,6 +4,7 @@ var pv = require('pv');
 var pvUpdate = require('pv/update');
 var spv = require('spv');
 var BrowseMap = require('js/libs/BrowseMap');
+var LoadableListBase = require('pv/LoadableList');
 
   var Investigation = spv.inh(BrowseMap.Model, {
     init: function(self) {
@@ -243,7 +244,7 @@ var BrowseMap = require('js/libs/BrowseMap');
   });
 
 
-  var SearchSection = spv.inh(pv.Model, {
+  var SearchSection = spv.inh(LoadableListBase, {
     init: function(self) {
       // self.app = opts && opts.app;
       // self.map_parent = opts && opts.map_parent;
@@ -269,15 +270,13 @@ var BrowseMap = require('js/libs/BrowseMap');
         }, {immediately: true});
     }
   }, {
+    main_list_name: 'items',
+    'nest_rqc-items': null, // resItem
     appendResults: function(arr, render, no_more_results) {
-      var r = [];
-      for (var i = 0; i < arr.length; i++) {
-        var item = this.initSi(this.resItem, arr[i]);
-        item.invstg = this.invstg;
-        r.push(item);
-      }
+      var r = this.insertDataAsSubitems(this, 'items', arr);
 
       this.r.append(r);
+
       if (render){
         this.renderSuggests(no_more_results);
       }

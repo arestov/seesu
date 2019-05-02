@@ -3,6 +3,7 @@ define(function(require) {
 var BrowseMap = require('./BrowseMap');
 var spv = require('spv');
 var pv = require('../provoda');
+var cloneObj = spv.cloneObj
 
 var initDeclaredNestings = require('js/libs/provoda/initDeclaredNestings');
 var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
@@ -14,14 +15,14 @@ var getPath = pv.pathExecutor(function(chunkName, app, data) {
 
 var getRelativeRequestsGroups = BrowseMap.Model.prototype.getRelativeRequestsGroups;
 
-return spv.inh(BrowseMap.Model, {
+var LoadableListBase = spv.inh(BrowseMap.Model, {
   strict: true,
   naming: function(fn) {
     return function LoadableListBase(opts, data, params, more, states) {
       fn(this, opts, data, params, more, states);
     };
   },
-  init: function initLoadableListBase(self, opts, data, params) {
+  init: function initLoadableListBase(self) {
     self.excess_data_items = null;
     self.loaded_nestings_items = null;
     self.loadable_lists = null;
@@ -35,19 +36,9 @@ return spv.inh(BrowseMap.Model, {
     }
 
     self.bindStaCons();
-
-    if (params && params.subitems) {
-      if (params.subitems[self.main_list_name]) {
-        self.nextTick(self.insertDataAsSubitems, [
-          self,
-          self.main_list_name,
-          params.subitems[self.main_list_name],
-          null,
-          params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true);
-      }
-    }
   }
 }, {
+  handling_v2_init: true,
   "+states": {
     "$needs_load": [
       "compx",
@@ -159,32 +150,32 @@ return spv.inh(BrowseMap.Model, {
   },
 
   insertDataAsSubitems: function(target, nesting_name, data_list, opts, source_name) {
+    if (!data_list || !data_list.length) {
+      return
+    }
     var items_list = [];
-    if (data_list && data_list.length){
-      var mlc_opts = target.getMainListChangeOpts();
 
+    var mlc_opts = target.getMainListChangeOpts();
 
-      var splitItemData = target['nest_rq_split-' + nesting_name];
-      for (var i = 0; i < data_list.length; i++) {
+    var splitItemData = target['nest_rq_split-' + nesting_name];
 
+    for (var i = 0; i < data_list.length; i++) {
+      var splited_data = splitItemData && splitItemData(data_list[i], target.getNestingSource(nesting_name, target.app));
+      var cur_data = splited_data ? splited_data[0] : data_list[i],
+        cur_params = splited_data && splited_data[1];
 
-
-        var splited_data = splitItemData && splitItemData(data_list[i], target.getNestingSource(nesting_name, target.app));
-        var cur_data = splited_data ? splited_data[0] : data_list[i],
-          cur_params = splited_data && splited_data[1];
-
-        if (target.isDataItemValid && !target.isDataItemValid(cur_data)) {
-          continue;
-        }
-        var item = target.addItemToDatalist(cur_data, true, cur_params, nesting_name);
-        if (source_name && item && item._network_source === null) {
-          item._network_source = source_name;
-        }
-        items_list.push(item);
+      if (target.isDataItemValid && !target.isDataItemValid(cur_data)) {
+        continue;
       }
-      target.dataListChange(mlc_opts, items_list, nesting_name);
+      var item = target.addItemToDatalist(cur_data, true, cur_params, nesting_name);
+      if (source_name && item && item._network_source === null) {
+        item._network_source = source_name;
+      }
+      items_list.push(item);
     }
 
+    target.dataListChange(mlc_opts, items_list, nesting_name);
+    return items_list
   },
 
   getRelativeRequestsGroups: function(space) {
@@ -336,26 +327,22 @@ return spv.inh(BrowseMap.Model, {
     var best_constr = this._all_chi[mentioned.key];
 
 
-    var netdata_as_states = best_constr.prototype.netdata_as_states;
     var network_data_as_states = best_constr.prototype.network_data_as_states;
 
-    var data_po_pass;
-    if (network_data_as_states) {
-      if (netdata_as_states) {
-        data_po_pass = {
-          network_states: netdata_as_states(data)
-        };
-      } else {
-        data_po_pass = {
-          network_states: data
-        };
-      }
-
-    } else {
-      data_po_pass = data;
+    if (best_constr.prototype.handling_v2_init) {
+      var v2_data = cloneObj({
+        by: 'LoadableList',
+        init_version: 2,
+        states: data,
+      }, convertToNestings(item_params))
+      return this.initSi(best_constr, v2_data);
     }
 
-    return this.initSi(best_constr, data_po_pass, item_params);
+    if (network_data_as_states) {
+      return this.initSi(best_constr, {network_states: data}, item_params);
+    } else {
+      return this.initSi(best_constr, data, item_params);
+    }
   },
 
   findMustBePresentDataItem: function(obj, nesting_name) {
@@ -424,4 +411,62 @@ return spv.inh(BrowseMap.Model, {
     }
   }
 });
+
+function convertToNestings(params) {
+  if (!params || !params.subitems) {
+    return null
+  }
+
+  var nestings = {}
+
+  for (var nesting_name in params.subitems) {
+    if (!params.subitems.hasOwnProperty(nesting_name)) {
+        continue
+    }
+
+    var cur = params.subitems[nesting_name]
+
+    var result = new Array(cur.length)
+    for (var i = 0; i < cur.length; i++) {
+      result[i] = {
+        states: cur[i]
+      }
+    }
+
+    nestings[nesting_name] = result
+  }
+
+  return {
+    nestings: nestings,
+    nestings_sources: params.subitems_source_name,
+  }
+}
+
+var LoadableList = spv.inh(LoadableListBase, {
+  init: function(self, opts, data, params) {
+    var init_v2 = data && data.init_version === 2
+
+    if (init_v2) {
+      return
+    }
+
+    if (!params || !params.subitems || !params.subitems[self.main_list_name]) {
+      return
+    }
+
+    self.nextTick(self.insertDataAsSubitems, [
+      self,
+      self.main_list_name,
+      params.subitems[self.main_list_name],
+      null,
+      params.subitems_source_name && params.subitems_source_name[self.main_list_name]], true
+    );
+  }
+}, {
+  handling_v2_init: true,
+})
+
+LoadableList.LoadableListBase = LoadableListBase
+
+return LoadableList
 });

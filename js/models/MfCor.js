@@ -12,44 +12,6 @@ var routePathByModels = BrowseMap.routePathByModels;
 var pvState = pv.state;
 var pvUpdate = require('pv/update');
 
-var NotifyCounter = spv.inh(pv.Model, {
-  naming: function(fn) {
-    return function NotifyCounter(opts, data, params) {
-      fn(this, opts, data, params);
-    };
-  },
-  init: function(self, opts, data, params) {
-    self.messages = {};
-    self.banned_messages = (params && params.banned_messages) || [];
-  }
-}, {
-  addMessage: function(m) {
-    if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
-      this.messages[m] = true;
-      this.recount();
-    }
-  },
-  banMessage: function(m) {
-    this.removeMessage(m);
-    this.banned_messages.push(m);
-  },
-  removeMessage: function(m) {
-    if (this.messages[m]){
-      delete this.messages[m];
-      this.recount();
-    }
-  },
-  recount: function() {
-    var counter = 0;
-    for (var a in this.messages){
-      ++counter;
-    }
-    pvUpdate(this, 'counter', counter);
-  }
-});
-
-
-
 var MfComplectBase = spv.inh(pv.Model, {
   naming: function(fn) {
     return function MfComplectBase(opts, data, params) {
@@ -191,16 +153,11 @@ var MfCorBase = spv.inh(LoadableList, {
   init: function(self, opts, data, omo) {
     self.files_investg = null;
     self.file = null;
-    self.notifier = null;
-    self.sf_notf = null;
     self.player = null;
 
     self.omo = omo;
     self.mo = self.map_parent;
     self.files_models = {};
-
-    self.initNotifier();
-    self.intMessages();
   }
 }, {
   "+effects": {
@@ -284,7 +241,6 @@ var MfCorBase = spv.inh(LoadableList, {
       }
     }
   },
-
   "+states": {
     "artist_name": ["compx", ['^artist_name']],
     "track_name": ["compx", ['^track_name']],
@@ -449,9 +405,19 @@ var MfCorBase = spv.inh(LoadableList, {
     }
 
   },
-
-  'stch-used_mopla': function(target, state) {
-    target.updateNesting('used_mopla', state);
+  'nest-notifier': ['#song-notifier'],
+  "+passes": {
+    "handleState:used_mopla": {
+      to: ['used_mopla <<', {
+        method: 'set_one',
+      }],
+      fn: [
+        [],
+        function(item) {
+          return item.value
+        },
+      ],
+    },
   },
 
   sub_pager: {
@@ -517,40 +483,6 @@ var MfCorBase = spv.inh(LoadableList, {
     return !this.file;
   },
 
-  'chi-notifier': NotifyCounter,
-
-  initNotifier: function() {
-    this.notifier = this.initChi('notifier');
-    pv.updateNesting(this, 'notifier', this.notifier);
-    this.sf_notf = this.app.notf.getStore('song-files');
-    var rd_msgs = this.sf_notf.getReadedMessages();
-
-    for (var i = 0; i < rd_msgs.length; i++) {
-      this.notifier.banMessage(rd_msgs[i]);
-    }
-    this.bindMessagesRecieving();
-  },
-
-  intMessages: function() {
-    this.player = this.mo.player;
-
-    this.player
-      .on('core-fail', this.hndPCoreFail, this.getContextOpts())
-      .on('core-ready', this.hndPCoreReady, this.getContextOpts());
-
-
-  },
-
-  hndPCoreFail: function() {
-    pvUpdate(this, 'cant_play_music', true);
-    this.notifier.addMessage('player-fail');
-  },
-
-  hndPCoreReady: function() {
-    pvUpdate(this, 'cant_play_music', false);
-    this.notifier.banMessage('player-fail');
-  },
-
   getCurrentMopla: function(){
     return this.state('current_mopla');
   },
@@ -566,19 +498,6 @@ var MfCorBase = spv.inh(LoadableList, {
     } else {
       pvUpdate(this, 'want_more_songs', false);
     }
-
-  },
-
-  markMessagesReaded: function() {
-    // this.sf_notf.markAsReaded('vk_audio_auth ');
-  },
-
-  hndNtfRead: function(message_id) {
-    this.notifier.banMessage(message_id);
-  },
-
-  bindMessagesRecieving: function() {
-    this.sf_notf.on('read', this.hndNtfRead, this.getContextOpts());
 
   },
 

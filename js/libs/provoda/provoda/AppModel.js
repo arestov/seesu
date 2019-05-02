@@ -8,6 +8,10 @@ var joinNavURL = require('../bwlev/joinNavURL');
 
 var AppModelBase = spv.inh(pv.Model, {
   init: function(target) {
+    target.app = target
+
+    target.all_queues = target.all_queues || []
+
     target.binded_models = {};
     // target.navigation = [];
     // target.map = ;
@@ -19,8 +23,19 @@ var AppModelBase = spv.inh(pv.Model, {
 
     });
     target.views_strucs = {};
+  },
+  postInit: function(target) {
+    if (!target['chi-start__page']) {
+      console.warn('add chi-start__page to AppModelBase')
+      return
+    }
+    target.start_page = target.start_page || target.initChi('start__page') // eslint-disable-line
   }
 }, {
+  checkActingRequestsPriority: function() {
+    console.warn('add checkActingRequestsPriority')
+  },
+  model_name: 'app_model',
   "+effects": {
     "produce": {
       "browser-location": {
@@ -106,9 +121,8 @@ var AppModelBase = spv.inh(pv.Model, {
     this.checkActingRequestsPriority();
   },
 
-  routePathByModels: function(pth_string, start_md, need_constr) {
-    return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr);
-
+  routePathByModels: function(pth_string, start_md, need_constr, strict, options) {
+    return BrowseMap.routePathByModels(start_md || this.start_page, pth_string, need_constr, strict, options);
   },
 
   knowViewingDataStructure: function(constr_id, used_data_structure) {

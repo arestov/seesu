@@ -8,6 +8,7 @@ var checkNesting =  require('../nest-watch/index').checkNesting;
 var isNestingChanged = require('../utils/isNestingChanged')
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
+var _passHandleNesting = require('../dcl/passes/handleNesting/handle')
 
 var hasDot = spv.memorize(function(nesting_name) {
   return nesting_name.indexOf('.') != -1;
@@ -88,6 +89,8 @@ return function updateNesting(self, collection_name, input, opts, spec_data) {
   if (!opts || !opts.skip_report){
     self.sendCollectionChange(collection_name, array, old_value, removed);
   }
+
+  _passHandleNesting(self, collection_name, old_value, array)
 
   var count = Array.isArray(array)
     ? array.length

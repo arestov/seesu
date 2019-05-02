@@ -94,8 +94,8 @@ var AllPSongsChart = spv.inh(SongsList, {}, {
         parse: declr_parsers.lfm.getTracks("tracks"),
         api: "#lfm",
 
-        fn: [[], function(api) {
-          return api.get("chart.getTopTracks", null);
+        fn: [[], function(api, opts) {
+          return api.get("chart.getTopTracks", null, opts);
         }]
       }
     }
@@ -112,8 +112,8 @@ var AllPSongsHyped = spv.inh(SongsList, {}, {
         parse: declr_parsers.lfm.getTracks("tracks"),
         api: "#lfm",
 
-        fn: [[], function(api) {
-          return api.get("chart.getHypedTracks", null);
+        fn: [[], function(api, opts) {
+          return api.get("chart.getHypedTracks", null, opts);
         }]
       }
     }
@@ -130,8 +130,8 @@ var AllPSongsLoved = spv.inh(SongsList, {}, {
         parse: declr_parsers.lfm.getTracks("tracks"),
         api: "#lfm",
 
-        fn: [[], function(api) {
-          return api.get("chart.getLovedTracks", null);
+        fn: [[], function(api, opts) {
+          return api.get("chart.getLovedTracks", null, opts);
         }]
       }
     }
@@ -184,8 +184,8 @@ var AllPArtistsHyped = spv.inh(ArtistsList, {}, {
         parse: declr_parsers.lfm.getArtists("artists"),
         api: "#lfm",
 
-        fn: [[], function(api) {
-          return api.get("chart.getHypedArtists", null);
+        fn: [[], function(api, opts) {
+          return api.get("chart.getHypedArtists", null, opts);
         }]
       }
     }
@@ -202,8 +202,8 @@ var AllPArtistsChart = spv.inh(ArtistsList, {}, {
         parse: declr_parsers.lfm.getArtists("artists"),
         api: "#lfm",
 
-        fn: [[], function(api) {
-          return api.get("chart.getTopArtists", null);
+        fn: [[], function(api, opts) {
+          return api.get("chart.getTopArtists", null, opts);
         }]
       }
     }
@@ -271,7 +271,7 @@ var CityAritstsTop = spv.inh(ArtistsList, {}, {
             return api.get("geo.getMetroArtistChart", {
               metro: city_name,
               country: country_name
-            });
+            }, opts);
           }
         ]
       }
@@ -294,7 +294,7 @@ var CityArtistsHype = spv.inh(ArtistsList, {}, {
             return api.get("geo.getMetroHypeArtistChart", {
               metro: city_name,
               country: country_name
-            });
+            }, opts);
           }
         ]
       }
@@ -317,7 +317,7 @@ var CityArtistsUnique = spv.inh(ArtistsList, {}, {
             return api.get("geo.getMetroUniqueArtistChart", {
               metro: city_name,
               country: country_name
-            });
+            }, opts);
           }
         ]
       }
@@ -363,7 +363,7 @@ var CitySongsTop = spv.inh(SongsList, {}, {
             return api.get("geo.getMetroTrackChart", {
               metro: city_name,
               country: country_name
-            });
+            }, opts);
           }
         ]
       }
@@ -386,7 +386,7 @@ var CitySongsHype = spv.inh(SongsList, {}, {
             return api.get("geo.getMetroHypeTrackChart", {
               metro: city_name,
               country: country_name
-            });
+            }, opts);
           }
         ]
       }
@@ -409,7 +409,7 @@ var CitySongsUnique = spv.inh(SongsList, {}, {
             return api.get("geo.getMetroUniqueTrackChart", {
               metro: city_name,
               country: country_name
-            });
+            }, opts);
           }
         ]
       }
@@ -515,7 +515,7 @@ var CountryTopArtists = spv.inh(ArtistsList, {}, {
         fn: [["country_name"], function(api, opts, country_name) {
           return api.get("geo.getTopArtists", {
             country: country_name
-          });
+          }, opts);
         }]
       }
     }
@@ -534,7 +534,7 @@ var CountryTopSongs = spv.inh(SongsList, {}, {
         fn: [["country_name"], function(api, opts, country_name) {
           return api.get("geo.getTopTracks", {
             country: country_name
-          });
+          }, opts);
         }]
       }
     }

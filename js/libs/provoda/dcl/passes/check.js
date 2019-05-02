@@ -3,25 +3,9 @@ define(function(require) {
 
 var cloneObj = require('spv').cloneObj
 var Dcl = require('./dcl')
-
-function rebuild(self, index) {
-  var result = {}
-
-  for (var name in index) {
-    if (!index.hasOwnProperty(name)) {
-      continue
-    }
-
-    if (!name.startsWith('handleState:')) {
-      continue
-    }
-
-    var state_name = name.replace('handleState:', '')
-    result[state_name] = index[name]
-  }
-
-  self.__handleState = result
-}
+var rebuildHandleState = require('./handleState/rebuild')
+var rebuildHandleNesting = require('./handleNesting/rebuild')
+var rebuildHandleInit = require('./handleInit/rebuild')
 
 return function checkPasses(self, props) {
   if (!props.hasOwnProperty('+passes')) {
@@ -38,7 +22,9 @@ return function checkPasses(self, props) {
     result[name] = new Dcl(name, props['+passes'][name])
   }
 
-  rebuild(self, result)
+  rebuildHandleState(self, result)
+  rebuildHandleNesting(self, result)
+  rebuildHandleInit(self, result)
 
   self._extendable_passes_index = result
 }

@@ -127,8 +127,10 @@ BrowseMap.Model = spv.inh(pv.HModel, {
     };
   },
   init: function (self, opts, data) {
+    var init_v2 = data && data.init_version === 2
+
     if (!self.skip_map_init){
-      if (data) {
+      if (data && !init_v2) {
         if (data['url_part'] && !self.hasComplexStateFn('url_part')){
           self.initState('url_part', data['url_part']);
         }
@@ -149,7 +151,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
     opts = opts || {};
 
-    if (self.allow_data_init) {
+    if (self.allow_data_init && !init_v2) {
       self.updateManyStates(data);
     }
 
@@ -160,6 +162,7 @@ BrowseMap.Model = spv.inh(pv.HModel, {
     }
   }
 }, {
+  handling_v2_init: true,
   network_data_as_states: true,
   '__required-nav_title': true,
   preview_nesting_source: 'lists_list',

@@ -147,18 +147,14 @@ var LULA = spv.inh(BrowseMap.Model, {}, pv.mergeBhv({
       function(lfm_i) {
         return lfm_i;
       }
-    ]
+    ],
+    'url_part': ['compx', ['artist'], slashPrefix],
+    'nav_title': ['compx', ['artist']],
+    'artist_name': ['compx', ['artist']],
+    'lfm_image': ['compx', ['lfm_img']],
   },
 
   model_name: 'lula',
-
-  netdata_as_states: {
-    url_part: [slashPrefix, 'artist'],
-    nav_title: 'artist',
-    artist_name: 'artist',
-    playcount: null,
-    lfm_image: 'lfm_img'
-  },
 
   net_head: ['artist_name'],
 
@@ -342,7 +338,7 @@ var RecommArtListForCurrentUser = spv.inh(RecommArtList, {}, {
 
         fn: [[], function(lfm) {
           return lfm.get("user.getRecommendedArtists", {
-            sk: this.app.lfm.sk
+            sk: lfm.sk
           });
         }]
       }

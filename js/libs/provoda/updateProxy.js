@@ -9,7 +9,7 @@ var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 var getFinupFullname = spv.getPrefixingFunc('finup-');
 var checkStates = require('./nest-watch/index').checkStates;
-var _passHandleState = require('./dcl/passes/handleState')
+var _passHandleState = require('./dcl/passes/handleState/handle')
 
 var serv_counter = 1;
 var ServStates = function() {
@@ -235,10 +235,6 @@ function getChanges(etr, original_states, changes_list, opts, result_arr) {
     _replaceState(etr, original_states, changes_list[i+1], changes_list[i+2], changed_states);
   }
 
-  for (i = 0; i < changes_list.length; i+=3) {
-    _passHandleState(etr, original_states, changes_list[i+1], changes_list[i+2]);
-  }
-
   if (etr.updateTemplatesStates){
     etr.updateTemplatesStates(changes_list, opts && opts.sync_tpl);
   }
@@ -406,6 +402,9 @@ function triggerLegacySChEv(etr, state_name, value, old_value, default_cb_cs, de
 }
 
 function _triggerStChanges(etr, i, state_name, value, zdsv) {
+
+  _passHandleState(etr, zdsv.original_states, state_name, value);
+
 
   zdsv.abortFlowSteps('stev', state_name);
 

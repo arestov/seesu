@@ -19,6 +19,7 @@ var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
 var SearchQueryModel = require('./models/SearchQueryModel');
+var effects = require('./app/effects')
 
 var pvUpdate = pv.update;
 
@@ -163,16 +164,13 @@ var SeesuApp = spv.inh(AppModel, {
 
     self.p = new PlayerSeesu(self);
     self.player = self.p;
+    self.useInterface('player', self.player)
     self.app_md = self;
-    self.art_images = self.initChi('art_images');
-
-    self.vk_users = self.initChi('vk_users');
-    self.vk_groups = self.initChi('vk_groups');
 
     if (app_env.check_resize){
       pv.update(self, 'slice-for-height', true);
     }
-    if (app_env.deep_sanbdox){
+    if (app_env.deep_sandbox){
       pv.update(self, 'deep_sandbox', true);
     }
 
@@ -237,6 +235,12 @@ var SeesuApp = spv.inh(AppModel, {
           }
         }
 
+        if (cur == 'lfm-scrobbling') {
+          value = value == null
+            ? true
+            : value
+        }
+
 
         self.letAppKnowSetting(cur, value);
       }
@@ -255,6 +259,25 @@ var SeesuApp = spv.inh(AppModel, {
   },
 
 }, {
+  "+passes": {
+    "handleState:lfm_auth_params": {
+      to: ['<< lfm_auth', {method: 'set_one'}],
+      fn: function(data) {
+        return {
+          states: data.next_value,
+        }
+      }
+    },
+    "handleState:vk_auth_params": {
+      to: ['<< vk_auth', {method: 'set_one'}],
+      fn: function(data) {
+        return {
+          states: data.next_value,
+        }
+      }
+    }
+  },
+  "+effects": effects,
   "+states": {
     "app_lang": ["compx", ['env.lang']],
 
@@ -302,12 +325,8 @@ var SeesuApp = spv.inh(AppModel, {
       pvUpdate(target, 'lfm_userid', target.lfm.username);
     }
   },
-
-  'chi-vk_users': pv.Model,
-  'chi-vk_groups': pv.Model,
-  'chi-art_images': comd.LastFMArtistImagesSelector,
-  'chi-vk_auth': VkAuth,
-  'chi-lfm_auth': LfmAuth,
+  'nest_rqc-lfm_auth': LfmAuth,
+  'nest_rqc-vk_auth': VkAuth,
   'chi-start__page': StartPage,
 
   tickStat: function(data_array) {
@@ -318,10 +337,10 @@ var SeesuApp = spv.inh(AppModel, {
     var store, character_id;
 
     if (key > 0) {
-      store = this.vk_users;
+      store = this.start_page.vk_users;
       character_id = key;
     } else {
-      store = this.vk_groups;
+      store = this.start_page.vk_groups;
       character_id = key * -1;
     }
 
@@ -572,9 +591,10 @@ var SeesuApp = spv.inh(AppModel, {
   vkSessCode: function(vk_t_raw) {
     if (vk_t_raw){
       var vk_token = new VkAuth.VkTokenAuth(this.vkappid, vk_t_raw);
-      this.vk_auth.api = this.connectVKApi(vk_token, true);
-      pvUpdate(this.vk_auth, 'has_token', true);
-      this.vk_auth.trigger('full-ready', true);
+      var vk_auth = this.getNesting('vk_auth')
+      vk_auth.api = this.connectVKApi(vk_token, true);
+      pvUpdate(vk_auth, 'has_token', true);
+      vk_auth.trigger('full-ready', true);
     }
   },
 

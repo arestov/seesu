@@ -8,7 +8,7 @@ var spv = require('spv');
 var PlayerBase = function(){};
 pv.Eventor.extendTo(PlayerBase, );
 */
-var PlayerBase = spv.inh(pv.Eventor, {
+var PlayerBase = spv.inh(pv.Model, {
   naming: function(constructor) {
     return function PlayerBase() {
       constructor(this);

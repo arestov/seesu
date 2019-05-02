@@ -17,8 +17,6 @@ var checkEffects = require('../dcl/effects/check')
 var checkNest = require('../dcl/nest/check');
 var collectStateChangeHandlers= require('../dcl/m-collectStateChangeHandlers');
 
-var xxxx_morph_props = ['netdata_as_states'];
-
 var updateStatesDcls = function(self, props, original) {
   if (!props['+states']) {
     return;
@@ -47,24 +45,16 @@ var checkSideeffects = function(self, props, typed_state_dcls, params) {
   collectStateChangeHandlers(self, props, typed_state_dcls);
   checkEffects(self, props, typed_state_dcls)
 
-  for (var i = 0; i < xxxx_morph_props.length; i++) {
-    // если есть декларации - парсим, делаем функции
-    // на вход функции - одна структура, на выход - другая
-    var cur = xxxx_morph_props[i];
-    var cur_name = Array.isArray(cur) ? cur[0] : cur;
-    if (props.hasOwnProperty(cur_name)) {
-      if (typeof self[cur_name] != 'function' && self[cur_name] !== true) {
-        var obj = {
-          props_map: self[cur_name]
-        };
-        self[cur_name] = spv.mmap(obj);
-      }
-
-    }
-  }
-
   var init = params && params.init || props.init;
   if (init) {
+    // 1 == self, 2 == opts, 3 == data, 4 == params, 5 == more, 6 == states
+
+    if (self.net_head || (init.length > 2 && !self.hasOwnProperty('handling_v2_init'))) {
+      // `handling_v2_init` is mark for invoker that it can pass new structure to Constr
+      // means that init fn can handle both legacy and v2 structure
+      self.handling_v2_init = false
+    }
+
     if (init.length > 2 && !self.hasOwnProperty('network_data_as_states')) {
       self.network_data_as_states = false;
     }

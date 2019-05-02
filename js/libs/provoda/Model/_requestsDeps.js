@@ -237,7 +237,7 @@ var getParent = function(self, dep) {
 var handleParent = function(dep, req_dep, self) {
   var parent = getParent(self, dep);
   if (!parent) {
-    console.log('should be parent');
+    console.log('should be parent', dep);
     return;
   }
   watchRelated(parent, dep, req_dep);

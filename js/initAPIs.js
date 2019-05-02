@@ -2,6 +2,7 @@ define(function(require) {
 'use strict';
 
 var pv = require('pv');
+var pvUpdate = require('pv/update')
 var spv = require('spv');
 var FuncsQueue = require('./libs/FuncsQueue');
 var net_apis = require('./modules/net_apis');
@@ -38,18 +39,15 @@ return function(self, app_serv, app_env, cache_ajax, resortQueue) {
 
 function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
-  self.lfm_auth = self.initChi('lfm_auth', {lfm: self.lfm}, {
-    deep_sanbdox: app_env.deep_sanbdox,
+  var lfm_auth_params = {
+    deep_sandbox: app_env.deep_sandbox || false,
     callback_url: 'http://seesu.me/lastfm/callbacker.html',
     bridge_url: 'http://seesu.me/lastfm/bridge.html'
-  });
+  }
 
-  self.lfm_auth.once("session", function() {
-    self.setSetting('lfm-scrobbling', true);
-    //self.auth.setScrobbling(true);
-  });
+  pvUpdate(self, 'lfm_auth_params', lfm_auth_params)
 
-  self.vk_auth = self.initChi('vk_auth', false, {
+  var vk_auth_params = {
     app_id: self.vkappid,
     urls: {
       bridge: 'http://seesu.me/vk/bridge.html',
@@ -57,23 +55,13 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     },
     permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
     open_api: false,
-    deep_sanbdox: app_env.deep_sanbdox,
+    deep_sandbox: app_env.deep_sandbox,
     vksite_app: app_env.vkontakte,
     vksite_settings: self._url.api_settings,
     display_type: app_env.tizen_app && 'mobile'
-  });
+  }
 
-  self.auths = {
-    lfm: self.lfm_auth,
-    vk: self.vk_auth
-  };
-
-  self.once("vk-site-api", function() {
-    window.document.ScrollSizeChangeHandler = function(height){
-      window.VK.callMethod("resizeWindow", 800, Math.max(700, height));
-    };
-    self.vk_auth.trigger('vk-site-api', window.VK);
-  });
+  pvUpdate(self, 'vk_auth_params', vk_auth_params)
 
   self.vk_queue = new FuncsQueue({
     time: [700, 8000 , 7],
@@ -163,8 +151,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
 
   });
 
-  self.updateNesting('lfm_auth', self.lfm_auth);
-
   if (self.lfm.username){
     pv.update(self, 'lfm_userid', self.lfm.username);
   } else {
@@ -172,54 +158,6 @@ function initAPIs(self, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     // 	pv.update(self, 'lfm_userid', self.lfm.username);
     // });
   }
-
-
-  self.lfm_auth.on('session', function(){
-    self.trackEvent('Auth to lfm', 'end');
-  });
-  self.lfm_auth.on('want-open-url', function(wurl){
-    if (app_env.showWebPage){
-      app_env.openURL(wurl);
-      /*
-      var opend = app_env.showWebPage(wurl, function(url){
-        var path = url.split('/')[3];
-        if (!path || path == 'home'){
-          app_env.clearWebPageCookies();
-          return true
-        } else{
-          var sb = 'http://seesu.me/lastfm/callbacker.html';
-          if (url.indexOf(sb) == 0){
-            var params = get_url_parameters(url.replace(sb, ''));
-            if (params.token){
-              self.lfm_auth.setToken(params.token);
-
-            }
-            app_env.clearWebPageCookies();
-            return true;
-          }
-        }
-
-      }, function(e){
-        app_env.openURL(wurl);
-
-      }, 960, 750);
-      if (!opend){
-        app_env.openURL(wurl);
-      }
-      */
-    } else{
-      app_env.openURL(wurl);
-    }
-    self.trackEvent('Auth to lfm', 'start');
-
-  });
-  spv.domReady(window.document, function() {
-    self.lfm_auth.try_to_login();
-    if (!self.lfm.sk) {
-      self.lfm_auth.get_lfm_token();
-
-    }
-  });
 
   moreApis(self, app_serv, app_env, cache_ajax, resortQueue, addQueue);
 }
@@ -239,7 +177,7 @@ function initLfm(su, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
   }));
 
   lfm.checkMethodResponse = function(method, data, r) {
-    su.art_images.checkLfmData(method, r);
+    su.start_page.art_images.checkLfmData(method, r);
   };
 
   return lfm;

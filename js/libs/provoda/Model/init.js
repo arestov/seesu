@@ -4,6 +4,38 @@ define(function (require) {
 var cloneObj = require('spv').cloneObj;
 var initSubPager = require('../dcl/sub_pager/init');
 
+function buildHead(self, data) {
+  var init_v2 = data && data.init_version === 2
+
+  var head = null;
+
+  if (self.map_parent && self.map_parent.head) {
+    if (!head) {head = {};}
+    cloneObj(head, self.map_parent.head);
+  }
+
+  if (data && data.head) {
+    if (!head) {head = {};}
+    cloneObj(head, data.head);
+  }
+
+  if (init_v2) {
+    return head
+  }
+
+  if (self.network_data_as_states && data && data.network_states) {
+    if (self.net_head) {
+      if (!head) {head = {};}
+      for (var i = 0; i < self.net_head.length; i++) {
+        var pk = self.net_head[i];
+        head[pk] = data.network_states[pk];
+      }
+    }
+  }
+
+  return head
+}
+
 return function initModel(self, opts, data, params, more, states) {
   self.current_motivator = self.current_motivator || (opts && opts._motivator);
 
@@ -49,72 +81,55 @@ return function initModel(self, opts, data, params, more, states) {
   self._requests_deps = null;
   self.shared_nest_sel_hands = null;
 
-  self.init_states = self.init_states || null;
-
-  self.init_service_states = null;
-
-  if (states || (data && data.states)) {
-
-    toServStates(self, states);
-    toServStates(self, data && data.states);
-    // pv.create must init init_states
+  self.init_v2_data = null
+  var init_v2 = data && data.init_version === 2
+  if (init_v2) {
+    self.init_v2_data = data
   }
 
-  self.head = null;
+  self.head = buildHead(self, data)
 
-  if (self.map_parent && self.map_parent.head) {
-    if (!self.head) {self.head = {};}
-    cloneObj(self.head, self.map_parent.head);
-  }
-
-  if (data && data.head) {
-    if (!self.head) {self.head = {};}
-    cloneObj(self.head, data.head);
-  }
-
-
-  if (self.network_data_as_states && data && data.network_states) {
-    toServStates(self, data.network_states);
-
-    if (self.net_head) {
-      if (!self.head) {self.head = {};}
-      for (var i = 0; i < self.net_head.length; i++) {
-        var pk = self.net_head[i];
-        self.head[pk] = data.network_states[pk];
-      }
-    }
-  }
-
-  if (self.head) {
-    toServStates(self, self.head);
-  }
-
-  if (!self.init_service_states) {
-    return self;
-  }
-
-  for (var state_name in self.init_service_states) {
-    if (self.hasComplexStateFn(state_name)) {
-      delete self.init_service_states[state_name];
-    }
-  }
-
-  self.init_states = self.init_states || {};
-
-  cloneObj(self.init_states, self.init_service_states);
-  self.init_service_states = null;
-
+  prepareStates(self, data, states)
 
   return self;
 };
 
-function toServStates(self, states) {
-  if (!states) {return;}
+function toServStates(iss, states) {
+  if (!states) {return iss;}
 
-  if (!self.init_service_states) {
-    self.init_service_states = {};
+  return cloneObj(iss || {}, states);
+}
+
+function prepareStates(self, data, states) {
+  var init_v2 = data && data.init_version === 2
+
+  self.init_states = self.init_states || null;
+
+  var iss = null
+
+  if (!init_v2) {
+    iss = toServStates(iss, states);
   }
 
-  cloneObj(self.init_service_states, states);
+  iss = toServStates(iss, data && data.states);
+
+  if (!init_v2 && self.network_data_as_states && data && data.network_states) {
+    iss = toServStates(iss, data.network_states);
+  }
+
+  iss = toServStates(iss, self.head);
+
+  if (!iss) {
+    return self;
+  }
+
+  for (var state_name in iss) {
+    if (self.hasComplexStateFn(state_name)) {
+      delete iss[state_name];
+    }
+  }
+
+  self.init_states = self.init_states || {};
+  self.init_states = cloneObj(self.init_states, iss);
 }
 });

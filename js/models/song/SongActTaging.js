@@ -59,7 +59,7 @@ var LfmTagSong = spv.inh(LfmAuth.LfmLogin, {
           return api.get('track.getTopTags', {
             'artist': artist,
             'track': track,
-          });
+          }, opts);
         }]
       },
 
