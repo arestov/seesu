@@ -18,6 +18,8 @@ var loadNestingsByStruc = require('../structure/reactions/loadNestingsByStruc');
 var loadAllByStruc = require('../structure/reactions/loadAllByStruc');
 var getModelSources = require('../structure/getModelSources');
 
+var updateSpyglass = require('../dcl/spyglass/update');
+
 var countKeys = spv.countKeys;
 var cloneObj = spv.cloneObj;
 
@@ -49,6 +51,12 @@ var BrowseLevel = spv.inh(Model, {
     }
   }
 }, {
+  updateSpyglass: function(data) {
+    updateSpyglass(BrowseLevel, this, data);
+  },
+  toggleSpyglass: function(data) {
+    updateSpyglass.toggle(BrowseLevel, this, data);
+  },
   model_name: 'bwlev',
   "+states": {
     "map_slice_view_sources": [

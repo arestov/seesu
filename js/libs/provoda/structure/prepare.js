@@ -5,6 +5,7 @@ var mark = require('./mark');
 var spv = require('spv');
 var BrowseLevel = require('../bwlev/BrowseLevel');
 var getUsageStruc = require('./getUsageStruc');
+var handleSpyglassRequests = require('../dcl/spyglass/handleRequest')
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
@@ -44,7 +45,10 @@ BrowseLevel.prototype.BWL = BrowseLevel;
 
 return function prepare(root) {
   var augmented = spv.inh(root, {}, {
-    'chi-__probe': Probe
+    'chi-__probe': Probe,
+    rpc_legacy: {
+      requestSpyglass: handleSpyglassRequests,
+    },
   });
   return mark(augmented, augmented);
 };
