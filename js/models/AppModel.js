@@ -60,15 +60,6 @@ var props = {
     pvUpdate(this, 'playing', false);
   },
 
-  keyNav: function(key_name) {
-    var md = this.map.getCurMapL().getNesting('pioneer');
-    if (md.key_name_nav){
-      var func = md.key_name_nav[key_name];
-      func.call(md);
-    }
-
-  },
-
   getVkUser: function(userid) {
     return this.start_page.getSPI('users/vk:' + encodeURIComponent(userid), true);
   },
