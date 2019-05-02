@@ -5,6 +5,7 @@ var spv = require('spv');
 var getUsageStruc = require('../structure/getUsageStruc');
 var BrowseLevel = require('./BrowseLevel');
 var handleSpyglassRequests = require('../dcl/spyglass/handleRequest')
+var updateSpyglass = require('../dcl/spyglass/update');
 
 var Probe = spv.inh(Model, {
   naming: function(fn) {
@@ -44,6 +45,12 @@ var RootLev = spv.inh(BrowseLevel, {}, {
   'chi-__probe': Probe,
   rpc_legacy: {
     requestSpyglass: handleSpyglassRequests,
+  },
+  updateSpyglass: function(data) {
+    updateSpyglass(BrowseLevel, this, data);
+  },
+  toggleSpyglass: function(data) {
+    updateSpyglass.toggle(BrowseLevel, this, data);
   },
 })
 
