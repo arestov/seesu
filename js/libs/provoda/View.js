@@ -14,6 +14,12 @@ var nestBorrowInit = require('./dcl_view/nest_borrow/init');
 var nestBorrowDestroy = require('./dcl_view/nest_borrow/destroy');
 var nestBorrowCheckChange = require('./dcl_view/nest_borrow/check-change');
 
+var initSpyglasses = require('./dcl_view/spyglass/init');
+var getRootBwlevView = require('./dcl_view/spyglass/getRootBwlevView');
+var getParentBwlevView = require('./dcl_view/spyglass/getParentBwlevView');
+
+// var spyglassDestroy = require('./dcl_view/spyglass/destroy');
+
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;
@@ -145,8 +151,29 @@ var initView = function(target, view_otps, opts){
   prsStCon.connect.root(target, target);
 
   nestBorrowInit(target);
+  initSpyglasses(target)
 };
 
+
+var changeSpyglassUniversal = function (method) {
+  return function () {
+    var bwlev_view = getRootBwlevView(this);
+    var parent_bwlev_view = getParentBwlevView(this);
+    var event_data = Array.prototype.slice.call(arguments, 2);
+    var data = {
+      context_md: parent_bwlev_view.children_models.pioneer._provoda_id,
+      bwlev: parent_bwlev_view.mpx.md._provoda_id,
+      target_id: this.mpx._provoda_id,
+      probe_name: event_data[0],
+      value: event_data[1],
+      probe_container_uri: null,
+    };
+
+    bwlev_view.RPCLegacy.apply(
+      bwlev_view, [method, data]
+    );
+  }
+}
 
 var selectParent = function (view) {
   return view.parent_view
@@ -201,6 +228,8 @@ var View = spv.inh(StatesEmitter, {
       var md_id = this.mpx._provoda_id;
       bwlev_view.RPCLegacy('followTo', md_id);
     },
+    toggleSpyglass: changeSpyglassUniversal('toggleSpyglass'),
+    updateSpyglass: changeSpyglassUniversal('updateSpyglass'),
   },
   onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
     return onPropsExtend(md, props, original, params);
@@ -900,6 +929,7 @@ var View = spv.inh(StatesEmitter, {
       this.markAsDead(opts && opts.skip_md_call);
       nestBorrowDestroy(this);
       this._lbr.marked_as_dead = true;
+      // spyglassDestroy(this)
     }
     return this;
   },
