@@ -106,7 +106,7 @@ combo('webapp', extend(common('webapp'), {
 	'index': [['index'], function() {
 		var patch = require('./dev/gulp-patch.js');
 
-		gulp.src('index.html')
+		return gulp.src('index.html')
 			.pipe(patch('./src/index.dist-js.patch'))
 			.pipe(patch('./src/webapp/index.html.patch'))
 			.pipe(gulp.dest('dist-envs/webapp'));
@@ -239,7 +239,7 @@ function combo(task, deps) {
 		array.push(task_name);
 	}
 
-	gulp.task(task, gulp.parallel(array));
+	return gulp.task(task, gulp.parallel(array));
 }
 
 function extend(origin, add) {
