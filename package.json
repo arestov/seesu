@@ -25,7 +25,7 @@
     "autoprefixer": "6.0.2",
     "ava": "^1.2.1",
     "css-select": "^1.3.0-rc0",
-    "diff": "2.1.1",
+    "diff": "3.5.0",
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-fp": "^2.3.0",
