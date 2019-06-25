@@ -82,6 +82,10 @@ test('map_values_list_to_target in pass', t => {
         false,
         pvState(getB(), 'selected'),
       )
+      //
+      // t.throws(() => {
+      //   updateNesting(app.start_page, 'selected', [getA()])
+      // })
     },
   ])
 
