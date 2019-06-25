@@ -24,6 +24,17 @@ var prepareAndHold = function(md, target, value, mut_refs_index, mut_wanted_ref)
   }
 }
 
+var getProperDestValue = function (target, value, i) {
+  // when `pass` option map_values_list_to_target === true
+  // map value from values list to model from targets list
+
+  if (!target.options || !target.options.map_values_list_to_target) {
+    return value
+  }
+
+  return value[i]
+}
+
 var unwrap = function (md, target, value, data, mut_refs_index, mut_wanted_ref, mut_result) {
   if (target.path_type == 'by_provoda_id') {
     mut_result.push({target: target, md: md, value: value, data: data})
@@ -32,16 +43,22 @@ var unwrap = function (md, target, value, data, mut_refs_index, mut_wanted_ref, 
 
   var models = getTargetModels(md, target, data)
 
+  if (value && target.options && target.options.map_values_list_to_target) {
+    if (value.length !== models.length) {
+      throw new Error('values list length should match target list length')
+    }
+  }
+
   if (Array.isArray(models)) {
     for (var i = 0; i < models.length; i++) {
       var cur = models[i];
       mut_result.push(
-        prepareAndHold(cur, target, value, mut_refs_index, mut_wanted_ref, mut_result)
+        prepareAndHold(cur, target, getProperDestValue(target, value, i), mut_refs_index, mut_wanted_ref, mut_result)
       )
     }
   } else {
     mut_result.push(
-      prepareAndHold(models, target, value, mut_refs_index, mut_wanted_ref, mut_result)
+      prepareAndHold(models, target, getProperDestValue(target, value, i), mut_refs_index, mut_wanted_ref, mut_result)
     )
   }
 
