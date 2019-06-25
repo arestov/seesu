@@ -19,7 +19,9 @@
   "scripts": {
     "gulp": "gulp",
     "inspect": "inspect",
-    "test": "ava --verbose **/__tests__"
+    "test": "ava --verbose **/__tests__",
+    "test:current-dev": "ava --verbose **/__tests__  --match=\"*map_values_list_to_target*\"",
+    "debug:current-dev": "inspect node_modules/ava/profile.js test/__tests__/pass/3.multi_and_args2.js"
   },
   "devDependencies": {
     "autoprefixer": "6.0.2",
