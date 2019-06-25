@@ -106,8 +106,8 @@ return function(md, dcl, value, data) {
   var mut_refs_index = {}
   var mut_wanted_ref = {}
 
-  if (!dcl.targets_list) {
-    unwrap(md, dcl.target_single, value, data, mut_refs_index, mut_wanted_ref, mut_result)
+  if (!dcl.targeted_results_list) {
+    unwrap(md, dcl.targeted_single_result, value, data, mut_refs_index, mut_wanted_ref, mut_result)
     completeValues(mut_result, mut_refs_index, mut_wanted_ref)
     return mut_result
   }
@@ -116,8 +116,8 @@ return function(md, dcl, value, data) {
     throw new Error('return object from handler')
   }
 
-  for (var i = 0; i < dcl.targets_list.length; i++) {
-    var cur = dcl.targets_list[i]
+  for (var i = 0; i < dcl.targeted_results_list.length; i++) {
+    var cur = dcl.targeted_results_list[i]
     if (!value.hasOwnProperty(cur.result_name)) {
       continue;
     }
