@@ -29,6 +29,16 @@ var createInitialStates = function(dcl, runner) {
   return _runStates;
 }
 
+var recalc = function(dcl, runner) {
+  var args = prepareArgs(dcl, runner._runStates)
+  var calcFn = dcl.calcFn
+  var result = calcFn.apply(null, args)
+
+  var dest_name = dcl.dest_name;
+
+  updateNesting(runner.md, dest_name, result)
+}
+
 var changeValue = function(runner, dep_full_name, value, checkFromNesting) {
   var dcl = runner.dcl
 
@@ -49,13 +59,7 @@ var changeValue = function(runner, dep_full_name, value, checkFromNesting) {
 
   runner._runStates[dep_full_name] = value;
 
-  var args = prepareArgs(dcl, runner._runStates)
-  var calcFn = dcl.calcFn
-  var result = calcFn.apply(null, args)
-
-  var dest_name = dcl.dest_name;
-
-  updateNesting(runner.md, dest_name, result)
+  recalc(dcl, runner)
 }
 
 
