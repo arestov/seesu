@@ -30,6 +30,10 @@ var createInitialStates = function(dcl, runner) {
 }
 
 var recalc = function(dcl, runner) {
+  if (!runner._runStates) {
+    runner._runStates = createInitialStates(dcl, runner)
+  }
+
   var args = prepareArgs(dcl, runner._runStates)
   var calcFn = dcl.calcFn
   var result = calcFn.apply(null, args)
@@ -75,7 +79,8 @@ return {
   },
   hstate: function nestCompxStateDepChangeHandler(runner, dep_full_name, value) {
     changeValue(runner, dep_full_name, value, false)
-  }
+  },
+  recalc: recalc,
 }
 
 })

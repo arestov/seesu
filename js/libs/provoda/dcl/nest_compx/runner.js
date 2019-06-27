@@ -4,6 +4,7 @@ var addFrom = require('../../nest-watch/addFrom');
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var handler = require('./handler')
 var hstate = handler.hstate
+var recalc = handler.recalc
 var subscribing = require('../../utils/multiPath/subscribing')
 
 var copyStates = function(md, target, state_name, full_name, runner) {
@@ -56,6 +57,7 @@ var NestCompxRunner = function(md, dcl) {
   runNestWatches(this, md, parsed_deps.nest_watch)
   runUsual(this, md, parsed_deps.usual)
   this.needs_self = parsed_deps.self
+  recalc(dcl, this)
 }
 
 return NestCompxRunner;
