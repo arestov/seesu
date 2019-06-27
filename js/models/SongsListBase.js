@@ -4,8 +4,9 @@ var pv = require('pv');
 var pvUpdate = require('pv/update');
 var spv = require('spv');
 var LoadableList = require('./LoadableList');
+var modern_base = require('./SongsListModernBase')
 
-return spv.inh(LoadableList, {
+var legacyBase = spv.inh(LoadableList, {
   init: function(target, opts){
     target.idx_wplay_song = null;
     target.idx_show_song = null;
@@ -714,4 +715,7 @@ return spv.inh(LoadableList, {
     }
   });
 }));
+
+
+return spv.inh(legacyBase, {}, modern_base)
 });
