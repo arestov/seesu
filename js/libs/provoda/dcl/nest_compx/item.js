@@ -56,6 +56,10 @@ var groupBySubscribing = function(list) {
   return result
 }
 
+var same = function(item) {
+  return item;
+}
+
 var NestCompxDcl = function(name, data) {
   this.dest_name = name;
 
@@ -66,7 +70,7 @@ var NestCompxDcl = function(name, data) {
 
   this.deps = list.map(asString);
 
-  this.calcFn = fn;
+  this.calcFn = fn || same;
 
   // will be used by runner
   this.parsed_deps = groupBySubscribing(list)
