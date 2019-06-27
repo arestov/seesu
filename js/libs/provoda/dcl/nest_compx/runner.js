@@ -55,6 +55,7 @@ var NestCompxRunner = function(md, dcl) {
 
   runNestWatches(this, md, parsed_deps.nest_watch)
   runUsual(this, md, parsed_deps.usual)
+  this.needs_self = parsed_deps.self
 }
 
 return NestCompxRunner;

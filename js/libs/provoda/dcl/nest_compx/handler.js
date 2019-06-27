@@ -15,11 +15,15 @@ var prepareArgs = function(dcl, _runStates) {
   return result;
 };
 
-var createInitialStates = function(dcl) {
+var createInitialStates = function(dcl, runner) {
   var _runStates = {}
 
   for (var i = 0; i < dcl.deps.length; i++) {
     _runStates[dcl.deps[i]] = null
+  }
+
+  if (runner.needs_self) {
+    _runStates['<<<<'] = runner.md
   }
 
   return _runStates;
@@ -30,7 +34,7 @@ var changeValue = function(runner, dep_full_name, value, checkFromNesting) {
 
 
   if (!runner._runStates) {
-    runner._runStates = createInitialStates(dcl)
+    runner._runStates = createInitialStates(dcl, runner)
   }
 
   if (!checkFromNesting) {

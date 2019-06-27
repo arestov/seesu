@@ -17,6 +17,10 @@ var getDeps = spv.memorize(function getEncodedState(string) {
     return null
   }
 
+  if (result.base_itself) {
+    return result
+  }
+
   if (result.result_type !== 'nesting' && result.result_type !== 'state') {
     throw new Error('implement runner part')
   }
@@ -42,11 +46,14 @@ var groupBySubscribing = function(list) {
   var result = {
     nest_watch: [],
     usual: [],
+    self: false,
   }
 
   for (var i = 0; i < list.length; i++) {
     var cur = list[i]
-    if (cur.nwatch) {
+    if (cur.base_itself) {
+      result.self = true
+    } else if (cur.nwatch) {
       result.nest_watch.push(cur);
     } else {
       result.usual.push(cur);
