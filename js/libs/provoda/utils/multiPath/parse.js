@@ -80,6 +80,14 @@ var parseModern = spv.memorize(function(string) {
 })
 
 var parseMultiPath = function(string, allow_legacy) {
+  if (string == '<<<<') {
+    return {
+      as_string: string,
+      base_itself: true,
+    }
+  }
+
+
   var modern = canParseModern(string)
   if (!modern) {
     return allow_legacy ? fromLegacy(string) : null
@@ -88,7 +96,10 @@ var parseMultiPath = function(string, allow_legacy) {
   return parseModern(string)
 }
 
-return parseMultiPath;
+return spv.memorize(parseMultiPath, function(a1, a2) {
+  var legacy_ok = Boolean(a2)
+  return legacy_ok + ' - ' + a1
+});
 
 function parseParts(state_raw, nest_raw, resource_raw, base_raw) {
   var state_info = getStateInfo(state_raw);
