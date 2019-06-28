@@ -140,11 +140,17 @@ function getNestInfo(string) {
 
   var full_path = splitByDot(path)
 
+  var zip_name = parts[0] || null
+
+  if (zip_name) {
+    throw new Error('dont use. use < @[zip_name] [statename] < [nestingname]')
+  }
+
   return {
     path: full_path,
     base: full_path.slice(0, full_path.length-1),
     target_nest_name: full_path[full_path.length-1],
-    zip_name: parts[0] || null,
+    zip_name: zip_name,
   }
 }
 
