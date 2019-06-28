@@ -19,8 +19,16 @@ function isStateOk(state) {
   return state && state.path
 }
 
+function wrapBySpace(item) {
+  if (!item) {
+    return ''
+  }
+
+  return ' ' + item + ' '
+}
+
 function firstPart(zip_name, state) {
-  return '<' + zipPart(zip_name) + stateString(state)
+  return '<' + wrapBySpace(zipPart(zip_name) + stateString(state))
 }
 
 function zipPart(zip_name) {
@@ -28,7 +36,7 @@ function zipPart(zip_name) {
     return ''
   }
 
-  return ' @' + zip_name
+  return '@' + zip_name + ':'
 }
 
 
@@ -37,7 +45,7 @@ function stateString(state) {
     return ''
   }
 
-  return ' ' + state.path
+  return state.path
 }
 
 function isNestingOk(nesting) {
@@ -51,7 +59,7 @@ function nestingString(zip_name, nesting) {
 
   var path = nesting.path.join('.');
 
-  return '< ' + zipPart(zip_name) + ' ' + path  + ' '
+  return '<' + wrapBySpace(zipPart(zip_name) + path)
 }
 
 function resourceString(resource) {
