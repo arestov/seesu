@@ -7,7 +7,7 @@ return function multiPathAsString(multi_path) {
   }
 
   multi_path.as_string = ''
-    + stateString(multi_path.state)
+    + firstPart(multi_path.zip_name, multi_path.state)
     + nestingString(multi_path.nesting)
     + resourceString(multi_path.resource)
     + baseString(multi_path.from_base);
@@ -15,13 +15,25 @@ return function multiPathAsString(multi_path) {
   return multi_path.as_string
 }
 
+function firstPart(zip_name, state) {
+  return '<' + zipPart(zip_name) + stateString(state)
+}
+
+function zipPart(zip_name) {
+  if (!zip_name) {
+    return ''
+  }
+
+  return ' @' + zip_name
+}
+
 
 function stateString(state) {
   if (!state || !state.path) {
-    return '<'
+    return ''
   }
 
-  return '< ' + state.path + ' '
+  return ' ' + state.path
 }
 
 function nestingString(nesting) {
@@ -30,10 +42,8 @@ function nestingString(nesting) {
   }
 
   var path = nesting.path.join('.');
-  var zip_name = nesting.zip_name || ''
-  var sep = zip_name ? ':' : ''
 
-  return '< ' + zip_name + sep + path  + ' '
+  return '< ' + path  + ' '
 }
 
 function resourceString(resource) {

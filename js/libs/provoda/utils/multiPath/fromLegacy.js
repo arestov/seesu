@@ -38,7 +38,6 @@ var getFullPathInfo = spv.memorize(function(full_path) {
         state: createStateInfo(info, info.base_state_name),
         nesting: {
           path: null,
-          zip_name: null,
         },
         from_base: {
           type: null,
@@ -64,12 +63,12 @@ var getFullPathInfo = spv.memorize(function(full_path) {
 
       return {
         result_type: info.state_name ? 'state' : 'nesting',
+        zip_name: info.zip_name || null,
         state: createStateInfo(info.state_name),
         nesting: {
           path: info.nesting_source.selector.join('.'),
           base: parts.slice(0, parts.length-1),
           target_nest_name: parts[parts.length-1],
-          zip_name: info.zip_name || null,
         },
         from_base: {
           type: null,
