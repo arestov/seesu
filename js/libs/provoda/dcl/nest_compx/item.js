@@ -29,6 +29,12 @@ var getDeps = spv.memorize(function getEncodedState(string) {
     return result;
   }
 
+
+  if (!result.zip_name) {
+    throw new Error('zip name `@one:` or `@all:` should be provided for: ' + string)
+  }
+
+
   var state_name = result.state && result.state.path
 
   var nwatch = new NestWatch(result, state_name, {
