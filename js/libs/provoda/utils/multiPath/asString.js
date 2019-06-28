@@ -31,7 +31,7 @@ function nestingString(nesting) {
 
   var path = nesting.path.join('.');
   var zip_name = nesting.zip_name || ''
-  var sep = zip_name ? '' : ''
+  var sep = zip_name ? ':' : ''
 
   return '< ' + zip_name + sep + path  + ' '
 }
