@@ -49,6 +49,10 @@ test('check parsing', function(t) {
 
   t.snapshot(parse("state_name"));
 
+  t.snapshot(parse("@one:state_name:nest"));
+  t.snapshot(parse("@state_name:nest.test"));
+
+
   t.snapshot(parse("/resource/[:ddaf]/sdf < #"));
 
   t.snapshot(parse("/resource/[:ddaf]/sdf <"));

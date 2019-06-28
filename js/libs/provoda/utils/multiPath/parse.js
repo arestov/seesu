@@ -80,6 +80,23 @@ var parseModern = spv.memorize(function(string) {
   return parseFromEnd(string)
 })
 
+var matchNotStateSymbols = /(^\W)|\@|\:/
+var attemptSimpleStateName = function(string) {
+  if (!string || matchNotStateSymbols.test(string)) {
+    return null
+  }
+
+  return {
+    result_type: 'state',
+    zip_name: null,
+    state: getStateInfo(string),
+    nesting: {},
+    resource: {},
+    from_base: {},
+    as_string: null,
+  }
+}
+
 var parseMultiPath = function(string, allow_legacy) {
   if (string == '<<<<') {
     return {
@@ -91,7 +108,9 @@ var parseMultiPath = function(string, allow_legacy) {
 
   var modern = canParseModern(string)
   if (!modern) {
-    return allow_legacy ? fromLegacy(string) : null
+    return attemptSimpleStateName(string) || (
+      allow_legacy ? fromLegacy(string) : null
+    )
   }
 
   return parseModern(string)
