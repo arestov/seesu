@@ -96,7 +96,7 @@ var parseMultiPath = function(string, allow_legacy) {
 
   return parseModern(string)
 }
-var matchZip = /(?:\@(.+?)\:)?(.+)/
+var matchZip = /(?:\@(.+?)\:)?(.+)?/
 
 
 return spv.memorize(parseMultiPath, function(a1, a2) {
@@ -106,12 +106,28 @@ return spv.memorize(parseMultiPath, function(a1, a2) {
 
 function parseParts(state_raw, nest_raw, resource_raw, base_raw) {
   var state_part_splited = state_raw && state_raw.match(matchZip)
-  var zip_string = state_part_splited && state_part_splited[1]
+  var zip_state_string = state_part_splited && state_part_splited[1]
   var state_string = state_part_splited && state_part_splited[2]
 
-  var zip_name = zip_string || null
+  var nest_part_splited = nest_raw && nest_raw.match(matchZip)
+  var zip_nest_string = nest_part_splited && nest_part_splited[1]
+  var nest_string = nest_part_splited && nest_part_splited[2]
+
+  if (zip_state_string && zip_nest_string) {
+    throw new Error('both state and nesting cant have zip_name')
+  }
+
+  if (zip_nest_string && state_string) {
+    throw new Error('use state zip')
+  }
+
+  if (zip_state_string && !state_string && nest_string) {
+    throw new Error('use nest zip')
+  }
+
+  var zip_name = zip_state_string || zip_nest_string || null
   var state_info = getStateInfo(state_string);
-  var nest_info = getNestInfo(nest_raw);
+  var nest_info = getNestInfo(nest_string);
   var resource_info = getResourceInfo(resource_raw);
   var base_info = getBaseInfo(base_raw);
 

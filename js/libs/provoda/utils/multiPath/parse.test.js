@@ -19,6 +19,16 @@ test('check parsing', function(t) {
 
   t.snapshot(parse("< @one:state_name < nesting < resource < #"));
 
+  // t.snapshot(parse("< state_name < @one:nesting < resource < #"));
+
+  t.throws(function() {
+    parse("< state_name < @one:nesting < resource < #")
+  });
+
+  t.throws(function() {
+    parse("< @one: < nesting < resource < #")
+  });
+
   t.snapshot(parse("< state_name < nesting < resource < #"));
 
   t.throws(function() {
