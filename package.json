@@ -19,8 +19,8 @@
   "scripts": {
     "gulp": "gulp",
     "inspect": "inspect",
-    "test": "ava --verbose **/__tests__",
-    "test:current-dev": "ava --verbose **/__tests__  --match=\"*map_values_list_to_target*\"",
+    "test": "ava --verbose",
+    "test:current-dev": "ava --verbose  --match=\"*map_values_list_to_target*\"",
     "debug:current-dev": "inspect node_modules/ava/profile.js test/__tests__/pass/3.multi_and_args2.js"
   },
   "devDependencies": {
@@ -49,15 +49,8 @@
   },
   "dependencies": {},
   "ava": {
-    "type": "node",
-    "request": "launch",
-    "name": "Run AVA test",
-    "program": "${workspaceRoot}/node_modules/ava/profile.js",
-    "args": [
-      "${file}"
-    ],
-    "skipFiles": [
-      "<node_internals>/**/*.js"
+    "files": [
+      "**/__tests__"
     ]
   }
 }
