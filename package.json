@@ -20,7 +20,7 @@
     "gulp": "gulp",
     "inspect": "inspect",
     "test": "ava --verbose",
-    "test:current-dev": "ava --verbose  --match=\"*map_values_list_to_target*\"",
+    "test:current-dev": "ava --verbose  --match=\"*parsing*\"",
     "debug:current-dev": "inspect node_modules/ava/profile.js test/__tests__/pass/3.multi_and_args2.js"
   },
   "devDependencies": {
@@ -47,10 +47,13 @@
     "postcss": "5.0.5",
     "xmldom": "0.1.19"
   },
-  "dependencies": {},
+  "dependencies": {
+    "requirejs": "^2.3.6"
+  },
   "ava": {
     "files": [
-      "**/__tests__"
+      "**/__tests__",
+      "js/**/*.test.js"
     ]
   }
 }
