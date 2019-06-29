@@ -20,8 +20,8 @@
     "gulp": "gulp",
     "inspect": "inspect",
     "test": "ava --verbose",
-    "test:current-dev": "ava --verbose --match=\"*asString*\"",
-    "debug:current-dev": "inspect node_modules/ava/profile.js test/__tests__/pass/3.multi_and_args2.js"
+    "test:current-dev": "ava --verbose --match=\"*compx-nests*\"",
+    "debug:current-dev": "inspect node_modules/ava/profile.js test/__tests__/nestings-compx.js"
   },
   "devDependencies": {
     "autoprefixer": "6.0.2",
