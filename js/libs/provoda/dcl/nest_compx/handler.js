@@ -129,11 +129,17 @@ var getValue = function(runner, lwroot, list) {
 
 
 return {
-  hnest: function nestCompxNestDepChangeHandler(flow_step, _, lwroot, __, value) {
+  hnest_state: function(_, __, lwroot) {
     var data = lwroot.data
     var runner = data.runner
 
-    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, value), true)
+    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items), true)
+  },
+  hnest: function nestCompxNestDepChangeHandler(flow_step, _, lwroot) {
+    var data = lwroot.data
+    var runner = data.runner
+
+    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items), true)
   },
   hstate: function nestCompxStateDepChangeHandler(runner, dep_full_name, value) {
     changeValue(runner, dep_full_name, value, false)

@@ -7,6 +7,7 @@ var asString = require('../../utils/multiPath/asString')
 
 var handler = require('./handler')
 var hnest = handler.hnest
+var hnest_state = handler.hnest_state
 
 var getDeps = spv.memorize(function getEncodedState(string) {
 
@@ -38,7 +39,7 @@ var getDeps = spv.memorize(function getEncodedState(string) {
   var state_name = result.state && result.state.path
 
   var nwatch = new NestWatch(result, state_name, {
-    onchd_state: hnest,
+    onchd_state: hnest_state,
     onchd_count: hnest,
   })
 
