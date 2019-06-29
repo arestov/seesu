@@ -44,22 +44,12 @@ var recalc = function(dcl, runner) {
   updateNesting(runner.md, dest_name, result)
 }
 
-var changeValue = function(runner, dep_full_name, value, checkFromNesting) {
+var changeValue = function(runner, dep_full_name, value) {
   var dcl = runner.dcl
 
 
   if (!runner._runStates) {
     runner._runStates = createInitialStates(dcl, runner)
-  }
-
-  if (!checkFromNesting) {
-    if (runner._runStates[dep_full_name] === value) {
-      return;
-    }
-  } else {
-    if (!isNestingChanged(runner._runStates[dep_full_name], value)) {
-      return;
-    }
   }
 
   runner._runStates[dep_full_name] = value;
@@ -133,16 +123,16 @@ return {
     var data = lwroot.data
     var runner = data.runner
 
-    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items), true)
+    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items))
   },
   hnest: function nestCompxNestDepChangeHandler(flow_step, _, lwroot) {
     var data = lwroot.data
     var runner = data.runner
 
-    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items), true)
+    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items))
   },
   hstate: function nestCompxStateDepChangeHandler(runner, dep_full_name, value) {
-    changeValue(runner, dep_full_name, value, false)
+    changeValue(runner, dep_full_name, value)
   },
   recalc: recalc,
 }
