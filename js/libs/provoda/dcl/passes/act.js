@@ -52,7 +52,10 @@ var prepareResults = require('./act/prepareResults')
     динамические пути в resource part
 */
 
-var saveToDestModel = function(exec_item) {
+var saveToDestModel = function(current_motivator, exec_item) {
+  if (!current_motivator) {
+    throw new Error('should be current_motivator')
+  }
   // md, target, value
   var target_md = exec_item.target_md
   var value = exec_item.value
@@ -74,7 +77,11 @@ var saveToDestModel = function(exec_item) {
   }
 }
 
-var saveByProvodaId = function(md, target, wrap) {
+var saveByProvodaId = function(current_motivator, md, target, wrap) {
+  if (!current_motivator) {
+    throw new Error('should be current_motivator')
+  }
+
   for (var id in wrap) {
     if (!wrap.hasOwnProperty(id)) {
       continue;
@@ -103,21 +110,22 @@ var saveByProvodaId = function(md, target, wrap) {
 }
 
 
-var saveResultToTarget = function(exec_item) {
+var saveResultToTarget = function(current_motivator, exec_item) {
   var target = exec_item.target
   if (target.path_type == 'by_provoda_id') {
-    saveByProvodaId(exec_item.md, target, exec_item.value)
+    saveByProvodaId(current_motivator, exec_item.md, target, exec_item.value)
     return
   }
 
-  saveToDestModel(exec_item)
+  saveToDestModel(current_motivator, exec_item)
 }
 
 var saveResult = function (md, dcl, value, data) {
+  var current_motivator = md._currentMotivator()
   var semi_result = prepareResults(md, dcl, value, data)
 
   for (var i = 0; i < semi_result.length; i++) {
-    saveResultToTarget(semi_result[i])
+    saveResultToTarget(current_motivator, semi_result[i])
   }
 }
 
