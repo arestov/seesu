@@ -3,6 +3,7 @@ define(function(require) {
 var pv = require('pv');
 var spv = require('spv');
 var BrowseMap = require('js/libs/BrowseMap');
+var SongBaseModern = require('./SongBaseModern')
 var PlayRequest = require('./../PlayRequest');
 var isDepend = pv.utils.isDepend;
 
@@ -20,7 +21,7 @@ var finup = function(callback) {
 };
 
 
-return spv.inh(BrowseMap.Model, {
+var SongBase = spv.inh(BrowseMap.Model, {
   strict: true,
   naming: function(fn) {
     return function SongBase(opts, data, params, more, states) {
@@ -745,4 +746,6 @@ return spv.inh(BrowseMap.Model, {
     return this.getMFCore().getCurrentMopla();
   }
 });
+
+return spv.inh(SongBase, {}, SongBaseModern)
 });
