@@ -30,7 +30,7 @@ var createInitialStates = function(dcl, runner) {
   return _runStates;
 }
 
-var recalc = function(dcl, runner) {
+var recalc = function(dcl, runner, current_motivator) {
   if (!runner._runStates) {
     runner._runStates = createInitialStates(dcl, runner)
   }
@@ -40,11 +40,14 @@ var recalc = function(dcl, runner) {
   var result = calcFn.apply(null, args)
 
   var dest_name = dcl.dest_name;
+  if (!current_motivator) {
+    throw new Error('should be current_motivator')
+  }
 
   updateNesting(runner.md, dest_name, result)
 }
 
-var changeValue = function(runner, dep_full_name, value) {
+var changeValue = function(current_motivator, runner, dep_full_name, value) {
   var dcl = runner.dcl
 
 
@@ -54,7 +57,7 @@ var changeValue = function(runner, dep_full_name, value) {
 
   runner._runStates[dep_full_name] = value;
 
-  recalc(dcl, runner)
+  recalc(dcl, runner, current_motivator)
 }
 
 var getOneValue = function(dep, item) {
@@ -119,20 +122,20 @@ var getValue = function(runner, lwroot, list) {
 
 
 return {
-  hnest_state: function(_, __, lwroot) {
+  hnest_state: function(motivator, __, lwroot) {
     var data = lwroot.data
     var runner = data.runner
 
-    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items))
+    changeValue(motivator, runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items))
   },
-  hnest: function nestCompxNestDepChangeHandler(flow_step, _, lwroot) {
+  hnest: function nestCompxNestDepChangeHandler(current_motivator, _, lwroot) {
     var data = lwroot.data
     var runner = data.runner
 
-    changeValue(runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items))
+    changeValue(current_motivator, runner, multiPathAsString(data.dep), getValue(runner, lwroot, lwroot.ordered_items))
   },
-  hstate: function nestCompxStateDepChangeHandler(runner, dep_full_name, value) {
-    changeValue(runner, dep_full_name, value)
+  hstate: function nestCompxStateDepChangeHandler(current_motivator, runner, dep_full_name, value) {
+    changeValue(current_motivator, runner, dep_full_name, value)
   },
   recalc: recalc,
 }
