@@ -21,7 +21,8 @@ var Eventor = spv.inh(function() {}, {
     // 	return this;
     // },
     _getCallsFlow: function() {
-      return this._local_calls_flow || this._calls_flow;
+      // disable this._local_calls_flow || for some time!
+      return this._calls_flow;
     },
     useMotivator: function(item, fn) {
       var old_value = item.current_motivator;
