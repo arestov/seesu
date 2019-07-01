@@ -216,6 +216,9 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 };
 var insertItem = spv.insertItem;
 CallbacksFlow.prototype = {
+  input: function(fn) {
+    this.pushToFlow(fn);
+  },
   startGroup: function() {
     var step = new Group(++this.flow_steps_counter);
     this.callbacks_busy = true

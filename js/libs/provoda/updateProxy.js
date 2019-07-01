@@ -439,6 +439,9 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
 }
 
 updateProxy.update = function(md, state_name, state_value, opts) {
+  if (!md._currentMotivator()) {
+    console.error(new Error('wrap pvUpdate call in `.input()`'))
+  }
   /*if (state_name.indexOf('-') != -1 && console.warn){
     console.warn('fix prop state_name: ' + state_name);
   }*/

@@ -1,5 +1,6 @@
 define(function(require) {
 'use strict';
+var wrapInputCall = require('pv/wrapInputCall')
 var pv = require('pv');
 var spv = require('spv');
 
@@ -62,7 +63,7 @@ var PlayerBase = spv.inh(pv.Model, {
       this.core_failed = null;
       this.trigger('core-ready');
     },
-    fireCoreEvent: function(event_name, id, opts){
+    fireCoreEvent: wrapInputCall(function(event_name, id, opts){
       var song_file = this.song_files[id],
         attached =  this.attached[id];
 
@@ -83,7 +84,7 @@ var PlayerBase = spv.inh(pv.Model, {
           song_id: id,
           opts: opts
         });
-    },
+    }),
     attachSong: function(song_file){
       this.song_files[song_file._provoda_id] = song_file;
       this.attached[song_file._provoda_id] = true;

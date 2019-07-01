@@ -15,6 +15,7 @@ var initModel = require('./Model/init');
 var updateNesting = require('./Model/updateNesting');
 var postInitModel = require('./Model/postInit')
 var initSi = require('./Model/initConstr/subitem')
+var wrapInputCall = require('pv/wrapInputCall')
 
 var push = Array.prototype.push;
 var cloneObj = spv.cloneObj;
@@ -316,7 +317,7 @@ add({
     }
     return this.md_replacer;
   },
-  RPCLegacy: function() {
+  RPCLegacy: wrapInputCall(function() {
     var args = Array.prototype.slice.call(arguments);
     var method_name = args.shift();
     if (this.rpc_legacy && this.rpc_legacy[method_name]){
@@ -325,7 +326,7 @@ add({
       this[method_name].apply(this, args);
 
     }
-  },
+  }),
   die: function(){
     this.stopRequests();
     //this.mpx.die();

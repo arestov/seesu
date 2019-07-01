@@ -27,6 +27,16 @@ var Eventor = spv.inh(function() {}, {
     _currentMotivator: function() {
       return this._getCallsFlow().current_step
     },
+    input: function(fn) {
+      this._getCallsFlow().input(fn)
+    },
+    inputFn: function(fn) {
+      var self = this;
+      return function() {
+        var args = Array.prototype.slice.call(arguments);
+        self._calls_flow.pushToFlow(fn, self, args)
+      }
+    },
     useMotivator: function(item, fn) {
       var old_value = item.current_motivator;
       var motivator = this.current_motivator;
