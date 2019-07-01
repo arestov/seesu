@@ -205,25 +205,29 @@ return {
         store.error = true;
       });
 
-      var initiator = self.sputnik.current_motivator;
+
 
       return request.then(function(r) {
-        var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
-        if (!has_error) {
-          var result = parse.call(self.sputnik, r, null, morph_helpers);
-          if (result) {
-            return result;
-          }
-        }
+        return new Promise(function(resolve) {
+          self.sputnik.nextTick(function() {
+            var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
+            if (!has_error) {
+              var result = parse.call(self.sputnik, r, null, morph_helpers);
+              if (result) {
+                return resolve(result)
+              }
+            }
 
-        return failed(new Error(has_error || 'no Result'));
+            resolve(failed(new Error(has_error || 'no Result')));
+          })
+        })
       }).then(function (response) {
         self.sputnik.nextTick(function () {
           anyway();
           handleResponse(response);
-        }, null, false, initiator);
+        }, null, false, null);
       }, function() {
-        self.sputnik.nextTick(anyway, null, false, initiator);
+        self.sputnik.nextTick(anyway, null, false, null);
       });
 
 
@@ -507,13 +511,13 @@ return {
       _this.sputnik.nextTick(function () {
         anyway();
         handleResponse(response);
-      }, null, false, initiator);
+      }, null, false);
       if (release) {
         _this.sputnik.nextTick(release, null, false, initiator);
       }
 
     }, function () {
-      _this.sputnik.nextTick(handleError, null, false, initiator);
+      _this.sputnik.nextTick(handleError, null, false);
       if (release) {
         _this.sputnik.nextTick(release, null, false, initiator);
       }

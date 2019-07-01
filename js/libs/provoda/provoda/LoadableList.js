@@ -347,7 +347,8 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
 
   findMustBePresentDataItem: function(obj, nesting_name) {
     nesting_name = nesting_name || this.main_list_name;
-    var matched = this.compareItemsWithObj(this.getNesting( nesting_name ), obj);
+    var list = this.getNesting( nesting_name )
+    var matched = list && this.compareItemsWithObj(this.getNesting( nesting_name ), obj);
     return matched || this.injectExcessDataItem(obj, nesting_name);
   },
 

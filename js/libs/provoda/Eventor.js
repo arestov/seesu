@@ -21,7 +21,21 @@ var Eventor = spv.inh(function() {}, {
     // 	return this;
     // },
     _getCallsFlow: function() {
-      return this._local_calls_flow || this._calls_flow;
+      // disable this._local_calls_flow || for some time!
+      return this._calls_flow;
+    },
+    _currentMotivator: function() {
+      return this._getCallsFlow().current_step
+    },
+    input: function(fn) {
+      this._getCallsFlow().input(fn)
+    },
+    inputFn: function(fn) {
+      var self = this;
+      return function() {
+        var args = Array.prototype.slice.call(arguments);
+        self._calls_flow.pushToFlow(fn, self, args)
+      }
     },
     useMotivator: function(item, fn) {
       var old_value = item.current_motivator;

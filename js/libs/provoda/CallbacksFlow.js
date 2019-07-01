@@ -216,8 +216,21 @@ var CallbacksFlow = function(win, rendering_flow, iteration_time) {
 };
 var insertItem = spv.insertItem;
 CallbacksFlow.prototype = {
+  input: function(fn) {
+    this.pushToFlow(fn);
+  },
   startGroup: function() {
-    return new Group(++this.flow_steps_counter);
+    var step = new Group(++this.flow_steps_counter);
+    this.callbacks_busy = true
+    this.current_step = step
+    return step
+  },
+  completeGroup: function(step) {
+    if (this.current_step != step) {
+      throw new Error('wrong step')
+    }
+    this.callbacks_busy = false
+    this.current_step = null
   },
   iterateCallbacksFlow: function() {
     var start = Date.now() + this.iteration_time;
@@ -241,7 +254,9 @@ CallbacksFlow.prototype = {
       }
 
       if (!cur.aborted) {
+        this.current_step = cur;
         cur.call();
+        this.current_step = null;
       }
 
       if (this.flow_start == cur) {

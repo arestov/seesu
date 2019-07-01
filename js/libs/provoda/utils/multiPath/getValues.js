@@ -4,7 +4,7 @@ var pvState = require('../../provoda/state')
 var getNesting = require('../../provoda/getNesting')
 
 var getValue = function(md, multi_path) {
-  if (multi_path.nesting && multi_path.nesting.zip_name) {
+  if (multi_path.zip_name) {
     throw new Error('implenent me')
   }
 

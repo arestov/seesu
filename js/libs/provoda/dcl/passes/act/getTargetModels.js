@@ -16,7 +16,14 @@ var getModelsFromManyBases = function(bases, target) {
   var result = []
   for (var i = 0; i < bases.length; i++) {
     var mds = getModelsFromBase(bases[i], target)
-    Array.prototype.push.apply(result, mds);
+    if (Array.isArray(mds)) {
+      Array.prototype.push.apply(result, mds);
+    } else {
+      result.push(mds)
+    }
+    if (!mds) {
+      throw new Error('not expected to null model')
+    }
   }
   return result;
 }

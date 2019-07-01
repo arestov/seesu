@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var pv = require('pv');
+var wrapInputCall = require('pv/wrapInputCall')
 var spv = require('spv');
 var $ = require('jquery');
 var filters = require('./modules/filters');
@@ -335,7 +336,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
     }
   },
 
-  markAnimationEnd: function(models, changes_number) {
+  markAnimationEnd: wrapInputCall(function(models, changes_number) {
     if (this.state('map_animation_num_started') == changes_number) {
       pv.update(this, 'map_animation_num_completed', changes_number, sync_opt);
     }
@@ -350,7 +351,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
       }
       ////MUST UPDATE VIEW, NOT MODEL!!!!!
     }
-  },
+  }),
 
   getMapSliceView: function(bwlev, md) {
     var dclr = pv.$v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
@@ -572,12 +573,12 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 
     var _this = this;
     setTimeout(function() {
-      spv.domReady(_this.d, function() {
+      spv.domReady(_this.d, _this.inputFn(function() {
         _this.buildAppDOM();
         _this.onDomBuild();
         _this.completeDomBuilding();
         _this.RPCLegacy('attachUI', _this.root_view_uid);
-      });
+      }));
     });
     this.on('die', function() {
       this.RPCLegacy('detachUI', this.root_view_uid);
@@ -660,10 +661,13 @@ var WebAppView = spv.inh(AppBaseView, {}, {
     };
   })(),
   onDomBuild: function() {
-    this.used_data_structure = getUsageTree([], [], this, this);
+    var used_data_structure = getUsageTree([], [], this, this);
+    this.used_data_structure = used_data_structure
     this.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);
     var opts = this.opts || this.parent_view.opts;
-    pvUpdate(opts.bwlev, 'view_structure', this.used_data_structure);
+    opts.bwlev.input(function() {
+      pvUpdate(opts.bwlev, 'view_structure', used_data_structure);
+    })
     console.log('used_data_structure', this.used_data_structure);
 
   },

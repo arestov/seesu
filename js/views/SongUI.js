@@ -71,8 +71,10 @@ var SongUI = spv.inh(SongViewBase, {}, {
     if (acts_row) {
       acts_row.hideAll();
     }
-
-    this.getMdChild('mf_cor').collapseExpanders();
+    var md = this.getMdChild('mf_cor');
+    md.input(function() {
+      md.collapseExpanders();
+    })
   },
 
   children_views: {

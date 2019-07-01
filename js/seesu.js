@@ -115,7 +115,7 @@ var SeesuApp = spv.inh(AppModel, {
     self.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
 
-    setInterval(function(){
+    setInterval(self.inputFn(function(){
 
       var now = new Date();
 
@@ -126,7 +126,7 @@ var SeesuApp = spv.inh(AppModel, {
       }
 
 
-    }, 1000 * 60 * 20);
+    }), 1000 * 60 * 20);
     setInterval(function(){
       return;
       /*var rootvs = self.mpx.getViews('root');
@@ -213,12 +213,12 @@ var SeesuApp = spv.inh(AppModel, {
       addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: window.opera_extension_button});
     }
 
-    setTimeout(function(){
+    setTimeout(self.inputFn(function(){
       self.checkStats();
-    },100);
+    }), 100);
 
 
-    setTimeout(function() {
+    setTimeout(self.inputFn(function() {
       for (var i = self.supported_settings.length - 1; i >= 0; i--) {
         var cur = self.supported_settings[i];
         var value = app_serv.store('settings.' + cur);
@@ -248,14 +248,14 @@ var SeesuApp = spv.inh(AppModel, {
       self.migrateStorage(last_ver);
       app_serv.store('last-su-ver', version, true);
 
-    }, 200);
+    }), 200);
 
     if (app_serv.app_env.nodewebkit) {
       pv.update(self, 'disallow_seesu_listeners', true);
     }
-    self.on('child_change-current_mp_md', function() {
+    self.on('child_change-current_mp_md', self.inputFn(function() {
       this.closeNavHelper();
-    });
+    }));
   },
 
 }, {
@@ -538,7 +538,7 @@ var SeesuApp = spv.inh(AppModel, {
       fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
 
     },{nocache: true})
-      .then(function(info) {
+      .then(_this.inputFn(function(info) {
         info = info.response && info.response[0];
         if (info){
           _this.s.vk_id = user_id;
@@ -559,7 +559,7 @@ var SeesuApp = spv.inh(AppModel, {
         } else {
 
         }
-      });
+      }));
   },
 
   getPhotoFromVK: function() {

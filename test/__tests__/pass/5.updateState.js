@@ -86,7 +86,7 @@ test('simple state by pass1 && pass2 calculated', t => {
         ],
         calculated_child: [
           'compx',
-          ['number <<< #', 'nickname <<< ^', '<< indie', '<< list'],
+          ['number <<< #', 'nickname <<< ^', '<< @all:indie', '<< @all:list'],
           (num, nickname, indie_value, list) => {
             if (num === 100) {
               return list.slice(0, 1)

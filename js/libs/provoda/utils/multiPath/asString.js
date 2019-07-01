@@ -7,33 +7,59 @@ return function multiPathAsString(multi_path) {
   }
 
   multi_path.as_string = ''
-    + stateString(multi_path.state)
-    + nestingString(multi_path.nesting)
+    + firstPart(isStateOk(multi_path.state) && multi_path.zip_name, multi_path.state)
+    + nestingString(!isStateOk(multi_path.state) && multi_path.zip_name, multi_path.nesting)
     + resourceString(multi_path.resource)
     + baseString(multi_path.from_base);
 
   return multi_path.as_string
 }
 
-
-function stateString(state) {
-  if (!state || !state.path) {
-    return '<'
-  }
-
-  return '< ' + state.path + ' '
+function isStateOk(state) {
+  return state && state.path
 }
 
-function nestingString(nesting) {
-  if (!nesting || !nesting.path) {
+function wrapBySpace(item) {
+  if (!item) {
+    return ''
+  }
+
+  return ' ' + item + ' '
+}
+
+function firstPart(zip_name, state) {
+  return '<' + wrapBySpace(zipPart(zip_name) + stateString(state))
+}
+
+function zipPart(zip_name) {
+  if (!zip_name) {
+    return ''
+  }
+
+  return '@' + zip_name + ':'
+}
+
+
+function stateString(state) {
+  if (!isStateOk(state)) {
+    return ''
+  }
+
+  return state.path
+}
+
+function isNestingOk(nesting) {
+  return nesting && nesting.path
+}
+
+function nestingString(zip_name, nesting) {
+  if (!isNestingOk(nesting)) {
     return '<'
   }
 
   var path = nesting.path.join('.');
-  var zip_name = nesting.zip_name || ''
-  var sep = zip_name ? '' : ''
 
-  return '< ' + zip_name + sep + path  + ' '
+  return '<' + wrapBySpace(zipPart(zip_name) + path)
 }
 
 function resourceString(resource) {

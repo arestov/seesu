@@ -109,13 +109,13 @@ var PassDcl = function(name, data) {
   this.name = name;
   this.by_named_result = !Array.isArray(data.to)
 
-  this.targets_list = null;
-  this.target_single = null;
+  this.targeted_results_list = null;
+  this.targeted_single_result = null;
 
   if (this.by_named_result) {
-    this.targets_list = targetsList(data.to)
+    this.targeted_results_list = targetsList(data.to)
   } else {
-    this.target_single = targetData(data.to)
+    this.targeted_single_result = targetData(data.to)
   }
 
   this.deps = null

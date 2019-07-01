@@ -19,7 +19,9 @@
   "scripts": {
     "gulp": "gulp",
     "inspect": "inspect",
-    "test": "ava --verbose **/__tests__"
+    "test": "ava --verbose",
+    "test:current-dev": "ava --verbose --match=\"*compx-nests*\"",
+    "debug:current-dev": "inspect node_modules/ava/profile.js test/__tests__/nestings-compx.js"
   },
   "devDependencies": {
     "autoprefixer": "6.0.2",
@@ -45,17 +47,13 @@
     "postcss": "5.0.5",
     "xmldom": "0.1.19"
   },
-  "dependencies": {},
+  "dependencies": {
+    "requirejs": "^2.3.6"
+  },
   "ava": {
-    "type": "node",
-    "request": "launch",
-    "name": "Run AVA test",
-    "program": "${workspaceRoot}/node_modules/ava/profile.js",
-    "args": [
-      "${file}"
-    ],
-    "skipFiles": [
-      "<node_internals>/**/*.js"
+    "files": [
+      "**/__tests__",
+      "js/**/*.test.js"
     ]
   }
 }

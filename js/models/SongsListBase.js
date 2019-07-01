@@ -351,12 +351,6 @@ return spv.inh(LoadableList, {
       }
     }
 
-    if (viewing || playing || wanted){
-      if (!target_song.hasNextSong()){
-        md.requestMoreData();
-      }
-    }
-
   };
 
   function getLastUsableSong(mdpl){

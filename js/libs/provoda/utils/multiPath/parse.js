@@ -14,6 +14,7 @@ var parent_count_regexp = /\^+/gi;
 
 
 /(\^|\s+)(\<)(\s+)/
+"< @all state_name < nesting < resource < #"
 
 "< state_name < aggr:nesting < resource < #"
 
@@ -79,20 +80,73 @@ var parseModern = spv.memorize(function(string) {
   return parseFromEnd(string)
 })
 
+var matchNotStateSymbols = /(^\W)|\@|\:/
+var attemptSimpleStateName = function(string) {
+  if (!string || matchNotStateSymbols.test(string)) {
+    return null
+  }
+
+  return {
+    result_type: 'state',
+    zip_name: null,
+    state: getStateInfo(string),
+    nesting: {},
+    resource: {},
+    from_base: {},
+    as_string: null,
+  }
+}
+
 var parseMultiPath = function(string, allow_legacy) {
+  if (string == '<<<<') {
+    return {
+      as_string: string,
+      base_itself: true,
+    }
+  }
+
+
   var modern = canParseModern(string)
   if (!modern) {
-    return allow_legacy ? fromLegacy(string) : null
+    return attemptSimpleStateName(string) || (
+      allow_legacy ? fromLegacy(string) : null
+    )
   }
 
   return parseModern(string)
 }
+var matchZip = /(?:\@(.+?)\:)?(.+)?/
 
-return parseMultiPath;
+
+return spv.memorize(parseMultiPath, function(a1, a2) {
+  var legacy_ok = Boolean(a2)
+  return legacy_ok + ' - ' + a1
+});
 
 function parseParts(state_raw, nest_raw, resource_raw, base_raw) {
-  var state_info = getStateInfo(state_raw);
-  var nest_info = getNestInfo(nest_raw);
+  var state_part_splited = state_raw && state_raw.match(matchZip)
+  var zip_state_string = state_part_splited && state_part_splited[1]
+  var state_string = state_part_splited && state_part_splited[2]
+
+  var nest_part_splited = nest_raw && nest_raw.match(matchZip)
+  var zip_nest_string = nest_part_splited && nest_part_splited[1]
+  var nest_string = nest_part_splited && nest_part_splited[2]
+
+  if (zip_state_string && zip_nest_string) {
+    throw new Error('both state and nesting cant have zip_name')
+  }
+
+  if (zip_nest_string && state_string) {
+    throw new Error('use state zip')
+  }
+
+  if (zip_state_string && !state_string && nest_string) {
+    throw new Error('use nest zip')
+  }
+
+  var zip_name = zip_state_string || zip_nest_string || null
+  var state_info = getStateInfo(state_string);
+  var nest_info = getNestInfo(nest_string);
   var resource_info = getResourceInfo(resource_raw);
   var base_info = getBaseInfo(base_raw);
 
@@ -100,6 +154,7 @@ function parseParts(state_raw, nest_raw, resource_raw, base_raw) {
 
   return {
     result_type: result_type,
+    zip_name: zip_name,
     state: state_info,
     nesting: nest_info,
     resource: resource_info,
@@ -129,11 +184,16 @@ function getNestInfo(string) {
 
   var full_path = splitByDot(path)
 
+  var zip_name = parts[0] || null
+
+  if (zip_name) {
+    throw new Error('dont use. use < @[zip_name] [statename] < [nestingname]')
+  }
+
   return {
     path: full_path,
     base: full_path.slice(0, full_path.length-1),
     target_nest_name: full_path[full_path.length-1],
-    zip_name: parts[0] || null,
   }
 }
 

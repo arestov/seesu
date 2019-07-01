@@ -96,14 +96,18 @@ return {
   _groupMotive: function(fn) {
     return function() {
       var self = this;
-      var need = !self.current_motivator;
+      var need = !this._currentMotivator();
       if (!need) {
         return fn.apply(self, arguments);
       }
 
-      self.current_motivator = self._highway.calls_flow.startGroup();
+      var flow = self._getCallsFlow()
+      var motivator = flow.startGroup();
+      self.current_motivator = motivator
       var result = fn.apply(self, arguments);
+      flow.completeGroup(motivator)
       self.current_motivator = null;
+      flow.checkCallbacksFlow()
       return result;
     };
   },

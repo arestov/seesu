@@ -7,6 +7,7 @@ var asString = require('../../utils/multiPath/asString')
 
 var handler = require('./handler')
 var hnest = handler.hnest
+var hnest_state = handler.hnest_state
 
 var getDeps = spv.memorize(function getEncodedState(string) {
 
@@ -17,6 +18,10 @@ var getDeps = spv.memorize(function getEncodedState(string) {
     return null
   }
 
+  if (result.base_itself) {
+    return result
+  }
+
   if (result.result_type !== 'nesting' && result.result_type !== 'state') {
     throw new Error('implement runner part')
   }
@@ -25,10 +30,16 @@ var getDeps = spv.memorize(function getEncodedState(string) {
     return result;
   }
 
+
+  if (!result.zip_name) {
+    throw new Error('zip name `@one:` or `@all:` should be provided for: ' + string)
+  }
+
+
   var state_name = result.state && result.state.path
 
   var nwatch = new NestWatch(result, state_name, {
-    onchd_state: hnest,
+    onchd_state: hnest_state,
     onchd_count: hnest,
   })
 
@@ -42,11 +53,14 @@ var groupBySubscribing = function(list) {
   var result = {
     nest_watch: [],
     usual: [],
+    self: false,
   }
 
   for (var i = 0; i < list.length; i++) {
     var cur = list[i]
-    if (cur.nwatch) {
+    if (cur.base_itself) {
+      result.self = true
+    } else if (cur.nwatch) {
       result.nest_watch.push(cur);
     } else {
       result.usual.push(cur);
@@ -54,6 +68,10 @@ var groupBySubscribing = function(list) {
   }
 
   return result
+}
+
+var same = function(item) {
+  return item;
 }
 
 var NestCompxDcl = function(name, data) {
@@ -66,7 +84,7 @@ var NestCompxDcl = function(name, data) {
 
   this.deps = list.map(asString);
 
-  this.calcFn = fn;
+  this.calcFn = fn || same;
 
   // will be used by runner
   this.parsed_deps = groupBySubscribing(list)

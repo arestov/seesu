@@ -176,9 +176,9 @@ function initLfm(su, app_serv, app_env, cache_ajax, resortQueue, addQueue) {
     init: addQueue
   }));
 
-  lfm.checkMethodResponse = function(method, data, r) {
+  lfm.checkMethodResponse = su.inputFn(function(method, data, r) {
     su.start_page.art_images.checkLfmData(method, r);
-  };
+  });
 
   return lfm;
 }
@@ -220,11 +220,13 @@ function domPart(su, app_serv){
       if (!data) {
         return;
       }
-      pv.update(su, 'news_list', StartPage.AppNews.converNews(data));
+      su.input(function() {
+        pv.update(su, 'news_list', StartPage.AppNews.converNews(data));
+      })
     });
   });
   queue.add(function() {
-    createDatastreamIframe('https://arestov.github.io/su_blocked_music/', app_serv, function(data) {
+    createDatastreamIframe('https://arestov.github.io/su_blocked_music/', app_serv, su.inputFn(function(data) {
       if (!data) {
         return;
       }
@@ -252,7 +254,7 @@ function domPart(su, app_serv){
       //forbidden_by_copyrh
       //white_of_copyrh
       pv.update(su, 'forbidden_by_copyrh', index);
-    });
+    }));
   });
   queue.add(function(){
     if (app_serv.app_env.nodewebkit) {

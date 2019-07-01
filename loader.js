@@ -65,23 +65,28 @@ window._gaq = window._gaq || [];
 		//app thread;
 		var views_proxies = new pv.views_proxies.Proxies();
 		window.views_proxies = views_proxies;
-		window.appModel = su = seesu  = new SeesuApp({
-			_highway: {
-				models_counters: 1,
-				sync_sender: new pv.SyncSender(),
-				views_proxies: views_proxies,
-				models: {},
-				calls_flow: new pv.CallbacksFlow(window),
-				proxies: views_proxies,
-				env: env
-			}
-		}, seesu_version);
+    var flow = new pv.CallbacksFlow(window)
+    flow.input(function() {
+      window.appModel = su = seesu  = new SeesuApp({
+        _highway: {
+          models_counters: 1,
+          sync_sender: new pv.SyncSender(),
+          views_proxies: views_proxies,
+          models: {},
+          calls_flow: flow,
+          proxies: views_proxies,
+          env: env
+        }
+      }, seesu_version);
 
-		window.root_bwlev = initBrowsing(window.appModel);
+      window.root_bwlev = initBrowsing(window.appModel);
 
-		if (need_ui) {
-			initViews(window.root_bwlev, window.appModel, views_proxies, window, false, true);
-		}
+      if (need_ui) {
+  			initViews(window.root_bwlev, window.appModel, views_proxies, window, false, true);
+  		}
+    })
+
+
 	});
 
 	if (need_ui) {
@@ -95,7 +100,9 @@ window._gaq = window._gaq || [];
 		requirejs(
 			['js/views/AppView', 'js/views/RootBwlevView', 'pv', 'spv'],
 			function(AppView, createRootBwlevView, pv, spv) {
-			appModel.updateLVTime(); // useless?
+			appModel.input(function() {
+        appModel.updateLVTime(); // useless?
+      })
 
 			var proxies_space = Date.now();
 			proxies.addSpaceById(proxies_space, root_bwlev);

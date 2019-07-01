@@ -68,12 +68,12 @@ return function fromNestingSourceDr(nesting_source) {
 
   return {
     result_type: 'nesting',
+    zip_name: null,
     state: {},
     nesting: {
       path: nesting_source.selector,
       base: parts.slice(0, parts.length-1),
       target_nest_name: parts[parts.length-1],
-      zip_name: null,
     },
     from_base: parsed_start_point.from_base,
     resource: parsed_start_point.resource,
