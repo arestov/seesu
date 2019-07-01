@@ -14,6 +14,12 @@ var playRelative = function(mo, result) {
   }
 };
 
+var finup = function(callback) {
+  callback.finup = true;
+  return callback;
+};
+
+
 return spv.inh(BrowseMap.Model, {
   strict: true,
   naming: function(fn) {
@@ -69,6 +75,11 @@ return spv.inh(BrowseMap.Model, {
 
   }
 }, {
+  'stch-should_load_next': finup(function(self, value) {
+    if (value) {
+      self.map_parent.requestMoreData()
+    }
+  }),
   "+effects": {
     "consume": {
       0: {
@@ -203,7 +214,13 @@ return spv.inh(BrowseMap.Model, {
         return this.getFullName(artist, track);
       }
     ],
-
+    "should_load_next": [
+      'compx',
+      ['is_important', 'related_next_song'],
+      function(important, next) {
+        return !next && important
+      }
+    ],
     "is_important": [
       "compx",
       ['mp_show', 'player_song', 'want_to_play'],
