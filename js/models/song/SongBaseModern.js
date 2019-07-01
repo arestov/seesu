@@ -9,9 +9,52 @@ var matched = function(ok, item, more) {
   return ok ? item : more
 }
 
-
+var checkRepeat = function(no_repeat, next, next_circled) {
+  return no_repeat ? next : next_circled
+}
 
 return {
+  '+passes': {
+    'handleState:mp_show': {
+      to: {
+        to_change: ['<< being_viewed_song << ^', {method: 'set_one'}],
+      },
+      fn: [
+        ['<<<<', '<< being_viewed_song << ^'],
+        function(data, self, current) {
+          if (data.next_value) {
+            return {
+              to_change: self,
+            }
+          }
+
+          if (current === self) {
+            return {
+              to_change: null,
+            }
+          }
+
+          return {}
+        }
+      ]
+    }
+  },
+  '+states': {
+    'vis_neig_prev': [
+      'compx', ['@modern_prev_possible'],
+    ],
+    'vis_neig_next': [
+      'compx', ['@modern_next_possible'],
+    ],
+    'next_song': [
+      'compx', ['^dont_rept_pl', '@modern_next_matched', '@modern_next_circled_matched'],
+      checkRepeat
+    ],
+    'prev_song': [
+      'compx', ['^dont_rept_pl', '@modern_prev_matched', '@modern_prev_matched_circled'],
+      checkRepeat
+    ]
+  },
   '+nests': {
     // next possible
     flow_next_possible: [
@@ -45,6 +88,15 @@ return {
         '<< @one:modern_next_possible_circled',
         '<< @one:modern_next_possible_circled.modern_next_circled_matched'],
       matched,
+    ],
+
+    modern_next_possible_preferred: [
+      'compx', [
+        '< dont_rept_pl <<< ^',
+        '<< @one:modern_next_possible',
+        '<< @one:modern_next_possible_circled',
+      ],
+      checkRepeat
     ],
 
     // prev possible

@@ -10,8 +10,71 @@ var targetPathNext = function(name) {
   ]
 }
 
+var marks = function(value) {
+  return function(data) {
+    if (data.next_value && data.prev_value) {
+      return {
+        prev: false,
+        next: value,
+      }
+    }
+
+    if (data.next_value) {
+      return {
+        next: value,
+      }
+    }
+
+    if (data.prev_value) {
+      return {
+        prev: false,
+      }
+    }
+  }
+}
+
 return {
+  '+nests': {
+    'vis_prev_modern': [
+      'compx',
+      ['< @one:vis_neig_prev < being_viewed_song'],
+    ],
+    'vis_next_modern': [
+      'compx',
+      ['< @one:vis_neig_next < being_viewed_song'],
+    ],
+  },
   '+passes': {
+    'handleNesting:vis_prev_modern': {
+      to: {
+        next: [
+          '< marked_as', {
+            base: 'arg_nesting_next',
+          },
+        ],
+        prev: [
+          '< marked_as', {
+            base: 'arg_nesting_prev',
+          },
+        ],
+      },
+      fn: marks('prev'),
+    },
+    'handleNesting:vis_next_modern': {
+      to: {
+        next: [
+          '< marked_as', {
+            base: 'arg_nesting_next',
+          },
+        ],
+        prev: [
+          '< marked_as', {
+            base: 'arg_nesting_prev',
+          },
+        ],
+      },
+      fn: marks('next'),
+    },
     'handleNesting:songs-list':  {
       to: {
         new_prev_cicled: targetPathNext('<< prev_cicled_by_number'),

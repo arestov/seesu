@@ -217,7 +217,7 @@ var SongBase = spv.inh(BrowseMap.Model, {
     ],
     "should_load_next": [
       'compx',
-      ['is_important', 'related_next_song'],
+      ['is_important', '@next_by_number'],
       function(important, next) {
         return !next && important
       }
@@ -237,10 +237,14 @@ var SongBase = spv.inh(BrowseMap.Model, {
         }
       }
     ],
+    'preffered_next_preload_song': [
+      'compx',
+      ['@modern_next_possible_preferred']
+    ],
 
     "$relation:next_preload_song-for-loaded_player_song": [
       "compx",
-      ['player_song', 'related_next_preload_song', 'file_almost_loaded'],
+      ['player_song', 'preffered_next_preload_song', 'file_almost_loaded'],
       function(player_song, related_next_preload_song, file_almost_loaded) {
         return player_song && file_almost_loaded && related_next_preload_song;
       }
@@ -248,7 +252,7 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
     "$relation:next_preload_song-for-mp_show": [
       "compx",
-      ['mp_show', 'related_next_preload_song'],
+      ['mp_show', 'preffered_next_preload_song'],
       function(mp_show, related_next_preload_song) {
         return mp_show && related_next_preload_song;
       }
@@ -256,7 +260,7 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
     "$relation:next_preload_song-for-player_song": [
       "compx",
-      ['player_song', 'related_next_preload_song'],
+      ['player_song', 'preffered_next_preload_song'],
       function(player_song, related_next_preload_song) {
         return player_song && related_next_preload_song;
       }
@@ -264,7 +268,7 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
     "$relation:next_preload_song-for-very_wanted_play": [
       "compx",
-      ['want_to_play', 'related_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
+      ['want_to_play', 'preffered_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
       function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
         return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
       }
