@@ -28,6 +28,8 @@ var PlayRequest = spv.inh(pv.Model, {}, {
     "play_inited": [
       "compx",
       ['play_inited', 'resolved'],
+      // locking to itself
+      // resolved - signal from player that playing has been started
       function(play_inited, resolved) {
         return play_inited || resolved;
       }
@@ -35,6 +37,15 @@ var PlayRequest = spv.inh(pv.Model, {}, {
 
     "possible_song": [
       "compx",
+      // `active` is signal that req is still under use
+      /*
+      basic input:
+      < wanted_file
+      << song,
+      << wanted_song,
+      << bwlev
+      */
+
       ['active', 'play_inited', 'next_song', '@wanted_song', 'wanted_file', 'song_of_wanted_file'],
       function (active, play_inited, next_song, wanted_song, wanted_file, song_of_wanted_file) {
         if (!active) {
@@ -102,6 +113,7 @@ var PlayRequest = spv.inh(pv.Model, {}, {
       "compx",
       ['song_files_ready', 'current_song'],
       function(opts, current_song) {
+        // current_song - input from player
         if (!opts) {return;}
         var mo = this.getNesting('possible_song');
         if (mo == current_song) {return;}
@@ -165,6 +177,7 @@ var PlayRequest = spv.inh(pv.Model, {}, {
   },
 
   playNext: function() {
+    // current_song is beeing pushed by player
     var current_song = this.state('current_song');
 
     if (current_song.state('rept-song')){
