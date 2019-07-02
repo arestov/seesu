@@ -76,6 +76,11 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
   }
 }, {
+  'stch-need_files': finup(function(self, value) {
+    if (value) {
+      self.makeSongPlayalbe(true)
+    }
+  }),
   'stch-should_load_next': finup(function(self, value) {
     if (value) {
       self.map_parent.requestMoreData()
