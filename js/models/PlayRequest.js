@@ -37,10 +37,19 @@ var PlayRequest = spv.inh(pv.Model, {}, {
       "compx",
       ['active', 'play_inited', 'next_song', '@wanted_song', 'wanted_file', 'song_of_wanted_file'],
       function (active, play_inited, next_song, wanted_song, wanted_file, song_of_wanted_file) {
-        return active && (
-          (play_inited && next_song) ?
-            next_song :
-            (wanted_file ? song_of_wanted_file : wanted_song));
+        if (!active) {
+          return
+        }
+
+        if (play_inited && next_song) {
+          return next_song
+        }
+
+        if (wanted_file) {
+          return song_of_wanted_file
+        }
+
+        return wanted_song
       }
     ],
 
