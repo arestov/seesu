@@ -1,5 +1,8 @@
-define(function() {
+define(function(require) {
 'use strict';
+var pv = require('pv');
+var wrapInputCall = require('pv/wrapInputCall')
+var PlayRequest = require('./ListPlayRequest')
 
 var targetPathNext = function(name) {
   return [
@@ -35,6 +38,13 @@ var marks = function(value) {
 
 return {
   '+nests': {
+    'first_song': [
+      'compx', ['<< @one:songs-list'],
+    ],
+    'possible_playlist_song': [
+      'compx',
+      ['<< @one:first_song.flow_next_possible'],
+    ],
     'vis_prev_modern': [
       'compx',
       ['< @one:vis_neig_prev < being_viewed_song'],
@@ -116,6 +126,30 @@ return {
         return result_mut
       }
     },
-  }
+  },
+  _playWanted: (function() {
+    var selectBwlev = function(self, bwlev_id) {
+      if (!bwlev_id) {
+        return self._getMySimpleBwlev()
+      }
+      return pv.getModelById(self, bwlev_id);
+
+    }
+
+    return wrapInputCall(function(bwlev_id) {
+      var bwlev = selectBwlev(this, bwlev_id)
+
+      var play_request = pv.create(PlayRequest, {}, {
+        nestings: {
+          wanted_playlist: this,
+          bwlev: bwlev,
+        }
+      }, this, this.app);
+
+      if (this.app.player) {
+        this.app.player.requestPlay(play_request);
+      }
+    })
+  })()
 }
 })
