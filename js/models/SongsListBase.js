@@ -544,11 +544,11 @@ var legacyBase = spv.inh(LoadableList, {
     checkChangesSinceFS: function() {
       if (this.player.waiting_playlist && this == this.player.waiting_playlist) {
         if (this.waiting_next){
-          if (!this.waiting_next.next_preload_song){
+          if (!this.waiting_next.getNextPreloadSong()){
             this.waiting_next = null;
             this.player.waiting_playlist = null;
-          } else if (this.waiting_next.next_preload_song.canPlay()){
-            this.waiting_next.next_preload_song.wantSong();
+          } else if (this.waiting_next.getNextPreloadSong().canPlay()){
+            this.waiting_next.getNextPreloadSong().wantSong();
           }
         }
       } else {
@@ -589,7 +589,7 @@ var legacyBase = spv.inh(LoadableList, {
       if (playlist.length > 1) {
         var s = false;
         if (direction) {
-          var possible = mo.next_preload_song;
+          var possible = mo.getNextPreloadSong();
           var can_repeat = !this.state('dont_rept_pl');
           var shuffle = this.state('pl-shuffle');
           if (possible){
@@ -662,26 +662,26 @@ var legacyBase = spv.inh(LoadableList, {
 
       if (v_song){
         addToArray(demonstration, v_song);
-        if (v_song.next_song){
-          addToArray(demonstration, v_song.next_song);
+        if (v_song.getNextSong()){
+          addToArray(demonstration, v_song.getNextSong());
         } else if (this.state('can_load_more')){
           addToArray(demonstration, this);
         }
-        if (v_song.prev_song){
-          addToArray(demonstration, v_song.prev_song);
+        if (v_song.getPrevSong()){
+          addToArray(demonstration, v_song.getPrevSong());
         }
       }
       if (p_song){
         addToArray(demonstration, p_song);
 
-        if (p_song.next_song){
-          addToArray(demonstration, p_song.next_song);
+        if (p_song.getNextSong()){
+          addToArray(demonstration, p_song.getNextSong());
         }
       }
       if (waiting_next){
         addToArray(demonstration, waiting_next);
-        if (waiting_next.next_song){
-          addToArray(demonstration, waiting_next.next_song);
+        if (waiting_next.getNextSong()){
+          addToArray(demonstration, waiting_next.getNextSong());
         }
       }
 

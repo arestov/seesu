@@ -633,7 +633,7 @@ var SongBase = spv.inh(BrowseMap.Model, {
   },
 
   hasNextSong: function(){
-    return !!this.next_song;
+    return !!this.getNextSong();
   },
 
 
@@ -698,7 +698,7 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
   // 	if (this.mp3_search){
   // 		opts = opts || {};
-  // 		opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
+  // 		opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.getNextPreloadSong() != this);
 
   // 		this.getMFCore().startSearch(opts);
   // 	}
@@ -717,12 +717,12 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
   getActingPriorityModels: function() {
     var result = [];
-    if (this.next_song){
-      result.push(this.next_song);
+    if (this.getNextSong()){
+      result.push(this.getNextSong());
     } else if (this.map_parent.state('has_data_loader')){
       result.push( this.map_parent );
-    } else if ( this.next_preload_song ){
-      result.push( this.next_preload_song );
+    } else if ( this.getNextPreloadSong() ){
+      result.push( this.getNextPreloadSong() );
 
     }
     result.push( this );
@@ -744,11 +744,11 @@ var SongBase = spv.inh(BrowseMap.Model, {
   },
 
   isPossibleNeighbour: function(mo) {
-    return this.isNeighbour(mo) || mo == this.next_preload_song;
+    return this.isNeighbour(mo) || mo == this.getNextPreloadSong();
   },
 
   isNeighbour: function(mo){
-    return (mo == this.prev_song) || (mo == this.next_song);
+    return (mo == this.getPrevSong()) || (mo == this.getNextSong());
   },
 
   setPlayableInfo: function(info){
@@ -764,6 +764,15 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
   getCurrentMopla: function(){
     return this.getMFCore().getCurrentMopla();
+  },
+  getNextSong: function() {
+    return this.state('next_song')
+  },
+  getNextPreloadSong: function() {
+    return this.getNesting('modern_next_possible_preferred')
+  },
+  getPrevSong: function() {
+    return this.state('prev_song')
   }
 });
 
