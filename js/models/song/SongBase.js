@@ -39,9 +39,6 @@ var SongBase = spv.inh(BrowseMap.Model, {
     };
   },
   init: function(self, opts, omo){
-    self.neighbour_for = null;
-    self.marked_prev_song = null;
-    self.marked_next_song = null;
     self.ready_to_preload = null;
     self.track = null;
     self.rtn_request = null;
@@ -463,9 +460,6 @@ var SongBase = spv.inh(BrowseMap.Model, {
       if (state){
         target.prepareForPlaying();
         target.requestState('album_name');
-
-      } else {
-        target.removeMarksFromNeighbours();
       }
     }
   },
@@ -484,8 +478,6 @@ var SongBase = spv.inh(BrowseMap.Model, {
     if (this.player) {
       this.player.requestPlay(play_request);
     }
-
-    this.makeSongPlayalbe(true);
   },
 
   wantSong: function() {
@@ -493,8 +485,6 @@ var SongBase = spv.inh(BrowseMap.Model, {
     if (this.player){
       this.player.wantSong(this);
     }
-
-    this.makeSongPlayalbe(true);
   },
 
   prepareForPlaying: function() {
@@ -569,63 +559,6 @@ var SongBase = spv.inh(BrowseMap.Model, {
     }
     this.getMFCore().play(mopla);
 
-  },
-
-  markAs: function(neighbour, mo){
-    if (!this.neighbour_for){
-      this.neighbour_for = mo;
-      pvUpdate(this, 'marked_as', neighbour);
-    }
-  },
-
-  unmark: function(mo){
-    if (this.neighbour_for == mo){
-      this.neighbour_for = null;
-      pvUpdate(this, 'marked_as', false);
-
-    }
-  },
-
-  wasMarkedAsPrev: function() {
-    return this.state('marked_as') && this.state('marked_as') == 'prev';
-  },
-
-  wasMarkedAsNext: function() {
-    return this.state('marked_as') && this.state('marked_as') == 'next';
-  },
-
-  addMarksToNeighbours: function(){
-
-    if (!this.marked_prev_song || this.marked_prev_song != this.prev_song){
-      if (this.marked_prev_song){
-      //	this.marked_prev_song.unmark(this);
-      }
-      if (this.prev_song){
-        (this.marked_prev_song = this.prev_song);//.markAs('prev', this);
-      }
-    }
-    if (!this.marked_next_song || this.marked_next_song != this.next_song){
-      if (this.marked_next_song){
-        //this.marked_next_song.unmark(this);
-      }
-      if (this.next_song){
-        (this.marked_next_song = this.next_song);//.markAs('next', this);
-      }
-    }
-    this.map_parent.checkShowedNeighboursMarks();
-
-  },
-
-  removeMarksFromNeighbours: function(){
-    if (this.marked_prev_song){
-      //this.marked_prev_song.unmark(this);
-      this.marked_prev_song = null;
-    }
-    if (this.marked_next_song){
-      //this.marked_next_song.unmark(this);
-      this.marked_next_song = null;
-    }
-    this.map_parent.checkShowedNeighboursMarks();
   },
 
   isImportant: function() {
