@@ -9,8 +9,17 @@ var matched = function(ok, item, more) {
   return ok ? item : more
 }
 
+var oneNotArray = function(item) {
+  if (Array.isArray(item)) {
+    debugger;
+    return item[0] || null
+  }
+
+  return item || null
+}
+
 var checkRepeat = function(no_repeat, next, next_circled) {
-  return no_repeat ? next : next_circled
+  return no_repeat ? oneNotArray(next) : oneNotArray(next_circled)
 }
 
 return {
@@ -42,9 +51,11 @@ return {
   '+states': {
     'vis_neig_prev': [
       'compx', ['@modern_prev_possible'],
+      oneNotArray,
     ],
     'vis_neig_next': [
       'compx', ['@modern_next_possible'],
+      oneNotArray,
     ],
     'next_song': [
       'compx', ['^dont_rept_pl', '@modern_next_matched', '@modern_next_circled_matched'],
