@@ -188,8 +188,12 @@ BrowseMap.Model = spv.inh(pv.HModel, {
   requestPage: function() {
     this.showOnMap();
   },
+  _getMySimpleBwlev: function() {
+    console.warn('_getMySimpleBwlev is depricated. md should not have tied connection to one `map` object')
+    return showMOnMap(BrowseLevel, this.app.map, this);
+  },
   showOnMap: function() {
-    var bwlev = showMOnMap(BrowseLevel, this.app.map, this);
+    var bwlev = this._getMySimpleBwlev();
     changeBridge(bwlev);
   },
   getParentMapModel: function() {
