@@ -21,6 +21,16 @@ var finup = function(callback) {
 };
 
 
+var oneNotArray = function(item) {
+  if (Array.isArray(item)) {
+    debugger;
+    return item[0] || null
+  }
+
+  return item || null
+}
+
+
 var SongBase = spv.inh(BrowseMap.Model, {
   strict: true,
   naming: function(fn) {
@@ -244,7 +254,8 @@ var SongBase = spv.inh(BrowseMap.Model, {
     ],
     'preffered_next_preload_song': [
       'compx',
-      ['@modern_next_possible_preferred']
+      ['@modern_next_possible_preferred'],
+      oneNotArray,
     ],
 
     "$relation:next_preload_song-for-loaded_player_song": [
