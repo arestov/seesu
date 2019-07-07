@@ -420,8 +420,8 @@ var navigator = window.navigator;
         play: function(e){
           if (this.c_song == e.song_file.mo){
             this.playing();
-            // if (this.c_song.next_preload_song){
-            // 	this.c_song.next_preload_song.prefindFiles();
+            // if (this.c_song.getNextPreloadSong()){
+            // 	this.c_song.getNextPreloadSong().prefindFiles();
             // }
             this.changeAppMode(true);
           }

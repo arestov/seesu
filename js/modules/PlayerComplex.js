@@ -138,11 +138,16 @@ var PlayerComplex = spv.inh(PlayerBase, {
 
           if (last_mo && resolved) {
             var bwlev = resolved.getNesting('bwlev');
-            var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, last_mo.map_parent);
-            var last_bwlev = pl_bwlev && BrowseMap.getBwlevFromParentBwlev(pl_bwlev, last_mo);
-            if (last_bwlev && last_bwlev.state('mp_show')) {
-              pl_bwlev.followTo(mo._provoda_id);
+            if (!bwlev) {
+              console.warn(new Error('play request should have bwlev'))
+            } else {
+              var pl_bwlev = BrowseMap.getConnectedBwlev(bwlev, last_mo.map_parent);
+              var last_bwlev = pl_bwlev && BrowseMap.getBwlevFromParentBwlev(pl_bwlev, last_mo);
+              if (last_bwlev && last_bwlev.state('mp_show')) {
+                pl_bwlev.followTo(mo._provoda_id);
+              }
             }
+
           }
 
           if (last_mo && last_mo.state('mp_show') && this.c_song != mo){
