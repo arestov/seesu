@@ -295,10 +295,12 @@ var legacyBase = spv.inh(LoadableList, {
 
 
       var addToArray = function(arr, item) {
-        if (arr.indexOf(item) == -1){
-          arr.push(item);
-          return true;
+        if (!item || arr.indexOf(item) != -1) {
+          return false
         }
+
+        arr.push(item);
+        return true;
       };
 
 
