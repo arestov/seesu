@@ -94,16 +94,7 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
 
   'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',
 
-  // 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
   'sel-coll-pioneer': '$spec_common-pioneer',
-  'collch-$spec_song': {
-    is_wrapper_parent: '^',
-    space: 'all-sufficient-details',
-    place: 'tpl.ancs.con',
-    by_model_name: true,
-  },
-
-  'sel-coll-pioneer/song': '$spec_song',
 }, used_struc_bhv));
 
 return BrowseLevView;

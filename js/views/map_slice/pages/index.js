@@ -7,6 +7,7 @@ var SearchPageView = require('../../SearchPageView');
 var ArtcardUI = require('../../ArtcardUI');
 var ArtistListView = require('../../ArtistListView');
 var SongsListView = require('../../SongsListView');
+var CurrentSongView = require('../../CurrentSongView')
 var UserCardPage = require('../../UserCardPage');
 var MusicConductorPage = require('../../MusicConductorPage');
 var TagPageView = require('../../TagPageView');
@@ -25,9 +26,7 @@ return {
     'main': SongsListView,
     'all-sufficient-details': SongsListView.SongsListDetailedView,
   },
-  song: {
-    'main': SongsListView.SongsListDetailedView
-  },
+  song: CurrentSongView,
   vk_usercard: UserCardPage.VkUsercardPageView,
   lfm_usercard: UserCardPage.LfmUsercardPageView,
   usercard: UserCardPage,

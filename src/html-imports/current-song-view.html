@@ -1,0 +1,48 @@
+<style>
+.playlist-container{
+	padding-top: 4px;
+	}
+
+.tracks-for-play{
+	clear:both;
+	}
+	.tracks-for-play.loading{
+		position: relative;
+		padding-bottom: 30px;
+		margin-bottom: -30px;
+	}
+	.tracks-for-play.loading:after{
+		left: auto;
+		top: auto;
+		bottom: 0;
+		right: 0.3rem;
+		}
+
+.show-zoom-to-track .tracks-for-play{
+	position: relative;
+}
+
+.show-zoom-to-track .tracks-for-play{
+	padding-top:40px;
+}
+
+.show-zoom-to-track .load-more-list-data{
+	display: none;
+}
+
+</style>
+<div class="current-song-view playlist-container show-zoom-to-track">
+	<ul
+		class="tracks-for-play"
+		pv-anchor="lc"
+		pv-class="
+			loading: list_loading
+		"
+		>
+    <script pv-nest='vis_neig_prev' pv-import="song-view"></script>
+
+    <!--pv-replace sample_name:song-view-->
+
+    <script pv-nest='vis_neig_next' pv-import="song-view"></script>
+  </ul>
+</div>
