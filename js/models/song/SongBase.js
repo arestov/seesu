@@ -281,9 +281,9 @@ var SongBase = spv.inh(BrowseMap.Model, {
 
     "$relation:next_preload_song-for-very_wanted_play": [
       "compx",
-      ['want_to_play', 'preffered_next_preload_song', '^want_be_played', 'mf_cor_has_available_tracks'],
-      function(want_to_play, related_next_preload_song, pl_want_be_played, mf_cor_has_available_tracks) {
-        return !mf_cor_has_available_tracks && want_to_play && pl_want_be_played && related_next_preload_song;
+      ['want_to_play', 'preffered_next_preload_song', 'mf_cor_has_available_tracks'],
+      function(want_to_play, related_next_preload_song, mf_cor_has_available_tracks) {
+        return !mf_cor_has_available_tracks && want_to_play && related_next_preload_song;
       }
     ],
 

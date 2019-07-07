@@ -87,9 +87,9 @@ var legacyBase = spv.inh(LoadableList, {
     "+states": {
       "active_use": [
         "compx",
-        ['mp_show', 'want_be_played'],
-        function (mp_show, want_be_played) {
-          return mp_show || want_be_played;
+        ['mp_show'],
+        function (mp_show) {
+          return mp_show;
         }
       ]
     },
@@ -200,22 +200,6 @@ var legacyBase = spv.inh(LoadableList, {
       } else {
         this.waiting_next = null;
       }
-    },
-
-    wantListPlaying: function() {
-      this.player.removeCurrentWantedSong();
-      pvUpdate(this, 'want_be_played', true);
-
-      if (!this.getMainlist()[0]) {
-        this.requestMoreData();
-      } else {
-        this.getMainlist()[0].wantSong();
-      }
-
-      var _this = this;
-      this.player.once('now_playing-signal', function() {
-        pvUpdate(_this, 'want_be_played', false);
-      });
     },
 
     setWaitingNextSong: setWaitingNextSong,
