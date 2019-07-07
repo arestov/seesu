@@ -11,7 +11,6 @@ var matched = function(ok, item, more) {
 
 var oneNotArray = function(item) {
   if (Array.isArray(item)) {
-    debugger;
     return item[0] || null
   }
 

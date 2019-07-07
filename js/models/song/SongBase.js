@@ -23,7 +23,6 @@ var finup = function(callback) {
 
 var oneNotArray = function(item) {
   if (Array.isArray(item)) {
-    debugger;
     return item[0] || null
   }
 
