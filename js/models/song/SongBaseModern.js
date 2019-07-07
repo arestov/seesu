@@ -21,6 +21,32 @@ var checkRepeat = function(no_repeat, next, next_circled) {
   return no_repeat ? oneNotArray(next) : oneNotArray(next_circled)
 }
 
+var buildFlow = function(name_next_base, name_flow, name_possbile, name_matched) {
+  var name_flow_helper = '<< @one:' + name_next_base + '.' + name_flow
+
+  var mut_result = {}
+
+  mut_result[name_flow] = [
+    'compx',
+    [ '< has_none_files_to_play', '<<<<', name_flow_helper],
+    failCheck,
+  ]
+
+  mut_result[name_possbile] = [
+    'compx', [name_flow_helper],
+  ]
+
+  mut_result[name_matched] = [
+    'compx', [
+      '< @one:playable < ' + name_possbile,
+      '<< @one:' + name_possbile,
+      '<< @one:' + name_possbile + '.modern_next_matched'],
+    matched,
+  ]
+
+  return mut_result
+}
+
 return {
   '+passes': {
     'handleState:mp_show': {
@@ -65,40 +91,12 @@ return {
       checkRepeat
     ]
   },
-  '+nests': {
+  '+nests': Object.assign({},
     // next possible
-    flow_next_possible: [
-      'compx',
-      [ '< has_none_files_to_play', '<<<<', '<< @one:next_by_number.flow_next_possible'],
-      failCheck,
-    ],
-    modern_next_possible: [
-      'compx', ['<< @one:next_by_number.flow_next_possible'],
-    ],
-    modern_next_matched: [
-      'compx', [
-        '< @one:playable < modern_next_possible',
-        '<< @one:modern_next_possible',
-        '<< @one:modern_next_possible.modern_next_matched'],
-      matched,
-    ],
+    buildFlow('next_by_number', 'flow_next_possible', 'modern_next_possible', 'modern_next_matched'),
 
     // next possible circled
-    flow_next_possible_circled: [
-      'compx',
-      [ '< has_none_files_to_play', '<<<<', '<< @one:next_cicled_by_number.flow_next_possible_circled'],
-      failCheck,
-    ],
-    modern_next_possible_circled: [
-      'compx', ['<< @one:next_cicled_by_number.flow_next_possible_circled'],
-    ],
-    modern_next_circled_matched: [
-      'compx', [
-        '< @one:playable < modern_next_possible_circled',
-        '<< @one:modern_next_possible_circled',
-        '<< @one:modern_next_possible_circled.modern_next_circled_matched'],
-      matched,
-    ],
+    buildFlow('next_cicled_by_number', 'flow_next_possible_circled', 'modern_next_possible_circled', 'modern_next_circled_matched'), {
 
     modern_next_possible_preferred: [
       'compx', [
@@ -107,41 +105,13 @@ return {
         '<< @one:modern_next_possible_circled',
       ],
       checkRepeat
-    ],
+    ]},
 
     // prev possible
-    flow_prev_possible: [
-      'compx',
-      [ '< has_none_files_to_play', '<<<<', '<< @one:prev_by_number.flow_prev_possible'],
-      failCheck,
-    ],
-    modern_prev_possible: [
-      'compx', ['<< @one:prev_by_number.flow_prev_possible'],
-    ],
-    modern_prev_matched: [
-      'compx', [
-        '< @one:playable < modern_prev_possible',
-        '<< @one:modern_prev_possible',
-        '<< @one:modern_prev_possible.modern_prev_matched'],
-      matched,
-    ],
+    buildFlow('prev_by_number', 'flow_prev_possible', 'modern_prev_possible', 'modern_prev_matched'),
 
     // prev possible circled
-    flow_prev_possible_circled: [
-      'compx',
-      [ '< has_none_files_to_play', '<<<<', '<< @one:prev_cicled_by_number.flow_prev_possible_circled'],
-      failCheck,
-    ],
-    modern_prev_possible_circled: [
-      'compx', ['<< @one:prev_cicled_by_number.flow_prev_possible_circled'],
-    ],
-    modern_prev_matched_circled: [
-      'compx', [
-        '< @one:playable < modern_prev_possible_circled',
-        '<< @one:modern_prev_possible_circled',
-        '<< @one:modern_prev_possible_circled.modern_prev_matched_circled'],
-      matched,
-    ],
-  }
-}
+    buildFlow('prev_cicled_by_number', 'flow_prev_possible_circled', 'modern_prev_possible_circled', 'modern_prev_matched_circled')
+
+)}
 })
