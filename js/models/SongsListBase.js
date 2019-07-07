@@ -311,22 +311,15 @@ var legacyBase = spv.inh(LoadableList, {
         } else if (this.state('can_load_more')){
           addToArray(demonstration, this);
         }
-        if (v_song.getPrevSong()){
-          addToArray(demonstration, v_song.getPrevSong());
-        }
+        addToArray(demonstration, v_song.getPrevSong());
       }
       if (p_song){
         addToArray(demonstration, p_song);
-
-        if (p_song.getNextSong()){
-          addToArray(demonstration, p_song.getNextSong());
-        }
+        addToArray(demonstration, p_song.getNextSong());
       }
       if (waiting_next){
         addToArray(demonstration, waiting_next);
-        if (waiting_next.getNextSong()){
-          addToArray(demonstration, waiting_next.getNextSong());
-        }
+        addToArray(demonstration, waiting_next.getNextSong());
       }
 
       addToArray(demonstration, this);
