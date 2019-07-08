@@ -3,6 +3,10 @@ define(function(require) {
 var spv = require('spv');
 
 var SongUI = require('./SongUI');
+var SongActionsRowUI = require('./SongActionsRowUI');
+var MfCorUI = require('./MfCorUI');
+var ArtcardUI = require('./ArtcardUI');
+var SongcardPage = require('./SongcardPage');
 
 return spv.inh(SongUI, {}, {
   base_tree: {
@@ -10,7 +14,11 @@ return spv.inh(SongUI, {}, {
   },
   children_views: {
     'vis_neig_prev': SongUI.SongViewLite,
-    'vis_neig_next': SongUI.SongViewLite
+    'vis_neig_next': SongUI.SongViewLite,
+    actionsrow: SongActionsRowUI,
+    mf_cor: MfCorUI,
+    artist: ArtcardUI.ArtistInSongConstroller,
+    songcard: SongcardPage.SongcardController,
   },
   "+states": {
     "vmp_show": [

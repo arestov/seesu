@@ -341,7 +341,7 @@ var MfCorUI = spv.inh(View, {}, {
     // }
     "vis_is_visible": [
       "compx",
-      ['^^^mp_show_end'],
+      ['^mp_show_end'],
       function(mp_show_end) {
         return !!mp_show_end;
       }
