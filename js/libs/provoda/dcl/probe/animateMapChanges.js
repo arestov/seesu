@@ -6,11 +6,11 @@ var pvUpdate = require('../../updateProxy').update;
 var probeDiff = require('../../probeDiff');
 
 
-var bindMMapStateChanges = function(app, md) {
-  if (app.binded_models[md._provoda_id]) {
+var bindMMapStateChanges = function(store_md, md) {
+  if (store_md.binded_models[md._provoda_id]) {
     return;
   }
-  app.binded_models[md._provoda_id] = true;
+  store_md.binded_models[md._provoda_id] = true;
 };
 
 var complexBrowsing = function(bwlev, md, value) {
@@ -23,11 +23,11 @@ var complexBrowsing = function(bwlev, md, value) {
 };
 
 var model_mapch = {
-  'move-view': function(change) {
+  'move-view': function(change, spg) {
     var md = change.target.getMD();
     var bwlev = change.bwlev.getMD();
 
-    bindMMapStateChanges(md.app, md);
+    bindMMapStateChanges(spg, md);
     // debugger;
 
     if (change.value) {
@@ -134,16 +134,18 @@ var branch = function (bwlev) {
   return list;
 }
 
- function animateMapChanges(app, bwlev) {
- var diff = probeDiff(bwlev.getMDReplacer(), app.current_mp_bwlev && app.current_mp_bwlev.getMDReplacer());
+ function animateMapChanges(fake_spyglass, bwlev) {
+ var diff = probeDiff(bwlev.getMDReplacer(), fake_spyglass.current_mp_bwlev && fake_spyglass.current_mp_bwlev.getMDReplacer());
  if (!diff.array || !diff.array.length) {
   return;
  }
 
   var bwlevs = branch(bwlev);
   var models = bwlevs.map(getPioneer);
-  updateNesting(app, 'navigation', bwlevs);
 
+  updateNesting(fake_spyglass, 'navigation', bwlevs);
+
+  var app = fake_spyglass.app;
   var nav_tree = models;
   app.nav_tree = nav_tree;
   if (app.matchNav){
@@ -164,7 +166,7 @@ var branch = function (bwlev) {
     var change = all_changhes[i];
     var handler = model_mapch[change.type];
     if (handler){
-      handler.call(null, change);
+      handler.call(null, change, fake_spyglass);
     }
   }
 
@@ -178,23 +180,29 @@ var branch = function (bwlev) {
 
 
   if (diff.target){
-    if (app.current_mp_md) {
-      pvUpdate(app.current_mp_md, 'mp_has_focus', false);
+    if (fake_spyglass.current_mp_md) {
+      pvUpdate(fake_spyglass.current_mp_md, 'mp_has_focus', false);
     }
-    var target_md = app.current_mp_md = diff.target.getMD();
+    var target_md = fake_spyglass.current_mp_md = diff.target.getMD();
 
-    app.current_mp_bwlev = depth(diff.bwlev.getMD(), app.current_mp_bwlev);
+    fake_spyglass.current_mp_bwlev = depth(diff.bwlev.getMD(), fake_spyglass.current_mp_bwlev);
 
     pvUpdate(target_md, 'mp_has_focus', true);
     pvUpdate(diff.bwlev.getMD(), 'mp_has_focus', true);
 
-    pvUpdate(app, 'show_search_form', !!target_md.state('needs_search_from'));
-    pvUpdate(app, 'full_page_need', !!target_md.full_page_need);
-  //	pvUpdate(app, 'current_mp_md', target_md._provoda_id);
-    updateNesting(app, 'current_mp_md', target_md);
-    updateNesting(app, 'current_mp_bwlev', diff.bwlev.getMD());
+    // pvUpdate(fake_spyglass, 'show_search_form', !!target_md.state('needs_search_from'));
+    pvUpdate(fake_spyglass, 'full_page_need', !!target_md.full_page_need);
+    updateNesting(fake_spyglass, 'current_mp_md', target_md);
+    updateNesting(fake_spyglass, 'current_mp_bwlev', diff.bwlev.getMD());
     //pvUpdate(target_md, 'mp-highlight', false);
 
+
+    // TODO: remove this legacy
+    updateNesting(app, 'current_mp_md', target_md);
+    // will be used for `imporant_models`
+    // will be using in views for size check?
+    pvUpdate(app, 'current_mp_bwlev', diff.bwlev.getMD());
+    // will be used for `imporant_models`
 
   }
 
@@ -215,11 +223,11 @@ var branch = function (bwlev) {
     }
   }
 
-  updateNesting(app, 'map_slice', {
+
+  updateNesting(fake_spyglass, 'map_slice', {
     residents_struc: mp_show_wrap,
     transaction: changes
   });
-
 
 };
 

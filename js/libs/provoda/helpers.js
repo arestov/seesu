@@ -11,26 +11,25 @@ var selecPoineertDeclr = require('./structure/selecPoineertDeclr');
 var getPropsPrefixChecker = require('./utils/getPropsPrefixChecker');
 var getEncodedState = require('./utils/getEncodedState');
 var getShortStateName = require('./utils/getShortStateName');
+var nil = spv.nil;
 
 var emergency_opt = {
   emergency: true
 };
 
-function getBwlevView(view) {
-  var bwlev_view;
 
-  var cur = view;
-  while (!bwlev_view && cur.parent_view) {
-    if (cur.parent_view != view.root_view) {
-      cur = cur.parent_view;
-    } else {
-      bwlev_view = cur;
-      break;
+function getBwlevView(target) {
+  var cur = target;
+
+  while (!nil(cur)) {
+    if (cur.mpx.md.model_name == 'bwlev') {
+      return cur;
     }
+
+    cur = cur.parent_view;
   }
 
-  return bwlev_view;
-}
+};
 
 function getBwlevId(view) {
   return getBwlevView(view).mpx._provoda_id;
@@ -207,8 +206,13 @@ return {
           var target_view;
           var fnName;
 
-          if (spv.startsWith(fnNameRaw, '#')) {
+          var firstChar = fnNameRaw.charAt(0);
+
+          if (firstChar === '#') {
             target_view = view.root_view;
+            fnName = fnNameRaw.slice(1);
+          } else if (firstChar === '^') {
+            target_view = view.parent_view;
             fnName = fnNameRaw.slice(1);
           } else {
             fnName = fnNameRaw
@@ -250,7 +254,7 @@ return {
             return;
           }
 
-          if (!e.pv_repeat_context){
+          if (!e.pv_repeat_context || args_list.length){
             target_view.tpl_events[fnName].apply(target_view, [e.event, e.node].concat(args_list));
           } else {
             target_view.tpl_r_events[e.pv_repeat_context][fnName].call(target_view, e.event, e.node, e.scope);

@@ -18,10 +18,12 @@ var localize_dict = require('js/libs/localizer');
 var route = require('./modules/route');
 var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
-var SearchQueryModel = require('./models/SearchQueryModel');
 var effects = require('./app/effects')
+var RootBwlevSeesu = require('./models/RootBwlevSeesu');
 
 var pvUpdate = pv.update;
+var updateNesting = require('pv/updateNesting');
+var pvState = require('pv/state');
 
 var app_env = app_serv.app_env;
 
@@ -163,6 +165,7 @@ var SeesuApp = spv.inh(AppModel, {
     self.cache_ajax = cache_ajax;
 
     self.p = new PlayerSeesu(self);
+    updateNesting(self, 'player', self.p);
     self.player = self.p;
     self.useInterface('player', self.player)
     self.app_md = self;
@@ -253,9 +256,6 @@ var SeesuApp = spv.inh(AppModel, {
     if (app_serv.app_env.nodewebkit) {
       pv.update(self, 'disallow_seesu_listeners', true);
     }
-    self.on('child_change-current_mp_md', self.inputFn(function() {
-      this.closeNavHelper();
-    }));
   },
 
 }, {
@@ -306,19 +306,7 @@ var SeesuApp = spv.inh(AppModel, {
 
   model_name: 'app_root',
 
-  BWLev: {
-    "+states": {
-      "show_search_form": [
-        "compx",
-        ['@one:needs_search_from:selected__md'],
-        function(needs_search_from) {
-          return needs_search_from;
-        }
-      ]
-    },
-
-    'nest-search_criteria': [SearchQueryModel]
-  },
+  BWLev: RootBwlevSeesu,
 
   'stch-session@lfm_auth': function(target, state) {
     if (state) {
@@ -328,7 +316,7 @@ var SeesuApp = spv.inh(AppModel, {
   'nest_rqc-lfm_auth': LfmAuth,
   'nest_rqc-vk_auth': VkAuth,
   'chi-start__page': StartPage,
-
+  // 'chi-fake_spyglass': FakeSpyglass,
   tickStat: function(data_array) {
     window._gaq.push(data_array);
   },
@@ -407,11 +395,6 @@ var SeesuApp = spv.inh(AppModel, {
 
 
   },
-
-  showPlaylists: function() {
-    this.search(':playlists');
-  },
-
   //fast search
   fs: {},
 
@@ -458,14 +441,6 @@ var SeesuApp = spv.inh(AppModel, {
 
   },
 
-  checkPageTracking: function() {
-    if (this.app_view_id && this.last_page_tracking_data){
-      this.trackStat.call(this, this.last_page_tracking_data);
-      this.last_page_tracking_data = null;
-
-    }
-  },
-
   trackTime: function(){
     var args = Array.prototype.slice.call(arguments);
     var current_page = this.current_page || '(nonono)';
@@ -509,20 +484,6 @@ var SeesuApp = spv.inh(AppModel, {
       }
     }
     return r;
-  },
-
-  attachUI: function(app_view_id) {
-    this.app_view_id = app_view_id;
-    this.checkPageTracking();
-  },
-
-  detachUI: function(app_view_id) {
-    if (this.p && this.p.c_song){
-      this.showNowPlaying(true);
-    }
-    if (this.app_view_id === app_view_id){
-      this.app_view_id = null;
-    }
   },
 
   vkappid: 2271620,
@@ -744,19 +705,6 @@ var SeesuApp = spv.inh(AppModel, {
     }
 
   },
-
-  suggestNavHelper: function() {
-    this.showNowPlaying();
-    if (this.state('played_playlists_length') > 1) {
-      pv.update(this, 'nav_helper_is_needed', true);
-    }
-
-
-  },
-
-  closeNavHelper: function() {
-    pv.update(this, 'nav_helper_is_needed', false);
-  }
 });
 
 return prepare(SeesuApp);

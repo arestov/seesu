@@ -21,6 +21,9 @@ var getModelSources = require('../structure/getModelSources');
 var countKeys = spv.countKeys;
 var cloneObj = spv.cloneObj;
 
+var transportName = function(spyglass_name) {
+  return 'spyglass__' + spyglass_name.replace('/', '__');
+}
 
 var BrowseLevel = spv.inh(Model, {
   strict: true,
@@ -31,11 +34,12 @@ var BrowseLevel = spv.inh(Model, {
   },
   init: function(self, opts, data, params, more, states) {
     self.children_bwlevs = {};
-    self.model_name = states['model_name'];
 
-    if (!self.model_name) {
-      throw new Error('must have model name');
-    }
+    // self.model_name = states['model_name'];
+    //
+    // if (!self.model_name) {
+    // 	throw new Error('must have model name');
+    // }
 
     var pioneer = states['pioneer'];
 
@@ -46,9 +50,9 @@ var BrowseLevel = spv.inh(Model, {
       self.ptree = self.ptree.concat(self.map_parent.ptree);
       self.rtree = self.rtree.concat(self.map_parent.rtree);
     }
-
   }
 }, {
+  model_name: 'bwlev',
   "+states": {
     "map_slice_view_sources": [
       "compx",
@@ -64,9 +68,14 @@ var BrowseLevel = spv.inh(Model, {
       "compx",
       ['@one:used_data_structure:map', '@pioneer', 'map_level_num', 'probe_name'],
       function(struc, pioneer, num, probe_name) {
+
         if (num == -2) {return}
+
         if (!struc || !pioneer || !probe_name) {return;}
-        return getUsageStruc(pioneer, probe_name, struc, this.app);
+
+        var spyglass_view_name = transportName(probe_name)
+        var sub_struc = struc.m_children.children[spyglass_view_name].main;
+        return getUsageStruc(pioneer, 'map_slice', sub_struc, this.app);
       }
     ],
 
@@ -150,6 +159,7 @@ var BrowseLevel = spv.inh(Model, {
     // md.requestPage();
     var bwlev = followFromTo(BrowseLevel, this.map, this, md);
     changeBridge(bwlev);
+    return bwlev;
   },
 
   'stch-mpl_attached': function(target, state) {

@@ -8,6 +8,9 @@ var getSPIConstr = getterSPIConstr();
 
 var routePathByModels = function routePathByModels(start_md, pth_string, need_constr, strict, options) {
 
+  if (!pth_string) {
+    throw new Error('Empty path can\'t be used. Use / to get start page')
+  }
   /*
   catalog
   users
@@ -35,7 +38,7 @@ var routePathByModels = function routePathByModels(start_md, pth_string, need_co
   var pth = cleanPath.split('/');
 
   var cur_md = start_md;
-  var result = cur_md;
+  var result = null;
   var tree_parts_group = null;
   for (var i = 0; i < pth.length; i++) {
     var types = spv.getTargetField(cur_md, '_sub_pager.type');
@@ -76,6 +79,7 @@ var routePathByModels = function routePathByModels(start_md, pth_string, need_co
       break;
     }
   }
+
   return result;
 }
 

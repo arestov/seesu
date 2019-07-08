@@ -20,7 +20,6 @@ var PlayerBase = spv.inh(pv.Model, {
     self.attached = {};
   },
   props: {
-    constructor: PlayerBase,
     global_volume: true,
     'regfr-cready': {
       event_name: 'core-ready',

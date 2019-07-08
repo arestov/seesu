@@ -40,9 +40,7 @@ return function showMOnMap(BWL, map, model, bwlev) {
       }
     }
 
-    if (model.state('has_no_access')) {
-      model.switchPmd();
-    } else if (ba_canReuse(bwlev) || is_start){//если модель прикреплена к карте
+    if (ba_canReuse(bwlev) || is_start){//если модель прикреплена к карте
       result = bwlev;
     } else {
       if (!model.model_name){

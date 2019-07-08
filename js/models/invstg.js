@@ -37,16 +37,14 @@ var playlistSuggest = spv.inh(base.BaseSuggest, {
     self.pl = data.playlist;
     self.text_title = self.getTitle();
     self.updateManyStates({
-      text_title: self.text_title
+      text_title: self.text_title,
+      playlist_provoda_id: data.playlist._provoda_id,
     });
   }
 }, {
   valueOf: function(){
     return this.pl.state('nav_title');
   },
-  onView: function(){
-    this.pl.showOnMap();
-  }
 });
 
 var seesuSection = spv.inh(base.SearchSection, {
@@ -176,8 +174,6 @@ var trackSuggest = spv.inh(base.BaseSuggest, {
     return this.artist + ' - ' + this.track;
   },
   onView: function(){
-    this.app.showTopTacks(this.artist, this.track);
-
     this.app.trackEvent('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
   }
 });
@@ -241,7 +237,6 @@ var tagSuggest = spv.inh(base.BaseSuggest, {
     return this.tag;
   },
   onView: function(){
-    this.app.show_tag(this.tag, this.invstg);
     this.app.trackEvent('Music search', this.q, "tag: " + this.tag );
   }
 });
@@ -296,6 +291,7 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
     }
     if (data.resid){
       self.aid = data.resid;
+      pvUpdate(self, 'aid', data.resid);
     }
     self.text_title = self.getTitle();
     pvUpdate(self, 'text_title', self.text_title);
@@ -305,11 +301,6 @@ var albumSuggest = spv.inh(base.BaseSuggest, {
     return '( ' + this.artist + ' ) ' + this.name;
   },
   onView: function(){
-    this.app.showArtistAlbum({
-      album_artist: this.artist,
-      album_name: this.name,
-      album_id: this.aid
-    }, this.invstg);
     this.app.trackEvent('Music search', this.q, "album: " + this.text_title);
   }
 });
@@ -433,18 +424,6 @@ var SearchPage = spv.inh(base.Investigation, {}, {
 
   setItemForEnter: function() {
 
-  },
-
-  key_name_nav: {
-    'Enter': function() {
-      this.pressEnter();
-    },
-    "Up": function() {
-      this.selectEnterItemAbove();
-    },
-    "Down": function() {
-      this.selectEnterItemBelow();
-    }
   },
 
   searchf: function() {

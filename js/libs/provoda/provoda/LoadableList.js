@@ -150,10 +150,11 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
   },
 
   insertDataAsSubitems: function(target, nesting_name, data_list, opts, source_name) {
-    if (!data_list || !data_list.length) {
-      return
-    }
     var items_list = [];
+
+    if (!data_list || !data_list.length) {
+      return items_list
+    }
 
     var mlc_opts = target.getMainListChangeOpts();
 
@@ -400,17 +401,6 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
       });
     }
   },
-
-  // :auth things
-  requestPage: function() {
-    if (!this.state('has_no_access')){
-      this.loadStart();
-      this.showOnMap();
-    } else {
-      this.map_parent.zoomOut();
-      this.switchPmd();
-    }
-  }
 });
 
 function convertToNestings(params) {

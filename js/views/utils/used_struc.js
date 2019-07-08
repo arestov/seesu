@@ -4,6 +4,9 @@ define(function(require) {
 var selecPoineertDeclr = require('js/libs/provoda/structure/selecPoineertDeclr');
 
 var bhv = {
+  'stch-used_struc': function(self, value) {
+    self.RPCLegacy('updateState', 'used_struc', value);
+  },
   "+states": {
     "view_path": [
       "compx",
@@ -12,7 +15,6 @@ var bhv = {
         return getViewPath(this).join('.');
       }
     ],
-
     "used_struc": [
       "compx",
       ['#view_structure', 'view_path'],

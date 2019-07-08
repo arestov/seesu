@@ -168,46 +168,35 @@
 
 		</div>
 		<div
-			pv-anchor="row_context"
-			class="song-row-content row-song-context hidden"
-			pv-class="hidden: !active_part"
 			>
-			<span class="rc-arrow hidden" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}" pv-class="hidden: !active_part">
-				<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
-			</span>
+      <div
+        pv-nest="spyglass__song_action"
+        class="hidden song-row-content row-song-context"
+        pv-class="hidden: !current_md$exists">
+        <span
+          pv-nest="current_md:arrow"
+          class="rc-arrow" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}">
+  				<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+  			</span>
+        <!--import-include('./addsong-to-playlist.html')-->
+  			<!--import-include('./share-song.html')-->
+  			<div class="love-song" pv-nest="current_md for_model:row-love"></div>
+  			<div class="song-tagging" pv-nest="current_md for_model:row-tag"></div>
+  			<div class="last-fm-scrobbling" pv-nest="current_md for_model:row-lastfm"></div>
+  			<div class="simple_row_setting" pv-nest="current_md for_model:row-repeat-song">
+  				<label class="song-row-label">
+  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
+  					<span class="lang localize-rept-song">Repeat playing song</span>
+  				</label>
 
-			<div pv-when="active_part === 'row-playlist-add'">
-				<!--import-include('./addsong-to-playlist.html')-->
-			</div>
-
-			<div class="share-song" pv-when="active_part === 'row-share'">
-				<!--import-include('./share-song.html')-->
-			</div>
-			<div class="love-song" pv-when="active_part === 'row-love'">
-				<div pv-nest="context_parts for_model:row-love"></div>
-			</div>
-			<div class="song-tagging" pv-when="active_part === 'row-tag'">
-				<div pv-nest="context_parts for_model:row-tag"></div>
-			</div>
-			<div class="last-fm-scrobbling" pv-when="active_part === 'row-lastfm'">
-				<div pv-nest="context_parts for_model:row-lastfm"></div>
-			</div>
-			<div class="simple_row_setting" pv-when="active_part === 'row-repeat-song'">
-				<div pv-nest="context_parts for_model:row-repeat-song">
-					<label class="song-row-label">
-						<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
-						<span class="lang localize-rept-song">Repeat playing song</span>
-					</label>
-				</div>
-			</div>
-			<div class="simple_row_setting" pv-when="active_part === 'row-pl-shuffle'">
-				<div pv-nest="context_parts for_model:row-pl-shuffle">
-					<label class="song-row-label">
-						<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
-						<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
-					</label>
-				</div>
-			</div>
+  			</div>
+  			<div class="simple_row_setting" pv-nest="current_md for_model:row-pl-shuffle">
+  				<label class="song-row-label">
+  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
+  					<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
+  				</label>
+  			</div>
+      </div>
 		</div>
 	</div>
 	<div class="photo_and_artinfo">

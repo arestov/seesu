@@ -92,6 +92,16 @@ return {
     ]
   },
   '+nests': Object.assign({},
+    {
+      'vis_neig_prev': [
+        'compx', ['<< @one:modern_prev_possible'],
+      ],
+      'vis_neig_next': [
+        'compx', ['<< @one:modern_next_possible'],
+      ],
+    },
+
+
     // next possible
     buildFlow('next_by_number', 'flow_next_possible', 'modern_next_possible', 'modern_next_matched'),
 

@@ -15,8 +15,8 @@ return function parsePVImport(node, sample_name) {
     script = node;
     node.removeChild(script);
   }
-
-  var map = script && JSON.parse(script.textContent);
+  var map_string = script && script.textContent
+  var map = map_string ? JSON.parse(map_string) : [{}];
 
   return {
     sample_name: sample_name,

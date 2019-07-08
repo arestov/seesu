@@ -2,19 +2,20 @@ define(function (require) {
 'use strict';
 var pv = require('pv');
 var view_serv = require('view_serv');
+// var findMpxViewInChildren = require('./findMpxViewInChildren')
 
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 var css_transform = view_serv.css.transform;
 var transform_props = css_transform ? [css_transform] : [];
 
 var getNavOHeight = function() {
-  return this.els.navs.outerHeight();
+  return this.root_view.els.navs.outerHeight();
 };
 var getAMCWidth = function() {
-  return this.els.app_map_con.width();
+  return this.root_view.els.app_map_con.width();
 };
 var getAMCOffset = function() {
-  return this.els.app_map_con.offset();
+  return this.root_view.els.app_map_con.offset();
 };
 
 return function readMapSliceAnimationData(view, transaction_data) {
@@ -38,15 +39,15 @@ return function readMapSliceAnimationData(view, transaction_data) {
   // var offset = targt_con.offset(); //domread
   var offset = target_in_parent.getBoxDemension(function() {
     return targt_con.offset();
-  }, 'con_offset', target_in_parent._lbr.innesting_pos_current, view.state('window_height'), view.state('workarea_width'));
+  }, 'con_offset', target_in_parent._lbr.innesting_pos_current, view.root_view.state('window_height'), view.root_view.state('workarea_width'));
 
   var width = target_in_parent.getBoxDemension(function() {
     return targt_con.outerWidth();
-  }, 'con_width', view.state('window_height'), view.state('workarea_width'));
+  }, 'con_width', view.root_view.state('window_height'), view.root_view.state('workarea_width'));
 
   var height = target_in_parent.getBoxDemension(function() {
     return targt_con.outerHeight();
-  }, 'con_height', view.state('window_height'), view.state('workarea_width'));
+  }, 'con_height', view.root_view.state('window_height'), view.root_view.state('workarea_width'));
 
 
   // var width = targt_con.outerWidth();  //domread
@@ -54,8 +55,8 @@ return function readMapSliceAnimationData(view, transaction_data) {
 
   var top = offset.top - parent_offset.top;
 
-  var con_height = view.state('window_height') - view.getBoxDemension(getNavOHeight, 'navs_height'); //domread, can_be_cached
-  var con_width = view.getBoxDemension(getAMCWidth, 'screens_width', view.state('workarea_width'));
+  var con_height = view.root_view.state('window_height') - view.getBoxDemension(getNavOHeight, 'navs_height'); //domread, can_be_cached
+  var con_width = view.getBoxDemension(getAMCWidth, 'screens_width', view.root_view.state('workarea_width'));
 
   var scale_x = width/con_width;
   var scale_y = height/con_height;
@@ -80,19 +81,19 @@ return function readMapSliceAnimationData(view, transaction_data) {
   };
 };
 
-function getMapSliceChildInParenViewOLD(md) {
-  var parent_md = md.map_parent;
-
-
-  var parent_view = this.getMapSliceView(parent_md);
-  if (!parent_view){
-    return;
-  }
-  var target_in_parent = parent_view.findMpxViewInChildren(this.getStoredMpx(md));
-  if (!target_in_parent){
-    var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
-    target_in_parent = view && view[0];
-  }
-  return target_in_parent;
-};
+// function getMapSliceChildInParenViewOLD(md) {
+//   var parent_md = md.map_parent;
+//
+//
+//   var parent_view = this.getMapSliceView(parent_md);
+//   if (!parent_view){
+//     return;
+//   }
+//   var target_in_parent = findMpxViewInChildren(parent_view, this.getStoredMpx(md));
+//   if (!target_in_parent){
+//     var view = parent_view.getChildViewsByMpx(this.getStoredMpx(md));
+//     target_in_parent = view && view[0];
+//   }
+//   return target_in_parent;
+// };
 });

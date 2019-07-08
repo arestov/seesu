@@ -76,9 +76,17 @@ var getPathBySimpleData = pathExecutor(function(chunkName, app, data) {
 
 var followStringTemplate = function (app, md, obj, need_constr, full_path, strict, options) {
   if (obj.from_root) {
+    if (full_path === '') {
+      // used just "#" as path
+      return app;
+    }
+
+    // "#page/etc/etc"
     return app.routePathByModels(full_path, app.start_page, need_constr, strict, options);
   }
+
   if (obj.from_parent) {
+    // "^page/ect"
     var target_md_start = md;
     for (var i = 0; i < obj.from_parent; i++) {
       target_md_start = target_md_start.map_parent;
@@ -88,6 +96,7 @@ var followStringTemplate = function (app, md, obj, need_constr, full_path, stric
     }
     return app.routePathByModels(full_path, target_md_start, need_constr, strict, options);
   }
+
   return app.routePathByModels(full_path, md, need_constr, strict, options);
 };
 
@@ -142,7 +151,7 @@ var getParsedPath = spv.memorize(function(string_template) {
     }
   }
 
-  if (!full_usable_string && !from_parent) {
+  if (!full_usable_string && !from_parent && !from_root) {
     throw new Error('path cannot be empty');
   }
 

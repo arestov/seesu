@@ -1073,7 +1073,7 @@
 					<div class="buttons-panel">
 					  <div class="nice-buttons-place">
 					    <span class="pc-place">
-					      <a class="pc pc-add "  title="add to playlist" pv-anchor="btrow-playlist-add" pv-events="click::switchPart:row-playlist-add" pv-type="way-point"></a>
+					      <a class="pc pc-add "  title="add to playlist" pv-anchor="btrow-playlist-add" pv-events="click:toggleProbe:song_action:row-playlist-add" pv-type="way-point"></a>
 					    </span>
 					    <!--
 					    <span class="pc-place">
@@ -1081,25 +1081,25 @@
 					    </span>
 					    -->
 					    <span class="pc-place">
-					      <a class="pc pc-rupor "  title="share song" pv-anchor="btrow-share" pv-events="click::switchPart:row-share" pv-type="way-point"></a>
+					      <a class="pc pc-rupor "  title="share song" pv-anchor="btrow-share" pv-events="click:toggleProbe:song_action:row-share" pv-type="way-point"></a>
 					    </span>
 					    <span class="pc-place">
-					      <a class="pc pc-love "  title="love song" pv-anchor="btrow-love" pv-events="click::switchPart:row-love" pv-type="way-point"></a>
+					      <a class="pc pc-love "  title="love song" pv-anchor="btrow-love" pv-events="click:toggleProbe:song_action:row-love" pv-type="way-point"></a>
 					    </span>
 					    <span class="pc-place">
-					      <a class="pc pc-tag "  title="tag song" pv-anchor="btrow-tag" pv-events="click::switchPart:row-tag" pv-type="way-point"></a>
+					      <a class="pc pc-tag "  title="tag song" pv-anchor="btrow-tag" pv-events="click:toggleProbe:song_action:row-tag" pv-type="way-point"></a>
 					    </span>
 
 					  </div>
 					  <ul class="track-buttons">
 					    <li class="scrobbling-button"  title="Last.fm scrobbling">
-					      <a  class="trackbutton lfm-scrobbling-button" pv-anchor="btrow-lastfm" pv-events="click::switchPart:row-lastfm" pv-type="way-point"></a>
+					      <a  class="trackbutton lfm-scrobbling-button" pv-anchor="btrow-lastfm" pv-events="click:toggleProbe:song_action:row-lastfm" pv-type="way-point"></a>
 					    </li>
 					    <li class="pl-shuffle-button-wrap">
-					      <a  class="trackbutton pl-shuffle-button" pv-anchor="btrow-pl-shuffle" pv-events="click::switchPart:row-pl-shuffle" pv-type="way-point"></a>
+					      <a  class="trackbutton pl-shuffle-button" pv-anchor="btrow-pl-shuffle" pv-events="click:toggleProbe:song_action:row-pl-shuffle" pv-type="way-point"></a>
 					    </li>
 					    <li class="rept-song-button-wrap">
-					      <a  class="trackbutton rept-song-button" pv-anchor="btrow-repeat-song" pv-events="click::switchPart:row-repeat-song" pv-type="way-point"></a>
+					      <a  class="trackbutton rept-song-button" pv-anchor="btrow-repeat-song" pv-events="click:toggleProbe:song_action:row-repeat-song" pv-type="way-point"></a>
 					    </li>
 					    <li class="volume-control" pv-anchor="volume-control">
 					      <div class="v-hole" pv-anchor="v-hole">
@@ -1114,203 +1114,191 @@
 
 				</div>
 				<div
-					pv-anchor="row_context"
-					class="song-row-content row-song-context hidden"
-					pv-class="hidden: !active_part"
 					>
-					<span class="rc-arrow hidden" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}" pv-class="hidden: !active_part">
-						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
-					</span>
+		      <div
+		        pv-nest="__run_probe_song_action"
+		        class="hidden song-row-content row-song-context"
+		        pv-class="hidden: !current_md$exists">
+		        <span
+		          pv-nest="current_md:arrow"
+		          class="rc-arrow" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}">
+		  				<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+		  			</span>
+		        
+		        <div class="addsong-to-playlist" pv-nest="current_md for_model:row-playlist-add">
+		          <h4><span class="lang localize-addsong ">add song to</span>:</h4>
+		          <div>
+		            <input type="search" class="playlist-query" autocomplete="off"
+		              pv-events="{{
+		                keyup:input_search
+		                change:input_search
+		                search:input_search
+		                mousemove:input_search
+		              }}"
+		            />
+		          </div>
+		          <!--pv-replace sample_name:list_of_playlists-->
+		        </div>
 
-					<div pv-when="active_part === 'row-playlist-add'">
-						
-						<div class="addsong-to-playlist" pv-nest="context_parts for_model:row-playlist-add">
-						  <h4><span class="lang localize-addsong ">add song to</span>:</h4>
-						  <div>
-						    <input type="search" class="playlist-query" autocomplete="off"
-						      pv-events="{{
-						        keyup:input_search
-						        change:input_search
-						        search:input_search
-						        mousemove:input_search
-						      }}"
-						    />
-						  </div>
-						  <!--pv-replace sample_name:list_of_playlists pv-when:active_view-->
-						</div>
+		  			
+		  			
+		  			
+		  			
+		  			<div class="share-song" pv-nest="current_md for_model:row-share">
+		  			  <input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
+		  			  <div
+		  			    class="shareb-base  users-list"
+		  			    pv-anchor="vk_share_b">
 
-					</div>
+		  			    <div class="shareb-con">
 
-					<div class="share-song" pv-when="active_part === 'row-share'">
-						
-						
-						
-						
+		  			      <div >
 
-						<div pv-nest="context_parts for_model:row-share">
-						  <input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
-						  <div
-						    class="shareb-base  users-list"
-						    pv-anchor="vk_share_b">
+		  			        <div class="">
+		  			          <input type="text" pv-anchor="vk_share_search">
+		  			        </div>
 
-						    <div class="shareb-con">
+		  			        <div pv-nest="searcher">
 
-						      <div >
+		  			          <div pv-nest="section for_model:section-vk-users" class="vk_share">
+		  			            <div class="vk_auth" pv-anchor="vk_auth"></div>
+		  			            <div pv-class="hidden: needs_vk_auth">
+		  			              <div>
+		  			                <div class="share_header_wrap">
+		  			                  <h3 class="vk_share_header lang localize-post-song"></h3>
+		  			                  <div class="post-to-my-vk-wall" pv-class="hidden: !own_photo" pv-events="click::postToVKWall" pv-type="way-point">
+		  			                    <img pv-props="src: {{own_photo}}">
+		  			                    <span class="lang localize-to-own-wall"></span>
+		  			                  </div>
+		  			                </div>
 
-						        <div class="">
-						          <input type="text" pv-anchor="vk_share_search">
-						        </div>
+		  			                <div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
+		  			              </div>
+		  			              <div class="details_switch_block">
+		  			                <span class="desc">vk.com</span>
 
-						        <div pv-nest="searcher">
+		  			                <div class="details_switch" >
+		  			                  <div
+		  			                    class="min_details"
+		  			                    pv-class="active: !vis_full_view_mode"
+		  			                    pv-events="click:toggleVisState:full_view_mode::">
+		  			                    <span class="icon"></span>
+		  			                  </div>
+		  			                  <div
+		  			                    class="max_details"
+		  			                    pv-class="active: vis_full_view_mode"
+		  			                    pv-events="click:toggleVisState:full_view_mode:true">
+		  			                    <span class="icon"></span>
+		  			                  </div>
+		  			                </div>
+		  			              </div>
 
-						          <div pv-nest="section for_model:section-vk-users" class="vk_share">
-						            <div class="vk_auth" pv-anchor="vk_auth"></div>
-						            <div pv-class="hidden: needs_vk_auth">
-						              <div>
-						                <div class="share_header_wrap">
-						                  <h3 class="vk_share_header lang localize-post-song"></h3>
-						                  <div class="post-to-my-vk-wall" pv-class="hidden: !own_photo" pv-events="click::postToVKWall" pv-type="way-point">
-						                    <img pv-props="src: {{own_photo}}">
-						                    <span class="lang localize-to-own-wall"></span>
-						                  </div>
-						                </div>
-
-						                <div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
-						              </div>
-						              <div class="details_switch_block">
-						                <span class="desc">vk.com</span>
-
-						                <div class="details_switch" >
-						                  <div
-						                    class="min_details"
-						                    pv-class="active: !vis_full_view_mode"
-						                    pv-events="click:toggleVisState:full_view_mode::">
-						                    <span class="icon"></span>
-						                  </div>
-						                  <div
-						                    class="max_details"
-						                    pv-class="active: vis_full_view_mode"
-						                    pv-events="click:toggleVisState:full_view_mode:true">
-						                    <span class="icon"></span>
-						                  </div>
-						                </div>
-						              </div>
-
-						              <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
-						                <div class="song_acting_vk_search protect_clicks  details_for_switcher ">
-						                  <ul>
-						                    <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-						                      <a>
-						                        <img pv-props="src:{{photo}}">
-						                        <span pv-text="{{text_title}}" class="text_part"></span>
-						                      </a>
-						                    </li>
-						                  </ul>
-						                  <div class="clicks_protecter" pv-events="click:requestFullView"></div>
-						                </div>
-						              </div>
-						            </div>
-
-
-
-
-						          </div>
-
-						          <div pv-anchor="lfm_auth_con"></div>
-						          <div pv-nest="section for_model:section-lfm-user"
-						            class="lfm_share"
-						            pv-class="hidden: !can_share">
-						            <ul >
-						              <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-						                <a>
-						                  <img src="" alt=""
-
-						                    pv-props=
-						                    "src: {{
-						                    (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
-						                    || selected_image.url
-						                    }}">
-						                  <span pv-text="{{text_title}}" class="text_part"></span>
-						                </a>
-						              </li>
-						            </ul>
-						          </div>
-						          <div pv-nest="section for_model:section-lfm-friends"
-						            class="lfm_share"
-						            pv-class="hidden: !can_share"
-
-						          >
-						            <div class="details_switch_block">
-						              <span class="desc">last.fm</span>
-
-						              <div class="details_switch" >
-						                <div
-						                  class="min_details"
-						                  pv-class="active: !vis_full_view_mode"
-						                  pv-events="click:toggleVisState:full_view_mode::">
-						                  <span class="icon"></span>
-						                </div>
-						                <div
-						                  class="max_details"
-						                  pv-class="active: vis_full_view_mode"
-						                  pv-events="click:toggleVisState:full_view_mode:true">
-						                  <span class="icon"></span>
-						                </div>
-						              </div>
-						            </div>
-
-						            <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
-						              <div class="song_acting_lfm_search protect_clicks details_for_switcher" >
-						                <ul >
-						                  <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-						                    <a>
-						                      <img pv-props="
-						                          src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
-						                        ">
-
-						                      <span pv-text="{{text_title}}" class="text_part"></span>
-						                    </a>
-						                  </li>
-						                </ul>
-						                <div class="clicks_protecter" pv-events="click:requestFullView"></div>
-						              </div>
-						            </div>
-						          </div>
-						        </div>
+		  			              <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+		  			                <div class="song_acting_vk_search protect_clicks  details_for_switcher ">
+		  			                  <ul>
+		  			                    <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+		  			                      <a>
+		  			                        <img pv-props="src:{{photo}}">
+		  			                        <span pv-text="{{text_title}}" class="text_part"></span>
+		  			                      </a>
+		  			                    </li>
+		  			                  </ul>
+		  			                  <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+		  			                </div>
+		  			              </div>
+		  			            </div>
 
 
 
-						      </div>
-						    </div>
-						  </div>
-						</div>
 
-					</div>
-					<div class="love-song" pv-when="active_part === 'row-love'">
-						<div pv-nest="context_parts for_model:row-love"></div>
-					</div>
-					<div class="song-tagging" pv-when="active_part === 'row-tag'">
-						<div pv-nest="context_parts for_model:row-tag"></div>
-					</div>
-					<div class="last-fm-scrobbling" pv-when="active_part === 'row-lastfm'">
-						<div pv-nest="context_parts for_model:row-lastfm"></div>
-					</div>
-					<div class="simple_row_setting" pv-when="active_part === 'row-repeat-song'">
-						<div pv-nest="context_parts for_model:row-repeat-song">
-							<label class="song-row-label">
-								<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
-								<span class="lang localize-rept-song">Repeat playing song</span>
-							</label>
-						</div>
-					</div>
-					<div class="simple_row_setting" pv-when="active_part === 'row-pl-shuffle'">
-						<div pv-nest="context_parts for_model:row-pl-shuffle">
-							<label class="song-row-label">
-								<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
-								<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
-							</label>
-						</div>
-					</div>
+		  			          </div>
+
+		  			          <div pv-anchor="lfm_auth_con"></div>
+		  			          <div pv-nest="section for_model:section-lfm-user"
+		  			            class="lfm_share"
+		  			            pv-class="hidden: !can_share">
+		  			            <ul >
+		  			              <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+		  			                <a>
+		  			                  <img src="" alt=""
+
+		  			                    pv-props=
+		  			                    "src: {{
+		  			                    (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+		  			                    || selected_image.url
+		  			                    }}">
+		  			                  <span pv-text="{{text_title}}" class="text_part"></span>
+		  			                </a>
+		  			              </li>
+		  			            </ul>
+		  			          </div>
+		  			          <div pv-nest="section for_model:section-lfm-friends"
+		  			            class="lfm_share"
+		  			            pv-class="hidden: !can_share"
+
+		  			          >
+		  			            <div class="details_switch_block">
+		  			              <span class="desc">last.fm</span>
+
+		  			              <div class="details_switch" >
+		  			                <div
+		  			                  class="min_details"
+		  			                  pv-class="active: !vis_full_view_mode"
+		  			                  pv-events="click:toggleVisState:full_view_mode::">
+		  			                  <span class="icon"></span>
+		  			                </div>
+		  			                <div
+		  			                  class="max_details"
+		  			                  pv-class="active: vis_full_view_mode"
+		  			                  pv-events="click:toggleVisState:full_view_mode:true">
+		  			                  <span class="icon"></span>
+		  			                </div>
+		  			              </div>
+		  			            </div>
+
+		  			            <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+		  			              <div class="song_acting_lfm_search protect_clicks details_for_switcher" >
+		  			                <ul >
+		  			                  <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+		  			                    <a>
+		  			                      <img pv-props="
+		  			                          src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
+		  			                        ">
+
+		  			                      <span pv-text="{{text_title}}" class="text_part"></span>
+		  			                    </a>
+		  			                  </li>
+		  			                </ul>
+		  			                <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+		  			              </div>
+		  			            </div>
+		  			          </div>
+		  			        </div>
+
+
+
+		  			      </div>
+		  			    </div>
+		  			  </div>
+		  			</div>
+
+		  			<div class="love-song" pv-nest="current_md for_model:row-love"></div>
+		  			<div class="song-tagging" pv-nest="current_md for_model:row-tag"></div>
+		  			<div class="last-fm-scrobbling" pv-nest="current_md for_model:row-lastfm"></div>
+		  			<div class="simple_row_setting" pv-nest="current_md for_model:row-repeat-song">
+		  				<label class="song-row-label">
+		  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
+		  					<span class="lang localize-rept-song">Repeat playing song</span>
+		  				</label>
+
+		  			</div>
+		  			<div class="simple_row_setting" pv-nest="current_md for_model:row-pl-shuffle">
+		  				<label class="song-row-label">
+		  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
+		  					<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
+		  				</label>
+		  			</div>
+		      </div>
 				</div>
 			</div>
 			<div class="photo_and_artinfo">
@@ -1941,7 +1929,7 @@
 					pv-class="
 						hidden: !now_playing_text
 						nav-button: !viewing_playing
-						np-button-nh_intend: {{ !nav_helper_is_needed && viewing_playing && (played_playlists_length > 1) }}
+						np-button-nh_intend: {{ !nav_helper_is_needed && viewing_playing && (played_playlists$length > 1) }}
 						player-played: playing
 						np-button-can_ff: {{ nav_helper_is_needed && !viewing_playing }}
 					"
@@ -1994,8 +1982,8 @@
 				</div>
 				<span
 					class="hidden nav_helper-fullb"
-					pv-class="hidden: {{ (played_playlists_length < 3 || nav_helper_full) }}"
-					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists_length - 2}}"></span> items</span>
+					pv-class="hidden: {{ (played_playlists$length < 3 || nav_helper_full) }}"
+					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists$length - 2}}"></span> items</span>
 
 				<span pv-events="click::closeNavHelper" class="nav_helper-closer">&times;</span>
 

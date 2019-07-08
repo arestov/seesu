@@ -3,10 +3,12 @@ define(function(require) {
 var spv = require('spv');
 var $ = require('jquery');
 
-var WPBox = function(root_view, getStartModel, select, press, getRelativeWP, removeWP) {
+var getMapSliceView = require('../map_slice/getMapSliceView');
+
+var WPBox = function(root_view, getImportantView, select, press, getRelativeWP, removeWP) {
   this.root_view = root_view;
 
-  this.getStartModel = getStartModel;
+  this.getImportantView = getImportantView;
   this.press = press;
   this.select = select;
   this.getRelativeWP = getRelativeWP;
@@ -35,68 +37,65 @@ spv.Class.extendTo(WPBox, {
     }
   },
   wayPointsNav: function(nav_type, e) {
-    //var _this = this;
+    var important_view = this.getImportantView();
+    var roocon_view =  important_view || this.root_view;
+    if (!roocon_view) {
+      return;
+    }
 
-    var cur_mp_md = this.getStartModel();
-    var roocon_view =  (cur_mp_md && this.root_view.getStoredMpx(cur_mp_md).getRooConPresentation(this.root_view, true)) || this.root_view;
-    if (roocon_view){
+    var cwp = this.getRelativeWP();
+    if (nav_type == 'Enter'){
+      if (cwp){
+        this.press(cwp);
 
+      }
+      return;
+    }
 
-      var cwp = this.getRelativeWP();
-      if (nav_type == 'Enter'){
+    if (!this.wp_dirs.all[nav_type]) {
+      return;
+    }
 
-        if (cwp){
-          this.press(cwp);
-
-        }
-
-      } else if (this.wp_dirs.all[nav_type]){
-        var dems_storage = {};
-        if (cwp) {
-          var passes = false;
-          while (cwp && !passes) {
-
-            if (!this.getWPDemsForStorage(cwp, dems_storage)) {
-              this.removeWP(cwp);
-              var ncwp = this.getRelativeWP();
-              if (ncwp != cwp) {
-                cwp = ncwp;
-              } else {
-                cwp = null;
-              }
-            } else {
-              passes = true;
-            }
-          }
-        }
-
-        if (!cwp){
-          var cur_view = roocon_view;
-          var wayp_pack =[];
-
-          while (!wayp_pack.length && cur_view){
-            wayp_pack = this.getWPPack(cur_view, dems_storage);
-            cur_view = cur_view.parent_view;
-          }
-          this.select(wayp_pack[0], e);
-
-
-        } else {
-          var target_dems = cwp && dems_storage[cwp.wpid];
-          if (!target_dems){
-            throw new Error('there is no demensions!');
-          }
-          var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
-
-          var new_wpoint = corridor[0];
-          if (new_wpoint ){
-            this.select(new_wpoint, e);
-          }
-
-        }
+    var dems_storage = {};
+    var passes = false;
+    while (cwp && !passes) {
+      if (this.getWPDemsForStorage(cwp, dems_storage)) {
+        passes = true;
+        continue;
       }
 
+      this.removeWP(cwp);
+      var ncwp = this.getRelativeWP();
+      if (ncwp != cwp) {
+        cwp = ncwp;
+      } else {
+        cwp = null;
+      }
     }
+
+    if (!cwp){
+      var cur_view = roocon_view;
+      var wayp_pack =[];
+
+      while (!wayp_pack.length && cur_view){
+        wayp_pack = this.getWPPack(cur_view, dems_storage);
+        cur_view = cur_view.parent_view;
+      }
+      this.select(wayp_pack[0], e);
+      return;
+    }
+
+    var target_dems = cwp && dems_storage[cwp.wpid];
+    if (!target_dems){
+      throw new Error('there is no demensions!');
+    }
+    var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
+
+    var new_wpoint = corridor[0];
+    if (new_wpoint ){
+      this.select(new_wpoint, e);
+    }
+
   },
   getAnyPossibleWaypoints: function(cwp, nav_type, dems_storage) {
     var corridor = [];

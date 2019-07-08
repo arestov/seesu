@@ -14,6 +14,12 @@ var nestBorrowInit = require('./dcl_view/nest_borrow/init');
 var nestBorrowDestroy = require('./dcl_view/nest_borrow/destroy');
 var nestBorrowCheckChange = require('./dcl_view/nest_borrow/check-change');
 
+var initSpyglasses = require('./dcl_view/spyglass/init');
+var getRootBwlevView = require('./dcl_view/spyglass/getRootBwlevView');
+var getBwlevView = require('./dcl_view/getBwlevView');
+
+// var spyglassDestroy = require('./dcl_view/spyglass/destroy');
+
 var pvUpdate = updateProxy.update;
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;
@@ -145,7 +151,29 @@ var initView = function(target, view_otps, opts){
   prsStCon.connect.root(target, target);
 
   nestBorrowInit(target);
+  initSpyglasses(target)
 };
+
+
+var changeSpyglassUniversal = function (method) {
+  return function () {
+    var bwlev_view = this.root_view.parent_view;
+    var parent_bwlev_view = getBwlevView(this);
+    var event_data = Array.prototype.slice.call(arguments, 2);
+    var data = {
+      context_md: parent_bwlev_view.children_models.pioneer._provoda_id,
+      bwlev: parent_bwlev_view.mpx.md._provoda_id,
+      target_id: this.mpx._provoda_id,
+      probe_name: event_data[0],
+      value: event_data[1],
+      probe_container_uri: null,
+    };
+
+    bwlev_view.RPCLegacy.apply(
+      bwlev_view, [method, data]
+    );
+  }
+}
 
 var selectParent = function (view) {
   return view.parent_view
@@ -184,22 +212,32 @@ var View = spv.inh(StatesEmitter, {
       this.RPCLegacy.apply(this, arguments);
     }
   },
+  requestPageById: function(_provoda_id) {
+    this.root_view.parent_view.RPCLegacy('requestPage', _provoda_id);
+  },
   requestPage: function() {
-    var bwlev_view = $v.getBwlevView(this);
-
     var md_id = this.mpx._provoda_id;
-    bwlev_view.RPCLegacy('requestPage', md_id);
+
+    this.root_view.parent_view.RPCLegacy('requestPage', md_id);
   },
   tpl_events: {
     requestPage: function() {
       this.requestPage();
     },
+    requestPageById: function(e, node, _provoda_id) {
+      this.requestPageById(_provoda_id);
+    },
     followTo: function() {
-      var bwlev_view = $v.getBwlevView(this);
-
       var md_id = this.mpx._provoda_id;
-      bwlev_view.RPCLegacy('followTo', md_id);
-    }
+      var bwlev_view = $v.getBwlevView(this);
+      this.root_view.parent_view.RPCLegacy('followTo', bwlev_view.mpx._provoda_id, md_id);
+    },
+    followURL: function(e, node, url) {
+      var bwlev_view = $v.getBwlevView(this);
+      this.root_view.parent_view.RPCLegacy('followURL', bwlev_view.mpx._provoda_id, url);
+    },
+    toggleSpyglass: changeSpyglassUniversal('toggleSpyglass'),
+    updateSpyglass: changeSpyglassUniversal('updateSpyglass'),
   },
   onExtend: spv.precall(StatesEmitter.prototype.onExtend, function (md, props, original, params) {
     return onPropsExtend(md, props, original, params);
@@ -370,6 +408,8 @@ var View = spv.inh(StatesEmitter, {
       this.tpl = tpl;
     }
 
+    tpl.root_node_raw._provoda_view = this;
+
     return tpl;
   },
   addTemplatedWaypoint: function(wp_wrap) {
@@ -516,6 +556,10 @@ var View = spv.inh(StatesEmitter, {
         this.createBase();
       }
     }
+
+    if (this.c) {
+      this.c._provoda_view = this;
+    }
   },
   requestDetailesCreating: function() {
     if (!this._lbr.has_details){
@@ -574,74 +618,6 @@ var View = spv.inh(StatesEmitter, {
       }
     }
 
-  },
-  getAncestorByRooViCon: function(view_space, strict) { //находит родительскую вьюху соеденённую с корневой вьюхой
-    //by root view connection
-    var target_ancestor;
-    var cur_ancestor = this;
-    if (strict){
-      cur_ancestor = cur_ancestor.parent_view;
-    }
-    while (!target_ancestor && cur_ancestor){
-      if (cur_ancestor == this.root_view){
-        break;
-      } else {
-        if (cur_ancestor.parent_view == this.root_view){
-          if ( this.root_view.matchCildrenView( cur_ancestor, view_space, 'map_slice' ) ) {
-            target_ancestor = cur_ancestor;
-            break;
-          }
-
-        }
-      }
-
-      cur_ancestor = cur_ancestor.parent_view;
-    }
-    return target_ancestor;
-  },
-  findMpxViewInChildren: function(mpx, nesting_space, nesting_name) {
-    nesting_space = nesting_space || 'main';
-    var i;
-    var views = mpx.getViews();
-
-
-    var children = [];
-
-    for (i = 0; i < this.children.length; i++) {
-      var cur = this.children[i];
-      if (cur.nesting_space != nesting_space) {
-        continue;
-      }
-      if (nesting_name && cur.nesting_name != nesting_name) {
-        continue;
-      }
-      children.push(cur);
-    }
-
-
-    for (i = 0; i < views.length; i++) {
-      if (children.indexOf(views[i]) != -1) {
-        return views[i];
-      }
-    }
-  },
-  matchCildrenView: function(target_view, nesting_space, nesting_name) {
-    nesting_space = nesting_space || 'main';
-    for (var i = 0; i < this.children.length; i++) {
-      var cur = this.children[i];
-      if (cur != target_view) {
-        continue;
-      }
-      if (nesting_space && cur.nesting_space != nesting_space) {
-        continue;
-      }
-      if (nesting_name && cur.nesting_name != nesting_name) {
-        continue;
-      }
-      return true;
-
-    }
-    return false;
   },
   getFreeChildView: function(address_opts, md, opts) {
     var mpx = this.getStoredMpx(md);
@@ -893,6 +869,7 @@ var View = spv.inh(StatesEmitter, {
       this.markAsDead(opts && opts.skip_md_call);
       nestBorrowDestroy(this);
       this._lbr.marked_as_dead = true;
+      // spyglassDestroy(this)
     }
     return this;
   },

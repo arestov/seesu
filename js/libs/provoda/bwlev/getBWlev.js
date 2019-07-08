@@ -1,6 +1,13 @@
 define(function (require) {
 'use strict';
-var create = require('../create');
+var getSPByPathTemplate = require('../initDeclaredNestings').getSPByPathTemplate;
+var initBWlev = require('./initBWlev')
+
+var getConstr = function(map, model_name) {
+  try {
+    return getSPByPathTemplate(map.app, map, 'bwlev-' + model_name, true)
+  } catch (e) {}
+}
 
 return function getBWlev(BrowseLevel, md, probe_name, parent_bwlev, map_level_num, map){
   var cache = parent_bwlev && parent_bwlev.children_bwlevs;
@@ -9,20 +16,12 @@ return function getBWlev(BrowseLevel, md, probe_name, parent_bwlev, map_level_nu
     return cache[key];
   }
 
-  // debugger;
-  // var BrowseLevel = require('./BrowseLevel');
+  if (!BrowseLevel) {
+    throw new Error('provide BrowseLevel constructor');
+  }
 
-  var bwlev = create(BrowseLevel, {
-    probe_name: probe_name,
-    map_level_num: map_level_num,
-    model_name: md.model_name,
-    pioneer: md
-  }, {
-    nestings: {
-      pioneer: md,
-      map: map
-    }
-  }, parent_bwlev, md.app);
+  var Constr = map && getConstr(map, md.model_name)
+  var bwlev = initBWlev(Constr || map.BWL, md, probe_name, map_level_num, map, parent_bwlev)
 
   if (cache) {
     cache[key] = bwlev;

@@ -3,20 +3,18 @@ define(function(require) {
 var pv = require('pv');
 var spv = require('spv');
 var changeBridge = require('../bwlev/changeBridge');
-var createLevel = require('../bwlev/createLevel');
-var BrowseLevel = require('../bwlev/BrowseLevel');
-var showMOnMap = require('../bwlev/showMOnMap');
+var initBWlev = require('../bwlev/initBWlev');
 var showInterest = require('../bwlev/showInterest');
 var getBwlevFromParentBwlev = require('../bwlev/getBwlevFromParentBwlev');
 var get_constr = require('../structure/get_constr');
 var prepare = require('../structure/prepare');
+var RootLev = require('../bwlev/RootLev');
+var getSPByPathTemplate = require('../initDeclaredNestings').getSPByPathTemplate;
 
 var routePathByModels = require('../routePathByModels');
 
 var getSPIConstr = routePathByModels.getSPIConstr;
 var getSPI= routePathByModels.getSPI;
-
-var cloneObj = spv.cloneObj;
 
 var getDeclrConstr = get_constr.getDeclrConstr;
 
@@ -29,10 +27,6 @@ var getDeclrConstr = get_constr.getDeclrConstr;
 
 */
 
-function setStartBwlev(probe_name, self, mainLevelResident) {
-  self.mainLevelResident = mainLevelResident;
-  self.start_bwlev = createLevel(BrowseLevel, probe_name, -1, false, self.mainLevelResident, self);
-}
 
 var BrowseMap = {};
 
@@ -46,7 +40,7 @@ var getCommonBwlevParent = function(bwlev, md) {
       if (pioneer == cur_md) {
         return cur_bwlev;
       }
-      cur_md = md.map_parent;
+      cur_md = cur_md.map_parent;
     }
 
     cur_bwlev = cur_bwlev.map_parent;
@@ -185,16 +179,12 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 
     }
   },
-  requestPage: function() {
-    this.showOnMap();
-  },
   _getMySimpleBwlev: function() {
-    console.warn('_getMySimpleBwlev is depricated. md should not have tied connection to one `map` object')
-    return showMOnMap(BrowseLevel, this.app.map, this);
-  },
-  showOnMap: function() {
-    var bwlev = this._getMySimpleBwlev();
-    changeBridge(bwlev);
+    throw new Error('implement new way to get simple bwlev (or try to use old?)')
+    // var showMOnMap = require('../bwlev/showMOnMap'); // todo: remove
+
+    // console.warn('_getMySimpleBwlev is depricated. md should not have tied connection to one `map` object')
+    // return showMOnMap(BrowseLevel, this.app.map, this);
   },
   getParentMapModel: function() {
     return this.map_parent;
@@ -211,11 +201,15 @@ BrowseMap.Model = spv.inh(pv.HModel, {
 });
 
 function hookRoot(rootmd, start_page) {
-  var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(BrowseLevel, {}, rootmd.BWLev)) : BrowseLevel;
-  var bwlev_root = createLevel(CurBrowseLevel, '', -2, null, rootmd, null);
-  if (start_page) {
-    setStartBwlev('map_slice', bwlev_root, start_page);
+  var CurBrowseLevel = rootmd.BWLev ? prepare(spv.inh(RootLev, {}, rootmd.BWLev)) : RootLev;
+  var bwlev_root = initBWlev(CurBrowseLevel, rootmd, '', -2, null, null)
+  if (!start_page) {
+    return bwlev_root;
   }
+
+  bwlev_root.nextTick(function() {
+    getSPByPathTemplate(bwlev_root.app, bwlev_root, 'spyglass-navigation')
+  });
 
   return bwlev_root;
 }

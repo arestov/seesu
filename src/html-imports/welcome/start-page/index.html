@@ -177,7 +177,7 @@
       <div class="arb-union">
         <div
           class="area_for_button" pv-class="button_selected: mp_show"
-          pv-events="click::requestPage" pv-type="way-point">
+          pv-events="click:requestPage" pv-type="way-point">
           <div class="to-open-block area-button">
             <span class="lang localize-music-cond">Music Conductor</span>
           </div>
@@ -216,7 +216,7 @@
                 class="js-serv"
                 pv-text="{{tag.name}}"
                 pv-type="way-point"
-                pv-events="click::#show_tag:{{tag.name}}"
+                pv-events="click:#showTag:{{tag.name}}"
                 ></a>
             </span>
           </div>
@@ -239,7 +239,7 @@
             <span class="lang localize-listening">are listening</span>
           </div>
           <a class="song-by-user" pv-props="title:{{lig.artist + ' - ' + lig.title}}"
-            pv-events="click::#showTopTacks:{{lig.artist}}:{{lig.title}}">
+            pv-events="click:#showTopTracks:{{lig.artist}}:{{lig.title}}">
             <span class="song-artist_name" pv-text="{{lig.artist}}"></span>
             <span class="song-track-name" pv-text="{{lig.title}}"></span>
           </a>

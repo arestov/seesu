@@ -5,24 +5,21 @@ var spv = require('spv');
 var $ = require('jquery');
 var app_serv = require('app_serv');
 var FuncsQueue = require('js/libs/FuncsQueue');
-var nav = require('./nav');
 var coct = require('./coct');
 
 var AppBaseView = require('./AppBaseView');
 var WPBox = require('./modules/WPBox');
-var View = require('View');
 var etc_views = require('./etc_views');
 var arrowsKeysNav = require('./utils/arrowsKeysNav');
-var map_slice_by_model = require('./pages/index');
-var used_struc_bhv = require('./utils/used_struc').bhv;
-
-var View = require('View');
+var MapSliceSpyglass = require('./map_slice/MapSliceSpyglass');
+var getAncestorByRooViCon = require('./map_slice/getAncestorByRooViCon');
+var getMapSliceView = require('./map_slice/getMapSliceView');
 
 var app_env = app_serv.app_env;
-var pvUpdate = pv.update;
 
 function initRootView(root_view) {
   root_view.all_queues = [];
+  root_view.parent_view.all_queues = root_view.all_queues;
   var addQueue = function() {
     this.reverse_default_prio = true;
     root_view.all_queues.push(this);
@@ -50,40 +47,8 @@ function initRootView(root_view) {
   });
 }
 
-
-var SearchCriteriaView = spv.inh(View, {}, {
-  "+states": {
-    "startpage_autofocus": [
-      "compx",
-      ['^startpage_autofocus']
-    ]
-  },
-
-  tpl_events: {
-    preventSubmit: function (e) {
-      e.preventDefault();
-    }
-  },
-
-  'stch-startpage_autofocus': function(target, value) {
-    if (!value) {
-      return;
-    }
-
-    target.nextLocalTick(target.tickCheckFocus);
-  },
-
-  tickCheckFocus: function() {
-    this.tpl.ancs['search_face'][0].focus();
-  }
-});
-
-
 var AppExposedView = spv.inh(AppBaseView.BrowserAppRootView, {}, {
   location_name: 'exposed_root_view',
-  'stch-doc_title': function(target, title) {
-    target.d.title = title || "";
-  },
   'stch-playing': function(target, state) {
     if (app_env.need_favicon){
       if (state){
@@ -122,153 +87,6 @@ function changeFaviconNode(d, oldLink, src, type) {
   return link;
 }
 
-var push = Array.prototype.push;
-
-var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
-  "+states": {
-    "mp_show_end": [
-      "compx",
-      ['animation_started', 'animation_completed', 'vmp_show'],
-      function(animation_started, animation_completed, vmp_show) {
-        if (!animation_started){
-          return vmp_show;
-        } else {
-          if (animation_started == animation_completed){
-            return vmp_show;
-          } else {
-            return false;
-          }
-        }
-      }
-    ]
-  },
-
-  children_views_by_mn: {
-    pioneer: map_slice_by_model
-  },
-
-  base_tree: {
-    sample_name: 'browse_lev_con'
-  },
-
-  'stch-map_slice_view_sources': function(target, state) {
-    if (state) {
-      if (target.location_name == 'map_slice-detailed') {
-        return;
-      }
-      if (target.parent_view == target.root_view && target.nesting_name == 'map_slice') {
-        var arr = [];
-        if (state[0]) {
-          arr.push(state[0]);
-        }
-        push.apply(arr, state[1][target.nesting_space]);
-        pvUpdate(target, 'view_sources', arr);
-      }
-
-    }
-  },
-
-  'collch-$spec_common-pioneer': {
-    by_model_name: true,
-    place: 'tpl.ancs.con'
-  },
-
-  'collch-$spec_det-pioneer': {
-    space: 'all-sufficient-details',
-    by_model_name: true,
-    place: 'tpl.ancs.con'
-  },
-
-  'collch-$spec_noplace-pioneer': {
-    by_model_name: true
-  },
-
-  // 'collch-$spec_wrapped-pioneer': {
-  // 	is_wrapper_parent: '^',
-  // 	space: 'all-sufficient-details',
-  // 	by_model_name: true,
-  // 	place: 'tpl.ancs.con'
-  // },
-  'sel-coll-pioneer//detailed':'$spec_det-pioneer',
-
-  'sel-coll-pioneer/start_page': '$spec_noplace-pioneer',
-
-  // 'sel-coll-pioneer/song': '$spec_wrapped-pioneer',
-  'sel-coll-pioneer': '$spec_common-pioneer'
-}, used_struc_bhv));
-
-
-var BrowseLevNavView = spv.inh(View, {}, {
-  "+states": {
-    "nav_clickable": [
-      "compx",
-      ['mp_stack', 'mp_has_focus'],
-      function(mp_stack, mp_has_focus) {
-        return !mp_has_focus && (mp_stack == 'root' || mp_stack == 'top');
-      }
-    ],
-
-    "mp_stack_root_follower": [
-      "compx",
-      ['$index', '$index_back', 'vmp_show'],
-      function (index, index_back) {
-        if (index == 0) {
-          return;
-        }
-
-        if (index_back == 0) {
-          // title
-          return;
-        }
-
-        return index == 1;
-      }
-    ],
-
-    "mp_stack": [
-      "compx",
-      ['$index', '$index_back', 'vmp_show'],
-      function (index, index_back, vmp_show) {
-        if (index == 0) {
-          return vmp_show && 'root';
-        }
-
-        if (index_back == 0) {
-          // title
-          return;
-        }
-
-        if (index_back == 1) {
-          return 'top';
-        }
-
-        if (index == 1) {
-          return 'bottom';
-        }
-
-        return 'middle';
-      }
-    ]
-  },
-
-  base_tree: {
-    sample_name: 'brow_lev_nav'
-  },
-
-  children_views_by_mn: {
-    pioneer: {
-      $default: nav.baseNavUI,
-      start_page: nav.StartPageNavView,
-      invstg: nav.investgNavUI
-    }
-  },
-
-  'collch-pioneer': {
-    by_model_name: true,
-    place: 'c'
-  }
-});
-
 var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   /*children_views_by_mn: {
     navigation: {
@@ -277,19 +95,12 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       invstg: nav.investgNavUI
     }
   },*/
-  'sel-coll-map_slice/song': '$spec_det-map_slice',
-  'nest_borrow-search_criteria': [
-    '^search_criteria',
-    SearchCriteriaView
-  ],
-  children_views: {
-    map_slice: {
-      main: BrowseLevView,
-      detailed: BrowseLevView
-    },
-    navigation: BrowseLevNavView,
-    // search_criteria: SearchCriteriaView,
-  },
+  isRootView: true,
+  'spyglass-navigation': [MapSliceSpyglass, {
+    context_md: false,
+    bwlev: false,
+  }],
+  'collch-spyglass__navigation': true,
   controllers: {
     auth_vk: etc_views.VkLoginUI,
     auth_lfm: etc_views.LfmLoginView,
@@ -315,12 +126,21 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     // }
 
   },
+  checkWaypoints: function() {
+    var cwp = this.state('vis_current_wpoint');
+    if (!cwp){
+      return;
+    }
 
+    if (cwp.canUse && !cwp.canUse()){
+      this.setVisState('current_wpoint', false);
+    }
+  },
   createDetails: function(){
     this._super();
     var _this = this;
     this.wp_box = new WPBox(this, function() {
-      return _this.getNesting('current_mp_md');
+      return _this.parent_view.important_bwlev_view;
     }, function(waypoint) {
       _this.setVisState('current_wpoint', waypoint);
     }, function(cwp) {
@@ -350,17 +170,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     _this.dom_related_props.push('favicon_node', 'wp_box');
 
     initRootView(this);
-
-    this.on('vip_state_change-current_mp_md', function() {
-      var cwp = this.state('vis_current_wpoint');
-      if (cwp){
-        if (cwp.canUse && !cwp.canUse()){
-          _this.setVisState('current_wpoint', false);
-        }
-      }
-
-    }, {skip_reg: true, immediately: true});
-
   },
   /*'compx-window_demensions_key': {
     depends_on: ['window_width', 'window_height'],
@@ -449,8 +258,8 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       //return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
     };
     var getCurrentNode = function() {
-      var current_md = self.getNesting('current_mp_md');
-      return current_md && self.getStoredMpx(current_md).getRooConPresentation(this, true, true).getC();
+      var important_bwlev_view = self.parent_view.important_bwlev_view;
+      return important_bwlev_view && important_bwlev_view.getC();
     };
 
     if (self.rsd_rz){
@@ -461,27 +270,23 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     var offset_top;
 
     var recheckFunc = function(){
-      if (typeof window.documentScrollSizeChangeHandler == 'function'){
-        var newsize = detectSize(getCurrentNode());
+      if (typeof window.document.ScrollSizeChangeHandler != 'function'){
+        return;
+      }
 
-        if (oldsize != newsize){
-          if (typeof offset_top == 'undefined'){
-            var offset = $(getCurrentNode()).offset();
-            offset_top = (offset && offset.top) || 0;
-          }
-          window.documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+      var newsize = detectSize(getCurrentNode());
+
+      if (oldsize != newsize){
+        if (typeof offset_top == 'undefined'){
+          var offset = $(getCurrentNode()).offset();
+          offset_top = (offset && offset.top) || 0;
         }
-
+        window.document.ScrollSizeChangeHandler((oldsize = newsize) + offset_top);
       }
     };
 
     self.rsd_rz = setInterval(recheckFunc, 100);
-
-    self.on('vip_state_change-current_mp_md', function() {
-      recheckFunc();
-    }, {
-      immediately: true
-    });
+    this.checkSizeFn = recheckFunc;
   },
   calculateScrollingViewport: function(screens_block) {
     var scrolling_viewport;
@@ -508,29 +313,76 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     }
     return scrolling_viewport;
   },
-  buildNowPlayingButton: function() {
-    var _this = this;
-    var np_button = this.nav.justhead.find('.np-button').detach();
-    _this.tpls.push( pv.$v.createTemplate( this, np_button ) );
-    this.nav.daddy.append(np_button);
+  tpl_r_events: {
+    showTag: function(_1, _2, _3, tag_name) {
+      this.parent_view.RPCLegacy('show_tag', tag_name);
+    },
   },
-  'stch-nav_helper_is_needed': function(target, state) {
-    if (!state) {
-      pv.update(target, 'nav_helper_full', false);
-    }
+  spyglassURL: function(name, pattern, data) {
+    this.root_view.parent_view.RPCLegacy(name, pattern, data);
   },
+  // tpl_events: {
+  //   showArtcardPage: function(artist_name) {
+  //     this.spyglassURL('navigation', 'catalog/[:artist_name]', {artist_name: artist_name})
+  //   },
+  //   showTopTracks: function(artist_name, track_name) {
+  //     if (!track_name) {
+  //       this.spyglassURL('navigation', 'catalog/[:artist_name]/_', {artist_name: artist_name})
+  //     }
+  //     this.spyglassURL(
+  //       'navigation',
+  //       'catalog/[:artist_name]/_/[:artist_name],[:track_name]', {
+  //         artist_name: artist_name,
+  //         track_name: track_name,
+  //       });
+  //   },
+  //   showArtistAlbum: function(artist, album_name, artist_name) {
+  //     this.spyglassURL(
+  //       'navigation',
+  //       'catalog/[:artist]/[:album_artist],[:album_name]',
+  //       {
+  //         artist: artist,
+  //         album_name: album_name,
+  //         artist_name: artist_name || artist,
+  //       }
+  //     );
+  //   },
+  //   showResultsPage: function(query) {
+  //     this.spyglassURL('navigation', 'search/[:query]', {query: query})
+  //   },
+  //   showTag: function(tag_name) {
+  //     this.spyglassURL('navigation', 'tags/[:tag_name]', {tag_name: tag_name})
+  //   },
+  //   /*
+  //     showArtcardPage
+  //     showArtistAlbum
+  //     showResultsPage
+  //     show_tag
+  //     showTopTracks
+  //     showNowPlaying
+  //   */
+  //   spyglassURL: function(e, node, name, pattern, data) {
+  //     this.root_view.parent_view.RPCLegacy(name, pattern, data);
   tpl_events: {
-    showFullNavHelper: function() {
-      pv.update(this, 'nav_helper_full', true);
+    closeNavHelper: function() {
+      this.parent_view.RPCLegacy('closeNavHelper');
     },
     showArtcardPage: function (e, node, artist_name) {
-      this.RPCLegacy('showArtcardPage', artist_name);
-    }
-  },
-  buildNavHelper: function() {
-    this.tpls.push( pv.$v.createTemplate(
-      this, this.els.nav_helper
-    ) );
+      this.parent_view.RPCLegacy('showArtcardPage', artist_name);
+    },
+    showArtistAlbum: function(e, node, album_artist, album_name, album_id) {
+      this.parent_view.RPCLegacy('showArtistAlbum', {
+        album_artist: album_artist,
+        album_name: album_name,
+        album_id: album_id
+      });
+    },
+    showTag: function(e, node, tag_name) {
+      this.parent_view.RPCLegacy('showTag', tag_name);
+    },
+    showTopTracks: function(e, node, artist_name, track_name) {
+      this.parent_view.RPCLegacy('showTopTracks', artist_name, track_name);
+    },
   },
   selectKeyNodes: function() {
     var slider = this.d.getElementById('slider');
@@ -562,7 +414,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       _this.checkSizeDetector();
       _this.nextTick(_this.buildWidthStreamer);
 
-      _this.wrapStartScreen(this.els.start_screen);
       $('#widget-url',d).val(window.location.href.replace('index.html', ''));
 
       if (app_env.bro.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
@@ -575,9 +426,6 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       }
 
       _this.buildVKSamples();
-
-      _this.buildNowPlayingButton();
-      _this.buildNavHelper();
 
       var d_click_callback = function(e) {
         e.preventDefault();
@@ -618,16 +466,19 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       });
   }),
   scrollToWP: function(cwp) {
-    if (cwp){
-      var cur_md_md = this.getNesting('current_mp_md');
-      var parent_md = cur_md_md.getParentMapModel();
-      if (parent_md && cwp.view.getAncestorByRooViCon('main') == this.getStoredMpx(parent_md).getRooConPresentation(this)){
-        this.scrollTo($(cwp.node), {
-          node: this.getLevByNum(parent_md.map_level_num).scroll_con
-        }, {vp_limit: 0.6, animate: 117});
-      }
-      this.scrollTo($(cwp.node), false, {vp_limit: 0.6, animate: 117});
+    if (!cwp){return;}
+
+    var cur_md_md = this.getNesting('current_mp_md');
+    var parent_md = cur_md_md.getParentMapModel();
+
+    // если родительская вьюха (вьюхи от cwp), соедененная с корнем совпадает
+    // с вьюхой соедененной с корнем
+    if (parent_md && getAncestorByRooViCon(cwp.view) == getMapSliceView(this.getStoredMpx(parent_md))){
+      this.scrollTo($(cwp.node), {
+        node: this.general_navigation_view.getLevByNum(parent_md.map_level_num).scroll_con
+      }, {vp_limit: 0.6, animate: 117});
     }
+    this.scrollTo($(cwp.node), false, {vp_limit: 0.6, animate: 117});
   },
   'stch-vis_current_wpoint': function(target, nst, ost) {
     if (ost){
@@ -653,13 +504,13 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
         e.preventDefault();
 
         var artist_name = decodeURIComponent(link.replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-        _this.root_view.tpl_events.showArtcardPage.call(_this.root_view, null, null, artist_name);
+        _this.root_view.parent_view.RPCLegacy('showTag', artist_name);
         _this.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
       } else if (node.is('.bbcode_tag')){
         e.preventDefault();
 
         var tag_name = decodeURIComponent(link.replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
-        _this.RPCLegacy('show_tag', 'artist_name');
+        _this.root_view.parent_view.RPCLegacy('showTag', tag_name);
         _this.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
       } else {
         e.preventDefault();
@@ -668,6 +519,14 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       }
     });
 
+  },
+  updateImportantBwlev: function(bwlev_view) {
+    this.parent_view.important_bwlev_view = bwlev_view;
+    this.resortQueue();
+    this.checkWaypoints();
+    if (this.checkSizeFn) {
+      this.checkSizeFn();
+    }
   },
 });
 

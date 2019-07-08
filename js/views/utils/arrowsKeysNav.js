@@ -24,7 +24,6 @@ return function arrowsKeysNav(view, e) {
   }
 
   if (key_name){
-    //this.RPCLegacy('keyNav', key_name);
     view.wp_box.wayPointsNav(key_name, e);
   }
 };
