@@ -150,10 +150,11 @@ var LoadableListBase = spv.inh(BrowseMap.Model, {
   },
 
   insertDataAsSubitems: function(target, nesting_name, data_list, opts, source_name) {
-    if (!data_list || !data_list.length) {
-      return
-    }
     var items_list = [];
+
+    if (!data_list || !data_list.length) {
+      return items_list
+    }
 
     var mlc_opts = target.getMainListChangeOpts();
 
