@@ -54,13 +54,24 @@ var BrowseLevel = spv.inh(Model, {
 }, {
   model_name: 'bwlev',
   "+states": {
-    "map_slice_view_sources": [
+    "source_of_item": [
+      'compx',
+      ['@pioneer'],
+      function(pioneer) {
+        if (!pioneer) {
+          return;
+        }
+
+        return pioneer._network_source
+      }
+    ],
+    "sources_of_item_details_by_space": [
       "compx",
       ['struc', '@pioneer'],
-      function (struc, pioneer) {
+      function(struc, pioneer) {
         if (!pioneer) {return;}
 
-        return [pioneer._network_source, getStrucSources(pioneer, struc)];
+        return getStrucSources(pioneer, struc)
       }
     ],
 
