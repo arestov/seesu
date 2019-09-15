@@ -71,11 +71,11 @@ SyncSender.prototype = {
   },
   pushStates: function(md, states_raw) {
   //	var struc;
+    var states = toTransferableStatesList(states_raw)
 
     for (var i = 0; i < this.streams_list.length; i++) {
       var cur = this.streams_list[i];
       if (this.sockets_m_index[cur.id][md._provoda_id]) {
-        var states = toTransferableStatesList(states_raw)
 
         cur.updateStates(md._provoda_id, states);
       }
