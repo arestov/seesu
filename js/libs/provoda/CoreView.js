@@ -514,6 +514,10 @@ var View = spv.inh(StatesEmitter, {
 
   },
   markAsDead: function(skip_md_call) {
+    if (this.__disconnectAdapter) {
+      this.__disconnectAdapter.call(null, this)
+    }
+
     var i = 0;
     if (!this.parent_view && this.proxies_space) {
       this._highway.views_proxies.removeSpaceById(this.proxies_space);
@@ -546,9 +550,6 @@ var View = spv.inh(StatesEmitter, {
 
   },
   die: function(opts){
-    if (this.__disconnectAdapter) {
-      this.__disconnectAdapter.call(null, this)
-    }
     if (!this._lbr.marked_as_dead){
       this.domDie()
       this.markAsDead(opts && opts.skip_md_call);
