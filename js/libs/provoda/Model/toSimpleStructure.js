@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
 var cloneObj = require('spv').cloneObj
+var isPrivate = require('./isPrivate')
 
 var checkModel = function(md, models_index, local_index, all_for_parse) {
   var cur_id = md._provoda_id;
@@ -67,6 +68,10 @@ var toSimpleStructure = function(models_index, big_result) {
     };
     for (var state_name in result.states){
       var state = result.states[state_name];
+      if (isPrivate(state_name)) {
+        delete result.states[state_name];
+        continue;
+      }
       result.states[state_name] = replaceModelInState(state)
     }
 
