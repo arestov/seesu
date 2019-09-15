@@ -108,7 +108,7 @@ var BrowseLevel = spv.inh(Model, {
       }
     ],
 
-    "struc_list": [
+    "__struc_list": [
       "compx",
       ['struc'],
       function(struc) {
@@ -117,7 +117,7 @@ var BrowseLevel = spv.inh(Model, {
       }
     ],
 
-    "supervision": [
+    "__supervision": [
       "compx",
       [],
       function () {
@@ -132,7 +132,7 @@ var BrowseLevel = spv.inh(Model, {
 
     "__to_load_all": [
       "compx",
-      ['mp_dft', 'struc_list', 'supervision'],
+      ['mp_dft', '__struc_list', '__supervision'],
       function(mp_dft, struc, supervision) {
         return {
           inactive: !mp_dft || mp_dft > 1 || !struc,
