@@ -356,7 +356,7 @@ return {
 
     return function(state_name) {
       var current_value = this.sputnik.state(state_name);
-      if (current_value) {
+      if (current_value != null) {
         return;
       }
 
