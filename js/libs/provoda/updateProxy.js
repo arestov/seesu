@@ -82,6 +82,8 @@ function updateProxy(etr, changes_list, opts) {
   var all_ch_compxs = serv_st.all_ch_compxs;
   var changed_states = serv_st.changed_states;
 
+  spv.cloneObj(zdsv.total_original_states, etr.states);
+
   while (serv_st.states_changing_stack.length){
 
     //spv.cloneObj(original_states, etr.states);
@@ -163,6 +165,8 @@ function updateProxy(etr, changes_list, opts) {
   } else {
     total_ch.length = 0;
   }
+
+  utils_simple.nullObjValues(zdsv.total_original_states)
 
 
   serv_st.collecting_states_changing = false;
@@ -409,12 +413,12 @@ function triggerLegacySChEv(etr, state_name, value, old_value, default_cb_cs, de
 
 function _triggerStChanges(etr, i, state_name, value, zdsv) {
 
-  _passHandleState(etr, zdsv.original_states, state_name, value);
+  _passHandleState(etr, zdsv.total_original_states, state_name, value);
 
 
   zdsv.abortFlowSteps('stev', state_name);
 
-  checkStates(etr, zdsv, state_name, value, zdsv.original_states[state_name]);
+  checkStates(etr, zdsv, state_name, value, zdsv.total_original_states[state_name]);
 
   var default_name = utils_simple.getSTEVNameDefault( state_name );
   var light_name = utils_simple.getSTEVNameLight( state_name );
@@ -433,7 +437,7 @@ function _triggerStChanges(etr, i, state_name, value, zdsv) {
   }
 
   if (default_cb_cs.length) {
-    triggerLegacySChEv(etr, state_name, value, zdsv.original_states[state_name], default_cb_cs, default_name, flow_steps);
+    triggerLegacySChEv(etr, state_name, value, zdsv.total_original_states[state_name], default_cb_cs, default_name, flow_steps);
   }
 
   if (flow_steps) {
