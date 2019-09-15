@@ -34,31 +34,33 @@ SyncSender.prototype = {
     for (var i = 0; i < this.streams_list.length; i++) {
       var cur = this.streams_list[i];
       var index = this.sockets_m_index[cur.id];
-      if (index[md._provoda_id]){
-
-
-        if (value && typeof parsed_value == 'undefined') {
-          //parsed_value
-
-          if (value._provoda_id){
-            parsed_value = value._provoda_id;
-          } else if (Array.isArray(value)){
-
-            parsed_value = new Array(value.length);
-            for (var jj = 0; jj < value.length; jj++) {
-              parsed_value[jj] = value[jj]._provoda_id;
-            }
-          } else {
-            console.warn('unparsed', value);
-          }
-          if (parsed_value == 'undefined') {
-            parsed_value = null;
-          }
-        }
-
-        var struc = md.toSimpleStructure(index);
-        cur.changeCollection(md._provoda_id, struc, nesname, parsed_value);
+      if (!index[md._provoda_id]){
+        continue;
       }
+
+
+      if (value && typeof parsed_value == 'undefined') {
+        //parsed_value
+
+        if (value._provoda_id){
+          parsed_value = value._provoda_id;
+        } else if (Array.isArray(value)){
+
+          parsed_value = new Array(value.length);
+          for (var jj = 0; jj < value.length; jj++) {
+            parsed_value[jj] = value[jj]._provoda_id;
+          }
+        } else {
+          console.warn('unparsed', value);
+        }
+        if (parsed_value == 'undefined') {
+          parsed_value = null;
+        }
+      }
+
+      var struc = md.toSimpleStructure(index);
+      cur.changeCollection(md._provoda_id, struc, nesname, parsed_value);
+
     }
   },
   pushStates: function(md, states_raw) {
