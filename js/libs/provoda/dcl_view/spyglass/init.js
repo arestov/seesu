@@ -10,8 +10,12 @@ var getBwlevView = require('../getBwlevView')
 
 function getModel(view, _provoda_id) {
   var proxies_space = view.proxies_space || view.root_view.proxies_space;
-  var mpx = view._highway.views_proxies.spaces[proxies_space].mpxes_index[_provoda_id]
-  return mpx.md;
+  if (view._highway.views_proxies) {
+    var mpx = view._highway.views_proxies.spaces[proxies_space].mpxes_index[_provoda_id]
+    return mpx.md;
+  }
+
+  return view._highway.sync_r.models_index[_provoda_id]
 }
 
 function watchAndRequest(root_bwlev_view, self, spyglass) {
