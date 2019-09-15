@@ -311,6 +311,7 @@ return spv.inh(View, {
   },
 
   'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
+    debugger
     var mp_show_states = nesting_data.residents_struc.mp_show_states;
     var transaction = nesting_data.transaction;
     var old_transaction = old_nesting_data && old_nesting_data.transaction;
@@ -343,7 +344,7 @@ return spv.inh(View, {
         animateMapSlice(this, transaction, animation_data);
         if (!transaction.bwlev){
           target_md = this.findBMapTarget(array);
-
+          debugger;
           if (target_md){
             pvUpdate(this, 'current_lev_num', pvState(target_md, 'map_level_num'), sync_opt);
           }
@@ -360,8 +361,8 @@ return spv.inh(View, {
         throw new Error('there is no model with focus!');
       }
       this.markAnimationStart(models, -1);
-      for (i = 0; i < array.length; i++) {
-        this.setVMpshow(this.getStoredMpx(array[i]), mp_show_states[i]);
+      for (i = 0; i < models.length; i++) {
+        this.setVMpshow(this.getStoredMpx(models[i]), mp_show_states[i]);
       }
       pvUpdate(this, 'current_lev_num', pvState(target_md, 'map_level_num'), sync_opt);
       this.markAnimationEnd(models, -1);
