@@ -6,6 +6,7 @@ var spv = require('spv');
 return function createRootBwlevView (RootView) {
   return spv.inh(View, {}, {
     resortQueue: function() {
+      throw new error('check if it works')
       return function (queue) {
         if (queue){
           queue.removePrioMarks();
