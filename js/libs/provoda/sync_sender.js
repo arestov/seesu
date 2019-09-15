@@ -53,7 +53,7 @@ SyncSender.prototype = {
         } else {
           console.warn('unparsed', value);
         }
-        if (parsed_value == 'undefined') {
+        if (typeof parsed_value == 'undefined') {
           parsed_value = null;
         }
       }
