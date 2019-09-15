@@ -520,10 +520,10 @@ return {
 
 
     request.then(function (response) {
-      _this.sputnik.nextTick(function () {
-        anyway();
+      _this.sputnik.nextTick(_this.sputnik.inputFn(function () {
         handleResponse(response);
-      }, null, false);
+        anyway();
+      }), null, false);
       if (release) {
         _this.sputnik.nextTick(release, null, false, initiator);
       }
