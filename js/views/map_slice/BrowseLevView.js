@@ -57,15 +57,16 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
         return;
       }
 
-      if (target.parent_view.parent_view == target.root_view && target.nesting_name == 'map_slice') {
-        var arr = [];
-        if (state[0]) {
-          arr.push(state[0]);
-        }
-        push.apply(arr, state[1][target.nesting_space]);
-        pvUpdate(target, 'view_sources', arr);
+      if (target.parent_view.parent_view != target.root_view || target.nesting_name != 'map_slice') {
+        return
       }
 
+      var arr = [];
+      if (state[0]) {
+        arr.push(state[0]);
+      }
+      push.apply(arr, state[1][target.nesting_space]);
+      pvUpdate(target, 'view_sources', arr);
     }
   },
 
