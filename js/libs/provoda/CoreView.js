@@ -298,10 +298,13 @@ var View = spv.inh(StatesEmitter, {
 
   },
   createTemplate: function() {
-
+    // dom
   },
   createDetails: function() {
-
+    // dom or developers
+  },
+  appendCon: function() {
+    // dom
   },
   requestDetailesCreating: function() {
     if (!this._lbr.has_details){
