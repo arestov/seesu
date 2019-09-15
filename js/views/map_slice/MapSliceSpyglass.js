@@ -6,6 +6,7 @@ var view_serv = require('view_serv');
 var pv = require('pv');
 var pvState = require('pv/state');
 var pvUpdate = require('pv/update');
+var getNesting = require('pv/getNesting')
 var $ = require('jquery');
 var wrapInputCall = require('pv/wrapInputCall')
 var getModelFromR = require('pv/v/getModelFromR')
@@ -446,7 +447,7 @@ return spv.inh(View, {
   getMapSliceChildInParenView: function(bwlev, md) {
     var parent_bwlev = bwlev.map_parent;
     // md of parent view could differ from md.map_parent
-    var parent_md = bwlev.getParentMapModel().getNesting('pioneer');
+    var parent_md = getNesting(bwlev.getParentMapModel(), 'pioneer');
 
     var parent_bwlev_view = this.getMapSliceView(parent_bwlev, parent_md);
     var parent_view = parent_bwlev_view && findMpxViewInChildren(parent_bwlev_view, this.getStoredMpx(parent_md));
