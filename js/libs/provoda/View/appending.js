@@ -16,6 +16,62 @@ var appendSpace = function() {
 
 
 return {
+  appen_ne_vws: {
+    appendDirectly: function(fragt) {
+      this.place.append(fragt);
+    },
+    getFreeView: function(cur) {
+      return this.view.getFreeChildView({
+        by_model_name: this.by_model_name,
+        nesting_name: this.nesname,
+        nesting_space: this.space
+      }, cur, (typeof this.view_opts == 'function' ? this.view_opts.call(this.view, cur) : this.view_opts));
+    }
+  },
+  pvCollectionChange: function(nesname, items, removed) {
+    var pv_views_complex_index = spv.getTargetField(this, this.tpl_children_prefix + nesname);
+    if (!pv_views_complex_index && this.tpls) {
+      for (var i = 0; i < this.tpls.length; i++) {
+        pv_views_complex_index = spv.getTargetField(this.tpls[i], ['children_templates', nesname]);
+        if (pv_views_complex_index) {
+          break;
+        }
+      }
+    }
+    var cur;
+    if (pv_views_complex_index){
+      var space_name;
+      var array = spv.toRealArray(items);
+      if (removed && removed.length) {
+        for (space_name in pv_views_complex_index.usual){
+          this.removeViewsByMds(removed, nesname, space_name);
+        }
+        for (space_name in pv_views_complex_index.by_model_name){
+          this.removeViewsByMds(removed, nesname, space_name);
+        }
+      }
+
+
+      for (space_name in pv_views_complex_index.usual){
+        cur = pv_views_complex_index.usual[space_name];
+        if (!cur) {continue;}
+        this.checkCollchItemAgainstPvView(nesname, array, space_name, pv_views_complex_index.usual[space_name]);
+      }
+      for (space_name in pv_views_complex_index.by_model_name){
+        cur = pv_views_complex_index.by_model_name[space_name];
+        if (!cur) {continue;}
+        this.checkCollchItemAgainstPvViewByModelName(nesname, array, space_name, cur);
+      }
+      /*
+      for (var
+        i = 0; i < space.length; i++) {
+        space[i]
+      };*/
+
+
+      this.requestAll();
+    }
+  },
   appendNestingViews: function(declr, view_opts, nesname, array, not_request){
     var place;
     if (typeof declr.place == 'string'){
