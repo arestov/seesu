@@ -44,7 +44,6 @@ return {
 
   },
   appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
-    debugger
     var location_id = $v.getViewLocationId(this, nesname, space || 'main');
 
 
