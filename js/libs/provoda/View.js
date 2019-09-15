@@ -3,12 +3,20 @@ define(function(require) {
 var spv = require('spv');
 var CoreView = require('./CoreView')
 var PvTemplate = require('./PvTemplate');
+var appending = require('./View/appending')
 var hp = require('./helpers');
 
 var $v = hp.$v;
 var way_points_counter = 0;
 
-var DomView = spv.inh(CoreView, {}, {
+var DomView
+var props = {}
+spv.cloneObj(props, appending)
+spv.cloneObj(props, {
+  DOMView: function() {
+    return DomView
+  },
+  parts_builder: {},
   addWayPoint: function(point, opts) {
     var obj = {
       node: point,
@@ -114,6 +122,7 @@ var DomView = spv.inh(CoreView, {}, {
     }
   },
 })
+DomView = spv.inh(CoreView, {}, props)
 DomView._PvTemplate = PvTemplate;
 
 return DomView
