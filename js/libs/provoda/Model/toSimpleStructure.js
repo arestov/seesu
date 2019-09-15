@@ -77,17 +77,19 @@ var toSimpleStructure = function(models_index, big_result) {
 
     for (var nesting_name in cur_md.children_models){
       var cur = cur_md.children_models[nesting_name];
-      if (cur){
-        if (cur._provoda_id){
-          result.children_models[nesting_name] = checkModel(cur, models_index, local_index, all_for_parse);
-        } else {
+      if (!cur) {
+        continue;
+      }
 
-          var array = new Array(cur.length);
-          for (var i = 0; i < cur.length; i++) {
-            array[i] = checkModel(cur[i], models_index, local_index, all_for_parse);
-          }
-          result.children_models[nesting_name] = array;
+      if (cur._provoda_id){
+        result.children_models[nesting_name] = checkModel(cur, models_index, local_index, all_for_parse);
+      } else {
+
+        var array = new Array(cur.length);
+        for (var i = 0; i < cur.length; i++) {
+          array[i] = checkModel(cur[i], models_index, local_index, all_for_parse);
         }
+        result.children_models[nesting_name] = array;
       }
     }
     if (can_push) {
