@@ -315,7 +315,7 @@ return spv.inh(View, {
     var transaction = nesting_data.transaction;
     var old_transaction = old_nesting_data && old_nesting_data.transaction;
 
-    var diff = pv.hp.probeDiff(nesting_data.transaction.bwlev, old_nesting_data && old_nesting_data.transaction.bwlev);
+    var diff = pv.hp.probeDiff(this, nesting_data.transaction.bwlev, old_nesting_data && old_nesting_data.transaction.bwlev);
 
     var bwlevs = nesting_data.residents_struc && nesting_data.residents_struc.bwlevs;
     var mds = nesting_data.residents_struc.items;

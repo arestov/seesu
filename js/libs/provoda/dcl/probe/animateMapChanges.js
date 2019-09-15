@@ -139,7 +139,7 @@ var asMDR = function(md) {
 }
 
  function animateMapChanges(fake_spyglass, bwlev) {
- var diff = probeDiff(bwlev.getMDReplacer(), fake_spyglass.current_mp_bwlev && fake_spyglass.current_mp_bwlev.getMDReplacer());
+ var diff = probeDiff(bwlev, bwlev.getMDReplacer(), fake_spyglass.current_mp_bwlev && fake_spyglass.current_mp_bwlev.getMDReplacer());
  if (!diff.array || !diff.array.length) {
   return;
  }
