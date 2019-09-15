@@ -1077,6 +1077,10 @@ var View = spv.inh(StatesEmitter, {
       args.unshift(this);
 
       this.nextTick(updateProxy, args);
+
+      if (this.__syncStates) {
+        this.nextTick(this.__syncStates, args);
+      }
     };
   })(),
   receiveStatesChanges: hp._groupMotive(function(changes_list, opts) {
