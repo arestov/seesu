@@ -787,7 +787,6 @@ var View = spv.inh(StatesEmitter, {
     }
   },
   callCollectionChangeDeclaration: function(dclr_fpckg, nesname, array, old_value, removed) {
-    debugger
     if (typeof dclr_fpckg == 'function'){
       dclr_fpckg.call(this, nesname, array, old_value, removed);
     } else {
