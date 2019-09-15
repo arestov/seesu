@@ -322,6 +322,9 @@ var View = spv.inh(StatesEmitter, {
       this.bindBase();
     }
   },
+  createTemplate: function() {
+
+  },
   createDetails: function() {
     if (this.pv_view_node){
       this.useBase(this.pv_view_node);
@@ -749,23 +752,6 @@ var View = spv.inh(StatesEmitter, {
     args.unshift(this);
 
     this.nextTick(this.collectionChange, args);
-  },
-  checkTplTreeChange: function(current_motivator) {
-    var old_mt = this.current_motivator;
-    this.current_motivator = current_motivator;
-    var total_ch = [];
-
-    for (var state_name in this.states) {
-      total_ch.push(true, state_name, this.states[total_ch]);
-    }
-
-    this.updateTemplatesStates(total_ch);
-
-    for (var nesname in this.children_models) {
-
-      this.pvCollectionChange(nesname, this.children_models[nesname]);
-    }
-    this.current_motivator = old_mt;
   },
   collectionChange: function(target, nesname, items, rold_value, removed) {
     if (!target.isAlive()){
