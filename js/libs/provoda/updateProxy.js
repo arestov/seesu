@@ -237,7 +237,13 @@ function getChanges(etr, original_states, changes_list, opts, result_arr) {
 
   if (etr.updateTemplatesStates){
     etr.updateTemplatesStates(changes_list, opts && opts.sync_tpl);
+
   }
+
+  if (etr.__syncStatesChanges) {
+    etr.__syncStatesChanges.call(null, etr, changes_list, etr.states);
+  }
+
   for (i = 0; i < changes_list.length; i+=3) {
     _handleStch(etr, original_states, changes_list[i+1], changes_list[i+2], opts && opts.skip_handler, opts && opts.sync_tpl);
   }
