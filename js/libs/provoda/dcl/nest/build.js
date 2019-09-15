@@ -10,6 +10,9 @@ var build = function(self, result) {
       continue;
     }
     var cur = result[name]
+    if (!cur) {
+      continue;
+    }
     self.nestings_declarations.push(cur);
     var item = cur.subpages_names_list;
     if (Array.isArray(item)) {

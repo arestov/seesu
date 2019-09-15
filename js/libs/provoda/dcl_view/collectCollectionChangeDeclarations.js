@@ -65,6 +65,9 @@ return function(self, props) {
   for (prop in self){
     if (getUnprefixed( prop )){
       var collch = self[ prop ];
+      if (!collch) {
+        continue;
+      }
       var nesting_name = getUnprefixed( prop );
       if (typeof collch == 'function'){
         self.dclrs_fpckgs[ nesting_name ] = collch;
