@@ -1007,7 +1007,6 @@ var View = spv.inh(StatesEmitter, {
   updateTemplatesStates: function(total_ch, sync_tpl) {
     var i = 0;
     //var states = this.states;
-
     if (this.tpl){
       this.tpl.checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
     }
@@ -1016,6 +1015,10 @@ var View = spv.inh(StatesEmitter, {
         this.tpls[i].checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
       }
     }
+    if (this.__syncStatesChanges) {
+      this.__syncStatesChanges.call(null, this, total_ch, this.states);
+    }
+
   },
   requireAllParts: function() {
     for (var a in this.parts_builder){
