@@ -11,6 +11,16 @@ var getTargetField = spv.getTargetField;
 
 var clean_obj = {};
 
+var withoutSelf = function(array, name) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] != name) {
+      return spv.arrayExclude(array, name)
+    }
+  }
+
+  return array;
+}
+
 var usualRequest = function (send_declr, sputnik, opts, network_api_opts) {
   var api_name = send_declr.api_name;
   var api_method = send_declr.api_method_name;
@@ -303,7 +313,9 @@ return {
           if (self.sputnik.state(cur)) {
             continue;
           }
-          reqs_list.push(requestDependencies(self, compx.depends_on, true));
+
+          var without_self_name = withoutSelf(compx.depends_on, compx.name)
+          reqs_list.push(requestDependencies(self, without_self_name, true));
           continue;
         }
 
