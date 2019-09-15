@@ -22,20 +22,6 @@ var getBwlevView = require('./dcl_view/getBwlevView');
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;
 
-var getBaseTreeSkeleton = function(array) {
-  var result = new Array(array.length);
-  for (var i = 0; i < array.length; i++) {
-    result[i] = {
-      handled: false,
-      node: null,
-      parent: array[i].parent && result[ array[i].parent.chunk_num ] || null,
-      chunk_num: array[i].chunk_num
-    };
-  }
-  return result;
-};
-
-
 var ViewLabour = function() {
   this.has_details = null;
   this._detailed = null;
@@ -83,10 +69,6 @@ var initView = function(target, view_otps, opts){
   target.nesting_space = view_otps.nesting_space;
   target.nesting_name = view_otps.nesting_name;
   target.by_model_name = Boolean(view_otps.by_model_name);
-
-  if (target.base_tree_list) {
-    target.base_skeleton = getBaseTreeSkeleton(target.base_tree_list);
-  }
 
   target.parent_view = null;
   if (view_otps.parent_view){
@@ -314,13 +296,6 @@ var View = spv.inh(StatesEmitter, {
     this._lbr.undetailed_states = null;
     this._setStates(states);
 
-  },
-  useBase: function(node) {
-    this.c = node;
-    this.createTemplate();
-    if (this.bindBase){
-      this.bindBase();
-    }
   },
   createTemplate: function() {
 

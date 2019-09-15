@@ -16,6 +16,20 @@ var stackEmergency = function(fn, eventor, args) {
 
 var push = Array.prototype.push;
 
+var getBaseTreeSkeleton = function(array) {
+  var result = new Array(array.length);
+  for (var i = 0; i < array.length; i++) {
+    result[i] = {
+      handled: false,
+      node: null,
+      parent: array[i].parent && result[ array[i].parent.chunk_num ] || null,
+      chunk_num: array[i].chunk_num
+    };
+  }
+  return result;
+};
+
+
 var DomView
 var props = {}
 spv.cloneObj(props, appending)
@@ -42,6 +56,14 @@ spv.cloneObj(props, {
 
     if (this.c) {
       this.c._provoda_view = this;
+    }
+  },
+
+  useBase: function(node) {
+    this.c = node;
+    this.createTemplate();
+    if (this.bindBase){
+      this.bindBase();
     }
   },
   parts_builder: {},
@@ -467,7 +489,13 @@ spv.cloneObj(props, {
     this.current_motivator = old_mt;
   },
 })
-DomView = spv.inh(CoreView, {}, props)
+DomView = spv.inh(CoreView, {
+  init: function initDomView(target) {
+    if (target.base_tree_list) {
+      target.base_skeleton = getBaseTreeSkeleton(target.base_tree_list);
+    }
+  }
+}, props)
 DomView._PvTemplate = PvTemplate;
 
 return DomView
