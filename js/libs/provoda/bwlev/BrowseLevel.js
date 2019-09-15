@@ -84,6 +84,11 @@ var BrowseLevel = spv.inh(Model, {
 
         if (!struc || !pioneer || !probe_name) {return;}
 
+        if (!struc.m_children.children) {
+          console.warn('add struct')
+          return
+        }
+
         var spyglass_view_name = transportName(probe_name)
         var sub_struc = struc.m_children.children[spyglass_view_name].main;
         return getUsageStruc(pioneer, 'map_slice', sub_struc, this.app);
