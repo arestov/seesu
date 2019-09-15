@@ -152,6 +152,10 @@ var initView = function(target, view_otps, opts){
 
   nestBorrowInit(target);
   initSpyglasses(target)
+
+  if (target.__connectAdapter) {
+    target.__connectAdapter.call(null, target)
+  }
 };
 
 
@@ -203,6 +207,13 @@ var View = spv.inh(StatesEmitter, {
   init: initView,
   onExtend: onPropsExtend
 }, {
+  ___stateToSync: function() {
+    if (this._lbr.undetailed_states) {
+      return this._lbr.undetailed_states
+    }
+
+    return this.states;
+  },
   handleTemplateRPC: function(method) {
     if (arguments.length === 1) {
       var bwlev_view = $v.getBwlevView(this);
@@ -866,6 +877,9 @@ var View = spv.inh(StatesEmitter, {
 
   },
   die: function(opts){
+    if (this.__disconnectAdapter) {
+      this.__disconnectAdapter.call(null, this)
+    }
     if (!this._lbr.marked_as_dead){
       $(this.getC()).remove();
       this.markAsDead(opts && opts.skip_md_call);
