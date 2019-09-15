@@ -122,7 +122,7 @@ var BrowseLevel = spv.inh(Model, {
       [],
       function () {
           return {
-            needy: this,
+            needy_id: this._provoda_id,
             store: {},
             reqs: {},
             is_active: {}

@@ -31,7 +31,7 @@ function fetchData(db, App, schema, url) {
         list: flatStruc(md, schema),
         supervision: {
           greedy: true,
-          needy: {_provoda_id: -1},
+          needy_id: -1,
           store: {},
           reqs: {},
           is_active: {}
