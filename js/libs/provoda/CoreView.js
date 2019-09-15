@@ -539,6 +539,12 @@ var View = spv.inh(StatesEmitter, {
 
 
   },
+  domDie: function() {
+
+  },
+  markDomDead: function() {
+
+  },
   die: function(opts){
     if (this.__disconnectAdapter) {
       this.__disconnectAdapter.call(null, this)
