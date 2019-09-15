@@ -302,8 +302,6 @@ return {
       return sendRequest(selected_map, store, self);
     }
 
-    var resolved = Promise.resolve();
-
     function requestDependencies(self, dependencies, soft) {
       var reqs_list = [];
       for (var i = 0; i < dependencies.length; i++) {
@@ -333,7 +331,7 @@ return {
       }
 
       var req = !reqs_list.length
-        ? resolved
+        ? Promise.resolve()
         : Promise.all(reqs_list);
 
       return req;
