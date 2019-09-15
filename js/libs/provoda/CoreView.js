@@ -326,25 +326,7 @@ var View = spv.inh(StatesEmitter, {
 
   },
   createDetails: function() {
-    if (this.pv_view_node){
-      this.useBase(this.pv_view_node);
-    } else {
-      if (this.base_skeleton) {
-        this.checkExpandableTree();
-        if (this.c) {
-          this.useBase(this.c);
-        }
-        if (this.expandBase) {
-          this.expandBase();
-        }
-      } else if (this.createBase){
-        this.createBase();
-      }
-    }
 
-    if (this.c) {
-      this.c._provoda_view = this;
-    }
   },
   requestDetailesCreating: function() {
     if (!this._lbr.has_details){
