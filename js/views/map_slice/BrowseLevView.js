@@ -57,7 +57,8 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
         var combined = all.slice()
         combined.unshift(one)
 
-        return combined;
+        var byKey = spv.makeIndexByField(combined);
+        return Object.keys(byKey)
       }
     ]
   },
