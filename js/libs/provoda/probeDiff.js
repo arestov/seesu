@@ -46,7 +46,7 @@ var pathAsSteps = function (path, value) {
       type: 'move-view',
       value: value,
       bwlev: cur.getMDReplacer(),
-      target: cur.getNesting('pioneer').getMDReplacer()
+      target: getNesting(cur, 'pioneer').getMDReplacer()
     };
   }
 
