@@ -248,6 +248,10 @@ function getChanges(etr, original_states, changes_list, opts, result_arr) {
     etr.__syncStatesChanges.call(null, etr, changes_list, etr.states);
   }
 
+  if (etr.__handleHookedSync) {
+    etr.__handleHookedSync.call(null, etr, changes_list, etr.states);
+  }
+
   for (i = 0; i < changes_list.length; i+=3) {
     _handleStch(etr, original_states, changes_list[i+1], changes_list[i+2], opts && opts.skip_handler, opts && opts.sync_tpl);
   }

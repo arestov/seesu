@@ -49,6 +49,7 @@ var ViewLabour = function() {
 
   this.undetailed_states = {};
   this.undetailed_children_models = {};
+  this.__sync_hooks = null;
 };
 
 var initView = function(target, view_otps, opts){
@@ -665,6 +666,37 @@ var View = spv.inh(StatesEmitter, {
       }
     };
   })(),
+  __hookStateSync: function(fn) {
+    if (!this.__sync_hooks) {
+      this.__sync_hooks = []
+    }
+
+    // TODO: subscribe to die event
+
+    this.__sync_hooks.push(fn);
+  },
+  __unhookStateSync: function(fn) {
+    this.__sync_hooks = spv.arrayExclude(this.__sync_hooks, fn);
+  },
+  __changesToObject: function (changes_list) {
+    var result = {}
+
+    for (var i = 0; i < changes_list.length; i += 3) {
+      result[changes_list[i + 1]] = changes_list[i + 2]
+      result = result
+    }
+
+    return result
+  },
+  __handleHookedSync: function(self, changes, all) {
+    if (!self.__sync_hooks) {
+      return
+    }
+
+    for (var i = 0; i < self.__sync_hooks.length; i++) {
+      self.__sync_hooks[i].call(null, self, changes, all)
+    }
+  },
   receiveStatesChanges: hp._groupMotive(function(changes_list, opts) {
     if (!this.isAlive()){
       return;
