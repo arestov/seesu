@@ -130,7 +130,7 @@ var BrowseLevel = spv.inh(Model, {
         }
     ],
 
-    "to_load_all": [
+    "__to_load_all": [
       "compx",
       ['mp_dft', 'struc_list', 'supervision'],
       function(mp_dft, struc, supervision) {
@@ -198,7 +198,7 @@ var BrowseLevel = spv.inh(Model, {
     loadNestingsByStruc(target.getNesting('pioneer'), struc);
   },
 
-  'stch-to_load_all': function(target, obj, prev) {
+  'stch-__to_load_all': function(target, obj, prev) {
     if (!obj.list) {
       return;
     }
