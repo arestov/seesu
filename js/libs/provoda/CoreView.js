@@ -50,6 +50,7 @@ var ViewLabour = function() {
   this.undetailed_states = {};
   this.undetailed_children_models = {};
   this.__sync_hooks = null;
+  this.__sync_nest_hooks = null;
 };
 
 var initView = function(target, view_otps, opts){
@@ -816,6 +817,62 @@ var View = spv.inh(StatesEmitter, {
         this.appendNestingViews(declr, opts, nesname, min_array, dclr_fpckg.not_request);
       }
     }
+
+    this.__handleHookedNestSync.call(null, this, nesname, dclr_fpckg.space, array);
+
+  },
+
+  __handleHookedNestSync: function(self, nesting_name, space, items) {
+    if (!self.__sync_nest_hooks ||
+      !self.__sync_nest_hooks[nesting_name] ||
+      !self.__sync_nest_hooks[nesting_name].length) {
+      return
+    }
+
+    var location_id = $v.getViewLocationId(self, nesting_name, space)
+
+    if (space && space !== 'main') {
+      return
+    }
+
+    var array = spv.toRealArray(items);
+
+    var views = array
+      .map(function(cur) {
+        return self.getStoredMpx(cur).getView(location_id);
+      })
+      .filter(Boolean)
+
+    for (var i = 0; i < self.__sync_nest_hooks[nesting_name].length; i++) {
+      self.__sync_nest_hooks[nesting_name][i].call(null, views)
+    }
+  },
+  __viewsList: function(nesting_name) {
+    var self = this
+    var location_id = $v.getViewLocationId(this, nesting_name, 'main');
+    var array = spv.toRealArray(this.children_models[nesting_name]);
+    var views = array
+      .map(function(cur) {
+        return self.getStoredMpx(cur).getView(location_id);
+      })
+      .filter(Boolean)
+
+    return views;
+  },
+  __hookNestSync: function(nesting_name, fn) {
+    if (!this.__sync_nest_hooks) {
+      this.__sync_nest_hooks = {}
+    }
+    if (!this.__sync_nest_hooks[nesting_name]) {
+      this.__sync_nest_hooks[nesting_name] = []
+    }
+
+    // TODO: subscribe to die event
+
+    this.__sync_nest_hooks[nesting_name].push(fn);
+  },
+  __unhookNestSync: function(nesting_name, fn) {
+    this.__sync_nest_hooks[nesting_name] = spv.arrayExclude(this.__sync_nest_hooks[nesting_name], fn);
   },
 
   simpleAppendNestingViews: function(declr, opts, nesname, array) {
