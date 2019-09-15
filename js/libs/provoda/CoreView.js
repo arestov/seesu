@@ -1383,6 +1383,7 @@ var View = spv.inh(StatesEmitter, {
     }
   },
   callCollectionChangeDeclaration: function(dclr_fpckg, nesname, array, old_value, removed) {
+    debugger
     if (typeof dclr_fpckg == 'function'){
       dclr_fpckg.call(this, nesname, array, old_value, removed);
     } else {
@@ -1522,6 +1523,7 @@ var View = spv.inh(StatesEmitter, {
     return getCollPriority && getCollPriority.call(this, array);
   },
   appendCollection: function(space, funcs, view_opts, nesname, array, not_request) {
+    debugger
     var location_id = $v.getViewLocationId(this, nesname, space || 'main');
 
 
