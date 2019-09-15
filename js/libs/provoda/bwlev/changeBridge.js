@@ -1,11 +1,23 @@
-define(function () {
+define(function (require) {
 'use strict';
+var BrowseLevel = require('./BrowseLevel')
+var showMOnMap = require('./showMOnMap')
+
+var redirected = function(map, pioneer) {
+  var redirectBWLev = pioneer.redirectBWLev
+  if (!redirectBWLev) {
+    return null
+  }
+  debugger
+  return showMOnMap(BrowseLevel, map, redirectBWLev(pioneer));
+
+}
 
 return function changeBridge(bwlev_raw) {
   var pioneer = bwlev_raw.getNesting('pioneer')
 
-  var bwlev = bwlev_raw
-  var map = bwlev.map
+  var map = bwlev_raw.map
+  var bwlev = redirected(map, pioneer) || bwlev_raw
   if (map.bridge_bwlev === bwlev) {
     return bwlev;
   }
