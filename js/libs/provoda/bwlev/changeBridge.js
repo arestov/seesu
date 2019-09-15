@@ -1,15 +1,16 @@
 define(function (require) {
 'use strict';
-var BrowseLevel = require('./BrowseLevel')
 var showMOnMap = require('./showMOnMap')
 
 var redirected = function(map, pioneer) {
+  var BWL = map.BWL; // kinda hack?! TODO FIXME
+
   var redirectBWLev = pioneer.redirectBWLev
   if (!redirectBWLev) {
     return null
   }
   debugger
-  return showMOnMap(BrowseLevel, map, redirectBWLev(pioneer));
+  return showMOnMap(BWL, map, redirectBWLev(pioneer));
 
 }
 
