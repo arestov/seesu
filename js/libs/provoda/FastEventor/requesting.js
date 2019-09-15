@@ -241,8 +241,9 @@ return {
           anyway();
           handleResponse(response);
         }, null, false, null);
-      }, function() {
+      }, function(err) {
         self.sputnik.nextTick(anyway, null, false, null);
+        throw err
       });
 
 
