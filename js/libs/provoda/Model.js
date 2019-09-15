@@ -323,6 +323,12 @@ add({
   RPCLegacy: wrapInputCall(function() {
     var args = Array.prototype.slice.call(arguments);
     var method_name = args.shift();
+    if (method_name == 'pass') {
+      var fn = this.__act
+      args.unshift(this)
+      fn.apply(null, args)
+      return
+    }
     if (this.rpc_legacy && this.rpc_legacy[method_name]){
       this.rpc_legacy[method_name].apply(this, args);
     } else {
