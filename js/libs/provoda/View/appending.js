@@ -2,8 +2,8 @@ define(function(require) {
 'use strict'
 var spv = require('spv');
 var $ = require('jquery');
-var hp = require('./helpers');
-var updateProxy = require('./updateProxy');
+var hp = require('../helpers');
+var updateProxy = require('../updateProxy');
 
 
 var pvUpdate = updateProxy.update;

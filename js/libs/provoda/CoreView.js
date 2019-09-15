@@ -1,7 +1,7 @@
 define(function(require) {
 'use strict';
 
-var $ = require('jquery');
+// var $ = require('jquery');
 var spv = require('spv');
 var hp = require('./helpers');
 var updateProxy = require('./updateProxy');
@@ -64,10 +64,6 @@ var ViewLabour = function() {
 
   this.undetailed_states = {};
   this.undetailed_children_models = {};
-};
-
-var stackEmergency = function(fn, eventor, args) {
-  return eventor._calls_flow.pushToFlow(fn, eventor, args);
 };
 
 var initView = function(target, view_otps, opts){
@@ -245,9 +241,6 @@ var View = spv.inh(StatesEmitter, {
   getNesting: function(collection_name) {
     return this.children_models[collection_name];
   },
-  getWindow: function() {
-    return spv.getDefaultView(this.d || this.getC()[0].ownerDocument);
-  },
   demensions_cache: {},
   checkDemensionsKeyStart: function() {
     if (!this._lbr.demensions_key_start){
@@ -369,78 +362,6 @@ var View = spv.inh(StatesEmitter, {
       this.bindBase();
     }
   },
-  checkExpandableTree: function() {
-    var i, cur, cur_config, has_changes = true, append_list = [];
-    while (this.base_skeleton && has_changes) {
-      has_changes = false;
-      for (i = 0; i < this.base_skeleton.length; i++) {
-        cur = this.base_skeleton[i];
-        cur_config = this.base_tree_list[ cur.chunk_num ];
-        if (cur.handled) {
-          continue;
-        }
-        if (!cur.parent || cur.parent.handled) {
-          if (!cur_config.needs_expand_state){
-            cur.handled = true;
-            if (cur_config.sample_name) {
-              cur.node = this.root_view.getSample( cur_config.sample_name );
-            } else if (cur_config.part_name) {
-              cur.node = this.requirePart( cur_config.part_name );
-            } else {
-              throw new Error('how to get node for this?!');
-            }
-            has_changes = true;
-            append_list.push(cur);
-
-            //sample_name
-            //part_name
-          }
-        }
-
-        //chunk_num
-      }
-      while (append_list.length) {
-        cur = append_list.pop();
-        if (cur.parent && cur.parent.node) {
-          cur_config = this.base_tree_list[ cur.chunk_num ];
-          var target_node = cur_config.selector ? $(cur.parent.node).find(cur_config.selector) : $(cur.parent.node);
-
-          if (!cur_config.prepend) {
-            target_node.append(cur.node);
-          } else {
-            target_node.prepend(cur.node);
-          }
-
-          if (cur_config.needs_expand_state && cur_config.parse_as_tplpart) {
-            this.parseAppendedTPLPart(cur.node);
-          }
-        } else if (cur.parent){
-          console.log('cant append');
-        } else {
-          this.c = cur.node;
-        }
-      }
-
-    }
-    if (!this.c && this.base_skeleton[0].node) {
-      this.c = this.base_skeleton[0].node;
-    }
-
-    //если есть прикреплённый родитель и пришло время прикреплять (если оно должно было прийти)
-    //
-
-    /*
-    прикрепление родителя
-    парсинг детей
-    прикрепление детей
-
-    прикрепление детей привязаных к якорю
-
-
-
-    */
-
-  },
   createDetails: function() {
     if (this.pv_view_node){
       this.useBase(this.pv_view_node);
@@ -476,23 +397,6 @@ var View = spv.inh(StatesEmitter, {
       this.connectStates();
     }
     this.appendCon();
-  },
-  appendCon: function(){
-    if (this.skip_anchor_appending){
-      return;
-    }
-    var con = this.getC();
-    var anchor = this._lbr._anchor;
-    if (con && anchor && anchor.parentNode){
-      $(anchor).after(con);
-      //anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
-      this._lbr._anchor = null;
-      $(anchor).detach();
-      this.setVisState('con_appended', true);
-    } else if (con && con.parent()[0]){
-      this.setVisState('con_appended', true);
-
-    }
   },
 
   getFreeCV: function(child_name, view_space, opts) {
@@ -691,7 +595,6 @@ var View = spv.inh(StatesEmitter, {
     if (!this.parent_view && this.proxies_space) {
       this._highway.views_proxies.removeSpaceById(this.proxies_space);
     }
-    stackEmergency(this.remove, this, [this.getC(), this._lbr._anchor]);
     this.dead = true; //new DeathMarker();
     this.stopRequests();
 
@@ -700,44 +603,8 @@ var View = spv.inh(StatesEmitter, {
       this.mpx.removeDeadViews();
     }
 
-    this.c = null;
+    this.markDomDead()
 
-    if (this.base_skeleton) {
-      for (i = 0; i < this.base_skeleton.length; i++) {
-        $(this.base_skeleton[i].node);
-      }
-      this.base_skeleton = null;
-    }
-
-
-    this._lbr._anchor = null;
-    if (this.tpl) {
-      this.tpl.destroy();
-      this.tpl = null;
-    }
-
-    if (this.tpls){
-      for (i = 0; i < this.tpls.length; i++) {
-        this.tpls[i].destroy();
-      }
-      this.tpls = null;
-    }
-    this.way_points = null;
-
-    if (this.wp_box){
-      this.wp_box = null;
-    }
-    if (this.pv_view_node){
-      this.pv_view_node = null;
-    }
-
-
-
-    if (this.dom_related_props){
-      for (i = 0; i < this.dom_related_props.length; i++) {
-        this[this.dom_related_props[i]] = null;
-      }
-    }
     var children = this.children;
     this.children = [];
     for (i = 0; i < children.length; i++) {
@@ -749,44 +616,18 @@ var View = spv.inh(StatesEmitter, {
 
 
   },
-  remove: function(con, anchor) {
-    if (!con){
-      con = this.getC();
-    }
-    if (con){
-      con.remove();
-    }
-    if (!anchor){
-      anchor = this._lbr._anchor;
-    }
-    if (anchor){
-      $(anchor).remove();
-    }
-
-  },
   die: function(opts){
     if (this.__disconnectAdapter) {
       this.__disconnectAdapter.call(null, this)
     }
     if (!this._lbr.marked_as_dead){
-      $(this.getC()).remove();
+      this.domDie()
       this.markAsDead(opts && opts.skip_md_call);
       nestBorrowDestroy(this);
       this._lbr.marked_as_dead = true;
       // spyglassDestroy(this)
     }
     return this;
-  },
-  getT: function(){
-    return this.c || this.pv_view_node || $(this.getA());
-  },
-  getC: function(){
-    return this.c;
-  },
-  getA: function(){
-    return this._lbr._anchor || (this._lbr._anchor = window.document.createComment(''));
-
-    //document.createTextNode('')
   },
   requestView: function() {
     this.requestAll();
@@ -848,28 +689,11 @@ var View = spv.inh(StatesEmitter, {
     }
     return this.requestChildrenDetLev(rel_depth - 1);
   },
-  getCNode: function(c) {
-    return (c = this.getC()) && (typeof c.length != 'undefined' ? c[0] : c);
-  },
   isAliveFast: function() {
     return !this.dead;
   },
-  isAlive: function(dead_doc) {
-    if (this.dead){
-      return false;
-    } else {
-      if (this.getC()){
-        var c = this.getCNode();
-        if (!c || (dead_doc && dead_doc === c.ownerDocument) || !spv.getDefaultView(c.ownerDocument)){
-          this.markAsDead();
-          return false;
-        } else {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    }
+  isAlive: function() {
+    return this.isAliveFast()
   },
   _setStates: hp._groupMotive(function(states){
     this._lbr._states_set_processing = true;
@@ -916,58 +740,6 @@ var View = spv.inh(StatesEmitter, {
   },
   getPart: function(part_name) {
     return this.view_parts && this.view_parts[part_name];
-  },
-  requirePart: function(part_name) {
-    if (!this.isAlive()){
-      return $();
-    }
-    if (this.view_parts && this.view_parts[part_name]){
-      return this.view_parts[part_name];
-    } else {
-      if (!this.view_parts){
-        this.view_parts = {};
-      }
-
-      var parts_builder = this.parts_builder[part_name];
-      if (!parts_builder) {
-        throw new Error('cant build part ' + part_name)
-      }
-
-      var part = typeof parts_builder == 'string' ? this.root_view.getSample(parts_builder) : parts_builder.call(this);
-
-
-      this.view_parts[part_name] = part;
-      if (!this.view_parts[part_name]){
-        throw new Error('"return" me some build result please');
-      }
-
-      for (var i = 0; i < this.stch_hs.length; i++) {
-        var cur = this.stch_hs[i];
-        if (this.states.hasOwnProperty(cur.name) && typeof cur.item != 'function'){
-          if (this.checkDepVP(cur.item, part_name)){
-            cur.item.fn.call(this, this.state(cur.name));
-          }
-        }
-
-      }
-      return this.view_parts[part_name];
-    }
-  },
-  checkDepVP: function(state_changer, builded_vp_name) {
-    var has_all_dependings;
-    if (builded_vp_name && state_changer.dep_vp.indexOf(builded_vp_name) == -1){
-      return false;
-    }
-    for (var i = 0; i < state_changer.dep_vp.length; i++) {
-      var cur = state_changer.dep_vp[i];
-      if (!this.view_parts || !this.view_parts[cur]){
-        has_all_dependings = false;
-        break;
-      } else {
-        has_all_dependings = true;
-      }
-    }
-    return has_all_dependings;
   },
   stackReceivedChanges: (function() {
     return function() {
