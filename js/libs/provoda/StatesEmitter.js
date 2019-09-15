@@ -134,6 +134,9 @@ add({
     }
     return this.conx_optsi;
   },
+  ___stateToSync: function() {
+    return this.states;
+  },
   getContextOpts: function() {
     if (!this.conx_opts){
       this.conx_opts = new EvConxOpts(this);
