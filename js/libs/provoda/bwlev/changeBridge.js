@@ -5,7 +5,8 @@ return function changeBridge(bwlev_raw) {
   var pioneer = bwlev_raw.getNesting('pioneer')
 
   var bwlev = bwlev_raw
-  if (bwlev.map.bridge_bwlev === bwlev) {
+  var map = bwlev.map
+  if (map.bridge_bwlev === bwlev) {
     return bwlev;
   }
 
