@@ -11,6 +11,10 @@ var checkModel = function(md, models_index, local_index, all_for_parse) {
   return cur_id;
 };
 
+var hasId = function(value) {
+  return value && value._provoda_id
+}
+
 var toSimpleStructure = function(models_index, big_result) {
   //используется для получения массива всех ПОДДЕЛЬНЫХ, пригодных для отправки через postMessage моделей, связанных с текущей
   models_index = models_index || {};
@@ -18,7 +22,32 @@ var toSimpleStructure = function(models_index, big_result) {
   var all_for_parse = [this];
   big_result = big_result || [];
 
+  var replaceItem = function(item) {
+    if (!hasId(item)) {
+      return item
+    }
 
+    return {
+      _provoda_id: checkModel(item, models_index, local_index, all_for_parse)
+    };
+  }
+
+  var replaceModelInState = function(value) {
+    if (!value) {
+      return value
+    }
+
+    if (!Array.isArray(value)) {
+      return replaceItem(value)
+
+    }
+
+    if (!value.some(hasId)) {
+      return value
+    }
+
+    return value.map(replaceItem)
+  }
 
   while (all_for_parse.length) {
     var cur_md = all_for_parse.shift();
@@ -38,11 +67,7 @@ var toSimpleStructure = function(models_index, big_result) {
     };
     for (var state_name in result.states){
       var state = result.states[state_name];
-      if (state && state._provoda_id){
-        result.states[state_name] = {
-          _provoda_id: checkModel(state, models_index, local_index, all_for_parse)
-        };
-      }
+      result.states[state_name] = replaceModelInState(state)
     }
 
     for (var nesting_name in cur_md.children_models){
