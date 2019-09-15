@@ -66,7 +66,7 @@ return function(self, props, original) {
 
   var base_tree_mofified = props.hasOwnProperty('base_tree');
   if (base_tree_mofified) {
-    self.base_tree_list = getBaseTreeCheckList(props.base_tree);
+    self.base_tree_list = props.base_tree && getBaseTreeCheckList(props.base_tree);
   }
 
   changeChildrenViewsDeclarations(self, props);
