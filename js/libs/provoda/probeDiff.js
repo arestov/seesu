@@ -41,6 +41,10 @@ function getClosestStep(value_full_path, oldvalue_full_path) {
   }
 }
 
+var asMDR = function(md) {
+  return md && md.getMDReplacer();
+}
+
 return function probeDiff(value, oldvalue) {
   var bwlev = value;
   var target = bwlev.getMD().getNesting('pioneer').getMDReplacer();
@@ -71,8 +75,8 @@ return function probeDiff(value, oldvalue) {
   return {
     bwlev: bwlev,
     target: target,
-    value_full_path: value_full_path,
-    oldvalue_full_path: oldvalue_full_path,
+    value_full_path: value_full_path.map(asMDR),
+    oldvalue_full_path: oldvalue_full_path.map(asMDR),
     common_step: common_step,
     array: changes_wrap,
   };

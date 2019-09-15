@@ -8,6 +8,7 @@ var pvState = require('pv/state');
 var pvUpdate = require('pv/update');
 var $ = require('jquery');
 var wrapInputCall = require('pv/wrapInputCall')
+var getModelFromR = require('pv/v/getModelFromR')
 
 var BrowseLevNavView = require('./BrowseLevNavView');
 var BrowseLevView = require('./BrowseLevView');
@@ -265,17 +266,17 @@ return spv.inh(View, {
 
   'model-mapch': {
     'move-view': function(change) {
-      var parent = change.bwlev.getMD().getParentMapModel();
+      var parent = getModelFromR(this, change.bwlev).getParentMapModel();
       if (parent){
       //	parent.updateState('mp_has_focus', false);
       }
-      this.setVMpshow(this.getStoredMpx(change.bwlev.getMD()), change.value);
+      this.setVMpshow(this.getStoredMpx(getModelFromR(this, change.bwlev)), change.value);
     },
     'zoom-out': function(change) {
-      this.setVMpshow(this.getStoredMpx(change.bwlev.getMD()), false);
+      this.setVMpshow(this.getStoredMpx(getModelFromR(this, change.bwlev)), false);
     },
     'destroy': function(change) {
-      var md = change.bwlev.getMD();
+      var md = getModelFromR(this, change.bwlev);
       this.setVMpshow(this.getStoredMpx(md), false);
     }
   },
@@ -326,8 +327,8 @@ return spv.inh(View, {
     var animation_data = readMapSliceAnimationData(this, diff);
 
     for (i = array.length - 1; i >= 0; i--) {
-      var cur_md = mds[i];
-      cur = array[i];
+      var cur_md = getModelFromR(this, mds[i]);
+      cur = getModelFromR(this, array[i]);
 
       var dclr = pv.$v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
               nesname, cur_md.model_name, this.nesting_space);
@@ -351,9 +352,9 @@ return spv.inh(View, {
     } else {
       var models = new Array(array.length);
       for (i = 0; i < array.length; i++) {
-        models[i] = array[i].md_replacer;
+        models[i] = getModelFromR(this, array[i]);
       }
-      target_md = this.findBMapTarget(array);
+      target_md = this.findBMapTarget(models);
       if (!target_md){
         throw new Error('there is no model with focus!');
       }
@@ -462,8 +463,7 @@ return spv.inh(View, {
   markAnimationStart: function(models, changes_number) {
     pv.update(this, 'map_animation_num_started', changes_number, sync_opt);
     for (var i = 0; i < models.length; i++) {
-
-      pv.mpx.update(this.getStoredMpx(models[i].getMD()), 'animation_started', changes_number, sync_opt);
+      pv.mpx.update(this.getStoredMpx(getModelFromR(this, models[i])), 'animation_started', changes_number, sync_opt);
       ////MUST UPDATE VIEW, NOT MODEL!!!!!
     }
   },
@@ -476,7 +476,7 @@ return spv.inh(View, {
 
     for (var i = 0; i < models.length; i++) {
       //
-      var mpx = this.getStoredMpx(models[i].getMD());
+      var mpx = this.getStoredMpx(getModelFromR(this, models[i]));
 
       if (mpx.state('animation_started') == changes_number){
         pv.mpx.update(mpx, 'animation_completed', changes_number, sync_opt);

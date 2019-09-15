@@ -306,7 +306,9 @@ var View = spv.inh(StatesEmitter, {
     if (md.stream) {
       return md.mpx;
     } else {
-      return this._highway.views_proxies.getMPX(this.proxies_space || this.root_view.proxies_space, md);
+      // getModel
+      var space = this.proxies_space || this.root_view.proxies_space;
+      return this._highway.views_proxies.getMPX(space, md);
     }
     //
 

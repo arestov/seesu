@@ -2,6 +2,8 @@ define(function (require) {
 'use strict';
 var pv = require('pv');
 var view_serv = require('view_serv');
+var getModelFromR = require('pv/v/getModelFromR')
+
 // var findMpxViewInChildren = require('./findMpxViewInChildren')
 
 var can_animate = view_serv.css.transform && view_serv.css.transition;
@@ -21,13 +23,13 @@ var getAMCOffset = function() {
 return function readMapSliceAnimationData(view, transaction_data) {
   if (!transaction_data || !transaction_data.bwlev) {return;}
 
-  var target_md = transaction_data.bwlev.getMD();
+  var target_md = getModelFromR(view, transaction_data.bwlev);
   var current_lev_num = pv.state(target_md, 'map_level_num');
   var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in" && transaction_data.array[0].changes.length < 3;
 
   if (!(can_animate && current_lev_num != -1 && one_zoom_in)) {return;}
 
-  var target_in_parent = view.getMapSliceChildInParenView(target_md, transaction_data.target.getMD());
+  var target_in_parent = view.getMapSliceChildInParenView(target_md, getModelFromR(view, transaction_data.target));
   if (!target_in_parent) {return;}
 
   var targt_con = target_in_parent.getC();
