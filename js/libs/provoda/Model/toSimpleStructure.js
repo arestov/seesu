@@ -1,7 +1,7 @@
 define(function(require) {
 'use strict';
 var cloneObj = require('spv').cloneObj
-var isPrivate = require('./isPrivate')
+var isPrivate = require('./isPrivateState')
 
 var checkModel = function(md, models_index, local_index, all_for_parse) {
   var cur_id = md._provoda_id;

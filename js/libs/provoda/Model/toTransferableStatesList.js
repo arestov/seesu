@@ -1,9 +1,12 @@
-define(function() {
+define(function(require) {
 'use strict'
+var isPrivate = require('./isPrivateState')
 
 var hasId = function(value) {
   return value && value._provoda_id
 }
+
+
 
 function toTransferableStatesList(states_raw) {
 
@@ -12,12 +15,22 @@ function toTransferableStatesList(states_raw) {
 
   for ( var jj = 2; jj < states.length; jj += 3 ) {
     var cur_value = states[jj];
+
+    if (isPrivate(states[jj - 1])) {
+
+      needs_changes = true;
+      if (!fixed_values) {
+        fixed_values = states.slice();
+      }
+
+      fixed_values[jj] = null;
+    }
+
     if (!hasId(cur_value)) {
       continue
     }
 
     needs_changes = true;
-
     if (!fixed_values) {
       fixed_values = states.slice();
     }
