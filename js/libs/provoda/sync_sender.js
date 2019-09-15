@@ -55,14 +55,14 @@ SyncSender.prototype = {
   },
   pushNesting: function(md, nesname, value){
     //var struc;
+    var parsed_value = toTransferableNestings(value)
+
     for (var i = 0; i < this.streams_list.length; i++) {
       var cur = this.streams_list[i];
       var index = this.sockets_m_index[cur.id];
       if (!index[md._provoda_id]){
         continue;
       }
-
-      var parsed_value = toTransferableNestings(value)
 
       var struc = md.toSimpleStructure(index);
       cur.changeCollection(md._provoda_id, struc, nesname, parsed_value);
