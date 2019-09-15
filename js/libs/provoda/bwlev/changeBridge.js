@@ -9,7 +9,7 @@ var redirected = function(map, pioneer) {
   if (!redirectBWLev) {
     return null
   }
-  debugger
+
   return showMOnMap(BWL, map, redirectBWLev(pioneer));
 
 }
