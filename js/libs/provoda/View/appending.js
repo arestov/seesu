@@ -345,7 +345,7 @@ return {
         controller_name: pv_view.controller_name,
         nesting_name: this.nesname,
         nesting_space: this.space_name,
-        sampleController: this.DOMView()
+        sampleController: this.view.DOMView()
       }, cur_md);
 
       if (view){
@@ -418,7 +418,7 @@ return {
         controller_name: pv_view.controller_name,
         nesting_name: this.nesname,
         nesting_space: this.space_name,
-        sampleController: this.DOMView()
+        sampleController: this.view.DOMView()
       }, cur_md);
 
       if (view){
