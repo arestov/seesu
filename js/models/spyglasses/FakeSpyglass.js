@@ -287,7 +287,7 @@ function handleQuery(map, md) {
 
 function initNav(map, navi, app) {
   if (app_env.needs_url_history){
-    navi.init(function(e){
+    navi.init(app.inputFn(function(e){
       var url = e.newURL;
       var state_from_history = navi.findHistory(e.newURL);
       if (state_from_history){
@@ -299,7 +299,7 @@ function initNav(map, navi, app) {
         BrowseMap.changeBridge(bwlev);
         handleQuery(map, bwlev.getNesting('pioneer'));
       }
-    });
+    }));
     (function() {
       var url = window.location && window.location.hash.replace(/^\#/,'');
       if (url){
