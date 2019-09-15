@@ -17,6 +17,13 @@ var toTransferableNestings = function(value) {
 
     var parsed_value
 
+    if (value && value.each_items) {
+      // creating value to pass
+      var copy = spv.cloneObj({}, value)
+      delete copy.each_items;
+      return copy
+    }
+
     if (value._provoda_id){
       parsed_value = value._provoda_id;
     } else if (Array.isArray(value)){

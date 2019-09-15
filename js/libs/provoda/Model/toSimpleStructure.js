@@ -82,6 +82,13 @@ var toSimpleStructure = function(models_index, big_result) {
       }
 
       if (!Array.isArray(cur)) {
+        if (cur.each_items) {
+          for (var i = 0; i < cur.each_items.length; i++) {
+            checkModel(cur.each_items[i], models_index, local_index, all_for_parse);
+          }
+          continue;
+        }
+
         if (!cur._provoda_id) {
           throw new Error('unknown data structure inside nesting')
         }
