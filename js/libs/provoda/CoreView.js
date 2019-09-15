@@ -21,7 +21,6 @@ var getBwlevView = require('./dcl_view/getBwlevView');
 
 var cloneObj = spv.cloneObj;
 var $v = hp.$v;
-var push = Array.prototype.push;
 
 var getBaseTreeSkeleton = function(array) {
   var result = new Array(array.length);
@@ -304,45 +303,6 @@ var View = spv.inh(StatesEmitter, {
     this.mpx.RPCLegacy.apply(this.mpx, arguments);
   },
   children_views: {},
-  canUseWaypoints: function() {
-    return true;
-  },
-  canUseDeepWaypoints: function() {
-    return true;
-  },
-  getWaypoints: function(result_array) {
-    if (!result_array) {
-      throw new Error('you must apply result array');
-    }
-    if (this.canUseWaypoints()) {
-      if (this.way_points) {
-        push.apply(result_array, this.way_points);
-      }
-
-    }
-    //return this.canUseWaypoints() ? this.way_points : [];
-  },
-  getAllWaypoints: function(result_array) {
-    if (!result_array) {
-      throw new Error('you must apply result array');
-    }
-    this.getWaypoints(result_array);
-    this.getDeepWaypoints(result_array);
-
-  },
-  getDeepWaypoints: function(result_array) {
-    if (!result_array) {
-      throw new Error('you must apply result array');
-    }
-    if (this.canUseWaypoints() && this.canUseDeepWaypoints()){
-      //var views = this.getDeepChildren(exept);
-      for (var i = 0; i < this.children.length; i++) {
-        var cur = this.children[i];
-        cur.getAllWaypoints(result_array);
-      }
-    }
-
-  },
   connectChildrenModels: hp._groupMotive(function() {
     var udchm = this._lbr.undetailed_children_models;
     this._lbr.undetailed_children_models = null;
@@ -716,31 +676,6 @@ var View = spv.inh(StatesEmitter, {
     this._lbr._states_set_processing = null;
     return this;
   }),
-  updateTemplatesStates: function(total_ch, sync_tpl) {
-    var i = 0;
-    //var states = this.states;
-    if (this.tpl){
-      this.tpl.checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
-    }
-    if (this.tpls){
-      for (i = 0; i < this.tpls.length; i++) {
-        this.tpls[i].checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
-      }
-    }
-    if (this.__syncStatesChanges) {
-      this.__syncStatesChanges.call(null, this, total_ch, this.states);
-    }
-
-  },
-  requireAllParts: function() {
-    for (var a in this.parts_builder){
-      this.requirePart(a);
-    }
-    return this;
-  },
-  getPart: function(part_name) {
-    return this.view_parts && this.view_parts[part_name];
-  },
   stackReceivedChanges: (function() {
     return function() {
       if (!this.isAlive()){

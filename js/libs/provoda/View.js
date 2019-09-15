@@ -14,6 +14,7 @@ var stackEmergency = function(fn, eventor, args) {
   return eventor._calls_flow.pushToFlow(fn, eventor, args);
 };
 
+var push = Array.prototype.push;
 
 var DomView
 var props = {}
@@ -109,6 +110,45 @@ spv.cloneObj(props, {
       });
     }
   },
+  canUseWaypoints: function() {
+    return true;
+  },
+  canUseDeepWaypoints: function() {
+    return true;
+  },
+  getWaypoints: function(result_array) {
+    if (!result_array) {
+      throw new Error('you must apply result array');
+    }
+    if (this.canUseWaypoints()) {
+      if (this.way_points) {
+        push.apply(result_array, this.way_points);
+      }
+
+    }
+    //return this.canUseWaypoints() ? this.way_points : [];
+  },
+  getAllWaypoints: function(result_array) {
+    if (!result_array) {
+      throw new Error('you must apply result array');
+    }
+    this.getWaypoints(result_array);
+    this.getDeepWaypoints(result_array);
+
+  },
+  getDeepWaypoints: function(result_array) {
+    if (!result_array) {
+      throw new Error('you must apply result array');
+    }
+    if (this.canUseWaypoints() && this.canUseDeepWaypoints()){
+      //var views = this.getDeepChildren(exept);
+      for (var i = 0; i < this.children.length; i++) {
+        var cur = this.children[i];
+        cur.getAllWaypoints(result_array);
+      }
+    }
+
+  },
   updateTemplatedWaypoints: function(add, remove) {
     if (!this.isAlive()) {
       return;
@@ -126,6 +166,31 @@ spv.cloneObj(props, {
     if (add.length){
       //console.log(add);
     }
+  },
+  updateTemplatesStates: function(total_ch, sync_tpl) {
+    var i = 0;
+    //var states = this.states;
+    if (this.tpl){
+      this.tpl.checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
+    }
+    if (this.tpls){
+      for (i = 0; i < this.tpls.length; i++) {
+        this.tpls[i].checkChanges(total_ch, this.states, !sync_tpl, !sync_tpl && this.current_motivator);
+      }
+    }
+    if (this.__syncStatesChanges) {
+      this.__syncStatesChanges.call(null, this, total_ch, this.states);
+    }
+
+  },
+  requireAllParts: function() {
+    for (var a in this.parts_builder){
+      this.requirePart(a);
+    }
+    return this;
+  },
+  getPart: function(part_name) {
+    return this.view_parts && this.view_parts[part_name];
   },
   requirePart: function(part_name) {
     if (!this.isAlive()){
