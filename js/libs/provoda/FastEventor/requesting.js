@@ -302,19 +302,28 @@ return {
       return sendRequest(selected_map, store, self);
     }
 
+    function compxUsed(self, cur) {
+      var compx = self.sputnik.compx_check[cur];
+      if (!compx) {
+        return null;
+      }
+
+      if (self.sputnik.state(cur) != null) {
+        return self.sputnik.state(cur);
+      }
+
+      var without_self_name = withoutSelf(compx.watch_list, compx.name)
+      return requestDependencies(self, without_self_name, true)
+    }
+
     function requestDependencies(self, dependencies, soft) {
       var reqs_list = [];
       for (var i = 0; i < dependencies.length; i++) {
         var cur = dependencies[i];
-        var compx = self.sputnik.compx_check[cur];
-        if (compx) {
-          if (self.sputnik.state(cur)) {
-            continue;
-          }
-
-          var without_self_name = withoutSelf(compx.depends_on, compx.name)
-          reqs_list.push(requestDependencies(self, without_self_name, true));
-          continue;
+        var used_compex = compxUsed(self, cur)
+        if (used_compex != null) {
+          reqs_list.push(used_compex)
+          continue
         }
 
         if (soft) {
