@@ -15,7 +15,11 @@ var FakeModel = function(model_skeleton, stream) {
   this.model_name = model_skeleton.model_name;
   this.mpx = model_skeleton.mpx;
   this.states = model_skeleton.states;
+  this.md_replacer = null;
+};
 
+var MDReplace = function(_provoda_id){
+  this._provoda_id = _provoda_id
 };
 
 FakeModel.prototype = {
@@ -27,7 +31,13 @@ FakeModel.prototype = {
   },
   RPCLegacy: function() {
     this.RealRemoteCall(arguments);
-  }
+  },
+  getMDReplacer: function() {
+    if (!this.md_replacer) {
+      this.md_replacer = new MDReplace(this._provoda_id);
+    }
+    return this.md_replacer;
+  },
 };
 
 
