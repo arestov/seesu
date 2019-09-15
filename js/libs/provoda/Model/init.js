@@ -129,6 +129,15 @@ function prepareStates(self, data, states) {
     }
   }
 
+  if (self.default_states) {
+    var cur = self.init_states
+    self.init_states = {}
+    cloneObj(self.init_states, self.default_states);
+    cloneObj(self.init_states, cur);
+  }
+
+  self.init_states = cloneObj(self.init_states, iss);
+
   self.init_states = self.init_states || {};
   self.init_states = cloneObj(self.init_states, iss);
 }
