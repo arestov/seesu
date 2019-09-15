@@ -33,6 +33,33 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
       function(a, b) {
         return a && b;
       }
+    ],
+    'sources_of_item_details': [
+      'compx',
+      ['sources_of_item_details_by_space'],
+      function(obj) {
+        var nesting_space = this.nesting_space
+        return obj && obj[nesting_space]
+      }
+    ],
+    'map_slice_view_sources':[
+      'compx',
+      ['source_of_item', 'sources_of_item_details'],
+      function(one, all) {
+        if (!all) {
+          return [one]
+        }
+
+        if (!one) {
+          return all
+        }
+
+        var combined = all.slice()
+        combined.unshift(one)
+
+        var byKey = spv.makeIndexByField(combined);
+        return Object.keys(byKey)
+      }
     ]
   },
 
@@ -57,15 +84,11 @@ var BrowseLevView = spv.inh(View, {}, pv.mergeBhv({
         return;
       }
 
-      if (target.parent_view.parent_view == target.root_view && target.nesting_name == 'map_slice') {
-        var arr = [];
-        if (state[0]) {
-          arr.push(state[0]);
-        }
-        push.apply(arr, state[1][target.nesting_space]);
-        pvUpdate(target, 'view_sources', arr);
+      if (target.parent_view.parent_view != target.root_view || target.nesting_name != 'map_slice') {
+        return
       }
 
+      pvUpdate(target, 'view_sources', state);
     }
   },
 

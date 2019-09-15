@@ -106,6 +106,10 @@ function handleChdDeepState(motivator, _, lnwatch, args) {
 
   var _provoda_id = md._provoda_id;
   var states = hands.deep_item_states_index[_provoda_id];
+  if (!states) {
+    // we can get state change event just after item was removed from list
+    return
+  }
   states[state_name] = value;
   hands.deep_item_states_index[_provoda_id] = states;
 

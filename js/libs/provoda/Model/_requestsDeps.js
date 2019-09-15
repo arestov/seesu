@@ -7,19 +7,20 @@ var addRootNestWatch = require('../nest-watch/add-remove').addRootNestWatch;
 var removeRootNestWatch = require('../nest-watch/add-remove').removeRootNestWatch;
 var NestWatch = require('../nest-watch/NestWatch');
 var toMultiPath = require('../utils/NestingSourceDr/toMultiPath')
+var getModelById = require('../utils/getModelById')
 var spv = require('spv');
 
 var watchDependence = changeDependence(true);
 var unwatchDependence = changeDependence(false);
 
 var count = 1;
-var ReqDep = function(dep_key, dep, target, supervision) {
+var ReqDep = function(dep_key, dep, target, supervision, needy) {
   this.id = count++;
   this.supervision = supervision;
   this.dep_key = dep_key;
   this.dep = dep;
   this.target = target;
-  this.needy = supervision.needy;
+  this.needy = needy;
   this.anchor = null;
 };
 
@@ -365,7 +366,7 @@ function changeDependence(mark) {
     var reqs = supervision.reqs;
     var kkkey = reqKey(self, dep);
     if (!reqs[ kkkey ]) {
-      reqs[ kkkey ] = new ReqDep(dep_key, dep, self, supervision);
+      reqs[ kkkey ] = new ReqDep(dep_key, dep, self, supervision, getModelById(self, supervision.needy_id));
     }
 
     spv.setTargetField(tree, path, mark);
@@ -378,10 +379,10 @@ function changeDependence(mark) {
 
 return {
   addReqDependence: function(supervision, dep) {
-    watchDependence(supervision, this, dep, supervision.needy._provoda_id);
+    watchDependence(supervision, this, dep, supervision.needy_id);
   },
   removeReqDependence: function(supervision, dep) {
-    unwatchDependence(supervision, this, dep, supervision.needy._provoda_id);
+    unwatchDependence(supervision, this, dep, supervision.needy_id);
   }
 };
 });

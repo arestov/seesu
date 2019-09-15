@@ -27,8 +27,9 @@ return function(self, props) {
 
         real_name = getUnprefixed(prop);
         var cur = self[prop];
+
         used_props[real_name] = true;
-        result[real_name] = new NestDcl(real_name, cur);
+        result[real_name] = cur ? new NestDcl(real_name, cur) : null;
       }
     }
   }

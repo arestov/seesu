@@ -134,8 +134,12 @@ var branch = function (bwlev) {
   return list;
 }
 
+var asMDR = function(md) {
+  return md && md.getMDReplacer();
+}
+
  function animateMapChanges(fake_spyglass, bwlev) {
- var diff = probeDiff(bwlev.getMDReplacer(), fake_spyglass.current_mp_bwlev && fake_spyglass.current_mp_bwlev.getMDReplacer());
+ var diff = probeDiff(bwlev, bwlev.getMDReplacer(), fake_spyglass.current_mp_bwlev && fake_spyglass.current_mp_bwlev.getMDReplacer());
  if (!diff.array || !diff.array.length) {
   return;
  }
@@ -213,9 +217,9 @@ var branch = function (bwlev) {
     var all_items = models.concat(bwlevs);
 
     mp_show_wrap = {
-      items: models,
-      bwlevs: bwlevs,
-      all_items: all_items,
+      items: models.map(asMDR),
+      bwlevs: bwlevs.map(asMDR),
+      all_items: all_items.map(asMDR),
       mp_show_states: []
     };
     for (i = 0; i < models.length; i++) {
@@ -226,6 +230,7 @@ var branch = function (bwlev) {
 
   updateNesting(fake_spyglass, 'map_slice', {
     residents_struc: mp_show_wrap,
+    each_items: all_items,
     transaction: changes
   });
 

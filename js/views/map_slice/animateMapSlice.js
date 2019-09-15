@@ -3,6 +3,7 @@ define(function (require) {
 var pv = require('pv');
 var spv = require('spv');
 var view_serv = require('view_serv');
+var getModelFromR = require('pv/v/getModelFromR')
 
 var sync_opt = {sync_tpl: true};
 
@@ -24,13 +25,13 @@ var inCache = function(cache, key) {
   return cache.hasOwnProperty(key) && cache[key] !== false;
 };
 
-var needsDestroing = function(all_changhes) {
+var needsDestroing = function(view, all_changhes) {
   var destroy_insurance = {}, i, cur, target, pvid;
   var result = [];
 
   for (i = 0; i < all_changhes.length; i++) {
     cur = all_changhes[i];
-    target = cur.bwlev.getMD();
+    target = getModelFromR(view, cur.bwlev);
     pvid = target._provoda_id;
     if (cur.type == 'destroy'){
       destroy_insurance[pvid] = target;
@@ -41,7 +42,7 @@ var needsDestroing = function(all_changhes) {
 
   for (i = all_changhes.length - 1; i >= 0; i--) {
     cur = all_changhes[i];
-    target = cur.bwlev.getMD();
+    target = getModelFromR(view, cur.bwlev);
     pvid = target._provoda_id;
     if (cur.type == 'destroy'){
       if (inCache(destroy_insurance, pvid)) {
@@ -71,7 +72,7 @@ return function(view, transaction_data, animation_data) {
 
   view.markAnimationStart(models, changes_number);
 
-  var doomed = needsDestroing(all_changhes);
+  var doomed = needsDestroing(view, all_changhes);
   for (i = doomed.length - 1; i >= 0; i--) {
     view.removeChildViewsByMd(view.getStoredMpx(doomed[i]), 'map_slice');
   }
@@ -85,7 +86,7 @@ return function(view, transaction_data, animation_data) {
   }
 
   if (transaction_data.bwlev){
-    var target_md = transaction_data.bwlev.getMD();
+    var target_md = getModelFromR(view, transaction_data.bwlev);
     var current_lev_num = pv.state(target_md, 'map_level_num');
 
     if (animation_data){

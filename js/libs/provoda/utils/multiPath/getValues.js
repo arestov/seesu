@@ -19,7 +19,10 @@ var getValue = function(md, multi_path) {
       return pvState(md, multi_path.state.base)
     }
   }
-  console.warn('is it good idea!?', 'should not we throw error here?')
+
+  if (multi_path.as_string != '<<<<') {
+    console.warn('is it good idea!?', 'should not we throw error here?')
+  }
 
   return md
 }

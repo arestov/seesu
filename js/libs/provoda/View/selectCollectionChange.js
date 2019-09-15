@@ -4,7 +4,11 @@ var hp = require('../helpers');
 var $v = hp.$v;
 
 return function (target, nesname, items, removed, old_value) {
-  target.pvCollectionChange(nesname, items, removed);
+  if (target.pvCollectionChange) {
+    // DOM layer
+    target.pvCollectionChange(nesname, items, removed);
+
+  }
 
 
   var collch = target.dclrs_fpckgs && target.dclrs_fpckgs.hasOwnProperty(nesname) && target.dclrs_fpckgs[nesname];

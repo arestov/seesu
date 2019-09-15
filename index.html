@@ -380,7 +380,7 @@
 			<div pv-nest='allpas'>
 				<!--pv-replace sample_name:imp-area_for_button-simple-->
 			</div>
-			<div pv-nest='сountries'>
+			<div pv-nest='countries'>
 				<!--pv-replace sample_name:imp-area_for_button-simple-->
 			</div>
 		</div>
@@ -610,7 +610,7 @@
 			class="artists_list no_arfb"
 			pv-class="list_loading_state: list_loading">
 
-			<div class="to-open-block area-button" pv-events="click::requestRandomPlaylist" pv-type="way-point">
+			<div class="to-open-block area-button" pv-events="click:followURL:~" pv-type="way-point">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
 			</div>
 			<ul>
@@ -644,7 +644,7 @@
 						class="js-serv"
 						pv-text="{{tag.name}}"
 						pv-type="way-point"
-						pv-events="click::#show_tag:{{tag.name}}"
+						pv-events="click:#showTag:{{tag.name}}"
 						></a>
 				</span>
 
@@ -803,7 +803,7 @@
 							class="music-tag js-serv"
 							pv-repeat="tag in preview_list"
 							pv-type="hard-way-point"
-							pv-events="click:showTag"
+							pv-events="click:#showTag:{{tag.name}}"
 							pv-text="{{tag.name}}"></a></span>
 					</p>
 				</div>
@@ -1073,7 +1073,7 @@
 					<div class="buttons-panel">
 					  <div class="nice-buttons-place">
 					    <span class="pc-place">
-					      <a class="pc pc-add "  title="add to playlist" pv-anchor="btrow-playlist-add" pv-events="click:toggleProbe:song_action:row-playlist-add" pv-type="way-point"></a>
+					      <a class="pc pc-add "  title="add to playlist" pv-anchor="btrow-playlist-add" pv-events="click:toggleSpyglass:song_action:row-playlist-add" pv-type="way-point"></a>
 					    </span>
 					    <!--
 					    <span class="pc-place">
@@ -1081,25 +1081,25 @@
 					    </span>
 					    -->
 					    <span class="pc-place">
-					      <a class="pc pc-rupor "  title="share song" pv-anchor="btrow-share" pv-events="click:toggleProbe:song_action:row-share" pv-type="way-point"></a>
+					      <a class="pc pc-rupor "  title="share song" pv-anchor="btrow-share" pv-events="click:toggleSpyglass:song_action:row-share" pv-type="way-point"></a>
 					    </span>
 					    <span class="pc-place">
-					      <a class="pc pc-love "  title="love song" pv-anchor="btrow-love" pv-events="click:toggleProbe:song_action:row-love" pv-type="way-point"></a>
+					      <a class="pc pc-love "  title="love song" pv-anchor="btrow-love" pv-events="click:toggleSpyglass:song_action:row-love" pv-type="way-point"></a>
 					    </span>
 					    <span class="pc-place">
-					      <a class="pc pc-tag "  title="tag song" pv-anchor="btrow-tag" pv-events="click:toggleProbe:song_action:row-tag" pv-type="way-point"></a>
+					      <a class="pc pc-tag "  title="tag song" pv-anchor="btrow-tag" pv-events="click:toggleSpyglass:song_action:row-tag" pv-type="way-point"></a>
 					    </span>
 
 					  </div>
 					  <ul class="track-buttons">
 					    <li class="scrobbling-button"  title="Last.fm scrobbling">
-					      <a  class="trackbutton lfm-scrobbling-button" pv-anchor="btrow-lastfm" pv-events="click:toggleProbe:song_action:row-lastfm" pv-type="way-point"></a>
+					      <a  class="trackbutton lfm-scrobbling-button" pv-anchor="btrow-lastfm" pv-events="click:toggleSpyglass:song_action:row-lastfm" pv-type="way-point"></a>
 					    </li>
 					    <li class="pl-shuffle-button-wrap">
-					      <a  class="trackbutton pl-shuffle-button" pv-anchor="btrow-pl-shuffle" pv-events="click:toggleProbe:song_action:row-pl-shuffle" pv-type="way-point"></a>
+					      <a  class="trackbutton pl-shuffle-button" pv-anchor="btrow-pl-shuffle" pv-events="click:toggleSpyglass:song_action:row-pl-shuffle" pv-type="way-point"></a>
 					    </li>
 					    <li class="rept-song-button-wrap">
-					      <a  class="trackbutton rept-song-button" pv-anchor="btrow-repeat-song" pv-events="click:toggleProbe:song_action:row-repeat-song" pv-type="way-point"></a>
+					      <a  class="trackbutton rept-song-button" pv-anchor="btrow-repeat-song" pv-events="click:toggleSpyglass:song_action:row-repeat-song" pv-type="way-point"></a>
 					    </li>
 					    <li class="volume-control" pv-anchor="volume-control">
 					      <div class="v-hole" pv-anchor="v-hole">
@@ -1116,7 +1116,7 @@
 				<div
 					>
 		      <div
-		        pv-nest="__run_probe_song_action"
+		        pv-nest="spyglass__song_action"
 		        class="hidden song-row-content row-song-context"
 		        pv-class="hidden: !current_md$exists">
 		        <span
@@ -1432,13 +1432,6 @@
 
 
 			</div>
-			<div class="track-aside-info">
-				<!--pv-replace sample_name:view_sources-->
-
-				<div class="track-aside-info_friendly-app">
-					Download <a href="http://tgsoft.in/android/install/abcmusic/index.php?utm_source=seesu&utm_medium=cpc&utm_campaign=seesu" class='external'>abc music</a> app for android
-				</div>
-			</div>
 
 		</div>
 
@@ -1623,19 +1616,18 @@
 				<span class="desc lang localize-search-control-hint"></span>
 			</p>
 			<div class="search_results_sections">
-
-
 				<div
-					pv-nest="section for_model:section-tag"
-					pv-class="hidden: !active">
+					pv-nest="section for_model:section-playlist"
+					pv-class="hidden: !active"
+					class="hidden">
 					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 					<ul
-						class="sugg-section results-suggests"
+						class="sugg-section results-suggests playlist-results"
 						pv-class="odd_section: odd_section active-section: active">
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
-							pv-type="way-point" pv-events="click::view"
+							pv-type="way-point" pv-events="click::view click:requestPageById:%states%playlist_provoda_id"
 							pv-class="
 								hidden: !text_title
 								searched-bordered: bordered
@@ -1645,17 +1637,7 @@
 								<span pv-text="{{text_title}}"></span>
 							</a>
 						</li>
-						<li class="suggest" pv-nest="button"
-							pv-type="way-point" pv-events="click::view"
-							pv-class="
-								searched-bordered: bordered
-								hidden: disabled
-							">
-							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
-						</li>
-						<li  pv-class="hidden: !no_results_text">
-							<a pv-text="{{no_results_text}}"></a>
-						</li>
+
 					</ul>
 				</div>
 				<div
@@ -1708,7 +1690,7 @@
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
-							pv-type="way-point" pv-events="click::view"
+							pv-type="way-point" pv-events="click::view click:#showArtistAlbum:%states%artist:%states%name:%states%aid"
 							pv-class="
 								hidden: !text_title
 								searched-bordered: bordered
@@ -1749,7 +1731,7 @@
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
-							pv-type="way-point" pv-events="click::view"
+							pv-type="way-point" pv-events="click::view click:#showTopTracks:%states%artist:%states%track"
 							pv-class="
 								hidden: !text_title
 								searched-bordered: bordered
@@ -1781,18 +1763,18 @@
 						</li>
 					</ul>
 				</div>
+
 				<div
-					pv-nest="section for_model:section-playlist"
-					pv-class="hidden: !active"
-					class="hidden">
+					pv-nest="section for_model:section-tag"
+					pv-class="hidden: !active">
 					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
 					<ul
-						class="sugg-section results-suggests playlist-results"
+						class="sugg-section results-suggests"
 						pv-class="odd_section: odd_section active-section: active">
 						<li
 							pv-nest="rendering_list"
 							class="suggest text_title"
-							pv-type="way-point" pv-events="click::view"
+							pv-type="way-point" pv-events="click::view click:#showTag:%states%tag"
 							pv-class="
 								hidden: !text_title
 								searched-bordered: bordered
@@ -1802,7 +1784,17 @@
 								<span pv-text="{{text_title}}"></span>
 							</a>
 						</li>
-
+						<li class="suggest" pv-nest="button"
+							pv-type="way-point" pv-events="click::view"
+							pv-class="
+								searched-bordered: bordered
+								hidden: disabled
+							">
+							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+						</li>
+						<li  pv-class="hidden: !no_results_text">
+							<a pv-text="{{no_results_text}}"></a>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -1919,8 +1911,26 @@
 		</div>
 
 
+		
+		<div class="current-song-view playlist-container show-zoom-to-track">
+			<ul
+				class="tracks-for-play"
+				pv-anchor="lc"
+				pv-class="
+					loading: list_loading
+				"
+				>
+		    <script pv-nest='vis_neig_prev' pv-import="song-view"></script>
+
+		    <!--pv-replace sample_name:song-view-->
+
+		    <script pv-nest='vis_neig_next' pv-import="song-view"></script>
+		  </ul>
+		</div>
+
+
 	</div>
-<div id="slider">
+<div id="slider" pv-nest="spyglass__navigation">
 	<div class="navs ">
 		<div class="appnav_wrap">
 			<a
@@ -1966,7 +1976,7 @@
 						nav_pl_hitem-allow_preview: {{ $index < 2 }}
 						nav_pl_hitem-selected: mp_show
 					"
-					pv-events="click::#closeNavHelper click::requestLastPlayedSong">
+					pv-events="click::^closeNavHelper click:#requestPageById:%states%last_played_song_provoda_id">
 					<span pv-text="{{nav_title}}"></span>
 					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" player_song: player_song">
 						<span pv-text="{{nav_title}}"></span>
@@ -2103,7 +2113,7 @@
                   <div class="arb-union">
                     <div
                       class="area_for_button" pv-class="button_selected: mp_show"
-                      pv-events="click::requestPage" pv-type="way-point">
+                      pv-events="click:requestPage" pv-type="way-point">
                       <div class="to-open-block area-button">
                         <span class="lang localize-music-cond">Music Conductor</span>
                       </div>
@@ -2142,7 +2152,7 @@
                             class="js-serv"
                             pv-text="{{tag.name}}"
                             pv-type="way-point"
-                            pv-events="click::#show_tag:{{tag.name}}"
+                            pv-events="click:#showTag:{{tag.name}}"
                             ></a>
                         </span>
                       </div>
@@ -2165,7 +2175,7 @@
                         <span class="lang localize-listening">are listening</span>
                       </div>
                       <a class="song-by-user" pv-props="title:{{lig.artist + ' - ' + lig.title}}"
-                        pv-events="click::#showTopTacks:{{lig.artist}}:{{lig.title}}">
+                        pv-events="click:#showTopTracks:{{lig.artist}}:{{lig.title}}">
                         <span class="song-artist_name" pv-text="{{lig.artist}}"></span>
                         <span class="song-track-name" pv-text="{{lig.title}}"></span>
                       </a>

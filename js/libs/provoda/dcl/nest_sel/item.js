@@ -35,6 +35,7 @@ var getMap = function(map_chunk) {
 }
 
 var SelectNestingDeclaration = function(dest_name, data) {
+  console.warn('sel does not follow source reorder')
   this.map = null;
   if (data.map) {
     this.map = getMap(data.map)

@@ -54,13 +54,24 @@ var BrowseLevel = spv.inh(Model, {
 }, {
   model_name: 'bwlev',
   "+states": {
-    "map_slice_view_sources": [
+    "source_of_item": [
+      'compx',
+      ['@pioneer'],
+      function(pioneer) {
+        if (!pioneer) {
+          return;
+        }
+
+        return pioneer._network_source
+      }
+    ],
+    "sources_of_item_details_by_space": [
       "compx",
       ['struc', '@pioneer'],
-      function (struc, pioneer) {
+      function(struc, pioneer) {
         if (!pioneer) {return;}
 
-        return [pioneer._network_source, getStrucSources(pioneer, struc)];
+        return getStrucSources(pioneer, struc)
       }
     ],
 
@@ -73,7 +84,18 @@ var BrowseLevel = spv.inh(Model, {
 
         if (!struc || !pioneer || !probe_name) {return;}
 
+        if (!struc.m_children.children) {
+          console.warn('add struct')
+          return
+        }
+
         var spyglass_view_name = transportName(probe_name)
+
+        if (!struc.m_children.children[spyglass_view_name]) {
+          console.warn('add struct')
+          return
+        }
+
         var sub_struc = struc.m_children.children[spyglass_view_name].main;
         return getUsageStruc(pioneer, 'map_slice', sub_struc, this.app);
       }
@@ -97,7 +119,7 @@ var BrowseLevel = spv.inh(Model, {
       }
     ],
 
-    "struc_list": [
+    "__struc_list": [
       "compx",
       ['struc'],
       function(struc) {
@@ -106,12 +128,12 @@ var BrowseLevel = spv.inh(Model, {
       }
     ],
 
-    "supervision": [
+    "__supervision": [
       "compx",
       [],
       function () {
           return {
-            needy: this,
+            needy_id: this._provoda_id,
             store: {},
             reqs: {},
             is_active: {}
@@ -119,9 +141,9 @@ var BrowseLevel = spv.inh(Model, {
         }
     ],
 
-    "to_load_all": [
+    "__to_load_all": [
       "compx",
-      ['mp_dft', 'struc_list', 'supervision'],
+      ['mp_dft', '__struc_list', '__supervision'],
       function(mp_dft, struc, supervision) {
         return {
           inactive: !mp_dft || mp_dft > 1 || !struc,
@@ -187,7 +209,7 @@ var BrowseLevel = spv.inh(Model, {
     loadNestingsByStruc(target.getNesting('pioneer'), struc);
   },
 
-  'stch-to_load_all': function(target, obj, prev) {
+  'stch-__to_load_all': function(target, obj, prev) {
     if (!obj.list) {
       return;
     }

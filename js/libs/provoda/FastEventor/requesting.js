@@ -11,6 +11,16 @@ var getTargetField = spv.getTargetField;
 
 var clean_obj = {};
 
+var withoutSelf = function(array, name) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] != name) {
+      return spv.arrayExclude(array, name)
+    }
+  }
+
+  return array;
+}
+
 var usualRequest = function (send_declr, sputnik, opts, network_api_opts) {
   var api_name = send_declr.api_name;
   var api_method = send_declr.api_method_name;
@@ -106,6 +116,11 @@ var getRequestByDeclr = function(send_declr, sputnik, opts, network_api_opts) {
 
   var network_api = hp.getNetApiByDeclr(send_declr, sputnik);
   var api_part = getApiPart(send_declr, sputnik);
+
+  if (!network_api) {
+    throw new Error('network_api must present!');
+  }
+
 
   if (!network_api.source_name) {
     throw new Error('network_api must have source_name!');
@@ -226,8 +241,9 @@ return {
           anyway();
           handleResponse(response);
         }, null, false, null);
-      }, function() {
+      }, function(err) {
         self.sputnik.nextTick(anyway, null, false, null);
+        throw err
       });
 
 
@@ -292,19 +308,28 @@ return {
       return sendRequest(selected_map, store, self);
     }
 
-    var resolved = Promise.resolve();
+    function compxUsed(self, cur) {
+      var compx = self.sputnik.compx_check[cur];
+      if (!compx) {
+        return null;
+      }
+
+      if (self.sputnik.state(cur) != null) {
+        return self.sputnik.state(cur);
+      }
+
+      var without_self_name = withoutSelf(compx.watch_list, compx.name)
+      return requestDependencies(self, without_self_name, true)
+    }
 
     function requestDependencies(self, dependencies, soft) {
       var reqs_list = [];
       for (var i = 0; i < dependencies.length; i++) {
         var cur = dependencies[i];
-        var compx = self.sputnik.compx_check[cur];
-        if (compx) {
-          if (self.sputnik.state(cur)) {
-            continue;
-          }
-          reqs_list.push(requestDependencies(self, compx.depends_on, true));
-          continue;
+        var used_compex = compxUsed(self, cur)
+        if (used_compex != null) {
+          reqs_list.push(used_compex)
+          continue
         }
 
         if (soft) {
@@ -321,7 +346,7 @@ return {
       }
 
       var req = !reqs_list.length
-        ? resolved
+        ? Promise.resolve()
         : Promise.all(reqs_list);
 
       return req;
@@ -337,8 +362,13 @@ return {
 
     return function(state_name) {
       var current_value = this.sputnik.state(state_name);
-      if (current_value) {
+      if (current_value != null) {
         return;
+      }
+
+      var used_compex = compxUsed(this, state_name)
+      if (used_compex != null) {
+        return used_compex
       }
 
       var i, cur;
@@ -508,10 +538,10 @@ return {
 
 
     request.then(function (response) {
-      _this.sputnik.nextTick(function () {
-        anyway();
+      _this.sputnik.nextTick(_this.sputnik.inputFn(function () {
         handleResponse(response);
-      }, null, false);
+        anyway();
+      }), null, false);
       if (release) {
         _this.sputnik.nextTick(release, null, false, initiator);
       }

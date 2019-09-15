@@ -6,8 +6,10 @@ var view_serv = require('view_serv');
 var pv = require('pv');
 var pvState = require('pv/state');
 var pvUpdate = require('pv/update');
+var getNesting = require('pv/getNesting')
 var $ = require('jquery');
 var wrapInputCall = require('pv/wrapInputCall')
+var getModelFromR = require('pv/v/getModelFromR')
 
 var BrowseLevNavView = require('./BrowseLevNavView');
 var BrowseLevView = require('./BrowseLevView');
@@ -265,17 +267,17 @@ return spv.inh(View, {
 
   'model-mapch': {
     'move-view': function(change) {
-      var parent = change.bwlev.getMD().getParentMapModel();
+      var parent = getModelFromR(this, change.bwlev).getParentMapModel();
       if (parent){
       //	parent.updateState('mp_has_focus', false);
       }
-      this.setVMpshow(this.getStoredMpx(change.bwlev.getMD()), change.value);
+      this.setVMpshow(this.getStoredMpx(getModelFromR(this, change.bwlev)), change.value);
     },
     'zoom-out': function(change) {
-      this.setVMpshow(this.getStoredMpx(change.bwlev.getMD()), false);
+      this.setVMpshow(this.getStoredMpx(getModelFromR(this, change.bwlev)), false);
     },
     'destroy': function(change) {
-      var md = change.bwlev.getMD();
+      var md = getModelFromR(this, change.bwlev);
       this.setVMpshow(this.getStoredMpx(md), false);
     }
   },
@@ -309,11 +311,12 @@ return spv.inh(View, {
   },
 
   'collch-map_slice': function(nesname, nesting_data, old_nesting_data){
+    debugger
     var mp_show_states = nesting_data.residents_struc.mp_show_states;
     var transaction = nesting_data.transaction;
     var old_transaction = old_nesting_data && old_nesting_data.transaction;
 
-    var diff = pv.hp.probeDiff(nesting_data.transaction.bwlev, old_nesting_data && old_nesting_data.transaction.bwlev);
+    var diff = pv.hp.probeDiff(this, nesting_data.transaction.bwlev, old_nesting_data && old_nesting_data.transaction.bwlev);
 
     var bwlevs = nesting_data.residents_struc && nesting_data.residents_struc.bwlevs;
     var mds = nesting_data.residents_struc.items;
@@ -326,8 +329,8 @@ return spv.inh(View, {
     var animation_data = readMapSliceAnimationData(this, diff);
 
     for (i = array.length - 1; i >= 0; i--) {
-      var cur_md = mds[i];
-      cur = array[i];
+      var cur_md = getModelFromR(this, mds[i]);
+      cur = getModelFromR(this, array[i]);
 
       var dclr = pv.$v.selecPoineertDeclr(this.dclrs_fpckgs, this.dclrs_selectors,
               nesname, cur_md.model_name, this.nesting_space);
@@ -341,7 +344,7 @@ return spv.inh(View, {
         animateMapSlice(this, transaction, animation_data);
         if (!transaction.bwlev){
           target_md = this.findBMapTarget(array);
-
+          debugger;
           if (target_md){
             pvUpdate(this, 'current_lev_num', pvState(target_md, 'map_level_num'), sync_opt);
           }
@@ -351,15 +354,15 @@ return spv.inh(View, {
     } else {
       var models = new Array(array.length);
       for (i = 0; i < array.length; i++) {
-        models[i] = array[i].md_replacer;
+        models[i] = getModelFromR(this, array[i]);
       }
-      target_md = this.findBMapTarget(array);
+      target_md = this.findBMapTarget(models);
       if (!target_md){
         throw new Error('there is no model with focus!');
       }
       this.markAnimationStart(models, -1);
-      for (i = 0; i < array.length; i++) {
-        this.setVMpshow(this.getStoredMpx(array[i]), mp_show_states[i]);
+      for (i = 0; i < models.length; i++) {
+        this.setVMpshow(this.getStoredMpx(models[i]), mp_show_states[i]);
       }
       pvUpdate(this, 'current_lev_num', pvState(target_md, 'map_level_num'), sync_opt);
       this.markAnimationEnd(models, -1);
@@ -445,7 +448,7 @@ return spv.inh(View, {
   getMapSliceChildInParenView: function(bwlev, md) {
     var parent_bwlev = bwlev.map_parent;
     // md of parent view could differ from md.map_parent
-    var parent_md = bwlev.getParentMapModel().getNesting('pioneer');
+    var parent_md = getNesting(bwlev.getParentMapModel(), 'pioneer');
 
     var parent_bwlev_view = this.getMapSliceView(parent_bwlev, parent_md);
     var parent_view = parent_bwlev_view && findMpxViewInChildren(parent_bwlev_view, this.getStoredMpx(parent_md));
@@ -462,8 +465,7 @@ return spv.inh(View, {
   markAnimationStart: function(models, changes_number) {
     pv.update(this, 'map_animation_num_started', changes_number, sync_opt);
     for (var i = 0; i < models.length; i++) {
-
-      pv.mpx.update(this.getStoredMpx(models[i].getMD()), 'animation_started', changes_number, sync_opt);
+      pv.mpx.update(this.getStoredMpx(getModelFromR(this, models[i])), 'animation_started', changes_number, sync_opt);
       ////MUST UPDATE VIEW, NOT MODEL!!!!!
     }
   },
@@ -476,7 +478,7 @@ return spv.inh(View, {
 
     for (var i = 0; i < models.length; i++) {
       //
-      var mpx = this.getStoredMpx(models[i].getMD());
+      var mpx = this.getStoredMpx(getModelFromR(this, models[i]));
 
       if (mpx.state('animation_started') == changes_number){
         pv.mpx.update(mpx, 'animation_completed', changes_number, sync_opt);

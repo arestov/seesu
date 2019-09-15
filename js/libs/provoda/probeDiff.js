@@ -1,11 +1,34 @@
-define(function () {
+define(function (require) {
 'use strict';
-var getTree = function (mdrp) {
+var getNesting = require('pv/getNesting')
+
+var getModelByIdUniversal = function(highway_holder, _provoda_id) {
+  var _highway = highway_holder._highway
+  if (_highway.models) {
+    return _highway.models[_provoda_id]
+  }
+
+  if (!_highway.views_proxies) {
+    return _highway.sync_r.models_index[_provoda_id]
+  }
+
+  var view = highway_holder
+  var proxies_space = view.proxies_space || view.root_view.proxies_space;
+  var mpx = _highway.views_proxies.spaces[proxies_space].mpxes_index[_provoda_id]
+  return mpx.md;
+}
+
+var getModelByR = function(highway_holder, mdr) {
+  var _provoda_id = mdr._provoda_id
+  return getModelByIdUniversal(highway_holder, _provoda_id)
+}
+
+var getTree = function (highway_holder, mdrp) {
   var result = [];
   if (!mdrp) {
     return result;
   }
-  var cur = mdrp.getMD();
+  var cur = getModelByR(highway_holder, mdrp);
   while (cur) {
     result.unshift(cur);
     cur = cur.map_parent;
@@ -23,7 +46,7 @@ var pathAsSteps = function (path, value) {
       type: 'move-view',
       value: value,
       bwlev: cur.getMDReplacer(),
-      target: cur.getNesting('pioneer').getMDReplacer()
+      target: getNesting(cur, 'pioneer').getMDReplacer()
     };
   }
 
@@ -41,12 +64,16 @@ function getClosestStep(value_full_path, oldvalue_full_path) {
   }
 }
 
-return function probeDiff(value, oldvalue) {
-  var bwlev = value;
-  var target = bwlev.getMD().getNesting('pioneer').getMDReplacer();
+var asMDR = function(md) {
+  return md && md.getMDReplacer();
+}
 
-  var value_full_path = getTree(value);
-  var oldvalue_full_path = getTree(oldvalue);
+return function probeDiff(highway_holder, value, oldvalue) {
+  var bwlev = value;
+  var target = getNesting(getModelByR(highway_holder, bwlev), 'pioneer').getMDReplacer();
+
+  var value_full_path = getTree(highway_holder, value);
+  var oldvalue_full_path = getTree(highway_holder, oldvalue);
 
   var closest_step = getClosestStep(value_full_path, oldvalue_full_path);
   var value_path_to = closest_step != null && value_full_path.slice(closest_step);;
@@ -71,8 +98,8 @@ return function probeDiff(value, oldvalue) {
   return {
     bwlev: bwlev,
     target: target,
-    value_full_path: value_full_path,
-    oldvalue_full_path: oldvalue_full_path,
+    value_full_path: value_full_path.map(asMDR),
+    oldvalue_full_path: oldvalue_full_path.map(asMDR),
     common_step: common_step,
     array: changes_wrap,
   };

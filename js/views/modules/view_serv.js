@@ -10,7 +10,7 @@ var serv = {};
 (function() {
   var css = {};
 
-  var dom_style_obj = window.document.body.style;
+  var dom_style_obj = window.document.createElement('div').style;
   var has_transform_prop;
   var has_transition_prop;
 

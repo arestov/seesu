@@ -1,8 +1,25 @@
-define(function () {
+define(function (require) {
 'use strict';
+var showMOnMap = require('./showMOnMap')
 
-return function changeBridge(bwlev) {
-  if (bwlev.map.bridge_bwlev === bwlev) {
+var redirected = function(map, pioneer) {
+  var BWL = map.BWL; // kinda hack?! TODO FIXME
+
+  var redirectBWLev = pioneer.redirectBWLev
+  if (!redirectBWLev) {
+    return null
+  }
+
+  return showMOnMap(BWL, map, redirectBWLev(pioneer));
+
+}
+
+return function changeBridge(bwlev_raw) {
+  var pioneer = bwlev_raw.getNesting('pioneer')
+
+  var map = bwlev_raw.map
+  var bwlev = redirected(map, pioneer) || bwlev_raw
+  if (map.bridge_bwlev === bwlev) {
     return bwlev;
   }
 

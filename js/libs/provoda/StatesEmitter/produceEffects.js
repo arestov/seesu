@@ -15,12 +15,12 @@ function checkAndMutateCondReadyEffects(changes_list, self) {
     if (Boolean(old_ready) === Boolean(value)) {
       continue;
     }
-    self._effects_using.invalidated[index[state_name].name] = true;
   }
 }
 
 function checkAndMutateInvalidatedEffects(changes_list, self) {
   var index = self.__api_effects_$_index_by_triggering;
+  var using = self._effects_using;
 
   for (var i = 0; i < changes_list.length; i+=3) {
     var state_name = changes_list[i+1];
@@ -29,6 +29,10 @@ function checkAndMutateInvalidatedEffects(changes_list, self) {
     }
     var list = index[state_name];
     for (var jj = 0; jj < list.length; jj++) {
+      var effect_name = list[jj].name
+      if (!using.conditions_ready[effect_name]) {
+        continue;
+      }
       self._effects_using.invalidated[list[jj].name] = true;
     }
     // self.__api_effects_$_index_by_triggering[index[state_name].name] = true;

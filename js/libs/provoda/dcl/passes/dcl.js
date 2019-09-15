@@ -96,7 +96,7 @@ var getDeps = function(deps) {
   var result = new Array(deps.length)
   for (var i = 0; i < deps.length; i++) {
     var cur = parseMultiPath(deps[i], true);
-    if (cur.result_type != 'nesting' && cur.result_type != 'state') {
+    if (cur.result_type != 'nesting' && cur.result_type != 'state' && cur.as_string != '<<<<') {
       console.warn('please use nesting and state', deps[i])
     }
     result[i] = cur
