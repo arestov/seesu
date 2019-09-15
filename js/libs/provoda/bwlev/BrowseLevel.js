@@ -90,6 +90,12 @@ var BrowseLevel = spv.inh(Model, {
         }
 
         var spyglass_view_name = transportName(probe_name)
+
+        if (!struc.m_children.children[spyglass_view_name]) {
+          console.warn('add struct')
+          return
+        }
+
         var sub_struc = struc.m_children.children[spyglass_view_name].main;
         return getUsageStruc(pioneer, 'map_slice', sub_struc, this.app);
       }
