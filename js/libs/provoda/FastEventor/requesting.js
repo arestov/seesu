@@ -360,6 +360,11 @@ return {
         return;
       }
 
+      var used_compex = compxUsed(this, state_name)
+      if (used_compex != null) {
+        return used_compex
+      }
+
       var i, cur;
       var maps_for_state = this.sputnik._states_reqs_index && this.sputnik._states_reqs_index[state_name];
       if (!maps_for_state) {
