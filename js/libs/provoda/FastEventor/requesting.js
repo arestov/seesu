@@ -213,7 +213,17 @@ return {
 
       function anyway() {
         store.process = false;
-        self.sputnik.updateManyStates(makeLoadingMarks(states_list, false));
+        self.sputnik.updateManyStates(makeLoadingMarks('__loading', states_list, false));
+      }
+
+      function markAttemptComplete() {
+        var states = {}
+
+        makeLoadingMarks('__load_attempting', selected_map.states_list, false, states)
+        makeLoadingMarks('__load_attempted', selected_map.states_list, true, states)
+        makeLoadingMarks('__load_attempted_at', selected_map.states_list, Date.now(), states)
+
+        self.sputnik.updateManyStates(states);
       }
 
       onPromiseFail(request, function(){
@@ -240,9 +250,11 @@ return {
         self.sputnik.nextTick(function () {
           anyway();
           handleResponse(response);
+          markAttemptComplete()
         }, null, false, null);
       }, function(err) {
         self.sputnik.nextTick(anyway, null, false, null);
+        self.sputnik.nextTick(markAttemptComplete, null, false, null);
         throw err
       });
 
@@ -352,10 +364,10 @@ return {
       return req;
     }
 
-    function makeLoadingMarks(states_list, value) {
-      var loading_marks = {};
+    function makeLoadingMarks(suffix, states_list, value, result) {
+      var loading_marks = result || {};
       for (var i = 0; i < states_list.length; i++) {
-        loading_marks[ states_list[i] + '__loading'] = value;
+        loading_marks[ states_list[i] + suffix] = value;
       }
       return loading_marks;
     }
@@ -410,7 +422,12 @@ return {
 
       store.process = true;
 
-      this.sputnik.updateManyStates(makeLoadingMarks(selected_map.states_list, true));
+      var states = {}
+      makeLoadingMarks('__loading', selected_map.states_list, true, states)
+      makeLoadingMarks('__load_attempting', selected_map.states_list, true, states)
+
+      this.sputnik.updateManyStates(states);
+
 
       if (!selected_map.dependencies) {
         return bindRequest(sendRequest(selected_map, store, this), selected_map, store, this);
