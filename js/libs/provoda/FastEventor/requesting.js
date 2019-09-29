@@ -427,6 +427,13 @@ return {
     };
   })(),
   requestNesting: function(dclt, nesting_name, limit) {
+    // 'loading_nesting_' + nesting_name
+    // nesting_name + '$loading'
+    // 'main_list_loading', true
+    // nesting_name + "$error"
+    // nesting_name + '$waiting_queue'
+
+
     if (!dclt) {
       return;
     }
