@@ -1717,6 +1717,47 @@ spv.set = (function() {
 })();
 
 
+spv.getBoxedSetImmFunc = function getBoxedSetImmFunc(win) {
+  return win.setImmediate || (function() {
+    //http://learn.javascript.ru/setimmediate
+
+    var head = {
+      func: null,
+      next: null
+    }, tail = head; // очередь вызовов, 1-связный список
+
+    var ID = Math.random(); // уникальный идентификатор
+
+    var onmessage = function(e) {
+      if ( e.data != ID ) {
+        return;
+      } // не наше сообщение
+      head = head.next;
+      var func = head.func;
+      head.func = null;
+      func();
+    };
+
+    if ( win.addEventListener ) { // IE9+, другие браузеры
+      win.addEventListener('message', onmessage, false);
+    } else { // IE8
+      win.attachEvent( 'onmessage', onmessage );
+    }
+
+    return win.postMessage ? function(func) {
+      if (!win || win.closed) {
+        return;
+      }
+      tail = tail.next = { func: func, next: null };
+      win.postMessage(ID, "*");
+    } :
+    function(func) { // IE<8
+      setTimeout(func, 0);
+    };
+  }());
+};
+
+
 })();
 
 
