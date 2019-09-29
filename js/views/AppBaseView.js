@@ -274,6 +274,9 @@ var WebAppView = spv.inh(AppBaseView, {}, {
     return this.parent_view.resortQueue(queue);
   },
   onDomBuild: function() {
+    if (this.skip_structure_reporing == true) {
+      return
+    }
     var used_data_structure = getUsageTree([], [], this, this);
     this.used_data_structure = used_data_structure
     this.parent_view.RPCLegacy('knowViewingDataStructure', this.constr_id, this.used_data_structure);

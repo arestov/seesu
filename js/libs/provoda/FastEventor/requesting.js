@@ -213,7 +213,17 @@ return {
 
       function anyway() {
         store.process = false;
-        self.sputnik.updateManyStates(makeLoadingMarks(states_list, false));
+        self.sputnik.updateManyStates(makeLoadingMarks('__loading', states_list, false));
+      }
+
+      function markAttemptComplete() {
+        var states = {}
+
+        makeLoadingMarks('__load_attempting', selected_map.states_list, false, states)
+        makeLoadingMarks('__load_attempted', selected_map.states_list, true, states)
+        makeLoadingMarks('__load_attempted_at', selected_map.states_list, Date.now(), states)
+
+        self.sputnik.updateManyStates(states);
       }
 
       onPromiseFail(request, function(){
@@ -240,9 +250,11 @@ return {
         self.sputnik.nextTick(function () {
           anyway();
           handleResponse(response);
+          markAttemptComplete()
         }, null, false, null);
       }, function(err) {
         self.sputnik.nextTick(anyway, null, false, null);
+        self.sputnik.nextTick(markAttemptComplete, null, false, null);
         throw err
       });
 
@@ -352,10 +364,10 @@ return {
       return req;
     }
 
-    function makeLoadingMarks(states_list, value) {
-      var loading_marks = {};
+    function makeLoadingMarks(suffix, states_list, value, result) {
+      var loading_marks = result || {};
       for (var i = 0; i < states_list.length; i++) {
-        loading_marks[ states_list[i] + '__loading'] = value;
+        loading_marks[ states_list[i] + suffix] = value;
       }
       return loading_marks;
     }
@@ -410,7 +422,12 @@ return {
 
       store.process = true;
 
-      this.sputnik.updateManyStates(makeLoadingMarks(selected_map.states_list, true));
+      var states = {}
+      makeLoadingMarks('__loading', selected_map.states_list, true, states)
+      makeLoadingMarks('__load_attempting', selected_map.states_list, true, states)
+
+      this.sputnik.updateManyStates(states);
+
 
       if (!selected_map.dependencies) {
         return bindRequest(sendRequest(selected_map, store, this), selected_map, store, this);
@@ -427,6 +444,13 @@ return {
     };
   })(),
   requestNesting: function(dclt, nesting_name, limit) {
+    // 'loading_nesting_' + nesting_name
+    // nesting_name + '$loading'
+    // 'main_list_loading', true
+    // nesting_name + "$error"
+    // nesting_name + '$waiting_queue'
+
+
     if (!dclt) {
       return;
     }
@@ -451,6 +475,7 @@ return {
 
     var is_main_list = nesting_name == this.sputnik.main_list_name;
 
+    this.sputnik.updateState(nesting_name + '$load_attempting', true);
     this.sputnik.updateState('loading_nesting_' + nesting_name, true);
     this.sputnik.updateState(nesting_name + '$loading', true);
     if (is_main_list) {
@@ -485,6 +510,15 @@ return {
     store.process = true;
     var _this = this;
 
+    function markAttemptComplete() {
+      var states = {}
+      states[nesting_name + '$load_attempting'] = false
+      states[nesting_name + '$load_attempted'] = true
+      states[nesting_name + '$load_attempted_at'] = Date.now()
+
+       _this.sputnik.updateManyStates(states);
+    }
+
     function anyway() {
       store.process = false;
       _this.sputnik.updateState('loading_nesting_' + nesting_name, false);
@@ -497,6 +531,8 @@ return {
     function handleError() {
       _this.sputnik.updateState(nesting_name + "$error", true);
       anyway();
+      markAttemptComplete()
+
     }
 
     onPromiseFail(request, function(){
@@ -541,6 +577,7 @@ return {
       _this.sputnik.nextTick(_this.sputnik.inputFn(function () {
         handleResponse(response);
         anyway();
+        markAttemptComplete()
       }), null, false);
       if (release) {
         _this.sputnik.nextTick(release, null, false, initiator);
@@ -576,7 +613,7 @@ return {
       if (!supports_paging) {
         store.has_all_items = true;
         if (is_main_list) {
-            sputnik.updateState("all_data_loaded", true);
+          many_states['all_data_loaded'] = true
         }
 
         many_states[nesting_name + "$all_loaded"] = true;
@@ -587,7 +624,7 @@ return {
           store.has_all_items = true;
 
           if (is_main_list) {
-              sputnik.updateState("all_data_loaded", true);
+            many_states['all_data_loaded'] = true
           }
 
           many_states[nesting_name + "$all_loaded"] = true;
