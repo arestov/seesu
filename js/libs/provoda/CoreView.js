@@ -829,19 +829,11 @@ var View = spv.inh(StatesEmitter, {
       return
     }
 
-    var location_id = $v.getViewLocationId(self, nesting_name, space)
-
     if (space && space !== 'main') {
       return
     }
 
-    var array = spv.toRealArray(items);
-
-    var views = array
-      .map(function(cur) {
-        return self.getStoredMpx(cur).getView(location_id);
-      })
-      .filter(Boolean)
+    var views = self.__mapListToViews(nesting_name, items)
 
     for (var i = 0; i < self.__sync_nest_hooks[nesting_name].length; i++) {
       self.__sync_nest_hooks[nesting_name][i].call(null, views)
