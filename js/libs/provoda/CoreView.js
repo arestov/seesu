@@ -847,10 +847,10 @@ var View = spv.inh(StatesEmitter, {
       self.__sync_nest_hooks[nesting_name][i].call(null, views)
     }
   },
-  __viewsList: function(nesting_name) {
+  __mapListToViews: function(nesting_name, items) {
     var self = this
     var location_id = $v.getViewLocationId(this, nesting_name, 'main');
-    var array = spv.toRealArray(this.children_models[nesting_name]);
+    var array = spv.toRealArray(items);
     var views = array
       .map(function(cur) {
         return self.getStoredMpx(cur).getView(location_id);
@@ -858,6 +858,9 @@ var View = spv.inh(StatesEmitter, {
       .filter(Boolean)
 
     return views;
+  },
+  __viewsList: function(nesting_name) {
+    return this.__mapListToViews(nesting_name, this.children_models[nesting_name])
   },
   __hookNestSync: function(nesting_name, fn) {
     if (!this.__sync_nest_hooks) {
