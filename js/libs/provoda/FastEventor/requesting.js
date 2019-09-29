@@ -458,6 +458,7 @@ return {
 
     var is_main_list = nesting_name == this.sputnik.main_list_name;
 
+    this.sputnik.updateState(nesting_name + '$load_attempting', true);
     this.sputnik.updateState('loading_nesting_' + nesting_name, true);
     this.sputnik.updateState(nesting_name + '$loading', true);
     if (is_main_list) {
@@ -492,6 +493,15 @@ return {
     store.process = true;
     var _this = this;
 
+    function markAttemptComplete() {
+      var states = {}
+      states[nesting_name + '$load_attempting'] = false
+      states[nesting_name + '$load_attempted'] = true
+      states[nesting_name + '$load_attempted_at'] = Date.now()
+
+       _this.sputnik.updateManyStates(states);
+    }
+
     function anyway() {
       store.process = false;
       _this.sputnik.updateState('loading_nesting_' + nesting_name, false);
@@ -504,6 +514,8 @@ return {
     function handleError() {
       _this.sputnik.updateState(nesting_name + "$error", true);
       anyway();
+      markAttemptComplete()
+
     }
 
     onPromiseFail(request, function(){
@@ -548,6 +560,7 @@ return {
       _this.sputnik.nextTick(_this.sputnik.inputFn(function () {
         handleResponse(response);
         anyway();
+        markAttemptComplete()
       }), null, false);
       if (release) {
         _this.sputnik.nextTick(release, null, false, initiator);
