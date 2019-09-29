@@ -576,7 +576,7 @@ return {
       if (!supports_paging) {
         store.has_all_items = true;
         if (is_main_list) {
-            sputnik.updateState("all_data_loaded", true);
+          many_states['all_data_loaded'] = true
         }
 
         many_states[nesting_name + "$all_loaded"] = true;
@@ -587,7 +587,7 @@ return {
           store.has_all_items = true;
 
           if (is_main_list) {
-              sputnik.updateState("all_data_loaded", true);
+            many_states['all_data_loaded'] = true
           }
 
           many_states[nesting_name + "$all_loaded"] = true;
