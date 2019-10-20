@@ -20,6 +20,8 @@ var initAPIs = require('./initAPIs');
 var prepare = require('js/libs/provoda/structure/prepare');
 var effects = require('./app/effects')
 var RootBwlevSeesu = require('./models/RootBwlevSeesu');
+var morph_helpers = require('js/libs/morph_helpers');
+
 
 var pvUpdate = pv.update;
 var updateNesting = require('pv/updateNesting');
@@ -705,6 +707,7 @@ var SeesuApp = spv.inh(AppModel, {
     }
 
   },
+  morph_helpers: morph_helpers,
 });
 
 return prepare(SeesuApp);

@@ -2,7 +2,6 @@ define(function (require) {
 'use strict';
 var spv = require('spv');
 var cloneObj = spv.cloneObj;
-var morph_helpers = require('js/libs/morph_helpers');
 var getSPI = getterSPI();
 var getSPIConstr = getterSPIConstr();
 
@@ -165,6 +164,8 @@ function getterSPI(){
 
     var states = common_opts[0] || {};
     var hbu_declr = item.getHead;
+    var morph_helpers = self.app.morph_helpers
+
     var head_by_urlname = hbu_declr && hbu_declr(common_opts[1], null, morph_helpers);
 
     if (Constr.prototype.handling_v2_init) {

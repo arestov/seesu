@@ -1,8 +1,8 @@
 define(function (require) {
 'use strict';
 var pv = require('pv');
-var BrowseMap = require('js/libs/BrowseMap');
-var flatStruc = require('js/libs/provoda/structure/flatStruc');
+var BrowseMap = require('./provoda/BrowseMap');
+var flatStruc = require('./structure/flatStruc');
 
 function fetchData(db, App, schema, url) {
   var proxies = new pv.views_proxies.Proxies();

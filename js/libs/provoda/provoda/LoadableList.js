@@ -5,7 +5,7 @@ var spv = require('spv');
 var pv = require('../provoda');
 var cloneObj = spv.cloneObj
 
-var initDeclaredNestings = require('js/libs/provoda/initDeclaredNestings');
+var initDeclaredNestings = require('../initDeclaredNestings');
 var getSPByPathTemplateAndData = initDeclaredNestings.getSPByPathTemplateAndData;
 
 var pvUpdate = pv.update;

@@ -1,6 +1,5 @@
 define(function (require) {
 'use strict';
-var morph_helpers = require('js/libs/morph_helpers');
 var Promise = require('Promise');
 var hex_md5 = require('hex_md5');
 var hp = require('../helpers');
@@ -237,6 +236,7 @@ return {
           self.sputnik.nextTick(function() {
             var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
             if (!has_error) {
+              var morph_helpers = self.sputnik.morph_helpers;
               var result = parse.call(self.sputnik, r, null, morph_helpers);
               if (result) {
                 return resolve(result)
@@ -607,6 +607,7 @@ return {
       many_states[nesting_name + "$error"] = null;
       many_states[nesting_name + "$has_any"] = true;
 
+      var morph_helpers = sputnik.app.morph_helpers;
       var items = parse_items.call(sputnik, r, clean_obj, morph_helpers, network_api);
       var serv_data = typeof parse_serv == 'function' && parse_serv.call(sputnik, r, paging_opts, morph_helpers);
 
