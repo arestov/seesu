@@ -95,7 +95,7 @@ function getDeps(data, map, where_states) {
   var deep = {all: null};
 
   getConditinal(base, deep, where_states);
-  getMap(base, deep, map);
+  getMap2(base, deep, map);
   getSort(base, deep, data.sort);
 
   base.all = combineStates(base);
@@ -107,7 +107,7 @@ function getDeps(data, map, where_states) {
   };
 }
 
-function getMap(base, deep, map) {
+function getMap2(base, deep, map) {
   if (!map) {return;}
 
   deep.map = {
