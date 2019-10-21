@@ -31,6 +31,12 @@ function connectNests(self) {
   initNestCompx(self);
 }
 
+function markInitied(md) {
+  // - this state shuld be true when all preparations, all initial triggers and subscribtions are done
+  // - use it to not produce effects for states changes during initialization
+  md.updateState('$meta_inited', true);
+}
+
 return function postInitModel(self) {
   connectStates(self)
   connectNests(self)
@@ -46,5 +52,7 @@ return function postInitModel(self) {
   }
 
   initApis(self)
+
+  self.nextTick(markInitied, null, false, self.current_motivator);
 }
 })
