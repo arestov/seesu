@@ -18,6 +18,7 @@ var initDeclaredNestings = require('./initDeclaredNestings');
 var markStrucure = require('./structure/mark');
 var create = require('./create');
 var addSubpage = require('./dcl/sub_pager/addSubpage');
+var behavior = require('./provoda/bhv')
 var mergeBhv = require('./mergeBhv');
 
 var provoda, pv;
@@ -110,19 +111,6 @@ pv = provoda = {
   mergeBhv: mergeBhv,
 };
 
-function behavior(declr, declr_extend_from, named) {
-  var behaviorFrom = declr_extend_from || pv.Model;
-  if (typeof named == 'object' || !declr.init) {
-    return spv.inh(behaviorFrom, {
-      naming: named && named.naming,
-      init: named && named.init,
-      props: declr
-    });
-  }
-  var func = named || function() {};
-  behaviorFrom.extendTo(func, declr);
-  return func;
-}
 
 function getHModel() {
 var HModel = spv.inh(Model, {
