@@ -1,25 +1,7 @@
 define(function(require) {
 'use strict';
-var localizer = require('localizer');
+var localize = require('./localize')
 
-var sviga = {};
-var localize= function(lang){
-  return function(string, j){
-    if (localizer[string]){
-      return localizer[string][lang] || localizer[string].original;
-    } else{
-      if (j){
-        sviga[string] ={
-          original:j
-        };
-        return j;
-      }
-
-      return 'no this localization: ' + string;
-    }
-
-  };
-};
 
 if (typeof window === 'undefined' && typeof process !== 'undefined') {
   return {
