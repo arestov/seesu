@@ -12,6 +12,8 @@ var BrowseMap = require('js/libs/BrowseMap');
 var SearchQueryModel = require('./SearchQueryModel');
 var FakeSpyglassCore = require('./FakeSpyglassCore')
 
+var app_serv = require('app_serv');
+var app_env = app_serv.app_env;
 
 var showOnMapWrap = function(map, md) {
   var bwlev = showMOnMap(BrowseLevel, map, md);
@@ -20,6 +22,7 @@ var showOnMapWrap = function(map, md) {
 
 return spv.inh(FakeSpyglassCore, {
 }, {
+  needs_url_history: app_env.needs_url_history,
   handleQuery: handleQuery,
   'nest_sel-player': {
     from: '#>player',

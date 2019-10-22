@@ -14,9 +14,6 @@ var createLevel = require('js/libs/provoda/bwlev/createLevel');
 var BrowseMap = require('js/libs/BrowseMap');
 var animateMapChanges = require('js/libs/provoda/dcl/probe/animateMapChanges');
 
-var app_serv = require('app_serv');
-var app_env = app_serv.app_env;
-
 return spv.inh(Model, {
   init: function(self) {
     self.binded_models = {};
@@ -36,7 +33,7 @@ return spv.inh(Model, {
       self
     );
 
-    initMapTree(self, self.app.start_page, app_env.needs_url_history, navi);
+    initMapTree(self, self.app.start_page, self.needs_url_history, navi);
     self.nextTick(function() {
       initNav(self, navi, self.app)
     })
@@ -152,7 +149,7 @@ function initMapTree(target, start_page, needs_url_history, navi) {
 };
 
 function initNav(map, navi, app) {
-  if (app_env.needs_url_history){
+  if (map.needs_url_history){
     navi.init(app.inputFn(function(e){
       var url = e.newURL;
       var state_from_history = navi.findHistory(e.newURL);
