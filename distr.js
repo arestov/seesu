@@ -9,7 +9,12 @@ const build = ({
     preserveModules: true,
     input: [
       'js/libs/provoda/provoda.js',
+      'js/libs/provoda/provoda/routePathByModels.js',
+      'js/libs/provoda/provoda/LoadableList.js',
+      'js/models/spyglasses/FakeSpyglassCore',
       'js/utils/init.js',
+      'js/initBrowsing',
+      'js/modules/route',
       'js/views/map_slice/MapSliceSpyglassCore',
       'js/views/map_slice/BrowseLevViewCore',
       'js/views/map_slice/getAncestorByRooViCon',
