@@ -2,7 +2,10 @@ const { rollup } = require('rollup');
 const amd = require('rollup-plugin-amd');
 const lookup = require('module-lookup-amd');
 
-const build = (all = false) => rollup({
+const build = ({
+  all = false,
+  path = 'dist/esm'
+}) => rollup({
     preserveModules: true,
     input: [
       'js/libs/provoda/provoda.js',
@@ -11,7 +14,7 @@ const build = (all = false) => rollup({
       'js/views/map_slice/BrowseLevViewCore',
       'js/views/map_slice/getAncestorByRooViCon',
       'js/views/map_slice/getMapSliceView',
-    ],
+    ].map(path => (__dirname + '/' + path)),
 
     plugins: [
       amd({
@@ -53,7 +56,7 @@ const build = (all = false) => rollup({
   .then(async bundle => {
     await Promise.all([
       bundle.write({
-        dir: 'dist/esm',
+        dir: path,
         format: 'esm',
         name: 'library',
         // sourcemap: true
