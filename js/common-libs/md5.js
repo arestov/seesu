@@ -2,7 +2,7 @@ define(function(){
 'use strict';
 
 return true &&
-!function(g) {
+(function(g) {
   if (typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node !== 'undefined') {
     var crypto = require('crypto');
     var nodeMd5 = function(string) {
@@ -300,6 +300,6 @@ return true &&
   }
 
   return md5
-}(typeof global !== 'undefined' ? global: (this || window));
+})(typeof global !== 'undefined' ? global: (this || window));
 
 })
