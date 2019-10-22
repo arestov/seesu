@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
-var cloneObj = require('spv').cloneObj;
+var spv = require('spv')
+var cloneObj = spv.cloneObj;
 var getCachedPVData = require('./getCachedPVData');
 var patchNode = require('./patchNode');
 var buildClone = require('./buildClone');

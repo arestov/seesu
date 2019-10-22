@@ -2,7 +2,8 @@ define(function(require) {
 'use strict';
 var getTargetModels = require('./getTargetModels')
 var prepareNestingValue = require('./prepareNestingValue')
-var countKeys = require('spv').countKeys
+var spv = require('spv')
+var countKeys = spv.countKeys
 var getModelById = require('../../../utils/getModelById');
 var initPassedValue = prepareNestingValue.initPassedValue
 

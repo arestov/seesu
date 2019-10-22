@@ -1,7 +1,8 @@
 define(function (require) {
 'use strict';
 
-var cloneObj = require('spv').cloneObj;
+var spv = require('spv')
+var cloneObj = spv.cloneObj;
 var initSubPager = require('../dcl/sub_pager/init');
 
 function buildHead(self, data) {
