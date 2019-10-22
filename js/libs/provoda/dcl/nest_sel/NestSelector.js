@@ -1,7 +1,8 @@
 define(function (require) {
 'use strict';
 var pvState = require('../../utils/state');
-var executeStringTemplate = require('../../initDeclaredNestings').executeStringTemplate;
+var initDeclaredNestings = require('../../initDeclaredNestings');
+var executeStringTemplate = initDeclaredNestings.executeStringTemplate;
 
 function addHead(md, hands, head) {
   hands.heads.push(head);

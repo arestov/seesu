@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
-var read = require('./utils/readDepValue').read;
+var readDepValue = require('./utils/readDepValue');
+var read = readDepValue.read;
 
 var bind = {
   root: function(bind) {

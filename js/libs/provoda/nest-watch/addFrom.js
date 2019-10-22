@@ -1,6 +1,7 @@
 define(function (require) {
 'use strict';
-var addRootNestWatch = require('./add-remove').addRootNestWatch;
+var addRemove = require('./add-remove');
+var addRootNestWatch = addRemove.addRootNestWatch;
 var getStartModel = require('./getStartModel')
 
 return function addFrom(target, lnest_watch) {

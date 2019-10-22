@@ -6,7 +6,8 @@ var changeBridge = require('js/libs/provoda/bwlev/changeBridge');
 var showMOnMap = require('js/libs/provoda/bwlev/showMOnMap');
 var BrowseLevel = require('js/libs/provoda/bwlev/BrowseLevel');
 var getUsageStruc = require('js/libs/provoda/structure/getUsageStruc');
-var getSPByPathTemplate = require('js/libs/provoda/initDeclaredNestings').getSPByPathTemplate;
+var initDeclaredNestings = require('js/libs/provoda/initDeclaredNestings');
+var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 var Model = require('pv/Model');
 var spv = require('spv');
 

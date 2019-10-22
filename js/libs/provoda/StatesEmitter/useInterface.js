@@ -2,7 +2,8 @@ define(function (require) {
 'use strict';
 
 var spv = require('spv');
-var pvUpdate = require('../updateProxy').update;
+var updateProxy = require('../updateProxy');
+var pvUpdate = updateProxy.update;
 
 var getStateUpdater = function(em, state_name) {
   if (!em._state_updaters) {

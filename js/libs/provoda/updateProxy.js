@@ -8,7 +8,8 @@ var produceEffects = require('./StatesEmitter/produceEffects');
 var push = Array.prototype.push;
 var getSTCHfullname = spv.getPrefixingFunc('stch-');
 var getFinupFullname = spv.getPrefixingFunc('finup-');
-var checkStates = require('./nest-watch/index').checkStates;
+var nestWIndex = require('./nest-watch/index');
+var checkStates = nestWIndex.checkStates;
 var _passHandleState = require('./dcl/passes/handleState/handle')
 
 var serv_counter = 1;

@@ -2,7 +2,8 @@ define(function(require) {
 'use strict';
 var initDeclaredNestings = require('../initDeclaredNestings');
 var prsStCon = require('../prsStCon');
-var initWatchList = require('../nest-watch/index').initList;
+var nestWIndex = require('../nest-watch/index')
+var initWatchList = nestWIndex.initList;
 var initNestSel = require('../dcl/nest_sel/init');
 var initNestConcat = require('../dcl/nest_conj/init');
 var initNestCompx = require('../dcl/nest_compx/init');

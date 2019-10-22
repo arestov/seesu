@@ -6,7 +6,8 @@ var pvState = require('../../provoda/state')
 var getNesting = require('../../provoda/getNesting')
 
 var updateNesting = require('../../provoda/updateNesting')
-var readDepValue = require('../../utils/readDepValue').depValue
+var mreadDepValue = require('../../utils/readDepValue')
+var readDepValue = mreadDepValue.depValue
 var getModels = require('../../utils/multiPath/getModels')
 var getValues = require('../../utils/multiPath/getValues')
 var getModelById = require('../../utils/getModelById');
