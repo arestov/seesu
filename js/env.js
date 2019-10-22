@@ -2,15 +2,21 @@ define(function(require) {
 'use strict';
 var localize = require('./localize')
 
+var noEnv = typeof window === 'undefined' && typeof process !== 'undefined'
 
-if (typeof window === 'undefined' && typeof process !== 'undefined') {
-  return {
+var env = noEnv
+  ? {
     bro: {},
     app_type: 'node',
     node: true,
     localize: localize()
-  };
-}
+  }
+  : calcEnv();
+
+return env
+
+function calcEnv() {
+
 
 var get_url_parameters = function(str, decode_uri_c){
   var url_vars = str.replace(/^\?/,'').split('&');
@@ -370,4 +376,5 @@ for (var prop in env) {
 env.states = states;
 
 return env;
+}
 });
