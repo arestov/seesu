@@ -1,11 +1,14 @@
-;!function(g) {
+define(function(){
 'use strict';
+
+return true &&
+!function(g) {
   if (typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node !== 'undefined') {
     var crypto = require('crypto');
     var nodeMd5 = function(string) {
       return crypto.createHash('md5').update(string).digest('hex');
     };
-    return resolve(nodeMd5);
+    return nodeMd5
   }
 
   var $0 = [], // result
@@ -296,17 +299,7 @@
     BUF[3] = d;
   }
 
-  resolve(md5);
+  return md5
+}(typeof global !== 'undefined' ? global: (this || window));
 
-  function resolve(md5) {
-    if ( typeof define === "function" && define.amd ) {
-      define(function() {
-        return md5;
-      } );
-    } else if ( typeof module === "object" && typeof module.exports === "object" ) {
-      module.exports = md5;
-    } else {
-      g.md5 = g.md5 || md5;
-    }
-  }
-}(this);
+})
