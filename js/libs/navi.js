@@ -1,10 +1,14 @@
 define(function(require) {
 'use strict';
 var spv = require('spv');
-if (typeof window == 'undefined') {
-  console.log('!')
-  return {}
-}
+
+var navi = typeof window == 'undefined'
+  ? {}
+  : getNavi();
+
+return navi;
+
+function getNavi() {
 var history_api = !!(window.history && window.history.pushState);
 var hash_start = /^\#/;
 
@@ -231,4 +235,5 @@ var navi;
 })();
 
 return navi;
+}
 });
