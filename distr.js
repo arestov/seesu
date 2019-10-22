@@ -9,8 +9,10 @@ const build = ({
     preserveModules: true,
     input: [
       'js/libs/provoda/provoda.js',
+      'js/libs/provoda/structure/getUsageTree',
       'js/libs/provoda/provoda/routePathByModels.js',
       'js/libs/provoda/provoda/LoadableList.js',
+      'js/libs/provoda/provoda/CoreView',
       'js/models/spyglasses/FakeSpyglassCore',
       'js/utils/init.js',
       'js/initBrowsing',
