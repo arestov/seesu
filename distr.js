@@ -23,6 +23,8 @@ const build = ({
       'js/views/map_slice/getAncestorByRooViCon',
       'js/views/map_slice/getMapSliceView',
 
+      'js/views/AppBaseView.js',
+      'js/views/utils/loadImage.js',
       'js/common-libs/jquery',
     ].map(path => (__dirname + '/' + path)),
 
