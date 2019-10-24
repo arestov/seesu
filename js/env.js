@@ -78,8 +78,7 @@ var env = (function(wd){
     env.deep_sandbox = true;
     env.as_application = false;
     env.app_type = 'lg_smarttv_app';
-
-  } else if (typeof process == 'object' && window.process.nextTick && typeof navigator == 'object'){
+  } else if (typeof process == 'object' && process.title == 'node' && process.nextTick && typeof navigator == 'object'){
     env.app_type = 'nodewebkit';
     env.as_application = false;
     env.deep_sandbox = true;
