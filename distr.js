@@ -13,6 +13,7 @@ const build = ({
       'js/libs/provoda/provoda/routePathByModels.js',
       'js/libs/provoda/provoda/LoadableList.js',
       'js/libs/provoda/provoda/CoreView',
+      'js/libs/provoda/provoda/View',
       'js/models/spyglasses/FakeSpyglassCore',
       'js/utils/init.js',
       'js/initBrowsing',
