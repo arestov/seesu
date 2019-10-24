@@ -3,7 +3,7 @@ var requirejs = require('./nodejs/require-r-2.2.0.min.js');
 requirejs.config({
 	nodeRequire: require,
   paths: {
-		jquery: 'js/common-libs/jquery-2.1.4.min',
+		jquery: 'js/common-libs/jquery-2.1.4',
 		angbo: 'js/libs/provoda/StatementsAngularParser.min',
     'js': 'js'
 	},
@@ -38,7 +38,7 @@ requirejs.config({
 	// 	spv: 'js/libs/spv',
 	// 	su: 'js/seesu',
 	// 	angbo: 'js/libs/provoda/StatementsAngularParser.min',
-	// 	jquery: 'js/common-libs/jquery-2.1.4.min',
+	// 	jquery: 'js/common-libs/jquery-2.1.4',
 	// 	localizer: 'js/libs/localizer',
 	// 	cache_ajax: 'js/libs/cache_ajax',
 	// 	app_serv: "js/app_serv",
