@@ -22,6 +22,8 @@ const build = ({
       'js/views/map_slice/BrowseLevViewCore',
       'js/views/map_slice/getAncestorByRooViCon',
       'js/views/map_slice/getMapSliceView',
+
+      'js/common-libs/jquery',
     ].map(path => (__dirname + '/' + path)),
 
     plugins: [
