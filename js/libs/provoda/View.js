@@ -295,6 +295,9 @@ spv.cloneObj(props, {
     }
     return has_all_dependings;
   },
+  getCustomCon: function() {
+    return this.root_view.getViewCustomCon(this);
+  },
   getT: function(){
     return this.c || this.pv_view_node || dWrap(this.getA());
   },
@@ -346,6 +349,11 @@ spv.cloneObj(props, {
   },
   domDie: function() {
     dRemove(this.getC())
+
+    if (this.root_view.getViewCustomCon) {
+      // if we have this.root_view.getViewCustomCon we should have removeCustomCon
+      this.root_view.removeViewCustomCon(this);
+    }
   },
   markDomDead: function() {
     stackEmergency(this.remove, this, [this.getC(), this._lbr._anchor]);

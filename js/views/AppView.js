@@ -181,9 +181,9 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
 
   toggleBodyClass: function(add, class_name){
     if (add){
-      this.c.addClass(class_name);
+      this.getCustomCon().addClass(class_name);
     } else {
-      this.c.removeClass(class_name);
+      this.getCustomCon().removeClass(class_name);
     }
   },
 
@@ -528,6 +528,21 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
       this.checkSizeFn();
     }
   },
+  getViewCustomCon: function(view) {
+    if (!view.__custom_con) {
+      view.__custom_con = $(view.getC());
+    }
+
+    return view.__custom_con;
+  },
+  removeViewCustomCon: function(view) {
+    if (!view.__custom_con) {
+      return;
+    }
+
+    view.__custom_con.remove()
+    delete view.__custom_con
+  }
 });
 
 AppView.AppExposedView = AppExposedView;
