@@ -39,7 +39,7 @@ var FanPreview = spv.inh(View, {}, {
   },
 
   'stch-selected_image': function(target, state) {
-    var image_node = target.tpl.ancs['user-image'];
+    var image_node = target.getCusomAncs()['user-image'];
     image_node.src = '';
     if (state){
       var url = state.lfm_id ?

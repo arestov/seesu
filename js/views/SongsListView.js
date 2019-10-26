@@ -14,7 +14,7 @@ var ActionsRowUI = require('./common/ActionsRowUI');
     },
     bindBase: function() {
       var _this = this;
-      this.dont_rept_pl_chbx = this.tpl.ancs['dont-rept-pl'].click(function() {
+      this.dont_rept_pl_chbx = this.getCusomAncs()['dont-rept-pl'].click(function() {
         _this.RPCLegacy('setDnRp', $(this).prop('checked'));
       });
 

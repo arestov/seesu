@@ -58,12 +58,12 @@ var ActionsRowUI = spv.inh(View, {}, {
   getCurrentButton: function() {
     var active_part = this.state('active_part');
     if (active_part){
-      return this.tpl.ancs['bt' + active_part];
+      return this.getCusomAncs()['bt' + active_part];
     }
   },
 
   getArPaOffset: function() {
-    return this.tpl.ancs['arrow'].offsetParent().offset();
+    return this.getCusomAncs()['arrow'].offsetParent().offset();
   },
 
   getCurrentButtonOWidth: function() {

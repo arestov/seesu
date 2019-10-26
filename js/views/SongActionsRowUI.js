@@ -41,7 +41,7 @@ var VkShareSectionView = spv.inh(ShareSearchSection, {}, {
 	},
 	'stch-needs_vk_auth': function(target, state) {
 		if (state){
-			target.tpl.ancs['vk_auth'].append(target.getAFreeCV('vk_auth'));
+			target.getCusomAncs()['vk_auth'].append(target.getAFreeCV('vk_auth'));
 			target.requestAll();
 		}
 	},
@@ -87,13 +87,13 @@ var ShareRowUI = spv.inh(View, {}, {
 
 		}, 100);
 
-		this.tpl.ancs['vk_share_search'].bind('keyup change search mousemove', inputSearch);
-		this.tpl.ancs['share_input'].bind("click focus", function() {
+		this.getCusomAncs()['vk_share_search'].bind('keyup change search mousemove', inputSearch);
+		this.getCusomAncs()['share_input'].bind("click focus", function() {
 			this.select();
 		});
 	},
 	focusToInput: function() {
-		this.tpl.ancs['share_input'][0].focus();
+		this.getCusomAncs()['share_input'][0].focus();
 	},
 	"stch-vis_con_appended": function(target, state){
     // !!
@@ -174,7 +174,7 @@ var ArrowPart = spv.inh(ActionsRowUI, {}, {
   getCurrentButton: function() {
     var active_part = this.state('active_part');
     if (active_part) {
-      return this.parent_view.parent_view.tpl.ancs['bt' + active_part];
+      return this.parent_view.parent_view.getCusomAncs()['bt' + active_part];
     }
   }
 });
@@ -212,15 +212,15 @@ var SongActionsRowUI = spv.inh(ActionsRowUI, {}, {
 	},
   'spyglass-song_action': [Probe],
 	getVHoleWidth: function() {
-		return this.tpl.ancs['v-hole'].width();
+		return this.getCusomAncs()['v-hole'].width();
 	},
 
 	getVBarOuterWidth: function() {
-		return this.tpl.ancs['v-bar'].outerWidth();
+		return this.getCusomAncs()['v-bar'].outerWidth();
 	},
 
 	getVBarWidth: function() {
-		return this.tpl.ancs['v-bar'].width();
+		return this.getCusomAncs()['v-bar'].width();
 	},
 
 	'stch-key_vol_hole_w': function(target, value) {
@@ -239,10 +239,10 @@ var SongActionsRowUI = spv.inh(ActionsRowUI, {}, {
 	},
 
 	createVolumeControl: function() {
-		this.vol_cc = this.tpl.ancs['volume-control'];
+		this.vol_cc = this.getCusomAncs()['volume-control'];
 
 		var events_anchor = this.vol_cc;
-		var pos_con = this.tpl.ancs['v-hole'];
+		var pos_con = this.getCusomAncs()['v-hole'];
 
 		this.dom_related_props.push('vol_cc', 'tpl');
 		var _this = this;

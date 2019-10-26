@@ -31,7 +31,7 @@ var SearchCriteriaView = spv.inh(View, {}, {
   },
 
   tickCheckFocus: function() {
-    this.tpl.ancs['search_face'][0].focus();
+    this.getCusomAncs()['search_face'][0].focus();
   }
 });
 

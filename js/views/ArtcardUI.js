@@ -34,8 +34,8 @@ var ArtcardUI = spv.inh(View, {}, {
       }
       var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/500/' + lfm_wrap.lfm_id : lfm_wrap.url;
       if (url){
-        target.tpl.ancs.bigimagec.empty();
-        target.tpl.ancs.bigimagec.append(
+        target.getCusomAncs().bigimagec.empty();
+        target.getCusomAncs().bigimagec.append(
           $('<img/>').attr('src', url)
         );
       }
@@ -48,8 +48,8 @@ var ArtcardUI = spv.inh(View, {}, {
 
         $(safe_node).find('script').remove();
 
-        target.tpl.ancs.bio.empty().append(safe_node);
-        target.root_view.bindLfmTextClicks(target.tpl.ancs.bio);
+        target.getCusomAncs().bio.empty().append(safe_node);
+        target.root_view.bindLfmTextClicks(target.getCusomAncs().bio);
       }
     }
   },
@@ -155,7 +155,7 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
   },
 
   'stch-bio': function(target, text) {
-    var bioc = target.tpl.ancs['artbio'];
+    var bioc = target.getCusomAncs()['artbio'];
     if (!bioc){
       return;
     }
@@ -214,15 +214,15 @@ var ArtistInSongConstroller = spv.inh(View, {}, {
     if (!images || !images.length){
       return;
     }
-    var photo_c = target.tpl.ancs['phocoli'];
+    var photo_c = target.getCusomAncs()['phocoli'];
     if (!photo_c){
       return;
     }
 
     var prepareImageAppend = function(index) {
       if (index === 0){
-        target.tpl.ancs['first-image'].remove();
-        target.tpl.ancs['first-image'] = null;
+        target.getCusomAncs()['first-image'].remove();
+        target.getCusomAncs()['first-image'] = null;
       }
     };
     var canUse = function() {

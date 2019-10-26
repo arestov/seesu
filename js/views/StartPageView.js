@@ -65,7 +65,7 @@ var StartPageView = spv.inh(coct.SPView, {}, {
       }
     },
     "ask_rating_help": finup(function(target, obj){
-      var anchor = target.tpl.ancs.help_text;
+      var anchor = target.getCusomAncs().help_text;
       if (!obj) {
         // anchor.empty();
       } else {

@@ -34,10 +34,10 @@ var ListPreview = spv.inh(View, {}, {
     this.addWayPoint(button_area);
   },
   'stch-list_loading': function(target, state) {
-    if (!target.tpl.ancs.listc) {
+    if (!target.getCusomAncs().listc) {
       return;
     }
-    target.tpl.ancs.listc.toggleClass('list_loading', !!state);
+    target.getCusomAncs().listc.toggleClass('list_loading', !!state);
   },
   'stch-mp_show': function(target, state) {
     var node = spv.getTargetField(target, 'tpl.ancs.button_area') || target.c;
@@ -266,7 +266,7 @@ var BigAlbumPreview = spv.inh(View, {}, {
   'stch-selected_image': function(target, lfm_wrap) {
     var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
     if (url){
-      var node = target.tpl.ancs.imgc[0];
+      var node = target.getCusomAncs().imgc[0];
       var req = loadImage(target, {
           url: url,
           cache_allowed: true
@@ -279,7 +279,7 @@ var BigAlbumPreview = spv.inh(View, {}, {
         req.abort();
       });
     } else {
-      target.tpl.ancs.imgc.attr('src', '');
+      target.getCusomAncs().imgc.attr('src', '');
     }
   }
 });
@@ -298,7 +298,7 @@ var AlbumsListView = spv.inh(PageView, {}, {
 var AlbumsListPreview = spv.inh(ItemOfLL, {}, {
   createBase: function() {
     this._super();
-    this.tpl.ancs.listc.addClass('albums_previews');
+    this.getCusomAncs().listc.addClass('albums_previews');
   },
   children_views: {
     preview_list: AlbumsListPreviewItem
@@ -311,13 +311,13 @@ var AlbumsListPreview = spv.inh(ItemOfLL, {}, {
 
 
 var tagListChange = function(target, array) {
-  target.tpl.ancs.listc.empty();
+  target.getCusomAncs().listc.empty();
   var df = window.document.createDocumentFragment();
   for (var i = 0; i < array.length; i++) {
     $(df).append(target.createTagLink(array[i].name));
     $(df).append(window.document.createTextNode(" "));
   }
-  target.tpl.ancs.listc.append(df);
+  target.getCusomAncs().listc.append(df);
 };
 var TagsListPreview = spv.inh(ListPreview, {}, {
   'stch-simple_tags_list': tagListChange,

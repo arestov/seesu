@@ -135,7 +135,7 @@ var SongFileModelUI = spv.inh(View, {}, {
   dom_rp: true,
 
   getProgressWidth: function() {
-    return this.tpl.ancs['progress_c'].width();
+    return this.getCusomAncs()['progress_c'].width();
   },
 
   'stch-key-progress-c-width': function(target, state) {
@@ -153,7 +153,7 @@ var SongFileModelUI = spv.inh(View, {}, {
   expandBase: function() {
 
 
-    var progress_c = this.tpl.ancs['progress_c'];
+    var progress_c = this.getCusomAncs()['progress_c'];
 
     var _this = this;
 
@@ -331,10 +331,10 @@ var MfCorUI = spv.inh(View, {}, {
     // bindBase: function() {
     // 	//this.createTemplate();
     // 	var _this = this;
-    // 	this.tpl.ancs.more_songs_b.click(function() {
+    // 	this.getCusomAncs().more_songs_b.click(function() {
     // 		_this.RPCLegacy('switchMoreSongsView');
     // 	});
-    // 	this.addWayPoint(this.tpl.ancs.more_songs_b);
+    // 	this.addWayPoint(this.getCusomAncs().more_songs_b);
     // },
     // base_tree: {
     // 	sample_name: 'moplas-block'

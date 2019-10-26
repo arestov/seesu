@@ -41,7 +41,7 @@ var LfmTagItView = spv.inh(etc_views.LfmLoginView, {}, {
     })
   },
   "stch-user_tags_string": function(target, state) {
-    target.tpl.ancs['tags-input'].val(state);
+    target.getCusomAncs()['tags-input'].val(state);
   },
   "stch-has_session": function(target, state) {
     state = !!state;
