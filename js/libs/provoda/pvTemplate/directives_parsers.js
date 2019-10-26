@@ -11,6 +11,14 @@ var startsWith = spv.startsWith;
 var getTargetField = spv.getTargetField;
 var setTargetField = spv.setTargetField;
 
+var getText = function(node) {
+  return $(node).text()
+}
+
+var setText = function(node, value) {
+  return $(node).text(value);
+}
+
 
 var DOT = '.';
 var regxp_complex_spaces = /(^\s+)|(\s+$)|(\s{2,})/gi;
@@ -157,10 +165,10 @@ return {
   directives_p: {
     'pv-text': (function() {
       var getTextValue = function(node) {
-        return $(node).text();
+        return getText(node);
       };
       var setTextValue = function(node, new_value) {
-        $(node).text(new_value);
+        return setText(node, new_value)
       };
       return function(node, full_declaration, directive_name) {
         return new StandartChange(node, {
