@@ -1,11 +1,19 @@
 define(function(require) {
 'use strict';
 var spv = require('spv');
-var $ = require('jquery');
 var CoreView = require('./CoreView')
 var PvTemplate = require('./PvTemplate');
 var appending = require('./View/appending')
 var hp = require('./helpers');
+var dom_helpers = require('./utils/dom_helpers')
+
+var dFind = dom_helpers.find;
+var dAppend = dom_helpers.append;
+var dAfter = dom_helpers.after;
+var dDetach = dom_helpers.detach;
+var dBefore = dom_helpers.before;
+var dWrap = dom_helpers.wrap;
+var dRemove = dom_helpers.remove;
 
 var $v = hp.$v;
 var way_points_counter = 0;
@@ -234,7 +242,7 @@ spv.cloneObj(props, {
   },
   requirePart: function(part_name) {
     if (!this.isAlive()){
-      return $();
+      return dWrap();
     }
     if (this.view_parts && this.view_parts[part_name]){
       return this.view_parts[part_name];
@@ -285,7 +293,7 @@ spv.cloneObj(props, {
     return has_all_dependings;
   },
   getT: function(){
-    return this.c || this.pv_view_node || $(this.getA());
+    return this.c || this.pv_view_node || dWrap(this.getA());
   },
   getC: function(){
     return this.c;
@@ -323,18 +331,18 @@ spv.cloneObj(props, {
       con = this.getC();
     }
     if (con){
-      con.remove();
+      dRemove(con);
     }
     if (!anchor){
       anchor = this._lbr._anchor;
     }
     if (anchor){
-      $(anchor).remove();
+      dRemove(anchor)
     }
 
   },
   domDie: function() {
-    $(this.getC()).remove();
+    dRemove(this.getC())
   },
   markDomDead: function() {
     stackEmergency(this.remove, this, [this.getC(), this._lbr._anchor]);
@@ -343,7 +351,7 @@ spv.cloneObj(props, {
 
     if (this.base_skeleton) {
       for (var i = 0; i < this.base_skeleton.length; i++) {
-        $(this.base_skeleton[i].node);
+        dWrap(this.base_skeleton[i].node) // remove?
       }
       this.base_skeleton = null;
     }
@@ -385,10 +393,10 @@ spv.cloneObj(props, {
     var con = this.getC();
     var anchor = this._lbr._anchor;
     if (con && anchor && anchor.parentNode){
-      $(anchor).after(con);
+      dAfter(anchor, con);
       //anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
       this._lbr._anchor = null;
-      $(anchor).detach();
+      dDetach(anchor);
       this.setVisState('con_appended', true);
     } else if (con && con.parent()[0]){
       this.setVisState('con_appended', true);
@@ -429,7 +437,9 @@ spv.cloneObj(props, {
         cur = append_list.pop();
         if (cur.parent && cur.parent.node) {
           cur_config = this.base_tree_list[ cur.chunk_num ];
-          var target_node = cur_config.selector ? $(cur.parent.node).find(cur_config.selector) : $(cur.parent.node);
+          var target_node = cur_config.selector
+            ? dFind(cur.parent.node, cur_config.selector)
+            : dWrap(cur.parent.node);
 
           if (!cur_config.prepend) {
             target_node.append(cur.node);

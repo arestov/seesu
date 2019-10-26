@@ -2,6 +2,10 @@ define(function(require) {
 'use strict';
 var $ = require('jquery');
 
+var find = function(con, selector) {
+  return $(con).find(selector)
+}
+
 var append = function(place, target) {
   $(place).append(target);
 }
@@ -36,6 +40,7 @@ var remove = function(node) {
 }
 
 return {
+  find: find,
   append: append,
   after: after,
   detach: detach,
