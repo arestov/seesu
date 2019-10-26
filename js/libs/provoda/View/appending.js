@@ -1,34 +1,19 @@
 define(function(require) {
 'use strict'
 var spv = require('spv');
-var $ = require('jquery');
 var hp = require('../helpers');
 var updateProxy = require('../updateProxy');
+var dom_helpers = require('../utils/dom_helpers')
 
 
 var pvUpdate = updateProxy.update;
 var $v = hp.$v;
 
-
-var append = function(place, target) {
-  $(place).append(target);
-}
-
-var after = function(place, target) {
-  $(place).after(target)
-}
-
-var detach = function(target) {
-  $(target).detach();
-}
-
-var before = function(place, comment_anchor) {
-  $(place).before(comment_anchor);
-}
-
-var wrap = function(node) {
-  return $(node);
-}
+var append = dom_helpers.append;
+var after = dom_helpers.after;
+var detach = dom_helpers.detach;
+var before = dom_helpers.before;
+var wrap = dom_helpers.wrap;
 
 var appendSpace = function() {
   //fixme
