@@ -39,7 +39,7 @@ var appendSpace = function() {
 return {
   appen_ne_vws: {
     appendDirectly: function(fragt) {
-      this.place.append(fragt);
+      append(this.place, fragt)
     },
     getFreeView: function(cur) {
       return this.view.getFreeChildView({
@@ -295,9 +295,9 @@ return {
     for (i = 0; i < ordered_complects.length; i++) {
       var complect = complects[ordered_complects[i]];
       if (complect.type == 'after'){
-        complect.view.getT().after(complect.fragt);
+        after(complect.view.getT(), complect.fragt)
       } else if (complect.type == 'before'){
-        complect.view.getT().before(complect.fragt);
+        before(complect.view.getT(), complect.fragt)
       } else if (complect.type =='direct'){
         funcs.appendDirectly(complect.fragt);
       }
@@ -346,7 +346,7 @@ return {
         if (!place && typeof place != 'boolean'){
           throw new Error('give me place');
         } else {
-          place.append(view.getA());
+          append(place, view.getA())
           appendSpace(place);
         }
       }
