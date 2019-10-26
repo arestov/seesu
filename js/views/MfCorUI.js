@@ -16,14 +16,14 @@ var notifyCounterUI = spv.inh(View, {}, {
   },
   state_change: {
     counter: function(target, state) {
-      target.c.toggleClass('hidden', !state);
+      target.getCustomCon().toggleClass('hidden', !state);
     }
   }
 });
 
 var FileIntorrentPromiseUI = spv.inh(View, {}, {
   'stch-infoHash': function(target, state) {
-    target.c.text(state);
+    target.getCustomCon().text(state);
   },
   createBase: function(){
     this.c = $('<li class="mopla-item"></li>');

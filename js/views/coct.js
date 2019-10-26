@@ -12,7 +12,7 @@ var pvUpdate = pv.update;
 var SoftVkLoginUI = spv.inh(etc_views.VkLoginUI, {}, {
   createBase: function() {
     this._super();
-    this.c.removeClass('attention-focuser');
+    this.getCustomCon().removeClass('attention-focuser');
   }
 });
 
@@ -72,7 +72,7 @@ var ListPreviewLine = spv.inh(View, {}, {
 var LiListsPreview = spv.inh(ListPreview, {}, {
   createBase: function() {
     this._super();
-    this.c.addClass('tag_artists-preview');
+    this.getCustomCon().addClass('tag_artists-preview');
   },
   children_views: {
     lists_list: ListPreviewLine
@@ -103,7 +103,7 @@ var SPView = spv.inh(View, {}, {
 
 var PageView = spv.inh(SPView, {}, {
   'stch-vmp_show': function(target, state) {
-    target.c.toggleClass('hidden', !state);
+    target.getCustomCon().toggleClass('hidden', !state);
   },
   createBase: function() {
     this.c = $('<div class="usual_page"></div>');
@@ -131,7 +131,7 @@ var ListSimplePreview = spv.inh(ListPreview, {}, {
     }
   },
   'stch-pmd_vswitched': function(target, state) {
-    target.c.toggleClass('access-request', state);
+    target.getCustomCon().toggleClass('access-request', state);
   },
   'collch-preview_list': {
     place: 'tpl.ancs.listc',
@@ -220,7 +220,7 @@ var AlbumsListPreviewItem = spv.inh(View, {}, {
         req.abort();
       });
     } else {
-      target.c.attr('src', '');
+      target.getCustomCon().attr('src', '');
     }
   }
 });

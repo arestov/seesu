@@ -136,7 +136,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
       var spv_top_pos = scroll_c.offset().top;
       node_position = scroll_top + (node_top_post - spv_top_pos);
 
-      //node_position = jnode.position().top + scroll_top + this.c.parent().position().top;
+      //node_position = jnode.position().top + scroll_top + this.getCustomCon().parent().position().top;
     }
     /*
 
@@ -296,7 +296,7 @@ var WebAppView = spv.inh(AppBaseView, {}, {
       window_width: wd.innerWidth
     });
     if (this.ui_samples_csel) {
-      this.els.ui_samples = this.c.find(this.ui_samples_csel);
+      this.els.ui_samples = this.getCustomCon().find(this.ui_samples_csel);
     }
   },
   ui_samples_csel: '#ui-samples'
@@ -315,7 +315,7 @@ var WebComplexTreesView = spv.inh(WebAppView, {}, {
   }),
   onDomBuild: function() {
     this._super();
-    this.c.addClass('app-loaded');
+    this.getCustomCon().addClass('app-loaded');
   },
 });
 

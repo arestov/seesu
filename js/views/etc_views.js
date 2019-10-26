@@ -9,30 +9,30 @@ var VkLoginUI = spv.inh(View, {}, {
   state_change: {
     'data_wait': function(target, state) {
       if (state){
-        target.c.addClass("waiting-auth");
+        target.getCustomCon().addClass("waiting-auth");
       } else {
-        target.c.removeClass("waiting-auth");
+        target.getCustomCon().removeClass("waiting-auth");
       }
     },
     "request_description": function(target, state) {
       target.login_desc.text(state || "");
     },
     'deep_sandbox': function(target, state) {
-      target.c.toggleClass('deep-sandbox', !!state);
+      target.getCustomCon().toggleClass('deep-sandbox', !!state);
     }
   },
 
   'stch-has_notify_closer': function(target, state) {
-    target.c.toggleClass('has_notify_closer', !!state);
+    target.getCustomCon().toggleClass('has_notify_closer', !!state);
   },
   'stch-notify_readed': function(target, state) {
-    target.c.toggleClass('notf-readed', !!state);
+    target.getCustomCon().toggleClass('notf-readed', !!state);
   },
   'stch-has_session': function(target, state){
     if (!state){
-      target.c.removeClass("hidden");
+      target.getCustomCon().removeClass("hidden");
     } else {
-      target.c.addClass("hidden");
+      target.getCustomCon().addClass("hidden");
     }
   },
   createBase: function() {
@@ -41,18 +41,18 @@ var VkLoginUI = spv.inh(View, {}, {
   },
   bindBase: function() {
     var _this = this;
-    var sign_link = this.c.find('.sign-in-to-vk').click(function(e){
+    var sign_link = this.getCustomCon().find('.sign-in-to-vk').click(function(e){
       _this.RPCLegacy('requestAuth');
       e.preventDefault();
     });
-    this.login_desc = this.c.find('.login-request-desc');
+    this.login_desc = this.getCustomCon().find('.login-request-desc');
     this.addWayPoint(sign_link, {
       canUse: function() {
 
       }
     });
-    var input = this.c.find('.vk-code');
-    this.c.find('.use-vk-code').click(function() {
+    var input = this.getCustomCon().find('.vk-code');
+    this.getCustomCon().find('.use-vk-code').click(function() {
       var vk_t_raw = input.val();
       _this.root_view.RPCLegacy('vkSessCode', vk_t_raw);
 
@@ -63,11 +63,11 @@ var VkLoginUI = spv.inh(View, {}, {
 
       }
     });
-    this.c.find('.notify-closer').click(function() {
+    this.getCustomCon().find('.notify-closer').click(function() {
       _this.RPCLegacy('removeNotifyMark');
     });
 
-    var inpco = this.c.find('.js-input-code').click(function() {
+    var inpco = this.getCustomCon().find('.js-input-code').click(function() {
       _this.RPCLegacy('waitData');
     });
 
@@ -81,30 +81,30 @@ var VkLoginUI = spv.inh(View, {}, {
 var LfmLoginView = spv.inh(View, {}, {
   'stch-has_session': function(target, state){
     if (!state){
-      target.c.removeClass("hidden");
+      target.getCustomCon().removeClass("hidden");
     } else {
-      target.c.addClass("hidden");
+      target.getCustomCon().addClass("hidden");
     }
   },
   'stch-deep_sandbox': function(target, state){
-    target.c.toggleClass('deep-sandbox', !!state);
+    target.getCustomCon().toggleClass('deep-sandbox', !!state);
   },
   'stch-data_wait': function(target, state) {
     if (state){
-      target.c.addClass("waiting-auth");
+      target.getCustomCon().addClass("waiting-auth");
     } else {
-      target.c.removeClass("waiting-auth");
+      target.getCustomCon().removeClass("waiting-auth");
     }
   },
   'stch-request_description': function(target, state) {
-    target.c.find('.lfm-auth-request-desc').text(state || "");
+    target.getCustomCon().find('.lfm-auth-request-desc').text(state || "");
   },
   createBase: function () {
     this.c = this.root_view.getSample('lfm-auth-module');
     this.bindBase();
   },
   bindBase: function() {
-    this.auth_block = this.c.find(".auth-block");
+    this.auth_block = this.getCustomCon().find(".auth-block");
     var _this = this;
     var auth_link = this.auth_block.find('.lastfm-auth-bp a').click(function(e){
       _this.RPCLegacy('requestAuth');
@@ -145,7 +145,7 @@ var LfmLoveItView = spv.inh(LfmLoginView, {}, {
     });
     this.addWayPoint(this.nloveb.b);
 
-    this.c.append(wrap);
+    this.getCustomCon().append(wrap);
 
 
   },
@@ -156,13 +156,13 @@ var LfmLoveItView = spv.inh(LfmLoginView, {}, {
 
   "stch-has_session": function(target, state) {
     state = !!state;
-    target.c.toggleClass('has_session', state);
+    target.getCustomCon().toggleClass('has_session', state);
     target.auth_block.toggleClass('hidden', state);
     target.nloveb.toggle(state);
   },
 
   "stch-wait_love_done": function(target, state){
-    target.c.toggleClass('wait_love_done', !!state);
+    target.getCustomCon().toggleClass('wait_love_done', !!state);
   }
 });
 
@@ -191,7 +191,7 @@ var LfmScrobbleView = spv.inh(LfmLoginView, {}, {
   },
   "stch-has_session": function(target, state) {
     state = !!state;
-    target.c.toggleClass('has_session', state);
+    target.getCustomCon().toggleClass('has_session', state);
     target.auth_block.toggleClass('hidden', state);
     target.chbx_enabl.add(target.chbx_disabl).prop('disabled', !state);
   },

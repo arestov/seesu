@@ -9,11 +9,11 @@ var UserCardPreview = spv.inh(View, {}, {
   dom_rp: true,
   createBase: function() {
     this.c = this.root_view.els.pestf_preview;
-    this.aqc_preview_c = this.c.find('.aqc_preview');
+    this.aqc_preview_c = this.getCustomCon().find('.aqc_preview');
 
     var _this = this;
 
-    var button = this.c.find('.to-open-block').click(function() {
+    var button = this.getCustomCon().find('.to-open-block').click(function() {
       _this.requestPage();
     });
     this.addWayPoint(button);

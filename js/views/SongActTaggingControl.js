@@ -17,7 +17,7 @@ var LfmTagItView = spv.inh(etc_views.LfmLoginView, {}, {
 
     this.tpl = this.createTemplate(tpl_con);
 
-    this.c.append(tpl_con);
+    this.getCustomCon().append(tpl_con);
   },
   tpl_r_events: {
     'petags_result': {
@@ -45,7 +45,7 @@ var LfmTagItView = spv.inh(etc_views.LfmLoginView, {}, {
   },
   "stch-has_session": function(target, state) {
     state = !!state;
-    target.c.toggleClass('has_session', state);
+    target.getCustomCon().toggleClass('has_session', state);
     target.auth_block.toggleClass('hidden', state);
     /*
 
@@ -55,7 +55,7 @@ var LfmTagItView = spv.inh(etc_views.LfmLoginView, {}, {
     */
   },
   // "stch-wait_love_done": function(target){
-  // 	//target.c.toggleClass('wait_love_done', !!state);
+  // 	//target.getCustomCon().toggleClass('wait_love_done', !!state);
   // }
 });
 
