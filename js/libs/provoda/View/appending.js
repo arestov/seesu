@@ -9,6 +9,27 @@ var updateProxy = require('../updateProxy');
 var pvUpdate = updateProxy.update;
 var $v = hp.$v;
 
+
+var append = function(place, target) {
+  $(place).append(target);
+}
+
+var after = function(place, target) {
+  $(place).after(target)
+}
+
+var detach = function(target) {
+  $(target).detach();
+}
+
+var before = function(place, comment_anchor) {
+  $(place).before(comment_anchor);
+}
+
+var wrap = function(node) {
+  return $(node);
+}
+
 var appendSpace = function() {
   //fixme
   //$(target).append(document.createTextNode(' '));
@@ -253,9 +274,8 @@ return {
       apd_views[i/2] = view;
       //append_data.view = view;
       view.skip_anchor_appending = true;
-      var fragt = $(complect.fragt);
-      fragt.append(view.getT());
-      appendSpace(fragt);
+      append(complect.fragt, view.getT())
+      appendSpace(complect.fragt);
       //append_data.complect.fragt.appendChild(view.getT()[0]);
       //$(.fragt).append();
     }
@@ -353,7 +373,7 @@ return {
           node_to_use = pv_view.sampler.getClone();
           //node_to_use = pv_view.original_node.cloneNode(true);
         }
-        view.pv_view_node = $(node_to_use);
+        view.pv_view_node = wrap(node_to_use);
         //var model_name = mmm.model_name;
 
         pv_view.node = null;
@@ -370,7 +390,7 @@ return {
     };
 
     var appendDirectly = function(fragt) {
-      $(this.cur_pv_v_data.comment_anchor).after(fragt);
+      after(this.cur_pv_v_data.comment_anchor, fragt)
     };
 
     return function(nesname, real_array, space_name, pv_v_data) {
@@ -426,7 +446,7 @@ return {
           //node_to_use = pv_view.original_node.cloneNode(true);
           node_to_use = pv_view.sampler.getClone();
         }
-        view.pv_view_node = $(node_to_use);
+        view.pv_view_node = wrap(node_to_use);
         //var model_name = mmm.model_name;
 
         pv_view.node = null;
@@ -441,7 +461,7 @@ return {
     };
 
     var appendDirectly = function(fragt) {
-      $(this.pv_view.comment_anchor).after(fragt);
+      after(this.pv_view.comment_anchor, fragt)
     };
 
     return function(nesname, real_array, space_name, pv_view) {
@@ -451,11 +471,11 @@ return {
     //	}
       if (!pv_view.comment_anchor){
         pv_view.comment_anchor = window.document.createComment('collch anchor for: ' + nesname + ", " + space_name);
-        $(pv_view.node).before(pv_view.comment_anchor);
+        before(pv_view.node, pv_view.comment_anchor)
       }
 
       if (pv_view.node){
-        $(pv_view.node).detach();
+        detach(pv_view.node)
         pv_view.node = null;
       }
 
