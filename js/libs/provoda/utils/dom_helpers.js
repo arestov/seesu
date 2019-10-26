@@ -31,6 +31,10 @@ var setText = function(node, value) {
   return $(node).text(value);
 }
 
+var remove = function(node) {
+  return $(node).remove();
+}
+
 return {
   append: append,
   after: after,
@@ -39,6 +43,7 @@ return {
   wrap: wrap,
   getText: getText,
   setText: setText,
+  remove: remove,
 }
 
 })
