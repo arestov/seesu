@@ -541,8 +541,34 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
     }
 
     view.__custom_con.remove()
-    delete view.__custom_con
-  }
+    view.__custom_con = null;
+  },
+  getViewCusomAncs: function(view) {
+    if (!view.__custom_ancs) {
+      view.__custom_ancs = {}
+      for (var anc_name in view.tpl.acns) {
+        if (!view.tpl.acns.hasOwnProperty(anc_name)) {
+          continue;
+        }
+        view.__custom_ancs[anc_name] = $(view.tpl.acns[anc_name])
+      }
+    }
+
+    return view.__custom_ancs;
+  },
+  removeViewCusomAncs: function(view) {
+    if (!view.__custom_ancs) {
+      return;
+    }
+    for (var anc_name in view.__custom_ancs) {
+      if (!view.__custom_ancs.hasOwnProperty(anc_name)) {
+        continue
+      }
+      view.__custom_ancs[anc_name].remove();
+      view.__custom_ancs[anc_name] = null;
+    }
+    view.__custom_ancs = null;
+  },
 });
 
 AppView.AppExposedView = AppExposedView;
