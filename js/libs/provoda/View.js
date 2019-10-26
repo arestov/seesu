@@ -15,6 +15,8 @@ var dDetach = dom_helpers.detach;
 var dBefore = dom_helpers.before;
 var dWrap = dom_helpers.wrap;
 var dRemove = dom_helpers.remove;
+var dUnwrap = dom_helpers.unwrap;
+var dParent = dom_helpers.parent;
 
 var $v = hp.$v;
 var way_points_counter = 0;
@@ -305,10 +307,10 @@ spv.cloneObj(props, {
     //document.createTextNode('')
   },
   getWindow: function() {
-    return spv.getDefaultView(this.d || this.getC()[0].ownerDocument);
+    return spv.getDefaultView(this.d || dUnwrap(this.getC()).ownerDocument);
   },
-  getCNode: function(c) {
-    return (c = this.getC()) && (typeof c.length != 'undefined' ? c[0] : c);
+  getCNode: function() {
+    return dUnwrap(this.getC());
   },
   isAlive: function(dead_doc) {
     if (this.dead){
@@ -399,7 +401,7 @@ spv.cloneObj(props, {
       this._lbr._anchor = null;
       dDetach(anchor);
       this.setVisState('con_appended', true);
-    } else if (con && con.parent()[0]){
+    } else if (con && dUnwrap(dParent(con))){
       this.setVisState('con_appended', true);
 
     }
