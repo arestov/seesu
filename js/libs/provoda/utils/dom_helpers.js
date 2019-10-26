@@ -10,6 +10,10 @@ var append = function(place, target) {
   $(place).append(target);
 }
 
+var prepend = function(place, target) {
+  return $(place).prepend(target);
+}
+
 var after = function(place, target) {
   $(place).after(target)
 }
@@ -42,6 +46,7 @@ var remove = function(node) {
 return {
   find: find,
   append: append,
+  prepend: prepend,
   after: after,
   detach: detach,
   before: before,

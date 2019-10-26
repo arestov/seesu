@@ -9,6 +9,7 @@ var dom_helpers = require('./utils/dom_helpers')
 
 var dFind = dom_helpers.find;
 var dAppend = dom_helpers.append;
+var dPrepend = dom_helpers.prepend;
 var dAfter = dom_helpers.after;
 var dDetach = dom_helpers.detach;
 var dBefore = dom_helpers.before;
@@ -442,9 +443,9 @@ spv.cloneObj(props, {
             : dWrap(cur.parent.node);
 
           if (!cur_config.prepend) {
-            target_node.append(cur.node);
+            dAppend(target_node, cur.node)
           } else {
-            target_node.prepend(cur.node);
+            dPrepend(target_node, cur.node)
           }
 
           if (cur_config.needs_expand_state && cur_config.parse_as_tplpart) {
