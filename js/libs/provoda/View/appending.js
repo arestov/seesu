@@ -14,6 +14,8 @@ var after = dom_helpers.after;
 var detach = dom_helpers.detach;
 var before = dom_helpers.before;
 var wrap = dom_helpers.wrap;
+var dPrev = dom_helpers.prev;
+var dIs = dom_helpers.is;
 
 var appendSpace = function() {
   //fixme
@@ -197,7 +199,7 @@ return {
         if (prev_view){
           var current_node = view.getT();
           var prev_node = prev_view.getT();
-          if (!current_node.prev().is(prev_node)){
+          if (!dIs(dPrev(current_node), prev_node)){
             var parent_node = current_node[0] && current_node[0].parentNode;
             if (parent_node){
               parent_node.removeChild(current_node[0]);

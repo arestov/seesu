@@ -63,6 +63,14 @@ var remove = function(node) {
   return $(node).remove();
 }
 
+var prev = function(node) {
+  return $(node).prev()
+}
+
+var is = function(one, two) {
+  return $(one).is(two);
+}
+
 return {
   find: find,
   append: append,
@@ -76,6 +84,8 @@ return {
   getText: getText,
   setText: setText,
   remove: remove,
+  prev: prev,
+  is: is,
 }
 
 })
