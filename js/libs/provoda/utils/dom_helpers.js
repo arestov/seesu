@@ -30,6 +30,26 @@ var wrap = function(node) {
   return $(node);
 }
 
+var unwrap = function(wrapped) {
+  if (!wrapped) {
+    return null;
+  }
+
+  if ("nodeType" in wrapped) {
+    return wrapped
+  }
+
+  if ("length" in wrapped) {
+    return wrapped[0]
+  }
+
+  return null;
+}
+
+var parent = function(node) {
+  return $(node).parent()
+}
+
 
 var getText = function(node) {
   return $(node).text()
@@ -51,6 +71,8 @@ return {
   detach: detach,
   before: before,
   wrap: wrap,
+  unwrap: unwrap,
+  parent: parent,
   getText: getText,
   setText: setText,
   remove: remove,
