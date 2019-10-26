@@ -3,7 +3,7 @@ define(function(require) {
 
 var spv = require('spv');
 var angbo = require('angbo');
-var $ = require('jquery');
+var dom_helpers = require('./utils/dom_helpers')
 var parser = require('./pvTemplate/parser');
 var PvSimpleSampler = require('./pvTemplate/PvSimpleSampler');
 var parseEasy = require('./pvTemplate/parseEasy');
@@ -12,25 +12,11 @@ var push = Array.prototype.push;
 var addEvent = spv.addEvent;
 var removeEvent = spv.removeEvent;
 
-var append = function(place, target) {
-  $(place).append(target);
-}
-
-var after = function(place, target) {
-  $(place).after(target)
-}
-
-var detach = function(target) {
-  $(target).detach();
-}
-
-var before = function(place, comment_anchor) {
-  $(place).before(comment_anchor);
-}
-
-var wrap = function(node) {
-  return $(node);
-}
+var append = dom_helpers.append;
+var after = dom_helpers.after;
+var detach = dom_helpers.detach;
+var before = dom_helpers.before;
+var wrap = dom_helpers.wrap;
 
 /*
 

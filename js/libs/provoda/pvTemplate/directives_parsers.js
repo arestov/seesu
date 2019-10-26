@@ -2,22 +2,17 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var $ = require('jquery');
 var angbo = require('angbo');
 var StandartChange = require('./StandartChange');
+var dom_helpers = require('../utils/dom_helpers')
 
 var capitalize = spv.capitalize;
 var startsWith = spv.startsWith;
 var getTargetField = spv.getTargetField;
 var setTargetField = spv.setTargetField;
 
-var getText = function(node) {
-  return $(node).text()
-}
-
-var setText = function(node, value) {
-  return $(node).text(value);
-}
+var getText = dom_helpers.getText;
+var setText = dom_helpers.setText;
 
 
 var DOT = '.';
