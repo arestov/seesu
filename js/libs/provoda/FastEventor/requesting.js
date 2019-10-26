@@ -236,7 +236,7 @@ return {
           self.sputnik.nextTick(function() {
             var has_error = network_api.errors_fields ? findErrorByList(r, network_api.errors_fields) : network_api.checkResponse(r);
             if (!has_error) {
-              var morph_helpers = self.sputnik.morph_helpers;
+              var morph_helpers = self.sputnik.app.morph_helpers;
               var result = parse.call(self.sputnik, r, null, morph_helpers);
               if (result) {
                 return resolve(result)
