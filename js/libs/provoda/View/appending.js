@@ -16,6 +16,7 @@ var before = dom_helpers.before;
 var wrap = dom_helpers.wrap;
 var dPrev = dom_helpers.prev;
 var dIs = dom_helpers.is;
+var dUnwrap = dom_helpers.unwrap
 
 var appendSpace = function() {
   //fixme
@@ -197,12 +198,12 @@ return {
       if (view){
         prev_view = this.getPrevView(array, i, location_id, true);
         if (prev_view){
-          var current_node = view.getT();
+          var current_node = dUnwrap(view.getT());
           var prev_node = prev_view.getT();
           if (!dIs(dPrev(current_node), prev_node)){
-            var parent_node = current_node[0] && current_node[0].parentNode;
+            var parent_node = current_node && current_node.parentNode;
             if (parent_node){
-              parent_node.removeChild(current_node[0]);
+              parent_node.removeChild(current_node);
             }
             view.setVisState('con_appended', false);
 
