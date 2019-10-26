@@ -546,11 +546,11 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   getViewCusomAncs: function(view) {
     if (!view.__custom_ancs) {
       view.__custom_ancs = {}
-      for (var anc_name in view.tpl.acns) {
-        if (!view.tpl.acns.hasOwnProperty(anc_name)) {
+      for (var anc_name in view.tpl.ancs) {
+        if (!view.tpl.ancs.hasOwnProperty(anc_name)) {
           continue;
         }
-        view.__custom_ancs[anc_name] = $(view.tpl.acns[anc_name])
+        view.__custom_ancs[anc_name] = $(view.tpl.ancs[anc_name])
       }
     }
 
