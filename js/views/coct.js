@@ -26,7 +26,7 @@ var ListPreview = spv.inh(View, {}, {
   bindBase: function() {
     this.createTemplate();
     var _this = this;
-    var button_area = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
+    var button_area = this.getCusomAncs().button_area || this.getCustomCon();
     button_area.click(function() {
       _this.requestPage();
     });
@@ -40,7 +40,7 @@ var ListPreview = spv.inh(View, {}, {
     target.getCusomAncs().listc.toggleClass('list_loading', !!state);
   },
   'stch-mp_show': function(target, state) {
-    var node = spv.getTargetField(target, 'tpl.ancs.button_area') || target.c;
+    var node = this.getCusomAncs().button_area || this.getCustomCon();
     node.toggleClass('button_selected', !!state);
   },
   base_tree: {
