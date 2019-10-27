@@ -26,6 +26,10 @@ var find = function(con, selector) {
   return $(con).find(selector)
 }
 
+var children = function(node, selector) {
+  return $(node).children(selector);
+}
+
 var append = function(place, target) {
   $(place).append(target);
 }
@@ -129,6 +133,7 @@ return {
   css: css,
   scrollTop: scrollTop,
   toggleClass: toggleClass,
+  children: children,
 }
 
 })

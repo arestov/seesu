@@ -6,9 +6,11 @@ var $ = require('jquery');
 var filters = require('./modules/filters');
 var getUsageTree = require('js/libs/provoda/structure/getUsageTree');
 var View = require('View');
-
+var dom_helpers = require('pv/dom_helpers')
 var pvUpdate = pv.update;
 
+var dChildren = dom_helpers.children
+var dFind = dom_helpers.find
 
 pv.setTplFilterGetFn(function(filter_name) {
   if (filters[filter_name]){
@@ -170,7 +172,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
   getSampler: function(sample_name) {
     var sampler = this.samples[sample_name], sample_node;
     if (!sampler){
-      sample_node = this.els.ui_samples.children('.' + sample_name);
+      sample_node = dChildren(this.els.ui_samples, '.' + sample_name);
       sample_node = sample_node[0];
       if (sample_node){
 
@@ -284,7 +286,8 @@ var WebAppView = spv.inh(AppBaseView, {}, {
 
   },
   buildAppDOM: function() {
-    this.c = $(this.d.body);
+    var con = this.d.body
+    this.c = con;
     var _this = this;
     //var d = this.d;
 
@@ -295,7 +298,7 @@ var WebAppView = spv.inh(AppBaseView, {}, {
       window_width: wd.innerWidth
     });
     if (this.ui_samples_csel) {
-      this.els.ui_samples = this.getCustomCon().find(this.ui_samples_csel);
+      this.els.ui_samples = dFind(con, this.ui_samples_csel);
     }
   },
   ui_samples_csel: '#ui-samples'

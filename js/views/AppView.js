@@ -190,10 +190,10 @@ var AppView = spv.inh(AppBaseView.WebComplexTreesView, {}, {
   parts_builder: {
     //samples
     'people-list-item': function() {
-      return this.els.ui_samples.children('ul').children('.people-list-item');
+      return $(this.els.ui_samples).children('ul').children('.people-list-item');
     },
     'song-view': function() {
-      return this.els.ui_samples.children('ul').children('.song-view');
+      return $(this.els.ui_samples).children('ul').children('.song-view');
     },
   },
 
