@@ -2,6 +2,26 @@ define(function(require) {
 'use strict';
 var $ = require('jquery');
 
+var wrap = function(node) {
+  return $(node);
+}
+
+var unwrap = function(wrapped) {
+  if (!wrapped) {
+    return null;
+  }
+
+  if ("nodeType" in wrapped) {
+    return wrapped
+  }
+
+  if ("length" in wrapped) {
+    return wrapped[0]
+  }
+
+  return null;
+}
+
 var find = function(con, selector) {
   return $(con).find(selector)
 }
@@ -24,26 +44,6 @@ var detach = function(target) {
 
 var before = function(place, comment_anchor) {
   $(place).before(comment_anchor);
-}
-
-var wrap = function(node) {
-  return $(node);
-}
-
-var unwrap = function(wrapped) {
-  if (!wrapped) {
-    return null;
-  }
-
-  if ("nodeType" in wrapped) {
-    return wrapped
-  }
-
-  if ("length" in wrapped) {
-    return wrapped[0]
-  }
-
-  return null;
 }
 
 var parent = function(node) {
