@@ -1,7 +1,8 @@
 define(function(require) {
 'use strict'
 
-var cloneObj = require('spv').cloneObj
+var spv = require('spv')
+var cloneObj = spv.cloneObj
 var Dcl = require('./dcl')
 var rebuildHandleState = require('./handleState/rebuild')
 var rebuildHandleNesting = require('./handleNesting/rebuild')

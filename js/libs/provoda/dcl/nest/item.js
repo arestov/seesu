@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict'
-var declarationConstructor = require('../../structure/constr_mention').declarationConstructor;
+var constr_mention = require('../../structure/constr_mention')
+var declarationConstructor = constr_mention.declarationConstructor;
 
 var NestDcl = function (name, data) {
   this.nesting_name = name;

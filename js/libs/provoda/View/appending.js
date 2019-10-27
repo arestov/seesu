@@ -1,13 +1,22 @@
 define(function(require) {
 'use strict'
 var spv = require('spv');
-var $ = require('jquery');
 var hp = require('../helpers');
 var updateProxy = require('../updateProxy');
+var dom_helpers = require('../utils/dom_helpers')
 
 
 var pvUpdate = updateProxy.update;
 var $v = hp.$v;
+
+var append = dom_helpers.append;
+var after = dom_helpers.after;
+var detach = dom_helpers.detach;
+var before = dom_helpers.before;
+var wrap = dom_helpers.wrap;
+var dPrev = dom_helpers.prev;
+var dIs = dom_helpers.is;
+var dUnwrap = dom_helpers.unwrap
 
 var appendSpace = function() {
   //fixme
@@ -18,7 +27,7 @@ var appendSpace = function() {
 return {
   appen_ne_vws: {
     appendDirectly: function(fragt) {
-      this.place.append(fragt);
+      append(this.place, fragt)
     },
     getFreeView: function(cur) {
       return this.view.getFreeChildView({
@@ -189,12 +198,12 @@ return {
       if (view){
         prev_view = this.getPrevView(array, i, location_id, true);
         if (prev_view){
-          var current_node = view.getT();
+          var current_node = dUnwrap(view.getT());
           var prev_node = prev_view.getT();
-          if (!current_node.prev().is(prev_node)){
-            var parent_node = current_node[0] && current_node[0].parentNode;
+          if (!dIs(dPrev(current_node), prev_node)){
+            var parent_node = current_node && current_node.parentNode;
             if (parent_node){
-              parent_node.removeChild(current_node[0]);
+              parent_node.removeChild(current_node);
             }
             view.setVisState('con_appended', false);
 
@@ -253,9 +262,8 @@ return {
       apd_views[i/2] = view;
       //append_data.view = view;
       view.skip_anchor_appending = true;
-      var fragt = $(complect.fragt);
-      fragt.append(view.getT());
-      appendSpace(fragt);
+      append(complect.fragt, view.getT())
+      appendSpace(complect.fragt);
       //append_data.complect.fragt.appendChild(view.getT()[0]);
       //$(.fragt).append();
     }
@@ -275,9 +283,9 @@ return {
     for (i = 0; i < ordered_complects.length; i++) {
       var complect = complects[ordered_complects[i]];
       if (complect.type == 'after'){
-        complect.view.getT().after(complect.fragt);
+        after(complect.view.getT(), complect.fragt)
       } else if (complect.type == 'before'){
-        complect.view.getT().before(complect.fragt);
+        before(complect.view.getT(), complect.fragt)
       } else if (complect.type =='direct'){
         funcs.appendDirectly(complect.fragt);
       }
@@ -326,7 +334,7 @@ return {
         if (!place && typeof place != 'boolean'){
           throw new Error('give me place');
         } else {
-          place.append(view.getA());
+          append(place, view.getA())
           appendSpace(place);
         }
       }
@@ -353,7 +361,7 @@ return {
           node_to_use = pv_view.sampler.getClone();
           //node_to_use = pv_view.original_node.cloneNode(true);
         }
-        view.pv_view_node = $(node_to_use);
+        view.pv_view_node = wrap(node_to_use);
         //var model_name = mmm.model_name;
 
         pv_view.node = null;
@@ -370,7 +378,7 @@ return {
     };
 
     var appendDirectly = function(fragt) {
-      $(this.cur_pv_v_data.comment_anchor).after(fragt);
+      after(this.cur_pv_v_data.comment_anchor, fragt)
     };
 
     return function(nesname, real_array, space_name, pv_v_data) {
@@ -426,7 +434,7 @@ return {
           //node_to_use = pv_view.original_node.cloneNode(true);
           node_to_use = pv_view.sampler.getClone();
         }
-        view.pv_view_node = $(node_to_use);
+        view.pv_view_node = wrap(node_to_use);
         //var model_name = mmm.model_name;
 
         pv_view.node = null;
@@ -441,7 +449,7 @@ return {
     };
 
     var appendDirectly = function(fragt) {
-      $(this.pv_view.comment_anchor).after(fragt);
+      after(this.pv_view.comment_anchor, fragt)
     };
 
     return function(nesname, real_array, space_name, pv_view) {
@@ -451,11 +459,11 @@ return {
     //	}
       if (!pv_view.comment_anchor){
         pv_view.comment_anchor = window.document.createComment('collch anchor for: ' + nesname + ", " + space_name);
-        $(pv_view.node).before(pv_view.comment_anchor);
+        before(pv_view.node, pv_view.comment_anchor)
       }
 
       if (pv_view.node){
-        $(pv_view.node).detach();
+        detach(pv_view.node)
         pv_view.node = null;
       }
 

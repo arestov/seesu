@@ -6,7 +6,8 @@ var pvUpdate = require('pv/update');
 var updateNesting = require('pv/updateNesting');
 var getModelById = require('../../utils/getModelById');
 var getKey = require('./getKey');
-var getSPByPathTemplate = require('../../initDeclaredNestings').getSPByPathTemplate;
+var initDeclaredNestings = require('../../initDeclaredNestings')
+var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 
 return function(request) {
   var self = this;

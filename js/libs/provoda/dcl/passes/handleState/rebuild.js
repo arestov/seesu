@@ -1,7 +1,8 @@
 define(function(require) {
 'use strict'
 
-var getDeprefixFunc = require('spv').getDeprefixFunc
+var spv = require('spv')
+var getDeprefixFunc = spv.getDeprefixFunc
 var check = getDeprefixFunc('handleState:')
 
 return function rebuild(self, index) {

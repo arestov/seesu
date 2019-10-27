@@ -1,5 +1,0 @@
---- a/index.html
-+++ b/index.html
-@@ -13 +13 @@
--	<script data-main="loader" src="js-sep/require-2.2.0.min.js"></script>
-+	<script data-main="dist/loader" src="js-sep/require-2.2.0.min.js"></script>

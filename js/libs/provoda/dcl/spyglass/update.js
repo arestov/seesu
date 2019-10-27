@@ -2,7 +2,8 @@ define(function(require) {
 'use strict';
  // var getSPByPathTemplate = function(app, start_md, string_template, need_constr, md_for_urldata) {
 var spv = require('spv');
-var switchCurrentBwlev = require('../probe/animateMapChanges').switchCurrentBwlev;
+var animateMapChanges = require('../probe/animateMapChanges')
+var switchCurrentBwlev = animateMapChanges.switchCurrentBwlev;
 var initDeclaredNestings = require('../../initDeclaredNestings');
 var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 var getModelById = require('../../utils/getModelById');

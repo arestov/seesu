@@ -13,7 +13,8 @@ var pvUpdate = require('pv/update');
 var showMOnMap = require('./showMOnMap');
 var getModelById = require('../utils/getModelById');
 var followFromTo = require('./followFromTo');
-var getSPByPathTemplate = require('../initDeclaredNestings').getSPByPathTemplate;
+var initDeclaredNestings = require('../initDeclaredNestings')
+var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 
 
 var RootLev = spv.inh(Model, {}, {

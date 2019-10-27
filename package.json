@@ -4,7 +4,8 @@
     "type": "git",
     "url": "git+https://github.com/arestov/seesu.git"
   },
-  "main": "index.html",
+  "main": "dist/cjs/libs/provoda/provoda.js",
+  "module": "dist/esm/libs/provoda/provoda.js",
   "webkit": {
     "plugin": true
   },
@@ -44,7 +45,10 @@
     "gulp-util": "3.0.6",
     "gulp-zip": "3.2.0",
     "inspect-process": "^0.5.0",
+    "module-lookup-amd": "^6.2.0",
     "postcss": "5.0.5",
+    "rollup": "^1.25.1",
+    "rollup-plugin-amd": "^4.0.0",
     "xmldom": "0.1.19"
   },
   "dependencies": {

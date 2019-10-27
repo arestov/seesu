@@ -2,14 +2,17 @@ define(function(require) {
 'use strict';
 
 var spv = require('spv');
-var $ = require('jquery');
 var angbo = require('angbo');
 var StandartChange = require('./StandartChange');
+var dom_helpers = require('../utils/dom_helpers')
 
 var capitalize = spv.capitalize;
 var startsWith = spv.startsWith;
 var getTargetField = spv.getTargetField;
 var setTargetField = spv.setTargetField;
+
+var getText = dom_helpers.getText;
+var setText = dom_helpers.setText;
 
 
 var DOT = '.';
@@ -157,10 +160,10 @@ return {
   directives_p: {
     'pv-text': (function() {
       var getTextValue = function(node) {
-        return $(node).text();
+        return getText(node);
       };
       var setTextValue = function(node, new_value) {
-        $(node).text(new_value);
+        return setText(node, new_value)
       };
       return function(node, full_declaration, directive_name) {
         return new StandartChange(node, {

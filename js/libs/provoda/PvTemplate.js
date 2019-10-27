@@ -3,7 +3,7 @@ define(function(require) {
 
 var spv = require('spv');
 var angbo = require('angbo');
-var $ = require('jquery');
+var dom_helpers = require('./utils/dom_helpers')
 var parser = require('./pvTemplate/parser');
 var PvSimpleSampler = require('./pvTemplate/PvSimpleSampler');
 var parseEasy = require('./pvTemplate/parseEasy');
@@ -11,6 +11,12 @@ var parseEasy = require('./pvTemplate/parseEasy');
 var push = Array.prototype.push;
 var addEvent = spv.addEvent;
 var removeEvent = spv.removeEvent;
+
+var append = dom_helpers.append;
+var after = dom_helpers.after;
+var detach = dom_helpers.detach;
+var before = dom_helpers.before;
+var wrap = dom_helpers.wrap;
 
 /*
 
@@ -177,7 +183,7 @@ var hndPVRepeat = function(new_fv, states) {
     repeat_data.array = [];
     context.pv_types_collecting = true;
 
-    $(old_nodes).detach();
+    detach(old_nodes)
     old_nodes.length = 0;
 
     wwtch.original_fv = new_fv;
@@ -214,13 +220,13 @@ var hndPVRepeat = function(new_fv, states) {
       });
 
       old_nodes.push(cur_node);
-      $(fragt).append(cur_node);
+      append(fragt, cur_node);
       appendSpace(fragt);
       prev_node = cur_node;
       repeats_array.push(template);
       repeat_data.array.push(template);
     }
-    $(comment_anchor).after(fragt);
+    after(comment_anchor, fragt);
     if (!context.pv_repeats) {
       context.pv_repeats = {};
     }
@@ -288,12 +294,12 @@ var indexPvView = function(item, index) {
     item.comment_anchor = window.document.createComment(
       'collch anchor for: ' + real_name + ", " + item.for_model + ' (by_model_name)'
     );
-    $(item.node).before(item.comment_anchor);
+    before(item.node, item.comment_anchor)
 
     //cur.sampler
     item.original_node = item.node;
     //cur.sampler =
-    $(item.node).detach();
+    detach(item.node)
 
     storage.index[item.for_model] = item;
   } else {
@@ -356,7 +362,7 @@ var handleChunks = (function() {
       if (tpl.ancs[anchor_name]){
         throw new Error('anchors exists');
       } else {
-        tpl.ancs[anchor_name] = $(chunk.data.node);
+        tpl.ancs[anchor_name] = wrap(chunk.data.node);
       }
     },
     'pv_type': function(chunk, tpl) {
@@ -503,7 +509,9 @@ spv.Class.extendTo(PvTemplate, {
         sfy_values = data.sfy_values;
 
       var comment_anchor = window.document.createComment('pv-repeat anchor for: ' + expression);
-      $(node).after(comment_anchor).detach();
+      after(node, comment_anchor);
+
+      detach(node)
       var repeat_data = {
         array: null
       };

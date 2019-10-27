@@ -1,15 +1,17 @@
 define(function(require) {
 'use strict';
-var $ = require('jquery');
 var d_parsers = require('./directives_parsers');
+var dom_helpers = require('../utils/dom_helpers')
 var getCachedPVData = require('./getCachedPVData');
 var StandartChange = require('./StandartChange');
 var getTemplateOptions = require('./pv-import/getTemplateOptions');
-// var PvSimpleSampler = require('./PvSimpleSampler');
+var PvSimpleSampler = require('./PvSimpleSampler');
 // var patching_directives = d_parsers.patching_directives;
 var getIndexList = d_parsers.getIndexList;
 var setStrucKey = getCachedPVData.setStrucKey;
 
+var dRemove = dom_helpers.remove
+var dAfter = dom_helpers.after
 
 var patching_directives = {
   'pv-import': (function(){
@@ -137,7 +139,6 @@ function makePvWhen(anchor, expression, getSample, sample_node) {
           root_node = wwtch.data.getSample();
         } else {
           if (!wwtch.data.sampler) {
-            var PvSimpleSampler = require('./PvSimpleSampler');
             wwtch.data.sampler = new PvSimpleSampler(wwtch.data.sample_node, tpl.struc_store, tpl.getSample);
           }
           root_node = wwtch.data.sampler.getClone();
@@ -145,12 +146,12 @@ function makePvWhen(anchor, expression, getSample, sample_node) {
 
         wwtch.root_node = root_node;
 
-        $(node).after(root_node);
+        dAfter(node, root_node);
         var all_chunks = wwtch.context.parseAppended(root_node);
 
         wwtch.destroyer = function() {
           node.pvwhen_content = false;
-          $(wwtch.root_node).remove();
+          dRemove(wwtch.root_node);
           for (var i = 0; i < all_chunks.length; i++) {
             all_chunks[i].dead = true;
           }

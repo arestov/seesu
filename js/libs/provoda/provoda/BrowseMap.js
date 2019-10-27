@@ -9,7 +9,8 @@ var getBwlevFromParentBwlev = require('../bwlev/getBwlevFromParentBwlev');
 var get_constr = require('../structure/get_constr');
 var prepare = require('../structure/prepare');
 var RootLev = require('../bwlev/RootLev');
-var getSPByPathTemplate = require('../initDeclaredNestings').getSPByPathTemplate;
+var initDeclaredNestings = require('../initDeclaredNestings');
+var getSPByPathTemplate = initDeclaredNestings.getSPByPathTemplate;
 
 var routePathByModels = require('../routePathByModels');
 

@@ -9,7 +9,8 @@ var asMultiPath = require('../../utils/NestingSourceDr/asMultiPath');
 var NestWatch = require('../../nest-watch/NestWatch');
 
 var NestSelector = require('./NestSelector');
-var getParsedPath = require('../../initDeclaredNestings').getParsedPath;
+var initDeclaredNestings = require('../../initDeclaredNestings');
+var getParsedPath = initDeclaredNestings.getParsedPath;
 var handleChdDeepState = NestSelector.handleChdDeepState;
 var handleChdCount = NestSelector.handleChdCount;
 var handleAdding = NestSelector.handleAdding;

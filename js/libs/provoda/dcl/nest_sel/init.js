@@ -1,6 +1,7 @@
 define(function(require) {
 'use strict';
-var addRootNestWatch = require('../../nest-watch/add-remove').addRootNestWatch;
+var addRemove = require('../../nest-watch/add-remove');
+var addRootNestWatch = addRemove.addRootNestWatch;
 
 var LocalWatchRoot = require('../../nest-watch/LocalWatchRoot');
 var addFrom = require('../../nest-watch/addFrom');

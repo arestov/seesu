@@ -1,7 +1,7 @@
 define(require => {
   const pv = require('pv')
 
-  const glo = typeof global !== 'undefined' ? global : this
+  const glo = typeof global !== 'undefined' ? global : window
   const initApp = (App, env) => {
     const views_proxies = new pv.views_proxies.Proxies()
     const sync_sender = new pv.SyncSender()

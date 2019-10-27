@@ -6,7 +6,8 @@ var nil = spv.nil;
 var watcherKey = require('./watcherKey');
 
 var getParent = require('./getParent');
-var checkChildren = require('./check-change').checkChildren;
+var checkChange = require('./check-change');
+var checkChildren = checkChange.checkChildren;
 
 
 return function (self) {

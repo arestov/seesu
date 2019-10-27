@@ -4,7 +4,8 @@ var Promise = require('Promise');
 var hex_md5 = require('hex_md5');
 var hp = require('../helpers');
 var spv = require('spv');
-var toBigPromise = require('js/modules/extendPromise').toBigPromise;
+var extendPromise = require('js/modules/extendPromise');
+var toBigPromise = extendPromise.toBigPromise;
 var countKeys = spv.countKeys;
 var getTargetField = spv.getTargetField;
 

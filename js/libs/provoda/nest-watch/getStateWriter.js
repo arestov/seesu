@@ -3,7 +3,8 @@ define(function (require) {
 
 var spv = require('spv');
 var pvState = require('../utils/state');
-var pvUpdate = require('../updateProxy').update;
+var updateProxy = require('../updateProxy');
+var pvUpdate = updateProxy.update;
 var standart = require('./standartNWH');
 
 

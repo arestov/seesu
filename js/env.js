@@ -1,34 +1,22 @@
 define(function(require) {
 'use strict';
-var localizer = require('localizer');
+var localize = require('./localize')
 
-var sviga = {};
-var localize= function(lang){
-  return function(string, j){
-    if (localizer[string]){
-      return localizer[string][lang] || localizer[string].original;
-    } else{
-      if (j){
-        sviga[string] ={
-          original:j
-        };
-        return j;
-      }
+var noEnv = typeof window === 'undefined' && typeof process !== 'undefined'
 
-      return 'no this localization: ' + string;
-    }
-
-  };
-};
-
-if (typeof window === 'undefined' && typeof process !== 'undefined') {
-  return {
+var env = noEnv
+  ? {
     bro: {},
     app_type: 'node',
     node: true,
     localize: localize()
-  };
-}
+  }
+  : calcEnv();
+
+return env
+
+function calcEnv() {
+
 
 var get_url_parameters = function(str, decode_uri_c){
   var url_vars = str.replace(/^\?/,'').split('&');
@@ -90,8 +78,7 @@ var env = (function(wd){
     env.deep_sandbox = true;
     env.as_application = false;
     env.app_type = 'lg_smarttv_app';
-
-  } else if (typeof process == 'object' && window.process.nextTick && typeof navigator == 'object'){
+  } else if (typeof process == 'object' && process.title == 'node' && process.nextTick && typeof navigator == 'object'){
     env.app_type = 'nodewebkit';
     env.as_application = false;
     env.deep_sandbox = true;
@@ -355,7 +342,7 @@ if (typeof console != 'object'){
     // [https://gist.github.com/1020396] by [https://github.com/atk]
     object.atob || (
     object.atob = function (input) {
-    input = input.replace(/=+$/, '')
+    input = input.replace(/\=+$/, '')
     if (input.length % 4 == 1) {throw INVALID_CHARACTER_ERR;}
     for (
       // initialize result and counters
@@ -388,4 +375,5 @@ for (var prop in env) {
 env.states = states;
 
 return env;
+}
 });

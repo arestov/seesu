@@ -3,8 +3,9 @@ define(function(require){
 
 var hp = require('../helpers');
 var LocalWatchRoot = require('../nest-watch/LocalWatchRoot');
-var addRootNestWatch = require('../nest-watch/add-remove').addRootNestWatch;
-var removeRootNestWatch = require('../nest-watch/add-remove').removeRootNestWatch;
+var addRemoveN = require('../nest-watch/add-remove');
+var addRootNestWatch = addRemoveN.addRootNestWatch;
+var removeRootNestWatch = addRemoveN.removeRootNestWatch;
 var NestWatch = require('../nest-watch/NestWatch');
 var toMultiPath = require('../utils/NestingSourceDr/toMultiPath')
 var getModelById = require('../utils/getModelById')

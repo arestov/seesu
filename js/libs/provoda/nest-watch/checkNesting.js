@@ -1,6 +1,7 @@
 define(function (require) {
 'use strict';
-var checkNestWatchs = require('./add-remove').checkNestWatchs;
+var addRemove = require('./add-remove');
+var checkNestWatchs = addRemove.checkNestWatchs;
 var orderItems = require('./orderItems');
 
 return function checkNesting(self, collection_name, array, removed) {

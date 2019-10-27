@@ -1,8 +1,8 @@
+define(function() {
+
+"use strict";
 var spv = {};
 
-
-(function() {
-"use strict";
 var addEvent, removeEvent, getDefaultView, domReady,
   doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
   ttime, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
@@ -1757,9 +1757,5 @@ spv.getBoxedSetImmFunc = function getBoxedSetImmFunc(win) {
   }());
 };
 
-
-})();
-
-
-
-define(function(){return spv;});
+return spv
+});

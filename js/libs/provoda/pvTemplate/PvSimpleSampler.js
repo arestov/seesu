@@ -1,7 +1,7 @@
 define(function(require) {
 'use strict';
-var $ = require('jquery');
 var d_parsers = require('./directives_parsers');
+
 var config = d_parsers.config;
 
 var getPatchedTree = require('./getPatchedTree');
@@ -9,6 +9,9 @@ var spv = require('spv');
 var parseEasy = require('./parseEasy');
 var parse = require('./parse');
 var buildClone = require('./buildClone');
+var dom_helpers = require('../utils/dom_helpers')
+
+var dWrap = dom_helpers.wrap;
 
 var PvSimpleSampler = (function(){
   var push = Array.prototype.push;
@@ -16,7 +19,7 @@ var PvSimpleSampler = (function(){
   var samplers_counter = 0;
 
   var PvSimpleSampler = function(node, struc_store, getSample) {
-    node = $(node);
+    node = dWrap(node);
     node = node[0];
     if (!node){
       throw new Error('wrong node');
