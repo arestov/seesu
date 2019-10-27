@@ -6,6 +6,7 @@ var $ = require('jquery');
 var etc_views = require('./etc_views');
 var View = require('View');
 var loadImage = require('./utils/loadImage');
+var dom_helpers = require('pv/dom_helpers')
 
 var pvUpdate = pv.update;
 
@@ -15,7 +16,7 @@ var SoftVkLoginUI = spv.inh(etc_views.VkLoginUI, {}, {
     this.getCustomCon().removeClass('attention-focuser');
   }
 });
-
+var dUnwrap = dom_helpers.unwrap
 
 
 var ListPreview = spv.inh(View, {}, {
@@ -206,7 +207,7 @@ var AlbumsListPreviewItem = spv.inh(View, {}, {
   'stch-selected_image': function(target, lfm_wrap) {
     var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
     if (url){
-      var node = target.c[0];
+      var node = dUnwrap(target.c);
       var req = loadImage(target, {
         url: url,
         cache_allowed: true

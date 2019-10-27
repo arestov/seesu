@@ -3,12 +3,17 @@ define(function (require) {
 var pv = require('pv');
 var view_serv = require('view_serv');
 var getModelFromR = require('pv/v/getModelFromR')
+var dom_helpers = require('pv/dom_helpers')
 
 // var findMpxViewInChildren = require('./findMpxViewInChildren')
 
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 var css_transform = view_serv.css.transform;
 var transform_props = css_transform ? [css_transform] : [];
+
+var dOffset = dom_helpers.dOffset
+var dOuterWidth = dom_helpers.dOuterWidth
+var dOuterHeight = dom_helpers.dOuterHeight
 
 var getNavOHeight = function() {
   return this.root_view.els.navs.outerHeight();
@@ -17,7 +22,7 @@ var getAMCWidth = function() {
   return this.root_view.els.app_map_con.width();
 };
 var getAMCOffset = function() {
-  return this.root_view.els.app_map_con.offset();
+  return dOffset(this.root_view.els.app_map_con)
 };
 
 return function readMapSliceAnimationData(view, transaction_data) {
@@ -40,15 +45,15 @@ return function readMapSliceAnimationData(view, transaction_data) {
 
   // var offset = targt_con.offset(); //domread
   var offset = target_in_parent.getBoxDemension(function() {
-    return targt_con.offset();
+    return dOffset(targt_con)
   }, 'con_offset', target_in_parent._lbr.innesting_pos_current, view.root_view.state('window_height'), view.root_view.state('workarea_width'));
 
   var width = target_in_parent.getBoxDemension(function() {
-    return targt_con.outerWidth();
+    return dOuterWidth(targt_con)
   }, 'con_width', view.root_view.state('window_height'), view.root_view.state('workarea_width'));
 
   var height = target_in_parent.getBoxDemension(function() {
-    return targt_con.outerHeight();
+    return dOuterHeight(targt_con);
   }, 'con_height', view.root_view.state('window_height'), view.root_view.state('workarea_width'));
 
 

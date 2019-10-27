@@ -4,14 +4,9 @@ var pv = require('pv');
 var spv = require('spv');
 var view_serv = require('view_serv');
 var getModelFromR = require('pv/v/getModelFromR')
-
-var dHeight = function(node) {
-  return node.height()
-}
-
-var dCss = function(node, css) {
-  return node.css(css);
-}
+var dom_helpers = require('pv/dom_helpers')
+var dHeight = dom_helpers.height
+var dCss = dom_helpers.css
 
 var sync_opt = {sync_tpl: true};
 

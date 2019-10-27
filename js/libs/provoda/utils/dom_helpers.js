@@ -71,6 +71,34 @@ var is = function(one, two) {
   return $(one).is(two);
 }
 
+
+var offset = function(node) {
+  return $(node).offset();
+}
+
+var outerWidth = function(node) {
+  return $(node).outerWidth()
+}
+
+var outerHeight = function(node) {
+  $(node).outerHeight()
+}
+
+
+
+var height = function(node) {
+  return $(node).height()
+}
+
+var css = function(node, css) {
+  return $(node).css(css);
+}
+
+
+var scrollTop = function(node, value) {
+  node.scrollTop(value)
+}
+
 return {
   find: find,
   append: append,
@@ -86,6 +114,12 @@ return {
   remove: remove,
   prev: prev,
   is: is,
+  offset: offset,
+  outerWidth: outerWidth,
+  outerHeight: outerHeight,
+  height: height,
+  css: css,
+  scrollTop: scrollTop,
 }
 
 })

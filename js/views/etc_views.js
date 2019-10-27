@@ -4,6 +4,8 @@ var $ = require('jquery');
 var spv = require('spv');
 var View = require('View');
 var createNiceButton = require('./modules/createNiceButton');
+var dom_helpers = require('pv/dom_helpers')
+var dAppend = dom_helpers.append
 
 var VkLoginUI = spv.inh(View, {}, {
   state_change: {
@@ -170,7 +172,9 @@ var LfmLoveItView = spv.inh(LfmLoginView, {}, {
 var LfmScrobbleView = spv.inh(LfmLoginView, {}, {
   createBase: function(){
     this._super();
-    this.scrobbling_switchers = this.root_view.getSample('scrobbling-switches').appendTo(this.c);
+    var node = this.root_view.getSample('scrobbling-switches')
+    this.scrobbling_switchers = $(node)
+    dAppend(this.c, node)
     this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
     this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
     var _this = this;

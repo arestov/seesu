@@ -7,9 +7,9 @@ var pv = require('pv');
 var pvState = require('pv/state');
 var pvUpdate = require('pv/update');
 var getNesting = require('pv/getNesting')
-var $ = require('jquery');
 var wrapInputCall = require('pv/wrapInputCall')
 var getModelFromR = require('pv/v/getModelFromR')
+var dom_helpers = require('pv/dom_helpers')
 
 var readMapSliceAnimationData = require('./readMapSliceAnimationData');
 var animateMapSlice = require('./animateMapSlice');
@@ -18,6 +18,14 @@ var findMpxViewInChildren = require('./findMpxViewInChildren');
 var can_animate = view_serv.css.transform && view_serv.css.transition;
 
 var sync_opt = {sync_tpl: true};
+
+var dUnwrap = dom_helpers.unwrap
+var dFind = dom_helpers.find;
+var dScrollTop = dom_helpers.scrollTop
+var dHeight = dom_helpers.height
+var dParent = dom_helpers.parent
+var dAppend = dom_helpers.append
+var dBefore = dom_helpers.before
 
 var LevContainer = function(con, scroll_con, material, tpl, context) {
   this.c = con;
@@ -28,7 +36,7 @@ var LevContainer = function(con, scroll_con, material, tpl, context) {
   this.callbacks = [];
   var _this = this;
   if (can_animate){
-    spv.addEvent(this.c[0], can_animate, function() {
+    spv.addEvent(dUnwrap(this.c), can_animate, function() {
       //console.log(e);
       _this.completeAnimation();
     });
@@ -134,7 +142,7 @@ return spv.inh(View, {
 
     this.wrapStartScreen(this.root_view.els.start_screen);
     this.buildNav();
-    this.handleSearchForm($('#search', this.parent_view.d).parent().parent());
+    this.handleSearchForm(dParent(dParent(dFind(this.parent_view.d, '#search'))));
     this.buildNowPlayingButton();
     this.buildNavHelper();
 
@@ -189,9 +197,9 @@ return spv.inh(View, {
         }
       }
       if (next_lev_con) {
-        node.insertBefore(next_lev_con.c);
+        dBefore(next_lev_con.c, node)
       } else {
-        node.appendTo(this.root_view.els.app_map_con);
+        dAppend(this.root_view.els.app_map_con, node)
       }
 
       var lev_con = new LevContainer
@@ -207,8 +215,8 @@ return spv.inh(View, {
     }
   },
   wrapStartScreen: function(start_screen) {
-    var st_scr_scrl_con = start_screen.parent();
-    var start_page_wrap = st_scr_scrl_con.parent();
+    var st_scr_scrl_con = dParent(start_screen);
+    var start_page_wrap = dParent(st_scr_scrl_con);
 
     var tpl = this.parent_view.pvtemplate(start_page_wrap, false, false, {
       '$lev_num': -1
@@ -390,12 +398,12 @@ return spv.inh(View, {
       var mplev_item_view = target.getMapSliceChildInParenView(bwlev, md);
       var con = mplev_item_view && mplev_item_view.getC();
       var map_level_num = pvState(bwlev, 'map_level_num') - 1;
-      if (con && con.height()){
+      if (con && dHeight(con)){
         target.root_view.scrollTo(mplev_item_view.getC(), {
           node: target.getLevByNum(map_level_num).scroll_con
         }, {vp_limit: 0.4, animate: 117});
       } else {
-        target.getLevByNum(map_level_num).scroll_con.scrollTop(0);
+        dScrollTop(target.getLevByNum(map_level_num).scroll_con, 0);
       }
     }, 150);
 
