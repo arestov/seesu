@@ -11,9 +11,9 @@ var can_animate = view_serv.css.transform && view_serv.css.transition;
 var css_transform = view_serv.css.transform;
 var transform_props = css_transform ? [css_transform] : [];
 
-var dOffset = dom_helpers.dOffset
-var dOuterWidth = dom_helpers.dOuterWidth
-var dOuterHeight = dom_helpers.dOuterHeight
+var dOffset = dom_helpers.offset
+var dOuterWidth = dom_helpers.outerWidth
+var dOuterHeight = dom_helpers.outerHeight
 
 var getNavOHeight = function() {
   return this.root_view.els.navs.outerHeight();
