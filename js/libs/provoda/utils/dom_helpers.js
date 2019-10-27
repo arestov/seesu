@@ -97,7 +97,7 @@ var css = function(node, css) {
 
 
 var scrollTop = function(node, value) {
-  node.scrollTop(value)
+  $(node).scrollTop(value)
 }
 
 return {
