@@ -134,7 +134,7 @@ return spv.inh(View, {
 
     this.wrapStartScreen(this.root_view.els.start_screen);
     this.buildNav();
-    this.handleSearchForm($('#search', this.d).parent().parent());
+    this.handleSearchForm($('#search', this.parent_view.d).parent().parent());
     this.buildNowPlayingButton();
     this.buildNavHelper();
 
