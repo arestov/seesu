@@ -179,8 +179,7 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
 
     }
     if (!sampler){
-      sample_node = $(this.requirePart(sample_name));
-      sample_node = sample_node[0];
+      sample_node = this.requirePart(sample_name);
       if (sample_node){
         sampler = this.samples[sample_name] = this.pvsampler(sample_node);
       }
@@ -199,13 +198,13 @@ var AppBaseView = spv.inh(BrowserAppRootView, {}, {
       if (simple) {
         return sampler.getClone(options);
       } else {
-        return $(sampler.getClone(options));
+        return sampler.getClone(options);
       }
     } else {
       if (options) {
         throw new Error('not support options here');
       }
-      return $(sampler).clone();
+      return sampler.cloneNode(true);
     }
   },
 });

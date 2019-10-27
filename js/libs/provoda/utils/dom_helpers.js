@@ -47,7 +47,8 @@ var before = function(place, comment_anchor) {
 }
 
 var parent = function(node) {
-  return $(node).parent()
+  var raw = unwrap(node);
+  return raw && raw.parentNode;
 }
 
 
