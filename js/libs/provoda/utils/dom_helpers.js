@@ -85,7 +85,9 @@ var outerHeight = function(node) {
   $(node).outerHeight()
 }
 
-
+var width = function(node) {
+  return $(node).width();
+}
 
 var height = function(node) {
   return $(node).height()
@@ -119,6 +121,7 @@ return {
   outerWidth: outerWidth,
   outerHeight: outerHeight,
   height: height,
+  width: width,
   css: css,
   scrollTop: scrollTop,
 }

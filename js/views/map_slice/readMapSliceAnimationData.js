@@ -14,12 +14,13 @@ var transform_props = css_transform ? [css_transform] : [];
 var dOffset = dom_helpers.offset
 var dOuterWidth = dom_helpers.outerWidth
 var dOuterHeight = dom_helpers.outerHeight
+var dWidth = dom_helpers.width
 
 var getNavOHeight = function() {
-  return this.root_view.els.navs.outerHeight();
+  return dOuterHeight(this.root_view.els.navs);
 };
 var getAMCWidth = function() {
-  return this.root_view.els.app_map_con.width();
+  return dWidth(this.root_view.els.app_map_con);
 };
 var getAMCOffset = function() {
   return dOffset(this.root_view.els.app_map_con)
