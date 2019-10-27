@@ -5,7 +5,6 @@ var dom_helpers = require('../utils/dom_helpers')
 var getCachedPVData = require('./getCachedPVData');
 var StandartChange = require('./StandartChange');
 var getTemplateOptions = require('./pv-import/getTemplateOptions');
-var PvSimpleSampler = require('./PvSimpleSampler');
 // var patching_directives = d_parsers.patching_directives;
 var getIndexList = d_parsers.getIndexList;
 var setStrucKey = getCachedPVData.setStrucKey;
@@ -139,6 +138,7 @@ function makePvWhen(anchor, expression, getSample, sample_node) {
           root_node = wwtch.data.getSample();
         } else {
           if (!wwtch.data.sampler) {
+            var PvSimpleSampler = require('./PvSimpleSampler');
             wwtch.data.sampler = new PvSimpleSampler(wwtch.data.sample_node, tpl.struc_store, tpl.getSample);
           }
           root_node = wwtch.data.sampler.getClone();
