@@ -1,0 +1,113 @@
+<style type="text/css">
+.user_acqes-preview{
+	cursor: pointer;
+	opacity: 0.5;
+	margin-top: 0.2rem;
+	overflow: hidden;
+	}
+	.user_acqes-preview img{
+		width:25px;
+		height:25px;
+		}
+	.user_acqes-preview:hover{
+		opacity: 0.8;
+		}
+	.user_acqes-preview:active{
+		opacity: 1;
+		}
+	.page-scheme .user_acqes-preview{
+		display: none;
+		}
+	.user_acq_preview_item {
+		float:left;
+	}
+</style>
+<style type="text/css">
+
+.people-l-wide .people-list-item{
+	width:238px;
+}
+
+.people-list-item {
+	overflow: hidden;
+	}
+	.people-list-item .desc{
+		display:block;
+		font-size:0.8rem;
+		line-height:1.4;
+	}
+	.people-image{
+		float:left;
+		margin-right:1rem;
+	}
+	.people-image img{
+		width: 50px;
+		height: 50px;
+		}
+
+</style>
+<style type="text/css">
+
+.full-page .people-list{
+	overflow:hidden;
+	}
+	.full-page .people-list>li{
+		float:left;
+		margin-bottom:1rem;
+		padding-right:1rem;
+	}
+.people-list-desc{
+	margin-top:-1rem;
+	font-size:1rem;
+	}
+	.button-place-people-el .button-hole{
+		margin-top:7px;
+	}
+
+</style>
+<div class="user_acqes-preview" pv-events="click:requestPage">
+	<span pv-nest="acqs_from_someone" class="user_acq_preview_item">
+		<img
+			src="https://vk.com/images/camera_b.gif"
+			pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+	</span>
+	<span pv-nest="acqs_from_me"  class="user_acq_preview_item">
+		<img
+			src="https://vk.com/images/camera_b.gif"
+			pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+	</span>
+
+</div>
+<div class="relations_page usual_page">
+	<div class="relations-invites-wrap">
+		<h3 pv-text="{{lo_from_people}}"></h3>
+		<ul class="people-list people-l-wide">
+			<li pv-nest='acqs_from_someone' class="people-list-item">
+				<!--pv-replace sample_name:people-list-item-inner-->
+			</li>
+		</ul>
+	</div>
+	<div class="relations-likes-wrap">
+		<h3 pv-text="{{lo_from_you}}"></h3>
+		<ul class="people-list people-l-wide">
+			<li pv-nest='acqs_from_me' class="people-list-item">
+				<!--pv-replace sample_name:people-list-item-inner-->
+			</li>
+		</ul>
+	</div>
+</div>
+<div class="people-list-item-inner">
+	<div class="people-image">
+		<img
+			src="https://vk.com/images/camera_b.gif"
+			pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+	</div>
+	<div class="button-place-people-el" pv-anchor="button_place" pv-when="needs_accept_b">
+		<span class="button-hole"><a class="nicebutton" pv-text="{{lo_accept_inv}}" pv-events="click::acceptInvite"></a></span>
+		<!-- needs_accept_b -->
+	</div>
+	<div class="p-link-place" pv-when="userlink" pv-anchor="link_place">
+		<a href="" pv-props="href: {{userlink.href}}" pv-text="{{userlink.text}}"></a>
+	</div>
+	<span class="desc" pv-when="after_accept_desc" pv-text="{{after_accept_desc}}"></span>
+</div>

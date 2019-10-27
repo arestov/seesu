@@ -1,0 +1,5 @@
+--- a/_locales/ru/messages.json
++++ b/_locales/ru/messages.json
+@@ -3 +3 @@
+-		"message": "Сису музыкальная (приложение)",
++		"message": "Сису музыкальная",

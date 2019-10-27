@@ -1,0 +1,103 @@
+<style>
+.art_card{
+	overflow:hidden;
+	margin: 0 auto;
+	padding-bottom: 20px;
+	max-width: 750px;
+	}
+
+.full-page .art_card{
+	padding: 1.72rem 10px;
+	}
+
+.page-scheme .art_card{
+	padding-top: 1rem;
+	}
+
+	.art_card-statinfo{
+		clear: both;
+		padding-top:1rem;
+		overflow: hidden;
+		}
+
+.page-scheme .art_card-image{
+	display: none;
+	}
+
+
+	.art_card-bio.loading{
+		min-height:20px;
+		position: relative;
+		}
+		.art_card-bio.loading:after{
+			left: auto;
+			right: 0;
+		}
+.page-scheme .art_card-bio{
+	display: none;
+	}
+
+
+	.art_card-image img{
+		margin-bottom:1.72rem;
+		width:100%;
+		background: transparent;
+	}
+
+
+	.theme--dark .art_card-image img{
+	background-color:#666;
+}
+</style>
+<div class="art_card">
+	<div class="leftcol">
+		<div pv-nest="top_songs">
+			<!--pv-replace sample_name:imp-area_for_button-->
+		</div>
+		<div pv-nest="hypem_new">
+			<!--pv-replace sample_name:imp-area_for_button-->
+		</div>
+		<div pv-nest="hypem_fav">
+			<!--pv-replace sample_name:imp-area_for_button-->
+		</div>
+		<div pv-nest="hypem_reblog">
+			<!--pv-replace sample_name:imp-area_for_button-->
+		</div>
+		<div pv-nest="soundc_prof">
+			<!--pv-replace sample_name:imp-area_for_button-->
+		</div>
+		<div pv-nest="soundc_likes">
+			<!--pv-replace sample_name:imp-area_for_button-->
+		</div>
+	</div>
+	<div class="rightcol">
+		<script pv-nest='tags_list' pv-import="imp-area_for_button" type="pv-import-map">
+			[{ "imp-desc_item": "imp-desc_item-tag" }]
+		</script>
+		<div pv-nest="similar_artists">
+			<!--pv-replace sample_name:imp-area_for_button-->
+		</div>
+		<div class="area_for_button" pv-nest="albums_list">
+			<div class="area-button" pv-anchor="big_button">
+				<span pv-text="{{nav_title}}">Albums</span>
+			</div>
+			<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+		</div>
+		<div class="area_for_button" pv-nest="dgs_albums">
+			<div class="area-button" pv-anchor="big_button">
+				<span pv-text="{{nav_title}}">Albums</span>
+			</div>
+			<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+		</div>
+	</div>
+
+
+
+	<div class="art_card-statinfo">
+		<div class="leftcol art_card-image ">
+			<div class="" pv-anchor="bigimagec"></div>
+		</div>
+		<div class="rightcol art_card-bio " pv-anchor="bio" pv-class="loading: bio__loading"></div>
+	</div>
+
+</div>

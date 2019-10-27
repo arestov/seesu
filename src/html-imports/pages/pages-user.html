@@ -1,0 +1,209 @@
+<style>
+.vk_friend-base-preview{
+	overflow: hidden;
+	margin-bottom: 1rem;
+	padding: 0.5rem;
+	border-radius: 0.2rem;
+	cursor: pointer;
+	}
+	.vk_friend-base-preview:hover{
+		background-color:transparent;
+	}
+	.theme--dark .vk_friend-base-preview:hover{
+	background-color: #555;
+}
+	.vk_friend-ava{
+		float:left;
+		height: 4.58rem;
+		width: 4.58rem;
+		margin-right:1rem;
+		}
+	.vk_friend-desc{
+		font-size: 0.8em;
+		color:transparent;
+	}
+	.theme--dark .vk_friend-desc{
+	color: #8C8C8C;
+}
+</style>
+<!-- userslist -->
+<div class="vk_users_page usual_page">
+	<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click:followTo" pv-type="way-point">
+		<img class="vk_friend-ava" src="" alt="" pv-props="
+			src: {{ava_image.url}}">
+		<div class="vk_friend-desc">
+			<span pv-text="{{big_desc}}"></span>
+		</div>
+	</div>
+</div>
+
+<style>
+.lfm_friend-base-preview{
+	overflow: hidden;
+	margin-bottom: 1rem;
+	padding: 0.5rem;
+	border-radius: 0.2rem;
+	cursor: pointer;
+	}
+	.lfm_friend-base-preview:hover{
+		background-color:transparent;
+	}
+	.theme--dark .lfm_friend-base-preview:hover{
+	background-color: #555;
+}
+	.lfm_friend-ava{
+		float:left;
+		height: 4.58rem;
+		width: 4.58rem;
+		margin-right:1rem;
+		}
+	.lfm_friend-desc{
+		font-size: 0.8em;
+		color:transparent;
+	}
+	.theme--dark .lfm_friend-desc{
+	color: #8C8C8C;
+}
+	.lfm_friend-scrobbler{
+		float:right;
+		font-size:0.8em;
+		}
+		.lfm_friend-scrobbler img{
+			height: 1.143rem;
+			width: 1.143rem;
+			position: relative;
+			top: 0.2rem;
+		}
+</style>
+<!-- userslist -->
+<div class="lfm_users_page usual_page">
+	<div pv-nest="list_items" class="lfm_friend-base-preview" pv-events="click:followTo"
+	pv-type="way-point">
+		<img class="lfm_friend-ava" src="" alt="" pv-props="
+			src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
+		<span class="lfm_friend-name" pv-text="{{userid}}"></span>
+		<div class="lfm_friend-desc">
+			<span pv-text="{{big_desc}}"></span>
+		</div>
+		<div class="lfm_friend-scrobbler" pv-class="hidden: !scrobbler">
+			<a
+				href=""
+				class="external"
+				pv-props="href: {{scrobbler.url}}"
+				pv-class="hidden: !scrobbler.url"
+				pv-events="click:open_link"
+				>
+				<img src="" alt=""
+					pv-props="src: {{scrobbler.image}}"
+					pv-class="hidden: !scrobbler.image">
+				<span pv-text="{{scrobbler.name}}"></span>
+			</a>
+			<span
+				class="desc"
+				pv-text="{{scrobbler.name}}"
+				pv-class="hidden: scrobbler.url"></span>
+		</div>
+		<div class="lfm_friend-recent_song">
+			<span pv-text="{{song}}"></span>
+			<div>
+				<span class="desc" pv-text="{{song_time}}"></span>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<div class="vk_pthgs">
+	<div pv-nest="vk__friends" class="preview_area" pv-class="access-request:pmd_vswitched">
+		<!--pv-replace sample_name:imp-area_for_button-->
+		<div pv-when="pmd_vswitched">
+			<div class="pl-auth-con" pv-nest="auth_part controller:auth_vk">
+				<!--pv-replace sample_name:vk_login-->
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div class="lfm_preview_block preview_area" pv-class="access-request:pmd_vswitched">
+	<!--pv-replace sample_name:imp-area_for_button-->
+	<div pv-when="pmd_vswitched">
+		<div class="pl-auth-con" pv-nest="auth_part controller:auth_lfm">
+			<!--pv-replace sample_name:lfm-auth-module-->
+		</div>
+	</div>
+</div>
+
+<div class="lastfm_pthgs">
+	<div pv-nest="lfm__friends">
+		<!--pv-replace sample_name:lfm_preview_block-->
+	</div>
+	<div pv-nest="lfm__neighbours">
+		<!--pv-replace sample_name:lfm_preview_block-->
+	</div>
+	<div class="preview_area" pv-nest="lfm__tracks">
+		<!--pv-replace sample_name:imp-area_for_button-simple-->
+	</div>
+	<div class="preview_area" pv-nest="lfm__tags">
+		<!--pv-replace sample_name:imp-area_for_button-simple-->
+	</div>
+	<div class="preview_area" pv-nest="lfm__artists">
+		<!--pv-replace sample_name:imp-area_for_button-simple-->
+	</div>
+	<div class="preview_area" pv-nest="lfm__albums">
+		<!--pv-replace sample_name:imp-area_for_button-simple-->
+	</div>
+</div>
+
+<div class="usual_page user_page">
+	<div class="internal_pthgs">
+		<div pv-nest='user-playlists'>
+			<!--pv-replace sample_name:imp-area_for_button-simple-->
+		</div>
+		<div class="aqc_preview preview_ffp" pv-anchor="users_acqutes"></div>
+	</div>
+	<!--pv-replace sample_name:vk_pthgs-->
+	<!--pv-replace sample_name:lastfm_pthgs-->
+</div>
+
+<style>
+.lfm_user_page-header{
+	overflow: hidden;
+	margin-bottom: 1rem;
+}
+</style>
+<div class="lfm_user_page usual_page">
+	<div class="lfm_user_page-header">
+		<img class="lfm_friend-ava" src="" alt="" pv-props="
+			src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
+		<span class="lfm_friend-name" pv-text="{{userid}}"></span>
+		<div class="lfm_friend-desc">
+			<span pv-text="{{big_desc}}"></span>
+		</div>
+		<div>
+			<a pv-type="way-point" class="external" pv-props="href:{{'http://last.fm/user/' + lfm_userid}}">last.fm profile</a>
+		</div>
+	</div>
+	<!--pv-replace sample_name:lastfm_pthgs-->
+</div>
+
+<style>
+.vk_user_page-header{
+	overflow: hidden;
+	margin-bottom: 1rem;
+}
+</style>
+<div class="vk_user_page usual_page">
+	<div class="vk_user_page-header">
+		<img class="vk_friend-ava" src="" alt="" pv-props="
+			src: {{ava_image.url}}">
+		<div class="vk_friend-desc">
+			<span pv-text="{{big_desc}}"></span>
+		</div>
+		<div>
+			<a pv-type="way-point" class="external" pv-props="href:{{'https://vk.com/id' + vk_userid}}">vk.com profile</a>
+		</div>
+	</div>
+	<!--pv-replace sample_name:vk_pthgs-->
+</div>

@@ -1,0 +1,136 @@
+.as-application:not(.chrome-extension) body{
+	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
+	overflow:hidden;
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
+
+	background-color:transparent;
+}
+
+
+.theme--dark.as-application:not(.chrome-extension) body{
+	background-color:transparent;
+}
+
+
+html.as-application:not(.chrome-extension){
+	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
+	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
+}
+
+html.opera-extension{
+	height:100%;
+}
+	html.opera-extension body{
+		height:100%;
+	}
+ #slider{
+	position:static ;
+	padding:0 0 0;
+}
+.pokki-app{
+	width:800px !important;
+}
+.pokki-app, .pokki-app body{
+	height:710px;
+	}
+	.pokki-app #slider{
+		padding-bottom:5px;
+		}
+		.pokki-app #slider-materail{
+			overflow: auto;
+			height:661px;
+			}
+
+
+
+	 #slider .screens{
+		position:relative;
+		z-index:2;
+
+
+
+		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
+		}
+
+.as-application:not(.chrome-extension) #slider-materail{
+	position: absolute;
+	top: 43px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	border:1px solid transparent;
+	border-top:0;
+	background-color: transparent;
+}
+
+.theme--dark.as-application:not(.chrome-extension) #slider-materail{
+	border-color:#666;
+	background-color:#505050;
+}
+
+#promo{
+
+	bottom: 10px;
+	z-index:3;
+}
+.as-application #slider .screens{
+		overflow-x:hidden;
+		overflow-y:auto;
+		height:549px;
+		}
+.chrome-extension.as-application #slider .screens{
+			height: 553px;
+		}
+.as-application:not(.chrome-extension) #slider #screens{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 20px;
+	left: 0;
+	width:auto;
+	height:auto;
+}
+
+
+.as-application.opera-extension #slider #screens{
+	bottom: 1px;
+}
+
+
+.as-application .navs{
+	border-radius:0.5rem 0.5rem 0 0;
+}
+.as-application #slider-materail{
+	border-radius: 0 0 0.5rem 0.5rem;
+}
+
+
+
+
+
+
+#slider-materail{
+	position: absolute;
+	top: 43px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	}
+	#slider .screens{
+		position: absolute;
+		right: 0;
+		left: 0;
+		min-height: 100%;
+		}
+
+
+
+.app_map_con{
+	position: absolute;
+
+	left:0;
+	right: 0;
+	min-height: 100%;
+	margin:0 1rem 0;
+}

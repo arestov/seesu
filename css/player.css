@@ -1,0 +1,50 @@
+#slider .track-node.surf_nav{
+		background: transparent;
+		}
+
+.theme--dark #slider .track-node.surf_nav{
+		background-color: #000;
+}
+
+#i_f_sm2{
+	position:absolute;
+	bottom:50px;
+
+	left:19px;
+	z-index:10;
+	width:30px;
+	height:30px;
+	border:0;
+}
+#i_f_sm2.sm-inited{
+	left:-100rem;
+	z-index:-10;
+}
+
+.song-track-name {
+	display: block;
+	margin-right:0.5rem;
+	}
+
+.song-artist_name {
+	display: block;
+	color: transparent;
+	font-size: 0.85rem;
+	}
+
+.theme--dark .song-artist_name{
+		color: hsl(0, 0%, 50%);
+}
+
+.page-scheme .song-track-name {
+	overflow: hidden;
+	height: 1.5rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	}
+.page-scheme .song-artist_name{
+	overflow: hidden;
+	height: 1.5rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

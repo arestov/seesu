@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://seesu.me/app" version="1.0.2" viewmodes="fullscreen">
+    <access origin="*"/>
+    <tizen:application id="us8eqvo1kX.SeesuMusic" package="us8eqvo1kX" required_version="2.2"/>
+    <content src="index.html"/>
+    <description>Music search, player and meetings. Powered by last.fm and others.</description>
+    <description xml:lang="en">Music search, player and meetings. Powered by last.fm and others.</description>
+    <description xml:lang="ru">Музыкальные поиск, проигрыватель и знакомства. Технологии last.fm и др. сервисов</description>
+
+    <icon src="tizen/icon-117.png"/>
+    <name>Seesu Music</name>
+    <name xml:lang="en">Seesu Music</name>
+    <name xml:lang="ru">Сису музыкальная</name>
+    <feature name="http://tizen.org/feature/screen.size.normal"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <tizen:setting screen-orientation="auto-rotation" context-menu="enable" background-support="enable" encryption="disable" install-location="auto" hwkey-event="enable"/>
+    
+</widget>

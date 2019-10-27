@@ -1,0 +1,266 @@
+<style>
+.start-screen{
+	padding-bottom:1.5rem;
+	}
+.full-page .start-screen{
+	padding: 0 1rem 1.5rem;
+	}
+.page-scheme .start-screen{
+	padding-top: 1rem;
+	}
+</style>
+<style>
+.full-page .personal-stuff-preview{
+  margin: 0 -0.5rem;
+  padding: 1rem 1rem 0.5rem;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  border-radius: 1rem;
+  background: transparent;
+  color:transparent;
+  min-height: 6.7rem;
+  }
+.theme--dark .full-page .personal-stuff-preview{
+  border-top-color: #444;
+  border-bottom-color: #555;
+  background-color: #4D4D4D;
+  color: #999;
+}
+  .full-page .personal-stuff-preview .area-button{
+    margin: -0.5rem -0.5rem 0;
+    }
+</style>
+<style>
+.users-play-this{
+	clear: both;
+	overflow:hidden;
+
+}
+
+.page-scheme .users-play-this{
+	display: none;
+}
+
+.users-play-this li{
+	float: left;
+	overflow: hidden;
+	margin-bottom: 1rem;
+	min-width: 13rem;
+	width: 33%;
+}
+	.users-play-this li .vk-ava{
+		float:left;
+		margin:0 1rem 0 0;
+		padding:0;
+	}
+	.users-play-this li .vk-ava img{
+		padding:2px;
+		border-radius:2px;
+		width: 50px;
+		height: 50px;
+
+		background:transparent;
+}
+	.theme--dark .users-play-this li .vk-ava img{
+	background-color: #5C5C5C;
+
+}
+
+.users-play-this .desc-row{
+  overflow: hidden;
+  height: 1.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.5rem;
+  }
+
+</style>
+<style>
+
+.block-for-startpage.loading{
+	min-height:30px;
+	position: relative;
+}
+.block-for-startpage.loading:after{
+	left:auto;
+	right:0;
+	top:0.2rem;
+}
+.block-for-startpage h3{
+	overflow:hidden;
+	margin:0 0 18px;
+	line-height:2;
+}
+.block-for-startpage h3 a.js-serv{
+	margin-left:1.72rem;
+	font-size:0.85rem;
+}
+
+.block-for-startpage{
+	margin-top:2rem;
+}
+
+</style>
+<style>
+.song-by-user{
+	display: block;
+	overflow: hidden;
+	margin-right: 1rem;
+	border-radius: 0.5rem;
+	background-color: transparent;
+	cursor: pointer;
+	}
+.theme--dark .song-by-user{
+	background-color: #4D4D4D;
+}
+	.song-by-user .song-track-name,
+	.song-by-user .song-artist_name{
+		overflow: hidden;
+		height: 1.5rem;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		line-height: 1.5rem;
+		}
+.song-by-user:hover{
+	background-color:transparent;
+
+	}
+.theme--dark .song-by-user:hover{
+	background-color: #535353;
+}
+</style>
+<div class="complex-page_material start-screen"
+  id="start-screen" pv-foreign>
+	<p pv-nest="search_criteria" class="search-desc search-form-desc">
+		<span class="lang localize-trysearches desc">try to search</span>
+		<a
+			id='hint-query'
+			class="hint-query js-serv"
+			pv-text="{{nice_artist_hint}}"
+			pv-type="way-point"
+			pv-events="click::requestSearchHint mouseout::changeSearchHint">The Beatles</a>
+	</p>
+  <div
+    class="block-for-startpage start-page-messages"
+    pv-anchor="start-page-messages">
+    <!--pv-replace sample_name:help_app_message pv-when:ask_rating_help-->
+  </div>
+  <!--
+  <div class="area_for_button" pv-nest="albums_list">
+    <div class="area-button" pv-anchor="big_button">
+      <span pv-text="{{nav_title}}">Albums</span>
+    </div>
+    <div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+  </div>
+  -->
+
+  <div class="personal-stuff-preview has-dark-buttons no_arfb">
+    <div class="to-open-block area-button">
+      <span class="lang localize-your-pmus-f-aq">Your personal music, friends and acquaintances</span>
+
+      <div class="area-description">
+        <span class="lang localize-reccoms-for-you">Recommendations for you</span>,
+        <span class="lang localize-loved-tracks">Loved Tracks</span>,
+        <span class="lang localize-vk-audio">Vkontakte audio</span>
+      </div>
+    </div>
+    <div class="aqc_preview preview_ffp"></div>
+
+    <div class="block-for-startpage relations-invites-wrap hidden"></div>
+    <div class="block-for-startpage relations-likes-wrap hidden"></div>
+
+  </div>
+
+
+  <div class="block-for-startpage">
+    <div class="music-conductor-preview" pv-nest="muco">
+      <div class="arb-union">
+        <div
+          class="area_for_button" pv-class="button_selected: mp_show"
+          pv-events="click:requestPage" pv-type="way-point">
+          <div class="to-open-block area-button">
+            <span class="lang localize-music-cond">Music Conductor</span>
+          </div>
+          <div class="area-description">
+            <div class="desc_prevw_list">
+              <span pv-nest="preview_list" pv-text="{{nav_title}}{{!$last && ', '}}"></span>
+              <div pv-when="preview_images.length" class="hidden" pv-class="hidden: !preview_images.length">
+                <span pv-repeat="selected_image in preview_images"
+                  class="desc_item-imgcon">
+                  <img src="" alt=""
+                    pv-class="hidden: !selected_image"
+                    pv-props=
+                    "src: {{
+                    (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+                    || selected_image.url
+                    }}">
+                </span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="arb-union" pv-nest="tags">
+        <div class="no_arfb">
+          <div class="to-open-block area-button" pv-anchor="button_area">
+            <span class="lang localize-Tags">Tags</span>
+          </div>
+        </div>
+        <div class="hidden" pv-class="hidden: nothing">
+          <div class="preview_ffp tags_list">
+            <span pv-repeat="tag in preview_list">
+              <a
+                class="js-serv"
+                pv-text="{{tag.name}}"
+                pv-type="way-point"
+                pv-events="click:#showTag:{{tag.name}}"
+                ></a>
+            </span>
+          </div>
+          <div class="preview_ffp tags_con"></div>
+        </div>
+      </div>
+    </div>
+    <div class="block-for-startpage users-play-this" pv-when="users_listenings.length">
+      <h3>
+        <span class="lang localize-User-listening"></span>
+        <a class="js-serv lang localize-refresh" pv-events="click::refreshListeners">Refresh</a>
+      </h3>
+      <ul>
+        <li pv-repeat="lig in users_listenings|limitTo:12">
+          <div class="vk-ava">
+            <img alt="user photo" pv-props="src:{{lig.info.photo}}">
+          </div>
+          <div class="desc-row">
+            <a class="" pv-text="{{lig.info.first_name}}" pv-props="href:{{'#/users/vk:' + lig.vk_id}}"></a>
+            <span class="lang localize-listening">are listening</span>
+          </div>
+          <a class="song-by-user" pv-props="title:{{lig.artist + ' - ' + lig.title}}"
+            pv-events="click:#showTopTracks:{{lig.artist}}:{{lig.title}}">
+            <span class="song-artist_name" pv-text="{{lig.artist}}"></span>
+            <span class="song-track-name" pv-text="{{lig.title}}"></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="block-for-startpage full_wide_col">
+    donate bitcoin: <a href="https://blockchain.info/address/1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN" class="external">1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN</a> <br/>
+    twitter: <a href="https://twitter.com/seesu_app" class="external">seesu_app</a>
+  </div>
+  <div class="block-for-startpage full_wide_col">
+    <div pv-nest="news" class="hidden" pv-class="hidden: nothing">
+      <a pv-text="{{nav_title}}:" class="js-serv" pv-events="click:requestPage"></a>
+      <span pv-repeat="entity in news_list|limitTo:1">
+        <span pv-text="{{entity.date}}" class="desc"></span>
+        <span pv-text="{{entity.header}}"></span>
+      </span>
+    </div>
+  </div>
+
+
+  <!--pv-replace sample_name:view_sources-->
+</div>

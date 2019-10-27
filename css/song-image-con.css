@@ -1,0 +1,16 @@
+.song-image-con {
+	float: left;
+	width: 38px;
+	height: 38px;
+
+	border-radius: 50%;
+	background: transparent;
+	}
+.theme--dark .song-image-con {
+	background-color: #595959;
+}
+	.song-image-con img{
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		}

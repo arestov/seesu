@@ -1,0 +1,91 @@
+<ul class="track-video" >
+	<li class="you-tube-video-link"
+		pv-nest="yt_videos"
+		pv-props="title:{{nav_title}}"
+		pv-events="click|sp,pd::requestVideo"
+		pv-type="way-point"
+		pv-class="cant-show: cant_show">
+		<a class='video-preview external' pv-props="href:{{ yt_id && 'http://www.youtube.com/watch?v=' + yt_id }}">
+			<img  alt="" class="whole" pv-props="src:{{previews.default}}" pv-when="!triple"/>
+			<span class="preview-slicer" pv-repeat="pict in triple">
+				<img
+					class="preview-part" alt=""
+					pv-props="src:{{pict}}"
+					pv-class="
+						preview-start: $first
+						preview-middle: $middle
+						preview-end: {{ $last  }}
+						"
+				/>
+			</span>
+		</a>
+	</li>
+</ul>
+
+<style type="text/css">
+
+.track-video{
+float:right;
+-webkit-transform: translateZ(0);
+padding: 0;
+min-height: 48px;
+overflow: hidden;
+}
+.track-video ul{
+	}
+
+.you-tube-video-link{
+	float:left;
+	cursor:pointer;
+	}
+.you-tube-video-link.cant-show{
+	opacity: 0.5;
+	filter:alpha(opacity=5);
+	-moz-opacity: 0.5;
+	}
+	.video-title{
+		display:none;
+		}
+	.video-preview{
+		float:left;
+		overflow:hidden;
+		width:85px;
+		height:48px;
+		border:0 !important;
+		}
+	.surf_nav .video-preview{
+		opacity: 0.3;
+		}
+		.video-preview img{
+			width:85px;
+			height:64px;
+
+			}
+		.video-preview img.whole{
+			margin-top:-8px;
+			}
+			.video-preview .preview-slicer{
+				position: relative;
+				display: block;
+				overflow: hidden;
+				height:16px;
+				}
+		.video-preview .preview-part{
+			position: absolute;
+			}
+		.video-preview .preview-start{
+			top:-8px;
+			}
+		.video-preview .preview-middle{
+			top:-1.72rem; /*8 + (48/3)*/
+			}
+		.video-preview .preview-end{
+			top:-40px; /*8 + (48/3)x2*/
+			}
+	.video-preview:hover, .you-tube-video-link.active .video-preview{
+		border-color:transparent;
+		}
+	.theme--dark .video-preview:hover, .theme--dark .you-tube-video-link.active .video-preview{
+border-color:#9C9C9C;
+}
+</style>

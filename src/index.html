@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html class="not-as-application theme--dark">
+  <head>
+	<meta charset="utf-8">
+	<meta name="google" content="notranslate" />
+	<title>Seesu</title>
+	<link rel="shortcut icon" id="dynamic-favicon"  href="icons/icon16.png"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="dist/combined.css">
+	<meta name="keywords"  content="seesu, seesu for iphone, seesu for android, seesu for mobile, seesu online, last.fm, vk.com music, vkontakte.ru and last.fm" >
+	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
+	<script data-main="loader" src="js-sep/require-2.2.0.min.js"></script>
+
+<!--
+
+<div class="preview_area" pv-nest="recomm_releases">
+	<div class="area_for_button" pv-anchor="button_area">
+		<div class="area-button" pv-anchor='big_button'>
+			<span pv-text="{{nav_title}}">Albums</span>
+		</div>
+		<div class="area-description" >
+			<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
+		</div>
+	</div>
+	<div class="pl-auth-con" pv-anchor="auth_con"></div>
+</div>
+-->
+  </head>
+
+  <body>
+	<div id="ui-samples" style="display:none">
+		<!--import-include('./components.html')-->
+	</div>
+<div id="slider" pv-nest="spyglass__navigation">
+	<div class="navs ">
+		<div class="appnav_wrap">
+			<a
+					class="nav-item np-button hidden"
+					pv-props="title:{{now_playing_text}}"
+					pv-class="
+						hidden: !now_playing_text
+						nav-button: !viewing_playing
+						np-button-nh_intend: {{ !nav_helper_is_needed && viewing_playing && (played_playlists$length > 1) }}
+						player-played: playing
+						np-button-can_ff: {{ nav_helper_is_needed && !viewing_playing }}
+					"
+					pv-events="click::suggestNavHelper"
+					pv-type="{{!viewing_playing && 'way-point'}}"
+					><span class="np"></span></a>
+			<div class="daddy not-inited">
+				<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+
+			</div>
+		</div>
+		<div class="app-loading-mark"></div>
+
+	</div>
+	<div id="slider-materail" class="shadowed">
+			<div id="nav-helper"
+				class="nav_helper hidden"
+				pv-class="
+					hidden: !nav_helper_is_needed
+					nav_helper-full: nav_helper_full">
+				<div class="nvh-arrow">
+					<div class="nvh-s-arrow arrow-part">
+						<div class="nvh-s-arrow-bg arrow-part"></div>
+					</div>
+				</div>
+				<h5 class="nav_helper-header">
+					Played playlists history
+				</h5>
+
+				<div
+					pv-nest="played_playlists"
+					class="nav_pl_hitem"
+					pv-class="
+						nav_pl_hitem-allow_preview: {{ $index < 2 }}
+						nav_pl_hitem-selected: mp_show
+					"
+					pv-events="click::^closeNavHelper click:#requestPageById:%states%last_played_song_provoda_id">
+					<span pv-text="{{nav_title}}"></span>
+					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" player_song: player_song">
+						<span pv-text="{{nav_title}}"></span>
+						<!--import-include('./html-imports/playing-song-mark.html')-->
+					</div>
+
+				</div>
+				<span
+					class="hidden nav_helper-fullb"
+					pv-class="hidden: {{ (played_playlists$length < 3 || nav_helper_full) }}"
+					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists$length - 2}}"></span> items</span>
+
+				<span pv-events="click::closeNavHelper" class="nav_helper-closer">&times;</span>
+
+			</div>
+			<div class="screens" id="screens">
+
+				<div id="pages_area_width_streamer-wrapper">
+					<iframe src="about:blank" id="pages_area_width_streamer"></iframe>
+				</div>
+
+				<div class="app_map_con">
+				<div class="shared-parts">
+          <div pv-nest="search_criteria">
+            <!--import-include('./html-imports/welcome/form.html')-->
+          </div>
+				</div>
+				<div
+					id="root_level"
+					class="complex-page root_level full-page can_be_animated"
+					pv-foreign
+					pv-class="
+						inactive-page: {{ current_lev_num != $lev_num }}
+						full-page: {{ current_lev_num == $lev_num }}
+						page-scheme: {{ (current_lev_num - 1) == $lev_num }}
+						can_be_animated: !disallow_animation"
+					pv-anchor="con">
+					<div
+						class="complex-page-scroll_con"
+						pv-anchor="scroll_con">
+            <!--import-include('./html-imports/welcome/start-page/index.html')-->
+				  </div>
+
+
+				</div>
+
+
+			</div></div>
+
+			<div id="promo"></div>
+			<div class="footer">
+
+			</div>
+
+	</div>
+
+
+
+	<div id="wb" class="window-bottom"></div>
+</div>
+</body>
+</html>

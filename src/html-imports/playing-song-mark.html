@@ -1,0 +1,19 @@
+<style>
+.playing-song-mark{
+	position: absolute;
+	top:3px;
+	right:5px;
+	display: none;
+	width: 20px;
+	height: 20px;
+	background: url(../i/equalaizer_stoped.gif) no-repeat;
+	}
+	.playing-process.playing-song-mark{
+		background-image: url(../i/equalaizer.gif);
+	}
+</style>
+<span
+  class="playing-song-mark"
+  pv-class="playing-process: {{ play == 'play' }} "
+  >
+</span>

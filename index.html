@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html class="not-as-application theme--dark">
+  <head>
+	<meta charset="utf-8">
+	<meta name="google" content="notranslate" />
+	<title>Seesu</title>
+	<link rel="shortcut icon" id="dynamic-favicon"  href="icons/icon16.png"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="dist/combined.css">
+	<meta name="keywords"  content="seesu, seesu for iphone, seesu for android, seesu for mobile, seesu online, last.fm, vk.com music, vkontakte.ru and last.fm" >
+	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
+	<script data-main="loader" src="js-sep/require-2.2.0.min.js"></script>
+
+<!--
+
+<div class="preview_area" pv-nest="recomm_releases">
+	<div class="area_for_button" pv-anchor="button_area">
+		<div class="area-button" pv-anchor='big_button'>
+			<span pv-text="{{nav_title}}">Albums</span>
+		</div>
+		<div class="area-description" >
+			<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
+		</div>
+	</div>
+	<div class="pl-auth-con" pv-anchor="auth_con"></div>
+</div>
+-->
+  </head>
+
+  <body>
+	<div id="ui-samples" style="display:none">
+		
+<span
+	class="brow_lev_nav"
+	pv-class="
+		hidden: !vmp_show
+		stackk-root-follower: {{ mp_stack_root_follower }}
+		stackk-top: {{ mp_stack == 'top' }}
+		stackk-bottom: {{ mp_stack == 'bottom' }}
+		stackk-middle: {{ mp_stack == 'middle' }}
+	"></span>
+<span
+	class="common-nav nav-item nav-usual"
+	pv-props="title:{{nav_title}}"
+	pv-events="click:zoomOut"
+	pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+
+	pv-class="
+		nnav: !mp_has_focus
+		nav_clickable: nav_clickable
+	"
+
+	><span
+		pv-text="{{nav_title}}"
+	>&nbsp;</span><b></b></span>
+<span
+	class="search_page-nav nav-item nav-usual nav-search_results"
+	title="Search results"
+	pv-props="title:{{nav_title}}"
+	pv-events="click:zoomOut"
+	pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+
+	pv-class="
+		nnav: !mp_has_focus
+		nav_clickable: nav_clickable
+	"
+	><b></b><span class="icon">&nbsp;</span></span>
+<span
+	class="start_page-nav nav-item nav-start nav-root"
+	title="Seesu start page"
+	pv-props="title:{{nav_title}}"
+	pv-events="click:zoomOut"
+	pv-type="{{nav_clickable && (vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+
+	pv-class="
+		nav-button: !mp_has_focus
+		nav_clickable: nav_clickable
+	"
+	><b></b><span class="icon">&nbsp;</span></span>
+
+
+		<div
+			class="complex-page inactive-page can_be_animated"
+			pv-class="
+				inactive-page: {{ current_lev_num != $lev_num }}
+				full-page: {{ current_lev_num == $lev_num }}
+				page-scheme: {{ (current_lev_num - 1) == $lev_num }}
+				can_be_animated: !disallow_animation
+				map_animating: map_animating
+				"
+			pv-anchor="con">
+			<div
+				class="complex-page-scroll_con"
+				pv-anchor="scroll_con">
+				<div
+					class="complex-page_material"
+					pv-anchor="material">
+				</div>
+			</div>
+		</div>
+		<div class="browse_lev_con" pv-class="hidden: !vmp_show">
+			<div pv-anchor="con"></div>
+			<!--pv-replace sample_name:view_sources-->
+		</div>
+
+
+		<div class="usual_page lilists">
+			<div pv-anchor="lilists_con"></div>
+
+		</div>
+		<div class="list-of-playlists list_of_playlists">
+			<div
+				class='create-named-playlist hidden suggest'
+				pv-class="hidden: !need_creation_button "
+				pv-events="click::findAddPlaylist"
+				pv-type="way-point">
+				<span class="lang localize-cr-new-playlist"></span>
+				"<em pv-text="{{query}}"></em>"
+			</div>
+			<!--pv-replace sample_name:song_acting_playlist_add-->
+
+		</div>
+
+
+		<div class="preview_area">
+			<div class="area_for_button" pv-anchor="button_area">
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}"></span>
+				</div>
+				<div class="area-description" >
+					<div class="desc_prevw_list" pv-anchor="listc"></div>
+				</div>
+			</div>
+			<div class="pl-auth-con" pv-anchor="auth_con"></div>
+		</div>
+
+		<div class="area_for_button">
+			<div class="area-button" pv-anchor='big_button'>
+				<span pv-text="{{nav_title}}"></span>
+			</div>
+			<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+		</div>
+
+		<div
+			class="area_for_button imp-area_for_button"
+			pv-class="button_selected: mp_show"
+			pv-events="click:requestPage"
+			pv-type="way-point">
+			<div class="area-button">
+				<span pv-text="{{nav_title}}"></span>
+			</div>
+			<div
+				class="area-description desc_prevw_list"
+				pv-class="list_loading: list_loading">
+				<!--pv-replace sample_name:imp-desc_item-->
+			</div>
+		</div>
+
+		<div
+			class="area_for_button imp-area_for_button-simple"
+			pv-class="button_selected: mp_show"
+			pv-events="click:requestPage"
+			pv-type="way-point">
+			<div class="area-button">
+				<span pv-text="{{nav_title}}"></span>
+			</div>
+			<div
+				class="area-description desc_prevw_list"
+				pv-class="list_loading: list_loading">
+				<span class="desc_item preview_line" pv-nest="preview_list">
+					<span class="preview_line-wrap">
+						<span class="desc_item-text" pv-text="{{selected_title || nav_short_title || nav_title}}"></span>
+					</span>
+
+
+				</span>
+			</div>
+		</div>
+
+
+		
+		<span class="desc_item preview_line">
+			<span class="preview_line-wrap">
+				<span
+					class="desc_item-imgcon hidden"
+					pv-class="hidden: !vis_img_allowed">
+					<img src="" alt=""
+						pv-class="hidden: !selected_image"
+						pv-props=
+						"src: {{
+						(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+						|| selected_image.url
+						}}">
+				</span>
+				<span class="desc_item-text" pv-text="{{selected_title}}"></span>
+			</span>
+
+		</span>
+
+		<span class="imp-desc_item desc_item preview_line" pv-nest="preview_list">
+			<span class="preview_line-wrap">
+				<span class="desc_item-imgcon">
+					<img src="" alt=""
+						pv-class="hidden: !selected_image"
+						pv-props=
+						"src: {{
+							(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+							|| selected_image.url
+						}}">
+				</span>
+				<span class="desc_item-text" pv-text="{{selected_title || nav_short_title || nav_title}}"></span>
+			</span>
+
+		</span>
+		<span class="imp-desc_item-tag"
+			pv-repeat="tag in simple_tags_list">
+			<span class="tags_list-tag" pv-text="{{tag.name}}"></span>
+		</span>
+
+
+		
+		<div
+			class="user_tag_page usual_page"
+			>
+			<div class="preview_area" pv-nest="tracks">
+				<!--pv-replace sample_name:imp-area_for_button-->
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-nest="artists">
+				<!--pv-replace sample_name:imp-area_for_button-->
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-nest="albums">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+		</div>
+
+		
+		<div
+			class="user_tags_page usual_page">
+			<ul>
+				<li pv-nest="tags" class="user_tag" pv-events="click:requestPage" pv-type="way-point">
+					<span class="user_tag-count" pv-text="{{count}}"></span>
+					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="lula_page usual_page">
+			<div class="preview_area" pv-nest="all_time">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">All Time</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+		</div>
+
+
+		
+		<div class="lulas_page usual_page">
+			<ul>
+				<li pv-nest="artists" pv-events="click:requestPage" class="user_artist" pv-type="way-point">
+					<div class="user_artist-image_con">
+						<img
+							alt=""
+							pv-props="
+								alt: {{artist_name}}
+								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+							"
+							pv-class="hidden: !selected_image"
+						>
+					</div>
+					<div
+						class="user_artist-name"
+						pv-text="{{artist_name}}"
+						pv-props="title:{{artist_name}}"
+						>
+					</div>
+					<div class="user_artist-counter" pv-text="{{playcount}}"></div>
+
+				</li>
+			</ul>
+		</div>
+
+
+		
+		<div class="playlist_panel" pv-nest="plarow">
+			<div class="playlist-actions">
+				<div class="pla-panel">
+					<span class="pla-button" pv-anchor="btrow-multiatcs" pv-events="click::switchPart:row-multiatcs" pv-type="way-point">● ● ●</span>
+					<span class="pl-settings-button" title="Playlists settings" pv-anchor="btrow-pl-settings" pv-events="click::switchPart:row-pl-settings" pv-type="way-point"></span>
+				</div>
+				<div
+					pv-anchor="row_context"
+					class="pla-row-content has-dark-buttons hidden"
+					pv-class="hidden: !active_part"
+					style="position:relative">
+					<span class="rc-arrow hidden" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}" pv-class="hidden: !active_part">
+						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+					</span>
+					<div class="pla-row hidden" pv-nest="context_parts for_model:row-multiatcs" pv-class="hidden: !active_view">
+						<div class="left-buttons-group">
+							<span class="button-hole">
+								<a
+									pv-events="click::makePlayable"
+									pv-type="way-point"
+									class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a>
+							</span>
+
+							<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
+							<span class="button-hole">
+								<a
+									pv-events="click::makeExternalPlaylist"
+									pv-type="way-point"
+									class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
+							</span>
+
+						</div>
+
+					</div>
+					<div class="pla-settings hidden" pv-nest="context_parts for_model:row-pl-settings" pv-class="hidden: !active_view">
+						<label class="dont-rept-pl">
+							<input type="checkbox" pv-anchor="dont-rept-pl"/>
+							<span class="lang localize-dont-rept-pl">Do not repeat playlist</span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div
+				class="loader_disallowing_desc hidden"
+				pv-class="hidden: !loader_disallowing_desc"
+				pv-text="{{loader_disallowing_desc}}"
+			></div>
+
+
+		</div>
+
+
+		
+		<div class="playlist-container"
+			pv-class="
+				has-files-in-songs: can_play
+				show-zoom-to-track: {{ !vis_overview && !mp_has_focus }}
+				">
+			<!--pv-replace sample_name:playlist_panel-->
+
+			<ul
+				class="tracks-for-play"
+				pv-anchor="lc"
+				pv-class="
+					loading: list_loading
+					list-overview: mp_has_focus
+				"
+				></ul>
+			<div class="lang localize-nothing-found" pv-class="hidden: !error"></div>
+
+			<a
+				class='load-more-list-data lang localize-load-more'
+				pv-events="click::requestMoreData:songs-list"
+				pv-type="{{more_load_available && 'way-point'}}"
+				pv-class="hidden: !more_load_available">Load more</a>
+		</div>
+
+
+		<div class="music_conductor_page usual_page">
+			<div pv-nest='allpas'>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
+			</div>
+			<div pv-nest='countries'>
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
+			</div>
+		</div>
+
+
+		
+		<div class="album_preview-big"
+			pv-events="click:requestPage"
+			pv-type="way-point"
+			pv-props="title: {{album_name}}"
+			>
+			<img src="" alt="" pv-anchor="imgc"/>
+			<div class="full_album_name">
+				<div class="desc hidden" pv-class="hidden: !album_year" pv-text="{{album_year}}"></div>
+				<div
+					class="artist_name_alb"
+					pv-class="hidden: can_hide_artist_name"
+					pv-anchor="artist_name_c" pv-text="{{album_artist}}"></div>
+				<div class="album_name" pv-anchor="album_name_c" pv-text="{{album_name}}"></div>
+			</div>
+		</div>
+
+
+		
+		
+		
+		<div class="user_acqes-preview" pv-events="click:requestPage">
+			<span pv-nest="acqs_from_someone" class="user_acq_preview_item">
+				<img
+					src="https://vk.com/images/camera_b.gif"
+					pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+			</span>
+			<span pv-nest="acqs_from_me"  class="user_acq_preview_item">
+				<img
+					src="https://vk.com/images/camera_b.gif"
+					pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+			</span>
+
+		</div>
+		<div class="relations_page usual_page">
+			<div class="relations-invites-wrap">
+				<h3 pv-text="{{lo_from_people}}"></h3>
+				<ul class="people-list people-l-wide">
+					<li pv-nest='acqs_from_someone' class="people-list-item">
+						<!--pv-replace sample_name:people-list-item-inner-->
+					</li>
+				</ul>
+			</div>
+			<div class="relations-likes-wrap">
+				<h3 pv-text="{{lo_from_you}}"></h3>
+				<ul class="people-list people-l-wide">
+					<li pv-nest='acqs_from_me' class="people-list-item">
+						<!--pv-replace sample_name:people-list-item-inner-->
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="people-list-item-inner">
+			<div class="people-image">
+				<img
+					src="https://vk.com/images/camera_b.gif"
+					pv-props="src: {{user_photo || 'https://vk.com/images/camera_b.gif'}}"/>
+			</div>
+			<div class="button-place-people-el" pv-anchor="button_place" pv-when="needs_accept_b">
+				<span class="button-hole"><a class="nicebutton" pv-text="{{lo_accept_inv}}" pv-events="click::acceptInvite"></a></span>
+				<!-- needs_accept_b -->
+			</div>
+			<div class="p-link-place" pv-when="userlink" pv-anchor="link_place">
+				<a href="" pv-props="href: {{userlink.href}}" pv-text="{{userlink.text}}"></a>
+			</div>
+			<span class="desc" pv-when="after_accept_desc" pv-text="{{after_accept_desc}}"></span>
+		</div>
+
+
+		
+		<!-- userslist -->
+		<div class="vk_users_page usual_page">
+			<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click:followTo" pv-type="way-point">
+				<img class="vk_friend-ava" src="" alt="" pv-props="
+					src: {{ava_image.url}}">
+				<div class="vk_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+			</div>
+		</div>
+
+		
+		<!-- userslist -->
+		<div class="lfm_users_page usual_page">
+			<div pv-nest="list_items" class="lfm_friend-base-preview" pv-events="click:followTo"
+			pv-type="way-point">
+				<img class="lfm_friend-ava" src="" alt="" pv-props="
+					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
+				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
+				<div class="lfm_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div class="lfm_friend-scrobbler" pv-class="hidden: !scrobbler">
+					<a
+						href=""
+						class="external"
+						pv-props="href: {{scrobbler.url}}"
+						pv-class="hidden: !scrobbler.url"
+						pv-events="click:open_link"
+						>
+						<img src="" alt=""
+							pv-props="src: {{scrobbler.image}}"
+							pv-class="hidden: !scrobbler.image">
+						<span pv-text="{{scrobbler.name}}"></span>
+					</a>
+					<span
+						class="desc"
+						pv-text="{{scrobbler.name}}"
+						pv-class="hidden: scrobbler.url"></span>
+				</div>
+				<div class="lfm_friend-recent_song">
+					<span pv-text="{{song}}"></span>
+					<div>
+						<span class="desc" pv-text="{{song_time}}"></span>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+
+		<div class="vk_pthgs">
+			<div pv-nest="vk__friends" class="preview_area" pv-class="access-request:pmd_vswitched">
+				<!--pv-replace sample_name:imp-area_for_button-->
+				<div pv-when="pmd_vswitched">
+					<div class="pl-auth-con" pv-nest="auth_part controller:auth_vk">
+						<!--pv-replace sample_name:vk_login-->
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="lfm_preview_block preview_area" pv-class="access-request:pmd_vswitched">
+			<!--pv-replace sample_name:imp-area_for_button-->
+			<div pv-when="pmd_vswitched">
+				<div class="pl-auth-con" pv-nest="auth_part controller:auth_lfm">
+					<!--pv-replace sample_name:lfm-auth-module-->
+				</div>
+			</div>
+		</div>
+
+		<div class="lastfm_pthgs">
+			<div pv-nest="lfm__friends">
+				<!--pv-replace sample_name:lfm_preview_block-->
+			</div>
+			<div pv-nest="lfm__neighbours">
+				<!--pv-replace sample_name:lfm_preview_block-->
+			</div>
+			<div class="preview_area" pv-nest="lfm__tracks">
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
+			</div>
+			<div class="preview_area" pv-nest="lfm__tags">
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
+			</div>
+			<div class="preview_area" pv-nest="lfm__artists">
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
+			</div>
+			<div class="preview_area" pv-nest="lfm__albums">
+				<!--pv-replace sample_name:imp-area_for_button-simple-->
+			</div>
+		</div>
+
+		<div class="usual_page user_page">
+			<div class="internal_pthgs">
+				<div pv-nest='user-playlists'>
+					<!--pv-replace sample_name:imp-area_for_button-simple-->
+				</div>
+				<div class="aqc_preview preview_ffp" pv-anchor="users_acqutes"></div>
+			</div>
+			<!--pv-replace sample_name:vk_pthgs-->
+			<!--pv-replace sample_name:lastfm_pthgs-->
+		</div>
+
+		
+		<div class="lfm_user_page usual_page">
+			<div class="lfm_user_page-header">
+				<img class="lfm_friend-ava" src="" alt="" pv-props="
+					src: {{(lfm_img.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_img.lfm_id) || lfm_img.url}}">
+				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
+				<div class="lfm_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div>
+					<a pv-type="way-point" class="external" pv-props="href:{{'http://last.fm/user/' + lfm_userid}}">last.fm profile</a>
+				</div>
+			</div>
+			<!--pv-replace sample_name:lastfm_pthgs-->
+		</div>
+
+		
+		<div class="vk_user_page usual_page">
+			<div class="vk_user_page-header">
+				<img class="vk_friend-ava" src="" alt="" pv-props="
+					src: {{ava_image.url}}">
+				<div class="vk_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div>
+					<a pv-type="way-point" class="external" pv-props="href:{{'https://vk.com/id' + vk_userid}}">vk.com profile</a>
+				</div>
+			</div>
+			<!--pv-replace sample_name:vk_pthgs-->
+		</div>
+
+
+		
+		<div class="usual_page albums_page">
+
+			<div class="albums_list_con" pv-anchor="albums_list_c"></div>
+
+			<div
+				class="load-more-list-data hidden lang localize-load-more"
+				pv-class="hidden: !more_load_available"
+				pv-events="click::requestMoreData:albums_list"
+				pv-type="{{more_load_available && 'way-point'}}">Load more</div>
+		</div>
+
+
+		
+		<div
+			class="artists_list no_arfb"
+			pv-class="list_loading_state: list_loading">
+
+			<div class="to-open-block area-button" pv-events="click:followURL:~" pv-type="way-point">
+				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
+			</div>
+			<ul>
+				<li
+					pv-type="way-point"
+					pv-nest="artists_list"
+					class="artist_in_list"
+					pv-events="click:followTo"
+					>
+					<span class="" pv-text="{{artist_name}}"></span>
+					<span class="song-image-con">
+						<img
+							alt=""
+							class="hidden"
+							pv-props="
+								alt: {{artist_name}}
+								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+							"
+							pv-class="hidden: !selected_image"
+						>
+					</span>
+				</li>
+			</ul>
+		</div>
+
+
+		<div class="tags_list_page usual_page">
+			<div class="tags_list">
+				<span pv-repeat="tag in simple_tags_list">
+					<a
+						class="js-serv"
+						pv-text="{{tag.name}}"
+						pv-type="way-point"
+						pv-events="click:#showTag:{{tag.name}}"
+						></a>
+				</span>
+
+			</div>
+		</div>
+
+		<div class="tag_page usual_page">
+			<h2 pv-text="{{tag_name}}"></h2>
+			<div class="leftcol">
+				<div pv-nest='artists_lists'>
+					<!--pv-replace sample_name:imp-area_for_button-simple-->
+				</div>
+			</div>
+			<div class="rightcol">
+				<div pv-nest='songs_list'>
+					<!--pv-replace sample_name:imp-area_for_button-simple-->
+				</div>
+			</div>
+			<div class="full_wide_col">
+				<div class="area_for_button" pv-nest="albums_list" >
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+				</div>
+				<div pv-nest='similar_tags'>
+					<script pv-import="imp-area_for_button" type="pv-import-map">
+						[{ "imp-desc_item": "imp-desc_item-tag" }]
+					</script>
+				</div>
+			</div>
+
+		</div>
+
+
+		
+		<div class="art_card">
+			<div class="leftcol">
+				<div pv-nest="top_songs">
+					<!--pv-replace sample_name:imp-area_for_button-->
+				</div>
+				<div pv-nest="hypem_new">
+					<!--pv-replace sample_name:imp-area_for_button-->
+				</div>
+				<div pv-nest="hypem_fav">
+					<!--pv-replace sample_name:imp-area_for_button-->
+				</div>
+				<div pv-nest="hypem_reblog">
+					<!--pv-replace sample_name:imp-area_for_button-->
+				</div>
+				<div pv-nest="soundc_prof">
+					<!--pv-replace sample_name:imp-area_for_button-->
+				</div>
+				<div pv-nest="soundc_likes">
+					<!--pv-replace sample_name:imp-area_for_button-->
+				</div>
+			</div>
+			<div class="rightcol">
+				<script pv-nest='tags_list' pv-import="imp-area_for_button" type="pv-import-map">
+					[{ "imp-desc_item": "imp-desc_item-tag" }]
+				</script>
+				<div pv-nest="similar_artists">
+					<!--pv-replace sample_name:imp-area_for_button-->
+				</div>
+				<div class="area_for_button" pv-nest="albums_list">
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-nest="dgs_albums">
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+				</div>
+			</div>
+
+
+
+			<div class="art_card-statinfo">
+				<div class="leftcol art_card-image ">
+					<div class="" pv-anchor="bigimagec"></div>
+				</div>
+				<div class="rightcol art_card-bio " pv-anchor="bio" pv-class="loading: bio__loading"></div>
+			</div>
+
+		</div>
+
+
+		
+		<div class="songcard_page usual_page">
+			<h4 class="songcard_page-header">
+				<span pv-text="{{track_name}}"></span> - <span pv-text="{{artist_name}}"></span>
+			</h4>
+			<div class="nested_artist photo_and_artinfo" pv-nest="artist"></div>
+			<div class="area_for_button" pv-nest='fans'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}"></span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+		</div>
+
+
+		<div class="photo-cont">
+			<div class="photo-cont-lift" pv-anchor="phocoli">
+				<img
+					class="artist_image hidden"
+					pv-anchor="first-image"
+					pv-class="hidden: !selected_image "
+					pv-props="
+						alt: {{artist_name}}
+						src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + selected_image.lfm_id) || selected_image.url}}
+					"
+					src="" alt=""
+					/>
+			</div>
+		</div>
+
+
+		
+		<div
+			class="artist_preview-base"
+			pv-class="want-more-info: vis_wamo_info"
+			>
+			<div class="possible_images_con"></div>
+
+			<div class="artist_preview-texcon">
+				<div class="dominator-head">
+					<div
+						class="closer-to-track"
+						pv-class="one-artist-playlist: one_artist_playlist ">
+						<a
+							class="js-serv lang localize-artcard"
+
+							pv-type="way-point"
+							pv-events="click:requestPage"
+							>artcard</a>
+					</div>
+					<a
+						class="extend-switcher"
+						pv-events="click:showMoreInfo"
+						pv-type="way-point"
+						pv-class="hidden: !infb_text ">
+						<span class="big-space" pv-text="{{infb_text}}"></span>
+					</a>
+					<p
+					pv-nest="tags_list"
+					class="artist-tags hidden"
+					pv-class="hidden: {{ (!preview_list || !preview_list.length) }}" >
+						<span class="simple-header">
+							<em class="lang localize-Tags">Tags</em>
+						</span>
+						<span pv-anchor="tags-c"><a
+							class="music-tag js-serv"
+							pv-repeat="tag in preview_list"
+							pv-type="hard-way-point"
+							pv-events="click:#showTag:{{tag.name}}"
+							pv-text="{{tag.name}}"></a></span>
+					</p>
+				</div>
+				<div class="artist-info">
+					<p class="artist-stat-in-song">
+						<span pv-class="hidden: !listeners" class="playcount">
+							<span class="desc">Listeners:</span>
+							<span pv-text="{{listeners}}"></span>
+						</span>
+						<span pv-class="hidden: !playcount" class="hidden">
+							<span class="desc">Playcount:</span>
+							<span pv-text="{{playcount}}"></span>
+						</span>
+					</p>
+					<div class="artist-bio" pv-anchor="artbio">...</div>
+					<div class="artist-meta-info">
+						<p
+							pv-nest="similar_artists"
+							class="artist-similar">
+							<span class="desc-name">
+								<em>
+									<a
+										class="similar-artists js-serv lang localize-similar-arts"
+										pv-type="hard-way-point"
+										pv-events="click:requestPage"
+										>Similar artists:</a>
+								</em>
+							</span>
+							<span class="desc-text" pv-anchor="similars-c"><a
+								pv-nest="preview_list"
+
+								class="artist js-serv"
+								pv-events="click:#showArtcardPage:%states%artist_name"
+								pv-type="hard-way-point"
+								pv-text="{{artist_name}}"></a></span>
+						</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+		
+		<div class="song-row-content moplas-block moplas_block" pv-nest="mf_cor" pv-class="want_more_songs: want_more_songs">
+			<div class="show-all-songs hidden" pv-class="hidden: !must_be_expandable">
+				<a pv-events="click::switchMoreSongsView" pv-type="way-point">
+					<span class="notifier hidden" pv-nest='notifier' pv-text='{{counter}}'></span>
+					<span class="lang localize-files">Files</span>
+				</a>
+
+
+			</div>
+			<div class="messages-c" pv-anchor='messages_c'>
+				<div class="cant_play_music_message hidden" pv-class="hidden: !cant_play_music" >
+					<span class="lang localize-need-audioplayers"></span>
+				</div>
+			</div>
+			<div class="music-files-lists" pv-anchor='mufils_c'>
+				<div class="dmca_notice lang localize-dmca_notice">
+					Seesu follows terms of service of each api it uses. Seesu does not store any content. Each service follows DMCA, feel free to report abuse.
+				</div>
+				<div
+					class="moplas-list"
+					pv-nest="sorted_completcs"
+					>
+					<div
+
+						pv-nest="pioneer"
+						class="files-list-pioneer full_mb_part">
+						<div class="moplas-block-shift" pv-class="list_loading: has_request">
+							<span class="moplas_source-icon" pv-events="click::switchTunerVisibility"></span>
+							<a
+								pv-type="way-point"
+								pv-props="href: {{dmca_url}}"
+								pv-class="hidden: !dmca_url dmca_url: dmca_url"
+								class="external hidden lang localize-report-abuse"></a>
+							<span pv-text="{{search_name}}" pv-class="moplas_source-unavailable: {{  search_complete && !has_files }} disabled_search: disable_search"></span>
+						</div>
+
+
+						<div
+							pv-nest="vis_tuner"
+							class="moplas_source-tuner moplas-block-shift hidden"
+							pv-class="hidden: hidden">
+							<div>
+								<label>
+									<input type="checkbox" pv-events="click:changeTune" name="disable_search" pv-props="checked:{{disable_search}}">
+									<span class="lang localize-disable-search"></span>
+
+								</label>
+							</div>
+							<div>
+								<label>
+									<input type="checkbox" pv-events="click:changeTune" name="wait_before_playing"
+									pv-props="
+										checked: {{wait_before_playing}}
+										disabled: {{disable_search}}
+									">
+									<span pv-class="desc: disable_search" class="lang localize-wait-before-play">
+
+									</span>
+
+								</label>
+							</div>
+
+						</div>
+					</div>
+
+
+
+					<ul pv-anchor='listc-start'></ul>
+					<div pv-class="hidden: !moplas_list_end$length">
+						<div class="full_mb_part full_list_switch">
+							<a
+								class="hidden lang localize-full-list js-serv"
+								pv-type="{{moplas_list_end$length && 'way-point'}}"
+								pv-class="hidden: !moplas_list_end$length"
+								pv-events="click::toggleOverstocked"
+								>full list</a>
+						</div>
+						<ul pv-anchor='listc-end' class="overstocked-part" pv-class="show_overstocked: {{want_more_songs && show_overstocked}}"></ul>
+					</div>
+
+
+
+				</div>
+
+			</div>
+			<div class="files_appendix">
+				<!--pv-replace sample_name:track-video pv-when:yt_videos$length-->
+
+				<div class="file_source">
+					<span class="hidden file_source_cont" pv-class="hidden: !current_source">
+						<span class="desc">file from</span> <a href="" class="external" pv-props="href:{{current_source.source_link}}" pv-text="{{current_source.source_name}}"></a>
+					</span>
+					<span pv-nest="current_mopla " class="hidden" pv-class="hidden: !progress_info">
+						<!-- <span title="downloaded" pv-text="{{progress_info.downloaded}}"></span> -->
+						<span class="desc">
+							active peers: <span title="" pv-text="{{progress_info.active_peers}}"></span>
+							/ total peers: <span title="progress_info.total_peers" pv-text="{{progress_info.total_peers}}"></span>
+						</span>
+
+						<br/>
+						<span class="desc">
+							<span title="download speed" pv-text="{{progress_info.downloadSpeed}}"></span>
+
+							<span title="upload speed" pv-text="{{progress_info.uploadSpeed}}"></span>
+							<span title="loaded percents" pv-text="{{progress_info.percent}}"></span>%
+						</span>
+
+
+					</span>
+
+				</div>
+
+			</div>
+
+		</div>
+
+
+		
+		
+		<ul>
+			<li class="song-view"
+				pv-class="
+					player_song: player_song
+					playing-song: play
+					v-song-sibling: {{ !vmp_show && marked_as }}
+					to-play-next: {{ marked_as == 'next' }}
+					to-play-previous: {{ marked_as == 'prev' }}
+					viewing-song: vmp_show
+					selected_song: {{ vis_lite_view && vmp_show }}
+				">
+				<a
+					pv-anchor="song-link"
+					class="track-node"
+					pv-type="{{(vis_lite_view || !vmp_show) && 'way-point'}}"
+					pv-class="
+						marked-for-play: want_to_play
+						search-mp3-failed: {{ has_none_files_to_play && !playable }}
+						waiting-full-render: {{ !has_none_files_to_play && !playable }}
+						search-mp3: searching_files
+						track_name_loading: track_name_loading
+						song: playable
+					"
+					pv-events="click:showSong"
+					pv-props="title: {{song_title}}"
+					>
+					
+					<span
+					  class="playing-song-mark"
+					  pv-class="playing-process: {{ play == 'play' }} "
+					  >
+					</span>
+
+					<span class="files-load-states">
+						<span
+							class="song-files-search-status"
+							pv-class="
+								has-none-files: has_none_files_to_play
+								has-best-files: {{ !has_none_files_to_play && files_search.have_best_tracks }}
+								has-some-files: {{ !has_none_files_to_play && files_search.have_mp3_tracks }}
+								forbidden_by_copyrh: forbidden_by_copyrh
+								"
+							pv-text="{{forbidden_by_copyrh && '©'}}"
+						>
+						</span>
+						<span class="nothing-toy"></span>
+					</span>
+					<div class="list_rel_pos_mark"></div>
+					<span class="song-image-con">
+						<img
+							alt=""
+							class="hidden"
+							pv-props="
+								alt: {{song_title}}
+								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+							"
+							pv-class="hidden: !selected_image"
+						>
+					</span>
+					<span class="full-song_title" pv-class="has-no_track_title: !track">
+						<span class="song-artist_name" pv-text="{{artist}}"></span>
+						<span class="song-track-name" pv-text="{{track}}"></span>
+					</span>
+					<span class="placeholder-decor"></span>
+				</a>
+				<!--pv-replace sample_name:track-context pv-when:must_expand-->
+			</li>
+		</ul>
+
+
+		
+		
+		
+		<!--
+		<style>
+		.song_fan-h-tck{
+			position: absolute;
+			top: 0;
+			visibility: hidden;
+			z-index: 2;
+			width: inherit;
+			text-overflow: ellipsis;
+			text-shadow: #333 1px 1px 1px;
+			word-wrap: break-word;
+			line-height: 1;
+			font-size: 0.8em;
+			padding: 0.3rem;
+			box-sizing: border-box;
+			}
+		</style>
+		-->
+
+		
+		<div class="track-context" >
+			<!--pv-replace sample_name:moplas_block pv-when:must_expand-->
+			<div >
+
+			</div>
+			<div class="song-actions" pv-anchor="song-actions" pv-nest="actionsrow">
+				<div class="track-panel" pv-anchor="buttons_panel">
+					
+					
+					
+					<div class="buttons-panel">
+					  <div class="nice-buttons-place">
+					    <span class="pc-place">
+					      <a class="pc pc-add "  title="add to playlist" pv-anchor="btrow-playlist-add" pv-events="click:toggleSpyglass:song_action:row-playlist-add" pv-type="way-point"></a>
+					    </span>
+					    <!--
+					    <span class="pc-place">
+					      <a class="pc pc-remove "  title="remove from playlist"></a>
+					    </span>
+					    -->
+					    <span class="pc-place">
+					      <a class="pc pc-rupor "  title="share song" pv-anchor="btrow-share" pv-events="click:toggleSpyglass:song_action:row-share" pv-type="way-point"></a>
+					    </span>
+					    <span class="pc-place">
+					      <a class="pc pc-love "  title="love song" pv-anchor="btrow-love" pv-events="click:toggleSpyglass:song_action:row-love" pv-type="way-point"></a>
+					    </span>
+					    <span class="pc-place">
+					      <a class="pc pc-tag "  title="tag song" pv-anchor="btrow-tag" pv-events="click:toggleSpyglass:song_action:row-tag" pv-type="way-point"></a>
+					    </span>
+
+					  </div>
+					  <ul class="track-buttons">
+					    <li class="scrobbling-button"  title="Last.fm scrobbling">
+					      <a  class="trackbutton lfm-scrobbling-button" pv-anchor="btrow-lastfm" pv-events="click:toggleSpyglass:song_action:row-lastfm" pv-type="way-point"></a>
+					    </li>
+					    <li class="pl-shuffle-button-wrap">
+					      <a  class="trackbutton pl-shuffle-button" pv-anchor="btrow-pl-shuffle" pv-events="click:toggleSpyglass:song_action:row-pl-shuffle" pv-type="way-point"></a>
+					    </li>
+					    <li class="rept-song-button-wrap">
+					      <a  class="trackbutton rept-song-button" pv-anchor="btrow-repeat-song" pv-events="click:toggleSpyglass:song_action:row-repeat-song" pv-type="way-point"></a>
+					    </li>
+					    <li class="volume-control" pv-anchor="volume-control">
+					      <div class="v-hole" pv-anchor="v-hole">
+					        <div class="v-bar" pv-anchor="v-bar" pv-props="style.width: {{vis_volume}}"></div>
+					      </div>
+					    </li>
+					  </ul>
+
+
+					</div>
+
+
+				</div>
+				<div
+					>
+		      <div
+		        pv-nest="spyglass__song_action"
+		        class="hidden song-row-content row-song-context"
+		        pv-class="hidden: !current_md$exists">
+		        <span
+		          pv-nest="current_md:arrow"
+		          class="rc-arrow" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}">
+		  				<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+		  			</span>
+		        
+		        <div class="addsong-to-playlist" pv-nest="current_md for_model:row-playlist-add">
+		          <h4><span class="lang localize-addsong ">add song to</span>:</h4>
+		          <div>
+		            <input type="search" class="playlist-query" autocomplete="off"
+		              pv-events="{{
+		                keyup:input_search
+		                change:input_search
+		                search:input_search
+		                mousemove:input_search
+		              }}"
+		            />
+		          </div>
+		          <!--pv-replace sample_name:list_of_playlists-->
+		        </div>
+
+		  			
+		  			
+		  			
+		  			
+		  			<div class="share-song" pv-nest="current_md for_model:row-share">
+		  			  <input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
+		  			  <div
+		  			    class="shareb-base  users-list"
+		  			    pv-anchor="vk_share_b">
+
+		  			    <div class="shareb-con">
+
+		  			      <div >
+
+		  			        <div class="">
+		  			          <input type="text" pv-anchor="vk_share_search">
+		  			        </div>
+
+		  			        <div pv-nest="searcher">
+
+		  			          <div pv-nest="section for_model:section-vk-users" class="vk_share">
+		  			            <div class="vk_auth" pv-anchor="vk_auth"></div>
+		  			            <div pv-class="hidden: needs_vk_auth">
+		  			              <div>
+		  			                <div class="share_header_wrap">
+		  			                  <h3 class="vk_share_header lang localize-post-song"></h3>
+		  			                  <div class="post-to-my-vk-wall" pv-class="hidden: !own_photo" pv-events="click::postToVKWall" pv-type="way-point">
+		  			                    <img pv-props="src: {{own_photo}}">
+		  			                    <span class="lang localize-to-own-wall"></span>
+		  			                  </div>
+		  			                </div>
+
+		  			                <div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
+		  			              </div>
+		  			              <div class="details_switch_block">
+		  			                <span class="desc">vk.com</span>
+
+		  			                <div class="details_switch" >
+		  			                  <div
+		  			                    class="min_details"
+		  			                    pv-class="active: !vis_full_view_mode"
+		  			                    pv-events="click:toggleVisState:full_view_mode::">
+		  			                    <span class="icon"></span>
+		  			                  </div>
+		  			                  <div
+		  			                    class="max_details"
+		  			                    pv-class="active: vis_full_view_mode"
+		  			                    pv-events="click:toggleVisState:full_view_mode:true">
+		  			                    <span class="icon"></span>
+		  			                  </div>
+		  			                </div>
+		  			              </div>
+
+		  			              <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+		  			                <div class="song_acting_vk_search protect_clicks  details_for_switcher ">
+		  			                  <ul>
+		  			                    <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+		  			                      <a>
+		  			                        <img pv-props="src:{{photo}}">
+		  			                        <span pv-text="{{text_title}}" class="text_part"></span>
+		  			                      </a>
+		  			                    </li>
+		  			                  </ul>
+		  			                  <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+		  			                </div>
+		  			              </div>
+		  			            </div>
+
+
+
+
+		  			          </div>
+
+		  			          <div pv-anchor="lfm_auth_con"></div>
+		  			          <div pv-nest="section for_model:section-lfm-user"
+		  			            class="lfm_share"
+		  			            pv-class="hidden: !can_share">
+		  			            <ul >
+		  			              <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+		  			                <a>
+		  			                  <img src="" alt=""
+
+		  			                    pv-props=
+		  			                    "src: {{
+		  			                    (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+		  			                    || selected_image.url
+		  			                    }}">
+		  			                  <span pv-text="{{text_title}}" class="text_part"></span>
+		  			                </a>
+		  			              </li>
+		  			            </ul>
+		  			          </div>
+		  			          <div pv-nest="section for_model:section-lfm-friends"
+		  			            class="lfm_share"
+		  			            pv-class="hidden: !can_share"
+
+		  			          >
+		  			            <div class="details_switch_block">
+		  			              <span class="desc">last.fm</span>
+
+		  			              <div class="details_switch" >
+		  			                <div
+		  			                  class="min_details"
+		  			                  pv-class="active: !vis_full_view_mode"
+		  			                  pv-events="click:toggleVisState:full_view_mode::">
+		  			                  <span class="icon"></span>
+		  			                </div>
+		  			                <div
+		  			                  class="max_details"
+		  			                  pv-class="active: vis_full_view_mode"
+		  			                  pv-events="click:toggleVisState:full_view_mode:true">
+		  			                  <span class="icon"></span>
+		  			                </div>
+		  			              </div>
+		  			            </div>
+
+		  			            <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+		  			              <div class="song_acting_lfm_search protect_clicks details_for_switcher" >
+		  			                <ul >
+		  			                  <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+		  			                    <a>
+		  			                      <img pv-props="
+		  			                          src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
+		  			                        ">
+
+		  			                      <span pv-text="{{text_title}}" class="text_part"></span>
+		  			                    </a>
+		  			                  </li>
+		  			                </ul>
+		  			                <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+		  			              </div>
+		  			            </div>
+		  			          </div>
+		  			        </div>
+
+
+
+		  			      </div>
+		  			    </div>
+		  			  </div>
+		  			</div>
+
+		  			<div class="love-song" pv-nest="current_md for_model:row-love"></div>
+		  			<div class="song-tagging" pv-nest="current_md for_model:row-tag"></div>
+		  			<div class="last-fm-scrobbling" pv-nest="current_md for_model:row-lastfm"></div>
+		  			<div class="simple_row_setting" pv-nest="current_md for_model:row-repeat-song">
+		  				<label class="song-row-label">
+		  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
+		  					<span class="lang localize-rept-song">Repeat playing song</span>
+		  				</label>
+
+		  			</div>
+		  			<div class="simple_row_setting" pv-nest="current_md for_model:row-pl-shuffle">
+		  				<label class="song-row-label">
+		  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
+		  					<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
+		  				</label>
+		  			</div>
+		      </div>
+				</div>
+			</div>
+			<div class="photo_and_artinfo">
+				<div class="photo-cont"><div class="photo-cont-lift" pv-anchor="phocoli">
+					<img
+						src="" alt="" class="artist_image"
+						pv-repeat="image in available_images"
+						pv-class="album_insong_image: $first"
+						pv-props="src:{{(image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + image.lfm_id)|| image.url}}">
+				</div></div>
+				<div pv-nest="artist" class="nested_artist">
+					<!--pv-replace sample_name:artist_preview-base-->
+				</div>
+			</div>
+
+			<div pv-nest="songcard">
+				
+				
+				
+				
+				<div class="track-listeners" pv-class="hidden: disallow_seesu_listeners">
+				  <div class="lang localize-listeners-looks">People who have listened to this track, look like this</div>
+				  <div class="song-listeners-list">
+				    <div class="song-listener current-user-listen" pv-when="current_su_user_info">
+				      <div class="image-cropper">
+				        <img alt="user photo" pv-props="src:{{current_su_user_info.photo}}"/>
+				      </div>
+				    </div>
+				    <ul pv-when="listenings$length">
+				      <li class="song-listener" pv-class="hidden: is_current_user" pv-nest="listenings" pv-events="click::switchPmd">
+				        <div class="image-cropper" pv-nest="user">
+				          <img alt="user photo" pv-props="src:{{photo}}"/>
+				        </div>
+				        <span class="rc-arrow" pv-when="pmd_vswitched">
+				          <span class="tl-arrow  arrow-part"><span class="tl-arrow-bg arrow-part"></span></span>
+				        </span>
+				      </li>
+				    </ul>
+				  </div>
+				</div>
+				
+				<div class="song-row-content row-listeners-context" pv-when="vswitched_select">
+
+				  <div class="big-listener-info" pv-nest="selected">
+				    <div class="big-user-avatar">
+				      <img class="big-user-avatar--img" alt="user photo" pv-props="src:{{info.photo_big}}">
+				    </div>
+				    <div pv-when="rel">
+				      <a
+				        pv-when="userlink"
+				        pv-text="{{userlink.text}}"
+				        pv-props="href:{{userlink.href}}"></a>
+
+				      <span
+				        pv-when="remain_time_desc"
+				        pv-text="{{remain_time_desc}}"></span>
+
+				      <div pv-when="!invite_accepted && !rel.item.accepted">
+				        <div pv-when="rel.item.from == user">
+				          <span class="desc people-list-desc">
+				            <span class="lang localize-user-want-you"></span>
+				          </span>
+				          <span class="button-hole">
+				            <a class="nicebutton lang localize-accept-inv" pv-events="click::acceptInvite">Accept invite</a>
+				          </span>
+				        </div>
+				      </div>
+				    </div>
+				    <div pv-when="like_just_sended || (rel.item.to == user)">
+				      <span class="desc people-list-desc">
+				        <span class="lang localize-if-user-accept-i"></span>
+				        <span class="lang localize-will-get-link"></span>
+				      </span>
+				    </div>
+
+				    <div  pv-when="!rel.item && has_vk_auth && !current_user_has_photo">
+				      <span class="button-hole">
+				        <a class="nicebutton lang localize-vk_photo_update" pv-events="click::#getPhotoFromVK">Get photo from my vk.com profile</a>
+				      </span>
+				    </div>
+
+				    <div pv-when="!like_just_sended && !rel.item && has_vk_auth && current_user_has_photo">
+				      <span class="button-hole">
+				        <a class="nicebutton lang localize-want-meet" pv-events="click::setLike">Want to meet!</a>
+				      </span>
+				    </div>
+
+				    <div class="soft_auth_con" pv-anchor="auth_con"></div>
+				  </div>
+				</div>
+
+				
+				<!-- <div class="song_fans-b-intrack intrack_page"
+				  pv-nest="fans" pv-events="click:requestPage" pv-type="way-point">
+				  <div class="intrack_page-h lang localize-lastfm_fans">
+				  </div>
+				  <div class="song_fans-l-intrack" pv-class="loading_list_items: loading_nesting_list_items">
+				    <div
+				      pv-nest="list_items | limitTo: 13"
+				      class="song_fan-b-tck hidden"
+				      pv-class="hidden: !userid"
+				      pv-props="title:{{userid}}"
+				      >
+				      <div pv-text="{{userid}}" class="song_fan-h-tck"></div>
+				      <img src="" alt=""
+				        class="hidden"
+				        pv-anchor="user-image"
+				        pv-class="hidden: !can_use_image">
+				    </div>
+				  </div>
+
+				</div> -->
+				
+				<div class="intrack_page"
+				  pv-nest="vk_posts" pv-events="click:requestPage" pv-type="way-point">
+				  <div class="intrack_page-h"><span class="lang localize-posts-from">Posts form</span><br/>vk.com</div>
+				  <div class="song_fans-l-intrack" pv-class="loading_list_items: loading_nesting_lists_list">
+				    <div
+				      pv-repeat="image in image_previews | limitTo: 13"
+				      class="song_fan-b-tck"
+
+				      >
+				      <img src="" alt=""
+				        class=""
+
+				        pv-props="src:{{image}}">
+				    </div>
+				  </div>
+
+				</div>
+
+
+			</div>
+
+		</div>
+
+
+		
+		
+		
+		
+		<li
+			class="song-file mopla-item"
+			pv-type="{{!selected && vis_wp_usable && 'way-point'}}"
+			pv-events="click:selectFile"
+			pv-class="
+				mf-unavailable: unavailable
+				buffering-progress: buffering_progress
+				playing-file: {{ play == 'play' }}
+				selected-mf: selected
+			">
+			<span
+				class="play-button-place"
+				pv-type="{{selected && 'way-point'}}"
+				pv-events="click:switchPlay">
+				<span class="pc-indicator big-indicator play-indicator pc-place">
+					<span class="pc pc-play big-control"></span>
+				</span>
+
+			</span>
+			<div class="mf-progress" pv-anchor="progress_c">
+				<div
+					class="mf-load-progress"
+					pv-props="style.width:{{vis_loading_p}}"
+					></div>
+				<div
+					class="mf-play-progress"
+					pv-props="style.width:{{vis_playing_p}}"
+					></div>
+				<div class="mf-text">
+					<span class="mf-duration" pv-text="{{visible_duration_text}}"></span>
+					<span class="mf-source" pv-text="{{source_name}}"></span>
+					<span class="main-mf-text" pv-text="{{title}}" pv-props="title:{{description}}"></span>
+
+				</div>
+			</div>
+		</li>
+
+
+		
+		<div class="vk_login_common">
+			<div class="decor">
+				<div class="vk-login-reg-link">
+					<div>
+						<a class="lang external localize-reg " href="https://vk.com/join">registration</a>
+					</div>
+
+					<a  class="js-serv sign-in-to-vk lang localize-sign ">sign in</a>
+
+
+
+				</div>
+				<span class="login-request-desc">
+					<span class="lang localize-to-find-and-play">To find and play</span>
+					<span class="lang localize-music-files-from-vk">music files you</span>
+					<span class="lang localize-vk-auth-invitation">need to login to vk.com (vkontakte.ru)</span>.
+				</span>
+				<div class="fast-code-input-access">
+					<a class="js-serv js-input-code lang localize-input-code">input code</a>
+				</div>
+				<div class="auth-container">
+					<input type="text" placeholder='Put your code here' class="vk-code"/>
+					<button class="use-vk-code lang localize-use-code">Use code</button>
+				</div>
+			</div>
+			<div class="notify-closer">&times;</div>
+		</div>
+		<div class="vk_login vk-login-context">
+			<!--pv-replace sample_name:vk_login_common-->
+		</div>
+		
+		<div class="lfm-auth-module">
+			<div class="auth-block">
+				<p>
+					<span class="button-hole lastfm-auth-bp">
+						<a class="nicebutton lang localize-grant">grant</a>
+					</span>
+					<span class="lfm-auth-request-desc"></span>
+				</p>
+
+				<div class="lfm-finish">
+					<div class="lang localize-enter-code">
+						Enter here code
+					</div>
+					<div>
+						<input type="text" placeholder='Put your code here' class="lfm-code"/>
+						<span class="button-hole">
+							<a class="use-lfm-code nicebutton lang localize-use-code">Use code</a>
+						</span>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		
+		<div class="song-act-tagging">
+			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input" pv-type="way-point"/>
+			<div class="save_tags_b hidden" pv-class="hidden: !has_changes">
+				<span class="button-hole">
+					<span class="nicebutton" pv-events="click::saveTagsChanges" pv-type="way-point">save</span>
+				</span>
+			</div>
+
+			<div class="possible_tags">
+				<div class="tagging_help">
+					<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
+				</div>
+
+			</div>
+			<div class="song_tagging_help">
+				<div class="personal_tags">
+					<h4 class="tagging_header" pv-class="has_tags: petags_result.length  " >
+						<span class="lang localize-your_tags">Your tags</span>
+					</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in petags_result | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag" pv-type="way-point"></span>
+					</div>
+
+				</div>
+
+
+				<div class="top_tags">
+					<h4 class="tagging_header" pv-class="has_tags: toptags.length  ">
+						<span class="lang localize-top_track_tags">Top tags of track</span>
+					</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag" pv-type="way-point"></span>
+					</div>
+
+				</div>
+
+				<div class="artist_tags">
+					<h4 class="tagging_header" pv-class="has_tags: artist_tags.length ">
+						<span class="lang localize-artist_tags">Artist tags</span>
+
+					</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag" pv-type="way-point"></span>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+
+		
+
+		<form class="scrobbling-switches">
+			<p class="lang localize-lfm_scrobbling">
+				scrobbling to last.fm
+			</p>
+
+			<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" />
+				<span class="lang localize-enabled">enabled</span>
+			</label></p>
+			<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" />
+				<span class="lang localize-disabled">disabled</span>
+			</label></p>
+		</form>
+		<div class="song_acting_playlist_add" pv-nest="searcher">
+			<ul pv-nest="section for_model:section-playlist">
+				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="suggest">
+					<a pv-text="{{text_title}}"></a>
+				</li>
+			</ul>
+		</div>
+
+
+		
+		<div class="search_results-container" pv-class="does-not-need-search-from: !needs_search_from">
+			<p class="search-desc">
+				<span class="desc lang localize-search-control-hint"></span>
+			</p>
+			<div class="search_results_sections">
+				<div
+					pv-nest="section for_model:section-playlist"
+					pv-class="hidden: !active"
+					class="hidden">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+					<ul
+						class="sugg-section results-suggests playlist-results"
+						pv-class="odd_section: odd_section active-section: active">
+						<li
+							pv-nest="rendering_list"
+							class="suggest text_title"
+							pv-type="way-point" pv-events="click::view click:requestPageById:%states%playlist_provoda_id"
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
+							">
+							<a pv-class="active: active" >
+								<span pv-text="{{text_title}}"></span>
+							</a>
+						</li>
+
+					</ul>
+				</div>
+				<div
+					pv-nest="section for_model:section-artist"
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+					<ul
+						class="sugg-section results-suggests"
+						pv-class="odd_section: odd_section active-section: active">
+						<li
+							pv-nest="rendering_list"
+							class="suggest text_title"
+							pv-type="way-point" pv-events="click:#showArtcardPage:%states%artist"
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
+							">
+
+							<a pv-class="active: active" >
+								<img
+									pv-props="
+										src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+										alt: {{text_title}}
+									"
+									src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+								<span pv-text="{{text_title}}"></span>
+							</a>
+						</li>
+						<li class="suggest" pv-nest="button"
+							pv-type="way-point" pv-events="click::view"
+							pv-class="
+								searched-bordered: bordered
+								hidden: disabled
+							">
+							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+						</li>
+						<li  pv-class="hidden: !no_results_text">
+							<a pv-text="{{no_results_text}}"></a>
+						</li>
+					</ul>
+				</div>
+				<div
+					pv-nest="section for_model:section-album"
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+					<ul
+						class="sugg-section results-suggests"
+						pv-class="odd_section: odd_section active-section: active">
+						<li
+							pv-nest="rendering_list"
+							class="suggest text_title"
+							pv-type="way-point" pv-events="click::view click:#showArtistAlbum:%states%artist:%states%name:%states%aid"
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
+							">
+
+							<a pv-class="active: active" >
+								<img
+									pv-props="
+										src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+										alt: {{text_title}}
+									"
+									src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+								<span class="suggest-artist_name" pv-text="{{artist}}"></span>
+								<span class="suggest-suggest-album_name" pv-text="{{name}}"></span>
+							</a>
+						</li>
+						<li class="suggest" pv-nest="button"
+							pv-type="way-point" pv-events="click::view"
+							pv-class="
+								searched-bordered: bordered
+								hidden: disabled
+							">
+							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+						</li>
+						<li  pv-class="hidden: !no_results_text">
+							<a pv-text="{{no_results_text}}"></a>
+						</li>
+					</ul>
+				</div>
+				<div
+					pv-nest="section for_model:section-track"
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+					<ul
+						class="sugg-section results-suggests"
+						pv-class="odd_section: odd_section active-section: active">
+						<li
+							pv-nest="rendering_list"
+							class="suggest text_title"
+							pv-type="way-point" pv-events="click::view click:#showTopTracks:%states%artist:%states%track"
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
+							">
+
+							<a pv-class="active: active" >
+								<img
+									pv-props="
+										src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+										alt: {{text_title}}
+									"
+									src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+								<span class="sugg-track-dur" pv-text="{{duration_text}}"></span>
+								<span class="suggest-track_name" pv-text="{{track}}"></span>
+								<span class="suggest-artist_name" pv-text="{{artist}}"></span>
+							</a>
+						</li>
+						<li class="suggest" pv-nest="button"
+							pv-type="way-point" pv-events="click::view"
+							pv-class="
+								searched-bordered: bordered
+								hidden: disabled
+							">
+							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+						</li>
+						<li  pv-class="hidden: !no_results_text">
+							<a pv-text="{{no_results_text}}"></a>
+						</li>
+					</ul>
+				</div>
+
+				<div
+					pv-nest="section for_model:section-tag"
+					pv-class="hidden: !active">
+					<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+					<ul
+						class="sugg-section results-suggests"
+						pv-class="odd_section: odd_section active-section: active">
+						<li
+							pv-nest="rendering_list"
+							class="suggest text_title"
+							pv-type="way-point" pv-events="click::view click:#showTag:%states%tag"
+							pv-class="
+								hidden: !text_title
+								searched-bordered: bordered
+								hidden: disabled
+							">
+							<a pv-class="active: active" >
+								<span pv-text="{{text_title}}"></span>
+							</a>
+						</li>
+						<li class="suggest" pv-nest="button"
+							pv-type="way-point" pv-events="click::view"
+							pv-class="
+								searched-bordered: bordered
+								hidden: disabled
+							">
+							<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+						</li>
+						<li  pv-class="hidden: !no_results_text">
+							<a pv-text="{{no_results_text}}"></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+
+		
+		
+		<div class="vk_posts_page usual_page">
+			<div pv-nest="lists_list" class="vk_post" pv-events="click:requestPage">
+				<div class="vk_post_header">
+					<div class="leftcol">
+						<div class="vk_post_owner">
+							<img width="100" height="100" src="" alt="" pv-props="src:{{owner_info.photo_medium_rec || owner_info.photo_100}}">
+						</div>
+						<div>
+							<span pv-text="{{owner_info.first_name || owner_info.name}}"></span>
+							<span pv-text="{{owner_info.last_name}}"></span>
+						</div>
+						<div pv-text="{{date_desc}}"></div>
+						<div>Likes <span pv-text="{{likes}}"></span>, Reposts <span pv-text="{{reposts}}"></span></div>
+
+					</div>
+				</div>
+				<div pv-text="{{text_body}}" class="vk_post_text_body"></div>
+				<div >
+					<span pv-repeat="photo in photos" pv-class="hidden: nothing" class="hidden">
+						<img src="" alt="" class="vk_post_oneimage" pv-props="src:{{photo.photo_604}}">
+					</span>
+
+				</div>
+				<div class="leftcol" pv-nest="songs-list">
+					<div class='compact_song' >
+						<div class="compact_song-image_con">
+							<img
+								alt=""
+								class="hidden"
+								pv-props="
+									alt: {{song_title}}
+									src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+								"
+								pv-class="hidden: !selected_image"
+							>
+						</div>
+						<div pv-text="{{artist}}" class="compact_song-artist_name"></div>
+						<div pv-text="{{track}}" class="compact_song-track_name"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+		
+		<div class="view_sources hidden" pv-class="hidden: !view_sources.length">
+			Powered by
+			<div>
+				<a class="external data_source_link" pv-repeat="source in view_sources" pv-text="{{source}} " pv-props="href:{{'http://' + source}}"></a>
+			</div>
+		</div>
+
+
+		<div class="app-news">
+			<span pv-repeat="entity in news_list|limitTo:1">
+				<h3>
+					<span pv-text="{{entity.date}}" class="desc"></span>
+					<span pv-text="{{entity.header}}"></span>
+				</h3>
+				<div pv-text="{{entity.body}}"></div>
+
+				<a class="external" pv-props="href:{{entity.link}}" pv-text="{{entity.link_text}}"></a>
+			</span>
+		</div>
+
+
+		<ul class="track-video" >
+			<li class="you-tube-video-link"
+				pv-nest="yt_videos"
+				pv-props="title:{{nav_title}}"
+				pv-events="click|sp,pd::requestVideo"
+				pv-type="way-point"
+				pv-class="cant-show: cant_show">
+				<a class='video-preview external' pv-props="href:{{ yt_id && 'http://www.youtube.com/watch?v=' + yt_id }}">
+					<img  alt="" class="whole" pv-props="src:{{previews.default}}" pv-when="!triple"/>
+					<span class="preview-slicer" pv-repeat="pict in triple">
+						<img
+							class="preview-part" alt=""
+							pv-props="src:{{pict}}"
+							pv-class="
+								preview-start: $first
+								preview-middle: $middle
+								preview-end: {{ $last  }}
+								"
+						/>
+					</span>
+				</a>
+			</li>
+		</ul>
+
+		
+
+
+		
+		<div class="help_app_message attention-message">
+			<a class='close-message' pv-events="click::closeMessage:rating-help">×</a>
+			<img
+				class="message-image"
+				src="http://cs9767.userapi.com/u198193/b_b379d470.jpg"
+				width="100"
+				height="126"
+				alt="Gleb Arestov"
+			/>
+			<span pv-anchor="help_text"></span>
+		</div>
+
+
+		
+		<div class="current-song-view playlist-container show-zoom-to-track">
+			<ul
+				class="tracks-for-play"
+				pv-anchor="lc"
+				pv-class="
+					loading: list_loading
+				"
+				>
+		    <script pv-nest='vis_neig_prev' pv-import="song-view"></script>
+
+		    <!--pv-replace sample_name:song-view-->
+
+		    <script pv-nest='vis_neig_next' pv-import="song-view"></script>
+		  </ul>
+		</div>
+
+
+	</div>
+<div id="slider" pv-nest="spyglass__navigation">
+	<div class="navs ">
+		<div class="appnav_wrap">
+			<a
+					class="nav-item np-button hidden"
+					pv-props="title:{{now_playing_text}}"
+					pv-class="
+						hidden: !now_playing_text
+						nav-button: !viewing_playing
+						np-button-nh_intend: {{ !nav_helper_is_needed && viewing_playing && (played_playlists$length > 1) }}
+						player-played: playing
+						np-button-can_ff: {{ nav_helper_is_needed && !viewing_playing }}
+					"
+					pv-events="click::suggestNavHelper"
+					pv-type="{{!viewing_playing && 'way-point'}}"
+					><span class="np"></span></a>
+			<div class="daddy not-inited">
+				<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+
+			</div>
+		</div>
+		<div class="app-loading-mark"></div>
+
+	</div>
+	<div id="slider-materail" class="shadowed">
+			<div id="nav-helper"
+				class="nav_helper hidden"
+				pv-class="
+					hidden: !nav_helper_is_needed
+					nav_helper-full: nav_helper_full">
+				<div class="nvh-arrow">
+					<div class="nvh-s-arrow arrow-part">
+						<div class="nvh-s-arrow-bg arrow-part"></div>
+					</div>
+				</div>
+				<h5 class="nav_helper-header">
+					Played playlists history
+				</h5>
+
+				<div
+					pv-nest="played_playlists"
+					class="nav_pl_hitem"
+					pv-class="
+						nav_pl_hitem-allow_preview: {{ $index < 2 }}
+						nav_pl_hitem-selected: mp_show
+					"
+					pv-events="click::^closeNavHelper click:#requestPageById:%states%last_played_song_provoda_id">
+					<span pv-text="{{nav_title}}"></span>
+					<div pv-nest="last_played_song"  class="nav_pl_hitem-song" pv-class=" player_song: player_song">
+						<span pv-text="{{nav_title}}"></span>
+						
+						<span
+						  class="playing-song-mark"
+						  pv-class="playing-process: {{ play == 'play' }} "
+						  >
+						</span>
+
+					</div>
+
+				</div>
+				<span
+					class="hidden nav_helper-fullb"
+					pv-class="hidden: {{ (played_playlists$length < 3 || nav_helper_full) }}"
+					pv-events="click:showFullNavHelper"><span pv-text="{{played_playlists$length - 2}}"></span> items</span>
+
+				<span pv-events="click::closeNavHelper" class="nav_helper-closer">&times;</span>
+
+			</div>
+			<div class="screens" id="screens">
+
+				<div id="pages_area_width_streamer-wrapper">
+					<iframe src="about:blank" id="pages_area_width_streamer"></iframe>
+				</div>
+
+				<div class="app_map_con">
+				<div class="shared-parts">
+          <div pv-nest="search_criteria">
+            
+            <form
+            	id="search"
+            	name="search"
+            	action='/o'
+            	method="get"
+            	class=""
+            	pv-class="hidden: !show_search_form"
+            	pv-events="submit:preventSubmit"
+            >
+              <!-- google stat for custom search in browsers -->
+              <div>
+                <input type="hidden" name="utm_source" value="web_app" id="app_type">
+                <input type="hidden" name="utm_medium" value="form search">
+                <input type="hidden" name="utm_campaign" value="application">
+              </div>
+              <!-- / google stat -->
+              <p id="search-p">
+                <label>
+                  <span class='main_search_label lang localize-search-big' pv-class="hidden: query_face">Search artists, albums, songs, tags</span>
+                  <span class="inpt">
+            				<input
+            	        type="search" name="q" size="50"  autocomplete="off"
+            					class="main-search-input"
+            	        pv-anchor="search_face"
+            	        pv-type="{{show_search_form && 'way-point'}}"
+            					pv-events="input::updateState:query_value:%node%value"
+            					pv-props="value:{{query_face}}"
+            				/>
+            			</span>
+
+                </label>
+
+              </p>
+
+
+            </form>
+
+          </div>
+				</div>
+				<div
+					id="root_level"
+					class="complex-page root_level full-page can_be_animated"
+					pv-foreign
+					pv-class="
+						inactive-page: {{ current_lev_num != $lev_num }}
+						full-page: {{ current_lev_num == $lev_num }}
+						page-scheme: {{ (current_lev_num - 1) == $lev_num }}
+						can_be_animated: !disallow_animation"
+					pv-anchor="con">
+					<div
+						class="complex-page-scroll_con"
+						pv-anchor="scroll_con">
+            
+            
+            
+            
+            
+            <div class="complex-page_material start-screen"
+              id="start-screen" pv-foreign>
+            	<p pv-nest="search_criteria" class="search-desc search-form-desc">
+            		<span class="lang localize-trysearches desc">try to search</span>
+            		<a
+            			id='hint-query'
+            			class="hint-query js-serv"
+            			pv-text="{{nice_artist_hint}}"
+            			pv-type="way-point"
+            			pv-events="click::requestSearchHint mouseout::changeSearchHint">The Beatles</a>
+            	</p>
+              <div
+                class="block-for-startpage start-page-messages"
+                pv-anchor="start-page-messages">
+                <!--pv-replace sample_name:help_app_message pv-when:ask_rating_help-->
+              </div>
+              <!--
+              <div class="area_for_button" pv-nest="albums_list">
+                <div class="area-button" pv-anchor="big_button">
+                  <span pv-text="{{nav_title}}">Albums</span>
+                </div>
+                <div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+              </div>
+              -->
+
+              <div class="personal-stuff-preview has-dark-buttons no_arfb">
+                <div class="to-open-block area-button">
+                  <span class="lang localize-your-pmus-f-aq">Your personal music, friends and acquaintances</span>
+
+                  <div class="area-description">
+                    <span class="lang localize-reccoms-for-you">Recommendations for you</span>,
+                    <span class="lang localize-loved-tracks">Loved Tracks</span>,
+                    <span class="lang localize-vk-audio">Vkontakte audio</span>
+                  </div>
+                </div>
+                <div class="aqc_preview preview_ffp"></div>
+
+                <div class="block-for-startpage relations-invites-wrap hidden"></div>
+                <div class="block-for-startpage relations-likes-wrap hidden"></div>
+
+              </div>
+
+
+              <div class="block-for-startpage">
+                <div class="music-conductor-preview" pv-nest="muco">
+                  <div class="arb-union">
+                    <div
+                      class="area_for_button" pv-class="button_selected: mp_show"
+                      pv-events="click:requestPage" pv-type="way-point">
+                      <div class="to-open-block area-button">
+                        <span class="lang localize-music-cond">Music Conductor</span>
+                      </div>
+                      <div class="area-description">
+                        <div class="desc_prevw_list">
+                          <span pv-nest="preview_list" pv-text="{{nav_title}}{{!$last && ', '}}"></span>
+                          <div pv-when="preview_images.length" class="hidden" pv-class="hidden: !preview_images.length">
+                            <span pv-repeat="selected_image in preview_images"
+                              class="desc_item-imgcon">
+                              <img src="" alt=""
+                                pv-class="hidden: !selected_image"
+                                pv-props=
+                                "src: {{
+                                (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+                                || selected_image.url
+                                }}">
+                            </span>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="arb-union" pv-nest="tags">
+                    <div class="no_arfb">
+                      <div class="to-open-block area-button" pv-anchor="button_area">
+                        <span class="lang localize-Tags">Tags</span>
+                      </div>
+                    </div>
+                    <div class="hidden" pv-class="hidden: nothing">
+                      <div class="preview_ffp tags_list">
+                        <span pv-repeat="tag in preview_list">
+                          <a
+                            class="js-serv"
+                            pv-text="{{tag.name}}"
+                            pv-type="way-point"
+                            pv-events="click:#showTag:{{tag.name}}"
+                            ></a>
+                        </span>
+                      </div>
+                      <div class="preview_ffp tags_con"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="block-for-startpage users-play-this" pv-when="users_listenings.length">
+                  <h3>
+                    <span class="lang localize-User-listening"></span>
+                    <a class="js-serv lang localize-refresh" pv-events="click::refreshListeners">Refresh</a>
+                  </h3>
+                  <ul>
+                    <li pv-repeat="lig in users_listenings|limitTo:12">
+                      <div class="vk-ava">
+                        <img alt="user photo" pv-props="src:{{lig.info.photo}}">
+                      </div>
+                      <div class="desc-row">
+                        <a class="" pv-text="{{lig.info.first_name}}" pv-props="href:{{'#/users/vk:' + lig.vk_id}}"></a>
+                        <span class="lang localize-listening">are listening</span>
+                      </div>
+                      <a class="song-by-user" pv-props="title:{{lig.artist + ' - ' + lig.title}}"
+                        pv-events="click:#showTopTracks:{{lig.artist}}:{{lig.title}}">
+                        <span class="song-artist_name" pv-text="{{lig.artist}}"></span>
+                        <span class="song-track-name" pv-text="{{lig.title}}"></span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="block-for-startpage full_wide_col">
+                donate bitcoin: <a href="https://blockchain.info/address/1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN" class="external">1GQYTZfCNNpHcEQAJJrQ5RnKYzaW5ioMdN</a> <br/>
+                twitter: <a href="https://twitter.com/seesu_app" class="external">seesu_app</a>
+              </div>
+              <div class="block-for-startpage full_wide_col">
+                <div pv-nest="news" class="hidden" pv-class="hidden: nothing">
+                  <a pv-text="{{nav_title}}:" class="js-serv" pv-events="click:requestPage"></a>
+                  <span pv-repeat="entity in news_list|limitTo:1">
+                    <span pv-text="{{entity.date}}" class="desc"></span>
+                    <span pv-text="{{entity.header}}"></span>
+                  </span>
+                </div>
+              </div>
+
+
+              <!--pv-replace sample_name:view_sources-->
+            </div>
+
+				  </div>
+
+
+				</div>
+
+
+			</div></div>
+
+			<div id="promo"></div>
+			<div class="footer">
+
+			</div>
+
+	</div>
+
+
+
+	<div id="wb" class="window-bottom"></div>
+</div>
+</body>
+</html>

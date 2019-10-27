@@ -1,0 +1,330 @@
+<style>
+.share-song{
+	padding-top:1rem;
+	}
+	.share-song .song-link{
+		box-sizing: border-box;
+		width:100%;
+		}
+	.share-song .users-list{
+
+		margin-top:1.72rem;
+		}
+
+		.share-song .song_acting_vk_search{
+			overflow: hidden;
+			}
+		.share-song .users-list .vk-login-context{
+			margin:1rem -1rem 0;
+			border-radius: 0;
+		}
+		.share-song .song_acting_vk_search{
+
+		}
+		.share-user-suggest{
+			float:left;
+			width:50%;
+			margin-bottom:7px;
+		}
+.shareb-base .details_switch_block{
+	float: right;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
+	}
+	.shareb-base .details_switch_block .desc{
+		float:left;
+		margin-right: 0.5rem;
+		}
+	.shareb-base .details_switch_block  .details_switch{
+		float: right;
+		}
+
+	.shareb-base .details_for_switcher{
+		clear: both;
+		}
+</style>
+<style media="screen">
+.shareb-base.sharebopened .share-user-suggest{
+
+
+
+  }
+  .shareb-base .share-user-suggest a{
+    min-width:200px;
+  }
+  .shareb-base .share-user-suggest a, .post-to-my-vk-wall{
+    display: block;
+    overflow: hidden;
+    padding: 3px 6px 3px 3px;
+    border-radius:3px;
+    cursor: pointer;
+    }
+  .share-user-suggest img{
+    width:25px;
+    height:25px;
+    float: left;
+  }
+  .shareb-base .share-user-suggest img, .post-to-my-vk-wall img{
+    float:left;
+    margin-right:7px;
+    width:1.8rem;
+    height:1.8rem;
+    }
+  .shareb-base .share-user-suggest:hover a,.post-to-my-vk-wall:hover{
+    background-color: transparent;
+    }
+  .theme--dark .shareb-base .share-user-suggest:hover a,.theme--dark .post-to-my-vk-wall:hover{
+    background-color:#494949;
+}
+</style>
+<style>
+
+
+.vk_share{
+
+	}
+	.vk_share h3{
+
+		}
+	.share_header_wrap{
+		overflow: hidden;
+		margin-top: 1.5rem;
+	}
+	.vk_share_header{
+		float:left;
+		color: transparent;
+		padding-top: 0.1rem;
+		margin: 0 1rem 0 0;
+	}
+	.theme--dark .vk_share_header{
+		color: #999;
+}
+	.post-to-my-vk-wall{
+		float:left;
+	}
+.lfm_share{
+	margin-top: 0.5rem;
+}
+
+.song_acting_vk_search{
+	overflow: hidden;
+}
+.shareb-base{
+	background: transparent;
+	border: 1px solid transparent;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	border-radius: 0.5rem;
+	margin-bottom: 0.2rem;
+	padding: 0.7rem;
+	overflow: hidden;
+	}
+.theme--dark .shareb-base{
+		background-color: #545454;
+		border-color: transparent;
+		border-top-color: #4E4E4E;
+		border-bottom-color: #646464;
+}
+
+	.shareb-con{
+		clear: both;
+		}
+
+</style>
+<style>
+.protect_clicks{
+	position: relative;
+
+	}
+.clicks_protecter{
+	position: absolute;
+	display: none;
+	left:0;
+	top:0;
+	bottom: 0;
+	right: 0;
+	background: transparent;
+	opacity: 0.5;
+	}
+.theme--dark .clicks_protecter{
+	background-color: #333;
+
+}
+	.clicks_protecter:hover{
+		cursor: pointer;
+		border-bottom: 0.2rem solid transparent;
+		}
+	.theme--dark .clicks_protecter:hover{
+	border-bottom-color: #fff;
+
+}
+.compact_share {
+
+	}
+	.compact_share .clicks_protecter{
+		display: block;
+	}
+	.share-song .compact_share .protect_clicks{
+		height: 4.5rem;
+		}
+	.compact_share .share-user-suggest{
+		width: auto;
+		margin-bottom:0;
+	}
+	.compact_share .share-user-suggest a{
+		padding: 0;
+		border-radius: 0;
+		cursor: default;
+		min-width: 0;
+		}
+	.compact_share .share-user-suggest img{
+		margin-right:0;
+		}
+	.compact_share .text_part{
+		display: none;
+		}
+
+.friends-search-desc{
+	clear: both;
+	float: left;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
+	}
+</style>
+<div class="share-song" pv-nest="current_md for_model:row-share">
+  <input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
+  <div
+    class="shareb-base  users-list"
+    pv-anchor="vk_share_b">
+
+    <div class="shareb-con">
+
+      <div >
+
+        <div class="">
+          <input type="text" pv-anchor="vk_share_search">
+        </div>
+
+        <div pv-nest="searcher">
+
+          <div pv-nest="section for_model:section-vk-users" class="vk_share">
+            <div class="vk_auth" pv-anchor="vk_auth"></div>
+            <div pv-class="hidden: needs_vk_auth">
+              <div>
+                <div class="share_header_wrap">
+                  <h3 class="vk_share_header lang localize-post-song"></h3>
+                  <div class="post-to-my-vk-wall" pv-class="hidden: !own_photo" pv-events="click::postToVKWall" pv-type="way-point">
+                    <img pv-props="src: {{own_photo}}">
+                    <span class="lang localize-to-own-wall"></span>
+                  </div>
+                </div>
+
+                <div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
+              </div>
+              <div class="details_switch_block">
+                <span class="desc">vk.com</span>
+
+                <div class="details_switch" >
+                  <div
+                    class="min_details"
+                    pv-class="active: !vis_full_view_mode"
+                    pv-events="click:toggleVisState:full_view_mode::">
+                    <span class="icon"></span>
+                  </div>
+                  <div
+                    class="max_details"
+                    pv-class="active: vis_full_view_mode"
+                    pv-events="click:toggleVisState:full_view_mode:true">
+                    <span class="icon"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+                <div class="song_acting_vk_search protect_clicks  details_for_switcher ">
+                  <ul>
+                    <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+                      <a>
+                        <img pv-props="src:{{photo}}">
+                        <span pv-text="{{text_title}}" class="text_part"></span>
+                      </a>
+                    </li>
+                  </ul>
+                  <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+          </div>
+
+          <div pv-anchor="lfm_auth_con"></div>
+          <div pv-nest="section for_model:section-lfm-user"
+            class="lfm_share"
+            pv-class="hidden: !can_share">
+            <ul >
+              <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+                <a>
+                  <img src="" alt=""
+
+                    pv-props=
+                    "src: {{
+                    (selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id)
+                    || selected_image.url
+                    }}">
+                  <span pv-text="{{text_title}}" class="text_part"></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div pv-nest="section for_model:section-lfm-friends"
+            class="lfm_share"
+            pv-class="hidden: !can_share"
+
+          >
+            <div class="details_switch_block">
+              <span class="desc">last.fm</span>
+
+              <div class="details_switch" >
+                <div
+                  class="min_details"
+                  pv-class="active: !vis_full_view_mode"
+                  pv-events="click:toggleVisState:full_view_mode::">
+                  <span class="icon"></span>
+                </div>
+                <div
+                  class="max_details"
+                  pv-class="active: vis_full_view_mode"
+                  pv-events="click:toggleVisState:full_view_mode:true">
+                  <span class="icon"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="compact_share" pv-class="compact_share: !vis_full_view_mode">
+              <div class="song_acting_lfm_search protect_clicks details_for_switcher" >
+                <ul >
+                  <li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+                    <a>
+                      <img pv-props="
+                          src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
+                        ">
+
+                      <span pv-text="{{text_title}}" class="text_part"></span>
+                    </a>
+                  </li>
+                </ul>
+                <div class="clicks_protecter" pv-events="click:requestFullView"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets">
+	<name xml:lang="en">Seesu Music</name>
+	<name xml:lang="ru">Сису музыкальная</name>
+	<description xml:lang="en">Music search, player and meetings. Powered by last.fm and others.</description>
+	<description xml:lang="ru">Музыкальные поиск, проигрыватель и знакомства. Технологии last.fm и др. сервисов</description>
+	<author href="http://arestov.me/" email='gleb.arestov@gmail.com'>Gleb Arestov</author>
+	<icon width="128" height="128" src="icons/icon128.png"/>
+	<icon width="64" height="64" src="icons/icon64.png"/>
+	<icon width="48" height="48" src="icons/icon48.png"/>
+	<icon width="32" height="32" src="icons/icon32.png"/>
+	<icon width="19" height="19" src="icons/icon19.png"/>
+	<icon width="16" height="16" src="icons/icon16.png"/>
+	<content src="bg.html"/>
+	
+
+
+	<access subdomains="true" origin="https://vk.com/" />
+	<access subdomains="true" origin="http://vk.com/" />
+	<access subdomains="true" origin="http://last.fm/" />
+	<access subdomains="true" origin="http://audioscrobbler.com/" />
+	<access subdomains="true" origin="http://api.soundcloud.com/" />
+	<access subdomains="true" origin="http://nigma.ru/" />
+	<access subdomains="false" origin="https://ajax.googleapis.com/" />
+	<access subdomains="false" origin="http://gdata.youtube.com/" />
+	<access subdomains="true" origin="http://isohunt.com/" />
+	<access subdomains="true" origin="http://seesu.me/" />
+	<access subdomains="false" origin="http://api.songkick.com/" />
+	<access subdomains="false" origin="http://ex.fm/" />
+	<access subdomains="false" origin="http://hypem.com/" />
+	<access subdomains="true" origin="http://hypem.net/" />
+	<access subdomains="true" origin="http://pleer.net/" />
+
+	
+	<access subdomains="false" origin="http://api.discogs.com/" />
+
+	<access subdomains="true" origin="http://youtube.com/" />
+	<access subdomains="true" origin="http://sndcdn.com/" />
+	
+	<access subdomains="false" origin="http://i.ytimg.com/" />
+	<access subdomains="false" origin="http://s.pixogs.com/" />
+	<access subdomains="true" origin="https://google-analytics.com/" />
+	<access subdomains="true" origin="http://google-analytics.com/" />
+	<access subdomains="true" origin="http://userapi.com/" />
+	<access subdomains="true" origin="http://vk.me/" />
+	<access					  origin="http://arestov.github.io/" />
+</widget>

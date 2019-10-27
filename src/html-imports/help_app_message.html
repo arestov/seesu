@@ -1,0 +1,48 @@
+<style>
+.attention-message{
+	overflow: hidden;
+	margin: 0 -1rem;
+	padding: 1rem;
+	border-radius: 7px;
+	background: transparent;
+	color: transparent;
+	}
+.theme--dark .attention-message{
+	background-color: #404040;
+	color: #999;
+}
+	.attention-message .message-image{
+		float: left;
+		margin-right: 1rem;
+		}
+	.attention-message .close-message{
+		float:right;
+		margin-top: -0.3rem;
+		margin-left: 1rem;
+		height: 0.5rem;
+		color:transparent;
+		font-size:3rem;
+		line-height: 1;
+		cursor: pointer;
+		}
+	.theme--dark .attention-message .close-message{
+	color: #999;
+}
+		.attention-message .close-message:hover{
+			color:transparent;
+			}
+		.theme--dark .attention-message .close-message:hover{
+	color: #ccc;
+}
+</style>
+<div class="help_app_message attention-message">
+	<a class='close-message' pv-events="click::closeMessage:rating-help">×</a>
+	<img
+		class="message-image"
+		src="http://cs9767.userapi.com/u198193/b_b379d470.jpg"
+		width="100"
+		height="126"
+		alt="Gleb Arestov"
+	/>
+	<span pv-anchor="help_text"></span>
+</div>

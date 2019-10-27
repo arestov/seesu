@@ -1,0 +1,56 @@
+<style>
+.playlist-container{
+	padding-top: 4px;
+	}
+
+.tracks-for-play{
+	clear:both;
+	}
+	.tracks-for-play.loading{
+		position: relative;
+		padding-bottom: 30px;
+		margin-bottom: -30px;
+	}
+	.tracks-for-play.loading:after{
+		left: auto;
+		top: auto;
+		bottom: 0;
+		right: 0.3rem;
+		}
+
+.show-zoom-to-track .tracks-for-play{
+	position: relative;
+}
+
+.show-zoom-to-track .tracks-for-play{
+	padding-top:40px;
+}
+
+.show-zoom-to-track .load-more-list-data{
+	display: none;
+}
+
+</style>
+<div class="playlist-container"
+	pv-class="
+		has-files-in-songs: can_play
+		show-zoom-to-track: {{ !vis_overview && !mp_has_focus }}
+		">
+	<!--pv-replace sample_name:playlist_panel-->
+
+	<ul
+		class="tracks-for-play"
+		pv-anchor="lc"
+		pv-class="
+			loading: list_loading
+			list-overview: mp_has_focus
+		"
+		></ul>
+	<div class="lang localize-nothing-found" pv-class="hidden: !error"></div>
+
+	<a
+		class='load-more-list-data lang localize-load-more'
+		pv-events="click::requestMoreData:songs-list"
+		pv-type="{{more_load_available && 'way-point'}}"
+		pv-class="hidden: !more_load_available">Load more</a>
+</div>

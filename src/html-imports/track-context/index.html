@@ -1,0 +1,208 @@
+<style>
+.track-context{
+	margin-top:0.5rem;
+	padding:0 8px 10px;
+	min-height: 389px;
+	}
+	.track-context .song-row-content{
+		margin-bottom: 0;
+		}
+	@media (min-height:600px) {
+		.track-context{
+			min-height: 422px;
+			}
+		}
+
+.track-context{
+	display:none;
+}
+
+.show-zoom-to-track .viewing-song .track-context{
+	display:block;
+}
+
+.track-context .photo_and_artinfo{
+	border-top:1px solid transparent;
+	border-bottom:1px solid transparent;
+	background:transparent;
+	margin:0 -13px;
+}
+
+.theme--dark .track-context .photo_and_artinfo{
+	border-top-color:#555555;
+	border-bottom-color:#6e6e6e;
+	background-color:#5a5a5a;
+}
+
+.album_insong_image {
+	width: 135px;
+}
+
+@media (min-height:600px) {
+	.album_insong_image {
+		width: 172px;
+	}
+}
+
+.song-actions{
+	clear:both;
+	padding:0.5rem 0 0.65rem;
+	}
+	.song-actions .song-row-content{
+		margin-top: 1rem;
+		}
+.track-panel{
+	position:relative;
+	top:1px;
+	height:26px;
+	}
+
+	.track-panel .pc-place{
+		float:left;
+		margin-right:6px;
+	}
+
+.song-row-content{
+	position:relative;
+	margin: 0 -13px 11px;
+	padding: 0 13px 1rem;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	background: transparent;
+	}
+
+.theme--dark .song-row-content{
+	border-top-color:#555555;
+	border-bottom-color:#6e6e6e;
+	background-color:#5a5a5a;
+}
+	.song-row-content .simple_row_setting{
+		padding-top:1rem;
+		}
+		.song-row-label{
+			padding: 0.3rem 0.5rem;
+			}
+
+</style>
+<style type="text/css">
+
+</style>
+<style>
+.song_fans-l-intrack{
+	max-height: 3rem;
+	overflow: hidden;
+	}
+.song_fan-b-tck{
+	float:left;
+	height: 3rem;
+	width: 3rem;
+	overflow: hidden;
+	position: relative;
+	background-size:60%;
+	background-position: 50% 50%;
+	background-image: url(../i/user.svg);
+	background-repeat: no-repeat;
+	}
+
+	.song_fan-b-tck img{
+		height: 100%;
+		width: 100%;
+		}
+</style>
+<!--
+<style>
+.song_fan-h-tck{
+	position: absolute;
+	top: 0;
+	visibility: hidden;
+	z-index: 2;
+	width: inherit;
+	text-overflow: ellipsis;
+	text-shadow: #333 1px 1px 1px;
+	word-wrap: break-word;
+	line-height: 1;
+	font-size: 0.8em;
+	padding: 0.3rem;
+	box-sizing: border-box;
+	}
+</style>
+-->
+
+<style>
+.row-song-context input{
+	margin:0;
+	border-color:transparent;
+	border-radius:4px;
+	background: transparent;
+	color:transparent;
+
+}
+.theme--dark .row-song-context input{
+	border-color:#919191;
+	background-color:#777;
+	color:#eee;
+
+}
+</style>
+<div class="track-context" >
+	<!--pv-replace sample_name:moplas_block pv-when:must_expand-->
+	<div >
+
+	</div>
+	<div class="song-actions" pv-anchor="song-actions" pv-nest="actionsrow">
+		<div class="track-panel" pv-anchor="buttons_panel">
+			<!--import-include('./buttons-panel.html')-->
+
+		</div>
+		<div
+			>
+      <div
+        pv-nest="spyglass__song_action"
+        class="hidden song-row-content row-song-context"
+        pv-class="hidden: !current_md$exists">
+        <span
+          pv-nest="current_md:arrow"
+          class="rc-arrow" pv-anchor="arrow" pv-props="style.left: {{arrow_pos}}">
+  				<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+  			</span>
+        <!--import-include('./addsong-to-playlist.html')-->
+  			<!--import-include('./share-song.html')-->
+  			<div class="love-song" pv-nest="current_md for_model:row-love"></div>
+  			<div class="song-tagging" pv-nest="current_md for_model:row-tag"></div>
+  			<div class="last-fm-scrobbling" pv-nest="current_md for_model:row-lastfm"></div>
+  			<div class="simple_row_setting" pv-nest="current_md for_model:row-repeat-song">
+  				<label class="song-row-label">
+  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{rept_song}}"/>
+  					<span class="lang localize-rept-song">Repeat playing song</span>
+  				</label>
+
+  			</div>
+  			<div class="simple_row_setting" pv-nest="current_md for_model:row-pl-shuffle">
+  				<label class="song-row-label">
+  					<input type="checkbox" pv-events="click::switchSetting:%node%.checked" pv-type="way-point" pv-props="checked: {{pl_shuffle}}"/>
+  					<span class="lang localize-shuffl-list">Shuffled playlist playing</span>
+  				</label>
+  			</div>
+      </div>
+		</div>
+	</div>
+	<div class="photo_and_artinfo">
+		<div class="photo-cont"><div class="photo-cont-lift" pv-anchor="phocoli">
+			<img
+				src="" alt="" class="artist_image"
+				pv-repeat="image in available_images"
+				pv-class="album_insong_image: $first"
+				pv-props="src:{{(image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + image.lfm_id)|| image.url}}">
+		</div></div>
+		<div pv-nest="artist" class="nested_artist">
+			<!--pv-replace sample_name:artist_preview-base-->
+		</div>
+	</div>
+
+	<div pv-nest="songcard">
+		<!--import-include('./users.html')-->
+		<!--import-include('./intrack_page.html')-->
+
+	</div>
+
+</div>

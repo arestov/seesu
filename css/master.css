@@ -1,0 +1,657 @@
+html{
+	font-size:14px;
+}
+body{
+	font-size:14px;
+	margin:0;
+	padding:0;
+	width: 760px;
+
+	height:596px;
+	color:transparent;
+
+	font-family: Arial, Helvetica ,sans-serif;
+	line-height:1.5;
+
+	}
+.theme--dark body{
+	color:#E6E6E6;
+}
+body.slice-for-height{
+	overflow:hidden;
+}
+html.not-as-application{
+	position:static;
+}
+html.not-as-application, .not-as-application  body{
+	height:100%;
+	width: auto;
+}
+
+.not-as-application body{
+	background-color: transparent;
+
+
+}
+
+.theme--dark.not-as-application body{
+	background-color:#505050;
+}
+.not-as-application .slider-materail{
+	padding-bottom:15px;
+}
+.big_spinner:after, .app-loading-mark:after, .wait_love_done .add-to-lfmfav:after, .artists_list.list_loading_state:after, .tracks-for-play.loading:after, .photo-cont.loading-images:after{
+	position: absolute;
+	top:0;
+	left:0;
+	content: url(../i/spinner.svg);
+	height: 1.72rem;
+	width: 1.72rem;
+	pointer-events: none;
+}
+
+.small_spiner:after,
+.selected-mf.buffering-progress .mf-progress:after,
+.block-for-startpage.loading:after,
+#search #search-p label span.loading:after,
+.search_results-container h4.loading:after,
+.art_card-bio.loading:after,
+.vk-login-context.waiting-auth .deco:after,
+.desc_prevw_list.list_loading:after,
+.search-mp3 .files-load-states:after,
+a.track_name_loading .song-track-name,
+.moplas-block-shift.list_loading:after,
+.loading_list_items:after {
+	position: absolute;
+	top:0;
+	left:0;
+	content: url(../i/spinner.svg);
+	height: 1.143rem;
+	width: 1.143rem;
+	pointer-events: none;
+}
+
+.keys-navigation-focus{
+	box-shadow: 0 0 3pt 2pt orange;
+	}
+
+.app-loading-mark{
+	height: 1.72rem;
+	width: 1.72rem;
+	margin-left: -0.86rem;
+	position: absolute;
+	top: 0.5rem;
+	left: 50%;
+	}
+
+	.app-loaded .app-loading-mark{
+		display: none;
+		}
+
+.sm2proxy{
+	position: absolute;
+	top:3rem;
+	z-index:-10;
+	width:12rem;
+	height:12rem;
+	border: 0;
+}
+.sm2proxy.sm2-complete{
+	left:-70rem;
+}
+.sm2proxy.long-appearance{
+	z-index:10;
+}
+
+
+#close-widget{
+	position:absolute;
+	top:5px;
+	right:8px;
+	height:25px;
+	color:transparent;
+	font-size:1.2rem;
+	font-family:"Trebuchet MS", sans-serif;
+	line-height:1;
+	cursor:pointer;
+	}
+
+
+.theme--dark #close-widget{
+	color:#ffffff;
+}
+
+	#close-widget:hover{
+		color:transparent;
+	}
+
+	.theme--dark #close-widget:hover{
+	color:#E52573;
+}
+	#close-widget:active{
+		color:transparent;
+	}
+	.theme--dark #close-widget:active{
+	color:#F4AF16;
+}
+
+
+.has_session .add-to-lfmfav{
+	opacity: 1;
+	}
+
+.wait_love_done .add-to-lfmfav{
+	position: relative;
+	}
+	.wait_love_done .add-to-lfmfav:after{
+		right:0;
+		top:0;
+		left:auto;
+		}
+.add-to-lfmfav{
+	margin-top:1rem;
+	opacity: 0.3;
+	}
+
+.page-scheme .nicebutton{
+	height: 19px;
+	line-height: 19px;
+	}
+.page-scheme .button-hole{
+	display: block;
+	}
+
+
+		.window-bottom{
+			position:absolute;
+			right:0;
+			bottom:0;
+			z-index:20;
+			overflow:hidden;
+			width: 20px;
+			height:20px;
+			text-align:right;
+			}
+			#resize-handle{
+				position:absolute;
+				right:3px;
+				bottom:3px;
+				cursor: se-resize;
+				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
+				}
+
+.load-more-list-data{
+	display:block;
+	padding:0.5rem;
+	border-radius:4px;
+	color: transparent;
+
+	cursor:pointer;
+	}
+
+.theme--dark .load-more-list-data{
+	color:gray;
+}
+	.load-more-list-data:hover{
+		background-color: transparent;
+		}
+	.theme--dark .load-more-list-data:hover{
+	background-color:#595959;
+}
+
+.photo-cont{
+	position: relative;
+	overflow: hidden;
+	height:135px;
+	}
+
+	.photo-cont.loading-images:after{
+		left:auto;
+		right:0;
+
+		}
+	@media (min-height:600px) {
+		.photo-cont{
+			/*237-48+16*/
+			height: 172px;
+		}
+	}
+
+	.photo-cont-lift{
+		height:100%;
+		white-space: nowrap;
+		position: relative;
+		overflow: hidden;
+	}
+	.photo-cont-lift .artist_image{
+		position: relative;
+	}
+	.photo-cont .artist_image{
+		height:100%;
+		display: inline-block;
+		}
+
+.photo_and_artinfo{
+	clear: both;
+
+	padding:0;
+	min-height:170px;
+	}
+
+	@media (min-height:600px) {
+		.photo_and_artinfo{
+			min-height:207px;
+		}
+	}
+
+
+
+#slider-materail{
+	position: relative;
+	z-index:2;
+	background:transparent;
+	}
+
+
+
+.theme--dark #slider-materail{
+	background-color:#505050;
+}
+.footer{
+	position: relative;
+	z-index: 3;
+	margin: 0 auto;
+	max-width: 750px;
+
+
+	}
+	.as-application .footer{
+		position: absolute;
+		right: 1rem;
+		bottom:0;
+		}
+
+.as-application #promo{
+	position: absolute;
+	bottom: 10px;
+	z-index:3;
+	}
+.as-application #seesu-me-link{
+
+	}
+#promo{
+	padding-right: 18px;
+	padding-left:18px;
+	height:10px;
+	color:transparent;
+	font-size:0.8rem;
+}
+.theme--dark #promo{
+	color:#999;
+}
+	#promo a{
+		padding: 1px 0.5rem;
+		background:transparent;
+
+		}
+	.theme--dark #promo a{
+	background-color:#505050;
+}
+		#promo a:hover{
+
+		}
+
+.start-page-messages{
+	display: none;
+	}
+	.full-page .start-page-messages{
+		display: block;
+		}
+
+.tags_list{
+	text-align: justify;
+	line-height: 2;
+	}
+.full-page .tags_list{
+	line-height: 2.5;
+	}
+	.full-page .tags_list a{
+
+		margin-right:15px;
+		}
+
+.desc{
+	color:transparent;
+}
+
+.theme--dark .desc{
+	color:#999;
+}
+
+.search-desc {
+	display: none;
+	font-size:0.9rem;
+}
+.full-page .search-desc{
+	display: block;
+}
+
+#update-star{
+	position:relative;
+	bottom:-4px;
+	border-bottom:0  !important;
+}
+#screens{
+	clear:left;
+}
+.arrow-part{
+	position: absolute;
+	width: 0;
+	height: 0;
+	font-size: 0;
+}
+	.rc-s-arrow,.tl-arrow {
+		top:-11px;
+		border-style: solid;
+		border-width: 11px;
+		border-color: transparent   transparent  transparent transparent;
+		}
+	.theme--dark .rc-s-arrow,.theme--dark .tl-arrow{
+	border-color:transparent   transparent  #555 transparent ;
+}
+		.rc-s-arrow-bg,.tl-arrow-bg {
+			top: -10px;
+			left: -11px;
+			border-style: solid;
+			border-width: 11px;
+			border-color: transparent transparent transparent transparent;
+			}
+		.theme--dark .rc-s-arrow-bg,.theme--dark .tl-arrow-bg{
+	border-color:transparent transparent #5A5A5A transparent  ;
+}
+	.tl-arrow{
+		margin-left:0;
+	}
+.rc-arrow{
+	position: absolute;
+	top: -11px;
+	display:block;
+	overflow: hidden;
+	margin-left: -11px;
+	width:22px;
+	height:11px;
+	}
+
+
+#sm2-container.swf_error{
+	display:none;
+	}
+
+
+
+#gstat{
+	position:absolute;
+	z-index:-10;
+	margin:0;
+	padding:0;
+	width:1px;
+	height:1px;
+	border:0;
+}
+.serv-container{
+	display:none;
+}
+
+iframe.you-tube-video,embed.you-tube-video{
+	display: block;
+	margin:0;
+	width:100%;
+	height:360px;
+	border:0;
+	}
+	.youtube-video-page iframe.you-tube-video,
+	.youtube-video-page embed.you-tube-video{
+		height: 100%;
+		position: absolute;
+		top:0;
+		bottom:0;
+		min-height: 320px;
+		}
+
+.minimize-button{
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 22px;
+	height: 13px;
+	border-radius: 0 0 0 4px;
+	background: url(../i/minimize-icon.png) no-repeat;
+	opacity: 0.8;
+	cursor: pointer;
+
+	}
+	.minimize-button:hover{
+		box-shadow: 0 0 9px transparent;
+		opacity: 1;
+		}
+	.theme--dark .minimize-button:hover{
+	box-shadow:0 0 9px #999;
+}
+		.minimize-button:active{
+			box-shadow: inset 0 0 7px transparent;
+			}
+		.theme--dark .minimize-button:active{
+	box-shadow:inset 0 0 7px #000;
+}
+/* Custom CSS scrollbar */
+
+.pokki-app ::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+	border-radius: 5px;
+	background: none;
+}
+
+
+.pokki-app ::-webkit-scrollbar-track:vertical {
+	background: none;
+}
+.pokki-app ::-webkit-scrollbar-thumb {
+	width: 8px;
+	height: 20px;
+	border-radius: 5px;
+	background: transparent;
+}
+.theme--dark .pokki-app ::-webkit-scrollbar-thumb{
+	background-color:#999;
+}
+
+.pokki-app ::-webkit-scrollbar-button: {
+	display: none;
+}
+
+body .surf_nav{
+	background-color: transparent;
+	1box-shadow:0 0 0 2pt #1DD8B2;
+	}
+
+.theme--dark body .surf_nav{
+	background-color:#000;
+}
+
+.pl-auth-con{
+	display: none;
+	color:transparent;
+	padding: 0.5rem 1rem 0;
+	}
+
+.theme--dark .pl-auth-con{
+	color:#999;
+}
+
+.access-request .pl-auth-con{
+	display: block;
+	}
+	.pl-auth-con p {
+		margin:0;
+
+		}
+
+.aqc_preview{
+	min-height: 31px;
+}
+.user_page .aqc_preview .user_acqes-preview{
+	margin-bottom: 1rem;
+	margin-top: 0;
+	padding: 0 0.5rem;
+	}
+
+.album_preview{
+	height: 4.58rem;
+	width: 4.58rem;
+	}
+
+
+#pages_area_width_streamer-wrapper {
+	position: absolute;
+	left:0;
+	right: 0;
+	z-index: -10;
+	visibility: hidden;
+	}
+	#pages_area_width_streamer {
+		width: 100%;
+		border: 0;
+		height: 1px;
+
+		}
+
+
+.nav_helper {
+	position: relative;
+	padding: 1rem;
+	background: transparent;
+	border-bottom: 1px solid transparent;
+}
+
+
+.theme--dark .nav_helper{
+	background-color:#313131;
+	border-bottom-color:#252525;
+}
+	.nav_helper-header {
+		margin: 0 1rem 0.5rem
+	}
+	.nav_helper-fullb {
+		display: inline;
+		padding: 0.2rem 1rem;
+		background: transparent;
+		border-radius: 0.3rem;
+		cursor: pointer;
+	}
+	.theme--dark .nav_helper-fullb{
+	background-color:#2E2E2E;
+}
+	.nav_helper-closer {
+		font-size: 2rem;
+		position: absolute;
+		padding: 0 0.4rem;
+		right: 1.8rem;
+		top: 0.5rem;
+		line-height: 2rem;
+		cursor: pointer;
+		border-radius: 0.4rem;
+	}
+	.nav_helper-closer:hover {
+		background-color:transparent;
+	}
+	.theme--dark .nav_helper-closer:hover{
+	background-color:#3F3F3F;
+}
+
+
+.nav_pl_hitem {
+	display: none;
+	cursor: pointer;
+	background: transparent;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	border-radius: 0.5rem;
+	padding: 0.5rem 1rem;
+	margin-bottom: 0.5rem;
+	max-width: 750px;
+	position: relative;
+}
+
+
+.theme--dark .nav_pl_hitem{
+	background-color:#2E2E2E;
+	border-top-color:#353535;
+	border-bottom-color:#292929;
+}
+.nav_pl_hitem-selected {
+	background: transparent;
+	border: 1px solid transparent;
+	cursor: default;
+}
+.theme--dark .nav_pl_hitem-selected{
+	background-color:#333333;
+	border-color:transparent;
+}
+.nav_pl_hitem:hover {
+	background: transparent;
+}
+.theme--dark .nav_pl_hitem:hover{
+	background-color:#333;
+}
+.nav_pl_hitem-song {
+	font-size: 0.8rem;
+	color: transparent;
+}
+.theme--dark .nav_pl_hitem-song{
+	color:#aaa;
+}
+
+.nav_pl_hitem-allow_preview {
+	display: block;
+}
+.nav_helper-full .nav_pl_hitem{
+	display: block;
+}
+
+
+
+	.nvh-s-arrow {
+		top: -11px;
+		border-style: solid;
+		border-width: 11px;
+		border-color: transparent transparent transparent transparent;
+		}
+
+
+
+	.theme--dark .nvh-s-arrow{
+	border-color:transparent transparent #252525 transparent;
+}
+		.nvh-s-arrow-bg {
+			top: -10px;
+			left: -11px;
+			border-style: solid;
+			border-width: 11px;
+			border-color: transparent transparent transparent transparent;
+			}
+		.theme--dark .nvh-s-arrow-bg{
+	border-color:transparent transparent #313131 transparent;
+}
+.nvh-arrow{
+	position: absolute;
+	top: -11px;
+	/* display: block; */
+	right: 1rem;
+	overflow: hidden;
+	margin-right: 8px;
+	width: 22px;
+	height: 11px;
+	pointer-events: none;
+	z-index: 10;
+	}

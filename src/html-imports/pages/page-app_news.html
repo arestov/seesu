@@ -1,0 +1,11 @@
+<div class="app-news">
+	<span pv-repeat="entity in news_list|limitTo:1">
+		<h3>
+			<span pv-text="{{entity.date}}" class="desc"></span>
+			<span pv-text="{{entity.header}}"></span>
+		</h3>
+		<div pv-text="{{entity.body}}"></div>
+
+		<a class="external" pv-props="href:{{entity.link}}" pv-text="{{entity.link_text}}"></a>
+	</span>
+</div>

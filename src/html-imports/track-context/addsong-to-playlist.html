@@ -1,0 +1,55 @@
+<style>
+.addsong-to-playlist{
+	padding:1rem 0 0;
+	}
+	.addsong-to-playlist h4{
+
+		margin: 0 0 0.5rem 0.2rem;
+		padding: 0;
+		font-weight:400;
+		}
+	.addsong-to-playlist .playlist-query{
+
+		margin-bottom: 1rem;
+		}
+		.addsong-to-playlist .create-named-playlist{
+			color:transparent;
+			}
+		.theme--dark .addsong-to-playlist .create-named-playlist{
+	color:#757575;
+}
+			.addsong-to-playlist .create-named-playlist em{
+				color: transparent;
+				}
+			.theme--dark .addsong-to-playlist .create-named-playlist em{
+	color:#ccc;
+}
+		.addsong-to-playlist .suggest{
+			padding:0.3rem;
+			border-radius:0.3rem;
+			cursor: pointer;
+			}
+			.addsong-to-playlist .suggest:hover{
+				background-color: transparent;
+				}
+			.theme--dark .addsong-to-playlist .suggest:hover{
+	background-color:#494949;
+}
+		.addsong-to-playlist .list-of-playlists{
+			width:200px;
+			}
+</style>
+<div class="addsong-to-playlist" pv-nest="current_md for_model:row-playlist-add">
+  <h4><span class="lang localize-addsong ">add song to</span>:</h4>
+  <div>
+    <input type="search" class="playlist-query" autocomplete="off"
+      pv-events="{{
+        keyup:input_search
+        change:input_search
+        search:input_search
+        mousemove:input_search
+      }}"
+    />
+  </div>
+  <!--pv-replace sample_name:list_of_playlists-->
+</div>

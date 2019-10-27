@@ -1,0 +1,23 @@
+<div
+	class="complex-page inactive-page can_be_animated"
+	pv-class="
+		inactive-page: {{ current_lev_num != $lev_num }}
+		full-page: {{ current_lev_num == $lev_num }}
+		page-scheme: {{ (current_lev_num - 1) == $lev_num }}
+		can_be_animated: !disallow_animation
+		map_animating: map_animating
+		"
+	pv-anchor="con">
+	<div
+		class="complex-page-scroll_con"
+		pv-anchor="scroll_con">
+		<div
+			class="complex-page_material"
+			pv-anchor="material">
+		</div>
+	</div>
+</div>
+<div class="browse_lev_con" pv-class="hidden: !vmp_show">
+	<div pv-anchor="con"></div>
+	<!--pv-replace sample_name:view_sources-->
+</div>

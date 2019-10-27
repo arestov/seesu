@@ -1,0 +1,393 @@
+<style>
+.does-not-need-search-from{
+	padding-top:2rem;
+	}
+.full-page .search_results-container{
+
+	}
+	.search_results_sections {
+		position:relative;
+		padding-left:4.3rem;
+		}
+	.search_results-container h4{
+		margin:0;
+
+		font-weight:400;
+
+		}
+	.full-page .search_results-container h4{
+		position:absolute;
+		left:0;
+		z-index:2;
+		padding:0.3rem 0 0;
+		width:4.3rem;
+		height:1.4rem;
+		}
+	.search_results-container h4.loading{
+
+		}
+		.search_results-container h4.loading:after{
+			left:auto;
+			right:0;
+			top:50%;
+			margin-top: -0.6rem;
+			}
+	.search_results-container ul.sugg-section{
+		position:relative;
+		overflow:hidden;
+		margin:0;
+		min-height:1.7rem;
+
+		border-bottom:1px solid transparent;
+		zoom:1;
+		}
+	.theme--dark .search_results-container ul.sugg-section{
+	border-bottom-color:#5d5d5d;
+}
+	.full-page .search_results-container ul.sugg-section{
+		border-left:1px solid transparent;
+		}
+	.theme--dark .full-page .search_results-container ul.sugg-section{
+	border-left-color:#5d5d5d;
+}
+		.search_results-container ul li{
+			position:relative;
+			}
+		.search_results-container ul li.searched-bordered{
+			border-top: 1px dashed transparent;
+			}
+		.theme--dark .search_results-container ul li.searched-bordered{
+	border-top-color:#5d5d5d;
+}
+		.search_results-container ul li:first-child{
+			border-top:0 !important;
+			}
+		.search_results-container a,
+		.search_results-container button{
+			position:relative;
+			display:block;
+			overflow: hidden;
+			margin: 0;
+			padding:0.4rem;
+			cursor:pointer;
+			zoom:1;
+			}
+			.search_results-container
+			ul
+			.sugg-track-dur{
+				float:right;
+				margin:0;
+			}
+		.search_results-container button{
+			position:relative;
+			width:100%;
+			border:0;
+			background: transparent;
+			color:transparent;
+			text-align:left;
+		}
+		.theme--dark .search_results-container button{
+	background-color:transparent;
+	color:#aaa;
+}
+
+		.search_results-container a.active,
+		.search_results-container button.active{
+			padding-right:1.7rem;
+			background-color:transparent  !important;
+		}
+
+		.theme--dark .search_results-container a.active,
+		.theme--dark .search_results-container button.active{
+	background-color:#555  !important;
+}
+		.search_results-container a.active:after,
+		.search_results-container button.active:after{
+			position:absolute;
+			top:1rem;
+			right:5px;
+			margin-top:-10px;
+			height:20px;
+			color:transparent;
+			content: '\21A9';
+			vertical-align:middle;
+			line-height:20px;
+		}
+		.theme--dark .search_results-container a.active:after,
+		.theme--dark .search_results-container button.active:after{
+	color:#fff;
+}
+		.search_results-container a:hover,
+		.search_results-container button:hover
+		{
+			background-color:transparent  !important;
+			color:transparent;
+			}
+		.theme--dark .search_results-container a:hover,
+		.theme--dark .search_results-container button:hover{
+	background-color:#666  !important;
+	color:#f6f0e1;
+}
+
+			.search_results-container	ul.results-suggests img{
+				float:left;
+				margin-right:0.5rem;
+				width:34px;
+				height:34px;
+				border:1px solid transparent;
+				}
+
+			.theme--dark .search_results-container	ul.results-suggests img{
+	border-color:#eee;
+}
+			.search_results-container	ul.results-suggests	span{
+				overflow:hidden;
+				margin-top:1px;
+				margin-bottom:0;
+				zoom:1;
+
+				}
+
+			ul.results-suggests .suggest{
+
+				}
+				ul.results-suggests .suggest .suggest-track_name{
+					display: block;
+					line-height: 1.2rem;
+					}
+				ul.results-suggests .suggest .suggest-artist_name{
+					display: block;
+					color: transparent;
+					line-height: 1.2rem;
+					}
+				.theme--dark ul.results-suggests .suggest .suggest-artist_name{
+	color:#777;
+}
+	.search_results-container > ul.sugg-section:last-child, .search_results-container > div:last-of-type > ul.sugg-section{
+		border-bottom:0;
+	}
+
+	.search_results-container ul{
+		display:none;
+	}
+	.search_results-container ul.active-section{
+		display: block;
+	}
+	.search_results-container ul.sugg-section.odd_section{
+		background-color:transparent;
+	}
+	.theme--dark .search_results-container ul.sugg-section.odd_section{
+	background-color:#4d4d4d;
+}
+	.search_results-container ul.playlist-results a{padding-left:47px;}
+	.search_results-container	ul.recommend-tags a{
+		padding-left:47px;
+		background: url(../i/tag-icon.png) no-repeat 26px 50%;
+	}
+
+	.search_results-container .nothing-found{
+		padding-left:47px  !important;
+		background:inherit  !important;
+		}
+		.search_results-container .nothing-found:hover{
+			background:inherit  !important;
+			color:inherit  !important;
+			cursor:default  !important;
+		}
+	.search_results-container button span{
+		border-bottom:1px dashed transparent;
+	}
+	.theme--dark .search_results-container button span{
+	border-bottom-color:#5c5c5c;
+}
+
+
+</style>
+<div class="search_results-container" pv-class="does-not-need-search-from: !needs_search_from">
+	<p class="search-desc">
+		<span class="desc lang localize-search-control-hint"></span>
+	</p>
+	<div class="search_results_sections">
+		<div
+			pv-nest="section for_model:section-playlist"
+			pv-class="hidden: !active"
+			class="hidden">
+			<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+			<ul
+				class="sugg-section results-suggests playlist-results"
+				pv-class="odd_section: odd_section active-section: active">
+				<li
+					pv-nest="rendering_list"
+					class="suggest text_title"
+					pv-type="way-point" pv-events="click::view click:requestPageById:%states%playlist_provoda_id"
+					pv-class="
+						hidden: !text_title
+						searched-bordered: bordered
+						hidden: disabled
+					">
+					<a pv-class="active: active" >
+						<span pv-text="{{text_title}}"></span>
+					</a>
+				</li>
+
+			</ul>
+		</div>
+		<div
+			pv-nest="section for_model:section-artist"
+			pv-class="hidden: !active">
+			<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+			<ul
+				class="sugg-section results-suggests"
+				pv-class="odd_section: odd_section active-section: active">
+				<li
+					pv-nest="rendering_list"
+					class="suggest text_title"
+					pv-type="way-point" pv-events="click:#showArtcardPage:%states%artist"
+					pv-class="
+						hidden: !text_title
+						searched-bordered: bordered
+						hidden: disabled
+					">
+
+					<a pv-class="active: active" >
+						<img
+							pv-props="
+								src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+								alt: {{text_title}}
+							"
+							src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+						<span pv-text="{{text_title}}"></span>
+					</a>
+				</li>
+				<li class="suggest" pv-nest="button"
+					pv-type="way-point" pv-events="click::view"
+					pv-class="
+						searched-bordered: bordered
+						hidden: disabled
+					">
+					<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+				</li>
+				<li  pv-class="hidden: !no_results_text">
+					<a pv-text="{{no_results_text}}"></a>
+				</li>
+			</ul>
+		</div>
+		<div
+			pv-nest="section for_model:section-album"
+			pv-class="hidden: !active">
+			<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+			<ul
+				class="sugg-section results-suggests"
+				pv-class="odd_section: odd_section active-section: active">
+				<li
+					pv-nest="rendering_list"
+					class="suggest text_title"
+					pv-type="way-point" pv-events="click::view click:#showArtistAlbum:%states%artist:%states%name:%states%aid"
+					pv-class="
+						hidden: !text_title
+						searched-bordered: bordered
+						hidden: disabled
+					">
+
+					<a pv-class="active: active" >
+						<img
+							pv-props="
+								src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+								alt: {{text_title}}
+							"
+							src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+						<span class="suggest-artist_name" pv-text="{{artist}}"></span>
+						<span class="suggest-suggest-album_name" pv-text="{{name}}"></span>
+					</a>
+				</li>
+				<li class="suggest" pv-nest="button"
+					pv-type="way-point" pv-events="click::view"
+					pv-class="
+						searched-bordered: bordered
+						hidden: disabled
+					">
+					<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+				</li>
+				<li  pv-class="hidden: !no_results_text">
+					<a pv-text="{{no_results_text}}"></a>
+				</li>
+			</ul>
+		</div>
+		<div
+			pv-nest="section for_model:section-track"
+			pv-class="hidden: !active">
+			<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+			<ul
+				class="sugg-section results-suggests"
+				pv-class="odd_section: odd_section active-section: active">
+				<li
+					pv-nest="rendering_list"
+					class="suggest text_title"
+					pv-type="way-point" pv-events="click::view click:#showTopTracks:%states%artist:%states%track"
+					pv-class="
+						hidden: !text_title
+						searched-bordered: bordered
+						hidden: disabled
+					">
+
+					<a pv-class="active: active" >
+						<img
+							pv-props="
+								src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+								alt: {{text_title}}
+							"
+							src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+						<span class="sugg-track-dur" pv-text="{{duration_text}}"></span>
+						<span class="suggest-track_name" pv-text="{{track}}"></span>
+						<span class="suggest-artist_name" pv-text="{{artist}}"></span>
+					</a>
+				</li>
+				<li class="suggest" pv-nest="button"
+					pv-type="way-point" pv-events="click::view"
+					pv-class="
+						searched-bordered: bordered
+						hidden: disabled
+					">
+					<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+				</li>
+				<li  pv-class="hidden: !no_results_text">
+					<a pv-text="{{no_results_text}}"></a>
+				</li>
+			</ul>
+		</div>
+
+		<div
+			pv-nest="section for_model:section-tag"
+			pv-class="hidden: !active">
+			<h4 pv-text="{{section_title}}" pv-class="loading: loading"></h4>
+			<ul
+				class="sugg-section results-suggests"
+				pv-class="odd_section: odd_section active-section: active">
+				<li
+					pv-nest="rendering_list"
+					class="suggest text_title"
+					pv-type="way-point" pv-events="click::view click:#showTag:%states%tag"
+					pv-class="
+						hidden: !text_title
+						searched-bordered: bordered
+						hidden: disabled
+					">
+					<a pv-class="active: active" >
+						<span pv-text="{{text_title}}"></span>
+					</a>
+				</li>
+				<li class="suggest" pv-nest="button"
+					pv-type="way-point" pv-events="click::view"
+					pv-class="
+						searched-bordered: bordered
+						hidden: disabled
+					">
+					<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+				</li>
+				<li  pv-class="hidden: !no_results_text">
+					<a pv-text="{{no_results_text}}"></a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
