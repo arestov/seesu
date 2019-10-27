@@ -5,6 +5,14 @@ var spv = require('spv');
 var view_serv = require('view_serv');
 var getModelFromR = require('pv/v/getModelFromR')
 
+var dHeight = function(node) {
+  return node.height()
+}
+
+var dCss = function(node, css) {
+  return node.css(css);
+}
+
 var sync_opt = {sync_tpl: true};
 
 var css_transform = view_serv.css.transform;
@@ -91,7 +99,7 @@ return function(view, transaction_data, animation_data) {
 
     if (animation_data){
       pv.update(view, 'disallow_animation', true, sync_opt);
-      animation_data.lc.c.css(animation_data.transform_values);
+      dCss(animation_data.lc.c, animation_data.transform_values)
       pv.update(view, 'disallow_animation', false, sync_opt);
     }
 
@@ -99,12 +107,12 @@ return function(view, transaction_data, animation_data) {
     //сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 
     if (animation_data && animation_data.lc){
-      animation_data.lc.c.height(); //заставляем всё пересчитать
-      animation_data.lc.c.css(empty_transform_props);
+      dHeight(animation_data.lc.c) //заставляем всё пересчитать
+      dCss(animation_data.lc.c, empty_transform_props)
       /*view.nextLocalTick(function() {
 
       });*/
-      animation_data.lc.c.height(); //заставляем всё пересчитать
+      dHeight(animation_data.lc.c) //заставляем всё пересчитать
     }
 
   }
