@@ -26,6 +26,7 @@ var dHeight = dom_helpers.height
 var dParent = dom_helpers.parent
 var dAppend = dom_helpers.append
 var dBefore = dom_helpers.before
+var dToggleClass = dom_helpers.toggleClass
 
 var LevContainer = function(con, scroll_con, material, tpl, context) {
   this.c = con;
@@ -93,7 +94,7 @@ return spv.inh(View, {
   },
 
   'stch-full_page_need': function(target, state) {
-    target.root_view.els.screens.toggleClass('full_page_need', !!state);
+    dToggleClass(target.root_view.els.screens, 'full_page_need', !!state);
   },
   handleSearchForm: function(form_node) {
     var tpl = this.createTemplate(form_node);

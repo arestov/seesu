@@ -102,6 +102,10 @@ var scrollTop = function(node, value) {
   $(node).scrollTop(value)
 }
 
+var toggleClass = function(node, name, value) {
+  $(node).toggleClass(name, value)
+}
+
 return {
   find: find,
   append: append,
@@ -124,6 +128,7 @@ return {
   width: width,
   css: css,
   scrollTop: scrollTop,
+  toggleClass: toggleClass,
 }
 
 })
