@@ -66,7 +66,7 @@ var StartPage = spv.inh(BrowseMap.Model, {
     filesSearchers(target.app, mp3_search, app_env, target.app.cache_ajax, target.app.resortQueueFn, target.app.addQueueFn);
     target.mp3_search = mp3_search;
 
-    target.app.s.susd.ligs.regCallback('start-page', function(resp){
+    var handleOk = target.inputFn(function(resp){
       if (!resp) {return;}
       var result = complexEach([resp[1], resp[2]], function(result, girl, boy) {
         if (girl) {
@@ -81,9 +81,13 @@ var StartPage = spv.inh(BrowseMap.Model, {
 
       pvUpdate(target, 'users_listenings', result);
       pvUpdate(target, 'users_listenings_loading', false);
-    }, function() {
+    })
+
+    var handleProgress = target.inputFn(function() {
       pvUpdate(target, 'users_listenings_loading', true);
-    });
+    })
+
+    target.app.s.susd.ligs.regCallback('start-page', handleOk, handleProgress);
 
     target.closed_messages = app_serv.store('closed-messages') || {};
     return target;
