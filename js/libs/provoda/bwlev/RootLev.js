@@ -43,7 +43,7 @@ var RootLev = spv.inh(Model, {}, {
 
       var from_bwlev = getModelById(this, from_id);
 
-      var bwlev = followFromTo(BrowseLevel, this, getSPByPathTemplate(this.app, this, 'spyglass-navigation'), from_bwlev, md);
+      var bwlev = followFromTo(BrowseLevel, getSPByPathTemplate(this.app, this, 'spyglass-navigation'), from_bwlev, md);
       bwlev.showOnMap();
       return bwlev;
     },
